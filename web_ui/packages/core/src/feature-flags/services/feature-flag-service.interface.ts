@@ -36,7 +36,7 @@ export const DEV_FEATURE_FLAGS = {
     FEATURE_FLAG_REQ_ACCESS: false,
     FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
     FEATURE_FLAG_TELEMETRY_STACK: true,
-
+    FEATURE_FLAG_ANNOTATION_HOLE: false,
     // Only used for unit testing
     DEBUG: false,
 };
