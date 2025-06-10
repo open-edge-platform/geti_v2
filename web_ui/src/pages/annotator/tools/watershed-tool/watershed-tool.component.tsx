@@ -3,6 +3,8 @@
 
 import { ComponentProps, useEffect } from 'react';
 
+import { WatershedPolygon } from '@geti/smart-tools/src/watershed/interfaces';
+
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { Line } from '../../annotation/shapes/line.component';
 import { Polygon } from '../../annotation/shapes/polygon.component';
