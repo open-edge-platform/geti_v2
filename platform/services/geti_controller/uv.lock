@@ -289,6 +289,7 @@ dependencies = [
     { name = "kubernetes" },
     { name = "oras" },
     { name = "packaging" },
+    { name = "types-pyyaml" },
     { name = "uvicorn" },
 ]
 
@@ -303,6 +304,7 @@ dev = [
     { name = "pytest-html" },
     { name = "pytest-mock" },
     { name = "ruff" },
+    { name = "types-requests" },
 ]
 
 [package.metadata]
@@ -313,6 +315,7 @@ requires-dist = [
     { name = "kubernetes", specifier = "==32.0.1" },
     { name = "oras", specifier = "==0.2.31" },
     { name = "packaging", specifier = "==25.0" },
+    { name = "types-pyyaml", specifier = "~=6.0" },
     { name = "uvicorn", specifier = "~=0.27.1" },
 ]
 
@@ -327,6 +330,7 @@ dev = [
     { name = "pytest-html", specifier = "~=4.0.0" },
     { name = "pytest-mock", specifier = "~=3.10" },
     { name = "ruff", specifier = "~=0.11" },
+    { name = "types-requests", specifier = "==2.28.11.13" },
 ]
 
 [[package]]
@@ -1492,6 +1496,36 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/5b/b9/1ed31d167be802da0fc95020d04cd27b7d7065cc6fbefdd2f9186f60d7bd/tomli-2.2.1-cp313-cp313-win32.whl", hash = "sha256:d3f5614314d758649ab2ab3a62d4f2004c825922f9e370b29416484086b264ec", size = 98724 },
     { url = "https://files.pythonhosted.org/packages/c7/32/b0963458706accd9afcfeb867c0f9175a741bf7b19cd424230714d722198/tomli-2.2.1-cp313-cp313-win_amd64.whl", hash = "sha256:a38aa0308e754b0e3c67e344754dff64999ff9b513e691d0e786265c93583c69", size = 109383 },
     { url = "https://files.pythonhosted.org/packages/6e/c2/61d3e0f47e2b74ef40a68b9e6ad5984f6241a942f7cd3bbfbdbd03861ea9/tomli-2.2.1-py3-none-any.whl", hash = "sha256:cb55c73c5f4408779d0cf3eef9f762b9c9f147a77de7b258bef0a5628adc85cc", size = 14257 },
+]
+
+[[package]]
+name = "types-pyyaml"
+version = "6.0.12.20250516"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4e/22/59e2aeb48ceeee1f7cd4537db9568df80d62bdb44a7f9e743502ea8aab9c/types_pyyaml-6.0.12.20250516.tar.gz", hash = "sha256:9f21a70216fc0fa1b216a8176db5f9e0af6eb35d2f2932acb87689d03a5bf6ba", size = 17378 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/99/5f/e0af6f7f6a260d9af67e1db4f54d732abad514252a7a378a6c4d17dd1036/types_pyyaml-6.0.12.20250516-py3-none-any.whl", hash = "sha256:8478208feaeb53a34cb5d970c56a7cd76b72659442e733e268a94dc72b2d0530", size = 20312 },
+]
+
+[[package]]
+name = "types-requests"
+version = "2.28.11.13"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "types-urllib3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c3/da/692fc34d40f2c27d3b29eaf0b8bbc3ee43d8ae8ef552c8174ffc72f04ad5/types-requests-2.28.11.13.tar.gz", hash = "sha256:3fd332842e8759ea5f7eb7789df8aa772ba155216ccf10ef4aa3b0e5b42e1b46", size = 14518 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8e/ca/e83826c25f39fa47f21d2909cf169f00a596a2a859ec78b2139e1f6c11d2/types_requests-2.28.11.13-py3-none-any.whl", hash = "sha256:94896f6f8e9f3db11e422c6e3e4abbc5d7ccace853eac74b23bdd65eeee3cdee", size = 14284 },
+]
+
+[[package]]
+name = "types-urllib3"
+version = "1.26.25.14"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/73/de/b9d7a68ad39092368fb21dd6194b362b98a1daeea5dcfef5e1adb5031c7e/types-urllib3-1.26.25.14.tar.gz", hash = "sha256:229b7f577c951b8c1b92c1bc2b2fdb0b49847bd2af6d1cc2a2e3dd340f3bda8f", size = 11239 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/11/7b/3fc711b2efea5e85a7a0bbfe269ea944aa767bbba5ec52f9ee45d362ccf3/types_urllib3-1.26.25.14-py3-none-any.whl", hash = "sha256:9683bbb7fb72e32bfe9d2be6e04875fbe1b3eeec3cbb4ea231435aa7fd6b4f0e", size = 15377 },
 ]
 
 [[package]]

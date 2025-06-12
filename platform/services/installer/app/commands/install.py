@@ -76,6 +76,7 @@ from validators.filepath import is_filepath_valid
 from validators.password import is_password_valid
 from validators.path import is_data_folder_valid
 from validators.tls import check_tls_certificates
+from geti_controller.communication import call_install_endpoint
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -256,16 +257,16 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
     try:
         deploy_geti_controller_chart(config=config)
         controller_response = call_install_endpoint(kube_config=config.kube_config.value)
-        # logger.info(f"Response from the GetiController installation endpoint: {controller_response}")
-        # status, message = monitor_installation_progress(config=config)
-        # if status != OperationStatus.SUCCEEDED:
-        #     raise GetiControllerError(f"Installation failed with status: {status}, message: {message}")
+        logger.info(f"Response from the GetiController installation endpoint: {controller_response}")
+        status, message = monitor_installation_progress(config=config)
+        if status != OperationStatus.SUCCEEDED:
+            raise GetiControllerError(f"Installation failed with status: {status}, message: {message}")
     except (StepsError, GetiControllerError):
         logger.exception("Error during installation.")
         click.secho("\n" + InstallCmdTexts.installation_failed, fg="red")
         cluster_info_dump(kubeconfig=config.kube_config.value)
     finally:
-        # uninstall_geti_controller_chart(config=config)  # TODO uncomment when progress will be done
+        uninstall_geti_controller_chart(config=config)
         # shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)  # TODO uncomment
         if config.lightweight_installer.value:
             # remove 'tools' dir on failure,
