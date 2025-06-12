@@ -26,7 +26,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fi
 from cli_utils.platform_logs import subprocess_run
 from constants.paths import HELM_BINARY, INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH, TEMPLATES_DIR
 from constants.platform import PLATFORM_REGISTRY_ADDRESS
-from platform_stages.steps.errors import ChartInstallationError, ChartPullError, GenerateTemplateError
+from platform_utils.errors import ChartInstallationError, ChartPullError, GenerateTemplateError
 from platform_utils.k8s import ensure_endpoint
 
 logger = logging.getLogger(__name__)

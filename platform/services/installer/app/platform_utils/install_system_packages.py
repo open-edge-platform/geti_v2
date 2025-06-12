@@ -33,7 +33,7 @@ from constants.paths import (
     UBUNTU_NVIDIA_PACKAGES_PATH,
     UBUNTU_PACKAGES_PATH,
 )
-from platform_stages.steps.errors import DownloadSystemPackagesError, InstallSystemPackagesError
+from platform_utils.errors import DownloadSystemPackagesError, InstallSystemPackagesError
 
 logger = logging.getLogger(__name__)
 

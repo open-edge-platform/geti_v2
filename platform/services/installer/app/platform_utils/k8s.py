@@ -28,7 +28,7 @@ from kubernetes.client import ApiException, BatchV1Api, CoreV1Api, V1Secret
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
 
 from constants.paths import K3S_KUBECONFIG_PATH
-from platform_stages.steps.errors import FailedJobError, RestartDeploymentError
+from platform_utils.errors import FailedJobError, RestartDeploymentError
 from platform_utils.kube_config_handler import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
