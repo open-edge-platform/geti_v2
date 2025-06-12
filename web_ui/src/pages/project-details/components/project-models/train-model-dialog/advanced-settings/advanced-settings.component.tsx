@@ -35,6 +35,9 @@ interface AdvancedSettingsProps {
     onReshufflingSubsetsEnabledChange: (reshufflingSubsetsEnabled: boolean) => void;
     configParameters: ConfigurableParametersTaskChain;
     trainingConfiguration: TrainingConfiguration;
+    onUpdateTrainingConfiguration: (
+        updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
+    ) => void;
     trainFromScratch: boolean;
     onTrainFromScratchChange: (trainFromScratch: boolean) => void;
 }
@@ -55,6 +58,7 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
     trainFromScratch,
     onTrainFromScratchChange,
     trainingConfiguration,
+    onUpdateTrainingConfiguration,
 }) => {
     const TABS: TabProps[] = [
         {
@@ -70,7 +74,12 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
         },
         {
             name: 'Data management',
-            children: <DataManagement trainingConfiguration={trainingConfiguration} />,
+            children: (
+                <DataManagement
+                    trainingConfiguration={trainingConfiguration}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            ),
         },
         {
             name: 'Training',
