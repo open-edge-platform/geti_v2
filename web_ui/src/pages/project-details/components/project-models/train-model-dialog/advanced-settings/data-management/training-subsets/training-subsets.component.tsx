@@ -175,18 +175,14 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
             const validationSubsetValue = values[1] - trainingSubsetValue;
             const testSubsetValue = MAX_RATIO_VALUE - values[1];
 
-            const KEY_VALUE_MAP = {
+            const KEY_VALUE_MAP: Record<string, number> = {
                 [TRAINING_SUBSET_KEY]: trainingSubsetValue,
                 [VALIDATION_SUBSET_KEY]: validationSubsetValue,
                 [TEST_SUBSET_KEY]: testSubsetValue,
             };
 
             newConfig.datasetPreparation.subsetSplit = config.datasetPreparation.subsetSplit.map((parameter) => {
-                if (
-                    TRAINING_SUBSET_KEY === parameter.key ||
-                    VALIDATION_SUBSET_KEY === parameter.key ||
-                    TEST_SUBSET_KEY === parameter.key
-                ) {
+                if ([TRAINING_SUBSET_KEY, TEST_SUBSET_KEY, VALIDATION_SUBSET_KEY].includes(parameter.key)) {
                     return {
                         ...parameter,
                         value: KEY_VALUE_MAP[parameter.key],
