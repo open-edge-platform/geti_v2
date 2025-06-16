@@ -6,7 +6,7 @@ import { FC, ReactNode, useState } from 'react';
 import { Grid, minmax, Text, View } from '@geti/ui';
 import { noop } from 'lodash-es';
 
-import { ConfigurableParametersComponents } from '../../../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+import { ConfigurationParameter } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { Accordion } from '../../ui/accordion/accordion.component';
 import { Parameters } from '../../ui/parameters.component';
 import { TILING_MODES, TilingModes } from './tiling-modes.component';
@@ -14,12 +14,12 @@ import { TILING_MODES, TilingModes } from './tiling-modes.component';
 import styles from './tiling.module.scss';
 
 interface TilingProps {
-    tilingParameters: ConfigurableParametersComponents;
+    tilingParameters: ConfigurationParameter[];
 }
 
-const getTilingMode = (tilingParameters: ConfigurableParametersComponents): TILING_MODES => {
-    const adaptive = tilingParameters?.parameters?.find((parameter) => parameter.name === 'enable_adaptive_params');
-    const enablingTiling = tilingParameters?.parameters?.find((parameter) => parameter.name === 'enable_tiling');
+const getTilingMode = (tilingParameters: ConfigurationParameter[]): TILING_MODES => {
+    const adaptive = tilingParameters.find((parameter) => parameter.key === 'enable_adaptive_params');
+    const enablingTiling = tilingParameters.find((parameter) => parameter.key === 'enable_tiling');
 
     if (adaptive !== undefined && adaptive.value === true) {
         return TILING_MODES.Adaptive;
@@ -36,9 +36,8 @@ export const Tiling: FC<TilingProps> = ({ tilingParameters }) => {
     const [selectedTilingMode, setSelectedTilingMode] = useState<TILING_MODES>(() => getTilingMode(tilingParameters));
 
     const manualTilingParameters =
-        tilingParameters.parameters?.filter(
-            (parameter) => !['enable_adaptive_params', 'enable_tiling'].includes(parameter.name)
-        ) ?? [];
+        tilingParameters?.filter((parameter) => !['enable_adaptive_params', 'enable_tiling'].includes(parameter.key)) ??
+        [];
 
     const TILING_MODE_COMPONENTS: Record<TILING_MODES, ReactNode> = {
         [TILING_MODES.OFF]: (

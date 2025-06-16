@@ -5,14 +5,17 @@ import { FC } from 'react';
 
 import { View } from '@geti/ui';
 
-import { ConfigurableParametersTaskChain } from '../../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+import {
+    ConfigurationParameter,
+    TrainingConfiguration,
+} from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { FineTuneParameters } from './fine-tune-parameters.component';
 import { LearningParameters } from './learning-parameters.component';
 
 interface TrainingProps {
     trainFromScratch: boolean;
     onTrainFromScratchChange: (trainFromScratch: boolean) => void;
-    configParameters: ConfigurableParametersTaskChain;
+    trainingConfiguration: TrainingConfiguration;
 
     isReshufflingSubsetsEnabled: boolean;
     onReshufflingSubsetsEnabledChange: (reshufflingSubsetsEnabled: boolean) => void;
@@ -21,13 +24,11 @@ interface TrainingProps {
 export const Training: FC<TrainingProps> = ({
     trainFromScratch,
     onTrainFromScratchChange,
-    configParameters,
     onReshufflingSubsetsEnabledChange,
     isReshufflingSubsetsEnabled,
+    trainingConfiguration: _trainingConfiguration,
 }) => {
-    const learningParameters = configParameters.components.find(
-        (component) => component.header === 'Learning Parameters'
-    );
+    const learningParameters: ConfigurationParameter[] = [];
 
     return (
         <View>
@@ -37,9 +38,7 @@ export const Training: FC<TrainingProps> = ({
                 isReshufflingSubsetsEnabled={isReshufflingSubsetsEnabled}
                 onReshufflingSubsetsEnabledChange={onReshufflingSubsetsEnabledChange}
             />
-            {learningParameters?.parameters !== undefined && (
-                <LearningParameters parameters={learningParameters.parameters} />
-            )}
+            <LearningParameters parameters={learningParameters} />
         </View>
     );
 };

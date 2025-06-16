@@ -5,12 +5,12 @@ import { FC } from 'react';
 
 import { noop } from 'lodash-es';
 
-import { ConfigurableParametersParams } from '../../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+import { ConfigurationParameter } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { Accordion } from '../ui/accordion/accordion.component';
 import { Parameters } from '../ui/parameters.component';
 
 interface LearningParametersProps {
-    parameters: ConfigurableParametersParams[];
+    parameters: ConfigurationParameter[];
 }
 
 export const LearningParameters: FC<LearningParametersProps> = ({ parameters }) => {

@@ -3,10 +3,8 @@
 
 import { useEffect, useState } from 'react';
 
-import { keepPreviousData } from '@tanstack/react-query';
 import { isEmpty, isNumber } from 'lodash-es';
 
-import { useConfigParameters } from '../../../../../core/configurable-parameters/hooks/use-config-parameters.hook';
 import { useTrainingConfigurationQuery } from '../../../../../core/configurable-parameters/hooks/use-training-configuration.hook';
 import { TrainingConfiguration } from '../../../../../core/configurable-parameters/services/configuration.interface';
 import { useFeatureFlags } from '../../../../../core/feature-flags/hooks/use-feature-flags.hook';
@@ -98,18 +96,6 @@ export const useTrainModelState = () => {
         selectedModelTemplateId,
     });
 
-    const { useGetModelConfigParameters } = useConfigParameters(projectIdentifier);
-    const { data: configParameters } = useGetModelConfigParameters(
-        {
-            taskId: selectedTask.id,
-            modelTemplateId: selectedModelTemplateId,
-            editable: true,
-        },
-        {
-            placeholderData: keepPreviousData,
-        }
-    );
-
     const [isReshufflingSubsetsEnabled, setIsReshufflingSubsetsEnabled] = useState<boolean>(false);
     const [trainFromScratch, setTrainFromScratch] = useState<boolean>(false);
 
@@ -164,7 +150,6 @@ export const useTrainModelState = () => {
         isTaskChainProject,
         isReshufflingSubsetsEnabled,
         changeReshufflingSubsetsEnabled: setIsReshufflingSubsetsEnabled,
-        configParameters,
         trainFromScratch,
         changeTrainFromScratch: handleTrainFromScratchChange,
         trainingConfiguration,

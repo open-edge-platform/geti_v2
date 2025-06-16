@@ -6,14 +6,14 @@ import { FC, ReactNode } from 'react';
 import { Grid, minmax, Text, ToggleButtons, View } from '@geti/ui';
 import { isFunction } from 'lodash-es';
 
-import { ConfigurableParametersParams } from '../../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+import { ConfigurationParameter } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { BooleanParameter } from './boolean-parameter.component';
-import { NumberParameter } from './number-parameter.component';
+import { NumberParameterField } from './number-parameter-field.component';
 import { ResetButton } from './reset-button.component';
 import { Tooltip } from './tooltip.component';
 
 interface ParametersProps {
-    parameters: ConfigurableParametersParams[];
+    parameters: ConfigurationParameter[];
     onChange: () => void;
 }
 
@@ -22,7 +22,7 @@ const ParameterTooltip: FC<{ text: string }> = ({ text }) => {
 };
 
 interface ParameterProps {
-    parameter: ConfigurableParametersParams;
+    parameter: ConfigurationParameter;
     onChange: () => void;
 }
 
@@ -47,30 +47,36 @@ const ParameterLayout: FC<ParameterLayoutProps> = ({ header, children, descripti
 };
 
 const ParameterField: FC<ParameterProps> = ({ parameter, onChange }) => {
-    if (parameter.dataType === 'string' && parameter.templateType === 'selectable') {
-        return <ToggleButtons options={parameter.options} selectedOption={parameter.value} onOptionChange={onChange} />;
-    }
-
-    if (parameter.templateType === 'input' && (parameter.dataType === 'float' || parameter.dataType === 'integer')) {
+    if (parameter.type === 'enum') {
         return (
-            <NumberParameter
-                value={parameter.value}
-                minValue={parameter.minValue}
-                maxValue={parameter.maxValue}
-                onChange={onChange}
-                type={parameter.dataType}
+            <ToggleButtons
+                options={parameter.allowedValues}
+                selectedOption={parameter.value}
+                onOptionChange={onChange}
             />
         );
     }
 
-    if (parameter.dataType === 'boolean') {
-        return <BooleanParameter value={parameter.value} header={parameter.header} onChange={() => {}} />;
+    if (parameter.type === 'float' || parameter.type === 'int') {
+        return (
+            <NumberParameterField
+                value={parameter.value}
+                minValue={parameter.minValue}
+                maxValue={parameter.maxValue}
+                onChange={onChange}
+                type={parameter.type}
+            />
+        );
+    }
+
+    if (parameter.type === 'bool') {
+        return <BooleanParameter value={parameter.value} header={parameter.name} onChange={() => {}} />;
     }
 };
 
 const Parameter: FC<ParameterProps> = ({ parameter, onChange }) => {
     return (
-        <ParameterLayout header={parameter.header} description={parameter.description} onReset={() => {}}>
+        <ParameterLayout header={parameter.name} description={parameter.description} onReset={() => {}}>
             <ParameterField parameter={parameter} onChange={onChange} />
         </ParameterLayout>
     );
