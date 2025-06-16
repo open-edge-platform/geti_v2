@@ -41,8 +41,7 @@ def deploy_geti_controller_chart(config: InstallationConfig, charts_dir: str = G
             },
             "global": {
                 "ingress_enabled": False,
-                "registry_address": config.geti_image_registry.value,
-                "tag": get_target_product_build(),
+                "registry_address": f"{config.geti_image_registry.value}/open-edge-platform",
                 "proxy": {
                     "enabled": bool(http_proxy or https_proxy),
                     "httpProxy": http_proxy if http_proxy is not None else "",

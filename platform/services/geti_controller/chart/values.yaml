@@ -9,7 +9,7 @@ global:
     name: busybox:glibc
   registry_address: ""
   tag: ""
-  docker_namespace: "open-edge-platform/geti"
+  docker_namespace: "geti"
   enable_local_image_pull_secret: false
   security_headers: ""
   stripped_headers: ""

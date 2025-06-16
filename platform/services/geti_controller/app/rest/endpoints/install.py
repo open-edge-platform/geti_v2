@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 GETI_REGISTRY = os.getenv("GETI_REGISTRY")
+INSTALL_VERSION = os.getenv("INSTALL_VERSION")
 
 
 @platform_router.post(
@@ -60,8 +61,6 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
     Starts the installation of the specified platform version.
     """
     logger.debug(f"POST install request received. Payload: {payload}")
-    registry = os.environ.get('REGISTRY')
-    version = os.environ.get("VERSION")
 
     if not payload.version_number:
         raise HTTPException(
@@ -90,8 +89,8 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
     job = create_job(
         name="install-upgrade",
         registry=GETI_REGISTRY,
-        image=f"{GETI_REGISTRY}/geti/install-upgrade:michala",
-        manifest_version=os.environ.get("INSTALL_VERSION"),
+        image=f"{GETI_REGISTRY}/geti/install-upgrade:{INSTALL_VERSION}",
+        manifest_version=INSTALL_VERSION,
     )
     deploy_job(job, namespace="default")
 

@@ -27,6 +27,7 @@ enabled:
   modelmesh_serving: true
   opa_bundle: true
   telemetry_compression: true
+  geti_controller: true
 
 global:
   istio_ambient_mesh: false
