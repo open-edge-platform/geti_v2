@@ -1,48 +1,24 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
+import { createInMemoryUsersService } from '@geti/core/src/users/services/in-memory-users-service';
 import { RESOURCE_TYPE, USER_ROLE } from '@geti/core/src/users/users.interface';
+import { createInMemoryApiWorkspacesService } from '@geti/core/src/workspaces/services/in-memory-api-workspaces-service';
 import { screen } from '@testing-library/react';
-import { useParams } from 'react-router-dom';
 
-import { WorkspacesConfig } from '../../../core/user-settings/dtos/user-settings.interface';
-import { useUserGlobalSettings } from '../../../core/user-settings/hooks/use-global-settings.hook';
-import { useWorkspaces } from '../../../providers/workspaces-provider/workspaces-provider.component';
 import { getMockedUser } from '../../../test-utils/mocked-items-factory/mocked-users';
 import { getMockedWorkspace } from '../../../test-utils/mocked-items-factory/mocked-workspace';
 import { providersRender as render } from '../../../test-utils/required-providers-render';
-import { useDefaultWorkspace } from '../../landing-page/workspaces-tabs/use-default-workspace.hook';
 import { Workspaces } from './workspaces.component';
 
-jest.mock('../../../providers/workspaces-provider/workspaces-provider.component', () => ({
-    ...jest.requireActual('../../../providers/workspaces-provider/workspaces-provider.component'),
-    useWorkspaces: jest.fn(),
-}));
-
-jest.mock('@geti/core/src/users/hook/use-users.hook', () => ({
-    useUsers: jest.fn(() => ({
-        useGetUserQuery: jest.fn(),
-        useActiveUser: jest.fn(),
-    })),
-}));
+const mockedOrganizationId = 'test-organization';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
-    useParams: jest.fn(() => ({})),
-}));
-
-jest.mock('../../landing-page/workspaces-tabs/use-default-workspace.hook', () => ({
-    useDefaultWorkspace: jest.fn(),
-}));
-
-jest.mock('../../../core/user-settings/hooks/use-global-settings.hook', () => ({
-    ...jest.requireActual('../../../core/user-settings/hooks/use-global-settings.hook'),
-    useUserGlobalSettings: jest.fn(),
-}));
-
-jest.mock('../../landing-page/workspaces-tabs/use-default-workspace.hook', () => ({
-    useDefaultWorkspace: jest.fn(),
+    useParams: jest.fn(() => ({
+        workspaceId: '1',
+        organizationId: mockedOrganizationId,
+    })),
 }));
 
 describe('Workspaces', () => {
@@ -50,97 +26,96 @@ describe('Workspaces', () => {
     const mockedWorkspace2 = getMockedWorkspace({ id: '2', name: 'Workspace 2' });
 
     it('Check if there are two workspaces displayed', async () => {
+        const workspacesService = createInMemoryApiWorkspacesService();
+        const usersService = createInMemoryUsersService();
+
         const mockedWorkspaces = [mockedWorkspace, mockedWorkspace2];
 
-        jest.mocked(useWorkspaces).mockReturnValue({
-            workspaceId: '1',
-            workspaces: mockedWorkspaces,
+        workspacesService.getWorkspaces = async () => {
+            return Promise.resolve(mockedWorkspaces);
+        };
+        usersService.getActiveUser = jest.fn(async () => getMockedUser());
+
+        render(<Workspaces />, {
+            services: { workspacesService, usersService },
         });
 
-        jest.mocked(useDefaultWorkspace).mockReturnValue({
-            defaultWorkspaceId: undefined,
-            reorderedWorkspaces: mockedWorkspaces,
-        });
-
-        jest.mocked(useUserGlobalSettings).mockReturnValue({
-            saveConfig: jest.fn(),
-            isSavingConfig: false,
-            config: {} as WorkspacesConfig,
-        });
-        // @ts-expect-error We only care about data property
-        jest.mocked(useUsers).mockReturnValue({ useActiveUser: () => ({ data: getMockedUser() }) });
-
-        render(<Workspaces />);
-
-        expect(screen.getByText('Workspace 1')).toBeInTheDocument();
-        expect(screen.getByText('Workspace 2')).toBeInTheDocument();
+        expect(await screen.findByText('Workspace 1')).toBeInTheDocument();
+        expect(await screen.findByText('Workspace 2')).toBeInTheDocument();
     });
 
     it('Check if add workspace button is visible when user is organization contributor - FEATURE_FLAG_WORKSPACE_ACTIONS on', async () => {
-        const organizationId = 'organization-id';
-        jest.mocked(useParams).mockReturnValue({ organizationId });
+        const workspacesService = createInMemoryApiWorkspacesService();
+        const usersService = createInMemoryUsersService();
 
-        jest.mocked(useWorkspaces).mockReturnValue({
-            workspaceId: '1',
-            workspaces: [],
-        });
+        workspacesService.getWorkspaces = async () => {
+            return Promise.resolve([]);
+        };
 
         const mockedContributorUser = getMockedUser({
             roles: [
                 {
                     resourceType: RESOURCE_TYPE.ORGANIZATION,
-                    resourceId: organizationId,
+                    resourceId: mockedOrganizationId,
                     role: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
                 },
             ],
         });
+        usersService.getActiveUser = async () => Promise.resolve(mockedContributorUser);
 
-        // @ts-expect-error We only care about data property
-        jest.mocked(useUsers).mockReturnValue({ useActiveUser: () => ({ data: mockedContributorUser }) });
+        render(<Workspaces />, {
+            services: { workspacesService, usersService },
+            featureFlags: { FEATURE_FLAG_WORKSPACE_ACTIONS: true },
+        });
 
-        render(<Workspaces />, { featureFlags: { FEATURE_FLAG_WORKSPACE_ACTIONS: true } });
-        expect(screen.getByRole('button', { name: 'Create new workspace' })).toBeInTheDocument();
+        expect(await screen.findByRole('button', { name: 'Create new workspace' })).toBeInTheDocument();
     });
 
     it('Check if add workspace button is visible when user is organization admin - FEATURE_FLAG_WORKSPACE_ACTIONS on', async () => {
-        const organizationId = 'organization-id';
-        jest.mocked(useParams).mockReturnValue({ organizationId });
-        jest.mocked(useWorkspaces).mockReturnValue({
-            workspaceId: '1',
-            workspaces: [],
-        });
+        const workspacesService = createInMemoryApiWorkspacesService();
+        const usersService = createInMemoryUsersService();
+
+        workspacesService.getWorkspaces = async () => {
+            return Promise.resolve([]);
+        };
 
         const mockedAdminUser = getMockedUser({
             roles: [
                 {
-                    resourceId: organizationId,
+                    resourceId: mockedOrganizationId,
                     resourceType: RESOURCE_TYPE.ORGANIZATION,
                     role: USER_ROLE.ORGANIZATION_ADMIN,
                 },
             ],
         });
-        // @ts-expect-error We only care about data property
-        jest.mocked(useUsers).mockReturnValue({ useActiveUser: () => ({ data: mockedAdminUser }) });
 
-        render(<Workspaces />, { featureFlags: { FEATURE_FLAG_WORKSPACE_ACTIONS: true } });
-        expect(screen.getByRole('button', { name: 'Create new workspace' })).toBeInTheDocument();
+        usersService.getActiveUser = async () => Promise.resolve(mockedAdminUser);
+
+        render(<Workspaces />, {
+            services: { workspacesService, usersService },
+            featureFlags: { FEATURE_FLAG_WORKSPACE_ACTIONS: true },
+        });
+        expect(await screen.findByRole('button', { name: 'Create new workspace' })).toBeInTheDocument();
     });
 
     it('Check if add workspace button is not visible when user is not organization user - FEATURE_FLAG_WORKSPACE_ACTIONS on', async () => {
-        const organizationId = 'organization-id';
-        jest.mocked(useParams).mockReturnValue({ organizationId });
-        jest.mocked(useWorkspaces).mockReturnValue({
-            workspaceId: '1',
-            workspaces: [],
-        });
+        const workspacesService = createInMemoryApiWorkspacesService();
+        const usersService = createInMemoryUsersService();
+
+        workspacesService.getWorkspaces = async () => {
+            return Promise.resolve([]);
+        };
 
         const mockedUserFromOutsideTheOrg = getMockedUser({
             roles: [],
         });
-        // @ts-expect-error We only care about data property
-        jest.mocked(useUsers).mockReturnValue({ useActiveUser: () => ({ data: mockedUserFromOutsideTheOrg }) });
 
-        render(<Workspaces />, { featureFlags: { FEATURE_FLAG_WORKSPACE_ACTIONS: true } });
+        usersService.getActiveUser = async () => Promise.resolve(mockedUserFromOutsideTheOrg);
+
+        render(<Workspaces />, {
+            services: { workspacesService, usersService },
+            featureFlags: { FEATURE_FLAG_WORKSPACE_ACTIONS: true },
+        });
         expect(screen.queryByRole('button', { name: 'Create new workspace' })).not.toBeInTheDocument();
     });
 });
