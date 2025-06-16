@@ -105,7 +105,7 @@ class ClassificationToAnnotationConverter(IPredictionToAnnotationConverter):
         for label_idx, label_name, prob in predictions.top_labels:
             _prob = float(prob)
             label = self.get_label_by_idx(label_idx)
-            print(f"DEBUG: label_idx: {label_idx}, label: {label}")
+            print(f"DEBUG: top_label.label_idx: {label_idx}, top_label.label_name: {label_name} -> label: {label}")
             labels.append(ScoredLabel(label_id=label.id_, is_empty=label.is_empty, probability=_prob))
 
         if not labels and self.empty_label:
