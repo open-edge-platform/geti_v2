@@ -10,11 +10,19 @@ import { getFloatingPointStep } from '../utils';
 
 type NumberGroupParamsProps = Pick<NumberParameter, 'type' | 'value' | 'minValue' | 'maxValue'> & {
     onChange: (value: number) => void;
+    isDisabled?: boolean;
 };
 
 const DEFAULT_STEP = 1;
 
-export const NumberParameterField: FC<NumberGroupParamsProps> = ({ value, minValue, maxValue, type, onChange }) => {
+export const NumberParameterField: FC<NumberGroupParamsProps> = ({
+    value,
+    minValue,
+    maxValue,
+    type,
+    onChange,
+    isDisabled,
+}) => {
     const [parameterValue, setParameterValue] = useState<number>(value);
 
     const floatingPointStep = maxValue === null ? DEFAULT_STEP : getFloatingPointStep(minValue, maxValue);
@@ -22,10 +30,6 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({ value, minVal
     const step = type === 'int' ? DEFAULT_STEP : floatingPointStep;
 
     const handleValueChange = (inputValue: number): void => {
-        setParameterValue(inputValue);
-    };
-
-    const handleSliderChangeEnd = (inputValue: number): void => {
         setParameterValue(inputValue);
         onChange(inputValue);
     };
@@ -35,7 +39,15 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({ value, minVal
     }, [value]);
 
     if (maxValue === null) {
-        return <NumberField isQuiet step={step} value={value} minValue={minValue} onChange={handleValueChange} />;
+        return (
+            <NumberField
+                step={step}
+                value={parameterValue}
+                minValue={minValue}
+                onChange={handleValueChange}
+                isDisabled={isDisabled}
+            />
+        );
     }
 
     return (
@@ -44,19 +56,21 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({ value, minVal
                 value={parameterValue}
                 minValue={minValue}
                 maxValue={maxValue}
-                onChange={handleValueChange}
-                onChangeEnd={handleSliderChangeEnd}
+                onChange={setParameterValue}
+                onChangeEnd={handleValueChange}
                 step={step}
                 isFilled
                 flex={1}
+                isDisabled={isDisabled}
             />
             <NumberField
                 isQuiet
                 step={step}
-                value={value}
+                value={parameterValue}
                 minValue={minValue}
                 maxValue={maxValue}
                 onChange={handleValueChange}
+                isDisabled={isDisabled}
             />
         </Flex>
     );

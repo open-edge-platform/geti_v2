@@ -7,7 +7,7 @@ import { View } from '@geti/ui';
 
 import { TrainingConfiguration } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { FineTuneParameters } from './fine-tune-parameters.component';
-import { LearningParametersSection } from './learning-parameters.component';
+import { LearningParameters } from './learning-parameters/learning-parameters.component';
 
 interface TrainingProps {
     trainFromScratch: boolean;
@@ -30,10 +30,6 @@ export const Training: FC<TrainingProps> = ({
     isReshufflingSubsetsEnabled,
     onUpdateTrainingConfiguration,
 }) => {
-    /*const learningParameters = trainingConfiguration.training.find(
-        (component) => component.header === 'Learning Parameters'
-    );*/
-
     return (
         <View>
             <FineTuneParameters
@@ -42,7 +38,10 @@ export const Training: FC<TrainingProps> = ({
                 isReshufflingSubsetsEnabled={isReshufflingSubsetsEnabled}
                 onReshufflingSubsetsEnabledChange={onReshufflingSubsetsEnabledChange}
             />
-            <LearningParametersSection parameters={trainingConfiguration.training} onUpdateTrainingConfiguration={onUpdateTrainingConfiguration} />
+            <LearningParameters
+                parameters={trainingConfiguration.training}
+                onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+            />
         </View>
     );
 };
