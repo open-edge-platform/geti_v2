@@ -453,7 +453,7 @@ class ImportUtils:
                 if dm_ann.type == dm.AnnotationType.points:
                     # for keypoint annotations, we force the label_id to be 0 which is the first label in the dm dataset
                     label_idx_to_ann_types[0].add(dm_ann.type)
-                elif label_id:
+                elif label_id is not None:
                     label_idx_to_ann_types[label_id].add(dm_ann.type)
                 # TODO: need to check if this is needed.
                 # for dm_attr_key in dm_ann.attributes:
