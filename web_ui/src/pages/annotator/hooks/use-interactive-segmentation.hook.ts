@@ -46,9 +46,7 @@ export const useInteractiveSegmentation = ({
 
             setIsDrawing(false);
         };
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [setIsDrawing]);
 
     const mutation = useMutation({
         mutationFn: async ({ imageData, area, givenPoints, outputShape }: RITMData) => {

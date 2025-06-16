@@ -26,7 +26,7 @@ export class RITM {
         return instance;
     }
 
-    constructor(cvInstance: OpenCVTypes.cv) {
+    private constructor(cvInstance: OpenCVTypes.cv) {
         this.CV = cvInstance;
     }
 
