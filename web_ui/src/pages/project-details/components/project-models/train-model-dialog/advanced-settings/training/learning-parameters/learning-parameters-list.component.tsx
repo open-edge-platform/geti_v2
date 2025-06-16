@@ -162,6 +162,8 @@ export const LearningParametersList = ({ parameters, onUpdateTrainingConfigurati
                     />
                 );
             }
+
+            return null;
         });
     });
 };
