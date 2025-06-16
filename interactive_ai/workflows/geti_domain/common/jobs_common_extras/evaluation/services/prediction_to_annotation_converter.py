@@ -58,11 +58,13 @@ class IPredictionToAnnotationConverter(metaclass=abc.ABCMeta):
         if self.empty_label is not None:
             self.legacy_label_map_names["otx_empty_lbl"] = [self.empty_label]
 
-        # Create a mapping of ModelAPI label indices to label objects
+        # Create a mapping of ModelAPI label indices/str to label objects
         self.idx_to_label = {}
+        self.str_to_label = {}
         self.model_api_label_map_counts: dict[str, int] = defaultdict(int)
         for i, label_str in enumerate(model_api_labels):
             self.idx_to_label[i] = self.__get_label(label_str, pos_idx=self.model_api_label_map_counts[label_str])
+            self.str_to_label[label_str] = self.idx_to_label[i]
             self.model_api_label_map_counts[label_str] += 1
 
         print(f"DEBUG: converter labels:")
@@ -78,7 +80,24 @@ class IPredictionToAnnotationConverter(metaclass=abc.ABCMeta):
         raise ValueError(f"Label '{label_str}' (pos_idx={pos_idx}) not found in the label schema")
 
     def get_label_by_idx(self, label_idx: int) -> Label:
+        """
+        Get label by index.
+
+        :param label_idx: index of the label
+        :return: Label object corresponding to the label index
+        """
         return self.idx_to_label[label_idx]
+
+    def get_label_by_name(self, label_name: str) -> Label:
+        """
+        Get label by name.
+
+        :param label_name: name of the label
+        :return: Label object corresponding to the label name
+        """
+        if label_name in self.str_to_label:
+            return self.str_to_label[label_name]
+        raise ValueError(f"Label '{label_name}' not found in the label schema")
 
     @abc.abstractmethod
     def convert_to_annotations(self, predictions: NamedTuple, **kwargs) -> list[Annotation]:
@@ -104,7 +123,7 @@ class ClassificationToAnnotationConverter(IPredictionToAnnotationConverter):
         labels = []
         for label_idx, label_name, prob in predictions.top_labels:
             _prob = float(prob)
-            label = self.get_label_by_idx(label_idx)
+            label = self.get_label_by_name(label_name)
             print(f"DEBUG: top_label.label_idx: {label_idx}, top_label.label_name: {label_name} -> label: {label}")
             labels.append(ScoredLabel(label_id=label.id_, is_empty=label.is_empty, probability=_prob))
 
