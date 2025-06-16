@@ -3,10 +3,14 @@
 
 import { FC, ReactNode } from 'react';
 
-import { Grid, minmax, Text, ToggleButtons, View } from '@geti/ui';
+import { Flex, Grid, minmax, Switch, Text, ToggleButtons, View } from '@geti/ui';
 import { isFunction } from 'lodash-es';
 
-import { ConfigurationParameter } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
+import {
+    BoolParameter,
+    ConfigurationParameter,
+} from '../../../../../../../core/configurable-parameters/services/configuration.interface';
+import { isBoolParameter } from '../../../../../../../core/configurable-parameters/utils';
 import { BooleanParameter } from './boolean-parameter.component';
 import { NumberParameterField } from './number-parameter-field.component';
 import { ResetButton } from './reset-button.component';
@@ -24,6 +28,7 @@ const ParameterTooltip: FC<{ text: string }> = ({ text }) => {
 interface ParameterProps {
     parameter: ConfigurationParameter;
     onChange: () => void;
+    isDisabled?: boolean;
 }
 
 interface ParameterLayoutProps {
@@ -46,13 +51,14 @@ const ParameterLayout: FC<ParameterLayoutProps> = ({ header, children, descripti
     );
 };
 
-const ParameterField: FC<ParameterProps> = ({ parameter, onChange }) => {
+export const ParameterField: FC<ParameterProps> = ({ parameter, onChange, isDisabled }) => {
     if (parameter.type === 'enum') {
         return (
             <ToggleButtons
                 options={parameter.allowedValues}
                 selectedOption={parameter.value}
                 onOptionChange={onChange}
+                isDisabled={isDisabled}
             />
         );
     }
@@ -74,7 +80,7 @@ const ParameterField: FC<ParameterProps> = ({ parameter, onChange }) => {
     }
 };
 
-const Parameter: FC<ParameterProps> = ({ parameter, onChange }) => {
+export const Parameter: FC<ParameterProps> = ({ parameter, onChange }) => {
     return (
         <ParameterLayout header={parameter.name} description={parameter.description} onReset={() => {}}>
             <ParameterField parameter={parameter} onChange={onChange} />
@@ -82,12 +88,37 @@ const Parameter: FC<ParameterProps> = ({ parameter, onChange }) => {
     );
 };
 
+interface ParametersListProps {
+    parameters: ConfigurationParameter[];
+    onChange: () => void;
+}
+
+const ParametersList = ({ parameters, onChange }: ParametersListProps) => {
+    if (parameters.length === 2 && parameters[0].key === 'enable' && isBoolParameter(parameters[0])) {
+        const enableParameter = parameters[0] as BoolParameter;
+        const configParameter = parameters[1];
+
+        return (
+            <ParameterLayout header={configParameter.name} description={configParameter.description} onReset={() => {}}>
+                <Flex gap={'size-100'}>
+                    <Switch
+                        isSelected={enableParameter.value}
+                        onChange={() => {}}
+                        aria-label={`Toggle ${configParameter.name}`}
+                    />
+                    <ParameterField parameter={configParameter} onChange={onChange} />
+                </Flex>
+            </ParameterLayout>
+        );
+    }
+
+    return parameters.map((parameter) => <Parameter key={parameter.name} parameter={parameter} onChange={onChange} />);
+};
+
 export const Parameters: FC<ParametersProps> = ({ parameters, onChange }) => {
     return (
         <Grid columns={['size-3000', minmax('size-3400', '1fr'), 'size-400']} gap={'size-300'} alignItems={'center'}>
-            {parameters.map((parameter) => (
-                <Parameter key={parameter.name} parameter={parameter} onChange={onChange} />
-            ))}
+            <ParametersList parameters={parameters} onChange={onChange} />
         </Grid>
     );
 };

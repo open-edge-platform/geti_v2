@@ -9,9 +9,15 @@ interface ToggleButtonProps<T extends string> {
     selectedOption: T;
     option: T;
     onOptionChange: (option: T) => void;
+    isDisabled?: boolean;
 }
 
-const ToggleButton = <T extends string>({ selectedOption, option, onOptionChange }: ToggleButtonProps<T>) => {
+const ToggleButton = <T extends string>({
+    selectedOption,
+    option,
+    onOptionChange,
+    isDisabled,
+}: ToggleButtonProps<T>) => {
     return (
         <Button
             data-activated={selectedOption === option}
@@ -20,6 +26,7 @@ const ToggleButton = <T extends string>({ selectedOption, option, onOptionChange
             onPress={() => {
                 onOptionChange(option);
             }}
+            isDisabled={isDisabled}
         >
             {option}
         </Button>
@@ -30,9 +37,15 @@ interface ToggleButtonsProps<T extends string> {
     options: T[];
     selectedOption: T;
     onOptionChange: (option: T) => void;
+    isDisabled?: boolean;
 }
 
-export const ToggleButtons = <T extends string>({ options, selectedOption, onOptionChange }: ToggleButtonsProps<T>) => {
+export const ToggleButtons = <T extends string>({
+    options,
+    selectedOption,
+    onOptionChange,
+    isDisabled,
+}: ToggleButtonsProps<T>) => {
     return (
         <Flex>
             {options.map((option) => (
@@ -41,6 +54,7 @@ export const ToggleButtons = <T extends string>({ options, selectedOption, onOpt
                     selectedOption={selectedOption}
                     option={option}
                     onOptionChange={onOptionChange}
+                    isDisabled={isDisabled}
                 />
             ))}
         </Flex>

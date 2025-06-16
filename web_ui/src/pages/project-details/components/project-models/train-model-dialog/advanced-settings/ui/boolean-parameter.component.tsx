@@ -1,22 +1,26 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ComponentProps, FC } from 'react';
+import { FC } from 'react';
 
 import { Switch } from '@geti/ui';
 
-type SwitchProps = ComponentProps<typeof Switch>;
-
-interface BooleanParameterProps
-    extends Omit<SwitchProps, 'isEmphasized' | 'aria-label' | 'isSelected' | 'value' | 'onChange'> {
+interface BooleanParameterProps {
     value: boolean;
     header: string;
     onChange: (isSelected: boolean) => void;
+    isDisabled?: boolean;
 }
 
-export const BooleanParameter: FC<BooleanParameterProps> = ({ value, header, onChange }) => {
+export const BooleanParameter: FC<BooleanParameterProps> = ({ value, header, onChange, isDisabled }) => {
     return (
-        <Switch isEmphasized isSelected={value} aria-label={`Toggle ${header}`} onChange={onChange}>
+        <Switch
+            isEmphasized
+            isSelected={value}
+            aria-label={`Toggle ${header}`}
+            onChange={onChange}
+            isDisabled={isDisabled}
+        >
             {value ? 'On' : 'Off'}
         </Switch>
     );

@@ -5,17 +5,18 @@ import { FC } from 'react';
 
 import { View } from '@geti/ui';
 
-import {
-    ConfigurationParameter,
-    TrainingConfiguration,
-} from '../../../../../../../core/configurable-parameters/services/configuration.interface';
+import { TrainingConfiguration } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { FineTuneParameters } from './fine-tune-parameters.component';
-import { LearningParameters } from './learning-parameters.component';
+import { LearningParametersSection } from './learning-parameters.component';
 
 interface TrainingProps {
     trainFromScratch: boolean;
     onTrainFromScratchChange: (trainFromScratch: boolean) => void;
+
     trainingConfiguration: TrainingConfiguration;
+    onUpdateTrainingConfiguration: (
+        updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
+    ) => void;
 
     isReshufflingSubsetsEnabled: boolean;
     onReshufflingSubsetsEnabledChange: (reshufflingSubsetsEnabled: boolean) => void;
@@ -24,11 +25,14 @@ interface TrainingProps {
 export const Training: FC<TrainingProps> = ({
     trainFromScratch,
     onTrainFromScratchChange,
+    trainingConfiguration,
     onReshufflingSubsetsEnabledChange,
     isReshufflingSubsetsEnabled,
-    trainingConfiguration: _trainingConfiguration,
+    onUpdateTrainingConfiguration,
 }) => {
-    const learningParameters: ConfigurationParameter[] = [];
+    /*const learningParameters = trainingConfiguration.training.find(
+        (component) => component.header === 'Learning Parameters'
+    );*/
 
     return (
         <View>
@@ -38,7 +42,7 @@ export const Training: FC<TrainingProps> = ({
                 isReshufflingSubsetsEnabled={isReshufflingSubsetsEnabled}
                 onReshufflingSubsetsEnabledChange={onReshufflingSubsetsEnabledChange}
             />
-            <LearningParameters parameters={learningParameters} />
+            <LearningParametersSection parameters={trainingConfiguration.training} onUpdateTrainingConfiguration={onUpdateTrainingConfiguration} />
         </View>
     );
 };
