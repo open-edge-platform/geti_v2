@@ -97,8 +97,8 @@ describe('AutoTrainingSwitch', () => {
     const getAutoTrainingThreshold = () => screen.queryByText('Auto-training threshold');
     const getAdaptiveThreshold = () => screen.getByRole('radio', { name: /adaptive/i });
     const getFixedThreshold = () => screen.getByRole('radio', { name: /fixed/i });
-    const getNumberOfRequiredAnnotationsSlider = () =>
-        screen.getByRole('slider', { name: 'Number of required annotations' });
+    const getNumberOfRequiredAnnotations = () =>
+        screen.getByRole('textbox', { name: 'Number of required annotations' });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -283,7 +283,7 @@ describe('AutoTrainingSwitch', () => {
 
         expect(getFixedThreshold()).toBeChecked();
         expect(getAdaptiveThreshold()).not.toBeChecked();
-        expect(getNumberOfRequiredAnnotationsSlider()).toBeInTheDocument();
+        expect(getNumberOfRequiredAnnotations()).toBeInTheDocument();
     });
 
     it('changes required images annotations config', async () => {
@@ -304,8 +304,7 @@ describe('AutoTrainingSwitch', () => {
             />
         );
 
-        const slider = getNumberOfRequiredAnnotationsSlider();
-        fireEvent.keyDown(slider, { key: 'Right' });
+        screen.getByRole('button', { name: /increase number of required annotations/i }).click();
 
         await waitFor(() => {
             expect(mockUpdateRequiredImagesAutoTraining).toHaveBeenCalledWith(mockRequiredAnnotationsConfig.value + 1);

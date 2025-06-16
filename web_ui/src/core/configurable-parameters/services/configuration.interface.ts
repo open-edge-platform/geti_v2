@@ -11,7 +11,7 @@ export interface NumberParameter extends ParameterBase {
     type: 'int' | 'float';
     value: number;
     minValue: number;
-    maxValue: number;
+    maxValue: number | null;
     defaultValue: number;
 }
 
