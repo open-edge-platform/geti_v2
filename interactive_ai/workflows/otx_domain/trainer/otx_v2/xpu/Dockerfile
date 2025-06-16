@@ -43,16 +43,14 @@ COPY --link --from=ghcr.io/astral-sh/uv:0.6.12@sha256:515b886e8eb99bcf9278776d8e
 
 COPY --link scripts/ scripts
 COPY --link run run
+COPY --link uv.lock uv.lock
+COPY --link pyproject.toml pyproject.toml
 COPY --link download_pretrained_weights.py download_pretrained_weights.py
 
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-dev --no-editable
-
 # For OTX to install torch with ipex support, else defaults to cpu version
-RUN uv pip install torch==2.7 --index-url https://download.pytorch.org/whl/xpu
-
+RUN uv venv
+RUN uv pip install torch==2.7.0 --default-index https://download.pytorch.org/whl/xpu
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
 
 # step 3: build final runtime image
 FROM base AS runtime
