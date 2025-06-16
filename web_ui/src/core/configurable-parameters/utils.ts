@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { isEqual, isObject } from 'lodash-es';
+import { get, isBoolean, isEqual, isNumber, isObject } from 'lodash-es';
 
 import { isNonEmptyArray } from '../../shared/utils';
 import {
@@ -251,21 +251,13 @@ export const getNewParameterValue = <T extends string | boolean | number>(
 };
 
 export const isBoolParameter = (input: unknown): input is BoolParameter => {
-    return (
-        isObject(input) &&
-        'type' in input &&
-        input.type === 'bool' &&
-        'value' in input &&
-        typeof input.value === 'boolean'
-    );
+    return isObject(input) && get(input, 'type') === 'bool' && isBoolean(get(input, 'value'));
 };
 
 export const isNumberParameter = (input: unknown): input is NumberParameter => {
     return (
         isObject(input) &&
-        'type' in input &&
-        (input.type === 'float' || input.type === 'int') &&
-        'value' in input &&
-        typeof input.value === 'number'
+        (get(input, 'type') === 'float' || get(input, 'type') === 'int') &&
+        isNumber(get(input, 'value'))
     );
 };
