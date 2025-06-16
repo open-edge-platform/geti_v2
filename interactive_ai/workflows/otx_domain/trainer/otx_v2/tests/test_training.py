@@ -1,14 +1,11 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import os
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from lightning import Trainer
-from mlflow import MlflowClient
-from mlflow.entities import Run
 from otx.algo.classification.vit import VisionTransformerForMulticlassCls
 from otx.core.types.label import LabelInfo
 from scripts.train import train
@@ -38,34 +35,27 @@ def fxt_checkpoint(request, tmpdir, monkeypatch: pytest.MonkeyPatch):
     return checkpoint_path
 
 
-@patch("mlflow.tracking.MlflowClient")
 @patch("scripts.train.load_trained_model_weights")
 def test_train(
     mock_load_trained_model_weights,
-    mock_pytorch_lightning_mlflow_client,
     fxt_config,
     fxt_dir_assets,
     fxt_checkpoint,
     tmpdir,
 ):
     # Arrange
-    mock_run = MagicMock(spec=Run)
-    mock_run.info.run_uuid = "0123"
-    mock_client = MagicMock(spec=MlflowClient)
     mock_load_trained_model_weights.return_value = fxt_checkpoint
-    mock_pytorch_lightning_mlflow_client.return_value = mock_client
 
     # Act
     train(
         config=fxt_config,
-        client=mock_client,
-        run=mock_run,
         dataset_dir=fxt_dir_assets,
         work_dir=Path(tmpdir),
         resume=False,
     )
 
     # Assert
+    # TODO: asserts
     logged_local_paths = [call_args.kwargs["artifact_path"] for call_args in mock_client.log_artifact.call_args_list]
     logged_local_names = {os.path.basename(path) for path in logged_local_paths}
 
