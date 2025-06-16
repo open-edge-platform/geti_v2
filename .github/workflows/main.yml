@@ -1,6 +1,8 @@
 name: Detection workflow
 
 on:
+  schedule:
+    - cron: '0 18 * * *'
   merge_group:
     branches:
       - main
@@ -55,21 +57,26 @@ jobs:
           DISPATCH_PUB: ${{ github.event.inputs.publish_binaries }}
           DISPATCH_REF: ${{ github.event.inputs.ref }}
         run: |
-          # BUILD_ALL: true on manual dispatch or any tag
-          if [[ "$EVENT_NAME" == "workflow_dispatch" || "$GITHUB_REF" == refs/tags/* ]]; then
-            build_all=true
-          else
-            build_all=false
-          fi
+
+          is_build_all_event() { 
+            [[ "$EVENT_NAME" == "workflow_dispatch" ]] || 
+            [[ "$EVENT_NAME" == "schedule" ]]; 
+          }
+          is_publish_event() { 
+            [[ "$EVENT_NAME" == "schedule" ]] || 
+            [[ "$EVENT_NAME" == "workflow_dispatch" && "$DISPATCH_PUB" == "true" ]]; 
+          }
+          is_tag() { [[ "$GITHUB_REF" == refs/tags/* ]]; }
           
-          # PUBLISH_BINARIES: only if manual & publish=true, or on any tag
-          if [[ ( "$EVENT_NAME" == "workflow_dispatch" && "$DISPATCH_PUB" == "true" ) || "$GITHUB_REF" == refs/tags/* ]]; then
-            publish_binaries=true
-          else
-            publish_binaries=false
-          fi
+          # Set defaults
+          build_all=false
+          publish_binaries=false
           
-          # CHECKOUT_REF: use manual input if provided, else real ref
+          # Override defaults when conditions are met
+          (is_build_all_event || is_tag) && build_all=true
+          (is_publish_event || is_tag) && publish_binaries=true
+          
+          # CHECKOUT_REF: manual input if provided, else use default ref
           if [[ "$EVENT_NAME" == "workflow_dispatch" && -n "$DISPATCH_REF" ]]; then
             checkout_ref="$DISPATCH_REF"
           else
