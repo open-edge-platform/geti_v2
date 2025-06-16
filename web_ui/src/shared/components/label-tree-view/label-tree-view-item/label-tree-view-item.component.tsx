@@ -4,6 +4,7 @@
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Flex } from '@geti/ui';
+import { isEmpty } from 'lodash-es';
 
 import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { getFullGroupName } from '../../../../core/labels/annotator-utils/group-utils';
@@ -143,8 +144,8 @@ export const LabelTreeViewItem = ({
     const isEditionModeOn = inEditMode || isEditable;
     const canEditItem = isCreationInNewProject || !(item.type === LabelItemType.GROUP && !isNew(item));
 
-    const canReorderUp = siblings[0].id !== item.id;
-    const canReorderDown = siblings[siblings.length - 1].id !== item.id;
+    const canReorderUp = !isEmpty(siblings) && siblings[0].id !== item.id;
+    const canReorderDown = !isEmpty(siblings) && siblings[siblings.length - 1].id !== item.id;
 
     const canAddGroup =
         !isAnomalyProject &&

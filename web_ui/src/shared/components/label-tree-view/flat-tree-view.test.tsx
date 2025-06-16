@@ -25,7 +25,7 @@ describe('FlatTreeView', () => {
 
         render(
             <FlatTreeView
-                labels={labels}
+                treeItems={labels}
                 actions={actions}
                 isEditable={false}
                 domains={[DOMAIN.CLASSIFICATION]}
