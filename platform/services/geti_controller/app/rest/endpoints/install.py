@@ -6,7 +6,7 @@ import os
 
 from fastapi import HTTPException, status
 
-from platform_operations.cluster.cluster import (
+from platform_operations.cluster import (
     check_config_map_exists,
     create_cluster_role,
     create_cluster_role_binding,
@@ -23,6 +23,8 @@ from routers import platform_router
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
+GETI_REGISTRY = os.getenv("GETI_REGISTRY")
 
 
 @platform_router.post(
@@ -57,7 +59,6 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
     """
     Starts the installation of the specified platform version.
     """
-    # TODO: remove payload when version will contain proper value
     logger.debug(f"POST install request received. Payload: {payload}")
     registry = os.environ.get('REGISTRY')
     version = os.environ.get("VERSION")
@@ -68,7 +69,7 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
             detail="Version number is required.",
         )
 
-    if payload.version_number == "invalid_version":
+    if payload.version_number == "invalid_version":  # TODO validation
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid version number provided.",
@@ -88,9 +89,9 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
     deploy_cluster_role_binding(crb)
     job = create_job(
         name="install-upgrade",
-        registry=f"{registry}/open-edge-platform",
-        image=f"{registry}/open-edge-platform/geti/install-upgrade:{payload.version_number}",
-        manifest_version=version,
+        registry=GETI_REGISTRY,
+        image=f"{GETI_REGISTRY}/geti/install-upgrade:michala",
+        manifest_version=os.environ.get("INSTALL_VERSION"),
     )
     deploy_job(job, namespace="default")
 
