@@ -28,18 +28,15 @@ interface SingleLearningParameterProps {
 }
 
 const SingleLearningParameter = ({ parameter, onUpdateTrainingConfiguration }: SingleLearningParameterProps) => {
-    const handleChange = (value: number | boolean | string) => {
+    const handleChange = (inputParameter: ConfigurationParameter) => {
         onUpdateTrainingConfiguration((config) => {
             if (!config) return undefined;
 
             const newConfig = structuredClone(config);
 
             newConfig.training = config.training.map((trainingParameter) => {
-                if (trainingParameter.key === parameter.key) {
-                    return {
-                        ...trainingParameter,
-                        value,
-                    } as ConfigurationParameter;
+                if (trainingParameter.key === inputParameter.key) {
+                    return inputParameter;
                 }
 
                 return trainingParameter;
@@ -122,9 +119,7 @@ const LearningParametersGroup = ({
                     />
                     <Parameter.Field
                         parameter={configParameter}
-                        onChange={(value) => {
-                            handleChange({ ...configParameter, value } as ConfigurationParameter);
-                        }}
+                        onChange={handleChange}
                         isDisabled={!enableParameter.value}
                     />
                 </Flex>
