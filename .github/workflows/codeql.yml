@@ -1,6 +1,6 @@
 name: "CodeQL Scan"
 
-on:
+on: # zizmor: ignore[cache-poisoning]
   pull_request:
     branches:
       - main
