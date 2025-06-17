@@ -11,6 +11,4 @@ test-component: venv
 
 venv: pre-venv
 	uv lock --check
-	# Cuda bindings is a sub-dependency of datumaro and is not needed for Geti.
-	# The install is therefore skipped here for compatibility with systems that don't support cuda
-	uv sync --frozen ${PIP_INSTALL_PARAMS} --no-install-package cuda-bindings
+	uv sync --frozen ${PIP_INSTALL_PARAMS}
