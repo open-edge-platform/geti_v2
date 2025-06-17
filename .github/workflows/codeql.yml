@@ -67,6 +67,11 @@ jobs:
     # - name: Setup runtime (example)
     #   uses: actions/setup-example@v1
 
+    - name: Setup GO
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.23'    
+
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
