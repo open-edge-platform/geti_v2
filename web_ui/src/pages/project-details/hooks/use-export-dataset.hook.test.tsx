@@ -3,11 +3,11 @@
 
 import { ReactNode } from 'react';
 
+import { createInMemoryApiFeatureFlagService } from '@geti/core';
 import { renderHook, waitFor } from '@testing-library/react';
 
 import { ExportStatusStateDTO } from '../../../core/configurable-parameters/dtos/configurable-parameters.interface';
 import { createInMemoryDatasetImportService } from '../../../core/datasets/services/in-memory-dataset-import-service';
-import { createInMemoryApiFeatureFlagService } from '../../../core/feature-flags/services/in-memory-api-feature-flag-service';
 import { JobState } from '../../../core/jobs/jobs.const';
 import { ExportDatasetStatusIdentifier, ExportFormats } from '../../../core/projects/dataset.interface';
 import { createInMemoryProjectService } from '../../../core/projects/services/in-memory-project-service';

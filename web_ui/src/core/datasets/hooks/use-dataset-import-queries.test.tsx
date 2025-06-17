@@ -3,13 +3,13 @@
 
 import { ReactNode } from 'react';
 
+import { createInMemoryApiFeatureFlagService } from '@geti/core';
 import { renderHook, waitFor } from '@testing-library/react';
 
 import { getMockedDatasetImportPayload } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedImportStatusJob, getMockedPrepareJob } from '../../../test-utils/mocked-items-factory/mocked-jobs';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
 import { RequiredProviders } from '../../../test-utils/required-providers-render';
-import { createInMemoryApiFeatureFlagService } from '../../feature-flags/services/in-memory-api-feature-flag-service';
 import { JobState } from '../../jobs/jobs.const';
 import {
     JobImportDatasetToExistingProjectStatus,

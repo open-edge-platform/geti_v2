@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { paths } from '@geti/core';
+import { paths, useFeatureFlags } from '@geti/core';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { getRoleDeletionPayload } from '@geti/core/src/users/services/utils';
@@ -10,7 +10,6 @@ import { AlertDialog } from '@geti/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useProjectIdentifier } from '../../../../hooks/use-project-identifier/use-project-identifier';
 
 interface UserActionsProps {

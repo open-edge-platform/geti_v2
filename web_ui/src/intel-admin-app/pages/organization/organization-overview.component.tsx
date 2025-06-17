@@ -3,7 +3,7 @@
 
 import { FormEvent, useEffect, useState } from 'react';
 
-import { paths } from '@geti/core';
+import { paths, useFeatureFlags } from '@geti/core';
 import { ActionGroup, Button, ButtonGroup, Divider, Flex, Form, Item, Key, Text, TextField, View } from '@geti/ui';
 import { CheckmarkCircleOutline, DeleteOutline, RemoveCircle } from '@geti/ui/icons';
 import dayjs from 'dayjs';
@@ -11,7 +11,6 @@ import { isEmpty } from 'lodash-es';
 import { Navigate } from 'react-router-dom';
 import { useOverlayTriggerState } from 'react-stately';
 
-import { useFeatureFlags } from '../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { AccountStatus, Organization } from '../../../core/organizations/organizations.interface';
 import { DeleteDialog } from '../../../shared/components/delete-dialog/delete-dialog.component';
 import { PhotoPlaceholder } from '../../../shared/components/photo-placeholder/photo-placeholder.component';
