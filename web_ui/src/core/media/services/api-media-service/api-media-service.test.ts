@@ -44,7 +44,7 @@ const activeMediaResponse = () => {
                 type: 'video',
                 upload_time: '2021-07-30T08:33:50.399',
                 preprocessing: {
-                    status: MEDIA_PREPROCESSING_STATUS.FINISHED
+                    status: MEDIA_PREPROCESSING_STATUS.FINISHED,
                 },
             },
             {

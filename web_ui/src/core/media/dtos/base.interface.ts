@@ -19,6 +19,6 @@ export interface BaseMediaDTO {
     annotation_scene_id?: string;
     last_annotator_id: string | null;
     preprocessing: {
-        status: MEDIA_PREPROCESSING_STATUS
+        status: MEDIA_PREPROCESSING_STATUS;
     };
 }

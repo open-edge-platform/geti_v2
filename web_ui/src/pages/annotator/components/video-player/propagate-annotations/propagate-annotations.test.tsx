@@ -125,7 +125,7 @@ describe('Propagate annotations', () => {
         };
     });
 
-    const { preprocessingStatus, ...videoFrame} = getMockedVideoFrameMediaItem({});
+    const { preprocessingStatus, ...videoFrame } = getMockedVideoFrameMediaItem({});
 
     const src = API_URLS.MEDIA_ITEM_SRC(mockDatasetIdentifier, { ...videoFrame.identifier, frameNumber: 60 });
 

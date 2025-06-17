@@ -3,22 +3,22 @@
 
 import { ReactNode, useState } from 'react';
 
-import { Skeleton, View, Flex, Text } from '@geti/ui';
+import { Flex, Skeleton, Text, View } from '@geti/ui';
 import { AlertCircle } from '@geti/ui/icons';
 import { useSpinDelay } from 'spin-delay';
 
 import { getAnnotationStateForTask } from '../../../core/annotations/utils';
+import { MEDIA_PREPROCESSING_STATUS } from '../../../core/media/base.interface';
 import { isImage } from '../../../core/media/image.interface';
 import { MediaItem } from '../../../core/media/media.interface';
-import { isVideo, isVideoFrame } from '../../../core/media/video.interface';
 import { isMediaPreprocessing } from '../../../core/media/utils/preprocessing.utils';
+import { isVideo, isVideoFrame } from '../../../core/media/video.interface';
 import { AnnotationStateIndicator } from '../annotation-indicator/annotation-state-indicator.component';
 import { VideoAnnotationIndicator } from '../annotation-indicator/video-annotation-indicator.component';
 import { VideoFrameNumberIndicator } from '../video-indicator/video-frame-number-indicator.component';
 import { VideoIndicator } from '../video-indicator/video-indicator.component';
 
 import classes from '../../shared.module.scss';
-import { MEDIA_PREPROCESSING_STATUS } from '../../../core/media/base.interface';
 
 interface MediaItemViewProps {
     mediaItem: MediaItem;
@@ -43,8 +43,7 @@ export const MediaItemView = ({
     const isPreprocessingFinished = preprocessingStatus === MEDIA_PREPROCESSING_STATUS.FINISHED;
 
     const shouldShowSkeleton =
-        isMediaPreprocessing(preprocessingStatus) ||
-        (!isImageLoaded && !thumbnailError && isPreprocessingFinished);
+        isMediaPreprocessing(preprocessingStatus) || (!isImageLoaded && !thumbnailError && isPreprocessingFinished);
     const showLoadingSpinner = useSpinDelay(shouldShowSkeleton, { delay: 100 });
 
     const handleThumbnailError = () => {
@@ -96,18 +95,16 @@ export const MediaItemView = ({
                     UNSAFE_style={{ aspectRatio: '1' }}
                 >
                     <Flex
-                        alignItems="center"
-                        justifyContent="center"
-                        direction="column"
-                        gap="size-100"
-                        height="100%"
-                        width="100%"
+                        alignItems='center'
+                        justifyContent='center'
+                        direction='column'
+                        gap='size-100'
+                        height='100%'
+                        width='100%'
                     >
                         <AlertCircle
                             size='L'
-                            aria-label={
-                                isPreprocessingFailed ? 'Thumbnail processing failed' : 'Failed to load'
-                            }
+                            aria-label={isPreprocessingFailed ? 'Thumbnail processing failed' : 'Failed to load'}
                         />
                         <Text
                             UNSAFE_style={{
@@ -129,9 +126,7 @@ export const MediaItemView = ({
                 />
             )}
 
-            {shouldShowAnnotationIndicator && isVideo(mediaItem) && (
-                <VideoAnnotationIndicator video={mediaItem} />
-            )}
+            {shouldShowAnnotationIndicator && isVideo(mediaItem) && <VideoAnnotationIndicator video={mediaItem} />}
 
             {shouldShowVideoIndicator && isVideo(mediaItem) && (
                 <VideoIndicator duration={mediaItem.metadata.duration} frames={mediaItem.matchedFrames} />

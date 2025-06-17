@@ -11,9 +11,9 @@ import { MEDIA_TYPE } from '../base-media.interface';
 import { AnnotationStatePerTask } from '../base.interface';
 import { AnnotationStatePerTaskDTO } from '../dtos/base.interface';
 import { ActiveMediaItemDTO, MediaItemDTO } from '../dtos/media.interface';
-import { getDefaultPreprocessingStatus } from '../utils/preprocessing.utils';
 import { FilterVideoFrameMediaDTO, VideoFrameMediaDTO, VideoStatisticsDTO } from '../dtos/video.interface';
 import { MediaIdentifier, MediaItem } from '../media.interface';
+import { getDefaultPreprocessingStatus } from '../utils/preprocessing.utils';
 import { FilterVideoFrame, isVideo, isVideoFrame, VideoStatistics } from '../video.interface';
 
 export const mediaIdentifierToDTO = (mediaIdentifier: MediaIdentifier): ImageIdDTO | VideoIdDTO | VideoFrameIdDTO => {

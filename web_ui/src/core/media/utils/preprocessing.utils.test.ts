@@ -2,10 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { MEDIA_PREPROCESSING_STATUS } from '../base.interface';
-import {
-    isMediaPreprocessing,
-    getDefaultPreprocessingStatus,
-} from './preprocessing.utils';
+import { getDefaultPreprocessingStatus, isMediaPreprocessing } from './preprocessing.utils';
 
 describe('preprocessing.utils', () => {
     describe('Status Check Functions', () => {

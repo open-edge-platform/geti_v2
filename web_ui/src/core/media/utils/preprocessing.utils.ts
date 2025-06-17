@@ -3,15 +3,10 @@
 
 import { MEDIA_PREPROCESSING_STATUS } from '../base.interface';
 
-export const isMediaPreprocessing = (
-    status?: MEDIA_PREPROCESSING_STATUS
-): boolean => {
-    return status === MEDIA_PREPROCESSING_STATUS.SCHEDULED ||
-           status === MEDIA_PREPROCESSING_STATUS.IN_PROGRESS;
+export const isMediaPreprocessing = (status?: MEDIA_PREPROCESSING_STATUS): boolean => {
+    return status === MEDIA_PREPROCESSING_STATUS.SCHEDULED || status === MEDIA_PREPROCESSING_STATUS.IN_PROGRESS;
 };
 
-export const getDefaultPreprocessingStatus = (
-    status?: MEDIA_PREPROCESSING_STATUS
-): MEDIA_PREPROCESSING_STATUS => {
+export const getDefaultPreprocessingStatus = (status?: MEDIA_PREPROCESSING_STATUS): MEDIA_PREPROCESSING_STATUS => {
     return status ?? MEDIA_PREPROCESSING_STATUS.FINISHED;
 };

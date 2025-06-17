@@ -129,7 +129,6 @@ describe('MediaItemView', () => {
     });
 
     describe('preprocessing states', () => {
-
         it('should show skeleton when preprocessing is scheduled', async () => {
             const mediaItem = getMockedImageMediaItem({
                 preprocessingStatus: MEDIA_PREPROCESSING_STATUS.SCHEDULED,

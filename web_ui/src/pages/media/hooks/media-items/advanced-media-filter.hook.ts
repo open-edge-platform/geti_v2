@@ -44,8 +44,8 @@ export const useAdvancedMediaFilter = ({
     const preprocessingAwareRefetchInterval = useCallback(
         (query: { state: { data?: InfiniteData<MediaAdvancedFilterResponse> } }) => {
             const data = query.state.data;
-            const hasPreprocessingItems = data?.pages?.some(page =>
-                page.media.some(item => isMediaPreprocessing(item.preprocessingStatus))
+            const hasPreprocessingItems = data?.pages?.some((page) =>
+                page.media.some((item) => isMediaPreprocessing(item.preprocessingStatus))
             );
             return hasPreprocessingItems ? 3000 : false;
         },
