@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useState } from 'react';
-
 import { TrainingConfiguration } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { Accordion } from '../../ui/accordion/accordion.component';
 import { isBoolEnableParameter } from '../../utils';
