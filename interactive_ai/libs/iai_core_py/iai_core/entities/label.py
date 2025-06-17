@@ -145,9 +145,8 @@ class Label(PersistentEntity):
     def __eq__(self, other: object) -> bool:
         """Returns True if the two labels are equal."""
         if isinstance(other, Label):
-            return (
-                self.id_ == other.id_
-                and self.name == other.name
+            return self.id_ == other.id_ or (
+                self.name == other.name
                 and self.color == other.color
                 and self.hotkey == other.hotkey
                 and self.domain == other.domain
