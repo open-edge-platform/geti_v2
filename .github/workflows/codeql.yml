@@ -56,7 +56,13 @@ jobs:
         # your codebase is analyzed, see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
     steps:
     - name: Free space on runner (delete unnecessary tools)
-      run: rm -rf /opt/hostedtoolcache
+      shell: bash
+      run: |
+        echo "Free space before deletion:"
+        df -h /
+        rm -rf /opt/hostedtoolcache
+        echo "Free space after deletion:"
+        df -h /
     
     - name: Checkout repository
       uses: actions/checkout@v4
