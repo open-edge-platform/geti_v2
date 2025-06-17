@@ -3,49 +3,45 @@
 
 import { FC } from 'react';
 
-import { Grid, Switch, Text } from '@geti/ui';
+import { Flex } from '@geti/ui';
 
-export interface DataAugmentationOption {
-    key: string;
-    name: string;
-    value: boolean;
+import {
+    ConfigurationParameter,
+    TrainingConfiguration,
+} from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
+import { Parameters } from '../../ui/parameters.component';
+
+export type DataAugmentationParameters = TrainingConfiguration['datasetPreparation']['augmentation'];
+
+interface DataAugmentationParametersListProps {
+    parameters: DataAugmentationParameters;
+    onUpdateTrainingConfiguration: (
+        updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
+    ) => void;
 }
 
-interface DataAugmentationOptionProps {
-    option: DataAugmentationOption;
-    onOptionChange: (isEnabled: boolean) => void;
-}
+export const DataAugmentationParametersList: FC<DataAugmentationParametersListProps> = ({
+    parameters,
+    onUpdateTrainingConfiguration,
+}) => {
+    const handleChange = (key: string) => (inputParameter: ConfigurationParameter) => {
+        onUpdateTrainingConfiguration((config) => {
+            if (!config) return undefined;
 
-const DataAugmentationOption: FC<DataAugmentationOptionProps> = ({ option, onOptionChange }) => {
-    const { name, value } = option;
+            const newConfig = structuredClone(config);
+            newConfig.datasetPreparation.augmentation[key] = config.datasetPreparation.augmentation[key].map(
+                (parameter) => (parameter.key === inputParameter.key ? inputParameter : parameter)
+            );
+
+            return newConfig;
+        });
+    };
+
     return (
-        <>
-            <Text>{name}</Text>
-            <Switch isEmphasized isSelected={value} aria-label={`Toggle ${name}`} onChange={onOptionChange}>
-                {value ? 'On' : 'Off'}
-            </Switch>
-        </>
-    );
-};
-
-interface DataAugmentationOptionsProps {
-    options: DataAugmentationOption[];
-    onOptionsChange: (options: DataAugmentationOption[]) => void;
-}
-
-export const DataAugmentationOptions: FC<DataAugmentationOptionsProps> = ({ options, onOptionsChange }) => {
-    return (
-        <Grid columns={['max-content', 'max-content']} columnGap={'size-1000'}>
-            {options.map((option) => (
-                <DataAugmentationOption
-                    key={option.key}
-                    option={option}
-                    onOptionChange={(value: boolean) => {
-                        const updatedOptions = options.map((opt) => (opt.key === option.key ? { ...opt, value } : opt));
-                        onOptionsChange(updatedOptions);
-                    }}
-                />
-            ))}
-        </Grid>
+        <Flex direction={'column'} height={'size-100%'} gap={'size-300'}>
+            {Object.entries(parameters).map(([key, parametersLocal]) => {
+                return <Parameters key={key} parameters={parametersLocal} onChange={handleChange(key)} />;
+            })}
+        </Flex>
     );
 };

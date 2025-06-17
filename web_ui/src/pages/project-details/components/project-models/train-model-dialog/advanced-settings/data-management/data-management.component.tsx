@@ -19,12 +19,21 @@ interface DataManagementProps {
     ) => void;
 }
 
+const getAugmentationParameters = (configuration: TrainingConfiguration) => {
+    const augmentation = structuredClone(configuration.datasetPreparation.augmentation);
+
+    delete augmentation['tiling'];
+
+    return augmentation;
+};
+
 const getTilingParameters = (_configParameters: TrainingConfiguration) => {
     return undefined;
 };
 
 export const DataManagement: FC<DataManagementProps> = ({ trainingConfiguration, onUpdateTrainingConfiguration }) => {
     const tilingParameters = getTilingParameters(trainingConfiguration);
+    const augmentationParameters = getAugmentationParameters(trainingConfiguration);
 
     return (
         <View>
@@ -34,7 +43,12 @@ export const DataManagement: FC<DataManagementProps> = ({ trainingConfiguration,
                 onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
             />
             {tilingParameters !== undefined && <Tiling tilingParameters={tilingParameters} />}
-            {!isEmpty(trainingConfiguration.datasetPreparation.augmentation) && <DataAugmentation />}
+            {!isEmpty(augmentationParameters) && (
+                <DataAugmentation
+                    parameters={augmentationParameters}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            )}
             <Filters
                 filtersConfiguration={trainingConfiguration.datasetPreparation.filtering}
                 onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
