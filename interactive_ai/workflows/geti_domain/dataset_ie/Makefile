@@ -19,7 +19,3 @@ test-component: venv
 test-integration: venv
 	# uv run pytest tests/integration --disable-warnings -v
 	@echo "test-integration temporarily disabled"
-
-venv: pre-venv
-	uv lock --check
-	uv sync --frozen ${PIP_INSTALL_PARAMS}

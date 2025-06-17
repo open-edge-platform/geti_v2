@@ -9,6 +9,3 @@ publish-image:
 test-component: venv
 	@echo "test-component not available"
 
-venv: pre-venv
-	uv lock --check
-	uv sync --frozen ${PIP_INSTALL_PARAMS}
