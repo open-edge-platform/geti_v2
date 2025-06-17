@@ -287,7 +287,7 @@ class TestCrossProjectMapping:
         # Act
         with patch("job.utils.cross_project_mapping.ImportUtils.get_project_type", return_value=project_type):
             result = CrossProjectMapper.is_cross_mapping_case_for_geti_exported_dataset(
-                dm_categories=dm_dataset.categories(), dm_infos=dm_dataset.infos(), project=dst_project
+                dm_dataset=dm_dataset, project=dst_project
             )
 
         # Assert
@@ -322,7 +322,7 @@ class TestCrossProjectMapping:
         # Act
         with patch("job.utils.cross_project_mapping.ImportUtils.get_project_type", return_value=project_type):
             result = CrossProjectMapper.is_cross_mapping_case_for_geti_exported_dataset(
-                dm_categories=dm_dataset.categories(), dm_infos=dm_dataset.infos(), project=dst_project
+                dm_dataset=dm_dataset, project=dst_project
             )
 
         # Assert
@@ -500,7 +500,7 @@ class TestCrossProjectMapping:
 
         # Assert
         assert infos["GetiProjectTask"] == ImportUtils.project_type_to_rest_api_string(dst_project)
-        assert ImportUtils.is_dataset_from_multi_label_classification(categories, infos)
+        assert ImportUtils.is_dataset_from_multi_label_classification(dm_dataset=dm_dataset)
         self._check_expected_labels(categories, label_names)
         if calc_label_to_ann_types:
             assert label_to_ann_types == {

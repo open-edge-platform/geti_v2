@@ -77,9 +77,11 @@ class CrossProjectConverterDetToRot(CrossProjectConverterBase):
         dm_infos: dict[str, Any],
         dm_categories: dm.CategoriesInfo,
         dst: GetiProjectType,
-        label_to_ann_types: dict[str, set[dm.AnnotationType]] = {},
+        label_to_ann_types: dict[str, set[dm.AnnotationType]] | None = None,
     ) -> LabelInfo:
         """Update label_to_ann_types mapping from detection to rotated detection."""
+        if label_to_ann_types is None:
+            label_to_ann_types = {}
         label_info = super().get_converted_label_info(
             dm_infos=dm_infos,
             dm_categories=dm_categories,
@@ -119,9 +121,11 @@ class CrossProjectConverterDetToCls(CrossProjectConverterBase):
         dm_infos: dict[str, Any],
         dm_categories: dm.CategoriesInfo,
         dst: GetiProjectType,
-        label_to_ann_types: dict[str, set[dm.AnnotationType]] = {},
+        label_to_ann_types: dict[str, set[dm.AnnotationType]] | None = None,
     ) -> LabelInfo:
         """Update label_to_ann_types mapping from segmentation to detection."""
+        if label_to_ann_types is None:
+            label_to_ann_types = {}
         label_info = super().get_converted_label_info(
             dm_infos=dm_infos,
             dm_categories=dm_categories,
@@ -166,9 +170,11 @@ class CrossProjectConverterSegToDet(CrossProjectConverterBase):
         dm_infos: dict[str, Any],
         dm_categories: dm.CategoriesInfo,
         dst: GetiProjectType,
-        label_to_ann_types: dict[str, set[dm.AnnotationType]] = {},
+        label_to_ann_types: dict[str, set[dm.AnnotationType]] | None = None,
     ) -> LabelInfo:
         """Update label_to_ann_types mapping from segmentation to detection."""
+        if label_to_ann_types is None:
+            label_to_ann_types = {}
         label_info = super().get_converted_label_info(
             dm_infos=dm_infos,
             dm_categories=dm_categories,
@@ -228,9 +234,11 @@ class CrossProjectConverterSegToDetSeg(CrossProjectConverterBase):
         dm_infos: dict[str, Any],
         dm_categories: dm.CategoriesInfo,
         dst: GetiProjectType,
-        label_to_ann_types: dict[str, set[dm.AnnotationType]] = {},
+        label_to_ann_types: dict[str, set[dm.AnnotationType]] | None = None,
     ) -> LabelInfo:
         """Add default detection label"""
+        if label_to_ann_types is None:
+            label_to_ann_types = {}
         label_info = super().get_converted_label_info(
             dm_infos=dm_infos,
             dm_categories=dm_categories,
@@ -290,9 +298,11 @@ class CrossProjectConverterDetSegToSeg(CrossProjectConverterBase):
         dm_infos: dict[str, Any],
         dm_categories: dm.CategoriesInfo,
         dst: GetiProjectType,
-        label_to_ann_types: dict[str, set[dm.AnnotationType]] = {},
+        label_to_ann_types: dict[str, set[dm.AnnotationType]] | None = None,
     ) -> LabelInfo:
         """Remove detection labels"""
+        if label_to_ann_types is None:
+            label_to_ann_types = {}
         label_info = super().get_converted_label_info(
             dm_infos=dm_infos,
             dm_categories=dm_categories,
