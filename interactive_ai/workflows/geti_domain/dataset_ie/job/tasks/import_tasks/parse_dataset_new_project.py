@@ -143,7 +143,7 @@ def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list
     # For the det->cls case, Users should be warned if the detection dataset contains only one label,
     # as this would prevent the creation of a classification project.
     if not is_classification_task_supported and (
-        ImportUtils.get_exported_project_type(dm_dataset.infos()) == GetiProjectType.DETECTION
+        ImportUtils.get_exported_project_type(dm_dataset) == GetiProjectType.DETECTION
     ):
         warnings.append(
             {

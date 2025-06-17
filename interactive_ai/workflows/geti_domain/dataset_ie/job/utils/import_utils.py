@@ -353,7 +353,7 @@ class PopulationManager:
         self._ranges_per_video: dict[str, list[dm_DatasetItem]] = {}
 
         # Check if we need to create VideoAnnotationRange from VideoFrame annotations
-        if ImportUtils.get_exported_project_type(self._dm_dataset.infos()) == GetiProjectType.UNKNOWN:
+        if ImportUtils.get_exported_project_type(self._dm_dataset) == GetiProjectType.UNKNOWN:
             tasks = project.get_trainable_task_nodes()
             self._create_video_annotation_range = len(tasks) == 1 and tasks[0].task_properties.is_global
             # Anomaly tasks should have a valid GetiProjectType. So we don't need to check 'is_anomaly' here.

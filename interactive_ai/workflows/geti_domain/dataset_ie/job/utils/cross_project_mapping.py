@@ -396,7 +396,7 @@ class CrossProjectMapper:
         each supported task with their compatible labels, list of possible domains
         """
         # we do not support cross mapping for the non-geti-exported format dataset
-        exported_type = ImportUtils.get_exported_project_type(dm_dataset.infos())
+        exported_type = ImportUtils.get_exported_project_type(dm_dataset)
         if exported_type == GetiProjectType.UNKNOWN:
             return
 
@@ -522,7 +522,7 @@ class CrossProjectMapper:
         """
         # we do not support cross mapping for the non-geti-exported format dataset
         dm_infos = dm_dataset.infos()
-        exported_type = ImportUtils.get_exported_project_type(dm_infos)
+        exported_type = ImportUtils.get_exported_project_type(dm_dataset)
         if exported_type == GetiProjectType.UNKNOWN:
             return
 
