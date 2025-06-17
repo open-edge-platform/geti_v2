@@ -27,7 +27,7 @@ describe('MaintenanceBannerSaaSEndOfLife', () => {
         jest.mocked(useIsSaasEnv).mockReturnValue(false);
 
         render(<MaintenanceBannerSaaSEndOfLife />);
-        expect(screen.queryByText(/Scheduled maintenance/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Important update to Geti Cloud Trial/i)).not.toBeInTheDocument();
     });
 
     it('hides the banner when dismiss button is clicked', () => {
@@ -37,6 +37,6 @@ describe('MaintenanceBannerSaaSEndOfLife', () => {
         const dismissButton = screen.getByLabelText(/dismiss banner/i);
         fireEvent.click(dismissButton);
 
-        expect(screen.queryByText(/Scheduled maintenance/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Important update to Geti Cloud Trial/i)).not.toBeInTheDocument();
     });
 });
