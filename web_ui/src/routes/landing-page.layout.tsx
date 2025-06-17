@@ -8,7 +8,7 @@ import { Outlet } from 'react-router-dom';
 
 import { LandingPageSidebar } from '../pages/landing-page/landing-page-sidebar/landing-page-sidebar.component';
 import { LandingPageHeader as Header } from '../shared/components/header/header.component';
-import { MaintenanceBanner } from './maintenance-banner/maintenance-banner.component';
+import { MaintenanceBannerSaaSEndOfLife } from './maintenance-banner/maintenance-banner-saas-end-of-life.component';
 
 import classes from './routes.module.scss';
 
@@ -26,7 +26,7 @@ export const LandingPageLayout = (): JSX.Element => {
             </View>
 
             <View gridArea={'banner'}>
-                <MaintenanceBanner />
+                <MaintenanceBannerSaaSEndOfLife />
             </View>
 
             <View backgroundColor='gray-75' gridArea={'sidebar'}>
