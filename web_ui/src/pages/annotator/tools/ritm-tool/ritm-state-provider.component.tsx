@@ -16,11 +16,12 @@ import useUndoRedoState from '../undo-redo/use-undo-redo-state';
 import { RITMPoint, RITMResult } from './ritm-tool.interface';
 
 export interface RITMStateContextProps {
+    loadImage: (imageData: ImageData) => void;
     isLoading: boolean;
     isProcessing: boolean;
     reset: () => void;
     cancel: () => void;
-    execute: (imageData: ImageData, area: RegionOfInterest, givenPoints: RITMPoint[], outputShape: ShapeType) => void;
+    execute: (area: RegionOfInterest, givenPoints: RITMPoint[], outputShape: ShapeType) => void;
     setBox: (box: RegionOfInterest | null) => void;
     box: RegionOfInterest | null;
     result: RITMResult | null;
@@ -48,6 +49,7 @@ export const RITMStateProvider = ({ children }: StateProviderProps): JSX.Element
         cleanMask,
         isLoading,
         reset: resetWorker,
+        loadImage,
         mutation,
         cancel,
     } = useInteractiveSegmentation({
@@ -62,13 +64,8 @@ export const RITMStateProvider = ({ children }: StateProviderProps): JSX.Element
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [result]);
 
-    const execute = (
-        imageData: ImageData,
-        area: RegionOfInterest,
-        givenPoints: RITMPoint[],
-        outputShape: ShapeType
-    ) => {
-        mutation.mutateAsync({ imageData, area, givenPoints, outputShape });
+    const execute = (area: RegionOfInterest, givenPoints: RITMPoint[], outputShape: ShapeType) => {
+        mutation.mutateAsync({ area, givenPoints, outputShape });
     };
 
     const reset = async () => {
@@ -81,6 +78,7 @@ export const RITMStateProvider = ({ children }: StateProviderProps): JSX.Element
     return (
         <RITMStateContext.Provider
             value={{
+                loadImage,
                 isLoading,
                 isProcessing: mutation.isPending,
                 result,

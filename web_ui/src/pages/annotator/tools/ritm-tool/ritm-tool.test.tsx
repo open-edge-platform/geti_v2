@@ -30,6 +30,7 @@ const mockRITM = () => {
         isLoading: false,
         cancel: jest.fn(),
         execute: jest.fn(),
+        loadImage: jest.fn(),
         box: null,
         setBox: jest.fn(),
         isProcessing: false,
@@ -149,7 +150,6 @@ describe('RITMTool', () => {
 
             await waitFor(() => {
                 expect(mockedRITMState.execute).toHaveBeenCalledWith(
-                    mockImage,
                     { x: 0, y: 0, width: 300, height: 300 },
                     [{ x: 50, y: 50, positive: true }],
                     ShapeType.Polygon
@@ -227,7 +227,6 @@ describe('RITMTool', () => {
 
                 await waitFor(() => {
                     expect(mockedRITMState.execute).toHaveBeenCalledWith(
-                        mockImage,
                         { x: 100, y: 50, width: 100, height: 100 },
                         [{ x: 150, y: 100, positive: true }],
                         ShapeType.Polygon
@@ -250,7 +249,6 @@ describe('RITMTool', () => {
 
                 await waitFor(() => {
                     expect(mockedRITMState.execute).toHaveBeenCalledWith(
-                        mockImage,
                         taskChainROI,
                         [{ x: 150, y: 100, positive: true }],
                         ShapeType.Polygon
@@ -349,7 +347,6 @@ describe('RITMTool', () => {
 
             await waitFor(() => {
                 expect(mockedRITMState.execute).toHaveBeenCalledWith(
-                    mockImage,
                     { x: 0, y: 0, width: 360, height: 300 },
                     [
                         { x: 30, y: 50, positive: true },
@@ -378,7 +375,6 @@ describe('RITMTool', () => {
 
             await waitFor(() => {
                 expect(mockedRITMState.execute).toHaveBeenCalledWith(
-                    mockImage,
                     { x: 0, y: 0, width: 300, height: 300 },
                     [
                         { x: 30, y: 50, positive: true },
@@ -409,7 +405,6 @@ describe('RITMTool', () => {
 
             await waitFor(() => {
                 expect(mockedRITMState.execute).toHaveBeenCalledWith(
-                    mockImage,
                     { x: 0, y: 0, width: 360, height: 300 },
                     [
                         { x: 30, y: 50, positive: true },

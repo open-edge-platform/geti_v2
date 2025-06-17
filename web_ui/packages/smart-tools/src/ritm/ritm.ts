@@ -17,11 +17,10 @@ export class RITM {
     image: OpenCVTypes.Mat | undefined;
     mask: OpenCVTypes.Mat | undefined;
 
-    static async loadRITM(cvInstance: OpenCVTypes.cv, imageData: ImageData) {
+    static async loadRITM(cvInstance: OpenCVTypes.cv) {
         const instance = new RITM(cvInstance);
 
         await instance.load();
-        instance.loadImage(imageData);
 
         return instance;
     }
@@ -50,6 +49,7 @@ export class RITM {
 
     loadImage(imageData: ImageData) {
         let imageRGBA: OpenCVTypes.Mat | null = null;
+
         try {
             imageRGBA = this.CV.matFromImageData(imageData);
             if (this.image === undefined) {

@@ -21,12 +21,10 @@ const waitForOpenCV = async () => {
     return false;
 };
 
-const initRITM = async (imageData: ImageData) => {
-    if (!opencv) {
-        throw new Error('OpenCV is not loaded. Please load OpenCV before running RITM.');
-    }
+const initRITM = async () => {
+    await waitForOpenCV();
 
-    return proxy(await RITM.loadRITM(opencv, imageData));
+    return proxy(await RITM.loadRITM(opencv));
 };
 
 const WorkerApi = {

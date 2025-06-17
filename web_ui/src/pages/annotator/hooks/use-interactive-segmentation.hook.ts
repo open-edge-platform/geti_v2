@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 
@@ -19,6 +19,7 @@ interface useInteractiveSegmentationProps {
 interface useInteractiveSegmentationResult {
     cleanMask: () => void;
     reset: () => void;
+    loadImage: (imageData: ImageData) => void;
     isLoading: boolean;
     mutation: UseMutationResult<Shape | undefined, unknown, RITMData>;
     cancel: () => void;
@@ -29,9 +30,12 @@ export const useInteractiveSegmentation = ({
     onSuccess,
 }: useInteractiveSegmentationProps): useInteractiveSegmentationResult => {
     const { setIsDrawing } = useAnnotationScene();
-    const { worker, isLoading } = useLoadAIWebworker(AlgorithmType.RITM);
+
+    const { worker } = useLoadAIWebworker(AlgorithmType.RITM);
 
     const wsInstance = useRef<RITMMethods | null>(null);
+
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const cancelRequested = useRef<boolean>(false);
 
     const cancel = () => {
@@ -39,23 +43,33 @@ export const useInteractiveSegmentation = ({
     };
 
     useEffect(() => {
+        const loadWorker = async () => {
+            if (worker) {
+                wsInstance.current = await worker.RITM();
+
+                setIsLoading(false);
+            }
+        };
+
+        if (worker) {
+            loadWorker();
+        }
+
         return () => {
-            if (wsInstance.current) {
+            if (wsInstance && wsInstance.current) {
                 wsInstance.current.cleanMemory();
             }
-
-            setIsDrawing(false);
         };
+    }, [worker]);
+
+    useEffect(() => {
+        return () => setIsDrawing(false);
     }, [setIsDrawing]);
 
     const mutation = useMutation({
-        mutationFn: async ({ imageData, area, givenPoints, outputShape }: RITMData) => {
-            if (!worker) {
-                throw 'Interactive segmentation worker not ready yet';
-            }
-
+        mutationFn: ({ area, givenPoints, outputShape }: RITMData) => {
             if (!wsInstance.current) {
-                wsInstance.current = await worker.RITM(imageData);
+                throw 'Interactive segmentation not ready yet';
             }
 
             cancelRequested.current = false;
@@ -87,10 +101,22 @@ export const useInteractiveSegmentation = ({
         wsInstance?.current?.reset();
     };
 
+    const loadImage = (imageData: ImageData) => {
+        if (!wsInstance.current) {
+            console.warn('loading image before RITM is loaded...');
+
+            return;
+        }
+
+        reset();
+        wsInstance.current.loadImage(imageData);
+    };
+
     return {
         cleanMask,
         reset,
         isLoading,
+        loadImage,
         mutation,
         cancel,
     };

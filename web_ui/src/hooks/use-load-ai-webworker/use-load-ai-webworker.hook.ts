@@ -15,6 +15,8 @@ export const useLoadAIWebworker = <T extends AlgorithmType>(algorithmType: T) =>
             const baseWorker = getWorker(algorithmType);
             const worker = wrap<MapAlgorithmToWorker[T]>(baseWorker);
 
+            // TODO: once all tools are moved, we wont need to wait here. The waiting part will
+            // be on the worker itself
             await worker.waitForOpenCV();
 
             return worker;

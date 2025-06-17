@@ -25,12 +25,11 @@ export interface RITMResult {
 }
 
 export interface RITMWorker extends WebWorker<Polygon> {
-    RITM: (imageData: ImageData) => Promise<RITMMethods>;
+    RITM: () => Promise<RITMMethods>;
     type: AlgorithmType.RITM;
 }
 
 export interface RITMData {
-    imageData: ImageData;
     area: RegionOfInterest;
     givenPoints: RITMPoint[];
     outputShape: ShapeType;
