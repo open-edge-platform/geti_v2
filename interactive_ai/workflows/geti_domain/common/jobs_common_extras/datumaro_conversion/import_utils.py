@@ -119,21 +119,16 @@ class ImportUtils:
 
     @staticmethod
     def is_dataset_from_multi_label_classification(
-        dm_categories: dm.CategoriesInfo,
-        dm_infos: dict[str, Any],
+        dm_dataset: dm.Dataset,
     ) -> bool:
         """
-        Check if given dm_dataset is exported from multi-label classification
+        Check if given dm_dataset is exported from multi-label classification. Ensure project type is classification
+        when calling this function.
 
-        :param dm_categories: Categories of Datumaro dataset object
-        :param dm_infos: Infos of Datumaro dataset object
+        :param dm_dataset: datumaro dataset
         :return: True if dm_dataset is exported from multi-label classification project
         """
-        project_type = ImportUtils.get_exported_project_type(dm_infos)
-        if project_type != GetiProjectType.CLASSIFICATION:
-            return False
-
-        label_cat: dm.LabelCategories = dm_categories[dm.AnnotationType.label]
+        label_cat: dm.LabelCategories = dm_dataset.categories()[dm.AnnotationType.label]
 
         dm_label_groups: list[dm.LabelCategories.LabelGroup] = label_cat.label_groups
 
@@ -146,17 +141,15 @@ class ImportUtils:
         return len(dm_groups) > 1 and len(dm_groups) == len(dm_grouped_labels)
 
     @staticmethod
-    def get_exported_project_type(dm_infos: dict[str, Any]) -> GetiProjectType:
+    def get_exported_project_type(dm_dataset: dm.Dataset) -> GetiProjectType:
         """
         Find the Geti project type where dm_dataset is exported from
 
-        :param dm_infos: Infos of Datumaro dataset object
+        :param dm_dataset: datumaro dataset
         :return: Geti project type
         """
-        project_task_type: str = dm_infos.get("GetiProjectTask", "NONE")
+        project_task_type: str = dm_dataset.infos().get("GetiProjectTask", "NONE")
         project_type = ImportUtils.rest_task_type_to_project_type(project_task_type)
-        if project_type == GetiProjectType.UNKNOWN:
-            logger.info("The dataset is not exported from Geti('GetiProjectTask': '{project_task_type}')")
         if project_type == GetiProjectType.KEYPOINT_DETECTION and not FeatureFlagProvider.is_enabled(
             FeatureFlag.FEATURE_FLAG_KEYPOINT_DETECTION
         ):
@@ -165,26 +158,20 @@ class ImportUtils:
 
     @staticmethod
     def is_dataset_from_hierarchical_classification(
-        dm_categories: dm.CategoriesInfo,
-        dm_infos: dict[str, Any],
+        dm_dataset: dm.Dataset,
     ) -> bool:
         """
         Check if given dm_dataset is exported from hierarchical classification
 
-        :param dm_categories: Categories of Datumaro dataset object
-        :param dm_infos: Infos of Datumaro dataset object
+        :param dm_dataset: Datumaro dataset object
         :return: True if dm_dataset is exported from hierarchical classification project
         """
-        project_type = ImportUtils.get_exported_project_type(dm_infos)
-        if project_type != GetiProjectType.CLASSIFICATION:
-            return False
-
-        label_cat: dm.LabelCategories = dm_categories[dm.AnnotationType.label]
+        label_cat: dm.LabelCategories = dm_dataset.categories()[dm.AnnotationType.label]
         dm_label_groups: list[dm.LabelCategories.LabelGroup] = label_cat.label_groups
 
         has_tree_structure = any(len(cate_item.parent) > 0 for cate_item in label_cat.items)
 
-        is_multi_label_classification = ImportUtils.is_dataset_from_multi_label_classification(dm_categories, dm_infos)
+        is_multi_label_classification = ImportUtils.is_dataset_from_multi_label_classification(dm_dataset)
 
         return has_tree_structure or (len(dm_label_groups) > 1 and not is_multi_label_classification)
 
@@ -288,7 +275,6 @@ class ImportUtils:
         Validate datumaro dataset using a given validator and collecting errors with types of interest
 
         :param dm_dataset: datumaro dataset to validate
-        :param possible_domains: possible task types to validate
         :param progress_callback: An optional callback function that takes two integers
                                   (current progress, total) and returns None. It is called
                                   to update the progress of the operation.
@@ -393,20 +379,20 @@ class ImportUtils:
 
     @classmethod
     def parse_chained_task_labels_from_datumaro(
-        cls, dm_infos: dict[str, Any]
+        cls, dm_dataset: dm.Dataset
     ) -> tuple[tuple[TaskType, tuple[str, ...]], ...]:
         """
         Parse label_names by task_type in a chained project from a dm_dataset
 
-        :param dm_infos: infos of datumaro dataset
+        :param dm_dataset: datumaro dataset
         :return: A tuple of (TaskType, tuple of label_names)
         """
-        exported_project_type = cls.get_exported_project_type(dm_infos)
+        exported_project_type = cls.get_exported_project_type(dm_dataset)
 
         if exported_project_type not in CHAINED_PROJECT_TYPES:
             return ()
 
-        dm_tasktype_labelnames = dm_infos.get("GetiTaskTypeLabels", [])
+        dm_tasktype_labelnames = dm_dataset.infos().get("GetiTaskTypeLabels", [])
 
         tasktype_label_names = []
         for task_type_name, label_names in dm_tasktype_labelnames:
@@ -468,8 +454,7 @@ class ImportUtils:
     def get_valid_project_labels(  # noqa: C901
         cls,
         project_type: GetiProjectType,
-        dm_infos: dict[str, Any],
-        dm_categories: dm.CategoriesInfo,
+        dm_dataset: dm.Dataset,
         label_to_ann_types: dict[str, set[dm.AnnotationType]],
         selected_labels: Sequence[str] | None = None,
         include_all_labels: bool | None = False,
@@ -478,8 +463,7 @@ class ImportUtils:
         Find the labels that is valid for the target project_type
 
         :param project_type: Geti project type
-        :param dm_infos: infos of datumaro dataset
-        :param dm_categories: Categories of Datumaro dataset object
+        :param dm_dataset: Datumaro dataset
         :param label_to_ann_types: A mapping of label names in dataset to ann_types with which they appear
         :param selected_labels: label_names that a user selected to include in the created project
         :param include_all_labels: If True, ignore selected_labels then include all possible labels for each task_type
@@ -505,9 +489,9 @@ class ImportUtils:
 
         def _get_keypoint_labels() -> dict[str, list[str]]:
             keypoint_labels: dict[str, list[str]] = {}
-            point_cat: dm.PointsCategories = dm_categories.get(dm.AnnotationType.points, None)
+            point_cat: dm.PointsCategories = dm_dataset.categories().get(dm.AnnotationType.points, None)
             if point_cat:
-                label_cat: dm.LabelCategories = dm_categories[dm.AnnotationType.label]
+                label_cat: dm.LabelCategories = dm_dataset.categories()[dm.AnnotationType.label]
                 for label_id, cat in point_cat.items.items():
                     try:
                         label = label_cat[label_id].name
@@ -525,7 +509,7 @@ class ImportUtils:
         if selected_labels is None:
             selected_labels = ()
 
-        exported_project_type = ImportUtils.get_exported_project_type(dm_infos)
+        exported_project_type = ImportUtils.get_exported_project_type(dm_dataset)
 
         # keep only selected labels with a valid domain for the project type
         label_domain = ImportUtils.project_type_to_label_domain(project_type=project_type)
@@ -542,13 +526,13 @@ class ImportUtils:
                 and exported_project_type == GetiProjectType.CLASSIFICATION
             )
         ):
-            label_cat: dm.LabelCategories = dm_categories[dm.AnnotationType.label]
+            label_cat: dm.LabelCategories = dm_dataset.categories()[dm.AnnotationType.label]
             all_valid_label_names.update([dm_label_item.name for dm_label_item in label_cat.items])
 
         # Since the label_domain only concern for the lastest trainable task,
         # we should search labels for the intermediate tasks even if they are not used for actual annotation.
         if project_type in CHAINED_PROJECT_TYPES:
-            chained_task_type_with_labels = ImportUtils.parse_chained_task_labels_from_datumaro(dm_infos)
+            chained_task_type_with_labels = ImportUtils.parse_chained_task_labels_from_datumaro(dm_dataset)
             for _, label_names in chained_task_type_with_labels[:-1]:
                 all_valid_label_names.update(label_names)
         elif project_type == GetiProjectType.KEYPOINT_DETECTION:
@@ -834,7 +818,7 @@ class ImportUtils:
         """
         Validate project valid for dataset import and return the task type of the project
 
-        :param project_id: str project id
+        :param project: Project
         :return: task type of the (only) trainable task in the project
         """
         supported_types = [

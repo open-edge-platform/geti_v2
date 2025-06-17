@@ -774,8 +774,7 @@ class ConvertUtils:
 
     @staticmethod
     def get_label_metadata(  # noqa: C901, PLR0912
-        dm_categories: dm.CategoriesInfo,
-        dm_infos: dict[str, Any],
+        dm_dataset: dm.Dataset,
         selected_labels: Sequence[str],
         project_type: GetiProjectType,
         include_all_labels: bool = False,
@@ -793,8 +792,8 @@ class ConvertUtils:
         label_groups: list[dict[str, Any]] = []
         labelname_to_parent: dict[str, str] = {}
 
-        label_cat: dm.LabelCategories = dm_categories[dm.AnnotationType.label]
-        label_mask: dm.MaskCategories = dm_categories.get(dm.AnnotationType.mask, {})
+        label_cat: dm.LabelCategories = dm_dataset.categories()[dm.AnnotationType.label]
+        label_mask: dm.MaskCategories = dm_dataset.categories().get(dm.AnnotationType.mask, {})
 
         # colormap from dm_dataset
         dm_label_id_to_name: dict[int, str] = {
@@ -813,7 +812,7 @@ class ConvertUtils:
 
                 dm_label_name_to_color[label_name] = colormap
 
-        exported_project_type = ImportUtils.get_exported_project_type(dm_infos)
+        exported_project_type = ImportUtils.get_exported_project_type(dm_dataset)
         if project_type != exported_project_type:
             labels = [{"name": label_name} for label_name in selected_labels]
             for label_meta in labels:
@@ -865,7 +864,7 @@ class ConvertUtils:
                 }
             )
 
-        anomaly_label_names = dm_infos.get("GetiAnomalyLabels", [])
+        anomaly_label_names = dm_dataset.infos().get("GetiAnomalyLabels", [])
         labels = ConvertUtils.build_labels_data(
             label_names=list(label_names_to_include),
             anomaly_label_names=anomaly_label_names,

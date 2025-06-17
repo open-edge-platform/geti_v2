@@ -109,24 +109,21 @@ def _parse_dataset_for_import_to_existing_project(import_id: str, project_id: st
         FeatureFlagProvider.is_enabled(feature_flag=FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
         and label_names
         and project_type == GetiProjectType.ANOMALY_CLASSIFICATION
-        and ImportUtils.get_exported_project_type(dm_dataset.infos())
+        and ImportUtils.get_exported_project_type(dm_dataset)
         in [GetiProjectType.ANOMALY_DETECTION, GetiProjectType.ANOMALY_SEGMENTATION]
     )
 
     # Get set of labels in the dataset that are possible to import to the project
-    if not label_names and not CrossProjectMapper.is_cross_mapping_case_for_geti_exported_dataset(
-        dm_dataset.categories(), dm_dataset.infos(), project
-    ):
+    if not label_names and not CrossProjectMapper.is_cross_mapping_case_for_geti_exported_dataset(dm_dataset, project):
         # Check if target task_type is supported regarding to CVS-105432.
         supported_project_types = get_filtered_supported_project_types(
-            dm_infos=dm_dataset.infos(), label_to_ann_types=label_to_ann_types
+            dm_dataset=dm_dataset, label_to_ann_types=label_to_ann_types
         )
         if project_type in supported_project_types:
             # Find labels that are valid for the target task_type
             label_names = ImportUtils.get_valid_project_labels(
                 project_type=project_type,
-                dm_infos=dm_dataset.infos(),
-                dm_categories=dm_dataset.categories(),
+                dm_dataset=dm_dataset,
                 label_to_ann_types=label_to_ann_types,
                 include_all_labels=True,
             )

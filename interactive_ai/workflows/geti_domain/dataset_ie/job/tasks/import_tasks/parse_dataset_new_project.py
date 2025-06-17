@@ -83,8 +83,7 @@ def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list
         progress_callback=progress_reporter.report,
     )
     project_metas_with_labels = get_project_metas_with_labels(
-        dm_infos=dm_dataset.infos(),
-        dm_categories=dm_dataset.categories(),
+        dm_dataset=dm_dataset,
         label_to_ann_types=label_to_ann_types,
     )
     CrossProjectMapper.check_if_cross_project_mapping_for_new_project(

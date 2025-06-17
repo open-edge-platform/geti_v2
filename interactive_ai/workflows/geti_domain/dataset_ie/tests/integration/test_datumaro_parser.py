@@ -178,8 +178,7 @@ class TestDatumaroProjectParser:
         dm_parser = DatumaroProjectParser(
             project_name=project_name,
             project_type=project_type,
-            dm_infos=fxt_datumaro_dataset.infos(),
-            dm_categories=fxt_datumaro_dataset.categories(),
+            dm_dataset=fxt_datumaro_dataset,
             label_to_ann_types=ImportUtils.get_label_to_ann_types(dm_dataset=fxt_datumaro_dataset),
             selected_labels=label_names_dataset,
         )
@@ -290,8 +289,7 @@ class TestDatumaroProjectParser:
         label_to_ann_types = ImportUtils.get_label_to_ann_types(dm_dataset=fxt_datumaro_dataset)
         project_label_names = ImportUtils.get_valid_project_labels(
             project_type=project_type,
-            dm_infos=fxt_datumaro_dataset.infos(),
-            dm_categories=fxt_datumaro_dataset.categories(),
+            dm_dataset=fxt_datumaro_dataset,
             label_to_ann_types=label_to_ann_types,
             include_all_labels=True,
         )
@@ -307,8 +305,7 @@ class TestDatumaroProjectParser:
             DatumaroProjectParser(
                 project_name=project_name,
                 project_type=project_type,
-                dm_infos=fxt_datumaro_dataset.infos(),
-                dm_categories=fxt_datumaro_dataset.categories(),
+                dm_dataset=fxt_datumaro_dataset,
                 label_to_ann_types=label_to_ann_types,
                 selected_labels=[],
             )
@@ -318,8 +315,7 @@ class TestDatumaroProjectParser:
             DatumaroProjectParser(
                 project_name=project_name,
                 project_type=project_type,
-                dm_infos=fxt_datumaro_dataset.infos(),
-                dm_categories=fxt_datumaro_dataset.categories(),
+                dm_dataset=fxt_datumaro_dataset,
                 label_to_ann_types=label_to_ann_types,
                 selected_labels=[project_label_names[0]],
             )
@@ -342,8 +338,7 @@ class TestDatumaroProjectParser:
         label_to_ann_types = ImportUtils.get_label_to_ann_types(dm_dataset=fxt_datumaro_dataset)
         project_label_names = ImportUtils.get_valid_project_labels(
             project_type=project_type,
-            dm_infos=fxt_datumaro_dataset.infos(),
-            dm_categories=fxt_datumaro_dataset.categories(),
+            dm_dataset=fxt_datumaro_dataset,
             label_to_ann_types=label_to_ann_types,
             include_all_labels=True,
         )
@@ -355,8 +350,7 @@ class TestDatumaroProjectParser:
             DatumaroProjectParser(
                 project_name=project_name,
                 project_type=project_type,
-                dm_infos=fxt_datumaro_dataset.infos(),
-                dm_categories=fxt_datumaro_dataset.categories(),
+                dm_dataset=fxt_datumaro_dataset,
                 label_to_ann_types=ImportUtils.get_label_to_ann_types(dm_dataset=fxt_datumaro_dataset),
                 selected_labels=[],
             )
@@ -365,8 +359,7 @@ class TestDatumaroProjectParser:
         parser = DatumaroProjectParser(
             project_name="test_project_name",
             project_type=GetiProjectType.DETECTION,
-            dm_infos=fxt_datumaro_dataset.infos(),
-            dm_categories=fxt_datumaro_dataset.categories(),
+            dm_dataset=fxt_datumaro_dataset,
             label_to_ann_types=ImportUtils.get_label_to_ann_types(dm_dataset=fxt_datumaro_dataset),
             selected_labels=["person"],
             color_by_label={"person": "#12345678"},
@@ -476,8 +469,7 @@ class TestDatumaroProjectParser:
         dm_project_parser = DatumaroProjectParser(
             project_name=f"test_{project_type.name.lower()}_project",
             project_type=project_type,
-            dm_infos=fxt_datumaro_dataset.infos(),
-            dm_categories=fxt_datumaro_dataset.categories(),
+            dm_dataset=fxt_datumaro_dataset,
             label_to_ann_types=ImportUtils.get_label_to_ann_types(dm_dataset=fxt_datumaro_dataset),
             include_all_labels=True,
         )

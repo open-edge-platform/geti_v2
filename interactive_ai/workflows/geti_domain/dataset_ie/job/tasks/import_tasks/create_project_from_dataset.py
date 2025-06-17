@@ -108,8 +108,7 @@ def create_project_from_dataset(
     parser_kwargs = {
         "project_name": name,
         "project_type": project_type,
-        "dm_infos": dm_dataset.infos(),
-        "dm_categories": dm_dataset.categories(),
+        "dm_dataset": dm_dataset,
         "label_to_ann_types": label_to_ann_types,
         "selected_labels": label_names,
         "color_by_label": color_by_label if color_by_label else None,

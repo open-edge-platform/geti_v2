@@ -28,8 +28,7 @@ class DatumaroProjectParser(ProjectParser):
 
     :param project_name: A name of project to be created
     :param project_type: Geti project type
-    :param dm_infos: Infos of datumaro dataset
-    :param dm_categories: Categories belonging to the datumaro dataset
+    :param dm_dataset: Datumaro dataset
     :param label_to_ann_types: A mapping of label names in dataset to ann_types with which they appear
     :param selected_labels: label_names that a user selected to include in the created project
     :param color_by_label: Optional, mapping between label names and their color.
@@ -37,12 +36,11 @@ class DatumaroProjectParser(ProjectParser):
     :param include_all_labels: if True, ignore selected_labels then include all possible labels for each task_type
     """
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         project_name: str,
         project_type: GetiProjectType,
-        dm_infos: dict[str, Any],
-        dm_categories: dm.CategoriesInfo,
+        dm_dataset: dm.Dataset,
         label_to_ann_types: dict[str, set[dm.AnnotationType]],
         selected_labels: Sequence[str] | None = None,
         color_by_label: dict[str, str] | None = None,
@@ -50,7 +48,7 @@ class DatumaroProjectParser(ProjectParser):
     ) -> None:
         if selected_labels is None:
             selected_labels = ()
-
+        self.dm_dataset = dm_dataset
         self._project_name: str = project_name
         self._project_type: GetiProjectType = project_type
         self._color_by_label = color_by_label if color_by_label else {}
@@ -63,14 +61,13 @@ class DatumaroProjectParser(ProjectParser):
             FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
             and project_type == GetiProjectType.ANOMALY_CLASSIFICATION
         ):
-            label_cat: dm.LabelCategories = dm_categories[dm.AnnotationType.label]
+            label_cat: dm.LabelCategories = dm_dataset.categories()[dm.AnnotationType.label]
             if label_cat.label_groups:
                 label_cat.label_groups = []  # ignore label_groups to generate correct group name for new task
 
         valid_labels: Sequence[str] = ImportUtils.get_valid_project_labels(
             project_type=project_type,
-            dm_infos=dm_infos,
-            dm_categories=dm_categories,
+            dm_dataset=dm_dataset,
             label_to_ann_types=label_to_ann_types,
             selected_labels=selected_labels,
             include_all_labels=include_all_labels,
@@ -78,15 +75,12 @@ class DatumaroProjectParser(ProjectParser):
 
         self._task_name_to_label_metas: dict[str, dict[str, dict[str, Any]]] = (
             self._extract_labels_metadata_from_dm_dataset(
-                dm_infos=dm_infos,
-                dm_categories=dm_categories,
                 selected_labels=valid_labels,
                 include_all_labels=include_all_labels,
             )
         )
 
         self._keypoint_structure: dict[str, list] = self._extract_keypoint_structure_from_dm_dataset(
-            dm_categories=dm_categories,
             selected_labels=valid_labels,
             include_all_labels=include_all_labels,
         )
@@ -188,8 +182,6 @@ class DatumaroProjectParser(ProjectParser):
 
     def _extract_labels_metadata_from_dm_dataset(
         self,
-        dm_infos: dict[str, Any],
-        dm_categories: dm.CategoriesInfo,
         selected_labels: Sequence[str],
         include_all_labels: bool = False,
     ) -> dict[str, dict[str, dict[str, Any]]]:
@@ -197,8 +189,6 @@ class DatumaroProjectParser(ProjectParser):
         Parse Datumaro dataset instance to extract label metadata.
         Label metadata includes 'parent', 'group', 'color', and 'hotkey' of labels
 
-        :param dm_infos: Infos of datumaro dataset.
-        :param dm_categories: Categories of datumaro dataset.
         :param selected_labels: label_names that a user selected to include in the created project
         :param include_all_labels: if True, ignore selected_labels then include all possible labels for each task_type
         :return: A dictionary storing label_meta with label_name as key
@@ -208,8 +198,7 @@ class DatumaroProjectParser(ProjectParser):
             label_name_to_parent,
             label_infos,
         ) = ConvertUtils.get_label_metadata(
-            dm_categories=dm_categories,
-            dm_infos=dm_infos,
+            dm_dataset=self.dm_dataset,
             selected_labels=selected_labels,
             project_type=self._project_type,
             include_all_labels=include_all_labels,
@@ -228,7 +217,7 @@ class DatumaroProjectParser(ProjectParser):
 
         # For chained task, we should detach label_meta for detection task
         if self._project_type in CHAINED_PROJECT_TYPES:
-            chained_task_type_with_labels = ImportUtils.parse_chained_task_labels_from_datumaro(dm_infos)
+            chained_task_type_with_labels = ImportUtils.parse_chained_task_labels_from_datumaro(self.dm_dataset)
 
             detection_label_meta: dict[str, Any] = {}
             for task_type, label_names in chained_task_type_with_labels:
@@ -266,14 +255,12 @@ class DatumaroProjectParser(ProjectParser):
 
     def _extract_keypoint_structure_from_dm_dataset(
         self,
-        dm_categories: dm.CategoriesInfo,
         selected_labels: Sequence[str],
         include_all_labels: bool = False,
     ) -> dict[str, list]:
         """
         Parse Datumaro dataset instance to extract keypoint structure.
 
-        :param dm_categories: Categories of datumaro dataset.
         :param selected_labels: label_names that a user selected to include in the created project
         :param include_all_labels: if True, ignore selected_labels then include all possible labels for each task_type
         :return: A dictionary representing the keypoint structure
@@ -285,7 +272,7 @@ class DatumaroProjectParser(ProjectParser):
             return {}
 
         return ConvertUtils.get_keypoint_structure(
-            dm_categories=dm_categories,
+            dm_categories=self.dm_dataset.categories(),
             selected_labels=selected_labels,
             include_all_labels=include_all_labels,
         )
@@ -577,7 +564,7 @@ class DatumaroProjectParser(ProjectParser):
 
 
 def get_filtered_supported_project_types(
-    dm_infos: dict[str, Any], label_to_ann_types: dict[str, set[dm.AnnotationType]]
+    dm_dataset: dm.Dataset, label_to_ann_types: dict[str, set[dm.AnnotationType]]
 ) -> list[GetiProjectType]:
     """
     Return possible project types based on CVS-105432, excluding cross-mapping projects.
@@ -592,11 +579,11 @@ def get_filtered_supported_project_types(
       - polygon/ellipse/mask -> segmentation
       - points -> keypoint detection
 
-    :param dm_infos: datumaro dataset info
+    :param dm_dataset: datumaro dataset
     :param label_to_ann_types: mapping of labels in dataset to their ann_type
     :return: A list of supported Geti project types
     """
-    exported_project_type = ImportUtils.get_exported_project_type(dm_infos)
+    exported_project_type = ImportUtils.get_exported_project_type(dm_dataset)
     if exported_project_type != GetiProjectType.UNKNOWN:
         filtered_supported_project_types = [exported_project_type]
     else:
@@ -627,23 +614,21 @@ def get_filtered_supported_project_types(
 
 @unified_tracing
 def get_project_metas_with_labels(
-    dm_infos: dict[str, Any],
-    dm_categories: dm.CategoriesInfo,
+    dm_dataset: dm.Dataset,
     label_to_ann_types: dict[str, set[dm.AnnotationType]],
 ) -> list[dict[str, Any]]:
     """
     Get mapping of domains to label names in the dataset. The list of labels for the
     domain will be filled with the labels which are compatible with the domain.
 
-    :param dm_infos: datumaro dataset info
-    :param dm_categories: datumaro dataset categories
+    :param dm_dataset: datumaro dataset
     :param label_to_ann_types: mapping of labels in dataset to their ann_type
     :return: A list containing a dictionary for each supported task with their
         compatible labels, list of possible domains in dataset based on present
         annotation types
     """
     filtered_supported_project_types = get_filtered_supported_project_types(
-        dm_infos=dm_infos,
+        dm_dataset=dm_dataset,
         label_to_ann_types=label_to_ann_types,
     )
 
@@ -654,8 +639,7 @@ def get_project_metas_with_labels(
             project_parser = DatumaroProjectParser(
                 project_name=f"prepare {ImportUtils.project_type_to_rest_api_string(project_type)} project",
                 project_type=project_type,
-                dm_infos=dm_infos,
-                dm_categories=dm_categories,
+                dm_dataset=dm_dataset,
                 label_to_ann_types=label_to_ann_types,
                 include_all_labels=True,
             )
@@ -677,7 +661,7 @@ def get_project_metas_with_labels(
     for project_meta in project_metas_with_labels:
         project_type = project_meta["project_type"]
         if project_type == GetiProjectType.CLASSIFICATION and ImportUtils.is_dataset_from_hierarchical_classification(
-            dm_categories, dm_infos
+            dm_dataset=dm_dataset
         ):
             project_type = GetiProjectType.HIERARCHICAL_CLASSIFICATION
         project_meta["project_type"] = project_type

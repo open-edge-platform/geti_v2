@@ -45,16 +45,18 @@ class CrossProjectConverterBase(metaclass=abc.ABCMeta):
         dm_infos: dict[str, Any],
         dm_categories: dm.CategoriesInfo,
         dst: GetiProjectType,
-        label_to_ann_types: dict[str, set[dm.AnnotationType]] = {},
+        label_to_ann_types: dict[str, set[dm.AnnotationType]] | None = None,
     ) -> LabelInfo:
         """label-to-ann_types mapping and update it if needed."""
+        if label_to_ann_types is None:
+            label_to_ann_types = {}
         infos = copy.deepcopy(dm_infos)
         infos["GetiProjectTask"] = ImportUtils.project_type_to_rest_api_string(dst)
-        catetories = copy.deepcopy(dm_categories)
-        label_cat: dm.LabelCategories = catetories[dm.AnnotationType.label]
+        categories = copy.deepcopy(dm_categories)
+        label_cat: dm.LabelCategories = categories[dm.AnnotationType.label]
         if label_cat.label_groups:
             label_cat.label_groups = []  # ignore label_groups to generate correct group name for new task
-        return LabelInfo(infos, catetories, copy.deepcopy(label_to_ann_types))
+        return LabelInfo(infos, categories, copy.deepcopy(label_to_ann_types))
 
     def apply_converted_label_info(self, dm_dataset: dm.Dataset, dst: GetiProjectType) -> None:
         label_info = self.get_converted_label_info(
@@ -429,8 +431,7 @@ class CrossProjectMapper:
                     project_parser = DatumaroProjectParser(
                         project_name=f"prepare {ImportUtils.project_type_to_rest_api_string(dst)} project",
                         project_type=dst,
-                        dm_infos=label_info.info,
-                        dm_categories=label_info.categories,
+                        dm_dataset=dm_dataset,
                         label_to_ann_types=label_info.label_to_ann_types,
                         include_all_labels=True,
                     )
@@ -493,8 +494,7 @@ class CrossProjectMapper:
 
             label_names = ImportUtils.get_valid_project_labels(
                 project_type=project_type,
-                dm_infos=label_info.info,
-                dm_categories=label_info.categories,
+                dm_dataset=dm_dataset,
                 label_to_ann_types=label_info.label_to_ann_types,
                 include_all_labels=True,
             )
@@ -546,11 +546,9 @@ class CrossProjectMapper:
                 )
 
     @staticmethod
-    def is_cross_mapping_case_for_geti_exported_dataset(
-        dm_categories: dm.CategoriesInfo, dm_infos: dict[str, Any], project: Project
-    ) -> bool:
+    def is_cross_mapping_case_for_geti_exported_dataset(dm_dataset: dm.Dataset, project: Project) -> bool:
         project_type = ImportUtils.get_project_type(project=project)
-        exported_type = ImportUtils.get_exported_project_type(dm_infos)
+        exported_type = ImportUtils.get_exported_project_type(dm_dataset)
         if exported_type == GetiProjectType.UNKNOWN:
             return False
 
@@ -567,9 +565,7 @@ class CrossProjectMapper:
         ]:
             # we do not support cross-project mapping among
             # single-label, multi-label, and hierarchical classification.
-            is_dataset_hierarchical = ImportUtils.is_dataset_from_hierarchical_classification(
-                dm_categories=dm_categories, dm_infos=dm_infos
-            )
+            is_dataset_hierarchical = ImportUtils.is_dataset_from_hierarchical_classification(dm_dataset=dm_dataset)
 
             is_task_hierarchical, is_task_multi_labels = ImportUtils.is_task_hierarhical_or_multi_labels(
                 project_identifier=project.identifier
@@ -581,7 +577,7 @@ class CrossProjectMapper:
             return (
                 is_dataset_hierarchical
                 or ImportUtils.is_dataset_from_multi_label_classification(
-                    dm_categories=dm_categories, dm_infos=dm_infos
+                    dm_dataset=dm_dataset,
                 )
                 != is_task_multi_labels
             )
