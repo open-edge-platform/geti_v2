@@ -10,8 +10,8 @@ modelserver:
 ovmsMemBufferBytes: 134217728
 ovmsRuntimeResources:
   requests:
-    cpu: 1
-    memory: 8Gi
+    cpu: 300m
+    memory: 2Gi
   limits:
     memory: 8Gi
 

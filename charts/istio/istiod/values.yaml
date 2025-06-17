@@ -27,7 +27,7 @@ _internal_defaults_do_not_set:
       memory: 1024Mi
     requests:
       cpu: 400m
-      memory: 1024Mi
+      memory: 400Mi
 
   # Set to `type: RuntimeDefault` to use the default profile if available.
   seccompProfile: {}

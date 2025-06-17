@@ -13,7 +13,7 @@ spec:
   minReplicas: 1
   maxReplicas: 1
   {{- else }}
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 20
   {{- end }}
   metrics:
