@@ -1,15 +1,14 @@
-{{ $previous := lookup "rbac.authorization.k8s.io/v1" "ClusterRoleBinding" "" ( include "geti-controller.name" .) }}
-{{- if not $previous }}
+{{- if .Values.global.ingress_enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "geti-controller.name" . }}
+  name: {{ include "geti-controller.name" . }}-version
 subjects:
 - kind: ServiceAccount
   name: {{ include "geti-controller.name" . }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: {{ include "geti-controller.name" . }}
+  name: {{ include "geti-controller.name" . }}-version
   apiGroup: rbac.authorization.k8s.io
 {{ end }}

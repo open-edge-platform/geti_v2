@@ -20,7 +20,4 @@ rules:
 - apiGroups: ["helm.cattle.io"]
   resources: ["helmcharts"]
   verbs: ["create", "update"]
-- apiGroups: [""]
-  resources: ["pods", "pods/exec"]  # needed for nvidia device plugin communication (different namespace)
-  verbs: ["get", "watch", "list"]
 {{- end }}

@@ -40,7 +40,7 @@ def deploy_geti_controller_chart(config: InstallationConfig, charts_dir: str = G
                 "tlsKey": "",
             },
             "global": {
-                "ingress_enabled": False,
+                "ingress_enabled": True,
                 "registry_address": f"{config.geti_image_registry.value}/open-edge-platform",
                 "proxy": {
                     "enabled": bool(http_proxy or https_proxy),

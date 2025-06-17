@@ -13,7 +13,7 @@ global:
   enable_local_image_pull_secret: false
   security_headers: ""
   stripped_headers: ""
-  ingress_enabled: true
+  ingress_enabled: false
   istio_gateway_name: "istio-gateway"
   istio_ingress_namespace: "istio-system"
   istio_ambient_mesh: false
