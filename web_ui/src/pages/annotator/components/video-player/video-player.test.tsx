@@ -25,6 +25,7 @@ import { useTask } from '../../providers/task-provider/task-provider.component';
 import { annotatorRender as render } from '../../test-utils/annotator-render';
 import { VideoPlayerProvider } from './video-player-provider.component';
 import { VideoPlayer } from './video-player.component';
+import { omit } from 'lodash-es';
 
 const mockedDatasetIdentifier = getMockedDatasetIdentifier({
     workspaceId: 'test-workspace',
@@ -88,7 +89,7 @@ describe('Video player', () => {
         jest.clearAllTimers();
     });
 
-    const videoFrame = getMockedVideoFrameMediaItem({});
+    const videoFrame = omit(getMockedVideoFrameMediaItem({}), 'preprocessingStatus');
 
     it('Shows video player controls', async () => {
         await renderVideoPlayer(videoFrame);
