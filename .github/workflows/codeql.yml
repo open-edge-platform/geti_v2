@@ -1,5 +1,6 @@
 name: "CodeQL Scan"
 
+# zizmor ignore: This workflow does not generate artifacts, setup-go is used to execute CodeQL
 on: # zizmor: ignore[cache-poisoning]
   pull_request:
     branches:
