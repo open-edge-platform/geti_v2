@@ -4,6 +4,7 @@
 """This module implements the PredictionToAnnotationConverter services"""
 
 import abc
+import logging
 from collections import defaultdict
 from collections.abc import Generator
 from typing import Any, NamedTuple
@@ -30,6 +31,8 @@ from model_api.models.utils import (
 
 from jobs_common_extras.evaluation.utils.detection_utils import detection2array
 from jobs_common_extras.evaluation.utils.segmentation_utils import create_annotation_from_segmentation_map
+
+logger = logging.getLogger(__name__)
 
 
 class IPredictionToAnnotationConverter(metaclass=abc.ABCMeta):
@@ -66,10 +69,7 @@ class IPredictionToAnnotationConverter(metaclass=abc.ABCMeta):
             self.idx_to_label[i] = self.__get_label(label_str, pos_idx=self.model_api_label_map_counts[label_str])
             self.str_to_label[label_str] = self.idx_to_label[i]
             self.model_api_label_map_counts[label_str] += 1
-
-        print(f"DEBUG: converter labels:")
-        for idx, label in self.idx_to_label.items():
-            print(f"DEBUG:   idx={idx}, label={label.name} (id={label.id_}, is_empty={label.is_empty})")
+            logger.debug(f"Label {label_str} mapped to {self.str_to_label[label_str]} and idx {i}")
 
     def __get_label(self, label_str: str, pos_idx: int) -> Label:
         if label_str in self.label_map_ids:
@@ -124,7 +124,6 @@ class ClassificationToAnnotationConverter(IPredictionToAnnotationConverter):
         for label_idx, label_name, prob in predictions.top_labels:
             _prob = float(prob)
             label = self.get_label_by_name(label_name)
-            print(f"DEBUG: top_label.label_idx: {label_idx}, top_label.label_name: {label_name} -> label: {label}")
             labels.append(ScoredLabel(label_id=label.id_, is_empty=label.is_empty, probability=_prob))
 
         if not labels and self.empty_label:
