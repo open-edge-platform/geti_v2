@@ -129,16 +129,6 @@ describe('MediaItemView', () => {
     });
 
     describe('preprocessing states', () => {
-        beforeEach(() => {
-            // Mock useSpinDelay to return the condition directly for easier testing
-            jest.mock('spin-delay', () => ({
-                useSpinDelay: jest.fn((condition) => condition),
-            }));
-        });
-
-        afterEach(() => {
-            jest.clearAllMocks();
-        });
 
         it('should show skeleton when preprocessing is scheduled', async () => {
             const mediaItem = getMockedImageMediaItem({

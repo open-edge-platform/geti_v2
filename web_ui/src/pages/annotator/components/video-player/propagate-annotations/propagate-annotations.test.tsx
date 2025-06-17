@@ -33,7 +33,6 @@ import { UseSubmitAnnotationsMutationResult } from '../../../providers/submit-an
 import { useTask } from '../../../providers/task-provider/task-provider.component';
 import { VideoPlayerProvider } from '../video-player-provider.component';
 import { PropagateAnnotations } from './propagate-annotations.component';
-import { omit } from 'lodash-es';
 
 const mockDatasetIdentifier = getMockedDatasetIdentifier();
 
@@ -126,7 +125,7 @@ describe('Propagate annotations', () => {
         };
     });
 
-    const videoFrame = omit(getMockedVideoFrameMediaItem({}), 'preprocessingStatus');
+    const { preprocessingStatus, ...videoFrame} = getMockedVideoFrameMediaItem({});
 
     const src = API_URLS.MEDIA_ITEM_SRC(mockDatasetIdentifier, { ...videoFrame.identifier, frameNumber: 60 });
 
