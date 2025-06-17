@@ -6,7 +6,7 @@ metadata:
   namespace: istio-system
 spec:
   hosts:
-  - {{ .Values.global.registry_address }}
+  - {{ (split "/" .Values.global.registry_address)._0 }}
   location: MESH_EXTERNAL
   ports:
   - number: 80
