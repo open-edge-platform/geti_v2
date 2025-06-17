@@ -104,6 +104,13 @@ def create_project_from_dataset(
         dm_dataset=dm_dataset,
         progress_callback=progress_reporter.report,
     )
+    logger.info(
+        f"Creating project {name} with parameters: "
+        f"import_id={import_id}, project_type_str={project_type_str}, "
+        f"label_names={label_names}, color_by_label={color_by_label}, "
+        f"user_id={user_id}, "
+        f"label_to_ann_types={label_to_ann_types}"
+    )
     # Create project
     parser_kwargs = {
         "project_name": name,
