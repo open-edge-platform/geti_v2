@@ -14,7 +14,9 @@ RUN apt-get update && \
     wget \
     curl && \
     rm -rf /var/lib/apt/lists/* && \
-    useradd -l -u 10001 non-root && \
+    # Create render group and non-root user, adding user to render group
+    groupadd -r render && \
+    useradd -l -u 10001 -G render non-root && \
     pip3 uninstall -y setuptools pip wheel && \
     rm -rf /root/.cache/pip
 
@@ -56,7 +58,7 @@ RUN uv pip install torch==2.7.0 --default-index https://download.pytorch.org/whl
 FROM base AS runtime
 
 # Copy the application from the builder
-COPY --link --from=build --chown=10001 /interactive_ai/workflows/otx_domain/trainer/otx_v2 /interactive_ai/workflows/otx_domain/trainer/otx_v2
+COPY --link --from=build --chown=10001:render /interactive_ai/workflows/otx_domain/trainer/otx_v2 /interactive_ai/workflows/otx_domain/trainer/otx_v2
 
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2/.venv/bin:/interactive_ai/workflows/otx_domain/trainer/otx_v2:$PATH"
@@ -64,7 +66,6 @@ ENV PYTHONPATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2"
 ENV HF_HUB_OFFLINE=1
 
 USER non-root
-RUN newgrp render
-RUN gpasswd -a non-root render
+
 WORKDIR /home/non-root
 WORKDIR /interactive_ai/workflows/otx_domain/trainer/otx_v2
