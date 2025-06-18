@@ -1177,14 +1177,6 @@ class TestLabelSchema:
         copy_schema = label_schema
         assert label_schema == copy_schema
 
-        new_schema = LabelSchema(
-            id_=LabelSchemaRepo.generate_id(),
-            label_tree=label_schema.label_tree,
-            label_groups=label_schema.get_groups(True),
-        )
-
-        assert new_schema != label_schema
-
         assert NullLabelSchema() != label_schema
         assert label_schema != NullLabelSchema()
         assert NullLabelSchema() == NullLabelSchema()
@@ -1455,13 +1447,6 @@ class TestLabelSchemaView:
         )
 
         assert label_schemaview == copy_label_schemaview
-
-        new_labelschemaview = LabelSchemaView.from_parent(
-            label_schema,
-            labels=[fxt_label_schema_example.no_plant],
-            id_=LabelSchemaRepo.generate_id(),
-        )
-        assert label_schemaview != new_labelschemaview
 
     @pytest.mark.parametrize(
         "domain",

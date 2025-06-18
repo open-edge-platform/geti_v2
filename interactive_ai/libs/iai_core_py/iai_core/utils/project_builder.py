@@ -994,6 +994,14 @@ class ProjectBuilder:
                     if label_name == label.name:
                         ordered_updated_labels.append(label)
 
+            # Add empty label, if it exists in the old labels, but not in the updated ones
+            if not any(label.is_empty for label in ordered_updated_labels):
+                empty_label = next((label for label in old_labels if label.is_empty), None)
+                if empty_label is not None:
+                    ordered_updated_labels.append(empty_label)
+                    empty_group = next(group for group in old_groups if group.group_type == LabelGroupType.EMPTY_LABEL)
+                    group_name_by_label[empty_label.id_] = empty_group.name
+
             labels_by_task[task_node.id_] = ordered_updated_labels
 
             if is_keypoint_detection_enabled and task_node.task_properties.task_type == TaskType.KEYPOINT_DETECTION:
