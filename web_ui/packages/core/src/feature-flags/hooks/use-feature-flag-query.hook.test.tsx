@@ -20,9 +20,7 @@ describe('useFeatureFlagQuery', () => {
         return (
             <QueryClientProvider client={queryClient}>
                 <Suspense fallback='loading...'>
-                    <ApplicationServicesProvider useInMemoryEnvironment={false}>
-                        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-                    </ApplicationServicesProvider>
+                    <ApplicationServicesProvider useInMemoryEnvironment={false}>{children}</ApplicationServicesProvider>
                 </Suspense>
             </QueryClientProvider>
         );
