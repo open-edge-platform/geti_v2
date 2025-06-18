@@ -170,7 +170,7 @@ describe('MediaItemView', () => {
 
             await renderMedia(mediaItem, false, false);
 
-            expect(screen.getByLabelText('Thumbnail processing failed')).toBeInTheDocument();
+            expect(screen.getByLabelText('Failed to load thumbnail')).toBeInTheDocument();
             expect(screen.queryByRole('img', { name: mediaItem.name })).not.toBeInTheDocument();
         });
 
