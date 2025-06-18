@@ -19,7 +19,6 @@ import { createInMemoryMediaService } from '../../../../src/core/media/services/
 import { createInMemoryModelsService } from '../../../../src/core/models/services/in-memory-models-service';
 import { createInMemoryOrganizationsService } from '../../../../src/core/organizations/services/in-memory-organizations-service';
 import { createInMemoryPersonalAccessTokensService } from '../../../../src/core/personal-access-tokens/in-memory-personal-access-tokens-service';
-import { createInMemoryPlatformUtilsService } from '../../../../src/core/platform-utils/services/create-in-memory-platform-utils-service';
 import { createInMemoryProjectService } from '../../../../src/core/projects/services/in-memory-project-service';
 import { createInMemoryDatasetStatisticsService } from '../../../../src/core/statistics/services/in-memory-api-dataset-statistics-service';
 import { createInMemoryModelStatisticsService } from '../../../../src/core/statistics/services/in-memory-api-model-statistics-service';
@@ -28,6 +27,7 @@ import { createInMemorySupportedAlgorithmsService } from '../../../../src/core/s
 import { createInMemoryTestsService } from '../../../../src/core/tests/services/in-memory-tests-service';
 import { createInMemoryUserSettingsService } from '../../../../src/core/user-settings/services/in-memory-user-settings-service';
 import { createInMemoryApiFeatureFlagService } from '../feature-flags/services/in-memory-api-feature-flag-service';
+import { createInMemoryPlatformUtilsService } from '../platform-utils/services/create-in-memory-platform-utils-service';
 import { createInMemoryUsersService } from '../users/services/in-memory-users-service';
 import { createInMemoryOnboardingService } from '../users/services/inmemory-onboarding-service';
 import { createInMemoryApiWorkspacesService } from '../workspaces/services/in-memory-api-workspaces-service';
