@@ -61,6 +61,11 @@ platform/services/platform_cleaner:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
+platform/services/weights_uploader:
+  - platform/services/weights_uploader/**
+  - Makefile.shared-python
+  - Makefile.shared
+  - .github/workflows/component.yml
 
 # IAI Services
 interactive_ai/services/auto_train:
