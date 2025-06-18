@@ -3,7 +3,6 @@
 
 import { ReactNode } from 'react';
 
-import { createInMemoryApiFeatureFlagService } from '@geti/core';
 import { renderHook, waitFor } from '@testing-library/react';
 
 import { ExportStatusStateDTO } from '../../../core/configurable-parameters/dtos/configurable-parameters.interface';
@@ -43,14 +42,12 @@ jest.mock('../../../notification/notification.component', () => ({
 }));
 
 const mockedProjectService = createInMemoryProjectService();
-const mockedFeatureFlagService = createInMemoryApiFeatureFlagService();
 const mockedDatasetImportService = createInMemoryDatasetImportService();
 
 jest.mock('@geti/core/src/services/application-services-provider.component', () => ({
     ...jest.requireActual('@geti/core/src/services/application-services-provider.component'),
     useApplicationServices: () => ({
         projectService: mockedProjectService,
-        featureFlagService: mockedFeatureFlagService,
         datasetImportService: mockedDatasetImportService,
     }),
 }));
