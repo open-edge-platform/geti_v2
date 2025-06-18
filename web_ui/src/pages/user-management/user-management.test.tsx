@@ -5,7 +5,6 @@ import { createInMemoryUsersService } from '@geti/core/src/users/services/in-mem
 import { RESOURCE_TYPE, USER_ROLE } from '@geti/core/src/users/users.interface';
 import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 
-import { createInMemoryPlatformUtilsService } from '../../core/platform-utils/services/create-in-memory-platform-utils-service';
 import { useIsSaasEnv } from '../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { MediaUploadProvider } from '../../providers/media-upload-provider/media-upload-provider.component';
 import {
@@ -55,14 +54,12 @@ describe('UserManagement', () => {
 
         it('user management tabs should be visible', async () => {
             const usersService = createInMemoryUsersService();
-            const platformUtilsService = createInMemoryPlatformUtilsService();
 
             usersService.getActiveUser = async () => Promise.resolve(getMockedOrganizationAdminUser());
 
             await renderPage({
                 services: {
                     usersService,
-                    platformUtilsService,
                 },
                 featureFlags: {
                     FEATURE_FLAG_STORAGE_SIZE_COMPUTATION: true,
@@ -235,7 +232,6 @@ describe('UserManagement', () => {
 
         it('user management tabs should be visible', async () => {
             const usersService = createInMemoryUsersService();
-            const platformUtilsService = createInMemoryPlatformUtilsService();
 
             usersService.getActiveUser = async () =>
                 Promise.resolve(
@@ -254,7 +250,6 @@ describe('UserManagement', () => {
             await renderPage({
                 services: {
                     usersService,
-                    platformUtilsService,
                 },
                 featureFlags: {
                     FEATURE_FLAG_WORKSPACE_ACTIONS: true,
