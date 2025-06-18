@@ -1,4 +1,4 @@
-FROM python:3.10-slim-noble AS base
+FROM python:3.10-slim-bookworm@sha256:2ee0fb8794bf82af1b2db168ada5869b4c27d17720dd3b155b56c111fb4a38ae AS base
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
@@ -64,5 +64,7 @@ ENV PYTHONPATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2"
 ENV HF_HUB_OFFLINE=1
 
 USER non-root
+RUN newgrp render
+RUN gpasswd -a non-root render
 WORKDIR /home/non-root
 WORKDIR /interactive_ai/workflows/otx_domain/trainer/otx_v2
