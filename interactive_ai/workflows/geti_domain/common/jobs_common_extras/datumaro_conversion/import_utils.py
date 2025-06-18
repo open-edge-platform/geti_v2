@@ -469,7 +469,7 @@ class ImportUtils:
         """
         Get keypoint structure positions from the dataset.
         This is used for datasets which are exported outside of Geti since they do not contain any position information.
-        The positon is generated based on the first keypoint annotation in the dataset.
+        The position is generated based on the first keypoint annotation in the dataset.
 
         :param dm_dataset: datumaro dataset
         :return: list of keypoint structure positions
