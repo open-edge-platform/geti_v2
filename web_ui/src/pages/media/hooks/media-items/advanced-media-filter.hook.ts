@@ -60,7 +60,6 @@ export const useAdvancedMediaFilter = ({
             retry: false,
             meta: { notifyOnError: true },
             refetchInterval: preprocessingAwareRefetchInterval,
-            refetchIntervalInBackground: false,
         },
         mediaItemsLoadSize,
         mediaFilterOptions,

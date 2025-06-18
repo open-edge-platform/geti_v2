@@ -46,12 +46,6 @@ export const MediaItemView = ({
         isMediaPreprocessing(preprocessingStatus) || (!isImageLoaded && !thumbnailError && isPreprocessingFinished);
     const showLoadingSpinner = useSpinDelay(shouldShowSkeleton, { delay: 100 });
 
-    const handleThumbnailError = () => {
-        if (isPreprocessingFinished) {
-            setThumbnailError(true);
-        }
-    };
-
     return (
         <View
             position={'relative'}
@@ -75,7 +69,7 @@ export const MediaItemView = ({
                     data-testid={`${name}${resolution}`}
                     src={thumbnailSrc}
                     onLoad={() => setImageLoaded(true)}
-                    onError={handleThumbnailError}
+                    onError={() => setThumbnailError(true)}
                     style={{
                         display: showLoadingSpinner ? 'none' : 'block',
                     }}
@@ -102,10 +96,7 @@ export const MediaItemView = ({
                         height='100%'
                         width='100%'
                     >
-                        <AlertCircle
-                            size='L'
-                            aria-label={isPreprocessingFailed ? 'Thumbnail processing failed' : 'Failed to load'}
-                        />
+                        <AlertCircle size='L' aria-label={'Failed to load thumbnail'} />
                         <Text
                             UNSAFE_style={{
                                 fontSize: 'var(--spectrum-global-dimension-font-size-100)',
@@ -113,7 +104,7 @@ export const MediaItemView = ({
                                 textAlign: 'center',
                             }}
                         >
-                            {isPreprocessingFailed ? 'Thumbnail processing failed' : 'Failed to load'}
+                            Failed to load thumbnail
                         </Text>
                     </Flex>
                 </View>

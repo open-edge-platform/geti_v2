@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { MEDIA_TYPE } from '../../media/base-media.interface';
 import { Image } from '../../media/image.interface';
 import { getAnnotationStatePerTaskFromDTO } from '../../media/services/utils';
+import { getDefaultPreprocessingStatus } from '../../media/utils/preprocessing.utils';
 import { ModelsGroups, ModelVersion } from '../../models/models.interface';
 import {
     BASELINE_MODEL,
@@ -23,7 +24,6 @@ import { TestImageMediaResult } from '../test-image.interface';
 import { TestMediaItem } from '../test-media.interface';
 import { MetricType, Test, TestScore } from '../tests.interface';
 import { RunTestBody } from './tests-service.interface';
-import { getDefaultPreprocessingStatus } from '../../media/utils/preprocessing.utils';
 
 export const getAverageScore = (scores: TestScore[]): TestScore | undefined => {
     return scores.find(({ labelId }) => isNil(labelId));
