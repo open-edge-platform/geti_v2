@@ -23,6 +23,7 @@ import { TestImageMediaResult } from '../test-image.interface';
 import { TestMediaItem } from '../test-media.interface';
 import { MetricType, Test, TestScore } from '../tests.interface';
 import { RunTestBody } from './tests-service.interface';
+import { getDefaultPreprocessingStatus } from '../../media/utils/preprocessing.utils';
 
 export const getAverageScore = (scores: TestScore[]): TestScore | undefined => {
     return scores.find(({ labelId }) => isNil(labelId));
@@ -123,7 +124,16 @@ export const getTestEntity = (test: TestDTO, modelsGroups: ModelsGroups[]): Test
 };
 
 export const getTestMediaItemEntity = (mediaItem: TestMediaItemDTO): TestMediaItem => {
-    const { name, annotation_state_per_task, thumbnail, upload_time, uploader_id, id, last_annotator_id } = mediaItem;
+    const {
+        name,
+        annotation_state_per_task,
+        thumbnail,
+        upload_time,
+        uploader_id,
+        id,
+        last_annotator_id,
+        preprocessing,
+    } = mediaItem;
 
     const baseMediaItem = {
         name,
@@ -132,6 +142,7 @@ export const getTestMediaItemEntity = (mediaItem: TestMediaItemDTO): TestMediaIt
         uploaderId: uploader_id,
         annotationStatePerTask: getAnnotationStatePerTaskFromDTO(annotation_state_per_task),
         lastAnnotatorId: last_annotator_id,
+        preprocessingStatus: getDefaultPreprocessingStatus(preprocessing?.status),
     };
 
     switch (mediaItem.type) {
