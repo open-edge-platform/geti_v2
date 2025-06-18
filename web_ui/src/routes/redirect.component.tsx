@@ -18,7 +18,7 @@ import { ErrorLayout } from '../pages/errors/error-layout/error-layout.component
 import { ResourceNotFound } from '../pages/errors/resource-not-found/resource-not-found.component';
 import { useProject } from '../pages/project-details/providers/project-provider/project-provider.component';
 import { useWorkspaceIdentifier } from '../providers/workspaces-provider/use-workspace-identifier.hook';
-import { LOCAL_STORAGE_KEYS } from '../shared/local-storage-keys';
+import { getLastOpenedWorkspaceKey, LOCAL_STORAGE_KEYS } from '../shared/local-storage-keys';
 
 export const RedirectToOptimizedModel = () => {
     const modelIdentifier = useModelIdentifier();
@@ -35,13 +35,14 @@ export const RedirectToOpenVino = () => {
 export const RedirectToWorkspace = () => {
     const { organizationId } = useOrganizationIdentifier();
 
-    // Redirect to the first available workspace
     const { useWorkspacesQuery } = useWorkspacesApi(organizationId);
     const { data: workspaces } = useWorkspacesQuery();
-    const workspaceId = workspaces.at(0)?.id;
+
+    // Redirect to last opened workspace or the first available
+    const [lastWorkspaceId] = useLocalStorage(getLastOpenedWorkspaceKey(organizationId), workspaces.at(0)?.id);
 
     // Show an error if we are unable to load workspaces
-    if (workspaceId === undefined) {
+    if (lastWorkspaceId === undefined) {
         return (
             <ErrorLayout>
                 <ResourceNotFound />
@@ -49,7 +50,7 @@ export const RedirectToWorkspace = () => {
         );
     }
 
-    return <Navigate to={paths.workspace({ organizationId, workspaceId })} replace />;
+    return <Navigate to={paths.workspace({ organizationId, workspaceId: lastWorkspaceId })} replace />;
 };
 
 export const RedirectToDatasetMedia = () => {
