@@ -4,12 +4,12 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { Cell, Column, Flex, Row, TableBody, TableHeader, TableView, View } from '@geti/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { get } from 'lodash-es';
 
-import { useFeatureFlags } from '../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { Organization } from '../../../core/organizations/organizations.interface';
 import { GetOrganizationsQueryOptions } from '../../../core/organizations/services/organizations-service.interface';
 import { SortDirection } from '../../../core/shared/query-parameters';

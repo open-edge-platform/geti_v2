@@ -3,12 +3,12 @@
 
 import { useEffect } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { ButtonGroup } from '@geti/ui';
 import { AICPUIcon, Human } from '@geti/ui/icons';
 import { isNil } from 'lodash-es';
 import { useSearchParams } from 'react-router-dom';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useModels } from '../../../../core/models/hooks/use-models.hook';
 import { useFuxNotifications } from '../../../../hooks/use-fux-notifications/use-fux-notifications.hook';
 import { ButtonWithSpectrumTooltip } from '../../../../shared/components/button-with-tooltip/button-with-tooltip.component';

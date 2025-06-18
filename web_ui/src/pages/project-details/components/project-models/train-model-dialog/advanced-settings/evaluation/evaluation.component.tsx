@@ -7,18 +7,18 @@ import { Grid, Item, minmax, Picker, Text, ToggleButtons, View } from '@geti/ui'
 import { noop } from 'lodash-es';
 
 import {
-    ConfigurableParametersParams,
-    NumberGroupParams,
-} from '../../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+    ConfigurationParameter,
+    NumberParameter,
+} from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { Accordion } from '../ui/accordion/accordion.component';
-import { NumberParameter } from '../ui/number-parameter.component';
+import { NumberParameterField } from '../ui/number-parameter-field.component';
 import { ResetButton } from '../ui/reset-button.component';
 import { Tooltip } from '../ui/tooltip.component';
 
 import styles from './evaluation.module.scss';
 
 interface EvaluationProps {
-    evaluationParameters: ConfigurableParametersParams[];
+    evaluationParameters: ConfigurationParameter[];
 }
 
 const ConfidenceThresholdTooltip: FC = () => {
@@ -39,7 +39,7 @@ const ConfidenceThresholdTooltip: FC = () => {
 interface ConfidenceThresholdProps {
     confidenceThresholdMode: CONFIDENCE_THRESHOLD_MODE;
     onConfidenceThresholdModeChange: (mode: CONFIDENCE_THRESHOLD_MODE) => void;
-    manualParameter: NumberGroupParams;
+    manualParameter: NumberParameter;
     onChange: () => void;
 }
 
@@ -66,15 +66,15 @@ const ConfidenceThreshold: FC<ConfidenceThresholdProps> = ({
             {isManualMode && (
                 <>
                     <View gridColumn={'2/3'}>
-                        <NumberParameter
+                        <NumberParameterField
                             value={manualParameter.value}
                             minValue={manualParameter.minValue}
                             maxValue={manualParameter.maxValue}
                             onChange={onChange}
-                            type={manualParameter.dataType}
+                            type={manualParameter.type}
                         />
                     </View>
-                    <ResetButton aria-label={`Reset ${manualParameter.header}`} onPress={noop} />
+                    <ResetButton aria-label={`Reset ${manualParameter.name}`} onPress={noop} />
                 </>
             )}
         </Grid>
@@ -86,11 +86,9 @@ enum CONFIDENCE_THRESHOLD_MODE {
     MANUAL = 'Manual',
 }
 
-const getConfidenceThresholdMode = (
-    evaluationParameters: ConfigurableParametersParams[]
-): CONFIDENCE_THRESHOLD_MODE => {
+const getConfidenceThresholdMode = (evaluationParameters: ConfigurationParameter[]): CONFIDENCE_THRESHOLD_MODE => {
     const resultBased = evaluationParameters.find(
-        (parameter) => parameter.name === '"result_based_confidence_threshold"'
+        (parameter) => parameter.key === '"result_based_confidence_threshold"'
     );
 
     if (resultBased?.value) {
@@ -130,7 +128,7 @@ export const Evaluation: FC<EvaluationProps> = ({ evaluationParameters }) => {
     );
     const manualParameter = evaluationParameters.find(
         (parameter) => parameter.name === 'confidence_threshold'
-    ) as NumberGroupParams;
+    ) as NumberParameter;
 
     return (
         <Accordion isExpanded UNSAFE_className={styles.accordionChevronIcon}>

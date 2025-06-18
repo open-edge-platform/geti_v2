@@ -4,9 +4,9 @@
 import { useState } from 'react';
 
 import { Button, Loading } from '@geti/ui';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { head } from 'lodash-es';
 
-import { useFeatureFlags } from '../../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useJobs } from '../../../../../core/jobs/hooks/use-jobs.hook';
 import { RunningTrainingJob } from '../../../../../core/jobs/jobs.interface';
 import { isJobTrain } from '../../../../../core/jobs/utils';

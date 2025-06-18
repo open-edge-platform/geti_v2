@@ -9,7 +9,6 @@ import { getMockedDatasetImportPayload } from '../../../test-utils/mocked-items-
 import { getMockedImportStatusJob, getMockedPrepareJob } from '../../../test-utils/mocked-items-factory/mocked-jobs';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
 import { RequiredProviders } from '../../../test-utils/required-providers-render';
-import { createInMemoryApiFeatureFlagService } from '../../feature-flags/services/in-memory-api-feature-flag-service';
 import { JobState } from '../../jobs/jobs.const';
 import {
     JobImportDatasetToExistingProjectStatus,
@@ -23,7 +22,6 @@ import { createInMemoryDatasetImportService } from '../services/in-memory-datase
 import { useDatasetImportQueries } from './use-dataset-import-queries.hook';
 
 const mockedDatasetImportService = createInMemoryDatasetImportService();
-const mockedFeatureFlagService = createInMemoryApiFeatureFlagService();
 
 mockedDatasetImportService.importDatasetToNewProject = jest.fn();
 mockedDatasetImportService.prepareDatasetForNewProject = jest.fn();
@@ -47,20 +45,12 @@ const mockDatasetImportPayload = getMockedDatasetImportPayload({
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => {
-    return (
-        <RequiredProviders
-            featureFlagService={mockedFeatureFlagService}
-            datasetImportService={mockedDatasetImportService}
-        >
-            {children}
-        </RequiredProviders>
-    );
+    return <RequiredProviders datasetImportService={mockedDatasetImportService}>{children}</RequiredProviders>;
 };
 
 const renderDatasetImportQueriesHook = () => {
     return renderHookWithProviders(() => useDatasetImportQueries(), {
         providerProps: {
-            featureFlagService: mockedFeatureFlagService,
             datasetImportService: mockedDatasetImportService,
         },
     });

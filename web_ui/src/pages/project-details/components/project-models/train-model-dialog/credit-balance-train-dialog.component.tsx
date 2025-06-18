@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isNil } from 'lodash-es';
 
 import { useCreditsQueries } from '../../../../../core/credits/hooks/use-credits-api.hook';
-import { useFeatureFlags } from '../../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { Task } from '../../../../../core/projects/task.interface';
 import { useTotalCreditPrice } from '../../../hooks/use-credits-to-consume.hook';
 import { useProject } from '../../../providers/project-provider/project-provider.component';

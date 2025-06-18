@@ -6,15 +6,15 @@ import { FC, ReactNode } from 'react';
 import { Grid, minmax, Text, ToggleButtons, View } from '@geti/ui';
 import { isFunction } from 'lodash-es';
 
-import { ConfigurableParametersParams } from '../../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+import { ConfigurationParameter } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { BooleanParameter } from './boolean-parameter.component';
-import { NumberParameter } from './number-parameter.component';
+import { NumberParameterField } from './number-parameter-field.component';
 import { ResetButton } from './reset-button.component';
 import { Tooltip } from './tooltip.component';
 
 interface ParametersProps {
-    parameters: ConfigurableParametersParams[];
-    onChange: () => void;
+    parameters: ConfigurationParameter[];
+    onChange: (value: string | boolean | number) => void;
 }
 
 const ParameterTooltip: FC<{ text: string }> = ({ text }) => {
@@ -22,8 +22,9 @@ const ParameterTooltip: FC<{ text: string }> = ({ text }) => {
 };
 
 interface ParameterProps {
-    parameter: ConfigurableParametersParams;
-    onChange: () => void;
+    parameter: ConfigurationParameter;
+    onChange: (value: string | boolean | number) => void;
+    isDisabled?: boolean;
 }
 
 interface ParameterLayoutProps {
@@ -46,42 +47,79 @@ const ParameterLayout: FC<ParameterLayoutProps> = ({ header, children, descripti
     );
 };
 
-const ParameterField: FC<ParameterProps> = ({ parameter, onChange }) => {
-    if (parameter.dataType === 'string' && parameter.templateType === 'selectable') {
-        return <ToggleButtons options={parameter.options} selectedOption={parameter.value} onOptionChange={onChange} />;
-    }
-
-    if (parameter.templateType === 'input' && (parameter.dataType === 'float' || parameter.dataType === 'integer')) {
+const ParameterField: FC<ParameterProps> = ({ parameter, onChange, isDisabled }) => {
+    if (parameter.type === 'enum') {
         return (
-            <NumberParameter
-                value={parameter.value}
-                minValue={parameter.minValue}
-                maxValue={parameter.maxValue}
-                onChange={onChange}
-                type={parameter.dataType}
+            <ToggleButtons
+                options={parameter.allowedValues}
+                selectedOption={parameter.value}
+                onOptionChange={onChange}
+                isDisabled={isDisabled}
             />
         );
     }
 
-    if (parameter.dataType === 'boolean') {
-        return <BooleanParameter value={parameter.value} header={parameter.header} onChange={() => {}} />;
+    if (parameter.type === 'float' || parameter.type === 'int') {
+        return (
+            <NumberParameterField
+                value={parameter.value}
+                minValue={parameter.minValue}
+                maxValue={parameter.maxValue}
+                onChange={onChange}
+                type={parameter.type}
+                isDisabled={isDisabled}
+            />
+        );
+    }
+
+    if (parameter.type === 'bool') {
+        return (
+            <BooleanParameter
+                value={parameter.value}
+                header={parameter.name}
+                onChange={onChange}
+                isDisabled={isDisabled}
+            />
+        );
     }
 };
 
-const Parameter: FC<ParameterProps> = ({ parameter, onChange }) => {
+export const Parameter = ({ parameter, onChange, isDisabled }: ParameterProps) => {
+    const handleReset = () => {
+        onChange(parameter.defaultValue);
+    };
+
     return (
-        <ParameterLayout header={parameter.header} description={parameter.description} onReset={() => {}}>
-            <ParameterField parameter={parameter} onChange={onChange} />
+        <ParameterLayout header={parameter.name} description={parameter.description} onReset={handleReset}>
+            <ParameterField parameter={parameter} onChange={onChange} isDisabled={isDisabled} />
         </ParameterLayout>
     );
 };
 
-export const Parameters: FC<ParametersProps> = ({ parameters, onChange }) => {
+Parameter.Layout = ParameterLayout;
+Parameter.Field = ParameterField;
+
+interface ParametersListProps {
+    parameters: ConfigurationParameter[];
+    onChange: (value: string | boolean | number) => void;
+}
+
+const ParametersList = ({ parameters, onChange }: ParametersListProps) => {
+    return parameters.map((parameter) => <Parameter key={parameter.name} parameter={parameter} onChange={onChange} />);
+};
+
+export const Parameters = ({ parameters, onChange }: ParametersProps) => {
     return (
         <Grid columns={['size-3000', minmax('size-3400', '1fr'), 'size-400']} gap={'size-300'} alignItems={'center'}>
-            {parameters.map((parameter) => (
-                <Parameter key={parameter.name} parameter={parameter} onChange={onChange} />
-            ))}
+            <ParametersList parameters={parameters} onChange={onChange} />
+        </Grid>
+    );
+};
+
+Parameters.Container = ({ children }: { children: ReactNode }) => {
+    return (
+        <Grid columns={['size-3000', minmax('size-3400', '1fr'), 'size-400']} gap={'size-300'} alignItems={'center'}>
+            {children}
         </Grid>
     );
 };

@@ -1,12 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Content, Dialog, DialogContainer, Divider, Heading, View } from '@geti/ui';
 import { OverlayTriggerState } from '@react-stately/overlays';
 
 import { DatasetImportItem } from '../../../../../core/datasets/dataset.interface';
 import { getCurrentJob } from '../../../../../core/datasets/utils';
-import { useFeatureFlags } from '../../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useJobs } from '../../../../../core/jobs/hooks/use-jobs.hook';
 import { useDatasetImportToNewProject } from '../../../../../providers/dataset-import-to-new-project-provider/dataset-import-to-new-project-provider.component';
 import { useWorkspaceIdentifier } from '../../../../../providers/workspaces-provider/use-workspace-identifier.hook';

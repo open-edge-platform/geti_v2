@@ -3,9 +3,9 @@
 
 import { FC } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Item, Key, Picker } from '@geti/ui';
 
-import { useFeatureFlags } from '../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { AccountStatus } from '../../../core/organizations/organizations.interface';
 
 export const ALL_ORGANIZATIONS = 'All';

@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isNil } from 'lodash-es';
 import { useSearchParams } from 'react-router-dom';
 
-import { useFeatureFlags } from '../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useDatasetIdentifier } from '../../annotator/hooks/use-dataset-identifier.hook';
 
 export enum CaptureMode {

@@ -3,6 +3,7 @@
 
 import { ReactElement } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import {
     ActionButton,
     dimensionValue,
@@ -23,7 +24,6 @@ import { isEqual, isFunction, isNil } from 'lodash-es';
 
 import { isVisualPromptModel } from '../../../../../../core/annotations/services/visual-prompt-service';
 import { useCreditsQueries } from '../../../../../../core/credits/hooks/use-credits-api.hook';
-import { useFeatureFlags } from '../../../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useModels } from '../../../../../../core/models/hooks/use-models.hook';
 import { ModelIdentifier } from '../../../../../../core/models/models.interface';
 import { NOTIFICATION_TYPE } from '../../../../../../notification/notification-toast/notification-type.enum';
