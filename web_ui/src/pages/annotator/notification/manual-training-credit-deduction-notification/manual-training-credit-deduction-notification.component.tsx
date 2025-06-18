@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { InfiniteData } from '@tanstack/react-query';
 import { isNil } from 'lodash-es';
 import { useParams } from 'react-router-dom';

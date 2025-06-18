@@ -18,11 +18,13 @@ describe('useFeatureFlagQuery', () => {
         const queryClient = new QueryClient();
 
         return (
-            <Suspense fallback='loading...'>
-                <ApplicationServicesProvider useInMemoryEnvironment={false}>
-                    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-                </ApplicationServicesProvider>
-            </Suspense>
+            <QueryClientProvider client={queryClient}>
+                <Suspense fallback='loading...'>
+                    <ApplicationServicesProvider useInMemoryEnvironment={false}>
+                        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+                    </ApplicationServicesProvider>
+                </Suspense>
+            </QueryClientProvider>
         );
     };
 

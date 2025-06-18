@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isEmpty, isNumber } from 'lodash-es';
 
 import { useTrainingConfigurationQuery } from '../../../../../core/configurable-parameters/hooks/use-training-configuration.hook';

@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isNil } from 'lodash-es';
 
 import { CREDIT_COST_PER_IMAGE_OR_VIDEO } from '../../../core/credits/credits.interface';

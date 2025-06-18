@@ -3,7 +3,8 @@
 
 import { Key } from 'react';
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useWorkspacesApi } from '@geti/core/src/workspaces/hooks/use-workspaces.hook';
 import {
     ActionButton,

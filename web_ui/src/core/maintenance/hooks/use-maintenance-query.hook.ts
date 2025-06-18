@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { useDeploymentConfigQuery } from '@geti/core/src/services/use-deployment-config-query.hook';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';

@@ -3,7 +3,8 @@
 
 import { ReactNode } from 'react';
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useProfileQuery } from '@geti/core/src/users/hook/use-profile.hook';
 import { Navigate } from 'react-router-dom';
 

@@ -1,7 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex, View } from '@geti/ui';
 import { useNavigate } from 'react-router-dom';
 

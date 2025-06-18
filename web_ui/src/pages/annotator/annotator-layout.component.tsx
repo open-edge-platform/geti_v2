@@ -3,7 +3,7 @@
 
 import { useEffect } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex, Grid, Heading, View } from '@geti/ui';
 import { FocusScope } from 'react-aria';
 

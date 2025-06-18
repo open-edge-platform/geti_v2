@@ -3,7 +3,8 @@
 
 import { Suspense, useEffect } from 'react';
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { IntelBrandedLoading } from '@geti/ui';
 import { negate } from 'lodash-es';
 import { Navigate, Outlet, Route, useLocation } from 'react-router-dom';

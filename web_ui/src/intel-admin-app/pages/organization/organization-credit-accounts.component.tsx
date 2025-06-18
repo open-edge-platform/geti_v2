@@ -3,7 +3,8 @@
 
 import { useState } from 'react';
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Button, Flex, Loading, Skeleton, Text, View } from '@geti/ui';
 import { Navigate } from 'react-router-dom';
 

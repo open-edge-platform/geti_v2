@@ -3,7 +3,7 @@
 
 import { ComponentProps } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex } from '@geti/ui';
 
 import { GenerateOnboardingTokenDialogContainer } from './generate-onboarding-invitation-link-dialog/generate-onboarding-invitation-link-dialog.component';

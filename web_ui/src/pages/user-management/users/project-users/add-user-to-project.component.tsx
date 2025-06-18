@@ -3,7 +3,7 @@
 
 import { FC, useMemo, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { getRoleCreationPayload } from '@geti/core/src/users/services/utils';
 import { RESOURCE_TYPE, User, USER_ROLE } from '@geti/core/src/users/users.interface';

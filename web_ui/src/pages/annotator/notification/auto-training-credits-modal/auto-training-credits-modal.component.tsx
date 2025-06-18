@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Button, Content, DialogContainer, Divider, Flex, Header, Heading, Text, View } from '@geti/ui';
 import { Info } from '@geti/ui/icons';
 import { InfiniteData } from '@tanstack/react-query';

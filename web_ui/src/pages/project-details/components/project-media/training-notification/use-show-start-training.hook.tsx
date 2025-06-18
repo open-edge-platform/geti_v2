@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { OverlayTriggerState } from '@react-stately/overlays';

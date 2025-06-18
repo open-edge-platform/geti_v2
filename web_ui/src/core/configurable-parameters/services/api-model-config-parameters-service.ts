@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { apiClient } from '@geti/core';
+import { apiClient } from '@geti/core/src/client/axios-instance';
 
 import { CreateApiService } from '../../../../packages/core/src/services/create-api-service.interface';
 import { API_URLS } from '../../../../packages/core/src/services/urls';

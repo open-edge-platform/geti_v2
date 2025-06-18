@@ -3,7 +3,8 @@
 
 import { Dispatch, SetStateAction } from 'react';
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { Cell, Column, Flex, Row, TableBody, TableHeader, TableView, View } from '@geti/ui';
 import { useQueryClient } from '@tanstack/react-query';

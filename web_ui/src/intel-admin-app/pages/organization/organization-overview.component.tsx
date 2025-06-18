@@ -3,7 +3,8 @@
 
 import { FormEvent, useEffect, useState } from 'react';
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { ActionGroup, Button, ButtonGroup, Divider, Flex, Form, Item, Key, Text, TextField, View } from '@geti/ui';
 import { CheckmarkCircleOutline, DeleteOutline, RemoveCircle } from '@geti/ui/icons';
 import dayjs from 'dayjs';

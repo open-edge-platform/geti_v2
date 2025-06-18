@@ -1,7 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { getRoleDeletionPayload } from '@geti/core/src/users/services/utils';

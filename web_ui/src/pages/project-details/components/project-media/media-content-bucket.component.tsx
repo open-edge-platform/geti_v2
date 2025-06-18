@@ -3,7 +3,7 @@
 
 import { Dispatch, FC, ReactNode, SVGProps } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Divider, Flex, IllustratedMessage, useMediaQuery, View, type DimensionValue, type Responsive } from '@geti/ui';
 import { NotFound } from '@geti/ui/icons';
 import { isLargeSizeQuery } from '@geti/ui/theme';

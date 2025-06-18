@@ -3,7 +3,8 @@
 
 import { CSSProperties } from 'react';
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { ActionButton, Divider, Flex, Text, Tooltip, TooltipTrigger, View } from '@geti/ui';
 import { Copy, DownloadIcon } from '@geti/ui/icons';

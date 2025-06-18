@@ -3,7 +3,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isNumber } from 'lodash-es';
 
 import { ConfigurableParametersTaskChain } from '../../../../../../core/configurable-parameters/services/configurable-parameters.interface';

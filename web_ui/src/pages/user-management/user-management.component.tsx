@@ -3,7 +3,8 @@
 
 import { Key } from 'react';
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { RESOURCE_TYPE, User, USER_ROLE } from '@geti/core/src/users/users.interface';
 import { Button, Loading } from '@geti/ui';

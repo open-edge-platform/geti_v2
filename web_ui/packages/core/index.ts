@@ -7,7 +7,6 @@ export { paths } from './src/services/routes';
 export { API_URLS } from './src/services/urls';
 export { addHostToApiUrls } from './src/services/use-api-router.hook';
 
-export { useFeatureFlags } from './src/feature-flags/hooks/use-feature-flags.hook';
 export { createInMemoryApiFeatureFlagService } from './src/feature-flags/services/in-memory-api-feature-flag-service';
 export {
     type CustomFeatureFlags,

@@ -3,7 +3,7 @@
 
 import { Key, useCallback, useMemo } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { isEmpty } from 'lodash-es';

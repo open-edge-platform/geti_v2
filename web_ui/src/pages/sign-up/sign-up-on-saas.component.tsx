@@ -3,7 +3,8 @@
 
 import { FormEvent, useState } from 'react';
 
-import { paths, useFeatureFlags } from '@geti/core';
+import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useOnboardUserMutation } from '@geti/core/src/users/hook/use-onboard-user-mutation.hook';
 import { useProfileQuery } from '@geti/core/src/users/hook/use-profile.hook';
 import { Item, Picker, TextField } from '@geti/ui';

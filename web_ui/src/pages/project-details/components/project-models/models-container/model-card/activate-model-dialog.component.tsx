@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Heading, Text } from '@geti/ui';
 
 import { useTotalCreditPrice } from '../../../../hooks/use-credits-to-consume.hook';

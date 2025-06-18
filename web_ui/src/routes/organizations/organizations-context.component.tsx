@@ -3,7 +3,7 @@
 
 import { ReactNode } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isNil } from 'lodash-es';
 
 import { useSelectedOrganization } from '../../core/organizations/hook/use-selected-organization.hook';

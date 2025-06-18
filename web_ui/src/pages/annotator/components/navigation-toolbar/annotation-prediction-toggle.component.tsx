@@ -3,7 +3,7 @@
 
 import { useEffect } from 'react';
 
-import { useFeatureFlags } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { ButtonGroup } from '@geti/ui';
 import { AICPUIcon, Human } from '@geti/ui/icons';
 import { isNil } from 'lodash-es';
