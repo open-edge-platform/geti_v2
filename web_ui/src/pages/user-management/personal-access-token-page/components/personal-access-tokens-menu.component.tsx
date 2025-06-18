@@ -11,7 +11,9 @@ import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 
 import {
+    DELETE_ERROR,
     DELETE_MESSAGE,
+    UPDATE_ERROR,
     UPDATE_MESSAGE,
     usePersonalAccessToken,
 } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
@@ -68,7 +70,7 @@ export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps)
                         addNotification({ message: UPDATE_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
                     },
                     onError: (error: AxiosError) => {
-                        const message = error?.message ?? DELETE_MESSAGE;
+                        const message = error?.message ?? UPDATE_ERROR;
                         addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
                     },
                 }
@@ -81,8 +83,11 @@ export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps)
             deletePersonalAccessTokenMutation.mutate(
                 { organizationId, userId: activeUser.id, tokenId: token.id },
                 {
+                    onSuccess: () => {
+                        addNotification({ message: DELETE_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
+                    },
                     onError: (error: AxiosError) => {
-                        const message = error?.message ?? DELETE_MESSAGE;
+                        const message = error?.message ?? DELETE_ERROR;
                         addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
                     },
                 }

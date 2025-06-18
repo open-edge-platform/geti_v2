@@ -17,9 +17,13 @@ import {
     UsePersonalAccessToken,
 } from '../personal-access-tokens.interface';
 
-export const DELETE_MESSAGE = 'Personal Access Token was not deleted due to an error.';
-export const RETRIEVE_ERROR = 'Personal Access Token was not retrieved due to an error.';
+export const CREATE_MESSAGE = 'Personal Access Token was created successfully.';
+export const DELETE_MESSAGE = 'Personal Access Token was deleted successfully.';
 export const UPDATE_MESSAGE = 'The expiration date has been updated.';
+
+export const CREATE_ERROR = 'Personal Access Token was not created due to an error.';
+export const DELETE_ERROR = 'Personal Access Token was not deleted due to an error.';
+export const UPDATE_ERROR = 'Personal Access Token was not updated due to an error.';
 
 export const usePersonalAccessToken = (): UsePersonalAccessToken => {
     const queryClient = useQueryClient();

@@ -9,7 +9,8 @@ import dayjs from 'dayjs';
 import { get } from 'lodash-es';
 
 import {
-    RETRIEVE_ERROR,
+    CREATE_ERROR,
+    CREATE_MESSAGE,
     usePersonalAccessToken,
 } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
 import { CreatePersonalAccessTokenDialogProps } from '../../../../core/personal-access-tokens/personal-access-tokens.interface';
@@ -70,9 +71,12 @@ export const CreatePersonalAccessTokenDialog = ({
                 userId,
             },
             {
-                onSuccess: () => setCurrentStep(Steps.Copy),
+                onSuccess: () => {
+                    setCurrentStep(Steps.Copy);
+                    addNotification({ message: CREATE_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
+                },
                 onError: (error: AxiosError) => {
-                    const message = get(error, 'message', RETRIEVE_ERROR);
+                    const message = get(error, 'message', CREATE_ERROR);
                     addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
                 },
             }

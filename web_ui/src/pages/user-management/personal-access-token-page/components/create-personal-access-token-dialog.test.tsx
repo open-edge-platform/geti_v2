@@ -5,7 +5,7 @@ import { useOverlayTriggerState } from '@react-stately/overlays';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { RETRIEVE_ERROR } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
+import { CREATE_ERROR } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
 import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { CreatePersonalAccessTokenDialog } from './create-personal-access-token-dialog.component';
@@ -150,7 +150,7 @@ describe('CreatePersonalAccessTokenDialog', () => {
 
         await waitFor(() => {
             expect(mockAddNotification).toHaveBeenCalledWith({
-                message: RETRIEVE_ERROR,
+                message: CREATE_ERROR,
                 type: NOTIFICATION_TYPE.ERROR,
             });
         });
