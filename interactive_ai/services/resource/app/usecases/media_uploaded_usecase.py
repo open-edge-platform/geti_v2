@@ -1,6 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import logging
+from tempfile import NamedTemporaryFile
 from typing import Any
 
 from geti_kafka_tools import publish_event
@@ -114,21 +115,21 @@ class MediaUploadedUseCase:
                 thumbnail_binary_filename=Video.thumbnail_filename_by_video_id(video_id),
             )
 
-            tmp_thumbnail_video = thumbnail_binary_repo.create_path_for_temporary_file(
-                filename=data_binary_filename, make_unique=False
-            )
-            generate_thumbnail_video(
-                data_binary_url=url,
-                thumbnail_video_path=tmp_thumbnail_video,
-                video_width=video_information.width,
-                video_height=video_information.height,
-                default_thumbnail_size=DEFAULT_THUMBNAIL_SIZE,
-            )
-            thumbnail_binary_repo.save(
-                data_source=tmp_thumbnail_video,
-                remove_source=True,
-                dst_file_name=Video.thumbnail_video_filename_by_video_id(video_id),
-            )
+            with NamedTemporaryFile() as tmp_thumbnail_video:
+                logger.debug(f"Writing thumbnail video to {tmp_thumbnail_video.name}")
+
+                generate_thumbnail_video(
+                    data_binary_url=url,
+                    thumbnail_video_path=tmp_thumbnail_video.name,
+                    video_width=video_information.width,
+                    video_height=video_information.height,
+                    default_thumbnail_size=DEFAULT_THUMBNAIL_SIZE,
+                )
+                thumbnail_binary_repo.save(
+                    data_source=tmp_thumbnail_video.name,
+                    remove_source=True,
+                    dst_file_name=Video.thumbnail_video_filename_by_video_id(video_id),
+                )
             logger.debug(f"Video {video_id} has been successfully preprocessed")
         except Exception as ex:
             logger.error(f"Error occurred while preprocessing video {video_id}", exc_info=ex)
