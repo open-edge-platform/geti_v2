@@ -110,6 +110,15 @@ def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list
             continue
         if project_type == GetiProjectType.CLASSIFICATION:
             is_classification_task_supported = True
+        if (
+            project_type == GetiProjectType.KEYPOINT_DETECTION
+            and not project_meta["pipeline"]["tasks"][1]["keypoint_structure"]["positions"]
+        ):
+            # This dataset is most likely exported outside of Geti, so it does not contain any position data.
+            # We generate this position data based on the first annotation in the dataset.
+            project_meta["pipeline"]["tasks"][1]["keypoint_structure"]["positions"] = (
+                ImportUtils.get_keypoint_structure_positions(dm_dataset=dm_dataset)
+            )
         supported_project_types.append(
             {
                 "project_type": ImportUtils.project_type_to_rest_api_string(
