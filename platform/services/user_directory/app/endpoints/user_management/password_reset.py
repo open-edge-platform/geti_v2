@@ -109,7 +109,8 @@ async def request_password_reset(  # noqa: ANN201
     try:
         UsersHandler.is_email_valid(sanitized_email)
     except InvalidEmail as msg:
-        logger.error(msg)
+        sanitized_msg = _sanitize_input(str(msg))
+        logger.error(sanitized_msg)
         return PlainTextResponse(ErrorMessages.INVALID_EMAIL, status_code=HTTPStatus.UNPROCESSABLE_ENTITY)
 
     with tracer.start_as_current_span("get-expiration-time-from-cm"):
