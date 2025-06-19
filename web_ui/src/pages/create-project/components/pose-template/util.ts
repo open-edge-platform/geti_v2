@@ -10,7 +10,7 @@ import { LabelsRelationType } from '../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { TaskMetadata } from '../../../../core/projects/task.interface';
 import { DEFAULT_LABEL, getNextColor } from '../../../../shared/components/label-tree-view/utils';
-import { EdgeLine } from '../../../utils';
+import { EdgeLine, getMaxMinPoint, PointAxis } from '../../../utils';
 
 export interface TemplateState {
     edges: EdgeLine[];
@@ -112,3 +112,28 @@ export const updateWithLatestPoints =
             from: points.find(isEqualLabel(from)) as KeypointNode,
         };
     };
+
+export const resizePoints = (scaleFactor: number, points: KeypointNode[]) => {
+    const [minX, maxX] = getMaxMinPoint(points, PointAxis.X);
+    const [minY, maxY] = getMaxMinPoint(points, PointAxis.Y);
+
+    const currentWidth = maxX - minX;
+    const currentHeight = maxY - minY;
+
+    const newWidth = currentWidth * scaleFactor;
+    const newHeight = currentHeight * scaleFactor;
+
+    const scaleX = newWidth / currentWidth;
+    const scaleY = newHeight / currentHeight;
+
+    const paddingY = (currentHeight - newHeight) / 2;
+    const paddingX = (currentWidth - newWidth) / 2;
+
+    const newPoints = points.map((point) => ({
+        ...point,
+        x: (point.x - minX) * scaleX + minX + paddingX,
+        y: (point.y - minY) * scaleY + minY + paddingY,
+    }));
+
+    return newPoints;
+};

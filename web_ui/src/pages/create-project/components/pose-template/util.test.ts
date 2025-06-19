@@ -16,6 +16,7 @@ import {
     isEqualLabel,
     isMatchingEdge,
     isPointInEdge,
+    resizePoints,
     rgbToHex,
     updateWithLatestPoints,
 } from './util';
@@ -193,6 +194,30 @@ describe('post-template utils', () => {
         it('edge does not match the given points', () => {
             expect(isMatchingEdge(pointA, pointC)(edgeAB)).toBe(false);
             expect(isMatchingEdge(pointC, pointB)(edgeAB)).toBe(false);
+        });
+    });
+
+    describe('resizePoints', () => {
+        it('scale points with scale factor < 1', () => {
+            const points = [getMockedKeypointNode({ x: 10, y: 10 }), getMockedKeypointNode({ x: 20, y: 30 })];
+            const result = resizePoints(0.5, points);
+
+            expect(result).toHaveLength(2);
+            expect(result[0].x).toBeCloseTo(12.5);
+            expect(result[0].y).toBeCloseTo(15);
+            expect(result[1].x).toBeCloseTo(17.5);
+            expect(result[1].y).toBeCloseTo(25);
+        });
+
+        it('centers points with padding', () => {
+            const points = [getMockedKeypointNode({ x: 0, y: 0 }), getMockedKeypointNode({ x: 100, y: 100 })];
+            const result = resizePoints(0.5, points);
+
+            expect(result).toHaveLength(2);
+            expect(result[0].x).toBeCloseTo(25);
+            expect(result[0].y).toBeCloseTo(25);
+            expect(result[1].x).toBeCloseTo(75);
+            expect(result[1].y).toBeCloseTo(75);
         });
     });
 });

@@ -6,47 +6,20 @@ import { useEffect, useRef, useState } from 'react';
 import { Flex } from '@geti/ui';
 import { noop } from 'lodash-es';
 
-import { KeypointNode } from '../../../../core/annotations/shapes.interface';
 import { HoveredProvider } from '../../../../providers/hovered-provider/hovered-provider.component';
 import { SelectedProvider } from '../../../../providers/selected-provider/selected-provider.component';
 import { denormalizePoint } from '../../../../shared/utils';
 import useUndoRedoState from '../../../annotator/tools/undo-redo/use-undo-redo-state';
 import { ZoomProvider } from '../../../annotator/zoom/zoom-provider.component';
 import { TransformZoom } from '../../../shared/zoom/transform-zoom.component';
-import { getMaxMinPoint, PointAxis } from '../../../utils';
 import { CanvasTemplate } from './canvas/canvas-template.component';
-import { createRoi, TemplateState } from './util';
+import { createRoi, resizePoints, TemplateState } from './util';
 
 export interface ReadonlyTemplateManagerProps {
     className: string;
     scaleFactor?: number;
     initialNormalizedState: TemplateState;
 }
-
-const repositionPoints = (scaleFactor: number, points: KeypointNode[]) => {
-    const [minX, maxX] = getMaxMinPoint(points, PointAxis.X);
-    const [minY, maxY] = getMaxMinPoint(points, PointAxis.Y);
-
-    const currentWidth = maxX - minX;
-    const currentHeight = maxY - minY;
-
-    const newWidth = currentWidth * scaleFactor;
-    const newHeight = currentHeight * scaleFactor;
-
-    const scaleX = newWidth / currentWidth;
-    const scaleY = newHeight / currentHeight;
-
-    const paddingY = (currentHeight - newHeight) / 2;
-    const paddingX = (currentWidth - newWidth) / 2;
-
-    const newPoints = points.map((point) => ({
-        ...point,
-        x: (point.x - minX) * scaleX + minX + paddingX,
-        y: (point.y - minY) * scaleY + minY + paddingY,
-    }));
-
-    return newPoints;
-};
 
 export const ReadonlyTemplateManager = ({
     className,
@@ -65,7 +38,7 @@ export const ReadonlyTemplateManager = ({
 
         undoRedoActions.reset({
             ...initialNormalizedState,
-            points: repositionPoints(
+            points: resizePoints(
                 scaleFactor,
                 initialNormalizedState.points.map((point) => denormalizePoint(point, newRoi))
             ),
