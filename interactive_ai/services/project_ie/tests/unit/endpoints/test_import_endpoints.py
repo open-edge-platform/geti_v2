@@ -4,15 +4,12 @@
 from http import HTTPStatus
 from unittest.mock import patch
 
-import pytest
-
 from communication.controllers import ImportController
 from communication.models import ImportOperation
 
 from geti_types import ID
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestProjectImportEndpoints:
     def test_start_project_import(self, fxt_test_app, fxt_session_ctx, fxt_ote_id) -> None:
         # Arrange

@@ -68,7 +68,6 @@ def fxt_mock_progress_callback():
     yield MagicMock()
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestProjectImportUseCase:
     @pytest.mark.parametrize("import_version, current_version", (("1.0", "1.0"), ("0.5", "1.0"), ("1.5", "1.0")))
     def test_import_zip(
