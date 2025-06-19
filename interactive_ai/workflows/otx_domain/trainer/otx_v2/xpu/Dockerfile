@@ -57,7 +57,7 @@ COPY --link download_pretrained_weights.py download_pretrained_weights.py
 # For OTX to install torch with ipex support, else defaults to cpu version
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
 RUN uv pip uninstall torch
-RUN uv cache clear
+RUN uv cache clean
 RUN uv pip install torch==2.7.0 --default-index https://download.pytorch.org/whl/xpu
 
 # step 3: build final runtime image
