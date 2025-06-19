@@ -13,8 +13,8 @@ import { useSelected } from '../../../../../providers/selected-provider/selected
 import { ButtonWithSpectrumTooltip } from '../../../../../shared/components/button-with-tooltip/button-with-tooltip.component';
 import { KeyMap } from '../../../../../shared/keyboard-events/keyboard.interface';
 import { hasDifferentId } from '../../../../../shared/utils';
+import { EdgeLine } from '../../../../utils';
 import {
-    EdgeLine,
     isDifferentLabel,
     isEqualLabel,
     TemplateState,

@@ -4,18 +4,13 @@
 import { negate } from 'lodash-es';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
-import { KeypointNode, Point } from '../../../../core/annotations/shapes.interface';
+import { KeypointNode } from '../../../../core/annotations/shapes.interface';
 import { LabelItemEditionState, LabelItemType, LabelTreeItem } from '../../../../core/labels/label-tree-view.interface';
 import { LabelsRelationType } from '../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { TaskMetadata } from '../../../../core/projects/task.interface';
 import { DEFAULT_LABEL, getNextColor } from '../../../../shared/components/label-tree-view/utils';
-
-export interface EdgeLine {
-    id: string;
-    from: KeypointNode;
-    to: KeypointNode;
-}
+import { EdgeLine } from '../../../utils';
 
 export interface TemplateState {
     edges: EdgeLine[];
@@ -117,7 +112,3 @@ export const updateWithLatestPoints =
             from: points.find(isEqualLabel(from)) as KeypointNode,
         };
     };
-
-export const denormalizePoint = <T extends Point>(point: T, roi: RegionOfInterest): T => {
-    return { ...point, x: point.x * roi.width, y: point.y * roi.height };
-};

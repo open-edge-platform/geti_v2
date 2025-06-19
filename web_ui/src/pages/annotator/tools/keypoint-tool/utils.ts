@@ -13,13 +13,8 @@ import { KeypointNode, Point } from '../../../../core/annotations/shapes.interfa
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { KeypointStructure } from '../../../../core/projects/task.interface';
 import { isNonEmptyString } from '../../../../shared/utils';
-import { KEYPOINT_RADIUS } from '../../../utils';
+import { getMaxMinPoint, KEYPOINT_RADIUS, PointAxis } from '../../../utils';
 import { createAnnotation } from '../../utils';
-
-export enum PointAxis {
-    X = 'x',
-    Y = 'y',
-}
 
 export enum CursorDirection {
     SouthEast = 'south-east',
@@ -192,12 +187,6 @@ export const getTemplateWithDirection = (templatePoints: KeypointNode[], cursorD
         return mirrorPointsAcrossAxis(mirrorPointsAcrossAxis(templatePoints, PointAxis.Y), PointAxis.X);
     }
     return templatePoints;
-};
-
-const getMaxMinPoint = <T extends Point>(points: T[], pointAxis: PointAxis) => {
-    const minAxisValue = Math.min(...points.map((point) => point[pointAxis]));
-    const maxAxisValue = Math.max(...points.map((point) => point[pointAxis]));
-    return [minAxisValue, maxAxisValue];
 };
 
 export const getPoseLocations = (points: KeypointNode[], gap: number): PoseLocations => {

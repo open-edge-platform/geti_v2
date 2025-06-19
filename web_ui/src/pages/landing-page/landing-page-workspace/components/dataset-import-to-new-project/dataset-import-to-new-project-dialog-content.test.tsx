@@ -114,7 +114,7 @@ describe(DatasetImportToNewProjectDialogContent, () => {
             expect(screen.queryByRole('checkbox', { name: 'select-all-labels' })).toBeInTheDocument();
         });
 
-        it('not render select label for keypoint detection', async () => {
+        it('displays template view when project type is keypoint detection', async () => {
             const supportedProjectTypes = getMockedSupportedProjectTypes([
                 {
                     projectType: DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION,
@@ -138,8 +138,8 @@ describe(DatasetImportToNewProjectDialogContent, () => {
                 supportedProjectTypes,
                 activeStep: DATASET_IMPORT_TO_NEW_PROJECT_STEP.LABELS,
             });
-            expect(screen.getByLabelText('dataset-import-to-new-project-labels')).toBeVisible();
-            expect(screen.queryByRole('checkbox', { name: 'select-all-labels' })).not.toBeInTheDocument();
+
+            expect(screen.getByLabelText('keypoint readonly template')).toBeVisible();
         });
     });
 });

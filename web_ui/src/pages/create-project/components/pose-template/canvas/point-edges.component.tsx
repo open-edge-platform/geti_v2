@@ -6,7 +6,7 @@ import { Delete } from '@geti/ui/icons';
 
 import { KeypointNode, Point } from '../../../../../core/annotations/shapes.interface';
 import { useSelected } from '../../../../../providers/selected-provider/selected-provider.component';
-import { EdgeLine } from '../util';
+import { EdgeLine } from '../../../../utils';
 import { Edge } from './edge.component';
 
 interface PointEdgesProps {

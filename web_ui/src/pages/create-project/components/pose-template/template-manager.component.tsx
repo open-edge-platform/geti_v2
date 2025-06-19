@@ -11,6 +11,7 @@ import { RegionOfInterest } from '../../../../core/annotations/annotation.interf
 import { HoveredProvider } from '../../../../providers/hovered-provider/hovered-provider.component';
 import { SelectedProvider } from '../../../../providers/selected-provider/selected-provider.component';
 import { ButtonWithSpectrumTooltip } from '../../../../shared/components/button-with-tooltip/button-with-tooltip.component';
+import { denormalizePoint } from '../../../../shared/utils';
 import { SyncZoomState } from '../../../annotator/zoom/sync-zoom-state.component';
 import { ZoomProvider } from '../../../annotator/zoom/zoom-provider.component';
 import { TransformZoom } from '../../../shared/zoom/transform-zoom.component';
@@ -23,7 +24,7 @@ import { TemplateFooter } from './template-footer.component';
 import { TemplatePrimaryToolbar } from './template-primary-toolbar/template-primary-toolbar.component';
 import { TemplateSecondaryToolbar } from './template-secondary-toolbar/template-secondary-toolbar.component';
 import { Templates } from './templates/templates.component';
-import { createRoi, denormalizePoint, TemplateState, TemplateStateWithHistory } from './util';
+import { createRoi, TemplateState, TemplateStateWithHistory } from './util';
 
 export interface TemplateManagerProps {
     gap?: Responsive<DimensionValue>;

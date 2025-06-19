@@ -4,6 +4,7 @@
 import { KeypointStructure } from '../../../../core/projects/task.interface';
 import { getMockedKeypointNode } from '../../../../test-utils/mocked-items-factory/mocked-keypoint';
 import { getMockedLabel } from '../../../../test-utils/mocked-items-factory/mocked-labels';
+import { PointAxis } from '../../../utils';
 import {
     CursorDirection,
     getAnnotationInBoundingBox,
@@ -18,7 +19,6 @@ import {
     groupByFirstNode,
     mirrorPointsAcrossAxis,
     PADDING_MULTIPLIER,
-    PointAxis,
     rotatePointsAroundPivot,
 } from './utils';
 
