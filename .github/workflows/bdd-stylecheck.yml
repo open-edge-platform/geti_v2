@@ -27,6 +27,8 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@f3121ef80ee2c4902cefcba4d30c2d17aa8baea7
+        with:
+          version: "0.7.13"
 
       - name: Setup Java
         uses: actions/setup-java@v4

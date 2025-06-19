@@ -14,7 +14,7 @@ PYTHONPATH_LOCAL     := tests:app
 
 # Dev environment
 PYTHON_VERSION       := python3.10
-UV_VERSION           := 0.6.12
+UV_VERSION           := 0.7.13  # Ensure version in GHA workflow matches this version
 
 # PIP installation command
 PIP_INSTALL_PARAMS   := --trusted-host pypi.org \
