@@ -97,7 +97,7 @@ class LabelGroup:
         """Returns True if the LabelGroup is equal to the other object."""
         if not isinstance(other, LabelGroup):
             return False
-        return self.id_ == other.id_ or (set(self.labels) == set(other.labels) and self.group_type == other.group_type)
+        return self.id_ == other.id_
 
     def __repr__(self) -> str:
         """Returns the string representation of the LabelGroup."""
@@ -557,13 +557,7 @@ class LabelSchema(PersistentEntity):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, LabelSchema):
             return False
-        return self.id_ == other.id_ or (
-            self.project_id == other.project_id
-            and self.previous_schema_revision_id == other.previous_schema_revision_id
-            and self.label_tree == other.label_tree
-            and self.get_groups(include_empty=True) == other.get_groups(include_empty=True)
-            and self.deleted_label_ids == other.deleted_label_ids
-        )
+        return self.id_ == other.id_
 
 
 class NullLabelSchema(LabelSchema):
@@ -699,10 +693,4 @@ class LabelSchemaView(LabelSchema):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, LabelSchemaView):
             return False
-        return self.id_ == other.id_ or (
-            self.parent_schema == other.parent_schema
-            and self.task_node_id == other.task_node_id
-            and self.previous_schema_revision_id == other.previous_schema_revision_id
-            and self.label_tree == other.label_tree
-            and self.get_groups(include_empty=True) == other.get_groups(include_empty=True)
-        )
+        return self.id_ == other.id_
