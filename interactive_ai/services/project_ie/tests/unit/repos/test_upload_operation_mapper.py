@@ -13,7 +13,6 @@ This module tests the UploadOperationMapper class.
 """
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestUploadOperationMapper:
     def test_map_upload_operation(self) -> None:
         # Arrange
