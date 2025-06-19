@@ -28,7 +28,7 @@ CLEAN_DIRS := \
     ${CHART_BUILD_DIR}
 
 pre-venv:
-	@if ! uv version | grep ${UV_VERSION}; then \
+	@if ! uv self version | grep ${UV_VERSION}; then \
 		curl --proto '=https' --tlsv1.2 -LsSf "https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-installer.sh" | sh; \
 	fi
 
