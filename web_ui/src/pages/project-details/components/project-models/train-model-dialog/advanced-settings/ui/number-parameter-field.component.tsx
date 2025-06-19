@@ -13,7 +13,8 @@ type NumberGroupParamsProps = Pick<NumberParameter, 'type' | 'value' | 'minValue
     isDisabled?: boolean;
 };
 
-const DEFAULT_STEP = 1;
+const DEFAULT_INT_STEP = 1;
+const DEFAULT_FLOAT_STEP = 0.1;
 
 export const NumberParameterField: FC<NumberGroupParamsProps> = ({
     value,
@@ -25,9 +26,9 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({
 }) => {
     const [parameterValue, setParameterValue] = useState<number>(value);
 
-    const floatingPointStep = maxValue === null ? DEFAULT_STEP : getFloatingPointStep(minValue, maxValue);
+    const floatingPointStep = maxValue === null ? DEFAULT_FLOAT_STEP : getFloatingPointStep(minValue, maxValue);
 
-    const step = type === 'int' ? DEFAULT_STEP : floatingPointStep;
+    const step = type === 'int' ? DEFAULT_INT_STEP : floatingPointStep;
 
     const handleValueChange = (inputValue: number): void => {
         setParameterValue(inputValue);
