@@ -158,20 +158,19 @@ class TestMediaUploadedUseCase:
             thumbnail_binary_filename="image_id_thumbnail.jpg",
         )
 
-    @patch("usecases.media_uploaded_usecase.NamedTemporaryFile")
+    @patch("usecases.media_uploaded_usecase.TemporaryDirectory")
     @patch.object(ThumbnailBinaryRepo, "__init__", new=mock_init)
     @patch.object(VideoBinaryRepo, "__init__", new=mock_init)
-    def test_on_video_uploaded(self, mock_named_temporary_file) -> None:
+    def test_on_video_uploaded(self, mock_temporary_directory) -> None:
         # Arrange
         frame_numpy = MagicMock()
         cropped_numpy = MagicMock()
         video_information = VideoInformation(fps=30, width=200, height=100, total_frames=100)
 
-        temp_file = MagicMock()
-        temp_file.name = "temporary_path"
-        temp_file_context = MagicMock()
-        temp_file_context.__enter__.return_value = temp_file
-        mock_named_temporary_file.return_value = temp_file_context
+        temp_dir = "temporary_path"
+        temp_dir_context = MagicMock()
+        temp_dir_context.__enter__.return_value = temp_dir
+        mock_temporary_directory.return_value = temp_dir_context
 
         # Act
         with (
@@ -206,16 +205,15 @@ class TestMediaUploadedUseCase:
             media_numpy=cropped_numpy,
             thumbnail_binary_filename="video_id_thumbnail.jpg",
         )
-        mock_named_temporary_file.assert_called_once_with()
+        mock_temporary_directory.assert_called_once_with()
         mock_generate_thumbnail_video.assert_called_once_with(
             data_binary_url="presigned_url",
-            thumbnail_video_path="temporary_path",
+            thumbnail_video_path="temporary_path/data_binary_filename",
             video_width=200,
             video_height=100,
             default_thumbnail_size=256,
         )
         mock_save.assert_called_once_with(
-            data_source="temporary_path",
-            remove_source=True,
+            data_source="temporary_path/data_binary_filename",
             dst_file_name="video_id_thumbnail.mp4",
         )

@@ -1,7 +1,8 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import logging
-from tempfile import NamedTemporaryFile
+import os
+from tempfile import TemporaryDirectory
 from typing import Any
 
 from geti_kafka_tools import publish_event
@@ -115,19 +116,19 @@ class MediaUploadedUseCase:
                 thumbnail_binary_filename=Video.thumbnail_filename_by_video_id(video_id),
             )
 
-            with NamedTemporaryFile() as tmp_thumbnail_video:
-                logger.debug(f"Writing thumbnail video to {tmp_thumbnail_video.name}")
+            with TemporaryDirectory() as tmp_directory:
+                tmp_thumbnail_video = os.path.join(tmp_directory, data_binary_filename)
+                logger.debug(f"Writing thumbnail video to {tmp_thumbnail_video}")
 
                 generate_thumbnail_video(
                     data_binary_url=url,
-                    thumbnail_video_path=tmp_thumbnail_video.name,
+                    thumbnail_video_path=tmp_thumbnail_video,
                     video_width=video_information.width,
                     video_height=video_information.height,
                     default_thumbnail_size=DEFAULT_THUMBNAIL_SIZE,
                 )
                 thumbnail_binary_repo.save(
-                    data_source=tmp_thumbnail_video.name,
-                    remove_source=True,
+                    data_source=tmp_thumbnail_video,
                     dst_file_name=Video.thumbnail_video_filename_by_video_id(video_id),
                 )
             logger.debug(f"Video {video_id} has been successfully preprocessed")
