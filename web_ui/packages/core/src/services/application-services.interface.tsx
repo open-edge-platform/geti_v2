@@ -15,7 +15,6 @@ import { SubscriptionsService } from '../../../../src/core/credits/subscriptions
 import { TransactionsService } from '../../../../src/core/credits/transactions/services/transactions-service.interface';
 import { TrainingDatasetService } from '../../../../src/core/datasets/services/api-training-dataset-service';
 import { DatasetImportService } from '../../../../src/core/datasets/services/dataset.interface';
-import { FeatureFlagService } from '../../../../src/core/feature-flags/services/feature-flag-service.interface';
 import { JobsService } from '../../../../src/core/jobs/services/jobs-service.interface';
 import { MaintenanceService } from '../../../../src/core/maintenance/services/maintenance.interface';
 import { MediaService } from '../../../../src/core/media/services/media-service.interface';
@@ -30,6 +29,7 @@ import { StatusService } from '../../../../src/core/status/services/status-servi
 import { SupportedAlgorithmsService } from '../../../../src/core/supported-algorithms/services/supported-algorithms.interface';
 import { TestsService } from '../../../../src/core/tests/services/tests-service.interface';
 import { UserSettingsService } from '../../../../src/core/user-settings/services/user-settings.interface';
+import { FeatureFlagService } from '../feature-flags/services/feature-flag-service.interface';
 import { OnboardingService } from '../users/services/onboarding-service.interface';
 import { UsersService } from '../users/services/users-service.interface';
 import { WorkspacesService } from '../workspaces/services/workspaces-service.interface';

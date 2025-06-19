@@ -13,6 +13,7 @@ import {
     useState,
 } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { useQueryClient } from '@tanstack/react-query';
@@ -26,7 +27,6 @@ import {
     DatasetImportToNewProjectItem,
 } from '../../core/datasets/dataset.interface';
 import { useDatasetImportQueries } from '../../core/datasets/hooks/use-dataset-import-queries.hook';
-import { useFeatureFlags } from '../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useLocalStorageDatasetImport } from '../../features/dataset-import/hooks/use-local-storage-dataset-import.hook';
 import { NOTIFICATION_TYPE } from '../../notification/notification-toast/notification-type.enum';
 import { useNotification } from '../../notification/notification.component';

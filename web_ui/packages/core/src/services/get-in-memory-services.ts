@@ -13,7 +13,6 @@ import { createInMemorySubscriptionsService } from '../../../../src/core/credits
 import { createInMemoryTransactionsService } from '../../../../src/core/credits/transactions/services/in-memory-transactions-service';
 import { createInMemoryDatasetImportService } from '../../../../src/core/datasets/services/in-memory-dataset-import-service';
 import { createInMemoryTrainingDatasetService } from '../../../../src/core/datasets/services/in-memory-training-dataset-service';
-import { createInMemoryApiFeatureFlagService } from '../../../../src/core/feature-flags/services/in-memory-api-feature-flag-service';
 import { createInMemoryJobsService } from '../../../../src/core/jobs/services/in-memory-jobs-service';
 import { createInMemoryApiMaintenanceService } from '../../../../src/core/maintenance/services/in-memory-api-maintenance-service';
 import { createInMemoryMediaService } from '../../../../src/core/media/services/in-memory-media-service/in-memory-media-service';
@@ -28,6 +27,7 @@ import { createInMemoryStatusService } from '../../../../src/core/status/service
 import { createInMemorySupportedAlgorithmsService } from '../../../../src/core/supported-algorithms/services/in-memory-supported-algorithms-service';
 import { createInMemoryTestsService } from '../../../../src/core/tests/services/in-memory-tests-service';
 import { createInMemoryUserSettingsService } from '../../../../src/core/user-settings/services/in-memory-user-settings-service';
+import { createInMemoryApiFeatureFlagService } from '../feature-flags/services/in-memory-api-feature-flag-service';
 import { createInMemoryUsersService } from '../users/services/in-memory-users-service';
 import { createInMemoryOnboardingService } from '../users/services/inmemory-onboarding-service';
 import { createInMemoryApiWorkspacesService } from '../workspaces/services/in-memory-api-workspaces-service';

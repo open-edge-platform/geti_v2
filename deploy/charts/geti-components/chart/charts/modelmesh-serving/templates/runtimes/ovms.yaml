@@ -44,6 +44,11 @@ spec:
   {{- toYaml .Values.ovmsRuntimeTolerations | nindent 4 }}
   {{- end }}
 
+  {{- if not .Values.global.istio_ambient_mesh }}
+  annotations:
+    proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+  {{- end }}
+
   containers:
     - name: ovms
       image: "{{ .Values.modelserver.image.registry }}/{{ if .Values.modelserver.image.repository }}{{ .Values.modelserver.image.repository }}/{{ end }}{{ .Values.modelserver.image.name }}"

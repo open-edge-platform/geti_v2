@@ -1,15 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Flex, Switch } from '@geti/ui';
-
 import {
-    BoolParameter,
     ConfigurationParameter,
     TrainingConfiguration,
 } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
-import { isBoolParameter, isConfigurationParameter } from '../../../../../../../../core/configurable-parameters/utils';
-import { Parameter, Parameters } from '../../ui/parameters.component';
+import { isConfigurationParameter } from '../../../../../../../../core/configurable-parameters/utils';
+import { Parameters } from '../../ui/parameters.component';
 
 export type LearningParametersType = TrainingConfiguration['training'];
 
@@ -28,18 +25,15 @@ interface SingleLearningParameterProps {
 }
 
 const SingleLearningParameter = ({ parameter, onUpdateTrainingConfiguration }: SingleLearningParameterProps) => {
-    const handleChange = (value: number | boolean | string) => {
+    const handleChange = (inputParameter: ConfigurationParameter) => {
         onUpdateTrainingConfiguration((config) => {
             if (!config) return undefined;
 
             const newConfig = structuredClone(config);
 
             newConfig.training = config.training.map((trainingParameter) => {
-                if (trainingParameter.key === parameter.key) {
-                    return {
-                        ...trainingParameter,
-                        value,
-                    } as ConfigurationParameter;
+                if (trainingParameter.key === inputParameter.key) {
+                    return inputParameter;
                 }
 
                 return trainingParameter;
@@ -65,9 +59,6 @@ const LearningParametersGroup = ({
     parameters,
     onUpdateTrainingConfiguration,
 }: LearningParametersGroupProps) => {
-    const enableParameter = parameters[0] as BoolParameter;
-    const configParameter = parameters[1];
-
     const handleChange = (inputParameter: ConfigurationParameter) => {
         onUpdateTrainingConfiguration((config) => {
             if (!config) return undefined;
@@ -95,42 +86,7 @@ const LearningParametersGroup = ({
         });
     };
 
-    return (
-        <Parameters.Container key={groupKey}>
-            <Parameter.Layout
-                header={configParameter.name}
-                description={configParameter.description}
-                onReset={() => {
-                    handleChange({
-                        ...enableParameter,
-                        value: enableParameter.defaultValue,
-                    });
-                    handleChange({
-                        ...configParameter,
-                        value: configParameter.defaultValue,
-                    } as ConfigurationParameter);
-                }}
-            >
-                <Flex gap={'size-100'}>
-                    <Switch
-                        isEmphasized
-                        isSelected={enableParameter.value}
-                        onChange={(isSelected) => {
-                            handleChange({ ...enableParameter, value: isSelected });
-                        }}
-                        aria-label={`Toggle ${configParameter.name}`}
-                    />
-                    <Parameter.Field
-                        parameter={configParameter}
-                        onChange={(value) => {
-                            handleChange({ ...configParameter, value } as ConfigurationParameter);
-                        }}
-                        isDisabled={!enableParameter.value}
-                    />
-                </Flex>
-            </Parameter.Layout>
-        </Parameters.Container>
-    );
+    return <Parameters parameters={parameters} onChange={handleChange} />;
 };
 
 export const LearningParametersList = ({ parameters, onUpdateTrainingConfiguration }: LearningParametersListProps) => {
@@ -148,22 +104,14 @@ export const LearningParametersList = ({ parameters, onUpdateTrainingConfigurati
         const objectParameters: [string, ConfigurationParameter[]][] = Object.entries(parameter);
 
         return objectParameters.map(([key, parametersLocal]) => {
-            if (
-                parametersLocal.length === 2 &&
-                parametersLocal[0].key === 'enable' &&
-                isBoolParameter(parametersLocal[0])
-            ) {
-                return (
-                    <LearningParametersGroup
-                        key={key}
-                        groupKey={key}
-                        parameters={parametersLocal}
-                        onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
-                    />
-                );
-            }
-
-            return null;
+            return (
+                <LearningParametersGroup
+                    key={key}
+                    groupKey={key}
+                    parameters={parametersLocal}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            );
         });
     });
 };

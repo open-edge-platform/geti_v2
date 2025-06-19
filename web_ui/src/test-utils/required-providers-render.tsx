@@ -3,6 +3,7 @@
 
 import { ReactElement, ReactNode, Suspense } from 'react';
 
+import { CustomFeatureFlags, DEV_FEATURE_FLAGS } from '@geti/core';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import {
     ApplicationServicesContextProps,
@@ -15,7 +16,6 @@ import { render, RenderOptions, RenderResult } from '@testing-library/react';
 import { AuthProvider } from 'react-oidc-context';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-import { CustomFeatureFlags, DEV_FEATURE_FLAGS } from '../core/feature-flags/services/feature-flag-service.interface';
 import { AccountStatusDTO } from '../core/organizations/dtos/organizations.interface';
 import { NotificationProvider, Notifications } from '../notification/notification.component';
 import { TusUploadProvider } from '../providers/tus-upload-provider/tus-upload-provider.component';

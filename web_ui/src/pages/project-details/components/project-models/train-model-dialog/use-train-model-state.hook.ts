@@ -3,11 +3,11 @@
 
 import { useEffect, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isEmpty, isNumber } from 'lodash-es';
 
 import { useTrainingConfigurationQuery } from '../../../../../core/configurable-parameters/hooks/use-training-configuration.hook';
 import { TrainingConfiguration } from '../../../../../core/configurable-parameters/services/configuration.interface';
-import { useFeatureFlags } from '../../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { TrainingBodyDTO } from '../../../../../core/models/dtos/train-model.interface';
 import { useModels } from '../../../../../core/models/hooks/use-models.hook';
 import { ModelsGroups } from '../../../../../core/models/models.interface';

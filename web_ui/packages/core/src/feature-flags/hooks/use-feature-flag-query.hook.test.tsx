@@ -3,14 +3,14 @@
 
 import { ReactNode, Suspense } from 'react';
 
-import { ApplicationServicesProvider } from '@geti/core/src/services/application-services-provider.component';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { rest } from 'msw';
 
-import { apiRequestUrl } from '../../../../packages/core/src/services/test-utils';
-import { API_URLS } from '../../../../packages/core/src/services/urls';
-import { server } from '../../annotations/services/test-utils';
+import { server } from '../../../../../src/core/annotations/services/test-utils';
+import { ApplicationServicesProvider } from '../../services/application-services-provider.component';
+import { apiRequestUrl } from '../../services/test-utils';
+import { API_URLS } from '../../services/urls';
 import { useFeatureFlagQuery } from './use-feature-flag-query.hook';
 
 describe('useFeatureFlagQuery', () => {
@@ -18,11 +18,11 @@ describe('useFeatureFlagQuery', () => {
         const queryClient = new QueryClient();
 
         return (
-            <Suspense fallback='loading...'>
-                <ApplicationServicesProvider useInMemoryEnvironment={false}>
-                    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-                </ApplicationServicesProvider>
-            </Suspense>
+            <QueryClientProvider client={queryClient}>
+                <Suspense fallback='loading...'>
+                    <ApplicationServicesProvider useInMemoryEnvironment={false}>{children}</ApplicationServicesProvider>
+                </Suspense>
+            </QueryClientProvider>
         );
     };
 

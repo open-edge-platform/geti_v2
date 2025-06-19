@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
+
 import { useConfigParameters } from '../../../../core/configurable-parameters/hooks/use-config-parameters.hook';
 import {
     useReconfigAutoTraining,
@@ -11,7 +13,6 @@ import {
     findDynamicRequiredAnnotationsConfig,
     findRequiredImagesAutoTrainingConfig,
 } from '../../../../core/configurable-parameters/utils';
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { ProjectIdentifier } from '../../../../core/projects/core.interface';
 import { Task } from '../../../../core/projects/task.interface';
 import { isNotCropTask } from '../../../utils';

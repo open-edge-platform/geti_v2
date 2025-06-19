@@ -3,11 +3,11 @@
 
 import { useEffect } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex, Grid, Heading, View } from '@geti/ui';
 import { FocusScope } from 'react-aria';
 
 import { hasMaxAllowedAnnotations } from '../../core/annotations/utils';
-import { useFeatureFlags } from '../../core/feature-flags/hooks/use-feature-flags.hook';
 import { Label } from '../../core/labels/label.interface';
 import { isExclusive } from '../../core/labels/utils';
 import { isVideo, isVideoFrame } from '../../core/media/video.interface';
