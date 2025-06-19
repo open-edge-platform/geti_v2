@@ -1,3 +1,8 @@
+# Required runtime flags to enable XPU support:
+# --device /dev/dri          # Intel GPU access
+# -v /dev/dri/by-path:/dev/dri/by-path  # Device path mapping
+# --ipc=host                 # Shared memory for XPU operations
+
 FROM python:3.10-slim-bookworm@sha256:2ee0fb8794bf82af1b2db168ada5869b4c27d17720dd3b155b56c111fb4a38ae AS base
 
 ENV UV_COMPILE_BYTECODE=1
