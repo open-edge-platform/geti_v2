@@ -13,7 +13,6 @@ import { createApiSubscriptionsService } from '../../../../src/core/credits/subs
 import { createApiTransactionsService } from '../../../../src/core/credits/transactions/services/api-transactions-service';
 import { createApiDatasetImportService } from '../../../../src/core/datasets/services/api-dataset-import-service';
 import { createApiTrainingDatasetService } from '../../../../src/core/datasets/services/api-training-dataset-service';
-import { createApiFeatureFlagService } from '../../../../src/core/feature-flags/services/api-feature-flag-service';
 import { createApiJobsService } from '../../../../src/core/jobs/services/api-jobs-service';
 import { createApiMaintenanceService } from '../../../../src/core/maintenance/services/api-maintenance-service';
 import { createApiMediaService } from '../../../../src/core/media/services/api-media-service/api-media-service';
@@ -28,6 +27,7 @@ import { createApiStatusService } from '../../../../src/core/status/services/api
 import { createApiSupportedAlgorithmsService } from '../../../../src/core/supported-algorithms/services/api-supported-algorithms-service';
 import { createApiTestsService } from '../../../../src/core/tests/services/api-tests-service';
 import { createApiUserSettingsService } from '../../../../src/core/user-settings/services/api-user-settings-service';
+import { createApiFeatureFlagService } from '../feature-flags/services/api-feature-flag-service';
 import { createApiOnboardingService } from '../users/services/api-onboarding-service';
 import { createApiUsersService } from '../users/services/api-users-service';
 import { createApiWorkspacesService } from '../workspaces/services/api-workspaces-service';

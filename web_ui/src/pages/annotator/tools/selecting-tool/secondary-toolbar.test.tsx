@@ -1,11 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { CustomFeatureFlags } from '@geti/core';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
-import { CustomFeatureFlags } from '../../../../core/feature-flags/services/feature-flag-service.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { fakeAnnotationToolContext } from '../../../../test-utils/fake-annotator-context';
 import { getMockedAnnotation } from '../../../../test-utils/mocked-items-factory/mocked-annotations';

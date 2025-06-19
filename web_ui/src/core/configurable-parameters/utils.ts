@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { isEqual } from 'lodash-es';
+import { get, isBoolean, isEqual, isNumber, isObject } from 'lodash-es';
 
 import { isNonEmptyArray } from '../../shared/utils';
 import {
@@ -19,6 +19,7 @@ import {
     EntityIdentifier,
     NumberGroupParams,
 } from './services/configurable-parameters.interface';
+import { BoolParameter, ConfigurationParameter, NumberParameter } from './services/configuration.interface';
 
 const hasEqualHeader =
     <T extends { header: string }>(toFind: string | null | undefined) =>
@@ -27,6 +28,9 @@ const hasEqualHeader =
 
 const getConfigByTaskId = (taskId: string) => (task: ConfigurableParametersTaskChain) => taskId === task.taskId;
 
+/**
+ * @deprecated
+ */
 export const findAutoTrainingConfig = (
     taskId: string,
     config: ConfigurableParametersTaskChain[]
@@ -43,6 +47,9 @@ export const findAutoTrainingConfig = (
     return parameterGroup;
 };
 
+/**
+ * @deprecated
+ */
 export const findDynamicRequiredAnnotationsConfig = (
     taskId: string,
     config: ConfigurableParametersTaskChain[]
@@ -59,6 +66,9 @@ export const findDynamicRequiredAnnotationsConfig = (
     return parameterGroup;
 };
 
+/**
+ * @deprecated
+ */
 export const findRequiredImagesAutoTrainingConfig = (
     taskId: string,
     config: ConfigurableParametersTaskChain[]
@@ -238,4 +248,20 @@ export const getNewParameterValue = <T extends string | boolean | number>(
         return { ...parameter, value };
     }
     return parameter;
+};
+
+export const isBoolParameter = (input: unknown): input is BoolParameter => {
+    return isObject(input) && get(input, 'type') === 'bool' && isBoolean(get(input, 'value'));
+};
+
+export const isNumberParameter = (input: unknown): input is NumberParameter => {
+    return (
+        isObject(input) &&
+        (get(input, 'type') === 'float' || get(input, 'type') === 'int') &&
+        isNumber(get(input, 'value'))
+    );
+};
+
+export const isConfigurationParameter = (input: unknown): input is ConfigurationParameter => {
+    return isObject(input) && 'key' in input && 'name' in input && 'description' in input;
 };

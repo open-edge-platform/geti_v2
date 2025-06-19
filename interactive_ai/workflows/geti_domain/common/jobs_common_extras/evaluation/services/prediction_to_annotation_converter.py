@@ -4,6 +4,7 @@
 """This module implements the PredictionToAnnotationConverter services"""
 
 import abc
+import logging
 from collections import defaultdict
 from collections.abc import Generator
 from typing import Any, NamedTuple
@@ -30,6 +31,8 @@ from model_api.models.utils import (
 
 from jobs_common_extras.evaluation.utils.detection_utils import detection2array
 from jobs_common_extras.evaluation.utils.segmentation_utils import create_annotation_from_segmentation_map
+
+logger = logging.getLogger(__name__)
 
 
 class IPredictionToAnnotationConverter(metaclass=abc.ABCMeta):
@@ -58,12 +61,15 @@ class IPredictionToAnnotationConverter(metaclass=abc.ABCMeta):
         if self.empty_label is not None:
             self.legacy_label_map_names["otx_empty_lbl"] = [self.empty_label]
 
-        # Create a mapping of ModelAPI label indices to label objects
+        # Create a mapping of ModelAPI label indices/str to label objects
         self.idx_to_label = {}
+        self.str_to_label = {}
         self.model_api_label_map_counts: dict[str, int] = defaultdict(int)
         for i, label_str in enumerate(model_api_labels):
             self.idx_to_label[i] = self.__get_label(label_str, pos_idx=self.model_api_label_map_counts[label_str])
+            self.str_to_label[label_str] = self.idx_to_label[i]
             self.model_api_label_map_counts[label_str] += 1
+            logger.debug(f"Label {label_str} mapped to {self.str_to_label[label_str]} and idx {i}")
 
     def __get_label(self, label_str: str, pos_idx: int) -> Label:
         if label_str in self.label_map_ids:
@@ -74,7 +80,24 @@ class IPredictionToAnnotationConverter(metaclass=abc.ABCMeta):
         raise ValueError(f"Label '{label_str}' (pos_idx={pos_idx}) not found in the label schema")
 
     def get_label_by_idx(self, label_idx: int) -> Label:
+        """
+        Get label by index.
+
+        :param label_idx: index of the label
+        :return: Label object corresponding to the label index
+        """
         return self.idx_to_label[label_idx]
+
+    def get_label_by_name(self, label_name: str) -> Label:
+        """
+        Get label by name.
+
+        :param label_name: name of the label
+        :return: Label object corresponding to the label name
+        """
+        if label_name in self.str_to_label:
+            return self.str_to_label[label_name]
+        raise ValueError(f"Label '{label_name}' not found in the label schema")
 
     @abc.abstractmethod
     def convert_to_annotations(self, predictions: NamedTuple, **kwargs) -> list[Annotation]:
@@ -100,7 +123,7 @@ class ClassificationToAnnotationConverter(IPredictionToAnnotationConverter):
         labels = []
         for label_idx, label_name, prob in predictions.top_labels:
             _prob = float(prob)
-            label = self.get_label_by_idx(label_idx)
+            label = self.get_label_by_name(label_name)
             labels.append(ScoredLabel(label_id=label.id_, is_empty=label.is_empty, probability=_prob))
 
         if not labels and self.empty_label:

@@ -7,7 +7,7 @@ import { Content, ContextualHelp, Flex, Radio, RadioGroup, Text } from '@geti/ui
 
 import { NumberGroupParams } from '../../../../../core/configurable-parameters/services/configurable-parameters.interface';
 import { NumberParameter } from '../../../../../core/configurable-parameters/services/configuration.interface';
-import { RequiredAnnotationsSlider } from './required-annotations-slider.component';
+import { RequiredAnnotations } from './required-annotations.component';
 
 enum AutoTrainingThresholdOption {
     FIXED = 'Fixed',
@@ -71,7 +71,7 @@ export const AutoTrainingThreshold: FC<AutoTrainingThresholdProps> = ({
             </RadioGroup>
 
             {isFixedThreshold && (
-                <RequiredAnnotationsSlider
+                <RequiredAnnotations
                     requiredImagesAutoTrainingConfig={requiredImagesAutoTrainingConfig}
                     onUpdateRequiredAnnotations={onUpdateRequiredAnnotations}
                 />

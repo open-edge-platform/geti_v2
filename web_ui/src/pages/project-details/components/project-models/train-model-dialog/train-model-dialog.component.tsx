@@ -47,9 +47,10 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
         isTaskChainProject,
         isReshufflingSubsetsEnabled,
         changeReshufflingSubsetsEnabled,
-        configParameters,
         changeTrainFromScratch,
         trainFromScratch,
+        trainingConfiguration,
+        updateTrainingConfiguration,
     } = useTrainModelState();
 
     const { canTrainModel, numberOfRequiredAnnotations } = isAllowedToTrainModel(selectedTask);
@@ -79,11 +80,11 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
     }
 
     return (
-        <Dialog maxWidth={'100rem'} width={'80vw'}>
+        <Dialog maxWidth={'100rem'} width={'80vw'} height={isBasicMode ? undefined : '80vh'}>
             <Heading>Train Model</Heading>
             <Divider />
             <Content>
-                {isBasicMode || configParameters === undefined ? (
+                {isBasicMode || trainingConfiguration === undefined ? (
                     <TrainModelBasic
                         selectedTask={selectedTask}
                         tasks={tasks}
@@ -96,11 +97,8 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
                     />
                 ) : (
                     <AdvancedSettings
-                        configParameters={configParameters}
-                        selectedTask={selectedTask}
-                        tasks={tasks}
-                        onTaskChange={changeTask}
-                        isTaskChainProject={isTaskChainProject}
+                        trainingConfiguration={trainingConfiguration}
+                        onUpdateTrainingConfiguration={updateTrainingConfiguration}
                         selectedModelTemplateId={selectedModelTemplateId}
                         onChangeSelectedTemplateId={changeSelectedTemplateId}
                         algorithms={algorithms}
