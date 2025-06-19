@@ -58,7 +58,6 @@ COPY --link download_pretrained_weights.py download_pretrained_weights.py
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
 RUN uv pip uninstall torch
 RUN uv pip install torch==2.7.0 --default-index https://download.pytorch.org/whl/xpu
-RUN uv cache clean
 
 # step 3: build final runtime image
 FROM base AS runtime
