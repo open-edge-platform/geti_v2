@@ -12,15 +12,6 @@ import { TaskMetadata } from '../../../../core/projects/task.interface';
 import { DEFAULT_LABEL, getNextColor } from '../../../../shared/components/label-tree-view/utils';
 import { EdgeLine, getMaxMinPoint, PointAxis } from '../../../utils';
 
-export interface TemplateState {
-    edges: EdgeLine[];
-    points: KeypointNode[];
-}
-
-export interface TemplateStateWithHistory extends TemplateState {
-    skipHistory?: boolean;
-}
-
 export const isEqualLabel = (point: KeypointNode) => (otherPoint: KeypointNode) => {
     return point.label.id === otherPoint.label.id;
 };
@@ -113,7 +104,7 @@ export const updateWithLatestPoints =
         };
     };
 
-export const resizePoints = (scaleFactor: number, points: KeypointNode[]) => {
+export const resizePoints = (scaleFactor: number, roi: RegionOfInterest, points: KeypointNode[]) => {
     const [minX, maxX] = getMaxMinPoint(points, PointAxis.X);
     const [minY, maxY] = getMaxMinPoint(points, PointAxis.Y);
 
@@ -126,14 +117,22 @@ export const resizePoints = (scaleFactor: number, points: KeypointNode[]) => {
     const scaleX = newWidth / currentWidth;
     const scaleY = newHeight / currentHeight;
 
-    const paddingY = (currentHeight - newHeight) / 2;
-    const paddingX = (currentWidth - newWidth) / 2;
+    const roiCenterX = roi.x + roi.width / 2;
+    const roiCenterY = roi.y + roi.height / 2;
 
-    const newPoints = points.map((point) => ({
-        ...point,
-        x: (point.x - minX) * scaleX + minX + paddingX,
-        y: (point.y - minY) * scaleY + minY + paddingY,
-    }));
+    const newPoints = points.map((point) => {
+        const newX = (point.x - minX) * scaleX + minX;
+        const newY = (point.y - minY) * scaleY + minY;
+
+        const offsetX = newX - minX;
+        const offsetY = newY - minY;
+
+        return {
+            ...point,
+            x: roiCenterX + offsetX - newWidth / 2,
+            y: roiCenterY + offsetY - newHeight / 2,
+        };
+    });
 
     return newPoints;
 };

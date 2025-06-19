@@ -12,8 +12,9 @@ import { denormalizePoint } from '../../../../shared/utils';
 import useUndoRedoState from '../../../annotator/tools/undo-redo/use-undo-redo-state';
 import { ZoomProvider } from '../../../annotator/zoom/zoom-provider.component';
 import { TransformZoom } from '../../../shared/zoom/transform-zoom.component';
+import { TemplateState } from '../../../utils';
 import { CanvasTemplate } from './canvas/canvas-template.component';
-import { createRoi, resizePoints, TemplateState } from './util';
+import { createRoi, resizePoints } from './util';
 
 export interface ReadonlyTemplateManagerProps {
     className: string;
@@ -33,15 +34,13 @@ export const ReadonlyTemplateManager = ({
 
     useEffect(() => {
         const newRoi = createRoi(containerRef.current?.clientWidth, containerRef.current?.clientHeight);
+        const denormalizePoints = initialNormalizedState.points.map((point) => denormalizePoint(point, newRoi));
 
         setRoi(newRoi);
 
         undoRedoActions.reset({
             ...initialNormalizedState,
-            points: resizePoints(
-                scaleFactor,
-                initialNormalizedState.points.map((point) => denormalizePoint(point, newRoi))
-            ),
+            points: resizePoints(scaleFactor, newRoi, denormalizePoints),
         });
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

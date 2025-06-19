@@ -16,15 +16,13 @@ import { KeyMap } from '../../../../../shared/keyboard-events/keyboard.interface
 import { getIds, hasDifferentId } from '../../../../../shared/utils';
 import { ClosestKeypoint } from '../../../../annotator/tools/edit-tool/edit-keypoint/closest-keypoint.component';
 import { useZoom } from '../../../../annotator/zoom/zoom-provider.component';
-import { EdgeLine, getPointInRoi } from '../../../../utils';
+import { EdgeLine, getPointInRoi, TemplateState, TemplateStateWithHistory } from '../../../../utils';
 import {
     getDefaultLabelStructure,
     isDifferentLabel,
     isEdgeConnectingPoints,
     isEqualLabel,
     isNotMatchingEdge,
-    TemplateState,
-    TemplateStateWithHistory,
     updateWithLatestPoints,
 } from '../util';
 import { DrawingBox } from './drawing-box.component';

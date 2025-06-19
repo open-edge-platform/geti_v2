@@ -14,10 +14,18 @@ import { KeypointStructure } from '../core/projects/task.interface';
 import { VALID_IMAGE_TYPES_SINGLE_UPLOAD } from '../shared/media-utils';
 import { PointerType } from './annotator/tools/tools.interface';
 import { isEraserOrRightButton, isLeftButton, MouseButton } from './buttons-utils';
-import { TemplateState } from './create-project/components/pose-template/util';
 
 type PointerSVGElement = PointerEvent<SVGElement>;
 type CallbackPointerVoid = (event: PointerSVGElement) => void;
+
+export interface TemplateState {
+    edges: EdgeLine[];
+    points: KeypointNode[];
+}
+
+export interface TemplateStateWithHistory extends TemplateState {
+    skipHistory?: boolean;
+}
 
 export enum PointAxis {
     X = 'x',

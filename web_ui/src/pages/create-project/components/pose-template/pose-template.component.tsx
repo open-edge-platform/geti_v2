@@ -10,11 +10,12 @@ import { RegionOfInterest } from '../../../../core/annotations/annotation.interf
 import { TaskMetadata } from '../../../../core/projects/task.interface';
 import { SliderAnimation } from '../../../../shared/components/slider-animation/slider-animation.component';
 import { isNonEmptyString } from '../../../../shared/utils';
+import { TemplateState } from '../../../utils';
 import { ProjectMetadata } from '../../new-project-dialog-provider/new-project-dialog-provider.interface';
 import { getLabelsNamesErrors } from '../../utils';
 import { InfoSection } from '../info-section/info-section.component';
 import { TemplateManager } from './template-manager.component';
-import { getProjectTypeMetadata, TemplateState } from './util';
+import { getProjectTypeMetadata } from './util';
 
 export interface PoseTemplateProps {
     metadata: TaskMetadata[];

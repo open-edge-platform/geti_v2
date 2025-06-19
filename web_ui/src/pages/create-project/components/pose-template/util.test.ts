@@ -198,26 +198,32 @@ describe('post-template utils', () => {
     });
 
     describe('resizePoints', () => {
-        it('scale points with scale factor < 1', () => {
-            const points = [getMockedKeypointNode({ x: 10, y: 10 }), getMockedKeypointNode({ x: 20, y: 30 })];
-            const result = resizePoints(0.5, points);
+        it('scales points', () => {
+            const pointA = getMockedKeypointNode({ x: 0, y: 0, label: getMockedLabel({ id: '1', name: 'A' }) });
+            const pointB = getMockedKeypointNode({ x: 100, y: 100, label: getMockedLabel({ id: '2', name: 'B' }) });
 
-            expect(result).toHaveLength(2);
-            expect(result[0].x).toBeCloseTo(12.5);
-            expect(result[0].y).toBeCloseTo(15);
-            expect(result[1].x).toBeCloseTo(17.5);
-            expect(result[1].y).toBeCloseTo(25);
+            const roi = { x: 0, y: 0, width: 100, height: 100 };
+            const [newPointA, newPointB] = resizePoints(0.5, roi, [pointA, pointB]);
+
+            expect(newPointA.x).toBeCloseTo(25);
+            expect(newPointA.y).toBeCloseTo(25);
+
+            expect(newPointB.x).toBeCloseTo(75);
+            expect(newPointB.y).toBeCloseTo(75);
         });
 
-        it('centers points with padding', () => {
-            const points = [getMockedKeypointNode({ x: 0, y: 0 }), getMockedKeypointNode({ x: 100, y: 100 })];
-            const result = resizePoints(0.5, points);
+        it('center element relative to roi', () => {
+            const pointA = getMockedKeypointNode({ x: 80, y: 80, label: getMockedLabel({ id: '1', name: 'A' }) });
+            const pointB = getMockedKeypointNode({ x: 100, y: 100, label: getMockedLabel({ id: '2', name: 'B' }) });
 
-            expect(result).toHaveLength(2);
-            expect(result[0].x).toBeCloseTo(25);
-            expect(result[0].y).toBeCloseTo(25);
-            expect(result[1].x).toBeCloseTo(75);
-            expect(result[1].y).toBeCloseTo(75);
+            const roi = { x: 0, y: 0, width: 100, height: 100 };
+            const [newPointA, newPointB] = resizePoints(1, roi, [pointA, pointB]);
+
+            expect(newPointA.x).toBeCloseTo(40);
+            expect(newPointA.y).toBeCloseTo(40);
+
+            expect(newPointB.x).toBeCloseTo(60);
+            expect(newPointB.y).toBeCloseTo(60);
         });
     });
 });
