@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
+import os
 from pathlib import Path
 from unittest.mock import patch
 
@@ -35,9 +35,11 @@ def fxt_checkpoint(request, tmpdir, monkeypatch: pytest.MonkeyPatch):
     return checkpoint_path
 
 
+@patch("otx_io.upload_model_artifact")
 @patch("scripts.train.load_trained_model_weights")
 def test_train(
     mock_load_trained_model_weights,
+    mock_upload_model_artifact,
     fxt_config,
     fxt_dir_assets,
     fxt_checkpoint,
@@ -55,8 +57,7 @@ def test_train(
     )
 
     # Assert
-    # TODO: asserts
-    logged_local_paths = [call_args.kwargs["artifact_path"] for call_args in mock_client.log_artifact.call_args_list]
+    logged_local_paths = [call_args.kwargs["dst_filepath"] for call_args in mock_upload_model_artifact.call_args_list]
     logged_local_names = {os.path.basename(path) for path in logged_local_paths}
 
     assert logged_local_names == {
@@ -77,12 +78,3 @@ def test_train(
         "exportable-code_fp32_non-xai.whl",
         "exportable-code_fp16_non-xai.whl",
     }
-
-    keys = set()
-    for call_args_list in mock_client.log_batch.call_args_list:
-        for key in call_args_list.kwargs:
-            keys.add(key)
-
-    assert "params" in keys
-    assert "metrics" in keys  # MLFLowLogger reports metrics
-    assert "tags" in keys  # ProgressUpdater uses tags
