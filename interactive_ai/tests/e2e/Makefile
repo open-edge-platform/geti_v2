@@ -9,8 +9,7 @@ SPEC_HASH_FILE := .openapi_spec_hash
 
 venv:
 	$(MAKE) generate_client_if_needed;
-	uv sync
-
+	uv sync --frozen ${PIP_INSTALL_PARAMS}
 check_yaml_spec:
 	@if [ ! -f $(OPENAPI_YAML_SPEC) ]; then \
 		echo "Error: OpenAPI YAML spec file not found at $(OPENAPI_YAML_SPEC)"; \
