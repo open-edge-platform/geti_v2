@@ -12,6 +12,7 @@ import { useDatasetImportToExistingProject } from '../../../../../providers/data
 import { matchStatus } from '../../../../../providers/dataset-import-to-existing-project-provider/utils';
 import { DatasetImportDnd } from '../../../../../shared/components/dataset-import-dnd/dataset-import-dnd.component';
 import { DatasetImportProgress } from '../../../../../shared/components/dataset-import-progress/dataset-import-progress.component';
+import { isNonEmptyArray } from '../../../../../shared/utils';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { DatasetImportToExistingProjectDialogButtons } from './dataset-import-to-existing-project-dialog-buttons.component';
 import { DatasetImportToExistingProjectMapLabels } from './dataset-import-to-existing-project-map-labels.component';
@@ -62,7 +63,7 @@ export const DatasetImportToExistingProjectDialog = ({
     const handlePrimaryAction = () => {
         if (!activeDatasetImport) return;
 
-        if (isKeypointMapLabels && getMissingLabels(project.labels, activeDatasetImport.labelsMap)) {
+        if (isKeypointMapLabels && isNonEmptyArray(getMissingLabels(project.labels, activeDatasetImport.labelsMap))) {
             patchDatasetImport({ id: activeDatasetImport.id, labelsMap: {} });
         }
 

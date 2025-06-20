@@ -5,7 +5,7 @@ import { uniq } from 'lodash-es';
 
 import { Label } from '../../../../../core/labels/label.interface';
 
-export const KEYPOINT_DUPLICATED_LABELS = '- Duplicate labels are not allow in keypoint detection projects:';
+export const KEYPOINT_DUPLICATED_LABELS = '- Duplicate labels are not allowed in keypoint detection projects:';
 export const KEYPOINT_MISSING_LABELS = '- The following labels require mapping:';
 export const KEYPOINT_ANNOTATION_WARNING =
     '- Due to incomplete label mapping, annotations will be removed. Consider importing as a new project instead.';
