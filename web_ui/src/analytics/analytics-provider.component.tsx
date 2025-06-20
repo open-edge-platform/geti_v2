@@ -4,11 +4,11 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
+import { useWorkflowId } from '@geti/core/src/platform-utils/hooks/use-platform-utils.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { Meter } from '@opentelemetry/api';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 
-import { useWorkflowId } from '../core/platform-utils/hooks/use-platform-utils.hook';
 import { useEventListener } from '../hooks/event-listener/event-listener.hook';
 import { createPeriodicMetricExporter, initializeMetrics } from './metrics';
 import { initializeTracing } from './traces';
