@@ -71,8 +71,3 @@ USER non-root
 
 WORKDIR /home/non-root
 WORKDIR /interactive_ai/workflows/otx_domain/trainer/otx_v2
-
-docker run -it --rm \
-    --device /dev/dri \
-    -v /dev/dri/by-path:/dev/dri/by-path \
-    intel/intel-extension-for-pytorch:2.7.10-xpu
