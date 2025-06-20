@@ -25,6 +25,7 @@ prepare-policies:
 build-bundle: prepare-policies
 	@echo "Preparing OPA policy bundle"
 	docker run --rm \
+		-u $(shell id -u):$(shell id -g) \
 		-v $$(pwd):/workspace \
 		-w /workspace \
 		${OPA_BUILDER_IMAGE} \
@@ -47,11 +48,11 @@ test-unit-default: prepare-policies
 
 static-code-analysis-default: prepare-policies
 	@echo "Checking Rego source files for parse and compilation errors"
-	docker run --rm \
+	@docker run --rm \
 		-v $$(pwd):/workspace \
 		-w /workspace \
 		${OPA_BUILDER_IMAGE} \
-		check -b ${BUNDLE_BUILD_DIR}/policies/all; \
+		check -b ${BUNDLE_BUILD_DIR}/policies/all
 	@echo "Checking Rego source files for parse and compilation errors completed"
 
 build-chart-default: build-bundle
