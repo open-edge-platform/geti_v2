@@ -56,7 +56,12 @@ jobs:
       GO_BUILDER_IMAGE: builder-images/go-builder:v0.1
     steps:
       - name: Free space on runner (delete unnecessary tools)
-        run: rm -rf /opt/hostedtoolcache
+        run: |
+          rm -rf /opt/hostedtoolcache || true
+          if [ -f /swapfile ]; then
+            sudo swapoff -a
+            sudo rm -f /swapfile
+          fi
 
       - name: Checkout code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.2
