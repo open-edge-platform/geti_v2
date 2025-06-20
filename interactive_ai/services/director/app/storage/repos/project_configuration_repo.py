@@ -3,14 +3,7 @@
 
 from collections.abc import Callable, Sequence
 
-from geti_configuration_tools.project_configuration import (
-    AutoTrainingParameters,
-    NullProjectConfiguration,
-    ProjectConfiguration,
-    TaskConfig,
-    TrainConstraints,
-    TrainingParameters,
-)
+from geti_configuration_tools.project_configuration import NullProjectConfiguration, ProjectConfiguration, TaskConfig
 from pymongo.command_cursor import CommandCursor
 from pymongo.cursor import Cursor
 

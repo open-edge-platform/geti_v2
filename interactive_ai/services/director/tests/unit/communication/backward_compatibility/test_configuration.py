@@ -3,9 +3,11 @@
 from unittest.mock import patch
 
 import pytest
+
 from communication.backward_compatibility.configurations import ConfigurationsBackwardCompatibility
+
 from geti_types import ID
-from iai_core.repos import TaskNodeRepo, ConfigurableParametersRepo, ModelStorageRepo
+from iai_core.repos import ConfigurableParametersRepo, ModelStorageRepo, TaskNodeRepo
 
 
 class TestConfigurationBackwardCompatibility:
@@ -59,10 +61,10 @@ class TestConfigurationBackwardCompatibility:
         ]
         legacy_global_configuration = [legacy_config_mapper(doc) for doc in fxt_global_config_docs]
 
-        expected_project_configuration, expected_training_configurations = (
-            request.getfixturevalue(expected_revamped_configurations_fixture)
+        expected_project_configuration, expected_training_configurations = request.getfixturevalue(
+            expected_revamped_configurations_fixture
         )
-        
+
         # Act
         with (
             patch.object(ModelStorageRepo, "get_by_id", return_value=fxt_model_storage),
@@ -72,9 +74,7 @@ class TestConfigurationBackwardCompatibility:
             project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
                 project_identifier=fxt_project_identifier,
                 legacy_global_configuration=legacy_global_configuration,
-                legacy_task_chain_configs=[
-                    {"task": fxt_task, "configurations": legacy_task_chain_configurations}
-                ],
+                legacy_task_chain_configs=[{"task": fxt_task, "configurations": legacy_task_chain_configurations}],
             )
 
             # check that it matches the expected output
@@ -101,4 +101,3 @@ class TestConfigurationBackwardCompatibility:
             assert len(training_configurations) == 1
             assert project_configuration.model_dump() == expected_project_configuration.model_dump()
             assert training_configurations[0].model_dump() == expected_training_configurations[0].model_dump()
-

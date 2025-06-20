@@ -2,16 +2,33 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from typing import Any
 
+from geti_configuration_tools.hyperparameters import (
+    AugmentationParameters,
+    DatasetPreparationParameters,
+    EarlyStopping,
+    EvaluationParameters,
+    Hyperparameters,
+    MaxDetectionPerImage,
+    Tiling,
+    TrainingHyperParameters,
+)
+from geti_configuration_tools.project_configuration import ProjectConfiguration
+from geti_configuration_tools.training_configuration import (
+    Filtering,
+    GlobalDatasetPreparationParameters,
+    GlobalParameters,
+    MaxAnnotationObjects,
+    MaxAnnotationPixels,
+    MinAnnotationObjects,
+    MinAnnotationPixels,
+    SubsetSplit,
+    TrainingConfiguration,
+)
+
 from active_learning.entities import ActiveLearningProjectConfig
 from configuration import ConfigurableComponentRegister
-from geti_configuration_tools.project_configuration import ProjectConfiguration
-from geti_configuration_tools.training_configuration import TrainingConfiguration, GlobalParameters
-from geti_configuration_tools.training_configuration import GlobalDatasetPreparationParameters, SubsetSplit, Filtering
-from geti_configuration_tools.training_configuration import MinAnnotationPixels, MaxAnnotationPixels
-from geti_configuration_tools.training_configuration import MinAnnotationObjects, MaxAnnotationObjects
-from geti_configuration_tools.hyperparameters import Hyperparameters, TrainingHyperParameters, EvaluationParameters
-from geti_configuration_tools.hyperparameters import DatasetPreparationParameters, AugmentationParameters, Tiling
-from geti_configuration_tools.hyperparameters import EarlyStopping, MaxDetectionPerImage
+from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
+
 from geti_types import ID, ProjectIdentifier
 from iai_core.configuration.elements.component_parameters import ComponentParameters
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
@@ -21,13 +38,8 @@ from iai_core.configuration.elements.hyper_parameters import HyperParameters
 from iai_core.configuration.elements.parameter_group import ParameterGroup
 from iai_core.configuration.enums import ComponentType
 from iai_core.entities.model_template import TaskType
-from iai_core.repos import TaskNodeRepo, ModelStorageRepo
-from geti_feature_tools import FeatureFlagProvider
+from iai_core.repos import ModelStorageRepo, TaskNodeRepo
 
-from features.feature_flag import FeatureFlag
-from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
-
-NEW_CONFIGURABLE_PARAMETERS_ACTIVE = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS)
 
 class ConfigurationsBackwardCompatibility:
     """
@@ -75,7 +87,7 @@ class ConfigurationsBackwardCompatibility:
         first_task_global_parameters = first_task_training_config.global_parameters
         filtering_parameters = first_task_global_parameters.dataset_preparation.filtering
         legacy_global_config: list[ConfigurableParameters] = [
-            ActiveLearningProjectConfig(), # fully deprecated, use default values
+            ActiveLearningProjectConfig(),  # fully deprecated, use default values
             DatasetManagementConfig(
                 minimum_annotation_size=filtering_parameters.min_annotation_pixels.min_annotation_pixels,
                 maximum_number_of_annotations=filtering_parameters.max_annotation_objects.max_annotation_objects,
@@ -114,7 +126,8 @@ class ConfigurationsBackwardCompatibility:
                 legacy_hyper_parameters.tiling_parameters.tile_max_number = 1500
                 legacy_hyper_parameters.tile_sampling_ratio = 1.0
             # Note: skipping "postprocessing" parameters as not present in the new configuration. Includes:
-            # ['confidence_threshold', 'max_num_detections', 'nms_iou_threshold', 'result_based_confidence_threshold', 'use_ellipse_shapes']
+            # ['confidence_threshold', 'max_num_detections', 'nms_iou_threshold'
+            # 'result_based_confidence_threshold', 'use_ellipse_shapes']
 
             # config types
             legacy_types = cls._get_legacy_config_types(task_type=task_node.task_properties.task_type)
@@ -171,7 +184,7 @@ class ConfigurationsBackwardCompatibility:
         return legacy_global_config, legacy_task_chain_configs
 
     @classmethod
-    def forward_mapping(
+    def forward_mapping(  # noqa: PLR0912, PLR0915, C901
         cls,
         project_identifier: ProjectIdentifier,
         legacy_global_configuration: list[ComponentParameters],
@@ -199,7 +212,7 @@ class ConfigurationsBackwardCompatibility:
         # Extract dataset management config from global configuration
         dataset_management_config = next(
             (config for config in legacy_global_configuration if isinstance(config, DatasetManagementConfig)),
-            DatasetManagementConfig()
+            DatasetManagementConfig(),
         )
 
         # Process each task configuration
@@ -231,10 +244,7 @@ class ConfigurationsBackwardCompatibility:
                     or component_type is ComponentType.DATASET_COUNTER
                 ):
                     legacy_dataset_counter = config
-                elif (
-                    isinstance(config, legacy_config_types["task_node"])
-                    or component_type is ComponentType.TASK_NODE
-                ):
+                elif isinstance(config, legacy_config_types["task_node"]) or component_type is ComponentType.TASK_NODE:
                     legacy_task_node = config
                 elif (
                     isinstance(config, legacy_config_types["pipeline_dataset_manager"])
@@ -247,15 +257,15 @@ class ConfigurationsBackwardCompatibility:
             # Create new configuration objects
             # 1. Global parameters
             subset_split = SubsetSplit(
-                training=int(
-                    legacy_subset_manager.subset_parameters.train_proportion * 100
-                ) if legacy_subset_manager else 70,
-                validation=int(
-                    legacy_subset_manager.subset_parameters.validation_proportion * 100
-                ) if legacy_subset_manager else 20,
-                test=int(
-                    legacy_subset_manager.subset_parameters.test_proportion * 100
-                ) if legacy_subset_manager else 10,
+                training=int(legacy_subset_manager.subset_parameters.train_proportion * 100)
+                if legacy_subset_manager
+                else 70,
+                validation=int(legacy_subset_manager.subset_parameters.validation_proportion * 100)
+                if legacy_subset_manager
+                else 20,
+                test=int(legacy_subset_manager.subset_parameters.test_proportion * 100)
+                if legacy_subset_manager
+                else 10,
                 auto_selection=legacy_subset_manager.auto_subset_fractions if legacy_subset_manager else True,
                 remixing=legacy_subset_manager.train_validation_remixing if legacy_subset_manager else False,
             )
@@ -263,20 +273,18 @@ class ConfigurationsBackwardCompatibility:
             project_wide_max_annotations = dataset_management_config.maximum_number_of_annotations
             task_wide_max_annotations = (
                 legacy_pipeline_dataset_manager.maximum_number_of_annotations
-                if legacy_pipeline_dataset_manager else None
+                if legacy_pipeline_dataset_manager
+                else None
             )
             max_annotations = (
-                task_wide_max_annotations
-                if task_wide_max_annotations is not None else project_wide_max_annotations
+                task_wide_max_annotations if task_wide_max_annotations is not None else project_wide_max_annotations
             )
             project_wide_min_annotations = dataset_management_config.minimum_annotation_size
             task_wide_min_annotations = (
-                legacy_pipeline_dataset_manager.minimum_annotation_size
-                if legacy_pipeline_dataset_manager else None
+                legacy_pipeline_dataset_manager.minimum_annotation_size if legacy_pipeline_dataset_manager else None
             )
             min_annotations = (
-                task_wide_min_annotations
-                if task_wide_min_annotations is not None else project_wide_min_annotations
+                task_wide_min_annotations if task_wide_min_annotations is not None else project_wide_min_annotations
             )
             filtering = Filtering(
                 min_annotation_pixels=MinAnnotationPixels(
@@ -303,9 +311,8 @@ class ConfigurationsBackwardCompatibility:
             tiling = None
             if legacy_tiling := getattr(legacy_hyperparams, "tiling_parameters", None):
                 tile_size = legacy_tiling.tile_size
-                adaptive = (
-                    getattr(legacy_tiling, "enable_adaptive_tiling", None)
-                    or getattr(legacy_tiling, "enable_adaptive_params", None)
+                adaptive = getattr(legacy_tiling, "enable_adaptive_tiling", None) or getattr(
+                    legacy_tiling, "enable_adaptive_params", None
                 )
                 tiling = Tiling(
                     enable=legacy_tiling.enable_tiling,
@@ -324,7 +331,7 @@ class ConfigurationsBackwardCompatibility:
                 early_stopping = legacy_learning_parameters.early_stop_patience
             # Anomaly tasks have difference structure
             elif getattr(legacy_learning_parameters, "early_stopping", None):
-              early_stopping = legacy_learning_parameters.early_stopping.patience
+                early_stopping = legacy_learning_parameters.early_stopping.patience
 
             learning_rate = 0.001
             for alias in ["learning_rate", "lr"]:
@@ -340,8 +347,7 @@ class ConfigurationsBackwardCompatibility:
                 max_epochs=max_epochs,
                 learning_rate=learning_rate,
                 early_stopping=(
-                    EarlyStopping(enable=True, patience=early_stopping)
-                    if early_stopping else EarlyStopping()
+                    EarlyStopping(enable=True, patience=early_stopping) if early_stopping else EarlyStopping()
                 ),
                 max_detection_per_image=MaxDetectionPerImage(),
             )
@@ -354,13 +360,9 @@ class ConfigurationsBackwardCompatibility:
 
             # 3. Update project configuration with auto-training settings
             auto_training_enabled = legacy_task_node.auto_training
-            min_images_per_label = (
-                legacy_dataset_counter.required_images_auto_training
-                if legacy_dataset_counter else 0
-            )
+            min_images_per_label = legacy_dataset_counter.required_images_auto_training if legacy_dataset_counter else 0
             enable_dynamic_required_annotations = (
-                legacy_dataset_counter.use_dynamic_required_annotations
-                if legacy_dataset_counter else False
+                legacy_dataset_counter.use_dynamic_required_annotations if legacy_dataset_counter else False
             )
 
             # Add task configuration to project configuration
@@ -368,13 +370,10 @@ class ConfigurationsBackwardCompatibility:
             project_task_config.auto_training.enable = auto_training_enabled
             project_task_config.auto_training.min_images_per_label = min_images_per_label
             project_task_config.auto_training.enable_dynamic_required_annotations = enable_dynamic_required_annotations
-            
 
             # Create training configuration for this task
             if entity_identifier := getattr(legacy_hyperparams, "entity_identifier", None):
-                model_storage = ModelStorageRepo(project_identifier).get_by_id(
-                    entity_identifier.model_storage_id
-                )
+                model_storage = ModelStorageRepo(project_identifier).get_by_id(entity_identifier.model_storage_id)
                 model_manifest_id = model_storage.model_template_id
             else:
                 # if entity identifier is not set, then the config must come from the backward compatibility
@@ -384,7 +383,7 @@ class ConfigurationsBackwardCompatibility:
                 task_id=task_id,
                 model_manifest_id=model_manifest_id,
                 global_parameters=global_params,
-                hyperparameters=hyperparams
+                hyperparameters=hyperparams,
             )
             training_configs.append(training_config)
 
@@ -407,28 +406,20 @@ class ConfigurationsBackwardCompatibility:
                 - "pipeline_dataset_manager": Legacy pipeline dataset manager type
         """
         legacy_subset_manager_register_data = ConfigurableComponentRegister[ComponentType.SUBSET_MANAGER.name].value
-        legacy_subset_manager_type = legacy_subset_manager_register_data.get_configuration_type(
-            task_type=task_type
-        )
-        legacy_dataset_counter_register_data = (
-            ConfigurableComponentRegister[ComponentType.DATASET_COUNTER.name].value
-        )
-        legacy_dataset_counter_type = legacy_dataset_counter_register_data.get_configuration_type(
-            task_type=task_type
-        )
-        legacy_task_active_learning_register_data = (
-            ConfigurableComponentRegister[ComponentType.TASK_ACTIVE_LEARNING.name].value
-        )
+        legacy_subset_manager_type = legacy_subset_manager_register_data.get_configuration_type(task_type=task_type)
+        legacy_dataset_counter_register_data = ConfigurableComponentRegister[ComponentType.DATASET_COUNTER.name].value
+        legacy_dataset_counter_type = legacy_dataset_counter_register_data.get_configuration_type(task_type=task_type)
+        legacy_task_active_learning_register_data = ConfigurableComponentRegister[
+            ComponentType.TASK_ACTIVE_LEARNING.name
+        ].value
         legacy_task_active_learning_type = legacy_task_active_learning_register_data.get_configuration_type(
             task_type=task_type
         )
         legacy_task_node_register_data = ConfigurableComponentRegister[ComponentType.TASK_NODE.name].value
-        legacy_task_node_type = legacy_task_node_register_data.get_configuration_type(
-            task_type=task_type
-        )
-        legacy_pipeline_dataset_manager_register_data = (
-            ConfigurableComponentRegister[ComponentType.PIPELINE_DATASET_MANAGER.name].value
-        )
+        legacy_task_node_type = legacy_task_node_register_data.get_configuration_type(task_type=task_type)
+        legacy_pipeline_dataset_manager_register_data = ConfigurableComponentRegister[
+            ComponentType.PIPELINE_DATASET_MANAGER.name
+        ].value
         legacy_pipeline_dataset_manager_type = legacy_pipeline_dataset_manager_register_data.get_configuration_type(
             task_type=task_type
         )
