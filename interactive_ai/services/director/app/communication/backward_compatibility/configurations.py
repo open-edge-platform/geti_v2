@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from typing import Any
+from typing import Any, cast
 
 from geti_configuration_tools.hyperparameters import (
     AugmentationParameters,
@@ -30,13 +30,12 @@ from configuration import ConfigurableComponentRegister
 from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_types import ID, ProjectIdentifier
-from iai_core.configuration.elements.component_parameters import ComponentParameters
-from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
 from iai_core.configuration.elements.dataset_manager_parameters import DatasetManagementConfig
 from iai_core.configuration.elements.default_model_parameters import DefaultModelParameters
 from iai_core.configuration.elements.hyper_parameters import HyperParameters
 from iai_core.configuration.elements.parameter_group import ParameterGroup
 from iai_core.configuration.enums import ComponentType
+from iai_core.configuration.interfaces import IConfigurableParameterContainer
 from iai_core.entities.model_template import TaskType
 from iai_core.repos import ModelStorageRepo, TaskNodeRepo
 
@@ -63,7 +62,7 @@ class ConfigurationsBackwardCompatibility:
         project_identifier: ProjectIdentifier,
         project_configuration: ProjectConfiguration,
         all_training_configurations: list[TrainingConfiguration],
-    ) -> tuple[list[ConfigurableParameters], list[dict[str, Any]]]:
+    ) -> tuple[list[IConfigurableParameterContainer[Any]], list[dict[str, Any]]]:
         """
         Convert new configuration entities to legacy ones for backward compatibility.
 
@@ -86,12 +85,23 @@ class ConfigurationsBackwardCompatibility:
         first_task_training_config = all_training_configurations[0]
         first_task_global_parameters = first_task_training_config.global_parameters
         filtering_parameters = first_task_global_parameters.dataset_preparation.filtering
-        legacy_global_config: list[ConfigurableParameters] = [
-            ActiveLearningProjectConfig(),  # fully deprecated, use default values
-            DatasetManagementConfig(
-                minimum_annotation_size=filtering_parameters.min_annotation_pixels.min_annotation_pixels,
-                maximum_number_of_annotations=filtering_parameters.max_annotation_objects.max_annotation_objects,
-            ),
+
+        # active_learning_config is fully deprecated, use default values
+        active_learning_config = cast(
+            "IConfigurableParameterContainer[Any]", ActiveLearningProjectConfig(header="Active Learning")
+        )
+        dataset_config = cast(
+            "IConfigurableParameterContainer[Any]", DatasetManagementConfig(header="Dataset Management")
+        )
+        dataset_config_obj = cast("DatasetManagementConfig", dataset_config)
+        dataset_config_obj.minimum_annotation_size = filtering_parameters.min_annotation_pixels.min_annotation_pixels
+        dataset_config_obj.maximum_number_of_annotations = (
+            filtering_parameters.max_annotation_objects.max_annotation_objects
+        )
+
+        legacy_global_config: list[IConfigurableParameterContainer[Any]] = [
+            active_learning_config,
+            dataset_config,
         ]
 
         legacy_task_chain_configs = []
@@ -101,30 +111,30 @@ class ConfigurationsBackwardCompatibility:
 
             legacy_hyper_parameters = DefaultModelParameters()
             legacy_learning_params = legacy_hyper_parameters.learning_parameters
+
             # Note: legacy_learning_params.batch_size is not present in the new configuration
             # "max_epochs" is sometimes defined as "num_iters"
-            legacy_learning_params.num_iters = task_training_config.hyperparameters.training.max_epochs
-            legacy_learning_params.max_epochs = task_training_config.hyperparameters.training.max_epochs
+            setattr(legacy_learning_params, "num_iters", task_training_config.hyperparameters.training.max_epochs)
+            setattr(legacy_learning_params, "max_epochs", task_training_config.hyperparameters.training.max_epochs)
             legacy_learning_params.learning_rate = task_training_config.hyperparameters.training.learning_rate
             early_stopping_params = task_training_config.hyperparameters.training.early_stopping
-            legacy_learning_params.enable_early_stopping = early_stopping_params.enable
-            legacy_learning_params.early_stop_patience = early_stopping_params.patience
+            setattr(legacy_learning_params, "enable_early_stopping", early_stopping_params.enable)
+            setattr(legacy_learning_params, "early_stop_patience", early_stopping_params.patience)
 
             # Legacy configuration stores "model_storage_id", but for convenience we use "model_template_id"
-            legacy_hyper_parameters.model_template_id = task_training_config.model_manifest_id
+            setattr(legacy_hyper_parameters, "model_template_id", task_training_config.model_manifest_id)
 
-            # Tiling
+            # Create and set tiling parameters
             if tiling := task_training_config.hyperparameters.dataset_preparation.augmentation.tiling:
-                legacy_hyper_parameters.tiling_parameters = ParameterGroup(
-                    header="Tiling", description="Crop dataset to tiles"
-                )
-                legacy_hyper_parameters.tiling_parameters.enable_tiling = tiling.enable
-                legacy_hyper_parameters.tiling_parameters.enable_adaptive_tiling = tiling.adaptive_tiling
-                legacy_hyper_parameters.tiling_parameters.tile_size = tiling.tile_size
-                legacy_hyper_parameters.tiling_parameters.tile_overlap = tiling.tile_overlap / tiling.tile_size
-                legacy_hyper_parameters.tiling_parameters.object_tile_ratio = 0.05
-                legacy_hyper_parameters.tiling_parameters.tile_max_number = 1500
-                legacy_hyper_parameters.tile_sampling_ratio = 1.0
+                tiling_params = ParameterGroup(header="Tiling", description="Crop dataset to tiles")
+                setattr(legacy_hyper_parameters, "tiling_parameters", tiling_params)
+                setattr(tiling_params, "enable_tiling", tiling.enable)
+                setattr(tiling_params, "enable_adaptive_tiling", tiling.adaptive_tiling)
+                setattr(tiling_params, "tile_size", tiling.tile_size)
+                setattr(tiling_params, "tile_overlap", tiling.tile_overlap / tiling.tile_size)
+                setattr(tiling_params, "object_tile_ratio", 0.05)
+                setattr(tiling_params, "tile_max_number", 1500)
+                setattr(legacy_hyper_parameters, "tile_sampling_ratio", 1.0)
             # Note: skipping "postprocessing" parameters as not present in the new configuration. Includes:
             # ['confidence_threshold', 'max_num_detections', 'nms_iou_threshold'
             # 'result_based_confidence_threshold', 'use_ellipse_shapes']
@@ -187,7 +197,7 @@ class ConfigurationsBackwardCompatibility:
     def forward_mapping(  # noqa: PLR0912, PLR0915, C901
         cls,
         project_identifier: ProjectIdentifier,
-        legacy_global_configuration: list[ComponentParameters],
+        legacy_global_configuration: list[IConfigurableParameterContainer],
         legacy_task_chain_configs: list[dict[str, Any]],
     ) -> tuple[ProjectConfiguration, list[TrainingConfiguration]]:
         """
@@ -212,7 +222,7 @@ class ConfigurationsBackwardCompatibility:
         # Extract dataset management config from global configuration
         dataset_management_config = next(
             (config for config in legacy_global_configuration if isinstance(config, DatasetManagementConfig)),
-            DatasetManagementConfig(),
+            DatasetManagementConfig(header="Dataset Management"),
         )
 
         # Process each task configuration
@@ -327,11 +337,15 @@ class ConfigurationsBackwardCompatibility:
             # Create training hyperparameters
             legacy_learning_parameters = legacy_hyperparams.learning_parameters
             early_stopping = None
-            if getattr(legacy_learning_parameters, "enable_early_stopping", None):
-                early_stopping = legacy_learning_parameters.early_stop_patience
+            if legacy_learning_parameters and hasattr(legacy_learning_parameters, "enable_early_stopping"):
+                early_stopping_enabled = getattr(legacy_learning_parameters, "enable_early_stopping", False)
+                if early_stopping_enabled and hasattr(legacy_learning_parameters, "early_stop_patience"):
+                    early_stopping = getattr(legacy_learning_parameters, "early_stop_patience")
             # Anomaly tasks have difference structure
-            elif getattr(legacy_learning_parameters, "early_stopping", None):
-                early_stopping = legacy_learning_parameters.early_stopping.patience
+            elif legacy_learning_parameters and hasattr(legacy_learning_parameters, "early_stopping"):
+                early_stopping_obj = getattr(legacy_learning_parameters, "early_stopping")
+                if hasattr(early_stopping_obj, "patience"):
+                    early_stopping = early_stopping_obj.patience
 
             learning_rate = 0.001
             for alias in ["learning_rate", "lr"]:
@@ -359,11 +373,17 @@ class ConfigurationsBackwardCompatibility:
             )
 
             # 3. Update project configuration with auto-training settings
-            auto_training_enabled = legacy_task_node.auto_training
-            min_images_per_label = legacy_dataset_counter.required_images_auto_training if legacy_dataset_counter else 0
-            enable_dynamic_required_annotations = (
-                legacy_dataset_counter.use_dynamic_required_annotations if legacy_dataset_counter else False
-            )
+            auto_training_enabled = False
+            if legacy_task_node is not None and hasattr(legacy_task_node, "auto_training"):
+                auto_training_enabled = legacy_task_node.auto_training
+
+            min_images_per_label = 0
+            enable_dynamic_required_annotations = False
+            if legacy_dataset_counter is not None:
+                min_images_per_label = getattr(legacy_dataset_counter, "required_images_auto_training", 0)
+                enable_dynamic_required_annotations = getattr(
+                    legacy_dataset_counter, "use_dynamic_required_annotations", False
+                )
 
             # Add task configuration to project configuration
             project_task_config = project_config.get_task_config(task_id=task_id)
@@ -372,12 +392,13 @@ class ConfigurationsBackwardCompatibility:
             project_task_config.auto_training.enable_dynamic_required_annotations = enable_dynamic_required_annotations
 
             # Create training configuration for this task
+            model_manifest_id = None
             if entity_identifier := getattr(legacy_hyperparams, "entity_identifier", None):
                 model_storage = ModelStorageRepo(project_identifier).get_by_id(entity_identifier.model_storage_id)
                 model_manifest_id = model_storage.model_template_id
-            else:
-                # if entity identifier is not set, then the config must come from the backward compatibility
-                model_manifest_id = legacy_hyperparams.model_template_id
+            elif hasattr(legacy_hyperparams, "model_template_id"):
+                model_manifest_id = getattr(legacy_hyperparams, "model_template_id")
+
             training_config = TrainingConfiguration(
                 id_=PartialTrainingConfigurationRepo.generate_id(),
                 task_id=task_id,
