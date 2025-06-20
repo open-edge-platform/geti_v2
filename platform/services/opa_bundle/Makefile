@@ -68,3 +68,6 @@ build-image:
 
 publish-image:
 	@echo "Not applicable"
+
+publish-chart:
+	@echo "Not applicable"
