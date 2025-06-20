@@ -57,11 +57,44 @@ jobs:
     steps:
       - name: Free space on runner (delete unnecessary tools)
         run: |
-          rm -rf /opt/hostedtoolcache || true
+          echo "=== Initial System Resources ==="
+          df -h
+          free -h
+          echo ""
+          
+          echo "=== Disk Space Cleanup ==="
+          # Remove hosted tool cache
+          sudo rm -rf /opt/hostedtoolcache || true
+          
+          # Remove swap file
           if [ -f /swapfile ]; then
             sudo swapoff -a
             sudo rm -f /swapfile
           fi
+          
+          # Remove unnecessary system packages and files
+          sudo rm -rf /usr/share/dotnet || true
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/share/boost || true
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY" || true
+          sudo rm -rf /usr/local/lib/android || true
+          sudo rm -rf /usr/share/swift || true
+          sudo rm -rf /opt/az || true
+          sudo rm -rf /usr/share/gradle || true
+          
+          # Clean package manager caches
+          sudo apt-get clean
+          sudo apt-get autoremove -y
+          sudo apt-get autoclean
+          
+          # Remove unnecessary locale and documentation
+          sudo rm -rf /usr/share/locale/* || true
+          sudo rm -rf /usr/share/man/* || true
+          sudo rm -rf /usr/share/doc/* || true
+          
+          echo "=== Post-cleanup Results ==="
+          df -h
+          free -h
 
       - name: Checkout code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.2
@@ -105,6 +138,22 @@ jobs:
           else
             make builder -C "${COMPONENT_DIR}" test-integration
           fi
+
+      - name: Pre-build cleanup
+        run: |
+          echo "=== Pre-build cleanup ==="
+          # Aggressive Docker cleanup before building
+          docker system prune -a -f --volumes || true
+          docker builder prune -a -f || true
+          
+          # Clear any temp files
+          sudo rm -rf /tmp/* || true
+          sudo rm -rf /var/tmp/* || true
+          
+          echo "=== Resources before build-image ==="
+          df -h
+          free -h
+          docker system df || true
 
       - name: Build image
         id: build-image
