@@ -1,7 +1,6 @@
 # Required runtime flags to enable XPU support:
 # --device /dev/dri          # Intel GPU access
 # -v /dev/dri/by-path:/dev/dri/by-path  # Device path mapping
-# --ipc=host                 # Shared memory for XPU operations
 
 FROM python:3.10-slim-bookworm@sha256:99d6b199420e2a3588649813218bef3e727fac9642d5da66c1c24ec96f7ec87d AS base
 
@@ -19,9 +18,7 @@ RUN apt-get update && \
     wget \
     curl && \
     rm -rf /var/lib/apt/lists/* && \
-    # Create render group and non-root user, adding user to render group
-    groupadd -r render && \
-    useradd -l -u 10001 -G render non-root && \
+    useradd -l -u 10001 non-root && \
     pip3 uninstall -y setuptools pip wheel && \
     rm -rf /root/.cache/pip
 
@@ -57,14 +54,13 @@ COPY --link download_pretrained_weights.py download_pretrained_weights.py
 # For OTX to install torch with ipex support, else defaults to cpu version
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
 RUN uv pip uninstall torch
-RUN uv cache clean
 RUN uv pip install torch==2.7.0 --default-index https://download.pytorch.org/whl/xpu
 
 # step 3: build final runtime image
 FROM base AS runtime
 
 # Copy the application from the builder
-COPY --link --from=build --chown=10001:render /interactive_ai/workflows/otx_domain/trainer/otx_v2 /interactive_ai/workflows/otx_domain/trainer/otx_v2
+COPY --link --from=build --chown=10001 /interactive_ai/workflows/otx_domain/trainer/otx_v2 /interactive_ai/workflows/otx_domain/trainer/otx_v2
 
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2/.venv/bin:/interactive_ai/workflows/otx_domain/trainer/otx_v2:$PATH"
@@ -75,3 +71,8 @@ USER non-root
 
 WORKDIR /home/non-root
 WORKDIR /interactive_ai/workflows/otx_domain/trainer/otx_v2
+
+docker run -it --rm \
+    --device /dev/dri \
+    -v /dev/dri/by-path:/dev/dri/by-path \
+    intel/intel-extension-for-pytorch:2.7.10-xpu
