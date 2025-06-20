@@ -3,7 +3,6 @@
 import os
 from unittest.mock import ANY, MagicMock, patch
 
-import pytest
 from _pytest.fixtures import FixtureRequest
 from geti_types import ID
 from iai_core.repos.storage.storage_client import BinaryObjectType
@@ -17,7 +16,6 @@ This module tests the BinaryStorageRepo class.
 """
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestBinaryStorageRepo:
     @staticmethod
     def __set_env_variables(request: FixtureRequest):

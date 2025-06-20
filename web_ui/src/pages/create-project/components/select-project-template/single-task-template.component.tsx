@@ -3,10 +3,10 @@
 
 import { useEffect, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Grid, minmax, repeat, useMediaQuery } from '@geti/ui';
 import { isLargeSizeQuery } from '@geti/ui/theme';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { SUBDOMAIN } from '../../../../core/projects/project.interface';
 import { Card } from '../card.component';
 import { DomainCardsMetadata, SingleTemplateProps } from './project-template.interface';

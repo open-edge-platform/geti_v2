@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import {
     InfiniteData,
@@ -24,7 +25,6 @@ import { getErrorMessage } from '../../../../packages/core/src/services/utils';
 import { WorkspaceIdentifier } from '../../../../packages/core/src/workspaces/services/workspaces.interface';
 import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { useNotification } from '../../../notification/notification.component';
-import { useFeatureFlags } from '../../feature-flags/hooks/use-feature-flags.hook';
 import { NextPageURL } from '../../shared/infinite-query.interface';
 import { DOMAIN, ProjectIdentifier } from '../core.interface';
 import { DatasetIdentifier } from '../dataset.interface';

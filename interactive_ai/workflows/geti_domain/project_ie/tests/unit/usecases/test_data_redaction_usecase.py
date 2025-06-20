@@ -18,7 +18,6 @@ from job.usecases import ExportDataRedactionUseCase, ImportDataRedactionUseCase
 from job.usecases.data_redaction_usecase import BaseDataRedactionUseCase, get_random_objectid_between_dates
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestBaseDataRedactionUseCase:
     def test_is_file_label_schema_json(self) -> None:
         assert not BaseDataRedactionUseCase._is_file_label_schema_json("random_string")
@@ -42,7 +41,6 @@ class TestBaseDataRedactionUseCase:
         )
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestExportDataRedactionUseCase:
     def test_get_random_objectid_between_dates(self) -> None:
         min_date = datetime(1983, 3, 4, tzinfo=timezone.utc)

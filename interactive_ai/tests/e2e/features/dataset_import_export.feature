@@ -39,8 +39,8 @@ Feature: dataset import and export
       | COCO           | polygon               | instance segmentation       |
       | YOLO           | bounding box          | detection                   |
 
-    @xfail
-    Examples:
-      | dataset_format | annotation_type       | project_type                |
-      # Issue: ITEP-36161
-      | VOC            | multi label           | multilabel classification   |
+#    ITEP-36161
+#    @xfail
+#    Examples:
+#      | dataset_format | annotation_type       | project_type                |
+#      | VOC            | multi label           | multilabel classification   |

@@ -3,6 +3,7 @@
 
 import { Key, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import {
     Button,
     ButtonGroup,
@@ -24,7 +25,6 @@ import {
 import { ChevronDownSmall } from '@geti/ui/icons';
 import { OverlayTriggerState } from '@react-stately/overlays';
 
-import { useFeatureFlags } from '../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useStatus } from '../../../core/status/hooks/use-status.hook';
 import { isBelowTooLowFreeDiskSpace } from '../../../core/status/hooks/utils';
 import { useCheckPermission } from '../../../shared/components/has-permission/has-permission.component';

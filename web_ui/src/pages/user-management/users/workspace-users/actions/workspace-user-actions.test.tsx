@@ -41,8 +41,8 @@ const mockedResourceIdentifier: Resource = {
     id: workspaceId,
 };
 
-jest.mock('../../../../../core/platform-utils/hooks/use-platform-utils.hook', () => ({
-    ...jest.requireActual('../../../../../core/platform-utils/hooks/use-platform-utils.hook'),
+jest.mock('@geti/core/src/platform-utils/hooks/use-platform-utils.hook', () => ({
+    ...jest.requireActual('@geti/core/src/platform-utils/hooks/use-platform-utils.hook'),
     useProductInfo: mockedUseProductInfo,
 }));
 

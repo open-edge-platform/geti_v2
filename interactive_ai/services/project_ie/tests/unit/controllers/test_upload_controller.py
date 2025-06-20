@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from unittest.mock import patch
 
-import pytest
 from starlette import status
 from starlette.datastructures import URL
 from starlette.responses import Response
@@ -11,7 +10,6 @@ from communication.controllers.upload_controller import UploadController
 from usecases import ProjectUploadUseCase
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestUploadController:
     def test_get_options_response(self):
         expected_response = Response(status_code=status.HTTP_204_NO_CONTENT)

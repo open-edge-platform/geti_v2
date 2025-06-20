@@ -60,7 +60,6 @@ def fxt_public_key_bytes():
     )
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestSignatureUseCaseCertManager:
     @patch.dict(
         os.environ,
@@ -163,18 +162,16 @@ class TestSignatureUseCaseCertManager:
             SignatureUseCaseCertManager()
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestSignatureUseCaseHelper:
     @pytest.mark.parametrize(
         "key_source, signature_use_case_type",
         [
-            # ("kms", SignatureUseCaseKMS),  # TODO CVS-166343 fix for KMS
             ("cert-manager", SignatureUseCaseCertManager),
         ],
     )
     @patch.dict(
         os.environ,
-        {"SIGNING_IE_PRIVKEY": PRIVATE_KEY_EC_PEM_STR, "KMS_PRIVKEY_ID": "dummy_id", "KMS_PUBKEY_ID": "dummy_id"},
+        {"SIGNING_IE_PRIVKEY": PRIVATE_KEY_EC_PEM_STR},
     )
     def test_signature_use_case_helper(self, key_source, signature_use_case_type) -> None:
         # Arrange

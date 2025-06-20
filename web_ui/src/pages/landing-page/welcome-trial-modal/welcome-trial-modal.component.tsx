@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useProfileQuery } from '@geti/core/src/users/hook/use-profile.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
@@ -10,7 +11,6 @@ import { sum } from 'lodash-es';
 import { FireWorks } from '../../../assets/images';
 import { useProducts } from '../../../core/credits/products/hooks/use-products.hook';
 import { useSubscriptions } from '../../../core/credits/subscriptions/hooks/use-subscription-api.hook';
-import { useFeatureFlags } from '../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { GLOBAL_MODALS_KEYS } from '../../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../../core/user-settings/hooks/use-global-settings.hook';
 import { getSettingsOfType } from '../../../core/user-settings/utils';

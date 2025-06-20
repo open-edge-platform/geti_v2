@@ -26,7 +26,7 @@ export type UseAdvancedFilterQueryOptions = Pick<
         QueryKey,
         NextPageURL
     >,
-    'retry' | 'meta' | 'enabled'
+    'retry' | 'meta' | 'enabled' | 'refetchInterval' | 'refetchIntervalInBackground'
 >;
 
 export const useAdvancedFilterQuery = (
