@@ -31,9 +31,6 @@ RUN apt-get purge -y --auto-remove gpg wget && \
     /tmp/* \
     /usr/share/man/* /usr/share/doc/*
 
-# step 2: get python dependencies
-FROM base AS build
-
 # Copy the service dependencies
 COPY --link --from=libs . libs
 
@@ -52,12 +49,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-dev --no-editable
-
-# step 3: build final runtime image
-FROM base AS runtime
-
-# Copy the application from the builder
-COPY --link --from=build --chown=10001 /interactive_ai/workflows/otx_domain/trainer/otx_v2 /interactive_ai/workflows/otx_domain/trainer/otx_v2
 
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2/.venv/bin:/interactive_ai/workflows/otx_domain/trainer/otx_v2:$PATH"

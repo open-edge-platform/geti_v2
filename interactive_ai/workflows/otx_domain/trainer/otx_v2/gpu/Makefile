@@ -8,7 +8,7 @@ DOCKER_BUILD_CONTEXT := --build-context libs=../../../../../../libs
 
 build-image: install_common_libs
 	@echo "Building docker image for component: ${COMPONENT_NAME}"
-	@DOCKER_BUILDKIT=1 docker build \
+	@docker build \
 		${DOCKER_EXTRA_ARGS} \
 		${DOCKER_BUILD_CONTEXT} \
 		--label "org.opencontainers.image.description=GPU trainer for Geti" \

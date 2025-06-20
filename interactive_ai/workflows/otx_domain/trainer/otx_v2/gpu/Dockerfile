@@ -30,7 +30,7 @@ RUN apt-get update && \
     echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
 
 # step 2: get python dependencies
-FROM base AS build
+FROM base AS runtime
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
@@ -50,9 +50,6 @@ COPY --link scripts/ run/ download_pretrained_weights.py pyproject.toml uv.lock 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --no-editable
 
-# step 3: build final runtime image
-FROM base AS runtime
-
 # Install runtime dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -65,7 +62,6 @@ RUN apt-get update && \
     rm -rf /root/.cache/pip
 
 # Copy the application from the builder
-COPY --link --from=build --chown=10001 /interactive_ai/workflows/otx_domain/trainer/otx_v2 /interactive_ai/workflows/otx_domain/trainer/otx_v2
 COPY --link --from=cuda --chown=10001 /usr/local /usr/local
 
 # Place executables in the environment at the front of the path
