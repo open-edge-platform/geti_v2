@@ -48,8 +48,7 @@ COPY --link --from=ghcr.io/astral-sh/uv:0.6.12@sha256:515b886e8eb99bcf9278776d8e
 COPY --link scripts/ run/ download_pretrained_weights.py pyproject.toml uv.lock ./
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev --no-editable && \
-    rm -rf /root/.cache/uv
+    uv sync --frozen --no-dev --no-editable
 
 # step 3: build final runtime image
 FROM base AS runtime

@@ -29,8 +29,8 @@ style-fix: venv
 test-unit: venv
 	PYTHONPATH=../scripts uv run pytest ../tests --disable-warnings -v
 
-test-component: venv
+test-component:
 	@echo "test-component not available"
 
-test-integration: venv
+test-integration:
 	@echo "test-integration not available"
