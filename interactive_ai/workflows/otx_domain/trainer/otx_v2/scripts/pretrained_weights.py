@@ -43,7 +43,7 @@ def download_file_from_url(object_name: str, file_path: str) -> None:
         else:
             raise RuntimeError(f"Failed to download '{object_name}' from {url}. Status code: {resp.status_code}")
     except Exception:
-        logger.error(f"Failed to download '{object_name}' from the Internet.")
+        logger.exception(f"Failed to download '{object_name}' from the Internet.")
         raise
 
 
@@ -59,7 +59,6 @@ def download_file(object_name, file_path):  # noqa: ANN001, ANN201, D103
         if e.code == "NoSuchKey":
             download_file_from_url(object_name, file_path)
         else:
-            logger.warning(f"{traceback.print_exc()}")
             logger.warning("Trying to get object using presigned URL")
             url = client.get_presigned_url(bucket_name=BUCKET_NAME_PRETRAINEDWEIGHTS, relative_path=object_name)
             try:
@@ -71,6 +70,7 @@ def download_file(object_name, file_path):  # noqa: ANN001, ANN201, D103
                                 f.write(chunk)
                     logger.info(f"File '{object_name}' downloaded successfully to '{file_path}' using presigned URL")
             except Exception:
+                logger.exception(f"Failed to download '{object_name}' using presigned URL.")
                 print(f"{traceback.print_exc()}")
                 raise
 
@@ -115,11 +115,3 @@ def download_pretrained_weights(work_dir: Path, template_id: str) -> None:
                 zip_ref.extractall(os.path.dirname(file_path))
             os.remove(file_path)
         logger.info(f"Downloaded pretrained weights: {obj_name} to {file_path}")
-
-
-# Example usage
-if __name__ == "__main__":
-    object_name = "pretrained_models_v2.json"
-    file_path = "./temp_downloaded.obj"
-
-    download_file(object_name, file_path)

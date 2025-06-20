@@ -9,12 +9,12 @@ from otx_io import (
     download_model_artifact,
     download_shard_files,
     load_trained_model_weights,
-    log_error,
-    log_full,
     save_checkpoint_sync,
     save_exported_model,
     save_openvino_exported_model,
     save_trained_model_weights,
+    upload_error_log,
+    upload_full_log,
     upload_model_artifact,
 )
 from s3_client import S3ClientSingleton
@@ -132,7 +132,7 @@ def test_save_checkpoint_sync(
 @patch.object(S3ClientSingleton, "instance")
 @patch("otx_io._get_object_name_base", return_value=Path("object_name_base"))
 @patch("otx_io._get_bucket_name", return_value="bucket")
-def test_log_error(
+def test_upload_error_log(
     mock_get_bucket_name,
     mock_get_object_name_base,
     mock_s3_client,
@@ -142,7 +142,7 @@ def test_log_error(
     mock_s3_client.return_value = client
 
     # Act
-    log_error(Exception())
+    upload_error_log(Exception())
 
     # Assert
     mock_get_bucket_name.assert_called()
@@ -158,7 +158,7 @@ def test_log_error(
 @patch.object(S3ClientSingleton, "instance")
 @patch("otx_io._get_object_name_base", return_value=Path("object_name_base"))
 @patch("otx_io._get_bucket_name", return_value="bucket")
-def test_log_full(
+def test_upload_full_log(
     mock_get_bucket_name,
     mock_get_object_name_base,
     mock_s3_client,
@@ -168,7 +168,7 @@ def test_log_full(
     mock_s3_client.return_value = client
 
     # Act
-    log_full("Full log")
+    upload_full_log("Full log")
 
     # Assert
     mock_get_bucket_name.assert_called()

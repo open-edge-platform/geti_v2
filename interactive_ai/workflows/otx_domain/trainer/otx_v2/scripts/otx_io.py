@@ -159,7 +159,6 @@ def save_checkpoint_sync(
     with TemporaryDirectory() as tmpdir:
         local_dir_path = Path(tmpdir)
         local_file_path = local_dir_path / filename
-        print(local_file_path)
 
         with local_file_path.open("wb") as fp:
             fp.write(model_weights_reader.read())
@@ -171,7 +170,7 @@ def save_checkpoint_sync(
         )
 
 
-def log_error(exception: Exception) -> None:
+def upload_error_log(exception: Exception) -> None:
     """Log exception and traceback."""
     error_dict = {
         "exc_type": exception.__class__.__name__,
@@ -186,7 +185,7 @@ def log_error(exception: Exception) -> None:
     )
 
 
-def log_full(full_log_text: str) -> None:
+def upload_full_log(full_log_text: str) -> None:
     """Log full OTX process."""
     S3ClientSingleton.instance().upload_file_from_bytes(
         bucket_name=_get_bucket_name(),

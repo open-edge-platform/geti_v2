@@ -175,7 +175,6 @@ class S3Client:
     @retry_on_rate_limit()
     def check_file_exists(self, bucket_name: str, object_name: Path) -> bool:
         try:
-            print(self.client)
             self.client.stat_object(bucket_name=bucket_name, object_name=str(object_name))
         except S3Error as e:
             logger.debug(e)

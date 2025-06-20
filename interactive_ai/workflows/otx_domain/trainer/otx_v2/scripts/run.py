@@ -9,7 +9,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from optimize import optimize
-from otx_io import AsyncCaller, download_config_file, download_shard_files, log_error, log_full
+from otx_io import AsyncCaller, download_config_file, download_shard_files, upload_error_log, upload_full_log
 from pretrained_weights import download_pretrained_weights
 from train import train
 from utils import JobType, OTXConfig, logging_elapsed_time
@@ -76,14 +76,14 @@ if __name__ == "__main__":
 
         Path("/tmp/training_completed").touch()  # noqa: S108
     except Exception as exception:
-        log_error(exception=exception)
+        upload_error_log(exception=exception)
         raise  # Reraise
     finally:
         root_logger.debug("Start AsyncCaller().close() process.")
         AsyncCaller().close()
 
-        root_logger.debug(f"Start log_full() process, log_file exists:{Path(log_file).exists()}")
+        root_logger.debug(f"Start upload_full_log() process, log_file exists:{Path(log_file).exists()}")
         if Path(log_file).exists():
             full_log_text = Path(log_file).read_text()
-            log_full(full_log_text=full_log_text)
-        root_logger.debug("Finished log_full() process.")
+            upload_full_log(full_log_text=full_log_text)
+        root_logger.debug("Finished upload_full_log() process.")
