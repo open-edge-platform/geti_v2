@@ -37,6 +37,12 @@ class ConfigurationsBackwardCompatibility:
     by converting between legacy and new configuration formats. It supports both directions:
     - Converting new configuration entities to legacy ones (backward_mapping)
     - Converting legacy configuration entities to new ones (forward_mapping)
+
+    Warning:
+        Not all legacy parameters are compatible with the new configuration system and vice versa.
+        Using legacy configuration endpoints has the following limitations:
+        - Users will not be able to access or set some new parameters (e.g., augmentations)
+        - Setting deprecated parameters will have no effect
     """
 
     @classmethod
@@ -51,6 +57,11 @@ class ConfigurationsBackwardCompatibility:
 
         This method transforms the new configuration format (ProjectConfiguration and TrainingConfiguration)
         to the legacy format.
+
+        Warning:
+            Not all new parameters can be represented in the legacy format. When using this method:
+            - Advanced features like certain augmentation parameters will not be accessible
+            - Some settings may be ignored entirely
 
         :param project_identifier: Identifier for the project
         :param project_configuration: New format project configuration containing task-specific settings
