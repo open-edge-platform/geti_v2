@@ -16,7 +16,7 @@ import { useProject } from '../../../providers/project-provider/project-provider
 import { DatasetImportToExistingProjectDialogButtons } from './dataset-import-to-existing-project-dialog-buttons.component';
 import { DatasetImportToExistingProjectMapLabels } from './dataset-import-to-existing-project-map-labels.component';
 import { KeypointErrorMessage } from './keypoint-error-message.component';
-import { hasDuplicatedValues } from './utils';
+import { getMissingLabels, hasDuplicatedValues } from './utils';
 
 interface DatasetImportToExistingProjectDialogProps {
     datasetImportDialogState: OverlayTriggerState;
@@ -28,13 +28,13 @@ export const DatasetImportToExistingProjectDialog = ({
     datasetImportDeleteDialogState,
 }: DatasetImportToExistingProjectDialogProps) => {
     const { project } = useProject();
-    const { setActiveDatasetImportId, activeDatasetImport, prepareDataset, importDatasetJob } =
+    const { setActiveDatasetImportId, prepareDataset, importDatasetJob, patchDatasetImport, activeDatasetImport } =
         useDatasetImportToExistingProject();
 
     const isAnomaly = project.domains.some(isAnomalyDomain);
     const isKeypoint = project.domains.some(isKeypointDetection);
-    const hasDuplicatedLabels = hasDuplicatedValues(activeDatasetImport?.labelsMap);
-    const isKeypointWithDuplicatedLabels = isKeypoint && hasDuplicatedLabels;
+    const hasDuplicatedMapLabels = hasDuplicatedValues(activeDatasetImport?.labelsMap);
+    const isKeypointWithDuplicatedLabels = isKeypoint && hasDuplicatedMapLabels;
 
     const showProgress = useMemo<boolean>(() => {
         return matchStatus(activeDatasetImport, [
@@ -54,20 +54,30 @@ export const DatasetImportToExistingProjectDialog = ({
 
     const isKeypointMapLabels = isKeypoint && showMapLabels;
 
-    const dialogDismiss = (): void => {
+    const handleDialogDismiss = (): void => {
         datasetImportDialogState.close();
         setActiveDatasetImportId(undefined);
     };
 
+    const handlePrimaryAction = () => {
+        if (!activeDatasetImport) return;
+
+        if (isKeypointMapLabels && getMissingLabels(project.labels, activeDatasetImport.labelsMap)) {
+            patchDatasetImport({ id: activeDatasetImport.id, labelsMap: {} });
+        }
+
+        importDatasetJob(activeDatasetImport.id);
+    };
+
     return (
-        <DialogContainer onDismiss={dialogDismiss}>
+        <DialogContainer onDismiss={handleDialogDismiss}>
             {datasetImportDialogState.isOpen && (
                 <Dialog aria-label='import-dataset-dialog' width={800}>
                     <Heading>Import dataset</Heading>
                     <Divider />
                     <Content>
                         <View backgroundColor={'gray-50'} minHeight={'size-4600'}>
-                            {!activeDatasetImport && (
+                            {activeDatasetImport === undefined && (
                                 <DatasetImportDnd
                                     setUploadItem={prepareDataset}
                                     setActiveUploadId={setActiveDatasetImportId}
@@ -98,15 +108,11 @@ export const DatasetImportToExistingProjectDialog = ({
                     </Content>
 
                     <DatasetImportToExistingProjectDialogButtons
-                        onDialogDismiss={dialogDismiss}
+                        onDialogDismiss={handleDialogDismiss}
                         datasetImportItem={activeDatasetImport}
                         deletionDialogTriggerState={datasetImportDeleteDialogState}
                         isImportDisabled={isKeypointWithDuplicatedLabels}
-                        onPrimaryAction={() => {
-                            if (!activeDatasetImport) return;
-
-                            importDatasetJob(activeDatasetImport.id);
-                        }}
+                        onPrimaryAction={handlePrimaryAction}
                     >
                         {isKeypointMapLabels && activeDatasetImport && (
                             <KeypointErrorMessage labels={project.labels} labelsMap={activeDatasetImport.labelsMap} />

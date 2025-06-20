@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { getMockedLabel } from '../../../../../test-utils/mocked-items-factory/mocked-labels';
-import { areAllLabelsIncluded, getDuplicates, hasDuplicatedValues } from './utils';
+import { areAllLabelsIncluded, getDuplicates, getMissingLabels, hasDuplicatedValues } from './utils';
 
 describe('dataset import to existing project utils', () => {
     describe('hasDuplicatedValues', () => {
@@ -53,6 +53,48 @@ describe('dataset import to existing project utils', () => {
 
         it('returns false for empty labels array', () => {
             expect(areAllLabelsIncluded([], { source1: 'label1' })).toBe(false);
+        });
+    });
+
+    describe('getMissingLabels', () => {
+        it('return labels that are not included in the labelsMap values', () => {
+            const labels = [
+                getMockedLabel({ id: 'label-1', name: 'Label 1' }),
+                getMockedLabel({ id: 'label-2', name: 'Label 2' }),
+                getMockedLabel({ id: 'label-3', name: 'Label 3' }),
+            ];
+
+            const labelsMap = {
+                'source-1': 'label-1',
+                'source-2': 'label-2',
+            };
+
+            expect(getMissingLabels(labels, labelsMap)).toEqual([getMockedLabel({ id: 'label-3', name: 'Label 3' })]);
+        });
+
+        it('return empty array when all labels are included in labelsMap values', () => {
+            const labels = [
+                getMockedLabel({ id: 'label-1', name: 'Label 1' }),
+                getMockedLabel({ id: 'label-2', name: 'Label 2' }),
+            ];
+
+            const labelsMap = {
+                'source-1': 'label-1',
+                'source-2': 'label-2',
+                'source-3': 'label-2',
+            };
+
+            expect(getMissingLabels(labels, labelsMap)).toEqual([]);
+        });
+
+        it('return all labels when labelsMap is empty', () => {
+            const labelsMap = {};
+            const labels = [
+                getMockedLabel({ id: 'label-1', name: 'Label 1' }),
+                getMockedLabel({ id: 'label-2', name: 'Label 2' }),
+            ];
+
+            expect(getMissingLabels(labels, labelsMap)).toEqual(labels);
         });
     });
 });

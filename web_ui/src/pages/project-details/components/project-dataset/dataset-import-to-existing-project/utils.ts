@@ -22,3 +22,9 @@ export const areAllLabelsIncluded = (labels: Label[], labelsMap?: Record<string,
 
 export const getDuplicates = (items: string[]) =>
     uniq(items.filter((value, index, array) => array.indexOf(value) !== index));
+
+export const getMissingLabels = (labels: Label[], labelsMap: Record<string, string>) => {
+    const labelsMapValues = Object.values(labelsMap);
+
+    return labels.filter((label) => !labelsMapValues.includes(label.id));
+};

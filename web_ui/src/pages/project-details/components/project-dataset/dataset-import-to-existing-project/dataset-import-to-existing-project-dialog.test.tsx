@@ -16,7 +16,7 @@ import { getMockedTask } from '../../../../../test-utils/mocked-items-factory/mo
 import { projectListRender } from '../../../../../test-utils/projects-list-providers-render';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { DatasetImportToExistingProjectDialog } from './dataset-import-to-existing-project-dialog.component';
-import { KEYPOINT_DUPLICATED_LABELS } from './utils';
+import { KEYPOINT_ANNOTATION_WARNING, KEYPOINT_DUPLICATED_LABELS } from './utils';
 
 const mockDatasetImportItem: DatasetImportToExistingProjectItem = {
     id: '987-654-321',
@@ -210,6 +210,9 @@ describe(DatasetImportToExistingProjectDialog, () => {
     });
 
     describe('keypoint detection', () => {
+        const neckLabel = getMockedLabel({ name: 'neck', id: '683d4ccfd01df152c3f65ff6' });
+        const headLabel = getMockedLabel({ name: 'neck', id: '683d4ccfd01df152c3f65ff7' });
+
         it('displays warning for duplicated keypoint labels', async () => {
             jest.mocked(useDatasetImportToExistingProject).mockReturnValue({
                 ...jest.requireActual(
@@ -218,10 +221,7 @@ describe(DatasetImportToExistingProjectDialog, () => {
                 isReady: jest.fn(),
                 activeDatasetImport: {
                     ...mockDatasetImportItem,
-                    labelsMap: {
-                        neck: '683d4ccfd01df152c3f65ff6',
-                        head: '683d4ccfd01df152c3f65ff6',
-                    },
+                    labelsMap: { neck: neckLabel.id, head: neckLabel.id },
                     status: DATASET_IMPORT_STATUSES.LABELS_MAPPING_TO_EXISTING_PROJECT,
                 },
             });
@@ -229,12 +229,7 @@ describe(DatasetImportToExistingProjectDialog, () => {
             jest.mocked(useProject).mockImplementation(() =>
                 mockedProjectContextProps({
                     project: getMockedProject({
-                        tasks: [
-                            getMockedTask({
-                                domain: DOMAIN.KEYPOINT_DETECTION,
-                                labels: [getMockedLabel({ name: 'neck', id: '683d4ccfd01df152c3f65ff6' })],
-                            }),
-                        ],
+                        tasks: [getMockedTask({ domain: DOMAIN.KEYPOINT_DETECTION, labels: [neckLabel] })],
                     }),
                 })
             );
@@ -243,6 +238,42 @@ describe(DatasetImportToExistingProjectDialog, () => {
 
             expect(screen.getByText(new RegExp(KEYPOINT_DUPLICATED_LABELS))).toBeVisible();
             expect(screen.getByRole('button', { name: /import/i })).toBeDisabled();
+        });
+
+        it('removes incomplete mapped labels', async () => {
+            const mockedImportDatasetJob = jest.fn();
+            const mockedPatchDatasetImport = jest.fn();
+            jest.mocked(useDatasetImportToExistingProject).mockReturnValue({
+                ...jest.requireActual(
+                    '../../../../../providers/dataset-import-to-existing-project-provider/dataset-import-to-existing-project-provider.component'
+                ),
+                isReady: jest.fn(() => true),
+                importDatasetJob: mockedImportDatasetJob,
+                patchDatasetImport: mockedPatchDatasetImport,
+                setActiveDatasetImportId: jest.fn(),
+                activeDatasetImport: {
+                    ...mockDatasetImportItem,
+                    labelsMap: { neck: '683d4ccfd01df152c3f65ff6' },
+                    status: DATASET_IMPORT_STATUSES.LABELS_MAPPING_TO_EXISTING_PROJECT,
+                },
+            });
+
+            jest.mocked(useProject).mockImplementation(() =>
+                mockedProjectContextProps({
+                    project: getMockedProject({
+                        tasks: [getMockedTask({ domain: DOMAIN.KEYPOINT_DETECTION, labels: [neckLabel, headLabel] })],
+                    }),
+                })
+            );
+
+            await renderMockedComponent({ featureFlags: { FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE: true } });
+
+            expect(screen.getByText(new RegExp(KEYPOINT_ANNOTATION_WARNING))).toBeVisible();
+
+            fireEvent.click(screen.getByRole('button', { name: 'Import' }));
+
+            expect(mockedImportDatasetJob).toHaveBeenCalledWith(mockDatasetImportItem.id);
+            expect(mockedPatchDatasetImport).toHaveBeenCalledWith({ id: mockDatasetImportItem.id, labelsMap: {} });
         });
     });
 });

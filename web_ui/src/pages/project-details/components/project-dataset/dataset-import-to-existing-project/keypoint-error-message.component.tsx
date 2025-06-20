@@ -9,6 +9,7 @@ import { Label } from '../../../../../core/labels/label.interface';
 import { isNonEmptyArray } from '../../../../../shared/utils';
 import {
     getDuplicates,
+    getMissingLabels,
     KEYPOINT_ANNOTATION_WARNING,
     KEYPOINT_DUPLICATED_LABELS,
     KEYPOINT_MISSING_LABELS,
@@ -21,11 +22,11 @@ export interface KeypointErrorProps {
 
 const concatNames = (labels: Label[]) => labels.map(({ name }) => name).join(', ');
 
-export const KeypointErrorMessage = ({ labelsMap, labels }: KeypointErrorProps) => {
+export const KeypointErrorMessage = ({ labels, labelsMap }: KeypointErrorProps) => {
     const labelsMapValues = Object.values(labelsMap);
     const duplicatedValues = getDuplicates(labelsMapValues);
 
-    const missingLabels = labels.filter((label) => !labelsMapValues.includes(label.id));
+    const missingLabels = getMissingLabels(labels, labelsMap);
     const duplicatedLabels = labels.filter((label) => duplicatedValues.includes(label.id));
 
     if (isEmpty(missingLabels) && isEmpty(duplicatedLabels)) {
