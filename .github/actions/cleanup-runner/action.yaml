@@ -25,17 +25,13 @@ runs:
       run: |
         echo "=== Performing System Cleanup ==="
         
-        # Remove hosted tool cache
         sudo rm -rf /opt/hostedtoolcache || true
-        
-        # Remove swap file
         if [ -f /swapfile ]; then
           sudo swapoff -a
           sudo rm -f /swapfile
         fi
         
         echo "Removing unnecessary system packages..."
-        # Remove unnecessary system packages and files
         sudo rm -rf /usr/share/dotnet || true
         sudo rm -rf /opt/ghc || true
         sudo rm -rf /usr/local/share/boost || true
@@ -45,12 +41,10 @@ runs:
         sudo rm -rf /opt/az || true
         sudo rm -rf /usr/share/gradle || true
         
-        # Remove unnecessary locale and documentation
         sudo rm -rf /usr/share/locale/* || true
         sudo rm -rf /usr/share/man/* || true
         sudo rm -rf /usr/share/doc/* || true
         
-        # Clean package manager caches
         echo "Cleaning package manager caches..."
         sudo apt-get clean
         sudo apt-get autoremove -y
