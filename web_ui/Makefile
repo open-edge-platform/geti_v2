@@ -27,3 +27,6 @@ static-code-analysis:
 
 builder:
 	@echo "Not applicable"
+
+publish-chart:
+	@echo "Not applicable"

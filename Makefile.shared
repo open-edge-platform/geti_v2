@@ -27,11 +27,11 @@ BASE_OTE_V2_IMAGE_TAG             ?= 12.8.1.1.30
 ###
 # component
 ###
+BUILD_DIR                         := ./.build
 CHART_DIR                         := ./chart
-CHART_YAML_TEMPLATE               := ${CHART_DIR}/Chart.yaml.template
-CHART_BUILD_DIR                   := ./.build
-CHART_YAML                        := ${CHART_BUILD_DIR}/Chart.yaml
-COMPONENT_NAME                    := $(shell grep '^name:' ${CHART_YAML_TEMPLATE} | sed 's/^name: //')
+EXTRA_CHART_DIRS                  ?=
+CHART_BUILD_DIR                   := ${BUILD_DIR}/chart
+
 ###
 # docker extra arguments
 ###
@@ -87,14 +87,17 @@ publish-image:
 build-chart-default:
 	mkdir -p ${CHART_BUILD_DIR}
 	cp -r ${CHART_DIR}/* ${CHART_BUILD_DIR}/
-	TAG=$(TAG) COMPONENT_NAME=$(COMPONENT_NAME) envsubst < ${CHART_BUILD_DIR}/Chart.yaml.template > ${CHART_YAML}
+	@if [ -n "$(EXTRA_CHART_DIRS)" ]; then \
+        cp $(EXTRA_CHART_DIRS) ${CHART_BUILD_DIR}/; \
+    fi
+	TAG=$(TAG) COMPONENT_NAME=$(COMPONENT_NAME) envsubst < ${CHART_BUILD_DIR}/Chart.yaml.template > ${CHART_BUILD_DIR}/Chart.yaml
 	rm "${CHART_BUILD_DIR}/Chart.yaml.template"
 	helm dependency update ${CHART_BUILD_DIR}
 	helm package ${CHART_BUILD_DIR} --version ${TAG} --destination ${CHART_BUILD_DIR}
 
 lint-chart-default: build-chart
 	@echo "Running chart linter for component: ${COMPONENT_NAME}"
-	helm lint --with-subcharts $(dir ${CHART_YAML})
+	helm lint --with-subcharts ${CHART_BUILD_DIR}
 
 publish-chart-default: build-chart
 	@echo "Publishing chart for component: ${COMPONENT_NAME}"
@@ -103,7 +106,7 @@ publish-chart-default: build-chart
 clean:
 	@if [ -n "$(CLEAN_DIRS)" ]; then \
         echo "Removing: $(CLEAN_DIRS)"; \
-        rm -rf $(CLEAN_DIRS); \
+        rm -rf $(CLEAN_DIRS) $(BUILD_DIR); \
     fi
 
 # To suppress warnings when overriding Makefile targets, declare the abstract targets as <name>-default
@@ -115,13 +118,20 @@ ifeq (builder,$(firstword $(MAKECMDGOALS)))
   BUILDER_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
   $(eval $(BUILDER_ARGS):;@:)
   ROOT_DIR=$(shell git rev-parse --show-toplevel)
-  RELATIVE_PATH=$(shell realpath --relative-to=$(ROOT_DIR) $(CURDIR))
+  RELATIVE_PATH=$(shell python3 -c "import os.path; print(os.path.relpath('$(CURDIR)', '$(ROOT_DIR)'))")
 endif
 
 # Run builder container when do "make builder -C <directory> <args>"
 builder-default:
-	@docker run --rm -u $(shell id -u):$(shell getent group docker | cut -d: -f3) \
-		-v "$(ROOT_DIR):/app" \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v ~/.docker/config.json:/home/bulider/.docker/config.json \
-		-w "/app" ${DOCKER_PROXY} ${BUILDER_IMAGE} make -C $(RELATIVE_PATH) $(BUILDER_ARGS)
+	@if [ -n "$(BUILDER_IMAGE)" ]; then \
+	    echo "Running make -C $(RELATIVE_PATH) $(BUILDER_ARGS) in the container: $(BUILDER_IMAGE)"; \
+		docker run --rm -u $(shell id -u):$(shell getent group docker | cut -d: -f3) \
+			-v "$(ROOT_DIR):/app" \
+			-v /var/run/docker.sock:/var/run/docker.sock \
+			-v ~/.docker/config.json:/home/bulider/.docker/config.json \
+			-w "/app" ${DOCKER_PROXY} ${BUILDER_IMAGE} make -C $(RELATIVE_PATH) $(BUILDER_ARGS); \
+    else \
+        echo "Running make $(BUILDER_ARGS) locally"; \
+        make $(BUILDER_ARGS); \
+    fi
+	@exit 0
