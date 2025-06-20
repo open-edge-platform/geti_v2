@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 import pytest
+
 from scripts.mlflow_io import AsyncCaller
 
 
@@ -33,3 +34,9 @@ def fxt_async_caller():
     AsyncCaller().start()
     yield
     AsyncCaller().close()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def ensure_torch_hub_checkpoints():
+    checkpoints_dir = Path.home() / ".cache" / "torch" / "hub" / "checkpoints"
+    checkpoints_dir.mkdir(parents=True, exist_ok=True)
