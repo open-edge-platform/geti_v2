@@ -31,6 +31,7 @@ class ModelStorageToMongo(IMapperSimple[ModelStorage, dict]):
             project_id=IDToMongo.backward(instance["project_id"]),
             task_node_id=IDToMongo.backward(instance["task_node_id"]),
             model_template=ModelTemplateList().get_by_id(instance["model_template_id"]),
+            model_template_id=instance["model_template_id"],
             creation_date=DatetimeToMongo.backward(instance["creation_date"]),
             ephemeral=False,
         )

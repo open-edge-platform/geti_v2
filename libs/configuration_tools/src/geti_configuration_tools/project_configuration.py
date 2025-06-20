@@ -30,8 +30,8 @@ class AutoTrainingParameters(BaseModel):
         description="Whether to dynamically adjust the number of required annotations",
     )
     min_images_per_label: int = Field(
-        ge=0,
-        default=0,
+        ge=3,
+        default=12,
         title="Minimum images per label",
         description="Minimum number of images needed for each label to trigger auto-training",
     )
@@ -80,6 +80,33 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
         PersistentEntity.__init__(self, id_=project_id, ephemeral=ephemeral)
 
         self._task_idx_mapping = {task_config.task_id: i for i, task_config in enumerate(self.task_configs)}
+
+    @staticmethod
+    def default_configuration(project_id: ID, task_ids: list[ID | str]) -> "ProjectConfiguration":
+        """
+        Creates a default project configuration given the task IDs
+
+        :param project_id: The ID of the project for which to create the configuration.
+        :param task_ids: A list of task IDs to include in the configuration.
+        :return: A ProjectConfiguration instance with an empty task configuration list.
+        """
+        default_task_configs = []
+
+        for task_id in task_ids:
+            default_task_configs.append(
+                TaskConfig(
+                    task_id=str(task_id),
+                    training=TrainingParameters(
+                        constraints=TrainConstraints(),
+                    ),
+                    auto_training=AutoTrainingParameters(),
+                )
+            )
+
+        return ProjectConfiguration(
+            project_id=project_id,
+            task_configs=default_task_configs,
+        )
 
     @property
     def project_id(self) -> ID:
