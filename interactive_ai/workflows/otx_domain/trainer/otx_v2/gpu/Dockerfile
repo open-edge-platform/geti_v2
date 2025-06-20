@@ -15,19 +15,21 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bi
 ENV TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.2;7.5;8.0;8.6"
 ENV TORCH_DONT_CHECK_COMPILER_ABI=1
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget && \
-    wget -q https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb && \
-    dpkg -i cuda-keyring_1.1-1_all.deb && \
-    rm cuda-keyring_1.1-1_all.deb && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-        cuda-libraries-12-6 \
-        cuda-compiler-12-6 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
-    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+RUN apt update \
+	&& apt install -y wget --no-install-recommends
+
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb \
+    && dpkg -i cuda-keyring_1.1-1_all.deb \
+    && rm -rf cuda-keyring_1.1-1_all.deb
+
+RUN apt update \
+	&& apt install -y --no-install-recommends \
+    cuda-libraries-12-6 \
+    cuda-compiler-12-6 \
+    && apt clean all \
+    && rm -rf /var/cache/apt/* \
+	&& echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \
+	&& echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
 
 # step 2: get python dependencies
 FROM base AS runtime
@@ -45,9 +47,13 @@ WORKDIR /interactive_ai/workflows/otx_domain/trainer/otx_v2
 
 COPY --link --from=ghcr.io/astral-sh/uv:0.6.12@sha256:515b886e8eb99bcf9278776d8ea41eb4553a794195ef5803aa7ca6258653100d /uv /bin/uv
 
-COPY --link scripts/ run/ download_pretrained_weights.py pyproject.toml uv.lock ./
+COPY --link scripts/ scripts
+COPY --link run run
+COPY --link download_pretrained_weights.py download_pretrained_weights.py
 
 RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-dev --no-editable
 
 # Install runtime dependencies
