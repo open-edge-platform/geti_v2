@@ -1,0 +1,714 @@
+# INTEL CONFIDENTIAL
+#
+# Copyright (C) 2024 Intel Corporation
+#
+# This software and the related documents are Intel copyrighted materials, and your use of them is governed by
+# the express license under which they were provided to you ("License"). Unless the License provides otherwise,
+# you may not use, modify, copy, publish, distribute, disclose or transmit this software or the related documents
+# without Intel's prior written permission.
+#
+# This software and the related documents are provided as is, with no express or implied warranties,
+# other than those that are expressly stated in the License.
+
+package istio.authz
+
+import future.keywords
+import future.keywords.every
+import input.attributes.request.http as http_request
+import input.parsed_path
+import input.parsed_query
+
+test_result_license_valid {
+    result == {"allowed": true, "body": ""}
+    with allow as true
+    with is_license_valid as true
+}
+
+test_result_license_invalid_not_allow {
+    result == {"allowed": false, "body": "License is invalid."}
+    with input as {
+        "attributes": {"request": {"http": {
+            "method": "GET",
+            "path": "/api/v1/organizations/",
+        }}},
+        "parsed_path": ["api", "v1", "workspaces"]
+        }
+    with is_license_valid as false
+}
+
+test_result_health_route_and_license_invalid {
+    result == {"allowed": true, "body": ""}
+    with input as {
+        "attributes": {"request": {"http": {
+            "method": "GET",
+            "path": "/health/",
+        }}},
+        "parsed_path": [
+            "health",
+            "",
+        ],
+    }
+    with is_license_valid as false
+}
+
+test_health_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+            "method": "GET",
+            "path": "/health/",
+        }}},
+        "parsed_path": [
+            "health",
+            "",
+        ],
+    }
+}
+
+test_license_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+            "method": "GET",
+            "path": "/api/v1/license/valid",
+        }}},
+        "parsed_path": ["api","v1","license","valid"],
+    }
+}
+
+test_license_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+            "method": "POST",
+            "path": "/api/v1/license/valid",
+        }}},
+        "parsed_path": ["api","v1","license","valid"],
+    }
+}
+
+test_get_balance_auth_user_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/balance",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "balance"],
+    } with is_license_valid as true
+with check_authorization_spicedb as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_balance_not_auth_user_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/balance",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "balance"],
+    } with is_license_valid as true
+with check_authorization_spicedb as false
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_balance_intel_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/balance",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "balance"],
+    } with is_license_valid as true
+}
+
+test_put_balance_intel_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."},
+        	"method": "PUT",
+            "path": "/api/v1/organizations/1/credit_accounts/1/balance",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts", 1, "balance"],
+    } with is_license_valid as true
+}
+
+test_put_balance_org_admin_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "PUT",
+            "path": "/api/v1/organizations/1/credit_accounts/1/balance",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts", 1, "balance"],
+    } with is_license_valid as true
+with check_authorization_spicedb as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_post_credit_account_intel_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."},
+        	"method": "POST",
+            "path": "/api/v1/organizations/1/credit_accounts",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts"],
+    } with is_license_valid as true
+}
+
+test_post_credit_account_org_admin_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "POST",
+            "path": "/api/v1/organizations/1/credit_accounts",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts"],
+    } with is_license_valid as true
+with check_authorization_spicedb as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_put_credit_account_intel_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."},
+        	"method": "PUT",
+            "path": "/api/v1/organizations/1/credit_accounts/1",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts", 1],
+    } with is_license_valid as true
+}
+
+test_put_credit_account_org_admin_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "PUT",
+            "path": "/api/v1/organizations/1/credit_accounts/1",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts", 1],
+    } with is_license_valid as true
+with check_authorization_spicedb as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_credit_account_org_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/credit_accounts",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts"],
+    } with is_license_valid as true
+with is_workspace_admin as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_transactions_org_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/transactions",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "transactions"],
+    } with is_license_valid as true
+with is_workspace_admin as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_transaction_aggregates_org_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/transactions/aggregates",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "transactions", "aggregates"],
+    } with is_license_valid as true
+with is_workspace_admin as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_transactions_intel_admin_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {{"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."}},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/transactions",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "transactions"],
+    } with is_license_valid as true
+}
+
+test_get_products_org_user_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "GET",
+            "path": "/api/v1/products",
+        }}},
+        "parsed_path": ["api", "v1", "products"],
+    } with is_license_valid as true
+with check_authorization_spicedb as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_post_subscription_org_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "POST",
+            "path": "/api/v1/organizations/1/workspaces/1/subscriptions",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "workspaces", 1, "subscriptions"],
+    } with is_license_valid as true
+with check_authorization as true
+with check_relation as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_post_subscription_intel_admin_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."},
+        	"method": "POST",
+            "path": "/api/v1/organizations/1/workspaces/1/subscriptions",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "workspaces", 1, "subscriptions"],
+    } with is_license_valid as true
+}
+
+test_get_subscriptions_org_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/subscriptions",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions"],
+    } with is_license_valid as true
+with is_workspace_admin as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_subscriptions_org_user_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/subscriptions",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions"],
+    } with is_license_valid as true
+with is_workspace_admin as false
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_subscriptions_quotas_intel_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/subscriptions/active/quotas",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
+    } with is_license_valid as true
+}
+
+test_get_subscriptions_quotas_org_user_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/subscriptions/active/quotas",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
+    } with is_license_valid as true
+with is_workspace_admin as false
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_subscriptions_quotas_org_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token":  "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+            "method": "GET",
+            "path": "/api/v1/organizations/1/subscriptions/active/quotas",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
+    } with is_license_valid as true
+with is_workspace_admin as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_put_subscriptions_quotas_intel_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."},
+        	"method": "PUT",
+            "path": "/api/v1/organizations/1/subscriptions/active/quotas",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
+    } with is_license_valid as true
+}
+
+test_get_subscriptions_quotas_org_user_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "PUT",
+            "path": "/api/v1/organizations/1/subscriptions/active/quotas",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
+    } with is_license_valid as true
+with is_workspace_admin as false
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_active_subscription_org_user_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJSUzUxMiIsImtpZCI6IjYxOWI0OTg2MzM5ZTgyMmFlOTM3YjNkNWFlZTJjZWY2MmE1MDA5YjM2MzQzYmE5MzY0MTVhM2MyMTNhY2FiOTRlZmExNmFhZDdhNzI0ZjNkNTk1ZmRiNjlkNDY5MTU1MDcxNWVhYWM4ZmUzMWQ3Yjg5NDJjMGE0YjY3YTZkODBlIiwidHlwIjoiSldUIn0.eyJyb2xlcyI6bnVsbCwidGlkIjoiIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwib3JnYW5pemF0aW9uX2lkIjoiYTM1MGI0NTQtY2M4MC00ZDQxLWI3MmQtMzA2MzNkNjNmMjRkIiwiZXh0ZXJuYWxfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1OaU1XVmlNakJrTWpreU9URmhPVGd6WXpabFkyRTRaak14WXpRNVlUZGxZelF6TmpFME16VWlmUS5leUpwYzNNaU9pSm9kSFJ3Y3pvdkx6RXdMalUxTGpJMU1pNHhOVEF2WkdWNElpd2ljM1ZpSWpvaVEycHNhbUpxTURGTlYxVXlUVEpLYVU5VE1EQk5la2t3VEZSUk5FNHlSWFJaVkZrMFRVTXhiRTVFVFRWT1ZGRjNXVmROTkUxdFZYTmFSMDA1V2xob2FHSllRbk5hVTNocldYb3hkbU50WTFORVdFcHNXak5XYzFsWVNtWmtXRTVzWTI1Tklpd2lZWFZrSWpvaWQyVmlYM1ZwSWl3aVpYaHdJam94TnpBM01qazRORFE1TENKcFlYUWlPakUzTURjeU9UUXlORGtzSW1GMFgyaGhjMmdpT2lKclpWTmZUM3B6Tms0eGNpMXNhbko2V2s5WWFHVkJJaXdpWTE5b1lYTm9Jam9pU1haVVl6SjVVREF5WlUxdlRIWmxOWFpqUTNwamR5SXNJbVZ0WVdsc0lqb2lZV1J0YVc1QWMyTXRjSEp2YW1WamRDNXBiblJsYkM1amIyMGlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aWJtRnRaU0k2SWpVeFpUWXpZbUk1TFRRek1qUXRORGczWVMxaE5qZ3dMV1UwTXprMU5EQmhZemd5WlNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJalV4WlRZelltSTVMVFF6TWpRdE5EZzNZUzFoTmpnd0xXVTBNemsxTkRCaFl6Z3laU0o5Lm5ydkF1THRmZ19hVzdtcWZFeW5Zb2FMc2xCQlVsT1lheENOU2VsNUtKOFNQZS1uV1l5dmRWREJ6RUJaRkRsU016SV9VTU5iWGhzZjJtTEd1TTA5TVZvaVpUUGNpMTcxTmpiWUdhejZHUXUyRkNybzQxejRlem9yTmVfRGEzTmE2TlFXQW5HUVZHUzZYb1JVa28xNThvLTJBamlCYnJwNlQtZ0NMRllDZUNiLVlicV8tV241Y0ZuaUxQRUtPc0thQnpqUUwwb3U2WmRqVlliR1RfX1R2Y3dCYVNxdHhFR3Q1R2tpZGtvbVFXaGVveVhuekVYSk9SVU03VDVnRHhrRV80a1R4d0hiOVZ2LWpnalJMNVFVR1luZlEwanlwYW4tRmdzdktseXBvVEZhd1V5MGhDS1lCRVpGRVBQSE1LalpnczFBWnI5eTZiZVdIYV9Yck0yWUhMZyIsInNvdXJjZSI6ImJyb3dzZXIiLCJpc3MiOiJJbnRlbCBHZXRpIiwic3ViIjoiNTFlNjNiYjktNDMyNC00ODdhLWE2ODAtZTQzOTU0MGFjODJlIiwiYXVkIjpbIndlYl91aSJdLCJleHAiOjE3MDcyOTQzMjksIm5iZiI6MTcwNzI5NDI2OSwiaWF0IjoxNzA3Mjk0MjY5fQ.hYCuEYbiTu-zajj62jwblj-XK3D4l054-SV1JG0iP8dTZKuIgJ7S1BSFgcpEpONmG_YrXlFK9yhUkYNyQMxctoDKA-XcRIQyi58Lfj87jWElEjI7mOp4l3fEuisopcKA1gdqd4jjytDqU_mi_JcBFvn_Av9xa5QSTHZ_bbUAkjv5lX0zuJS-O-c7Q43XzPeEI6MfP1tFfO6rDp-o_p_smRD647_1n_LgyNxnoL9OTO-LBZ7QZcCMh5B5PCfTJNXxlgcQL2Cep5fI-hYrA5zQO_-f7gCV5zUCKTb1KXkAHp1EAjipEm_wDK2p0Sa2tmynoOXwOu6DVHW1S7ttct-jo_v-jodwwDFmlzUcLIQ540OMtPZX2HxL-Ou0mG82b76jMwaUhwxKo9KAdBqXO_5nubQarnJLZp0fgkE7F95IqIl49GxgMyrvJh0q_ucrlJyH7x8FbxksOiwj5-rZSNE2Cd6EnZL1-MS3G_uQJc6inn7pDlxLdEvc87dJQnL3s9oarm7wI55EYvlEpexzjchLbS6YWLxYa_xVv2WVL21irPVHYeoDGdk42TFwOr4j5Hu9Kl4d-Q0sJ-1N_Gs43qsB9jAQM3FXUWix3oqyqLYtSWzZxjSyz-Hz44C1rNCkPn5VqcQEA7KgPA8aYfkpWSO0DesrL1ZOmJP7KdJm8Ttbbug"},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/subscriptions/active",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active"],
+    } with is_license_valid as true
+with check_authorization_spicedb as true
+with spicedb_key as "token"
+with spicedb_address as "localhost"
+}
+
+test_get_subscriptions_intel_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/subscriptions",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions"],
+    } with is_license_valid as true
+}
+
+test_get_active_subscription_intel_admin_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+        	"headers": {"x-auth-request-access-token": "eyJhbGciOiJub25lIn0.eyJpc3MiOiJodHRwczovLzEwLjU1LjI1Mi4xMDEvZGV4Iiwic3ViIjoiQ2lSamJqMTFhV1JBWlhoaGJYQnNaUzV2Y21jc1pHTTlaWGhoYlhCc1pTeGtZejF2Y21jU0RYSmxaM1ZzWVhKZmRYTmxjbk0iLCJhdWQiOiJmd0NEWEs1dXNWT2hKaHlJWWpnaCIsImV4cCI6MTY4NTUzODg3OCwiaWF0IjoxNjg1NTM4ODc4LCJhdF9oYXNoIjoibUtxbWN2NzF3ZDl2Q0FSRWZURUR1dyIsImVtYWlsIjoibWFpbEBleGFtcGxlLm9yZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoidWlkQGV4YW1wbGUub3JnIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiIn0."},
+        	"method": "GET",
+            "path": "/api/v1/organizations/1/subscriptions/active",
+        }}},
+        "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active"],
+    } with is_license_valid as true
+}
+
+test_rollover_is_allowed {
+    allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/api/v1/internal/tasks/credit_accounts/rollover",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/credit-system"
+            }
+        }
+    } with is_license_valid as true
+}
+
+test_snapshot_is_allowed {
+    allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/api/v1/internal/tasks/credit_accounts/snapshot",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/credit-system"
+            }
+        }
+    } with is_license_valid as true
+}
+
+test_grpc_lease_acquire_jobs_ms_allowed {
+    allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.LeaseService/acquire",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/impt-jobs-ms"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.LeaseService", "acquire"],
+    } with is_license_valid as true
+}
+
+test_grpc_lease_acquire_default_not_allowed {
+    not allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.LeaseService/acquire",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/default"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.LeaseService", "acquire"],
+    } with is_license_valid as true
+}
+
+test_grpc_lease_cancel_jobs_scheduler_allowed {
+    allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.LeaseService/cancel",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/impt-jobs-scheduler"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.LeaseService", "cancel"],
+    } with is_license_valid as true
+}
+
+test_grpc_lease_cancel_default_not_allowed {
+    not allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.LeaseService/cancel",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/default"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.LeaseService", "cancel"],
+    } with is_license_valid as true
+}
+
+test_grpc_activate_subscription_onboarding_allowed {
+    allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.SubscriptionService/activate",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/onboarding-service"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.SubscriptionService", "activate"],
+    } with is_license_valid as true
+}
+
+test_grpc_activate_subscription_default_not_allowed {
+    not allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.SubscriptionService/activate",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/default"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.SubscriptionService", "activate"],
+    } with is_license_valid as true
+}
+
+test_grpc_get_products_onboarding_allowed {
+    allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.ProductService/get_all_products",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/onboarding-service"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.ProductService", "get_all_products"],
+    } with is_license_valid as true
+}
+
+test_grpc_get_products_default_not_allowed {
+    not allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.ProductService/get_all_products",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/default"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.ProductService", "get_all_products"],
+    } with is_license_valid as true
+}
+
+test_grpc_get_quota_account_service_allowed {
+    allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.QuotaService/get",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/impt-account-service"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.QuotaService", "get"],
+    } with is_license_valid as true
+}
+
+test_grpc_get_quota_default_not_allowed {
+    not allow with input as {
+        "attributes": {
+            "request": {
+                "http": {
+                    "headers": {},
+                    "method": "POST",
+                    "path": "/credit_system_service.QuotaService/get",
+                }
+            },
+            "source": {
+                "principal": "spiffe://cluster.local/ns/impt/sa/default"
+            },
+            "destination": {
+                "address": {
+                    "socketAddress": {
+                        "address": "10.0.76.189",
+                        "portValue": 5556
+                    }
+                }
+            }
+        },
+        "parsed_path": ["credit_system_service.QuotaService", "get"],
+    } with is_license_valid as true
+}

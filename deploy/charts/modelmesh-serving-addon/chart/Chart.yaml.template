@@ -1,4 +1,4 @@
-name: modelmesh-serving-addon
+name: ${COMPONENT_NAME}
 apiVersion: v2
 description: Helm chart for ovms runtime
 version: ${TAG}

@@ -1,4 +1,4 @@
-name: cert-manager-addon
+name: ${COMPONENT_NAME}
 apiVersion: v2
 description: Helm chart for ca issuer
 version: ${TAG}

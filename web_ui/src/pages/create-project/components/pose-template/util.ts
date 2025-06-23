@@ -4,27 +4,13 @@
 import { negate } from 'lodash-es';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
-import { KeypointNode, Point } from '../../../../core/annotations/shapes.interface';
+import { KeypointNode } from '../../../../core/annotations/shapes.interface';
 import { LabelItemEditionState, LabelItemType, LabelTreeItem } from '../../../../core/labels/label-tree-view.interface';
 import { LabelsRelationType } from '../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { TaskMetadata } from '../../../../core/projects/task.interface';
 import { DEFAULT_LABEL, getNextColor } from '../../../../shared/components/label-tree-view/utils';
-
-export interface EdgeLine {
-    id: string;
-    from: KeypointNode;
-    to: KeypointNode;
-}
-
-export interface TemplateState {
-    edges: EdgeLine[];
-    points: KeypointNode[];
-}
-
-export interface TemplateStateWithHistory extends TemplateState {
-    skipHistory?: boolean;
-}
+import { EdgeLine, getMaxMinPoint, PointAxis } from '../../../utils';
 
 export const isEqualLabel = (point: KeypointNode) => (otherPoint: KeypointNode) => {
     return point.label.id === otherPoint.label.id;
@@ -118,6 +104,35 @@ export const updateWithLatestPoints =
         };
     };
 
-export const denormalizePoint = <T extends Point>(point: T, roi: RegionOfInterest): T => {
-    return { ...point, x: point.x * roi.width, y: point.y * roi.height };
+export const resizePoints = (scaleFactor: number, roi: RegionOfInterest, points: KeypointNode[]) => {
+    const [minX, maxX] = getMaxMinPoint(points, PointAxis.X);
+    const [minY, maxY] = getMaxMinPoint(points, PointAxis.Y);
+
+    const currentWidth = maxX - minX;
+    const currentHeight = maxY - minY;
+
+    const newWidth = currentWidth * scaleFactor;
+    const newHeight = currentHeight * scaleFactor;
+
+    const scaleX = newWidth / currentWidth;
+    const scaleY = newHeight / currentHeight;
+
+    const roiCenterX = roi.x + roi.width / 2;
+    const roiCenterY = roi.y + roi.height / 2;
+
+    const newPoints = points.map((point) => {
+        const newX = (point.x - minX) * scaleX + minX;
+        const newY = (point.y - minY) * scaleY + minY;
+
+        const offsetX = newX - minX;
+        const offsetY = newY - minY;
+
+        return {
+            ...point,
+            x: roiCenterX + offsetX - newWidth / 2,
+            y: roiCenterY + offsetY - newHeight / 2,
+        };
+    });
+
+    return newPoints;
 };

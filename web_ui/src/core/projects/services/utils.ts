@@ -24,12 +24,13 @@ import {
     RevisitLabel,
 } from '../../labels/label.interface';
 import {
-    filterOutEmptyLabel,
+    filterOutEmptyAndBackgroundLabel,
     getBehaviourFromDTO,
     getFlattenedItems,
     getFlattenedLabels,
     GROUP_SEPARATOR,
     isAnomalous,
+    isBackgroundLabel,
     isEmptyLabel,
 } from '../../labels/utils';
 import { DOMAIN } from '../core.interface';
@@ -235,21 +236,24 @@ const getCommonTaskStructure = (task: TaskDTO, domain: DOMAIN) => {
 
         return getLabel(label, domain);
     });
-    const emptyLabel = labels.find(isEmptyLabel);
 
     // NOTE: creation of tree transform Label to LabelTreeViewLabel, we have to translate to Label again
     const labelsSortedByStructure: LabelTreeLabelProps[] = getFlattenedLabels(
-        fetchLabelsTree(filterOutEmptyLabel(labels))
+        fetchLabelsTree(filterOutEmptyAndBackgroundLabel(labels))
     );
 
     const commonStructure = {
         id: task.id,
         title: task.title,
         domain,
-        labels: emptyLabel === undefined ? labelsSortedByStructure : [...labelsSortedByStructure, emptyLabel],
+        labels: [...labelsSortedByStructure, ...getEmptyAndBackgroundLabels(labels)],
     };
 
     return commonStructure;
+};
+
+const getEmptyAndBackgroundLabels = (labels: Label[]) => {
+    return labels.filter((label) => isBackgroundLabel(label) || isEmptyLabel(label));
 };
 
 const isKeypointType = (otherTask: TaskDTO | KeypointTaskDTO): otherTask is KeypointTaskDTO => {
@@ -257,7 +261,10 @@ const isKeypointType = (otherTask: TaskDTO | KeypointTaskDTO): otherTask is Keyp
     return domain !== undefined && isKeypointDetection(domain);
 };
 
-const getKeypointStructure = (structureDTO: KeypointStructureDTO, labels: Label[]): KeypointStructure => {
+export const formatDtoToKeypointStructure = (
+    structureDTO: KeypointStructureDTO,
+    labels: Label[]
+): KeypointStructure => {
     return {
         ...structureDTO,
         positions: structureDTO.positions.map((position) => {
@@ -293,7 +300,7 @@ export const getProjectEntity = (serverProject: ProjectDTO, router = API_URLS): 
             return isKeypointType(task)
                 ? {
                       ...commonStructure,
-                      keypointStructure: getKeypointStructure(task.keypoint_structure, commonStructure.labels),
+                      keypointStructure: formatDtoToKeypointStructure(task.keypoint_structure, commonStructure.labels),
                   }
                 : commonStructure;
         })
@@ -320,7 +327,7 @@ export const getProjectEntity = (serverProject: ProjectDTO, router = API_URLS): 
 };
 
 const getLabelDTO = (label: EditedLabel): EditedLabelDTO => {
-    const { name, color, group, parentLabelId, hotkey, isEmpty } = label;
+    const { name, color, group, parentLabelId, hotkey, isEmpty, behaviour } = label;
 
     const common = {
         name,
@@ -329,6 +336,7 @@ const getLabelDTO = (label: EditedLabel): EditedLabelDTO => {
         hotkey,
         parent_id: parentLabelId,
         is_empty: isEmpty,
+        is_background: behaviour === LABEL_BEHAVIOUR.BACKGROUND,
         is_anomalous: isAnomalous(label),
     };
 

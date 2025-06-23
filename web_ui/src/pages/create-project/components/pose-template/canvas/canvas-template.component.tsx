@@ -16,16 +16,13 @@ import { KeyMap } from '../../../../../shared/keyboard-events/keyboard.interface
 import { getIds, hasDifferentId } from '../../../../../shared/utils';
 import { ClosestKeypoint } from '../../../../annotator/tools/edit-tool/edit-keypoint/closest-keypoint.component';
 import { useZoom } from '../../../../annotator/zoom/zoom-provider.component';
-import { getPointInRoi } from '../../../../utils';
+import { EdgeLine, getPointInRoi, TemplateState, TemplateStateWithHistory } from '../../../../utils';
 import {
-    EdgeLine,
     getDefaultLabelStructure,
     isDifferentLabel,
     isEdgeConnectingPoints,
     isEqualLabel,
     isNotMatchingEdge,
-    TemplateState,
-    TemplateStateWithHistory,
     updateWithLatestPoints,
 } from '../util';
 import { DrawingBox } from './drawing-box.component';
@@ -61,6 +58,7 @@ export const CanvasTemplate = ({
 
     const isDrawingGhostLine = !isNil(ghostLine?.from);
     const selectedPoint = points.find(({ label }) => isSelected(label.id));
+    const nextPointName = String(points.length + 1);
 
     const isShiftPress = useIsPressed({
         key: KeyMap.Shift,
@@ -110,6 +108,7 @@ export const CanvasTemplate = ({
 
     const handleDeletePoint = (point: KeypointNode) => {
         onStateUpdate({
+            skipHistory: false,
             points: points.filter(isDifferentLabel(point)),
             edges: edges.filter((currentEdge) => {
                 return isDifferentLabel(currentEdge.from)(point) && isDifferentLabel(currentEdge.to)(point);
@@ -168,10 +167,10 @@ export const CanvasTemplate = ({
                     border: '1px solid var(--spectrum-global-color-gray-200)',
                 }}
             >
-                {isAddPointEnabled && (
+                {isAddPointEnabled && nextPointName !== null && (
                     <DrawingBox
-                        totalPoints={points.length + 1}
                         onAddPoint={handleNewPoint}
+                        nextPointName={nextPointName}
                         onPointerMove={handleGhostLineEndMoving}
                     />
                 )}

@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 
 import { runWhen } from '../../../../../shared/utils';
 import useUndoRedoState, { UseUndoRedoState } from '../../../../annotator/tools/undo-redo/use-undo-redo-state';
-import { TemplateState } from '../util';
+import { TemplateState } from '../../../../utils';
 
 export const useUndoRedoWithCallback = (
     initialState: TemplateState,

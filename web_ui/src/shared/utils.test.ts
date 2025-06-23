@@ -10,6 +10,7 @@ import { Test } from '../core/tests/tests.interface';
 import { getMockedTask } from '../test-utils/mocked-items-factory/mocked-tasks';
 import {
     DATE_TIME_IN_ISO_AND_UTC_OFFSETFORMAT,
+    denormalizePoint,
     formatDownloadUrl,
     getDateTimeInISOAndUTCOffsetFormat,
     getDownloadNotificationMessage,
@@ -28,6 +29,7 @@ import {
     isNotCropDomain,
     isNotCropTask,
     loadImage,
+    normalizePoint,
     onValidFileList,
     pluralize,
     sanitize,
@@ -319,4 +321,18 @@ it('getDownloadNotificationMessage', () => {
     expect(getDownloadNotificationMessage('test-name')).toEqual(
         'Your test-name file is being prepared and will start downloading shortly.'
     );
+});
+
+it('denormalizePoint', () => {
+    const point = { x: 0.5, y: 0.5 };
+    const roi = { x: 0, y: 0, width: 100, height: 200 };
+
+    expect(denormalizePoint(point, roi)).toEqual({ x: 50, y: 100 });
+});
+
+it('normalizePoint', () => {
+    const point = { x: 50, y: 100 };
+    const roi = { x: 0, y: 0, width: 100, height: 200 };
+
+    expect(normalizePoint(point, roi)).toEqual({ x: 0.5, y: 0.5 });
 });

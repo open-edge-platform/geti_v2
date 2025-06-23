@@ -8,13 +8,13 @@ import {
     DATASET_IMPORT_WARNING_TYPE,
 } from '../../core/datasets/dataset.enum';
 import { getFileSize } from '../../shared/utils';
-import { getMockedSupportedProjectTypes } from '../../test-utils/mocked-items-factory/mocked-dataset-import';
 import {
     formatDatasetPrepareImportResponse,
     getBytesRemaining,
     getDatasetImportInitialState,
+    getImportKeypointTask,
     getTimeRemaining,
-    hasKeypointStructure,
+    isKeypointType,
 } from './utils';
 
 jest.mock('../../shared/utils', () => ({
@@ -96,47 +96,57 @@ describe('import to new project utils', () => {
             expect(getTimeRemaining(Date.now(), 0, 0)).toEqual('Calculating...');
         });
     });
-    describe('hasKeypointStructure', () => {
-        it('return true when keypoint structure exists in supported project types', () => {
-            const activeDatasetImport = getMockedSupportedProjectTypes([
+
+    describe('isKeypointType', () => {
+        test.each([
+            [DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION, true],
+            [DATASET_IMPORT_TASK_TYPE.CLASSIFICATION, false],
+            [DATASET_IMPORT_TASK_TYPE.DETECTION, false],
+            [DATASET_IMPORT_TASK_TYPE.ANOMALY_CLASSIFICATION, false],
+            [DATASET_IMPORT_TASK_TYPE.SEGMENTATION, false],
+        ])('return %p for task type %s', (taskType, expected) => {
+            expect(isKeypointType(taskType)).toBe(expected);
+        });
+    });
+
+    describe('getImportKeypointTask', () => {
+        const keypointTask = {
+            title: 'Keypoint Detection',
+            labels: [],
+            taskType: DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION,
+            keypointStructure: { edges: [], positions: [] },
+        };
+
+        const classificationTask = {
+            title: 'Classification',
+            labels: [],
+            taskType: DATASET_IMPORT_TASK_TYPE.CLASSIFICATION,
+        };
+
+        it('returns null when keypoint type has no keypointStructure', () => {
+            const supportedTypes = [
                 {
                     projectType: DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION,
                     pipeline: {
+                        tasks: [{ ...keypointTask, keypointStructure: undefined }],
                         connections: [],
-                        tasks: [
-                            {
-                                title: 'keypoint detection',
-                                labels: [],
-                                keypointStructure: { edges: [], positions: [] },
-                                taskType: DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION,
-                            },
-                        ],
                     },
                 },
-            ]);
-
-            expect(hasKeypointStructure(activeDatasetImport)).toBe(true);
+            ];
+            expect(getImportKeypointTask(supportedTypes)).toBeNull();
         });
 
-        it('return false when project type is not KEYPOINT_DETECTION', () => {
-            expect(
-                hasKeypointStructure([
-                    {
-                        projectType: DATASET_IMPORT_TASK_TYPE.CLASSIFICATION,
-                        pipeline: {
-                            connections: [],
-                            tasks: [
-                                {
-                                    keypointStructure: { edges: [], positions: [] },
-                                    title: '',
-                                    taskType: DATASET_IMPORT_TASK_TYPE.ANOMALY_CLASSIFICATION,
-                                    labels: [],
-                                },
-                            ],
-                        },
+        it('returns keypoint task when found', () => {
+            const supportedTypes = [
+                {
+                    projectType: DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION,
+                    pipeline: {
+                        tasks: [classificationTask, keypointTask],
+                        connections: [],
                     },
-                ])
-            ).toBe(false);
+                },
+            ];
+            expect(getImportKeypointTask(supportedTypes)).toEqual(keypointTask);
         });
     });
 });
