@@ -10,6 +10,13 @@ export enum MEDIA_ANNOTATION_STATUS {
     TO_REVISIT = 'to_revisit',
 }
 
+export enum MEDIA_PREPROCESSING_STATUS {
+    SCHEDULED = 'SCHEDULED',
+    IN_PROGRESS = 'IN_PROGRESS',
+    FINISHED = 'FINISHED',
+    FAILED = 'FAILED',
+}
+
 export interface AnnotationStatePerTask {
     taskId: string;
     state: MEDIA_ANNOTATION_STATUS;
@@ -37,4 +44,5 @@ export interface BaseMediaItem {
     uploadTime: string;
     uploaderId: string;
     lastAnnotatorId: string | null;
+    preprocessingStatus?: MEDIA_PREPROCESSING_STATUS;
 }

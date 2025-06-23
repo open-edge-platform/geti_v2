@@ -34,6 +34,12 @@ Intel® Geti™ enables anyone to build computer vision AI models in a fraction 
  <img src="https://github.com/user-attachments/assets/af76a999-74d2-48bd-ae31-094e88a0d2e9" width="600"/>
 </p>
 
+Geti™ covers the complete AI model lifecycle, from dataset preparation and model training to model deployment and inferencing at the edge. You can now start building AI by running model fine-tuning on Intel® Arc™ GPU B-series. Once your computer vision solution is ready for deployment, you can easily run your OpenVINO™-optimized model across the full Intel XPU portfolio. 
+
+<p align="center">
+ <image src="https://github.com/user-attachments/assets/ec275031-aa67-41bb-9e59-79301c71b4f4" width="600"/>
+</p>
+
 ### Key features
 
 <details>

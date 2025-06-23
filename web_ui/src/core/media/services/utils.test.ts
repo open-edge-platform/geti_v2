@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { DatasetIdentifier } from '../../projects/dataset.interface';
-import { MEDIA_ANNOTATION_STATUS } from '../base.interface';
+import { MEDIA_ANNOTATION_STATUS, MEDIA_PREPROCESSING_STATUS } from '../base.interface';
 import { MediaItemDTO } from '../dtos/media.interface';
 import { getMediaItemFromDTO } from './utils';
 
@@ -44,6 +44,9 @@ describe('getMediaItemFromDTO', () => {
             state: MEDIA_ANNOTATION_STATUS.NONE,
             frame_index: 0,
             last_annotator_id: null,
+            preprocessing: {
+                status: MEDIA_PREPROCESSING_STATUS.FINISHED,
+            },
         };
 
         const datasetIdentifier = {
@@ -88,6 +91,7 @@ describe('getMediaItemFromDTO', () => {
             ),
             uploadTime: '2022-04-01T14:46:17.244000+00:00',
             uploaderId: '9b89482b-3894-41a1-a67c-7d1fbe8d47ad',
+            preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
         });
     });
 });

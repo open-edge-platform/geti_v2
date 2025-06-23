@@ -34,6 +34,9 @@ spec:
       annotations:
         # Exclude because Kubernetes API server does not support Istio mTLS for webhooks
         traffic.sidecar.istio.io/excludeInboundPorts: "9443"
+        {{- if not .Values.global.istio_ambient_mesh }}
+        proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+        {{- end }}
     spec:
       affinity:
         nodeAffinity:

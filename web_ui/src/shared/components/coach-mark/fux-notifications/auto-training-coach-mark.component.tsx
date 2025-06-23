@@ -3,9 +3,9 @@
 
 import { CSSProperties, useCallback, useEffect } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { InfiniteData } from '@tanstack/react-query';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useJobs } from '../../../../core/jobs/hooks/use-jobs.hook';
 import { NORMAL_INTERVAL } from '../../../../core/jobs/hooks/utils';
 import { JobType } from '../../../../core/jobs/jobs.const';

@@ -18,7 +18,6 @@ def fxt_encoded_manifest():
     yield b'{"version": "1.0", "export_date": {"$date": "1970-01-01T00:00:00Z"}, "min_id": "00000000000000000000000f"}'
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestManifest:
     def test_encode(self, fxt_manifest, fxt_encoded_manifest) -> None:
         encoded_manifest = fxt_manifest.encode()

@@ -9,7 +9,6 @@ from iai_core.repos.mappers import IDToMongo
 from job.repos.document_repo import DocumentRepo
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestDocumentRepo:
     def test_get_project_document_from_db(
         self,

@@ -3,13 +3,13 @@
 
 import { useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { ActionButton, LoadingIndicator, Text } from '@geti/ui';
 import { Delete } from '@geti/ui/icons';
 import { UseMutationResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import clsx from 'clsx';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { Job } from '../../../../core/jobs/jobs.interface';
 import { isJobTrain } from '../../../../core/jobs/utils';
 import { CustomAlertDialog } from '../../alert-dialog/custom-alert-dialog.component';

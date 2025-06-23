@@ -3,7 +3,7 @@
 
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { MEDIA_ANNOTATION_STATUS } from '../../../core/media/base.interface';
+import { MEDIA_ANNOTATION_STATUS, MEDIA_PREPROCESSING_STATUS } from '../../../core/media/base.interface';
 import { MediaItem } from '../../../core/media/media.interface';
 import {
     getMockedImageMediaItem,
@@ -126,5 +126,84 @@ describe('MediaItemView', () => {
 
         expect(screen.queryByTestId('annotation-state-indicator-id')).toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'annotation state indicator' })).toBeInTheDocument();
+    });
+
+    describe('preprocessing states', () => {
+        it('should show skeleton when preprocessing is scheduled', async () => {
+            const mediaItem = getMockedImageMediaItem({
+                preprocessingStatus: MEDIA_PREPROCESSING_STATUS.SCHEDULED,
+            });
+
+            await renderMedia(mediaItem, false, false);
+
+            expect(screen.getByTestId('image-placeholder-id')).toBeInTheDocument();
+            expect(screen.queryByRole('img')).not.toBeInTheDocument();
+        });
+
+        it('should show skeleton when preprocessing is in progress', async () => {
+            const mediaItem = getMockedImageMediaItem({
+                preprocessingStatus: MEDIA_PREPROCESSING_STATUS.IN_PROGRESS,
+            });
+
+            await renderMedia(mediaItem, false, false);
+
+            expect(screen.getByTestId('image-placeholder-id')).toBeInTheDocument();
+            expect(screen.queryByRole('img')).not.toBeInTheDocument();
+        });
+
+        it('should attempt to load thumbnail when preprocessing is finished', async () => {
+            const mediaItem = getMockedImageMediaItem({
+                preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
+            });
+
+            await renderMedia(mediaItem, false, false);
+
+            const img = screen.getByRole('img', { hidden: true });
+            expect(img).toBeInTheDocument();
+            expect(img).toHaveAttribute('src', mediaItem.thumbnailSrc);
+        });
+
+        it('should show error state when preprocessing failed', async () => {
+            const mediaItem = getMockedImageMediaItem({
+                preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FAILED,
+            });
+
+            await renderMedia(mediaItem, false, false);
+
+            expect(screen.getByLabelText('Failed to load thumbnail')).toBeInTheDocument();
+            expect(screen.queryByRole('img', { name: mediaItem.name })).not.toBeInTheDocument();
+        });
+
+        it('should show thumbnail after successful load when preprocessing finished', async () => {
+            const mediaItem = getMockedImageMediaItem({
+                preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
+            });
+
+            await renderMedia(mediaItem, false, false);
+
+            const img = screen.getByRole('img', { hidden: true });
+
+            fireEvent.load(img);
+
+            await waitFor(() => {
+                expect(img).toHaveStyle({ display: 'block' });
+            });
+        });
+
+        it('should show error state when thumbnail fails to load after preprocessing finished', async () => {
+            const mediaItem = getMockedImageMediaItem({
+                preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
+            });
+
+            await renderMedia(mediaItem, false, false);
+
+            const img = screen.getByRole('img', { hidden: true });
+
+            fireEvent.error(img);
+
+            await waitFor(() => {
+                expect(screen.getByTestId('broken-image-container')).toBeInTheDocument();
+            });
+        });
     });
 });

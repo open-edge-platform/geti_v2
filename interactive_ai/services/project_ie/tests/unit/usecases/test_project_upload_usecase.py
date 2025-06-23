@@ -2,8 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from unittest.mock import patch
 
-import pytest
-
 from entities import UploadOperation
 from repos import UploadOperationRepo
 from repos.zip_storage_repo import ZipStorageRepo
@@ -12,7 +10,6 @@ from usecases import ProjectUploadUseCase
 from geti_types import CTX_SESSION_VAR
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestProjectUploadUseCase:
     def test_create_multipart_upload(self, fxt_mongo_id, fxt_session_ctx):
         operation_id = fxt_mongo_id(1)
