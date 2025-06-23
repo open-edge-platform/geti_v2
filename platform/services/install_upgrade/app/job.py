@@ -306,11 +306,23 @@ async def run() -> None:
     await main(job_manager)
     await asyncio.sleep(300)
 
-    server_task.cancel()
-    # Wait for server task to finish gracefully
-    with suppress(asyncio.CancelledError):
-        await server_task
-        logger.info("Task finished successfully")
+    server.should_exit = True
+    await asyncio.sleep(1)
+
+    try:
+        # Wait for server task to finish gracefully
+        await asyncio.wait_for(server_task, timeout=5)
+    except asyncio.TimeoutError:
+        logger.info("Server didn't shutdown, cancelling server task")
+        server_task.cancel()
+        try:
+            await server_task
+        except asyncio.CancelledError:
+            pass
+    except asyncio.CancelledError:
+        logger.info("Server task correctly cancelled")
+        pass
+    logger.info("Task finished successfully")
 
 
 if __name__ == "__main__":
