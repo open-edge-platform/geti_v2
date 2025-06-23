@@ -1,6 +1,5 @@
 name: 'Read Component Configuration'
 description: 'Read component configuration from YAML file'
-author: 'Your Team'
 
 inputs:
   component_dir:
