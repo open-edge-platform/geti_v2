@@ -81,23 +81,34 @@ def refresh_logger(file_path, log_level=None, interval=30, loop=None, use_async=
 
 def initialize_logger(package_name: str, use_async: bool = True, logging_format: str | None = None) -> logging.Logger:
     """
-    Initialize logger and provide periodical dynamic refresh for its configuration
+    Initialize logger and provide periodical dynamic refresh for its configuration.
+    Adds a filter to sanitize log messages to prevent log injection.
+
     :param package_name: given name of package for the logger
     :param use_async: whether to use asyncio for scheduling refresh task (if not then threading)
     :param logging_format: optional, logging format to use instead of the default one
     :return: initialized logger
     """
+
+    class SanitizeLogFilter(logging.Filter):
+        def filter(self, record: logging.LogRecord) -> bool:
+            # Sanitize the log message to prevent log injection
+            record.msg = str(record.msg).replace("\n", "\\n").replace("\r", "\\r")
+            return True
+
     logging_config_dir = os.getenv("LOGGING_CONFIG_DIR", DEFAULT_CONFIG_DIR)
     config_filepath = f"{logging_config_dir}/{DEFAULT_CONFIG_FILE}"
     if logging_format is None:
         logging_format = get_logging_format()
     logging.basicConfig(level=logging.INFO, format=logging_format, datefmt=LOGGER_DATE_FORMAT, force=True)
 
+    logger = logging.getLogger(package_name)
+    logger.addFilter(SanitizeLogFilter())
     if use_async:
         loop = asyncio.get_event_loop()
         loop.call_soon(refresh_logger, config_filepath)
     else:
-        # initial blocking refresh for setting first logging level before app start
+        # Initial blocking refresh for setting first logging level before app start
         _refresh(config_filepath)
         refresh_thread = Thread(
             target=refresh_logger,
@@ -106,4 +117,4 @@ def initialize_logger(package_name: str, use_async: bool = True, logging_format:
             daemon=True,
         )
         refresh_thread.start()
-    return logging.getLogger(package_name)
+    return logger
