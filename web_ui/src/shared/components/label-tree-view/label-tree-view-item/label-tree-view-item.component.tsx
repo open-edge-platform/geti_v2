@@ -3,10 +3,10 @@
 
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { getFullGroupName } from '../../../../core/labels/annotator-utils/group-utils';
 import {
     LabelItemEditionState,
