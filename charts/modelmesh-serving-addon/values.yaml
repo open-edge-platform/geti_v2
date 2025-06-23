@@ -5,7 +5,7 @@ modelserver:
   image:
     registry: docker.io
     repository: openvino
-    name: model_server:2025.1
+    name: model_server:2025.2
 
 ovmsMemBufferBytes: 134217728
 ovmsRuntimeResources:
