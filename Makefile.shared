@@ -93,7 +93,7 @@ build-chart-default:
 	TAG=$(TAG) COMPONENT_NAME=$(COMPONENT_NAME) envsubst < ${CHART_BUILD_DIR}/Chart.yaml.template > ${CHART_BUILD_DIR}/Chart.yaml
 	rm "${CHART_BUILD_DIR}/Chart.yaml.template"
 	helm dependency update ${CHART_BUILD_DIR}
-	helm package ${CHART_BUILD_DIR} --version ${TAG} --destination ${CHART_BUILD_DIR}
+	helm package ${CHART_BUILD_DIR} --version ${TAG} --destination ${BUILD_DIR}
 
 lint-chart-default: build-chart
 	@echo "Running chart linter for component: ${COMPONENT_NAME}"
@@ -101,12 +101,14 @@ lint-chart-default: build-chart
 
 publish-chart-default: build-chart
 	@echo "Publishing chart for component: ${COMPONENT_NAME}"
-	helm push ${CHART_BUILD_DIR}/${COMPONENT_NAME}-${TAG}.tgz oci://${CHARTS_REGISTRY}
+	helm push ${BUILD_DIR}/${COMPONENT_NAME}-${TAG}.tgz oci://${CHARTS_REGISTRY}
 
 clean:
+	@echo "Removing: $(BUILD_DIR)"
+	rm -rf $(BUILD_DIR)
 	@if [ -n "$(CLEAN_DIRS)" ]; then \
         echo "Removing: $(CLEAN_DIRS)"; \
-        rm -rf $(CLEAN_DIRS) $(BUILD_DIR); \
+        rm -rf $(CLEAN_DIRS); \
     fi
 
 # To suppress warnings when overriding Makefile targets, declare the abstract targets as <name>-default
