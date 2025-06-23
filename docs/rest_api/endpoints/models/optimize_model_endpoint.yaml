@@ -19,10 +19,6 @@ post:
         schema:
           type: object
           additionalProperties: false
-        examples:
-          Empty optimize request:
-            value:
-              $ref: "../../examples/models/requests/optimization_request.json"
   responses:
     '200':
       description: Optimization job is submitted
