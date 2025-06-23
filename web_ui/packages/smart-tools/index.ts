@@ -2,5 +2,8 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 export { default as OpenCVLoader } from './src/utils/opencv-loader';
+
 export { Watershed } from './src/watershed/watershed';
 export { type WatershedInstance, type WatershedPolygon } from './src/watershed/interfaces';
+
+export { formatContourToPoints, approximateShape } from './src/utils/utils';
