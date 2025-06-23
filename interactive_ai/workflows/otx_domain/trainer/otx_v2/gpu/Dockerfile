@@ -44,6 +44,7 @@ ENV UV_PYTHON_DOWNLOADS=0
 COPY --link --from=libs . libs
 
 WORKDIR /interactive_ai/workflows/otx_domain/trainer/otx_v2
+RUN chown -R 10001:10001 /interactive_ai/workflows/otx_domain/trainer/otx_v2
 
 COPY --link --from=ghcr.io/astral-sh/uv:0.6.12@sha256:515b886e8eb99bcf9278776d8ea41eb4553a794195ef5803aa7ca6258653100d /uv /bin/uv
 
@@ -69,7 +70,6 @@ RUN apt-get update && \
 
 # Copy the application from the builder
 COPY --link --from=cuda --chown=10001 /usr/local /usr/local
-RUN chmod -R 755 /interactive_ai/workflows/otx_domain/trainer/otx_v2
 
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2/.venv/bin:/interactive_ai/workflows/otx_domain/trainer/otx_v2:$PATH"
