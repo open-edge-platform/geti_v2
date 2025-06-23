@@ -6,7 +6,7 @@ include ../../../Makefile.shared-python
 COMPONENT_NAME := geti-controller
 DOCKER_BUILD_CONTEXT := --build-context libs=../../../libs
 
-static-code-analysis-default:
+static-code-analysis:
 	@echo "Not applicable"
 
 test-component:

@@ -31,6 +31,7 @@ HTTPS_PROXY = os.getenv("HTTPS_PROXY", "")
 HTTP_PROXY = os.getenv("HTTP_PROXY", "")
 NO_PROXY = os.getenv("NO_PROXY", "")
 
+
 def download_manifest() -> str:
     """
     Download the GETI manifest file from the OCI registry.
@@ -97,9 +98,7 @@ def deploy_helm_charts(manifest: dict) -> None:
     Deploy the rendered helm chart to the Kubernetes cluster.
     In case of conflict (e.g., chart already exists), it will log an error.
     """
-    logger.info(
-        f"Deploying helm chart CR: '{manifest['metadata']['name']}'."
-    )
+    logger.info(f"Deploying helm chart CR: '{manifest['metadata']['name']}'.")
 
     with client.ApiClient() as api_client:
         custom_api = client.CustomObjectsApi(api_client)

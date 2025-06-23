@@ -35,7 +35,7 @@ prepare-manifest: get-oras
 
 build-chart-default: push-manifest
 
-static-code-analysis-default:
+static-code-analysis:
 	@echo "Not applicable"
 
 test-component:
