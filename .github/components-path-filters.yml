@@ -61,13 +61,13 @@ platform/services/platform_cleaner:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
-platform/services/opa_bundle:
-  - platform/services/opa_bundle/**
-  - Makefile.shared
-  - .github/workflows/component.yml
 platform/services/weights_uploader:
   - platform/services/weights_uploader/**
   - Makefile.shared-python
+  - Makefile.shared
+  - .github/workflows/component.yml
+platform/services/opa_bundle:
+  - platform/services/opa_bundle/**
   - Makefile.shared
   - .github/workflows/component.yml
 
@@ -281,19 +281,19 @@ interactive_ai/workflows/geti_domain/train:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/workflows/otx_domain/trainer/otx_v2/xpu:
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/xpu/**
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/scripts/**
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/tests/**
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/download_pretrained_weights.py
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/pyproject.toml
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/run
-  - libs/telemetry_tools/**
-  - libs/kafka_tools/**
-  - Makefile.shared-python
-  - Makefile.shared
-  - .github/workflows/component.yml
 # TODO: Re-enable CVS-166868
+#interactive_ai/workflows/otx_domain/trainer/otx_v2/xpu:
+#  - interactive_ai/workflows/otx_domain/trainer/otx_v2/xpu/**
+#  - interactive_ai/workflows/otx_domain/trainer/otx_v2/scripts/**
+#  - interactive_ai/workflows/otx_domain/trainer/otx_v2/tests/**
+#  - interactive_ai/workflows/otx_domain/trainer/otx_v2/download_pretrained_weights.py
+#  - interactive_ai/workflows/otx_domain/trainer/otx_v2/pyproject.toml
+#  - interactive_ai/workflows/otx_domain/trainer/otx_v2/run
+#  - libs/telemetry_tools/**
+#  - libs/kafka_tools/**
+#  - Makefile.shared-python
+#  - Makefile.shared
+#  - .github/workflows/component.yml
 # interactive_ai/workflows/otx_domain/trainer/otx_v2/gpu:
 #   - interactive_ai/workflows/otx_domain/trainer/otx_v2/gpu/**
 #   - interactive_ai/workflows/otx_domain/trainer/otx_v2/scripts/**
