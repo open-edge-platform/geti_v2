@@ -153,7 +153,7 @@ def _watch_job_events(job_name: str, namespace: str, timeout: int, batch_v1: cli
     """
     for event in w.stream(batch_v1.list_namespaced_job, namespace=namespace, timeout_seconds=timeout):
         job = event["object"]
-        if job.metadata.name != job.name:
+        if job.metadata.name != job_name:
             logger.debug(f"Skipping event for job {job.metadata.name}")
             continue
         if job.status.succeeded:
