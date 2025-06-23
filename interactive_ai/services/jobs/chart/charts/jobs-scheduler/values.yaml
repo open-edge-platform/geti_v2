@@ -49,7 +49,7 @@ global:
   debian:
     registry: docker.io
     repository: bitnami
-    name: bitnami-shell:11-debian-11-r136
+    name: bitnami-shell-archived:11-debian-11-r136
 
 jobs_templates_dir: /mnt/jobs_templates
 jobs_templates_file: jobs_templates.yaml
