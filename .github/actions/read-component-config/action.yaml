@@ -1,0 +1,48 @@
+name: 'Read Component Configuration'
+description: 'Read component configuration from YAML file with fallback to defaults'
+author: 'Your Team'
+
+inputs:
+  component_dir:
+    description: 'Component directory from the repo root'
+    required: true
+  config_file:
+    description: 'Path to configuration YAML file'
+    required: false
+    default: '.github/components-config.yml'
+
+outputs:
+  cleanup_type:
+    description: 'Type of cleanup to perform'
+    value: ${{ steps.config.outputs.cleanup_type }}
+  integration_tests_builder_container:
+    description: 'If integration tests should be executed in a builder container'
+    value: ${{ steps.config.outputs.integration_builder }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Read component configuration
+      id: config
+      shell: bash
+      run: |
+        
+        get_config_value() {
+          COMPONENT='${{ inputs.component_dir }}' KEY="$1" yq eval -r '
+          .defaults as $defaults |
+          (.components[env(COMPONENT)] // {}) as $component |
+          ($defaults * $component)[env(KEY)]
+          ' ${{ inputs.config_file }}
+        }
+
+        cleanup_type=$(get_config_value "cleanup_type")
+        integration_builder=$(get_config_value "integration_builder")
+        
+        echo "cleanup_type=$cleanup_type" >> $GITHUB_OUTPUT
+        echo "integration_builder=$integration_builder" >> $GITHUB_OUTPUT
+        
+        echo "=== Component Configuration ==="
+        echo "Component: ${{ inputs.component_dir }}"
+        echo "cleanup_type: $cleanup_type"
+        echo "integration_builder: $integration_builder"
+        echo "==============================="
