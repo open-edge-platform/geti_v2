@@ -27,32 +27,43 @@ const getAugmentationParameters = (configuration: TrainingConfiguration) => {
     return augmentation;
 };
 
-const getTilingParameters = (_configParameters: TrainingConfiguration) => {
-    return undefined;
+const getTilingParameters = (configuration: TrainingConfiguration) => {
+    return configuration.datasetPreparation.augmentation.tiling;
 };
 
 export const DataManagement: FC<DataManagementProps> = ({ trainingConfiguration, onUpdateTrainingConfiguration }) => {
     const tilingParameters = getTilingParameters(trainingConfiguration);
     const augmentationParameters = getAugmentationParameters(trainingConfiguration);
+    const subsetSplitParameters = trainingConfiguration.datasetPreparation.subsetSplit;
+    const filteringParameters = trainingConfiguration.datasetPreparation.filtering;
 
     return (
         <View>
             {/* Not supported in v1 of training flow revamp <BalanceLabelsDistribution /> */}
-            <TrainingSubsets
-                subsetsConfiguration={trainingConfiguration.datasetPreparation.subsetSplit}
-                onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
-            />
-            {tilingParameters !== undefined && <Tiling tilingParameters={tilingParameters} />}
+            {!isEmpty(subsetSplitParameters) && (
+                <TrainingSubsets
+                    subsetsConfiguration={trainingConfiguration.datasetPreparation.subsetSplit}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            )}
+            {!isEmpty(tilingParameters) && (
+                <Tiling
+                    tilingParameters={tilingParameters}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            )}
             {!isEmpty(augmentationParameters) && (
                 <DataAugmentation
                     parameters={augmentationParameters}
                     onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />
             )}
-            <Filters
-                filtersConfiguration={trainingConfiguration.datasetPreparation.filtering}
-                onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
-            />
+            {!isEmpty(filteringParameters) && (
+                <Filters
+                    filtersConfiguration={filteringParameters}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            )}
             {/* Not supported in v1 of training flow revamp <RemovingDuplicates /> */}
         </View>
     );

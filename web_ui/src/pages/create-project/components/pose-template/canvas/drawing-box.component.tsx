@@ -10,12 +10,12 @@ import { getRelativePoint, leftMouseButtonHandler } from '../../../../utils';
 import { getDefaultLabelStructure } from '../util';
 
 interface DrawingBoxProps {
-    totalPoints: number;
+    nextPointName: string;
     onAddPoint: (point: KeypointNode) => void;
     onPointerMove: (point: Point) => void;
 }
 
-export const DrawingBox = ({ totalPoints, onAddPoint, onPointerMove }: DrawingBoxProps) => {
+export const DrawingBox = ({ nextPointName, onAddPoint, onPointerMove }: DrawingBoxProps) => {
     const canvasRef = useRef<SVGRectElement>(null);
     const { zoomState } = useZoom();
 
@@ -29,7 +29,7 @@ export const DrawingBox = ({ totalPoints, onAddPoint, onPointerMove }: DrawingBo
         }
 
         onAddPoint({
-            label: getDefaultLabelStructure(String(totalPoints)),
+            label: getDefaultLabelStructure(nextPointName),
             isVisible: true,
             ...getRelativePoint(canvasRef.current, { x: event.clientX, y: event.clientY }, zoomState.zoom),
         });

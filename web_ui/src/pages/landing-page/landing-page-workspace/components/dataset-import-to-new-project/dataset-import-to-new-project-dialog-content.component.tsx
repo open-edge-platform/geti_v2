@@ -8,15 +8,34 @@ import { isEmpty, isNil } from 'lodash-es';
 
 import { DATASET_IMPORT_TO_NEW_PROJECT_STEP } from '../../../../../core/datasets/dataset.enum';
 import { DatasetImportToNewProjectItem } from '../../../../../core/datasets/dataset.interface';
-import { hasKeypointStructure } from '../../../../../providers/dataset-import-to-new-project-provider/utils';
+import { formatDtoToKeypointStructure } from '../../../../../core/projects/services/utils';
+import { getImportKeypointTask } from '../../../../../providers/dataset-import-to-new-project-provider/utils';
 import { DatasetImportDnd } from '../../../../../shared/components/dataset-import-dnd/dataset-import-dnd.component';
 import { DatasetImportProgress } from '../../../../../shared/components/dataset-import-progress/dataset-import-progress.component';
 import { DatasetImportWarnings } from '../../../../../shared/components/dataset-import-warnings/dataset-import-warnings.component';
+import { ReadonlyTemplateManager } from '../../../../create-project/components/pose-template/readonly-template-manager.component';
+import { getInitialKeypointStructure } from '../../../../utils';
 import { DatasetImportToNewProjectDomain } from './dataset-import-to-new-project-domain.component';
 import { DatasetImportToNewProjectLabels } from './dataset-import-to-new-project-labels.component';
+import { formatToLabelCommon } from './utils';
+
+import classes from './dataset-import-to-new-project.module.scss';
 
 interface DatasetImportToNewProjectDialogContentTabsProps {
     children: ReactNode;
+}
+
+interface DatasetImportLabelConfigurationPanelProps {
+    datasetImportItem: DatasetImportToNewProjectItem;
+    patchDatasetImport: (item: Partial<DatasetImportToNewProjectItem>) => void;
+}
+
+interface DatasetImportToNewProjectDialogContentProps {
+    anomalyRevamp: boolean;
+    datasetImportItem: DatasetImportToNewProjectItem | undefined;
+    prepareDataset: (file: File) => string | undefined;
+    patchDatasetImport: (item: Partial<DatasetImportToNewProjectItem>) => void;
+    setActiveDatasetImportId: Dispatch<SetStateAction<string | undefined>>;
 }
 
 const DatasetImportToNewProjectDialogContentTabs = ({
@@ -34,13 +53,32 @@ const DatasetImportToNewProjectDialogContentTabs = ({
     );
 };
 
-interface DatasetImportToNewProjectDialogContentProps {
-    datasetImportItem: DatasetImportToNewProjectItem | undefined;
-    prepareDataset: (file: File) => string | undefined;
-    patchDatasetImport: (item: Partial<DatasetImportToNewProjectItem>) => void;
-    setActiveDatasetImportId: Dispatch<SetStateAction<string | undefined>>;
-    anomalyRevamp: boolean;
-}
+const DatasetImportLabelConfigurationPanel = ({
+    datasetImportItem,
+    patchDatasetImport,
+}: DatasetImportLabelConfigurationPanelProps) => {
+    const keypointTask = datasetImportItem && getImportKeypointTask(datasetImportItem.supportedProjectTypes);
+
+    if (!isEmpty(keypointTask)) {
+        const formattedLabels = formatToLabelCommon(keypointTask.labels, datasetImportItem.labelColorMap);
+        const keypointStructure = formatDtoToKeypointStructure(keypointTask.keypointStructure, formattedLabels);
+
+        return (
+            <ReadonlyTemplateManager
+                className={classes.keypointPreview}
+                initialNormalizedState={getInitialKeypointStructure(keypointStructure)}
+            />
+        );
+    }
+
+    return (
+        <DatasetImportToNewProjectLabels
+            hasCheckbox={true}
+            datasetImportItem={datasetImportItem}
+            patchDatasetImport={patchDatasetImport}
+        />
+    );
+};
 
 export const DatasetImportToNewProjectDialogContent = ({
     datasetImportItem,
@@ -49,8 +87,6 @@ export const DatasetImportToNewProjectDialogContent = ({
     setActiveDatasetImportId,
     anomalyRevamp,
 }: DatasetImportToNewProjectDialogContentProps): JSX.Element => {
-    const isKeypointImport = datasetImportItem && hasKeypointStructure(datasetImportItem.supportedProjectTypes);
-
     if (isNil(datasetImportItem)) {
         return (
             <DatasetImportToNewProjectDialogContentTabs>
@@ -78,8 +114,7 @@ export const DatasetImportToNewProjectDialogContent = ({
                 />
             )}
             {datasetImportItem.activeStep === DATASET_IMPORT_TO_NEW_PROJECT_STEP.LABELS && (
-                <DatasetImportToNewProjectLabels
-                    hasCheckbox={!isKeypointImport}
+                <DatasetImportLabelConfigurationPanel
                     datasetImportItem={datasetImportItem}
                     patchDatasetImport={patchDatasetImport}
                 />

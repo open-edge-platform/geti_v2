@@ -9,7 +9,7 @@ import { KeyMap } from '../../../../../shared/keyboard-events/keyboard.interface
 import { getMockedKeypointNode } from '../../../../../test-utils/mocked-items-factory/mocked-keypoint';
 import { getMockedLabel } from '../../../../../test-utils/mocked-items-factory/mocked-labels';
 import { providersRender } from '../../../../../test-utils/required-providers-render';
-import { EdgeLine } from '../util';
+import { EdgeLine } from '../../../../utils';
 import {
     nodeConnectionMessage,
     nodeInteractionMessage,
