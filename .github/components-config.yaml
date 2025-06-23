@@ -7,6 +7,10 @@ components:
     # Heavy builds requiring cleanup to fit into default GitHub runner disk space
     cleanup_type: all
 
+  interactive_ai/workflows/otx_domain/trainer/otx_v2/gpu:
+    # Heavy builds requiring cleanup to fit into default GitHub runner disk space
+    cleanup_type: all
+
   interactive_ai/workflows/geti_domain/project_ie:
     integration_tests_builder_container: false
 
