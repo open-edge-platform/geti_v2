@@ -30,6 +30,7 @@ from configuration import ConfigurableComponentRegister
 from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_types import ID, ProjectIdentifier
+from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
 from iai_core.configuration.elements.dataset_manager_parameters import DatasetManagementConfig
 from iai_core.configuration.elements.default_model_parameters import DefaultModelParameters
 from iai_core.configuration.elements.hyper_parameters import HyperParameters
@@ -194,7 +195,7 @@ class ConfigurationsBackwardCompatibility:
         return legacy_global_config, legacy_task_chain_configs
 
     @classmethod
-    def forward_mapping(  # noqa: PLR0912, PLR0915, C901
+    def forward_mapping(  # noqa: PLR0915, C901
         cls,
         project_identifier: ProjectIdentifier,
         legacy_global_configuration: list[IConfigurableParameterContainer],
@@ -317,60 +318,7 @@ class ConfigurationsBackwardCompatibility:
             )
 
             # 2. Hyperparameters
-            # Create tiling parameters if enabled
-            tiling = None
-            if legacy_tiling := getattr(legacy_hyperparams, "tiling_parameters", None):
-                tile_size = legacy_tiling.tile_size
-                adaptive = getattr(legacy_tiling, "enable_adaptive_tiling", None) or getattr(
-                    legacy_tiling, "enable_adaptive_params", None
-                )
-                tiling = Tiling(
-                    enable=legacy_tiling.enable_tiling,
-                    adaptive_tiling=adaptive,
-                    tile_size=tile_size,
-                    tile_overlap=int(legacy_tiling.tile_overlap * tile_size) if tile_size > 0 else 0,
-                )
-
-            # Create augmentation parameters
-            augmentation = AugmentationParameters(tiling=tiling)
-
-            # Create training hyperparameters
-            legacy_learning_parameters = legacy_hyperparams.learning_parameters
-            early_stopping = None
-            if legacy_learning_parameters and hasattr(legacy_learning_parameters, "enable_early_stopping"):
-                early_stopping_enabled = getattr(legacy_learning_parameters, "enable_early_stopping", False)
-                if early_stopping_enabled and hasattr(legacy_learning_parameters, "early_stop_patience"):
-                    early_stopping = getattr(legacy_learning_parameters, "early_stop_patience")
-            # Anomaly tasks have difference structure
-            elif legacy_learning_parameters and hasattr(legacy_learning_parameters, "early_stopping"):
-                early_stopping_obj = getattr(legacy_learning_parameters, "early_stopping")
-                if hasattr(early_stopping_obj, "patience"):
-                    early_stopping = early_stopping_obj.patience
-
-            learning_rate = 0.001
-            for alias in ["learning_rate", "lr"]:
-                if hasattr(legacy_learning_parameters, alias):
-                    learning_rate = getattr(legacy_learning_parameters, alias)
-
-            max_epochs = 1000
-            for max_epochs_alias in ["num_iters", "max_epochs", "max_num_epochs"]:
-                if hasattr(legacy_learning_parameters, max_epochs_alias):
-                    max_epochs = getattr(legacy_learning_parameters, max_epochs_alias)
-                    break
-            training_params = TrainingHyperParameters(
-                max_epochs=max_epochs,
-                learning_rate=learning_rate,
-                early_stopping=(
-                    EarlyStopping(enable=True, patience=early_stopping) if early_stopping else EarlyStopping()
-                ),
-                max_detection_per_image=MaxDetectionPerImage(),
-            )
-
-            hyperparams = Hyperparameters(
-                dataset_preparation=DatasetPreparationParameters(augmentation=augmentation),
-                training=training_params,
-                evaluation=EvaluationParameters(),
-            )
+            hyperparams = cls.forward_hyperparameters(legacy_hyperparams=legacy_hyperparams)
 
             # 3. Update project configuration with auto-training settings
             auto_training_enabled = False
@@ -451,3 +399,61 @@ class ConfigurationsBackwardCompatibility:
             "task_node": legacy_task_node_type,
             "pipeline_dataset_manager": legacy_pipeline_dataset_manager_type,
         }
+
+    @staticmethod
+    def forward_hyperparameters(
+        legacy_hyperparams: Hyperparameters | IConfigurableParameterContainer | ConfigurableParameters,
+    ) -> Hyperparameters:
+        """ """
+        # Create tiling parameters if enabled
+        tiling = None
+        if legacy_tiling := getattr(legacy_hyperparams, "tiling_parameters", None):
+            tile_size = legacy_tiling.tile_size
+            adaptive = getattr(legacy_tiling, "enable_adaptive_tiling", None) or getattr(
+                legacy_tiling, "enable_adaptive_params", None
+            )
+            tiling = Tiling(
+                enable=legacy_tiling.enable_tiling,
+                adaptive_tiling=adaptive,
+                tile_size=tile_size,
+                tile_overlap=int(legacy_tiling.tile_overlap * tile_size) if tile_size > 0 else 0,
+            )
+
+        # Create augmentation parameters
+        augmentation = AugmentationParameters(tiling=tiling)
+
+        # Create training hyperparameters
+        legacy_learning_parameters = legacy_hyperparams.learning_parameters
+        early_stopping = None
+        if legacy_learning_parameters and hasattr(legacy_learning_parameters, "enable_early_stopping"):
+            early_stopping_enabled = getattr(legacy_learning_parameters, "enable_early_stopping", False)
+            if early_stopping_enabled and hasattr(legacy_learning_parameters, "early_stop_patience"):
+                early_stopping = getattr(legacy_learning_parameters, "early_stop_patience")
+        # Anomaly tasks have difference structure
+        elif legacy_learning_parameters and hasattr(legacy_learning_parameters, "early_stopping"):
+            early_stopping_obj = getattr(legacy_learning_parameters, "early_stopping")
+            if hasattr(early_stopping_obj, "patience"):
+                early_stopping = early_stopping_obj.patience
+
+        learning_rate = 0.001
+        for alias in ["learning_rate", "lr"]:
+            if hasattr(legacy_learning_parameters, alias):
+                learning_rate = getattr(legacy_learning_parameters, alias)
+
+        max_epochs = 1000
+        for max_epochs_alias in ["num_iters", "max_epochs", "max_num_epochs"]:
+            if hasattr(legacy_learning_parameters, max_epochs_alias):
+                max_epochs = getattr(legacy_learning_parameters, max_epochs_alias)
+                break
+        training_params = TrainingHyperParameters(
+            max_epochs=max_epochs,
+            learning_rate=learning_rate,
+            early_stopping=(EarlyStopping(enable=True, patience=early_stopping) if early_stopping else EarlyStopping()),
+            max_detection_per_image=MaxDetectionPerImage(),
+        )
+
+        return Hyperparameters(
+            dataset_preparation=DatasetPreparationParameters(augmentation=augmentation),
+            training=training_params,
+            evaluation=EvaluationParameters(),
+        )

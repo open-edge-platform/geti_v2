@@ -4,6 +4,7 @@ from typing import Any
 
 from geti_configuration_tools.training_configuration import NullTrainingConfiguration, PartialTrainingConfiguration
 
+from communication.backward_compatibility.configurations import ConfigurationsBackwardCompatibility
 from communication.exceptions import MissingTaskIDException, TaskNodeNotFoundException
 from communication.views.training_configuration_rest_views import TrainingConfigurationRESTViews
 from service.configuration_service import ConfigurationService
@@ -12,7 +13,7 @@ from storage.repos.partial_training_configuration_repo import PartialTrainingCon
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, ProjectIdentifier
 from iai_core.entities.annotation_scene_state import AnnotationState
-from iai_core.repos import AnnotationSceneStateRepo, DatasetStorageRepo, TaskNodeRepo
+from iai_core.repos import AnnotationSceneStateRepo, DatasetStorageRepo, ModelRepo, TaskNodeRepo
 
 
 class TrainingConfigurationRESTController:
@@ -54,8 +55,11 @@ class TrainingConfigurationRESTController:
                 model_id=model_id,
             )
             if model_hyperparams_dict is None:
-                # TODO ITEP-32067: add backward compatibility to display the old models configurable parameters
-                return {}
+                model = ModelRepo(model_storage.identifier).get_by_id(model_id)
+                model_hyperparams = ConfigurationsBackwardCompatibility.forward_hyperparameters(
+                    legacy_hyperparams=model.configuration.configurable_parameters
+                )
+                model_hyperparams_dict = model_hyperparams.model_dump()
             model_config = PartialTrainingConfiguration.model_validate(
                 {
                     "task_id": task_id,
