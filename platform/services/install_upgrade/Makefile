@@ -5,32 +5,17 @@ include ../../../Makefile.shared-python
 
 COMPONENT_NAME = install-upgrade
 
-ORAS := /usr/local/bin/oras
-ORAS_VERSION := 1.2.3
-ORAS_DIR := oras-install
+build-chart-default:
+	@echo "Not applicable"
 
-ifneq (,$(wildcard $(ORAS)))
-    ORAS_BINARY := $(ORAS)
-else
-    ORAS_BINARY := ./$(ORAS_DIR)/oras
-endif
+test-component:
+	@echo "Not applicable"
 
-get-oras: $(ORAS)
-$(ORAS):
-	curl -LO "https://github.com/oras-project/oras/releases/download/v$(ORAS_VERSION)/oras_$(ORAS_VERSION)_linux_amd64.tar.gz"
-	mkdir -p $(ORAS_DIR)/
-	tar -zxf oras_$(ORAS_VERSION)_*.tar.gz -C $(ORAS_DIR)/
-	rm -rf oras_$(ORAS_VERSION)_*.tar.gz
+test-integration:
+	@echo "Not applicable"
 
-remove-oras:
-	rm -rf $(ORAS_DIR)
+publish-image:
+	@echo "Not applicable"
 
-oras-push: prepare-manifest
-	$(ORAS_BINARY) push $(REGISTRY)/geti/geti-manifest:$(TAG) \
-		--artifact-type=application/text \
-		geti-manifest.yaml
-
-prepare-manifest: get-oras
-	VERSION=2.11.0-test-20250606102739 \
-	REGISTRY=$(REGISTRY) \
-	envsubst < geti-manifest.yaml.template > geti-manifest.yaml
+publish-chart:
+	@echo "Not applicable"

@@ -66,6 +66,21 @@ platform/services/weights_uploader:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
+platform/services/geti_controller:
+  - platform/services/geti_controller/**
+  - Makefile.shared-python
+  - Makefile.shared
+  - .github/workflows/component.yml
+platform/services/install_upgrade:
+  - platform/services/install_upgrade/**
+  - Makefile.shared-python
+  - Makefile.shared
+  - .github/workflows/component.yml
+deploy/geti_manifest:
+  - deploy/geti_manifest/**
+  - Makefile.shared-python
+  - Makefile.shared
+  - .github/workflows/component.yml
 
 # IAI Services
 interactive_ai/services/auto_train:
