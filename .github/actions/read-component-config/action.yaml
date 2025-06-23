@@ -8,7 +8,7 @@ inputs:
   config_file:
     description: 'Path to configuration YAML file'
     required: false
-    default: './.github/components-config.yml'
+    default: '.github/components-config.yaml'
 
 outputs:
   cleanup_type:
