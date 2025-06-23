@@ -5,6 +5,7 @@ import asyncio
 import logging
 import os
 import re
+from contextlib import suppress
 
 import jinja2
 import yaml
@@ -234,12 +235,12 @@ async def main(job_manager: JobManager) -> None:
                 job_manager.set_status(
                     "RUNNING",
                     message=f"Deploying helm chart {rendered_helm['metadata']['name']}",
-                    progress_percentage=int((index + 1) / total_charts * 100),
+                    progress_percentage=int((index + 1) / total_charts * 99),
                 )
                 await deploy_helm_charts(rendered_helm)
             except HelmChartDeployError as e:
                 logger.error(f"Failed to deploy helm chart: {e}")
-                job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 100))
+                job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 99))
                 break
 
             job_name = f"helm-install-{rendered_helm['metadata']['name']}"
@@ -253,16 +254,16 @@ async def main(job_manager: JobManager) -> None:
                 )
             except (FailedJobError, TimeoutJobError) as e:
                 logger.error(f"Job '{job_name}' in namespace '{namespace}' failed: {e}")
-                job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 100))
+                job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 99))
                 break
             except UnknownJobError as e:
                 logger.exception(f"Unexpected error while completing job '{job_name}' in namespace '{namespace}': {e}")
-                job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 100))
+                job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 99))
                 break
 
             job_manager.set_status(
                 "RUNNING",
-                progress_percentage=int((index + 1) / total_charts * 100),
+                progress_percentage=int((index + 1) / total_charts * 99),
                 message=f"helm chart {job_name} installed",
             )
 
@@ -306,6 +307,10 @@ async def run() -> None:
     await asyncio.sleep(300)
 
     server_task.cancel()
+    # Wait for server task to finish gracefully
+    with suppress(asyncio.CancelledError):
+        await server_task
+        logger.info("Task finished successfully")
 
 
 if __name__ == "__main__":
