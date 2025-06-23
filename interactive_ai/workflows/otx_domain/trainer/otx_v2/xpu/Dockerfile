@@ -1,3 +1,7 @@
+# Required runtime flags to enable XPU support:
+# --device /dev/dri          # Intel GPU access
+# -v /dev/dri/by-path:/dev/dri/by-path  # Device path mapping
+
 FROM python:3.10-slim-bookworm@sha256:99d6b199420e2a3588649813218bef3e727fac9642d5da66c1c24ec96f7ec87d AS base
 
 ENV UV_COMPILE_BYTECODE=1
@@ -43,15 +47,14 @@ COPY --link --from=ghcr.io/astral-sh/uv:0.6.12@sha256:515b886e8eb99bcf9278776d8e
 
 COPY --link scripts/ scripts
 COPY --link run run
+COPY --link uv.lock uv.lock
+COPY --link pyproject.toml pyproject.toml
 COPY --link download_pretrained_weights.py download_pretrained_weights.py
 
 # For OTX to install torch with ipex support, else defaults to cpu version
-ENV PIP_EXTRA_INDEX_URL=https://download.pytorch.org/whl/xpu
-
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-dev --no-editable
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
+RUN uv pip uninstall torch
+RUN uv pip install torch==2.7.0 --default-index https://download.pytorch.org/whl/xpu
 
 # step 3: build final runtime image
 FROM base AS runtime
@@ -65,5 +68,6 @@ ENV PYTHONPATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2"
 ENV HF_HUB_OFFLINE=1
 
 USER non-root
+
 WORKDIR /home/non-root
 WORKDIR /interactive_ai/workflows/otx_domain/trainer/otx_v2

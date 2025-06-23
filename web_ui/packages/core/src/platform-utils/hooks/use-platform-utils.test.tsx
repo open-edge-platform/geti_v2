@@ -6,8 +6,8 @@ import { ReactNode } from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useAuth } from 'react-oidc-context';
 
+import { RequiredProviders } from '../../../../../src/test-utils/required-providers-render';
 import { createInMemoryPlatformUtilsService } from '../services/create-in-memory-platform-utils-service';
-import { RequiredProviders } from './../../../test-utils/required-providers-render';
 import { useProductInfo, useWorkflowId } from './use-platform-utils.hook';
 
 jest.mock('react-oidc-context', () => ({

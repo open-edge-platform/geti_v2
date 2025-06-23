@@ -3,17 +3,11 @@
 
 import { screen, waitFor } from '@testing-library/react';
 
-import { GPUProvider } from '../../../../core/platform-utils/dto/utils.interface';
 import { projectListRender as render } from '../../../../test-utils/projects-list-providers-render';
 import { NewProjectDialogProvider } from '../../new-project-dialog-provider/new-project-dialog-provider.component';
 import { DomainCardsMetadata } from './project-template.interface';
 import { SingleTaskTemplate } from './single-task-template.component';
 import { TABS_SINGLE_TEMPLATE } from './utils';
-
-const mockGpuProvider = GPUProvider.NONE;
-jest.mock('../../../../core/platform-utils/hooks/use-gpu-provider.hook', () => ({
-    useGpuProvider: jest.fn(() => mockGpuProvider),
-}));
 
 describe('SingleTaskTemplate', () => {
     const tabToContent = [

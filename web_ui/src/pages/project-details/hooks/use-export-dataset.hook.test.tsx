@@ -1,19 +1,17 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ReactNode } from 'react';
-
-import { renderHook, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 
 import { ExportStatusStateDTO } from '../../../core/configurable-parameters/dtos/configurable-parameters.interface';
-import { createInMemoryDatasetImportService } from '../../../core/datasets/services/in-memory-dataset-import-service';
 import { JobState } from '../../../core/jobs/jobs.const';
 import { ExportDatasetStatusIdentifier, ExportFormats } from '../../../core/projects/dataset.interface';
 import { createInMemoryProjectService } from '../../../core/projects/services/in-memory-project-service';
+import { ProjectService } from '../../../core/projects/services/project-service.interface';
 import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { getMockedDatasetExportIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedDatasetExportJob } from '../../../test-utils/mocked-items-factory/mocked-jobs';
-import { RequiredProviders } from '../../../test-utils/required-providers-render';
+import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
 import { useExportDataset } from './use-export-dataset.hook';
 
 const organizationId = 'organization-id';
@@ -41,25 +39,14 @@ jest.mock('../../../notification/notification.component', () => ({
     useNotification: () => ({ addNotification: mockAddNotification, removeNotifications: mockRemoveNotifications }),
 }));
 
-const mockedProjectService = createInMemoryProjectService();
-const mockedDatasetImportService = createInMemoryDatasetImportService();
-
-jest.mock('@geti/core/src/services/application-services-provider.component', () => ({
-    ...jest.requireActual('@geti/core/src/services/application-services-provider.component'),
-    useApplicationServices: () => ({
-        projectService: mockedProjectService,
-        datasetImportService: mockedDatasetImportService,
-    }),
-}));
-
-const wrapper = ({ children }: { children: ReactNode }) => {
-    return <RequiredProviders>{children}</RequiredProviders>;
-};
-
 const datasetName = 'testDatasetName';
 
-const renderUseExportDatasetHook = () => {
-    return renderHook(() => useExportDataset(datasetName), { wrapper });
+const renderUseExportDatasetHook = (projectService: ProjectService) => {
+    return renderHookWithProviders(() => useExportDataset(datasetName), {
+        providerProps: {
+            projectService,
+        },
+    });
 };
 
 describe('useExportDataset', () => {
@@ -71,9 +58,10 @@ describe('useExportDataset', () => {
 
     describe('prepareExportDatasetJob', () => {
         it('save info in local storage', async () => {
+            const mockedProjectService = createInMemoryProjectService();
             mockedProjectService.prepareExportDatasetJob = async () => ({ jobId: mockExportDatasetId });
 
-            const { result } = renderUseExportDatasetHook();
+            const { result } = renderUseExportDatasetHook(mockedProjectService);
 
             result.current.prepareExportDatasetJob.mutate({
                 ...mockExportDatasetStatusIdentifier,
@@ -95,9 +83,11 @@ describe('useExportDataset', () => {
         });
 
         it('shows notification error message', async () => {
+            const mockedProjectService = createInMemoryProjectService();
+
             mockedProjectService.prepareExportDatasetJob = () => Promise.reject({ message: errorMessage });
 
-            const { result } = renderUseExportDatasetHook();
+            const { result } = renderUseExportDatasetHook(mockedProjectService);
 
             result.current.prepareExportDatasetJob.mutate({
                 ...mockExportDatasetStatusIdentifier,
@@ -116,6 +106,7 @@ describe('useExportDataset', () => {
 
     describe('exportDatasetStatus', () => {
         it('export is not "DONE", do not show notifications', async () => {
+            const mockedProjectService = createInMemoryProjectService();
             mockedProjectService.exportDatasetStatus = async () => ({
                 state: ExportStatusStateDTO.ZIPPING,
                 message: '',
@@ -123,7 +114,7 @@ describe('useExportDataset', () => {
                 download_url: '',
             });
 
-            const { result } = renderUseExportDatasetHook();
+            const { result } = renderUseExportDatasetHook(mockedProjectService);
             const { workspaceId, projectId, datasetId } = mockExportDatasetStatusIdentifier;
 
             result.current.exportDatasetStatus.mutate({
@@ -141,6 +132,7 @@ describe('useExportDataset', () => {
         });
 
         it('show notifications', async () => {
+            const mockedProjectService = createInMemoryProjectService();
             mockedProjectService.exportDatasetStatus = async () => ({
                 state: ExportStatusStateDTO.DONE,
                 message: '',
@@ -148,7 +140,7 @@ describe('useExportDataset', () => {
                 download_url: '',
             });
 
-            const { result } = renderUseExportDatasetHook();
+            const { result } = renderUseExportDatasetHook(mockedProjectService);
             const { workspaceId, projectId, datasetId } = mockExportDatasetStatusIdentifier;
 
             result.current.exportDatasetStatus.mutate({
@@ -168,9 +160,10 @@ describe('useExportDataset', () => {
         });
 
         it('shows notification error message', async () => {
+            const mockedProjectService = createInMemoryProjectService();
             mockedProjectService.exportDatasetStatus = () => Promise.reject({ message: errorMessage });
 
-            const { result } = renderUseExportDatasetHook();
+            const { result } = renderUseExportDatasetHook(mockedProjectService);
             const { workspaceId, projectId, datasetId } = mockExportDatasetStatusIdentifier;
 
             result.current.exportDatasetStatus.mutate({
@@ -190,6 +183,7 @@ describe('useExportDataset', () => {
         });
 
         it('successful request with error state shows notification error message', async () => {
+            const mockedProjectService = createInMemoryProjectService();
             mockedProjectService.exportDatasetStatus = async () => ({
                 state: ExportStatusStateDTO.ERROR,
                 message: errorMessage,
@@ -197,7 +191,7 @@ describe('useExportDataset', () => {
                 download_url: '',
             });
 
-            const { result } = renderUseExportDatasetHook();
+            const { result } = renderUseExportDatasetHook(mockedProjectService);
             const exportDatasetStatusIdentifier = mockExportDatasetStatusIdentifier;
 
             result.current.exportDatasetStatus.mutate({
@@ -222,21 +216,20 @@ describe('useExportDataset', () => {
             metadata: { downloadUrl: 'downloadUrl-test', project: { id: 'some-id', name: 'some-name' } },
         });
 
+        const mockedProjectService = createInMemoryProjectService();
         mockedProjectService.exportDatasetStatusJob = async () => jobResponse;
 
-        const { result } = renderUseExportDatasetHook();
+        const { result } = renderUseExportDatasetHook(mockedProjectService);
         const { workspaceId } = mockExportDatasetStatusIdentifier;
 
         const mockedData = { jobId: '2313', workspaceId, organizationId };
 
-        renderHook(
-            () =>
-                result.current.useExportDatasetStatusJob({
-                    enabled: true,
-                    data: mockedData,
-                    onSuccess: mockedOnSuccess,
-                }),
-            { wrapper }
+        renderHookWithProviders(() =>
+            result.current.useExportDatasetStatusJob({
+                enabled: true,
+                data: mockedData,
+                onSuccess: mockedOnSuccess,
+            })
         );
 
         await waitFor(() => {

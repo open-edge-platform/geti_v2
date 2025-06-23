@@ -91,7 +91,6 @@ def fxt_bad_project_archive_file_path():
         yield project_archive_file_path
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestZipArchive:
     def test_get_uncompressed_size(self, fxt_project_archive_file_path) -> None:
         zip_archive = ProjectZipArchive(zip_file_path=fxt_project_archive_file_path, readonly=True)

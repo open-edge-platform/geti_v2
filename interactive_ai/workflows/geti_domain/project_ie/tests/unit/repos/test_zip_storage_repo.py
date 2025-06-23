@@ -3,7 +3,6 @@
 import os
 from unittest.mock import patch
 
-import pytest
 from _pytest.fixtures import FixtureRequest
 from geti_types import ID
 from minio import Minio
@@ -11,7 +10,6 @@ from minio import Minio
 from job.repos.zip_storage_repo import ZipStorageRepo
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestZipStorageRepo:
     @staticmethod
     def __set_env_variables(request: FixtureRequest):
