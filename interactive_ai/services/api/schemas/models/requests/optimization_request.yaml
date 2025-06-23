@@ -1,3 +1,0 @@
-type: object
-description: Request to optimize a model
-properties:
