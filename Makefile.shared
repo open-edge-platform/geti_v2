@@ -8,7 +8,7 @@ CWD = $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
 ###
 # version
 ###
-PRODUCT_VERSION                    ?= 2.10.1
+PRODUCT_VERSION                    ?= 2.10.2
 TAG                                ?= $(PRODUCT_VERSION)-local-$(shell git rev-parse --short HEAD)
 
 ###
