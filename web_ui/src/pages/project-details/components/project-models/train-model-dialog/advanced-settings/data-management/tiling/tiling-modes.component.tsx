@@ -11,8 +11,8 @@ import styles from './tiling.module.scss';
 
 export enum TILING_MODES {
     OFF = 'Off',
-    ADAPTIVE = 'Adaptive',
-    MANUAL = 'Manual',
+    AUTOMATIC = 'Automatic',
+    CUSTOM = 'Custom',
 }
 
 const TilingModeTooltip: FC = () => {
@@ -36,7 +36,7 @@ export const TilingModes: FC<TilingModesProps> = ({ selectedTilingMode, onTiling
                 Tiling mode <TilingModeTooltip />
             </Text>
             <ToggleButtons
-                options={[TILING_MODES.OFF, TILING_MODES.ADAPTIVE, TILING_MODES.MANUAL]}
+                options={[TILING_MODES.OFF, TILING_MODES.AUTOMATIC, TILING_MODES.CUSTOM]}
                 selectedOption={selectedTilingMode}
                 onOptionChange={onTilingModeChange}
             />
