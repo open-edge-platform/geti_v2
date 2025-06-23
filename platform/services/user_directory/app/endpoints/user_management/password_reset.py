@@ -49,11 +49,13 @@ class PasswordResetData(BaseModel):
     new_password: str
     token: str
 
+
 def _sanitize_input(input_data: str) -> str:
     """
     Sanitize input data by removing newlines and carriage returns.
     """
     return input_data.replace("\n", "").replace("\r", "")
+
 
 def _send_password_reset_email(user: UserType, exp_period_in_min: int, server_address: str):
     users_handler = UsersHandler(**AUTH_CONFIG)
