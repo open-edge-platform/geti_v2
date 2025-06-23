@@ -5,10 +5,9 @@ import { useOverlayTriggerState } from '@react-stately/overlays';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_ERROR } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
 import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
-import { CreatePersonalAccessTokenDialog } from './create-personal-access-token-dialog.component';
+import { CREATE_ERROR, CreatePersonalAccessTokenDialog } from './create-personal-access-token-dialog.component';
 
 const App = () => {
     const createPersonalAccessTokenDialogState = useOverlayTriggerState({});

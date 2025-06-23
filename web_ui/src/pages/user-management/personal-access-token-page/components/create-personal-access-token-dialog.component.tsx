@@ -8,11 +8,7 @@ import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { get } from 'lodash-es';
 
-import {
-    CREATE_ERROR,
-    CREATE_MESSAGE,
-    usePersonalAccessToken,
-} from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
+import { usePersonalAccessToken } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
 import { CreatePersonalAccessTokenDialogProps } from '../../../../core/personal-access-tokens/personal-access-tokens.interface';
 import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { useNotification } from '../../../../notification/notification.component';
@@ -31,6 +27,8 @@ enum Steps {
 // NOTE: values set on backend side
 const NAME_MAX_LENGTH = 100;
 const DESCRIPTION_MAX_LENGTH = 1000;
+const CREATE_MESSAGE = 'Personal Access Token was created successfully.';
+export const CREATE_ERROR = 'Personal Access Token was not created due to an error.';
 
 interface PersonalAccessTokenData {
     name: string;

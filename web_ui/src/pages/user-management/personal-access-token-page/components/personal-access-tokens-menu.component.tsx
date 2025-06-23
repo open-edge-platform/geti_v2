@@ -10,13 +10,7 @@ import { useOverlayTriggerState } from '@react-stately/overlays';
 import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 
-import {
-    DELETE_ERROR,
-    DELETE_MESSAGE,
-    UPDATE_ERROR,
-    UPDATE_MESSAGE,
-    usePersonalAccessToken,
-} from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
+import { usePersonalAccessToken } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
 import { PartialPersonalAccessToken } from '../../../../core/personal-access-tokens/personal-access-tokens.interface';
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
@@ -34,6 +28,11 @@ enum PersonalAccessTokenMenuItems {
     EDIT = 'Edit',
     DELETE = 'Delete',
 }
+
+const DELETE_MESSAGE = 'Personal Access Token was deleted successfully.';
+const DELETE_ERROR = 'Personal Access Token was not deleted due to an error.';
+const UPDATE_MESSAGE = 'The expiration date has been updated.';
+const UPDATE_ERROR = 'Personal Access Token was not updated due to an error.';
 
 export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps): JSX.Element => {
     const { addNotification } = useNotification();
