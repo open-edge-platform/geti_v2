@@ -12,7 +12,8 @@ from geti_configuration_tools.hyperparameters import (
     Tiling,
     TrainingHyperParameters,
 )
-from geti_configuration_tools.project_configuration import ProjectConfiguration
+from geti_configuration_tools.project_configuration import ProjectConfiguration, PartialProjectConfiguration, \
+    PartialTaskConfig
 from geti_configuration_tools.training_configuration import (
     Filtering,
     GlobalDatasetPreparationParameters,
@@ -22,7 +23,7 @@ from geti_configuration_tools.training_configuration import (
     MinAnnotationObjects,
     MinAnnotationPixels,
     SubsetSplit,
-    TrainingConfiguration,
+    TrainingConfiguration, PartialTrainingConfiguration,
 )
 
 from active_learning.entities import ActiveLearningProjectConfig
@@ -200,7 +201,7 @@ class ConfigurationsBackwardCompatibility:
         project_identifier: ProjectIdentifier,
         legacy_global_configuration: list[IConfigurableParameterContainer],
         legacy_task_chain_configs: list[dict[str, Any]],
-    ) -> tuple[ProjectConfiguration, list[TrainingConfiguration]]:
+    ) -> tuple[PartialProjectConfiguration, list[PartialTrainingConfiguration]]:
         """
         Convert legacy configuration entities to new ones.
 
@@ -214,11 +215,8 @@ class ConfigurationsBackwardCompatibility:
                 - ProjectConfiguration: New format project configuration
                 - list[TrainingConfiguration]: List of new format training configurations for all tasks
         """
-        task_ids = [task_chain_config["task"].id_ for task_chain_config in legacy_task_chain_configs]
-        project_config = ProjectConfiguration.default_configuration(
-            project_id=project_identifier.project_id, task_ids=task_ids
-        )
-        training_configs = []
+        project_config = PartialProjectConfiguration(task_configs=[])
+        training_configs: list[PartialTrainingConfiguration] = []
 
         # Extract dataset management config from global configuration
         dataset_management_config = next(
@@ -267,20 +265,6 @@ class ConfigurationsBackwardCompatibility:
 
             # Create new configuration objects
             # 1. Global parameters
-            subset_split = SubsetSplit(
-                training=int(legacy_subset_manager.subset_parameters.train_proportion * 100)
-                if legacy_subset_manager
-                else 70,
-                validation=int(legacy_subset_manager.subset_parameters.validation_proportion * 100)
-                if legacy_subset_manager
-                else 20,
-                test=int(legacy_subset_manager.subset_parameters.test_proportion * 100)
-                if legacy_subset_manager
-                else 10,
-                auto_selection=legacy_subset_manager.auto_subset_fractions if legacy_subset_manager else True,
-                remixing=legacy_subset_manager.train_validation_remixing if legacy_subset_manager else False,
-            )
-
             project_wide_max_annotations = dataset_management_config.maximum_number_of_annotations
             task_wide_max_annotations = (
                 legacy_pipeline_dataset_manager.maximum_number_of_annotations
@@ -297,25 +281,40 @@ class ConfigurationsBackwardCompatibility:
             min_annotations = (
                 task_wide_min_annotations if task_wide_min_annotations is not None else project_wide_min_annotations
             )
-            filtering = Filtering(
-                min_annotation_pixels=MinAnnotationPixels(
-                    enable=min_annotations > 0,
-                    min_annotation_pixels=max(min_annotations, 1),
-                ),
-                max_annotation_pixels=MaxAnnotationPixels(),
-                min_annotation_objects=MinAnnotationObjects(),
-                max_annotation_objects=MaxAnnotationObjects(
-                    enable=max_annotations > 0,
-                    max_annotation_objects=max(max_annotations, 1),
-                ),
-            )
-
-            global_params = GlobalParameters(
-                dataset_preparation=GlobalDatasetPreparationParameters(
-                    subset_split=subset_split,
-                    filtering=filtering,
-                ),
-            )
+            global_params = {
+                "dataset_preparation": {
+                    "subset_split":  {
+                        "training": (
+                            int(legacy_subset_manager.subset_parameters.train_proportion * 100)
+                            if legacy_subset_manager else 70
+                        ),
+                        "validation": (
+                            int(legacy_subset_manager.subset_parameters.validation_proportion * 100)
+                            if legacy_subset_manager else 20
+                        ),
+                        "test": (
+                            int(legacy_subset_manager.subset_parameters.test_proportion * 100)
+                            if legacy_subset_manager else 10
+                        ),
+                        "auto_selection": (
+                            legacy_subset_manager.auto_subset_fractions if legacy_subset_manager else True
+                        ),
+                        "remixing": (
+                            legacy_subset_manager.train_validation_remixing if legacy_subset_manager else False
+                        ),
+                    },
+                    "filtering": {
+                        "min_annotation_pixels": {
+                            "enable": min_annotations > 0,
+                            "min_annotation_pixels": max(min_annotations, 1),
+                        },
+                        "max_annotation_objects": {
+                            "enable": max_annotations > 0,
+                            "max_annotation_objects": max(max_annotations, 1),
+                        },
+                    },
+                }
+            }
 
             # 2. Hyperparameters
             hyperparams = cls.forward_hyperparameters(legacy_hyperparams=legacy_hyperparams)
@@ -334,10 +333,15 @@ class ConfigurationsBackwardCompatibility:
                 )
 
             # Add task configuration to project configuration
-            project_task_config = project_config.get_task_config(task_id=task_id)
-            project_task_config.auto_training.enable = auto_training_enabled
-            project_task_config.auto_training.min_images_per_label = min_images_per_label
-            project_task_config.auto_training.enable_dynamic_required_annotations = enable_dynamic_required_annotations
+            project_task_config_dict = {
+                "task_id": task_id,
+                "auto_training": {
+                    "enable": auto_training_enabled,
+                    "min_images_per_label": min_images_per_label,
+                    "enable_dynamic_required_annotations": enable_dynamic_required_annotations,
+                }
+            }
+            project_config.task_configs.append(PartialTaskConfig.model_validate(project_task_config_dict))
 
             # Create training configuration for this task
             model_manifest_id = None
@@ -347,14 +351,13 @@ class ConfigurationsBackwardCompatibility:
             elif hasattr(legacy_hyperparams, "model_template_id"):
                 model_manifest_id = getattr(legacy_hyperparams, "model_template_id")
 
-            training_config = TrainingConfiguration(
-                id_=PartialTrainingConfigurationRepo.generate_id(),
-                task_id=task_id,
-                model_manifest_id=model_manifest_id,
-                global_parameters=global_params,
-                hyperparameters=hyperparams,
-            )
-            training_configs.append(training_config)
+            training_config_dict = {
+                "task_id": task_id,
+                "model_manifest_id": model_manifest_id,
+                "global_parameters": global_params,
+                "hyperparameters": hyperparams.model_dump(),
+            }
+            training_configs.append(PartialTrainingConfiguration.model_validate(training_config_dict))
 
         return project_config, training_configs
 

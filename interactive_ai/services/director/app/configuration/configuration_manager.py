@@ -449,10 +449,17 @@ class ConfigurationManager:
         project_identifier = ProjectIdentifier(workspace_id=workspace_id, project_id=project_id)
         task_ids = TaskNodeRepo(project_identifier).get_trainable_task_ids()
         project_configuration = ProjectConfigurationRepo(project_identifier).get_project_configuration()
-        training_config_repo = PartialTrainingConfigurationRepo(project_identifier)
-        training_configurations = [
-            training_config_repo.get_task_only_configuration(task_id=task_id) for task_id in task_ids
-        ]
+        training_configurations = []
+        for task_id in task_ids:
+            active_model_storage = ConfigurationManager.__get_active_model_storage_by_project_and_task_id(
+                project_id=project_id, task_id=task_id
+            )
+            full_training_config = ConfigurationService.get_full_training_configuration(
+                project_identifier=project_identifier,
+                task_id=task_id,
+                model_manifest_id=active_model_storage.model_template_id,
+            )
+            training_configurations.append(full_training_config)
         global_config, task_chain_config = ConfigurationsBackwardCompatibility.backward_mapping(
             project_identifier=project_identifier,
             project_configuration=project_configuration,
@@ -476,7 +483,7 @@ class ConfigurationManager:
         """
         if not FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
             raise ValueError("Cannot get new configurations without the feature flag enabled")
-        full_config = ConfigurationService.get_full_training_configuration(
+        full_training_config = ConfigurationService.get_full_training_configuration(
             project_identifier=project_identifier,
             task_id=task_id,
             model_manifest_id=model_template_id,
@@ -485,7 +492,7 @@ class ConfigurationManager:
         _, task_chain_config = ConfigurationsBackwardCompatibility.backward_mapping(
             project_identifier=project_identifier,
             project_configuration=project_configuration,
-            all_training_configurations=[full_config],
+            all_training_configurations=[full_training_config],
         )
         # task_chain_config only contains one entry for a specific model template/manifest ID
         return task_chain_config[0]["configurations"]
