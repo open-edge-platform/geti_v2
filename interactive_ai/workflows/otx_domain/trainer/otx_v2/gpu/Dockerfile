@@ -69,7 +69,8 @@ RUN apt-get update && \
 
 # Copy the application from the builder
 COPY --link --from=cuda --chown=10001 /usr/local /usr/local
-RUN chown -R 10001:10001 /interactive_ai/workflows/otx_domain/trainer/otx_v2
+RUN chmod -R 755 /interactive_ai/workflows/otx_domain/trainer/otx_v2
+
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2/.venv/bin:/interactive_ai/workflows/otx_domain/trainer/otx_v2:$PATH"
 ENV PYTHONPATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2"
