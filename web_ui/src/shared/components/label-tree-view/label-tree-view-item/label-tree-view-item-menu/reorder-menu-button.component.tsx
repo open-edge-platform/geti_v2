@@ -31,7 +31,7 @@ export const ReorderMenuButton = ({ action, id, type, isEnabled }: ReorderMenuBu
                     <SortDown aria-label={'reorder down'} width={'16px'} height={'16px'} />
                 )}
             </ActionButton>
-            <Tooltip>Reorder label {type}</Tooltip>
+            <Tooltip>Move {type}</Tooltip>
         </TooltipTrigger>
     );
 };

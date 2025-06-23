@@ -327,23 +327,23 @@ export const getReorderedTree = (
 ): LabelTreeItem[] => {
     const index = levelItems.findIndex(hasEqualId(itemToMove.id));
 
-    if (index >= 0) {
-        if (mode === 'down') {
-            if (index + 1 < levelItems.length) {
-                return levelItems.toSpliced(index, 2, levelItems[index + 1], levelItems[index]);
-            }
-        } else if (mode === 'up') {
-            if (index - 1 >= 0) {
-                return levelItems.toSpliced(index - 1, 2, levelItems[index], levelItems[index - 1]);
-            }
-        }
-        return levelItems;
-    } else {
+    if (index === -1) {
         return levelItems.map((item) => ({
             ...item,
             children: getReorderedTree(item.children, itemToMove, mode),
         }));
     }
+
+    if (mode === 'down') {
+        if (index + 1 < levelItems.length) {
+            return levelItems.toSpliced(index, 2, levelItems[index + 1], levelItems[index]);
+        }
+    } else if (mode === 'up') {
+        if (index - 1 >= 0) {
+            return levelItems.toSpliced(index - 1, 2, levelItems[index], levelItems[index - 1]);
+        }
+    }
+    return levelItems;
 };
 
 const getUniqueItemName = <T extends { name: string }>(prefix: string, items: T[] = []) => {
