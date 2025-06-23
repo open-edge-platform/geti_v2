@@ -171,7 +171,9 @@ export const getInitialKeypointStructure = ({ edges, positions }: KeypointStruct
 };
 
 export const getMaxMinPoint = <T extends Point>(points: T[], pointAxis: PointAxis) => {
-    const minAxisValue = Math.min(...points.map((point) => point[pointAxis]));
-    const maxAxisValue = Math.max(...points.map((point) => point[pointAxis]));
+    const [minAxisValue, maxAxisValue] = points.reduce(
+        ([min, max], point) => [Math.min(min, point[pointAxis]), Math.max(max, point[pointAxis])],
+        [Infinity, -Infinity]
+    );
     return [minAxisValue, maxAxisValue];
 };

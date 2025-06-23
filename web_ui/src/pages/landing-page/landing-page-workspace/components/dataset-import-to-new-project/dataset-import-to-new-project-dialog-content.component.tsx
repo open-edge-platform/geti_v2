@@ -9,7 +9,10 @@ import { isEmpty, isNil } from 'lodash-es';
 import { DATASET_IMPORT_TO_NEW_PROJECT_STEP } from '../../../../../core/datasets/dataset.enum';
 import { DatasetImportToNewProjectItem } from '../../../../../core/datasets/dataset.interface';
 import { formatDtoToKeypointStructure } from '../../../../../core/projects/services/utils';
-import { getImportKeypointTask } from '../../../../../providers/dataset-import-to-new-project-provider/utils';
+import {
+    getImportKeypointTask,
+    isValidKeypointStructure,
+} from '../../../../../providers/dataset-import-to-new-project-provider/utils';
 import { DatasetImportDnd } from '../../../../../shared/components/dataset-import-dnd/dataset-import-dnd.component';
 import { DatasetImportProgress } from '../../../../../shared/components/dataset-import-progress/dataset-import-progress.component';
 import { DatasetImportWarnings } from '../../../../../shared/components/dataset-import-warnings/dataset-import-warnings.component';
@@ -58,13 +61,13 @@ const DatasetImportLabelConfigurationPanel = ({
     patchDatasetImport,
 }: DatasetImportLabelConfigurationPanelProps) => {
     const keypointTask = datasetImportItem && getImportKeypointTask(datasetImportItem.supportedProjectTypes);
-
     if (!isEmpty(keypointTask)) {
         const formattedLabels = formatToLabelCommon(keypointTask.labels, datasetImportItem.labelColorMap);
         const keypointStructure = formatDtoToKeypointStructure(keypointTask.keypointStructure, formattedLabels);
 
         return (
             <ReadonlyTemplateManager
+                isValidStructure={isValidKeypointStructure(keypointTask)}
                 className={classes.keypointPreview}
                 initialNormalizedState={getInitialKeypointStructure(keypointStructure)}
             />
