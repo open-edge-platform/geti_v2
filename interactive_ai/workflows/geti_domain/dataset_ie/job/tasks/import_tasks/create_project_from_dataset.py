@@ -104,6 +104,10 @@ def create_project_from_dataset(
         dm_dataset=dm_dataset,
         progress_callback=progress_reporter.report,
     )
+    keypoint_structure_positions: list | None = None
+    if project_type == GetiProjectType.KEYPOINT_DETECTION:
+        keypoint_structure_positions = ImportUtils.get_keypoint_structure_positions(dm_dataset=dm_dataset)
+
     # Create project
     parser_kwargs = {
         "project_name": name,
@@ -113,6 +117,7 @@ def create_project_from_dataset(
         "label_to_ann_types": label_to_ann_types,
         "selected_labels": label_names,
         "color_by_label": color_by_label if color_by_label else None,
+        "keypoint_structure_positions": keypoint_structure_positions,
     }
     project, label_schema, _ = PersistedProjectBuilder.build_full_project(
         creator_id=user_id,

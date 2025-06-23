@@ -35,6 +35,7 @@ class DatumaroProjectParser(ProjectParser):
     :param color_by_label: Optional, mapping between label names and their color.
         Colors provided through this parameter override the ones in the Dataset, if any.
     :param include_all_labels: if True, ignore selected_labels then include all possible labels for each task_type
+    :param keypoint_structure_positions: keypoint positions to be used if the dataset does not explicitly define them
     """
 
     def __init__(  # noqa: PLR0913
@@ -47,6 +48,7 @@ class DatumaroProjectParser(ProjectParser):
         selected_labels: Sequence[str] | None = None,
         color_by_label: dict[str, str] | None = None,
         include_all_labels: bool = False,
+        keypoint_structure_positions: list | None = None,
     ) -> None:
         if selected_labels is None:
             selected_labels = ()
@@ -89,6 +91,7 @@ class DatumaroProjectParser(ProjectParser):
             dm_categories=dm_categories,
             selected_labels=valid_labels,
             include_all_labels=include_all_labels,
+            keypoint_structure_positions=keypoint_structure_positions,
         )
 
         self._validate()
@@ -269,6 +272,7 @@ class DatumaroProjectParser(ProjectParser):
         dm_categories: dm.CategoriesInfo,
         selected_labels: Sequence[str],
         include_all_labels: bool = False,
+        keypoint_structure_positions: list | None = None,
     ) -> dict[str, list]:
         """
         Parse Datumaro dataset instance to extract keypoint structure.
@@ -276,6 +280,7 @@ class DatumaroProjectParser(ProjectParser):
         :param dm_categories: Categories of datumaro dataset.
         :param selected_labels: label_names that a user selected to include in the created project
         :param include_all_labels: if True, ignore selected_labels then include all possible labels for each task_type
+        :param keypoint_structure_positions: positions of keypoints to be used if the dataset does not contain them
         :return: A dictionary representing the keypoint structure
         """
         if (
@@ -288,6 +293,7 @@ class DatumaroProjectParser(ProjectParser):
             dm_categories=dm_categories,
             selected_labels=selected_labels,
             include_all_labels=include_all_labels,
+            keypoint_structure_positions=keypoint_structure_positions,
         )
 
     @staticmethod
