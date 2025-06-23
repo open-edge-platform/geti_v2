@@ -6,7 +6,7 @@ keywords:
 - istio
 - istiod
 - istio-discovery
-name: istio-istiod
+name: ${COMPONENT_NAME}
 sources:
 - https://github.com/istio/istio
 version: ${TAG}

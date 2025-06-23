@@ -13,7 +13,7 @@ on:
         required: true
       publish_binaries:
         description: "Enable publishing binaries to repos"
-        type:  boolean
+        type: boolean
         default: false
       ref:
         description: 'The branch, tag or SHA to checkout'
@@ -36,7 +36,7 @@ on:
         description: "Path to the component (relative to the root of the repository)"
         required: true
 
-permissions: {} # No permissions by default on workflow level
+permissions: { } # No permissions by default on workflow level
 
 env:
   COMPONENT_DIR: ${{ inputs.component_dir }}
@@ -55,15 +55,16 @@ jobs:
       PYTHON_BUILDER_IMAGE: builder-images/python-builder:v0.1
       GO_BUILDER_IMAGE: builder-images/go-builder:v0.1
     steps:
-      - name: Free space on runner (delete unnecessary tools)
-        run: rm -rf /opt/hostedtoolcache
-
       - name: Checkout code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.2
         with:
           persist-credentials: false
           ref: ${{ inputs.ref || '' }}
 
+      - name: Initial cleanup
+        uses: ./.github/actions/cleanup-runner
+        with:
+          type: 'initial'
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
@@ -78,13 +79,14 @@ jobs:
       - name: Check if Python/Go project
         id: check-python-go
         run: |
+          BUILDER_IMAGE=""
           if [ -f "${COMPONENT_DIR}/setup.py" ] || [ -f "${COMPONENT_DIR}/pyproject.toml" ] || [ -f "${COMPONENT_DIR}/.python" ]; then
-            echo "BUILDER_IMAGE=${REGISTRY}/${PYTHON_BUILDER_IMAGE}" >> $GITHUB_ENV
+            BUILDER_IMAGE=${REGISTRY}/${PYTHON_BUILDER_IMAGE}
           elif [ -f "${COMPONENT_DIR}/go.mod" ] || [ -f "${COMPONENT_DIR}/.go" ]; then
-            echo "BUILDER_IMAGE=${REGISTRY}/${GO_BUILDER_IMAGE}" >> $GITHUB_ENV
-          else
-            echo "BUILDER_IMAGE=builder_image_not_set" >> $GITHUB_ENV
+            BUILDER_IMAGE=${REGISTRY}/${GO_BUILDER_IMAGE}
           fi
+          echo "BUILDER_IMAGE=${BUILDER_IMAGE}" >> $GITHUB_ENV
+          echo "BUILDER_IMAGE=${BUILDER_IMAGE}"
 
       - name: Static code analysis
         run: make builder -C "${COMPONENT_DIR}" static-code-analysis
@@ -99,6 +101,11 @@ jobs:
           else
             make builder -C "${COMPONENT_DIR}" test-integration
           fi
+
+      - name: Pre-build cleanup
+        uses: ./.github/actions/cleanup-runner
+        with:
+          type: 'pre-build'
 
       - name: Build image
         id: build-image

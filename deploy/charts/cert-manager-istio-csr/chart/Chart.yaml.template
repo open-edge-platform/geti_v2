@@ -19,7 +19,7 @@ maintainers:
 - email: cert-manager-maintainers@googlegroups.com
   name: cert-manager-maintainers
   url: https://cert-manager.io
-name: cert-manager-istio-csr
+name: ${COMPONENT_NAME}
 sources:
 - https://github.com/cert-manager/istio-csr
 type: application

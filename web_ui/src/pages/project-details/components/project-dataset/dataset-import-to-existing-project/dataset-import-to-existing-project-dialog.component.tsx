@@ -7,14 +7,17 @@ import { Content, Dialog, DialogContainer, Divider, Heading, View } from '@geti/
 import { OverlayTriggerState } from '@react-stately/overlays';
 
 import { DATASET_IMPORT_STATUSES } from '../../../../../core/datasets/dataset.enum';
-import { isAnomalyDomain } from '../../../../../core/projects/domains';
+import { isAnomalyDomain, isKeypointDetection } from '../../../../../core/projects/domains';
 import { useDatasetImportToExistingProject } from '../../../../../providers/dataset-import-to-existing-project-provider/dataset-import-to-existing-project-provider.component';
 import { matchStatus } from '../../../../../providers/dataset-import-to-existing-project-provider/utils';
 import { DatasetImportDnd } from '../../../../../shared/components/dataset-import-dnd/dataset-import-dnd.component';
 import { DatasetImportProgress } from '../../../../../shared/components/dataset-import-progress/dataset-import-progress.component';
+import { isNonEmptyArray } from '../../../../../shared/utils';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { DatasetImportToExistingProjectDialogButtons } from './dataset-import-to-existing-project-dialog-buttons.component';
 import { DatasetImportToExistingProjectMapLabels } from './dataset-import-to-existing-project-map-labels.component';
+import { KeypointErrorMessage } from './keypoint-error-message.component';
+import { getMissingLabels, hasDuplicatedValues } from './utils';
 
 interface DatasetImportToExistingProjectDialogProps {
     datasetImportDialogState: OverlayTriggerState;
@@ -26,10 +29,13 @@ export const DatasetImportToExistingProjectDialog = ({
     datasetImportDeleteDialogState,
 }: DatasetImportToExistingProjectDialogProps) => {
     const { project } = useProject();
-    const isAnomaly = project.domains.some(isAnomalyDomain);
-
-    const { setActiveDatasetImportId, activeDatasetImport, prepareDataset, importDatasetJob } =
+    const { setActiveDatasetImportId, prepareDataset, importDatasetJob, patchDatasetImport, activeDatasetImport } =
         useDatasetImportToExistingProject();
+
+    const isAnomaly = project.domains.some(isAnomalyDomain);
+    const isKeypoint = project.domains.some(isKeypointDetection);
+    const hasDuplicatedMapLabels = hasDuplicatedValues(activeDatasetImport?.labelsMap);
+    const isKeypointWithDuplicatedLabels = isKeypoint && hasDuplicatedMapLabels;
 
     const showProgress = useMemo<boolean>(() => {
         return matchStatus(activeDatasetImport, [
@@ -47,20 +53,32 @@ export const DatasetImportToExistingProjectDialog = ({
         ]);
     }, [activeDatasetImport]);
 
-    const dialogDismiss = (): void => {
+    const isKeypointMapLabels = isKeypoint && showMapLabels;
+
+    const handleDialogDismiss = (): void => {
         datasetImportDialogState.close();
         setActiveDatasetImportId(undefined);
     };
 
+    const handlePrimaryAction = () => {
+        if (!activeDatasetImport) return;
+
+        if (isKeypointMapLabels && isNonEmptyArray(getMissingLabels(project.labels, activeDatasetImport.labelsMap))) {
+            patchDatasetImport({ id: activeDatasetImport.id, labelsMap: {} });
+        }
+
+        importDatasetJob(activeDatasetImport.id);
+    };
+
     return (
-        <DialogContainer onDismiss={dialogDismiss}>
+        <DialogContainer onDismiss={handleDialogDismiss}>
             {datasetImportDialogState.isOpen && (
                 <Dialog aria-label='import-dataset-dialog' width={800}>
                     <Heading>Import dataset</Heading>
                     <Divider />
                     <Content>
                         <View backgroundColor={'gray-50'} minHeight={'size-4600'}>
-                            {!activeDatasetImport && (
+                            {activeDatasetImport === undefined && (
                                 <DatasetImportDnd
                                     setUploadItem={prepareDataset}
                                     setActiveUploadId={setActiveDatasetImportId}
@@ -89,16 +107,18 @@ export const DatasetImportToExistingProjectDialog = ({
                             )}
                         </View>
                     </Content>
+
                     <DatasetImportToExistingProjectDialogButtons
-                        onDialogDismiss={dialogDismiss}
+                        onDialogDismiss={handleDialogDismiss}
                         datasetImportItem={activeDatasetImport}
                         deletionDialogTriggerState={datasetImportDeleteDialogState}
-                        onPrimaryAction={() => {
-                            if (!activeDatasetImport) return;
-
-                            importDatasetJob(activeDatasetImport.id);
-                        }}
-                    />
+                        isImportDisabled={isKeypointWithDuplicatedLabels}
+                        onPrimaryAction={handlePrimaryAction}
+                    >
+                        {isKeypointMapLabels && activeDatasetImport && (
+                            <KeypointErrorMessage labels={project.labels} labelsMap={activeDatasetImport.labelsMap} />
+                        )}
+                    </DatasetImportToExistingProjectDialogButtons>
                 </Dialog>
             )}
         </DialogContainer>
