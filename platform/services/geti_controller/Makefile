@@ -3,7 +3,5 @@
 
 include ../../../Makefile.shared-python
 
-# invoke makefile with TAG variable set to specify the image tag
-# e.g. TAG=example make build-image
-
+COMPONENT_NAME := geti-controller
 DOCKER_BUILD_CONTEXT := --build-context libs=../../../libs

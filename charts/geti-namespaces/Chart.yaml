@@ -1,6 +1,0 @@
-apiVersion: v2
-name: geti-namespaces
-type: application
-version: 1.0.0
-appVersion: v1.0.0
-description: A Helm chart for geti namespaces

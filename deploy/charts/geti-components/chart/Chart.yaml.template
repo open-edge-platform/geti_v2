@@ -110,8 +110,8 @@ dependencies:
     version: 0.0.1
     condition: enabled.configuration
   - name: geti-controller
-    version: 0.0.1
-    repository: "file://../../platform/services/geti_controller/.build"
+    version: ${TAG}
+    repository: "file://../../../../platform/services/geti_controller/.build"
     condition: enabled.geti_controller
   - name: jobs-execution-namespace
     version: v0.1.15
