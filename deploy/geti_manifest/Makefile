@@ -53,5 +53,8 @@ build-image:
 publish-image:
 	@echo "Not applicable"
 
+lint-chart:
+	@echo "Not applicable"
+
 build-chart:
 	@echo "Not applicable"
