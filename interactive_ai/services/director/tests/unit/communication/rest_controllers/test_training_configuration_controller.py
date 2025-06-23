@@ -247,6 +247,7 @@ class TestTrainingConfigurationController:
 
     def test_get_dataset_size(
         self,
+        request,
         fxt_project_identifier,
         fxt_image_identifier,
         fxt_video_frame_identifier,
@@ -255,6 +256,7 @@ class TestTrainingConfigurationController:
     ) -> None:
         task_id = ID("task_id")
         repo = AnnotationSceneStateRepo(fxt_dataset_storage.identifier)
+        request.addfinalizer(lambda: repo.delete_all())
         ann_state_image = AnnotationSceneState(
             media_identifier=fxt_image_identifier,
             annotation_scene_id=fxt_mongo_id(1),

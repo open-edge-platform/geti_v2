@@ -150,7 +150,7 @@ class TrainingConfigurationRESTController:
             AnnotationState.ANNOTATED,
             AnnotationState.PARTIALLY_ANNOTATED,
         ]
-        dataset_storage = DatasetStorageRepo(project_identifier).get_one(extra_filter={"used_for_training": True})
+        dataset_storage = DatasetStorageRepo(project_identifier).get_one(extra_filter={"use_for_training": True})
         repo = AnnotationSceneStateRepo(dataset_storage.identifier)
         n_annotated_images = repo.count_images_state_for_task(annotation_states=annotation_states, task_id=task_id)
         n_annotated_frames = repo.count_video_frames_state_for_task(
