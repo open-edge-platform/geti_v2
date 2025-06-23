@@ -11,6 +11,7 @@ import {
     NumberParameter,
     TrainingConfiguration,
 } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
+import { isNumberParameter } from '../../../../../../../../core/configurable-parameters/utils';
 import { Accordion } from '../../ui/accordion/accordion.component';
 import { SubsetsDistributionSlider } from './subsets-distribution-slider/subsets-distribution-slider.component';
 
@@ -62,9 +63,9 @@ const SubsetDistributionStats: FC<SubsetDistributionStatsProps> = ({ trainingCou
 };
 
 interface SubsetsDistributionProps {
-    trainingSubsetCount: number;
-    validationSubsetCount: number;
-    testSubsetCount: number;
+    trainingSubsetSize: number;
+    validationSubsetSize: number;
+    testSubsetSize: number;
     subsetsDistribution: number[];
     onSubsetsDistributionChange: (values: number[]) => void;
     onSubsetsDistributionChangeEnd: (values: number[]) => void;
@@ -73,9 +74,9 @@ interface SubsetsDistributionProps {
 
 const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
     subsetsDistribution,
-    trainingSubsetCount,
-    testSubsetCount,
-    validationSubsetCount,
+    trainingSubsetSize,
+    testSubsetSize,
+    validationSubsetSize,
     onSubsetsDistributionChange,
     onSubsetsDistributionChangeEnd,
     onSubsetsDistributionReset,
@@ -114,9 +115,9 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
                     <Refresh />
                 </ActionButton>
                 <SubsetDistributionStats
-                    testCount={testSubsetCount}
-                    trainingCount={trainingSubsetCount}
-                    validationCount={validationSubsetCount}
+                    testCount={testSubsetSize}
+                    trainingCount={trainingSubsetSize}
+                    validationCount={validationSubsetSize}
                 />
             </Grid>
         </View>
@@ -154,8 +155,18 @@ const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
     };
 };
 
+const getDatasetSize = (subsetsConfiguration: SubsetsConfiguration): number => {
+    const datasetSize = subsetsConfiguration.find((parameter) => parameter.key === 'dataset_size');
+
+    if (isNumberParameter(datasetSize)) {
+        return datasetSize.value;
+    }
+
+    return 0;
+};
+
 export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration, onUpdateTrainingConfiguration }) => {
-    const { trainingSubset, validationSubset, testSubset } = getSubsets(subsetsConfiguration);
+    const { trainingSubset, validationSubset } = getSubsets(subsetsConfiguration);
 
     const [subsetsDistribution, setSubsetsDistribution] = useState<number[]>([
         trainingSubset.value,
@@ -165,6 +176,20 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
     const trainingSubsetRatio = subsetsDistribution[0];
     const validationSubsetRatio = subsetsDistribution[1] - trainingSubsetRatio;
     const testSubsetRatio = MAX_RATIO_VALUE - subsetsDistribution[1];
+
+    const getSubsetsSizes = () => {
+        const datasetSize = getDatasetSize(subsetsConfiguration);
+
+        const validationSubsetSize = Math.round(datasetSize * (validationSubsetRatio / 100));
+        const testSubsetSize = Math.round(datasetSize * (testSubsetRatio / 100));
+        const trainingSubsetSize = datasetSize - validationSubsetSize - testSubsetSize;
+
+        return {
+            trainingSubsetSize,
+            validationSubsetSize,
+            testSubsetSize,
+        };
+    };
 
     const handleUpdateSubsetsConfiguration = (values: number[]): void => {
         onUpdateTrainingConfiguration((config) => {
@@ -221,6 +246,8 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
         });
     };
 
+    const { trainingSubsetSize, validationSubsetSize, testSubsetSize } = getSubsetsSizes();
+
     return (
         <Accordion>
             <Accordion.Title>
@@ -239,9 +266,9 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
                 <SubsetsDistribution
                     subsetsDistribution={subsetsDistribution}
                     onSubsetsDistributionChange={setSubsetsDistribution}
-                    testSubsetCount={testSubset.value}
-                    trainingSubsetCount={trainingSubset.value}
-                    validationSubsetCount={validationSubset.value}
+                    testSubsetSize={testSubsetSize}
+                    trainingSubsetSize={trainingSubsetSize}
+                    validationSubsetSize={validationSubsetSize}
                     onSubsetsDistributionChangeEnd={handleUpdateSubsetsConfiguration}
                     onSubsetsDistributionReset={handleSubsetsConfigurationReset}
                 />
