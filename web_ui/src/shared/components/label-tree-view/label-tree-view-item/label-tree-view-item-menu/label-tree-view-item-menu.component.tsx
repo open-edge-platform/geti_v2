@@ -23,13 +23,12 @@ type ReorderActionType = Record<
 >;
 
 type ActionType = Record<
-    Exclude<Actions, Actions.REORDER_DOWN & Actions.REORDER_UP>,
+    Exclude<Actions, Actions.REORDER_DOWN | Actions.REORDER_UP>,
     { isVisible: boolean; onAction: () => void }
 >;
 
 interface LabelTreeViewItemMenuProps {
     isAvailable: boolean;
-
     actions: ReorderActionType & ActionType;
     itemId: string;
 }
