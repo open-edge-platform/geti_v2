@@ -6,7 +6,7 @@
 
 import functools
 import logging
-from typing import Any
+from typing import Any, cast
 
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration
 from geti_feature_tools import FeatureFlagProvider
@@ -247,11 +247,12 @@ class ConfigurationManager:
         """
         if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
             project_identifier = ProjectIdentifier(workspace_id=workspace_id, project_id=project_id)
-            return cls._get_task_config_from_new_configurations(
+            config_list = cls._get_task_config_from_new_configurations(
                 project_identifier=project_identifier,
                 task_id=task_id,
                 model_template_id=algorithm_name,
-            )[0]  # HyperParameters is the first element in the list
+            )
+            return cast("HyperParameters", config_list[0])
 
         project = ProjectRepo().get_by_id(project_id)
         if isinstance(project, NullProject):
@@ -464,7 +465,7 @@ class ConfigurationManager:
             project_configuration=project_configuration,
             all_training_configurations=training_configurations,
         )
-        return global_config, task_chain_config
+        return cast("list[ComponentParameters]", global_config), task_chain_config
 
     @staticmethod
     def _get_task_config_from_new_configurations(

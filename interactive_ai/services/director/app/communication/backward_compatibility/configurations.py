@@ -399,7 +399,7 @@ class ConfigurationsBackwardCompatibility:
         }
 
     @staticmethod
-    def forward_hyperparameters(
+    def forward_hyperparameters(  # noqa: C901
         legacy_hyperparams: Hyperparameters | IConfigurableParameterContainer | ConfigurableParameters,
     ) -> Hyperparameters:
         """ """
@@ -421,8 +421,10 @@ class ConfigurationsBackwardCompatibility:
         augmentation = AugmentationParameters(tiling=tiling)
 
         # Create training hyperparameters
-        legacy_learning_parameters = legacy_hyperparams.learning_parameters
+        # Check if legacy_hyperparams has learning_parameters before accessing
+        legacy_learning_parameters = getattr(legacy_hyperparams, "learning_parameters", None)
         early_stopping = None
+
         if legacy_learning_parameters and hasattr(legacy_learning_parameters, "enable_early_stopping"):
             early_stopping_enabled = getattr(legacy_learning_parameters, "enable_early_stopping", False)
             if early_stopping_enabled and hasattr(legacy_learning_parameters, "early_stop_patience"):
@@ -434,15 +436,18 @@ class ConfigurationsBackwardCompatibility:
                 early_stopping = early_stopping_obj.patience
 
         learning_rate = 0.001
-        for alias in ["learning_rate", "lr"]:
-            if hasattr(legacy_learning_parameters, alias):
-                learning_rate = getattr(legacy_learning_parameters, alias)
+        if legacy_learning_parameters:
+            for alias in ["learning_rate", "lr"]:
+                if hasattr(legacy_learning_parameters, alias):
+                    learning_rate = getattr(legacy_learning_parameters, alias)
 
         max_epochs = 1000
-        for max_epochs_alias in ["num_iters", "max_epochs", "max_num_epochs"]:
-            if hasattr(legacy_learning_parameters, max_epochs_alias):
-                max_epochs = getattr(legacy_learning_parameters, max_epochs_alias)
-                break
+        if legacy_learning_parameters:
+            for max_epochs_alias in ["num_iters", "max_epochs", "max_num_epochs"]:
+                if hasattr(legacy_learning_parameters, max_epochs_alias):
+                    max_epochs = getattr(legacy_learning_parameters, max_epochs_alias)
+                    break
+
         training_params = TrainingHyperParameters(
             max_epochs=max_epochs,
             learning_rate=learning_rate,
