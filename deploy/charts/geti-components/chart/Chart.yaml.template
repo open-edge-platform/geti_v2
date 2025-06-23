@@ -107,7 +107,7 @@ dependencies:
     repository: "file://../../../../../web_ui/.build/chart"
     condition: enabled.web_ui
   - name: opa-bundle
-    repository: "file://../../../../../platform/services/onboarding/.build/chart"
+    repository: "file://../../../../../platform/services/opa_bundle/.build/chart"
     version: ${TAG}
     condition: enabled.opa_bundle
   - name: configuration
