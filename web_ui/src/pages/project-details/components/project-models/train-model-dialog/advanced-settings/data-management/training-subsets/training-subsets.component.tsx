@@ -140,7 +140,6 @@ const VALIDATION_SUBSET_KEY = 'validation';
 const TRAINING_SUBSET_KEY = 'training';
 
 const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
-    const testSubset = subsetsConfiguration.find((parameter) => parameter.key === TEST_SUBSET_KEY) as NumberParameter;
     const validationSubset = subsetsConfiguration.find(
         (parameter) => parameter.key === VALIDATION_SUBSET_KEY
     ) as NumberParameter;
@@ -151,7 +150,6 @@ const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
     return {
         trainingSubset,
         validationSubset,
-        testSubset,
     };
 };
 
