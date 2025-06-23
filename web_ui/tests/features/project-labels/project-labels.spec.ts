@@ -423,7 +423,7 @@ test.describe('Task chains', () => {
 
         test('Check adding labels in detection -> classification', async ({ labelsPage, page }) => {
             await labelsPage.enableEditing();
-            await labelsPage.createLabelInGroup('Value');
+            await labelsPage.createLabelInGroup('Suit');
 
             await expect(
                 (await labelsPage.getNthItemFromTask('classification', 1))
@@ -443,7 +443,7 @@ test.describe('Task chains', () => {
                 expect.objectContaining({
                     name: 'Label',
                     parent_id: detectionLabelsRequest[0].id,
-                    group: 'Default group root task___Value',
+                    group: 'Default group root task___Suit',
                 })
             );
         });
