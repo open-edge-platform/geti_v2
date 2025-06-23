@@ -12,23 +12,15 @@ from geti_configuration_tools.hyperparameters import (
     Tiling,
     TrainingHyperParameters,
 )
-from geti_configuration_tools.project_configuration import ProjectConfiguration, PartialProjectConfiguration, \
-    PartialTaskConfig
-from geti_configuration_tools.training_configuration import (
-    Filtering,
-    GlobalDatasetPreparationParameters,
-    GlobalParameters,
-    MaxAnnotationObjects,
-    MaxAnnotationPixels,
-    MinAnnotationObjects,
-    MinAnnotationPixels,
-    SubsetSplit,
-    TrainingConfiguration, PartialTrainingConfiguration,
+from geti_configuration_tools.project_configuration import (
+    PartialProjectConfiguration,
+    PartialTaskConfig,
+    ProjectConfiguration,
 )
+from geti_configuration_tools.training_configuration import PartialTrainingConfiguration, TrainingConfiguration
 
 from active_learning.entities import ActiveLearningProjectConfig
 from configuration import ConfigurableComponentRegister
-from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_types import ID, ProjectIdentifier
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
@@ -215,7 +207,7 @@ class ConfigurationsBackwardCompatibility:
                 - ProjectConfiguration: New format project configuration
                 - list[TrainingConfiguration]: List of new format training configurations for all tasks
         """
-        project_config = PartialProjectConfiguration(task_configs=[])
+        project_config = PartialProjectConfiguration(task_configs=[], project_id=project_identifier.project_id)
         training_configs: list[PartialTrainingConfiguration] = []
 
         # Extract dataset management config from global configuration
@@ -283,18 +275,21 @@ class ConfigurationsBackwardCompatibility:
             )
             global_params = {
                 "dataset_preparation": {
-                    "subset_split":  {
+                    "subset_split": {
                         "training": (
                             int(legacy_subset_manager.subset_parameters.train_proportion * 100)
-                            if legacy_subset_manager else 70
+                            if legacy_subset_manager
+                            else 70
                         ),
                         "validation": (
                             int(legacy_subset_manager.subset_parameters.validation_proportion * 100)
-                            if legacy_subset_manager else 20
+                            if legacy_subset_manager
+                            else 20
                         ),
                         "test": (
                             int(legacy_subset_manager.subset_parameters.test_proportion * 100)
-                            if legacy_subset_manager else 10
+                            if legacy_subset_manager
+                            else 10
                         ),
                         "auto_selection": (
                             legacy_subset_manager.auto_subset_fractions if legacy_subset_manager else True
@@ -339,7 +334,7 @@ class ConfigurationsBackwardCompatibility:
                     "enable": auto_training_enabled,
                     "min_images_per_label": min_images_per_label,
                     "enable_dynamic_required_annotations": enable_dynamic_required_annotations,
-                }
+                },
             }
             project_config.task_configs.append(PartialTaskConfig.model_validate(project_task_config_dict))
 

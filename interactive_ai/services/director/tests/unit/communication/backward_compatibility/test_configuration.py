@@ -12,7 +12,7 @@ from iai_core.repos import ConfigurableParametersRepo, ModelStorageRepo, TaskNod
 
 class TestConfigurationBackwardCompatibility:
     @pytest.mark.parametrize(
-        "legacy_hyperparameters_doc_fixture, expected_revamped_configurations_fixture",
+        "legacy_hyperparameters_doc_fixture, expected_revamped_configuration_fixture",
         (
             ("fxt_legacy_classification_config_doc", "fxt_revamped_classification_configs"),
             ("fxt_legacy_detection_config_doc", "fxt_revamped_detection_configs"),
@@ -38,7 +38,8 @@ class TestConfigurationBackwardCompatibility:
         self,
         request,
         legacy_hyperparameters_doc_fixture,
-        expected_revamped_configurations_fixture,
+        expected_revamped_configuration_fixture,
+        fxt_revamped_project_configuration,
         fxt_global_config_docs,
         fxt_task_config_docs,
         fxt_project_identifier,
@@ -61,9 +62,8 @@ class TestConfigurationBackwardCompatibility:
         ]
         legacy_global_configuration = [legacy_config_mapper(doc) for doc in fxt_global_config_docs]
 
-        expected_project_configuration, expected_training_configurations = request.getfixturevalue(
-            expected_revamped_configurations_fixture
-        )
+        expected_training_configuration = request.getfixturevalue(expected_revamped_configuration_fixture)
+        expected_project_configuration = fxt_revamped_project_configuration
 
         # Act
         with (
@@ -80,7 +80,9 @@ class TestConfigurationBackwardCompatibility:
             # check that it matches the expected output
             assert len(training_configurations) == 1
             assert project_configuration.model_dump() == expected_project_configuration.model_dump()
-            assert training_configurations[0].model_dump() == expected_training_configurations[0].model_dump()
+            assert training_configurations[0].model_dump(
+                exclude_none=True
+            ) == expected_training_configuration.model_dump(exclude_none=True)
 
             # map backward
             legacy_global_configuration, legacy_task_chain_configurations = (
@@ -100,4 +102,4 @@ class TestConfigurationBackwardCompatibility:
             # check that it matches again after forward->backward->forward mapping
             assert len(training_configurations) == 1
             assert project_configuration.model_dump() == expected_project_configuration.model_dump()
-            assert training_configurations[0].model_dump() == expected_training_configurations[0].model_dump()
+            assert training_configurations[0].model_dump() == expected_training_configuration.model_dump()

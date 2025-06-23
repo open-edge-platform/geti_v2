@@ -1,5 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+from typing import Any
 
 from geti_types import ID, PersistentEntity
 from pydantic import BaseModel, Field, model_validator
@@ -78,8 +79,7 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
 
         # then initialize PersistentEntity with id and ephemeral parameters
         PersistentEntity.__init__(self, id_=project_id, ephemeral=ephemeral)
-
-        self._task_idx_mapping = {task_config.task_id: i for i, task_config in enumerate(self.task_configs)}
+        self._task_idx_mapping = {}
 
     @staticmethod
     def default_configuration(project_id: ID, task_ids: list[ID | str]) -> "ProjectConfiguration":
@@ -117,6 +117,19 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
         title="Task configurations", description="List of configurations for all tasks in this project"
     )
 
+    def _get_task_index(self, task_id: str) -> int:
+        """
+        Returns a mapping of task IDs to their indices in the task_configs list.
+
+        This mapping is used for efficient retrieval of task configurations by ID.
+        """
+        if task_id not in self._task_idx_mapping:
+            self._task_idx_mapping = {task_config.task_id: i for i, task_config in enumerate(self.task_configs)}
+        try:
+            return self._task_idx_mapping[task_id]
+        except KeyError:
+            raise ValueError(f"Task configuration with ID {task_id} not found.")
+
     def get_task_config(self, task_id: str) -> TaskConfig:
         """
         Retrieves the configuration for a specific task by its ID.
@@ -125,9 +138,11 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
         :return: The TaskConfig for the specified task, or None if not found.
         """
         if task_id not in self._task_idx_mapping:
+            self._task_idx_mapping = {task_config.task_id: i for i, task_config in enumerate(self.task_configs)}
+        if task_id not in self._task_idx_mapping:
             raise ValueError(f"Task configuration with ID {task_id} not found.")
 
-        idx = self._task_idx_mapping[task_id]
+        idx = self._get_task_index(task_id)
         return self.task_configs[idx]
 
     def update_task_config(self, task_config: TaskConfig) -> None:
@@ -140,10 +155,7 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
         :param task_config: The new task configuration to update with
         :raises ValueError: If a task configuration with the specified task_id does not exist
         """
-        if task_config.task_id not in self._task_idx_mapping:
-            raise ValueError(f"Task configuration with ID {task_config.task_id} not found.")
-
-        idx = self._task_idx_mapping[task_config.task_id]
+        idx = self._get_task_index(task_config.task_id)
         self.task_configs[idx] = task_config
 
     def __eq__(self, other: object) -> bool:
@@ -191,7 +203,7 @@ class PartialTaskConfig(TaskConfig):
 
 
 @partial_model
-class PartialProjectConfiguration(BaseModel):
+class PartialProjectConfiguration(ProjectConfiguration):
     """
     A partial version of `ProjectConfiguration` where all fields are optional.
 
@@ -202,3 +214,11 @@ class PartialProjectConfiguration(BaseModel):
     task_configs: list[PartialTaskConfig] = Field(
         title="Task configurations", description="List of configurations for all tasks in this project"
     )
+
+    def __init__(self, project_id: ID | None = None, ephemeral: bool = True, **data):
+        # first initialize the Pydantic BaseModel with all arguments
+        BaseModel.__init__(self, **data)
+
+        # then initialize PersistentEntity with id and ephemeral parameters
+        PersistentEntity.__init__(self, id_=project_id, ephemeral=ephemeral)
+        self._task_idx_mapping = {}

@@ -16,7 +16,6 @@ from communication.exceptions import AlgorithmNotFoundException, TaskNotFoundExc
 from configuration import ComponentRegisterEntry, ConfigurableComponentRegister
 from features.feature_flag import FeatureFlag
 from service.configuration_service import ConfigurationService
-from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
 from geti_fastapi_tools.exceptions import ModelNotFoundException, ProjectNotFoundException

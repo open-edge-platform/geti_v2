@@ -2,30 +2,8 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import pytest
-from geti_configuration_tools.hyperparameters import (
-    AugmentationParameters,
-    DatasetPreparationParameters,
-    EarlyStopping,
-    EvaluationParameters,
-    Hyperparameters,
-    MaxDetectionPerImage,
-    Tiling,
-    TrainingHyperParameters,
-)
-from geti_configuration_tools.project_configuration import ProjectConfiguration
-from geti_configuration_tools.training_configuration import (
-    Filtering,
-    GlobalDatasetPreparationParameters,
-    GlobalParameters,
-    MaxAnnotationObjects,
-    MaxAnnotationPixels,
-    MinAnnotationObjects,
-    MinAnnotationPixels,
-    SubsetSplit,
-    TrainingConfiguration,
-)
-
-from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
+from geti_configuration_tools.project_configuration import PartialProjectConfiguration
+from geti_configuration_tools.training_configuration import PartialTrainingConfiguration
 
 
 @pytest.fixture
@@ -3671,414 +3649,335 @@ def fxt_task_config_docs(fxt_task):
 
 
 @pytest.fixture
-def fxt_revamped_classification_configs(fxt_project_identifier, fxt_model_template, fxt_task):
+def fxt_revamped_project_configuration(fxt_task, fxt_project_identifier):
     # Create project configuration
-    project_configuration = ProjectConfiguration.default_configuration(
-        project_id=fxt_project_identifier.project_id, task_ids=[fxt_task.id_]
-    )
-    task_config = project_configuration.get_task_config(task_id=fxt_task.id_)
-    task_config.auto_training.enable = True
-    task_config.auto_training.min_images_per_label = 12
-    task_config.auto_training.enable_dynamic_required_annotations = True
-
-    # Create training configuration
-    training_configuration = TrainingConfiguration(
-        id_=PartialTrainingConfigurationRepo.generate_id(),
-        task_id=fxt_task.id_,
-        model_manifest_id=fxt_model_template.model_template_id,
-        global_parameters=GlobalParameters(
-            dataset_preparation=GlobalDatasetPreparationParameters(
-                subset_split=SubsetSplit(
-                    training=50,
-                    validation=20,
-                    test=30,
-                    auto_selection=True,
-                    remixing=False,
-                ),
-                filtering=Filtering(
-                    min_annotation_pixels=MinAnnotationPixels(enable=True, min_annotation_pixels=10),
-                    max_annotation_pixels=MaxAnnotationPixels(),
-                    min_annotation_objects=MinAnnotationObjects(),
-                    max_annotation_objects=MaxAnnotationObjects(enable=True, max_annotation_objects=1000),
-                ),
-            )
-        ),
-        hyperparameters=Hyperparameters(
-            dataset_preparation=DatasetPreparationParameters(augmentation=AugmentationParameters()),
-            training=TrainingHyperParameters(
-                max_epochs=90,
-                learning_rate=0.0049,
-                early_stopping=EarlyStopping(enable=True, patience=5),
-                max_detection_per_image=MaxDetectionPerImage(),
-            ),
-            evaluation=EvaluationParameters(),
-        ),
-    )
-
-    yield project_configuration, [training_configuration]
+    project_task_config_dict = {
+        "task_id": str(fxt_task.id_),
+        "auto_training": {
+            "enable": True,
+            "min_images_per_label": 12,
+            "enable_dynamic_required_annotations": True,
+        },
+    }
+    project_config_dict = {"task_configs": [project_task_config_dict], "project_id": fxt_project_identifier.project_id}
+    yield PartialProjectConfiguration.model_validate(project_config_dict)
 
 
 @pytest.fixture
-def fxt_revamped_detection_configs(fxt_project_identifier, fxt_model_template, fxt_task):
-    # Create project configuration
-    project_configuration = ProjectConfiguration.default_configuration(
-        project_id=fxt_project_identifier.project_id, task_ids=[fxt_task.id_]
-    )
-    task_config = project_configuration.get_task_config(task_id=fxt_task.id_)
-    task_config.auto_training.enable = True
-    task_config.auto_training.min_images_per_label = 12
-    task_config.auto_training.enable_dynamic_required_annotations = True
-
+def fxt_revamped_classification_configs(fxt_model_template, fxt_task):
     # Create training configuration
-    training_configuration = TrainingConfiguration(
-        id_=PartialTrainingConfigurationRepo.generate_id(),
-        task_id=fxt_task.id_,
-        model_manifest_id=fxt_model_template.model_template_id,
-        global_parameters=GlobalParameters(
-            dataset_preparation=GlobalDatasetPreparationParameters(
-                subset_split=SubsetSplit(
-                    training=50,
-                    validation=20,
-                    test=30,
-                    auto_selection=True,
-                    remixing=False,
-                ),
-                filtering=Filtering(
-                    min_annotation_pixels=MinAnnotationPixels(enable=True, min_annotation_pixels=10),
-                    max_annotation_pixels=MaxAnnotationPixels(),
-                    min_annotation_objects=MinAnnotationObjects(),
-                    max_annotation_objects=MaxAnnotationObjects(enable=True, max_annotation_objects=1000),
-                ),
-            )
-        ),
-        hyperparameters=Hyperparameters(
-            dataset_preparation=DatasetPreparationParameters(
-                augmentation=AugmentationParameters(
-                    tiling=Tiling(
-                        enable=False,
-                        adaptive_tiling=True,
-                        tile_size=400,
-                        tile_overlap=80,
-                    )
-                ),
-            ),
-            training=TrainingHyperParameters(
-                max_epochs=200,
-                learning_rate=0.004,
-                early_stopping=EarlyStopping(enable=True, patience=10),
-                max_detection_per_image=MaxDetectionPerImage(),
-            ),
-            evaluation=EvaluationParameters(),
-        ),
-    )
-
-    yield project_configuration, [training_configuration]
+    training_config_dict = {
+        "task_id": fxt_task.id_,
+        "model_manifest_id": fxt_model_template.model_template_id,
+        "global_parameters": {
+            "dataset_preparation": {
+                "subset_split": {
+                    "training": 50,
+                    "validation": 20,
+                    "test": 30,
+                    "auto_selection": True,
+                    "remixing": False,
+                },
+                "filtering": {
+                    "min_annotation_pixels": {"enable": True, "min_annotation_pixels": 10},
+                    "max_annotation_objects": {"enable": True, "max_annotation_objects": 1000},
+                },
+            }
+        },
+        "hyperparameters": {
+            "dataset_preparation": {
+                "augmentation": {},
+            },
+            "training": {
+                "max_epochs": 90,
+                "early_stopping": {"enable": True, "patience": 5},
+                "learning_rate": 0.0049,
+                "max_detection_per_image": {"enable": False, "max_detection_per_image": 10000},
+            },
+            "evaluation": {},
+        },
+    }
+    yield PartialTrainingConfiguration.model_validate(training_config_dict)
 
 
 @pytest.fixture
-def fxt_revamped_rotated_detection_configs(fxt_project_identifier, fxt_model_template, fxt_task):
-    # Create project configuration
-    project_configuration = ProjectConfiguration.default_configuration(
-        project_id=fxt_project_identifier.project_id, task_ids=[fxt_task.id_]
-    )
-    task_config = project_configuration.get_task_config(task_id=fxt_task.id_)
-    task_config.auto_training.enable = True
-    task_config.auto_training.min_images_per_label = 12
-    task_config.auto_training.enable_dynamic_required_annotations = True
-
+def fxt_revamped_detection_configs(fxt_model_template, fxt_task):
     # Create training configuration
-    training_configuration = TrainingConfiguration(
-        id_=PartialTrainingConfigurationRepo.generate_id(),
-        task_id=fxt_task.id_,
-        model_manifest_id=fxt_model_template.model_template_id,
-        global_parameters=GlobalParameters(
-            dataset_preparation=GlobalDatasetPreparationParameters(
-                subset_split=SubsetSplit(
-                    training=50,
-                    validation=20,
-                    test=30,
-                    auto_selection=True,
-                    remixing=False,
-                ),
-                filtering=Filtering(
-                    min_annotation_pixels=MinAnnotationPixels(enable=True, min_annotation_pixels=10),
-                    max_annotation_pixels=MaxAnnotationPixels(),
-                    min_annotation_objects=MinAnnotationObjects(),
-                    max_annotation_objects=MaxAnnotationObjects(enable=True, max_annotation_objects=1000),
-                ),
-            )
-        ),
-        hyperparameters=Hyperparameters(
-            dataset_preparation=DatasetPreparationParameters(
-                augmentation=AugmentationParameters(
-                    tiling=Tiling(
-                        enable=False,
-                        adaptive_tiling=True,
-                        tile_size=400,
-                        tile_overlap=80,
-                    )
-                ),
-            ),
-            training=TrainingHyperParameters(
-                max_epochs=100,
-                learning_rate=0.007,
-                early_stopping=EarlyStopping(enable=True, patience=10),
-                max_detection_per_image=MaxDetectionPerImage(),
-            ),
-            evaluation=EvaluationParameters(),
-        ),
-    )
-
-    yield project_configuration, [training_configuration]
+    training_config_dict = {
+        "task_id": fxt_task.id_,
+        "model_manifest_id": fxt_model_template.model_template_id,
+        "global_parameters": {
+            "dataset_preparation": {
+                "subset_split": {
+                    "training": 50,
+                    "validation": 20,
+                    "test": 30,
+                    "auto_selection": True,
+                    "remixing": False,
+                },
+                "filtering": {
+                    "min_annotation_pixels": {"enable": True, "min_annotation_pixels": 10},
+                    "max_annotation_objects": {"enable": True, "max_annotation_objects": 1000},
+                },
+            }
+        },
+        "hyperparameters": {
+            "dataset_preparation": {
+                "augmentation": {
+                    "tiling": {
+                        "enable": False,
+                        "adaptive_tiling": True,
+                        "tile_size": 400,
+                        "tile_overlap": 80,
+                    }
+                },
+            },
+            "training": {
+                "max_epochs": 200,
+                "early_stopping": {"enable": True, "patience": 10},
+                "learning_rate": 0.004,
+                "max_detection_per_image": {"enable": False, "max_detection_per_image": 10000},
+            },
+            "evaluation": {},
+        },
+    }
+    yield PartialTrainingConfiguration.model_validate(training_config_dict)
 
 
 @pytest.fixture
-def fxt_revamped_instance_segmentation_configs(fxt_project_identifier, fxt_model_template, fxt_task):
-    # Create project configuration
-    project_configuration = ProjectConfiguration.default_configuration(
-        project_id=fxt_project_identifier.project_id, task_ids=[fxt_task.id_]
-    )
-    task_config = project_configuration.get_task_config(task_id=fxt_task.id_)
-    task_config.auto_training.enable = True
-    task_config.auto_training.min_images_per_label = 12
-    task_config.auto_training.enable_dynamic_required_annotations = True
-
+def fxt_revamped_rotated_detection_configs(fxt_model_template, fxt_task):
     # Create training configuration
-    training_configuration = TrainingConfiguration(
-        id_=PartialTrainingConfigurationRepo.generate_id(),
-        task_id=fxt_task.id_,
-        model_manifest_id=fxt_model_template.model_template_id,
-        global_parameters=GlobalParameters(
-            dataset_preparation=GlobalDatasetPreparationParameters(
-                subset_split=SubsetSplit(
-                    training=50,
-                    validation=20,
-                    test=30,
-                    auto_selection=True,
-                    remixing=False,
-                ),
-                filtering=Filtering(
-                    min_annotation_pixels=MinAnnotationPixels(enable=True, min_annotation_pixels=10),
-                    max_annotation_pixels=MaxAnnotationPixels(),
-                    min_annotation_objects=MinAnnotationObjects(),
-                    max_annotation_objects=MaxAnnotationObjects(enable=True, max_annotation_objects=1000),
-                ),
-            )
-        ),
-        hyperparameters=Hyperparameters(
-            dataset_preparation=DatasetPreparationParameters(
-                augmentation=AugmentationParameters(
-                    tiling=Tiling(
-                        enable=False,
-                        adaptive_tiling=True,
-                        tile_size=400,
-                        tile_overlap=80,
-                    )
-                ),
-            ),
-            training=TrainingHyperParameters(
-                max_epochs=100,
-                learning_rate=0.015,
-                early_stopping=EarlyStopping(enable=True, patience=10),
-                max_detection_per_image=MaxDetectionPerImage(),
-            ),
-            evaluation=EvaluationParameters(),
-        ),
-    )
-
-    yield project_configuration, [training_configuration]
+    training_config_dict = {
+        "task_id": fxt_task.id_,
+        "model_manifest_id": fxt_model_template.model_template_id,
+        "global_parameters": {
+            "dataset_preparation": {
+                "subset_split": {
+                    "training": 50,
+                    "validation": 20,
+                    "test": 30,
+                    "auto_selection": True,
+                    "remixing": False,
+                },
+                "filtering": {
+                    "min_annotation_pixels": {"enable": True, "min_annotation_pixels": 10},
+                    "max_annotation_objects": {"enable": True, "max_annotation_objects": 1000},
+                },
+            }
+        },
+        "hyperparameters": {
+            "dataset_preparation": {
+                "augmentation": {
+                    "tiling": {
+                        "enable": False,
+                        "adaptive_tiling": True,
+                        "tile_size": 400,
+                        "tile_overlap": 80,
+                    }
+                },
+            },
+            "training": {
+                "max_epochs": 100,
+                "early_stopping": {"enable": True, "patience": 10},
+                "learning_rate": 0.007,
+                "max_detection_per_image": {"enable": False, "max_detection_per_image": 10000},
+            },
+            "evaluation": {},
+        },
+    }
+    yield PartialTrainingConfiguration.model_validate(training_config_dict)
 
 
 @pytest.fixture
-def fxt_revamped_semantic_segmentation_configs(fxt_project_identifier, fxt_model_template, fxt_task):
-    # Create project configuration
-    project_configuration = ProjectConfiguration.default_configuration(
-        project_id=fxt_project_identifier.project_id, task_ids=[fxt_task.id_]
-    )
-    task_config = project_configuration.get_task_config(task_id=fxt_task.id_)
-    task_config.auto_training.enable = True
-    task_config.auto_training.min_images_per_label = 12
-    task_config.auto_training.enable_dynamic_required_annotations = True
-
+def fxt_revamped_instance_segmentation_configs(fxt_model_template, fxt_task):
     # Create training configuration
-    training_configuration = TrainingConfiguration(
-        id_=PartialTrainingConfigurationRepo.generate_id(),
-        task_id=fxt_task.id_,
-        model_manifest_id=fxt_model_template.model_template_id,
-        global_parameters=GlobalParameters(
-            dataset_preparation=GlobalDatasetPreparationParameters(
-                subset_split=SubsetSplit(
-                    training=50,
-                    validation=20,
-                    test=30,
-                    auto_selection=True,
-                    remixing=False,
-                ),
-                filtering=Filtering(
-                    min_annotation_pixels=MinAnnotationPixels(enable=True, min_annotation_pixels=10),
-                    max_annotation_pixels=MaxAnnotationPixels(),
-                    min_annotation_objects=MinAnnotationObjects(),
-                    max_annotation_objects=MaxAnnotationObjects(enable=True, max_annotation_objects=1000),
-                ),
-            )
-        ),
-        hyperparameters=Hyperparameters(
-            dataset_preparation=DatasetPreparationParameters(
-                augmentation=AugmentationParameters(),
-            ),
-            training=TrainingHyperParameters(
-                max_epochs=200,
-                learning_rate=0.001,
-                early_stopping=EarlyStopping(enable=True, patience=10),
-                max_detection_per_image=MaxDetectionPerImage(),
-            ),
-            evaluation=EvaluationParameters(),
-        ),
-    )
-
-    yield project_configuration, [training_configuration]
+    training_config_dict = {
+        "task_id": fxt_task.id_,
+        "model_manifest_id": fxt_model_template.model_template_id,
+        "global_parameters": {
+            "dataset_preparation": {
+                "subset_split": {
+                    "training": 50,
+                    "validation": 20,
+                    "test": 30,
+                    "auto_selection": True,
+                    "remixing": False,
+                },
+                "filtering": {
+                    "min_annotation_pixels": {"enable": True, "min_annotation_pixels": 10},
+                    "max_annotation_objects": {"enable": True, "max_annotation_objects": 1000},
+                },
+            }
+        },
+        "hyperparameters": {
+            "dataset_preparation": {
+                "augmentation": {
+                    "tiling": {
+                        "enable": False,
+                        "adaptive_tiling": True,
+                        "tile_size": 400,
+                        "tile_overlap": 80,
+                    }
+                },
+            },
+            "training": {
+                "max_epochs": 100,
+                "early_stopping": {"enable": True, "patience": 10},
+                "learning_rate": 0.015,
+                "max_detection_per_image": {"enable": False, "max_detection_per_image": 10000},
+            },
+            "evaluation": {},
+        },
+    }
+    yield PartialTrainingConfiguration.model_validate(training_config_dict)
 
 
 @pytest.fixture
-def fxt_revamped_anomaly_stfpm_configs(fxt_project_identifier, fxt_model_template, fxt_task):
-    # Create project configuration
-    project_configuration = ProjectConfiguration.default_configuration(
-        project_id=fxt_project_identifier.project_id, task_ids=[fxt_task.id_]
-    )
-    task_config = project_configuration.get_task_config(task_id=fxt_task.id_)
-    task_config.auto_training.enable = True
-    task_config.auto_training.min_images_per_label = 12
-    task_config.auto_training.enable_dynamic_required_annotations = True
-
+def fxt_revamped_semantic_segmentation_configs(fxt_model_template, fxt_task):
     # Create training configuration
-    training_configuration = TrainingConfiguration(
-        id_=PartialTrainingConfigurationRepo.generate_id(),
-        task_id=fxt_task.id_,
-        model_manifest_id=fxt_model_template.model_template_id,
-        global_parameters=GlobalParameters(
-            dataset_preparation=GlobalDatasetPreparationParameters(
-                subset_split=SubsetSplit(
-                    training=50,
-                    validation=20,
-                    test=30,
-                    auto_selection=True,
-                    remixing=False,
-                ),
-                filtering=Filtering(
-                    min_annotation_pixels=MinAnnotationPixels(enable=True, min_annotation_pixels=10),
-                    max_annotation_pixels=MaxAnnotationPixels(),
-                    min_annotation_objects=MinAnnotationObjects(),
-                    max_annotation_objects=MaxAnnotationObjects(enable=True, max_annotation_objects=1000),
-                ),
-            )
-        ),
-        hyperparameters=Hyperparameters(
-            dataset_preparation=DatasetPreparationParameters(
-                augmentation=AugmentationParameters(),
-            ),
-            training=TrainingHyperParameters(
-                max_epochs=100,
-                learning_rate=0.4,
-                early_stopping=EarlyStopping(enable=True, patience=10),
-                max_detection_per_image=MaxDetectionPerImage(),
-            ),
-            evaluation=EvaluationParameters(),
-        ),
-    )
-
-    yield project_configuration, [training_configuration]
+    training_config_dict = {
+        "task_id": fxt_task.id_,
+        "model_manifest_id": fxt_model_template.model_template_id,
+        "global_parameters": {
+            "dataset_preparation": {
+                "subset_split": {
+                    "training": 50,
+                    "validation": 20,
+                    "test": 30,
+                    "auto_selection": True,
+                    "remixing": False,
+                },
+                "filtering": {
+                    "min_annotation_pixels": {"enable": True, "min_annotation_pixels": 10},
+                    "max_annotation_objects": {"enable": True, "max_annotation_objects": 1000},
+                },
+            }
+        },
+        "hyperparameters": {
+            "dataset_preparation": {
+                "augmentation": {},
+            },
+            "training": {
+                "max_epochs": 200,
+                "early_stopping": {"enable": True, "patience": 10},
+                "learning_rate": 0.001,
+                "max_detection_per_image": {"enable": False, "max_detection_per_image": 10000},
+            },
+            "evaluation": {},
+        },
+    }
+    yield PartialTrainingConfiguration.model_validate(training_config_dict)
 
 
 @pytest.fixture
-def fxt_revamped_anomaly_padim_configs(fxt_project_identifier, fxt_model_template, fxt_task):
-    # Create project configuration
-    project_configuration = ProjectConfiguration.default_configuration(
-        project_id=fxt_project_identifier.project_id, task_ids=[fxt_task.id_]
-    )
-    task_config = project_configuration.get_task_config(task_id=fxt_task.id_)
-    task_config.auto_training.enable = True
-    task_config.auto_training.min_images_per_label = 12
-    task_config.auto_training.enable_dynamic_required_annotations = True
-
+def fxt_revamped_anomaly_stfpm_configs(fxt_model_template, fxt_task):
     # Create training configuration
-    training_configuration = TrainingConfiguration(
-        id_=PartialTrainingConfigurationRepo.generate_id(),
-        task_id=fxt_task.id_,
-        model_manifest_id=fxt_model_template.model_template_id,
-        global_parameters=GlobalParameters(
-            dataset_preparation=GlobalDatasetPreparationParameters(
-                subset_split=SubsetSplit(
-                    training=50,
-                    validation=20,
-                    test=30,
-                    auto_selection=True,
-                    remixing=False,
-                ),
-                filtering=Filtering(
-                    min_annotation_pixels=MinAnnotationPixels(enable=True, min_annotation_pixels=10),
-                    max_annotation_pixels=MaxAnnotationPixels(),
-                    min_annotation_objects=MinAnnotationObjects(),
-                    max_annotation_objects=MaxAnnotationObjects(enable=True, max_annotation_objects=1000),
-                ),
-            )
-        ),
-        hyperparameters=Hyperparameters(
-            dataset_preparation=DatasetPreparationParameters(
-                augmentation=AugmentationParameters(),
-            ),
-            training=TrainingHyperParameters(),  # Padim has no training hyperparameters
-            evaluation=EvaluationParameters(),
-        ),
-    )
-
-    yield project_configuration, [training_configuration]
+    training_config_dict = {
+        "task_id": fxt_task.id_,
+        "model_manifest_id": fxt_model_template.model_template_id,
+        "global_parameters": {
+            "dataset_preparation": {
+                "subset_split": {
+                    "training": 50,
+                    "validation": 20,
+                    "test": 30,
+                    "auto_selection": True,
+                    "remixing": False,
+                },
+                "filtering": {
+                    "min_annotation_pixels": {"enable": True, "min_annotation_pixels": 10},
+                    "max_annotation_objects": {"enable": True, "max_annotation_objects": 1000},
+                },
+            }
+        },
+        "hyperparameters": {
+            "dataset_preparation": {
+                "augmentation": {},
+            },
+            "training": {
+                "max_epochs": 100,
+                "early_stopping": {"enable": True, "patience": 10},
+                "learning_rate": 0.4,
+                "max_detection_per_image": {"enable": False, "max_detection_per_image": 10000},
+            },
+            "evaluation": {},
+        },
+    }
+    yield PartialTrainingConfiguration.model_validate(training_config_dict)
 
 
 @pytest.fixture
-def fxt_revamped_uflow_configs(fxt_project_identifier, fxt_model_template, fxt_task):
-    # Create project configuration
-    project_configuration = ProjectConfiguration.default_configuration(
-        project_id=fxt_project_identifier.project_id, task_ids=[fxt_task.id_]
-    )
-    task_config = project_configuration.get_task_config(task_id=fxt_task.id_)
-    task_config.auto_training.enable = True
-    task_config.auto_training.min_images_per_label = 12
-    task_config.auto_training.enable_dynamic_required_annotations = True
-
+def fxt_revamped_anomaly_padim_configs(fxt_model_template, fxt_task):
     # Create training configuration
-    training_configuration = TrainingConfiguration(
-        id_=PartialTrainingConfigurationRepo.generate_id(),
-        task_id=fxt_task.id_,
-        model_manifest_id=fxt_model_template.model_template_id,
-        global_parameters=GlobalParameters(
-            dataset_preparation=GlobalDatasetPreparationParameters(
-                subset_split=SubsetSplit(
-                    training=50,
-                    validation=20,
-                    test=30,
-                    auto_selection=True,
-                    remixing=False,
-                ),
-                filtering=Filtering(
-                    min_annotation_pixels=MinAnnotationPixels(enable=True, min_annotation_pixels=10),
-                    max_annotation_pixels=MaxAnnotationPixels(),
-                    min_annotation_objects=MinAnnotationObjects(),
-                    max_annotation_objects=MaxAnnotationObjects(enable=True, max_annotation_objects=1000),
-                ),
-            )
-        ),
-        hyperparameters=Hyperparameters(
-            dataset_preparation=DatasetPreparationParameters(
-                augmentation=AugmentationParameters(),
-            ),
-            training=TrainingHyperParameters(
-                early_stopping=EarlyStopping(enable=False),
-            ),
-            evaluation=EvaluationParameters(),
-        ),
-    )
+    training_config_dict = {
+        "task_id": fxt_task.id_,
+        "model_manifest_id": fxt_model_template.model_template_id,
+        "global_parameters": {
+            "dataset_preparation": {
+                "subset_split": {
+                    "training": 50,
+                    "validation": 20,
+                    "test": 30,
+                    "auto_selection": True,
+                    "remixing": False,
+                },
+                "filtering": {
+                    "min_annotation_pixels": {"enable": True, "min_annotation_pixels": 10},
+                    "max_annotation_objects": {"enable": True, "max_annotation_objects": 1000},
+                },
+            }
+        },
+        "hyperparameters": {
+            "dataset_preparation": {
+                "augmentation": {},
+            },
+            "training": {  # default config - Padim has no training hyperparameters
+                "max_epochs": 1000,
+                "early_stopping": {"enable": False, "patience": 1},
+                "learning_rate": 0.001,
+                "max_detection_per_image": {"enable": False, "max_detection_per_image": 10000},
+            },
+            "evaluation": {},
+        },
+    }
+    yield PartialTrainingConfiguration.model_validate(training_config_dict)
 
-    yield project_configuration, [training_configuration]
+
+@pytest.fixture
+def fxt_revamped_uflow_configs(fxt_model_template, fxt_task):
+    # Create training configuration
+    training_config_dict = {
+        "task_id": fxt_task.id_,
+        "model_manifest_id": fxt_model_template.model_template_id,
+        "global_parameters": {
+            "dataset_preparation": {
+                "subset_split": {
+                    "training": 50,
+                    "validation": 20,
+                    "test": 30,
+                    "auto_selection": True,
+                    "remixing": False,
+                },
+                "filtering": {
+                    "min_annotation_pixels": {"enable": True, "min_annotation_pixels": 10},
+                    "max_annotation_objects": {"enable": True, "max_annotation_objects": 1000},
+                },
+            }
+        },
+        "hyperparameters": {
+            "dataset_preparation": {
+                "augmentation": {},
+            },
+            "training": {
+                "max_epochs": 1000,
+                "early_stopping": {"enable": False, "patience": 1},
+                "learning_rate": 0.001,
+                "max_detection_per_image": {"enable": False, "max_detection_per_image": 10000},
+            },
+            "evaluation": {},
+        },
+    }
+    yield PartialTrainingConfiguration.model_validate(training_config_dict)
 
 
 @pytest.fixture

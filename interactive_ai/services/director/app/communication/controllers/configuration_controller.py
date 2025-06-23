@@ -3,20 +3,21 @@
 
 from typing import TYPE_CHECKING, Any
 
+from geti_feature_tools import FeatureFlagProvider
+
 from communication.backward_compatibility.configurations import ConfigurationsBackwardCompatibility
 from communication.controllers.project_configuration_controller import ProjectConfigurationRESTController
 from communication.controllers.training_configuration_controller import TrainingConfigurationRESTController
 from communication.data_validator import ConfigurationRestValidator
 from communication.exceptions import ConfigurationMismatchException, TaskNotFoundException
 from communication.views.configuration_rest_views import ConfigurationRESTViews
-from configuration import ConfigurationValidator
 from configuration.configuration_manager import ConfigurationManager
+from configuration.configuration_validator import ConfigurationValidator
 from coordination.dataset_manager.subset_manager_config import SubsetManagerConfig
 from features.feature_flag import FeatureFlag
 
 from geti_fastapi_tools.exceptions import BadRequestException, ProjectNotFoundException
 from geti_fastapi_tools.responses import success_response_rest
-from geti_feature_tools import FeatureFlagProvider
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID
 from iai_core.configuration.elements.component_parameters import ComponentParameters, ComponentType
