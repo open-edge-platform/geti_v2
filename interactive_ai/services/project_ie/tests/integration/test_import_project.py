@@ -4,7 +4,6 @@
 import json
 from unittest.mock import patch
 
-import pytest
 from grpc import RpcError
 
 from geti_types import ID
@@ -22,7 +21,6 @@ S3_ENV_VARS = {
 }
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestProjectImport:
     def test_start_import(self, fxt_session_ctx, fxt_test_app, fxt_ote_id) -> None:
         # Arrange

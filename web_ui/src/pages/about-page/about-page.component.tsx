@@ -3,11 +3,11 @@
 
 import { useState } from 'react';
 
+import { useProductInfo } from '@geti/core/src/platform-utils/hooks/use-platform-utils.hook';
 import { ActionButton, Flex, Heading, Link as SpectrumLink, Text, View } from '@geti/ui';
 import { Link } from 'react-router-dom';
 
 import { COOKIES_NOTICE, PRIVACY_NOTICE, TERMS_OF_USE_GETI, TERMS_OF_USE_INTEL } from '../../core/const';
-import { useProductInfo } from '../../core/platform-utils/hooks/use-platform-utils.hook';
 import { useIsSaasEnv } from '../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { LicenseModal } from '../../shared/components/license-modal/license-modal.component';
 import { PageLayout } from '../../shared/components/page-layout/page-layout.component';

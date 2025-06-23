@@ -115,6 +115,11 @@ test.beforeEach(async ({ page, registerApiResponse, openApi }) => {
                 ...(isVideoFrame ? { frame_index: 0, video_id: id } : {}),
                 upload_time: '2022-08-08T07:26:00.580000+00:00',
                 uploader_id: '62f0cfb773cacf6370dbaccd',
+                preprocessing: !isVideoFrame
+                    ? {
+                          status: 'FINISHED',
+                      }
+                    : undefined,
             };
         });
         delete mock.next_page;

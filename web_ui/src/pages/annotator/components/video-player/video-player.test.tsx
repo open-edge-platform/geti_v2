@@ -88,7 +88,7 @@ describe('Video player', () => {
         jest.clearAllTimers();
     });
 
-    const videoFrame = getMockedVideoFrameMediaItem({});
+    const { preprocessingStatus, ...videoFrame } = getMockedVideoFrameMediaItem({});
 
     it('Shows video player controls', async () => {
         await renderVideoPlayer(videoFrame);

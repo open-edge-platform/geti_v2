@@ -14,7 +14,8 @@ PYTHONPATH_LOCAL     := tests:app
 
 # Dev environment
 PYTHON_VERSION       := python3.10
-UV_VERSION           := 0.6.12
+# Ensure version in GHA workflow matches uv version here
+UV_VERSION           := 0.7.13
 
 # PIP installation command
 PIP_INSTALL_PARAMS   := --trusted-host pypi.org \
@@ -27,8 +28,8 @@ CLEAN_DIRS := \
     ${CHART_BUILD_DIR}
 
 pre-venv:
-	@if ! uv --version | grep ${UV_VERSION}; then \
-		curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-installer.sh | sh; \
+	@if ! uv self version | grep ${UV_VERSION}; then \
+		curl --proto '=https' --tlsv1.2 -LsSf "https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-installer.sh" | sh; \
 	fi
 
 venv: pre-venv

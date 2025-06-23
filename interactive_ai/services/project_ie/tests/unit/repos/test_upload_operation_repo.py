@@ -1,14 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import pytest
 
 from entities import UploadOperation
 from entities.upload_operation import FileType
 from repos import UploadOperationRepo
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestIEOperationRepo:
     def test_get_by_upload_id(self, request) -> None:
         upload_operation_repo = UploadOperationRepo()

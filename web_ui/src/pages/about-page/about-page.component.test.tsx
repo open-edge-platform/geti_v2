@@ -8,8 +8,8 @@ import { useIsSaasEnv } from '../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { providersRender as render } from '../../test-utils/required-providers-render';
 import AboutPage from './about-page.component';
 
-jest.mock('../../core/platform-utils/hooks/use-platform-utils.hook', () => ({
-    ...jest.requireActual('../../core/platform-utils/hooks/use-platform-utils.hook'),
+jest.mock('@geti/core/src/platform-utils/hooks/use-platform-utils.hook', () => ({
+    ...jest.requireActual('@geti/core/src/platform-utils/hooks/use-platform-utils.hook'),
     useProductInfo: jest.fn(() => ({ data: { productVersion: '1.15.0-test-20240227114821' } })),
 }));
 

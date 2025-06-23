@@ -21,7 +21,6 @@ import { MediaService } from '../../../../src/core/media/services/media-service.
 import { ModelsService } from '../../../../src/core/models/services/models.interface';
 import { OrganizationsService } from '../../../../src/core/organizations/services/organizations-service.interface';
 import { PersonalAccessTokensService } from '../../../../src/core/personal-access-tokens/personal-access-tokens.interface';
-import { PlatformUtilsService } from '../../../../src/core/platform-utils/services/utils.interface';
 import { ProjectService } from '../../../../src/core/projects/services/project-service.interface';
 import { ApiModelStatisticsServiceInterface } from '../../../../src/core/statistics/services/api-model-statistics-service';
 import { DatasetStatisticsService } from '../../../../src/core/statistics/services/dataset-statistics.interface';
@@ -30,6 +29,7 @@ import { SupportedAlgorithmsService } from '../../../../src/core/supported-algor
 import { TestsService } from '../../../../src/core/tests/services/tests-service.interface';
 import { UserSettingsService } from '../../../../src/core/user-settings/services/user-settings.interface';
 import { FeatureFlagService } from '../feature-flags/services/feature-flag-service.interface';
+import { PlatformUtilsService } from '../platform-utils/services/utils.interface';
 import { OnboardingService } from '../users/services/onboarding-service.interface';
 import { UsersService } from '../users/services/users-service.interface';
 import { WorkspacesService } from '../workspaces/services/workspaces-service.interface';

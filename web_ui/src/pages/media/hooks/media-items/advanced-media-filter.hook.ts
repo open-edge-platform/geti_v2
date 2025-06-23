@@ -8,6 +8,7 @@ import { InfiniteData } from '@tanstack/react-query';
 import { AdvancedFilterOptions, AdvancedFilterSortingOptions } from '../../../../core/media/media-filter.interface';
 import { MediaAdvancedCount, MediaAdvancedFilterResponse, MediaItem } from '../../../../core/media/media.interface';
 import { MediaService } from '../../../../core/media/services/media-service.interface';
+import { isMediaPreprocessing } from '../../../../core/media/utils/preprocessing.utils';
 import { DatasetIdentifier } from '../../../../core/projects/dataset.interface';
 import { useAdvancedFilterQuery, type UseAdvancedFilterQueryOptions } from './advanced-filter-query.hook';
 
@@ -40,6 +41,17 @@ export const useAdvancedMediaFilter = ({
 }: UseAdvancedMediaFilterProps): UseAdvancedMediaFilter => {
     const handleSuccessRef = useRef(onSuccess);
 
+    const preprocessingAwareRefetchInterval = useCallback(
+        (query: { state: { data?: InfiniteData<MediaAdvancedFilterResponse> } }) => {
+            const data = query.state.data;
+            const hasPreprocessingItems = data?.pages?.some((page) =>
+                page.media.some((item) => isMediaPreprocessing(item.preprocessingStatus))
+            );
+            return hasPreprocessingItems ? 3000 : false;
+        },
+        []
+    );
+
     const mediaQuery = useAdvancedFilterQuery(
         mediaService,
         datasetIdentifier,
@@ -47,6 +59,7 @@ export const useAdvancedMediaFilter = ({
             ...queryOptions,
             retry: false,
             meta: { notifyOnError: true },
+            refetchInterval: preprocessingAwareRefetchInterval,
         },
         mediaItemsLoadSize,
         mediaFilterOptions,
