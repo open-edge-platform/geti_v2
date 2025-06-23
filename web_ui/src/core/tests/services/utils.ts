@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { MEDIA_TYPE } from '../../media/base-media.interface';
 import { Image } from '../../media/image.interface';
 import { getAnnotationStatePerTaskFromDTO } from '../../media/services/utils';
+import { getDefaultPreprocessingStatus } from '../../media/utils/preprocessing.utils';
 import { ModelsGroups, ModelVersion } from '../../models/models.interface';
 import {
     BASELINE_MODEL,
@@ -123,7 +124,16 @@ export const getTestEntity = (test: TestDTO, modelsGroups: ModelsGroups[]): Test
 };
 
 export const getTestMediaItemEntity = (mediaItem: TestMediaItemDTO): TestMediaItem => {
-    const { name, annotation_state_per_task, thumbnail, upload_time, uploader_id, id, last_annotator_id } = mediaItem;
+    const {
+        name,
+        annotation_state_per_task,
+        thumbnail,
+        upload_time,
+        uploader_id,
+        id,
+        last_annotator_id,
+        preprocessing,
+    } = mediaItem;
 
     const baseMediaItem = {
         name,
@@ -132,6 +142,7 @@ export const getTestMediaItemEntity = (mediaItem: TestMediaItemDTO): TestMediaIt
         uploaderId: uploader_id,
         annotationStatePerTask: getAnnotationStatePerTaskFromDTO(annotation_state_per_task),
         lastAnnotatorId: last_annotator_id,
+        preprocessingStatus: getDefaultPreprocessingStatus(preprocessing?.status),
     };
 
     switch (mediaItem.type) {

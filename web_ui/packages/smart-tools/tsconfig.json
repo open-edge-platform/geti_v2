@@ -1,0 +1,9 @@
+{
+  "extends": "@geti/config/typescript",
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "./src/opencv/4.9.0"
+  ],
+}

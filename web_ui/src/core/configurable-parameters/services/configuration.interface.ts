@@ -7,15 +7,15 @@ interface ParameterBase {
     description: string;
 }
 
-interface NumberParameter extends ParameterBase {
+export interface NumberParameter extends ParameterBase {
     type: 'int' | 'float';
     value: number;
     minValue: number;
-    maxValue: number;
+    maxValue: number | null;
     defaultValue: number;
 }
 
-interface BoolParameter extends ParameterBase {
+export interface BoolParameter extends ParameterBase {
     type: 'bool';
     value: boolean;
     defaultValue: boolean;
@@ -42,28 +42,38 @@ interface ProjectConfigurationTaskConfigs {
     taskId: string;
     training: ProjectConfigurationTaskConfigsTraining;
     autoTraining: ConfigurationParameter[];
-    predictions: ConfigurationParameter[];
 }
 
-type KeyValueParameter = Pick<ConfigurationParameter, 'key' | 'value'>;
+export type KeyValueParameter = Pick<ConfigurationParameter, 'key' | 'value'>;
 
 export interface ProjectConfigurationUploadPayload {
-    training?: {
-        constraints: KeyValueParameter[];
-    };
-    autoTraining?: KeyValueParameter[];
-    predictions?: KeyValueParameter[];
+    taskConfigs: {
+        taskId: string;
+        training?: {
+            constraints: KeyValueParameter[];
+        };
+        autoTraining?: KeyValueParameter[];
+    }[];
 }
 
 export interface ProjectConfiguration {
     taskConfigs: ProjectConfigurationTaskConfigs[];
 }
 
+export type DatasetPreparationParameters = {
+    subsetSplit: ConfigurationParameter[];
+    filtering: Record<string, ConfigurationParameter[]>;
+    augmentation: Record<string, ConfigurationParameter[]>;
+};
+
+export type TrainingParameters = (ConfigurationParameter | Record<string, ConfigurationParameter[]>)[];
+
 export interface TrainingConfiguration {
-    datasetPreparation?: Record<string, ConfigurationParameter[]>;
-    training?: ConfigurationParameter[];
-    evaluation?: ConfigurationParameter[];
+    datasetPreparation: DatasetPreparationParameters;
+    training: TrainingParameters;
+    evaluation: ConfigurationParameter[];
     advancedConfiguration?: StaticParameter[];
+    taskId: string;
 }
 
 export interface TrainingConfigurationUpdatePayload {

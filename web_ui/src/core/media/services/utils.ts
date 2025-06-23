@@ -13,6 +13,7 @@ import { AnnotationStatePerTaskDTO } from '../dtos/base.interface';
 import { ActiveMediaItemDTO, MediaItemDTO } from '../dtos/media.interface';
 import { FilterVideoFrameMediaDTO, VideoFrameMediaDTO, VideoStatisticsDTO } from '../dtos/video.interface';
 import { MediaIdentifier, MediaItem } from '../media.interface';
+import { getDefaultPreprocessingStatus } from '../utils/preprocessing.utils';
 import { FilterVideoFrame, isVideo, isVideoFrame, VideoStatistics } from '../video.interface';
 
 export const mediaIdentifierToDTO = (mediaIdentifier: MediaIdentifier): ImageIdDTO | VideoIdDTO | VideoFrameIdDTO => {
@@ -68,7 +69,10 @@ export const getMediaItemFromDTO = (
         upload_time,
         uploader_id,
         last_annotator_id,
+        preprocessing,
     } = item;
+
+    const preprocessing_status = preprocessing?.status;
     const { size, height, width } = media_information;
 
     const baseMediaItem = {
@@ -84,6 +88,7 @@ export const getMediaItemFromDTO = (
         uploaderId: uploader_id,
         annotationStatePerTask: getAnnotationStatePerTaskFromDTO(annotation_state_per_task),
         lastAnnotatorId: last_annotator_id,
+        preprocessingStatus: getDefaultPreprocessingStatus(preprocessing_status),
     };
 
     switch (item.type) {
@@ -213,6 +218,7 @@ export const getActiveMediaItems = (
                 uploadTime: videoMediaItem.uploadTime,
                 uploaderId: videoMediaItem.uploaderId,
                 lastAnnotatorId: videoMediaItem.lastAnnotatorId,
+                preprocessingStatus: videoMediaItem.preprocessingStatus,
             };
         });
 

@@ -16,6 +16,7 @@ import {
     isEqualLabel,
     isMatchingEdge,
     isPointInEdge,
+    resizePoints,
     rgbToHex,
     updateWithLatestPoints,
 } from './util';
@@ -193,6 +194,36 @@ describe('post-template utils', () => {
         it('edge does not match the given points', () => {
             expect(isMatchingEdge(pointA, pointC)(edgeAB)).toBe(false);
             expect(isMatchingEdge(pointC, pointB)(edgeAB)).toBe(false);
+        });
+    });
+
+    describe('resizePoints', () => {
+        it('scales points', () => {
+            const pointA = getMockedKeypointNode({ x: 0, y: 0, label: getMockedLabel({ id: '1', name: 'A' }) });
+            const pointB = getMockedKeypointNode({ x: 100, y: 100, label: getMockedLabel({ id: '2', name: 'B' }) });
+
+            const roi = { x: 0, y: 0, width: 100, height: 100 };
+            const [newPointA, newPointB] = resizePoints(0.5, roi, [pointA, pointB]);
+
+            expect(newPointA.x).toBeCloseTo(25);
+            expect(newPointA.y).toBeCloseTo(25);
+
+            expect(newPointB.x).toBeCloseTo(75);
+            expect(newPointB.y).toBeCloseTo(75);
+        });
+
+        it('center element relative to roi', () => {
+            const pointA = getMockedKeypointNode({ x: 80, y: 80, label: getMockedLabel({ id: '1', name: 'A' }) });
+            const pointB = getMockedKeypointNode({ x: 100, y: 100, label: getMockedLabel({ id: '2', name: 'B' }) });
+
+            const roi = { x: 0, y: 0, width: 100, height: 100 };
+            const [newPointA, newPointB] = resizePoints(1, roi, [pointA, pointB]);
+
+            expect(newPointA.x).toBeCloseTo(40);
+            expect(newPointA.y).toBeCloseTo(40);
+
+            expect(newPointB.x).toBeCloseTo(60);
+            expect(newPointB.y).toBeCloseTo(60);
         });
     });
 });

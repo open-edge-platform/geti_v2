@@ -3,11 +3,11 @@
 
 import { Key, useCallback, useMemo } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { isEmpty } from 'lodash-es';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { Dataset } from '../../../../core/projects/dataset.interface';
 import { isKeypointTask } from '../../../../core/projects/utils';
 import { useStatus } from '../../../../core/status/hooks/use-status.hook';

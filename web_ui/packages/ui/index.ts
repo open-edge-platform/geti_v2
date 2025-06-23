@@ -129,7 +129,6 @@ export { Slider } from './src/slider/slider.component';
 export { Switch } from './src/switch/switch.component';
 export { SearchField } from './src/search-field/search-field.component';
 export { Loading } from './src/loading/loading.component';
-export { LoadingIndicator } from './src/loading/loading-indicator.component';
 export { IntelBrandedLoading } from './src/loading/intel-branded-loading.component';
 export { Breadcrumbs } from './src/breadcrumbs/breadcrumbs.component';
 export { type BreadcrumbsProps } from './src/breadcrumbs/breadcrumbs.interface';
@@ -143,6 +142,7 @@ export { Divider } from './src/divider/divider.component';
 export { VirtualizedListLayout } from './src/virtualize-list-layout/virtualize-list-layout';
 export { CornerIndicator } from './src/corner-indicator/corner-indicator.component';
 export { VirtualizedHorizontalGrid } from './src/virtualized-horizontal-grid/virtualized-horizontal-grid';
+export { ToggleButtons } from './src/toggle-buttons/toggle-buttons.component';
 
 export {
     ListBox as AriaComponentsListBox,

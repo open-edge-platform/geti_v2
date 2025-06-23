@@ -30,7 +30,7 @@ def partial_model(model: type[BaseModel]) -> type[BaseModel]:
     def make_field_optional(field: FieldInfo) -> tuple[Any, FieldInfo]:
         # use json_schema_extra to store the default value, since default has to be None
         if field.json_schema_extra:
-            field.json_schema_extra["default_value"] = field.default
+            field.json_schema_extra["default_value"] = field.default  # type: ignore
         else:
             field.json_schema_extra = {"default_value": field.default}
         field.default = None
@@ -41,8 +41,10 @@ def partial_model(model: type[BaseModel]) -> type[BaseModel]:
     partial_fields = {}
     for field_name, field_info in model.model_fields.items():
         new_field = deepcopy(field_info)
-        if not new_field.is_required() and (optional_annotation := get_args(new_field.annotation)):
-            # field is already optional, but we still need to make sure that its nested fields are optional too
+
+        is_already_optional = not new_field.exclude and not new_field.is_required()
+        if is_already_optional and (optional_annotation := get_args(new_field.annotation)):
+            # Field is already optional, but still need to handle nested fields
             field_type, _ = optional_annotation  # tuple (annotation_type, None)
             new_field = FieldInfo(annotation=field_type)
         if type(new_field.annotation) is type(BaseModel):

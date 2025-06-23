@@ -4,40 +4,66 @@
 import { FC } from 'react';
 
 import { View } from '@geti/ui';
+import { isEmpty } from 'lodash-es';
 
-import { ConfigurableParametersTaskChain } from '../../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+import { TrainingConfiguration } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { DataAugmentation } from './data-augmentation/data-augmentation.component';
 import { Filters } from './filters/filters.component';
 import { Tiling } from './tiling/tiling.component';
 import { TrainingSubsets } from './training-subsets/training-subsets.component';
 
 interface DataManagementProps {
-    isReshufflingSubsetsEnabled: boolean;
-    onReshufflingSubsetsEnabledChange: (reshufflingSubsetsEnabled: boolean) => void;
-    configParameters: ConfigurableParametersTaskChain;
+    trainingConfiguration: TrainingConfiguration;
+    onUpdateTrainingConfiguration: (
+        updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
+    ) => void;
 }
 
-const getTilingParameters = (configParameters: ConfigurableParametersTaskChain) => {
-    return configParameters.components.find((component) => component.header === 'Tiling');
+const getAugmentationParameters = (configuration: TrainingConfiguration) => {
+    const augmentation = structuredClone(configuration.datasetPreparation.augmentation);
+
+    delete augmentation['tiling'];
+
+    return augmentation;
 };
 
-export const DataManagement: FC<DataManagementProps> = ({
-    isReshufflingSubsetsEnabled,
-    onReshufflingSubsetsEnabledChange,
-    configParameters,
-}) => {
-    const tilingParameters = getTilingParameters(configParameters);
+const getTilingParameters = (configuration: TrainingConfiguration) => {
+    return configuration.datasetPreparation.augmentation.tiling;
+};
+
+export const DataManagement: FC<DataManagementProps> = ({ trainingConfiguration, onUpdateTrainingConfiguration }) => {
+    const tilingParameters = getTilingParameters(trainingConfiguration);
+    const augmentationParameters = getAugmentationParameters(trainingConfiguration);
+    const subsetSplitParameters = trainingConfiguration.datasetPreparation.subsetSplit;
+    const filteringParameters = trainingConfiguration.datasetPreparation.filtering;
 
     return (
         <View>
             {/* Not supported in v1 of training flow revamp <BalanceLabelsDistribution /> */}
-            <TrainingSubsets
-                isReshufflingSubsetsEnabled={isReshufflingSubsetsEnabled}
-                onReshufflingSubsetsEnabledChange={onReshufflingSubsetsEnabledChange}
-            />
-            {tilingParameters !== undefined && <Tiling tilingParameters={tilingParameters} />}
-            <DataAugmentation />
-            <Filters />
+            {!isEmpty(subsetSplitParameters) && (
+                <TrainingSubsets
+                    subsetsConfiguration={trainingConfiguration.datasetPreparation.subsetSplit}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            )}
+            {!isEmpty(tilingParameters) && (
+                <Tiling
+                    tilingParameters={tilingParameters}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            )}
+            {!isEmpty(augmentationParameters) && (
+                <DataAugmentation
+                    parameters={augmentationParameters}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            )}
+            {!isEmpty(filteringParameters) && (
+                <Filters
+                    filtersConfiguration={filteringParameters}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            )}
             {/* Not supported in v1 of training flow revamp <RemovingDuplicates /> */}
         </View>
     );

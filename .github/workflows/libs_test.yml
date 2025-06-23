@@ -7,10 +7,14 @@ on:
         description: 'Dir in root directory'
         type: string
         required: true
+      ref:
+        description: "Ref to checkout"
+        type: string
+        default: ""
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Branch to checkout'
+      ref:
+        description: 'The branch, tag or SHA to checkout'
         required: true
         default: 'main'
       component-dir:
@@ -34,7 +38,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.2
         with:
           persist-credentials: false
-          ref: ${{ inputs.branch || '' }}
+          ref: ${{ inputs.ref || '' }}
 
       - name: Install missing dependencies
         run: |
@@ -42,7 +46,9 @@ jobs:
           sudo -E apt install -y ffmpeg
 
       - name: Install uv
-        uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
+        uses: astral-sh/setup-uv@a02a550bdd3185dba2ebb6aa98d77047ce54ad21 # v6.2.1
+        with:
+          version: "0.7.13"
 
       - name: Setup GO
         uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0

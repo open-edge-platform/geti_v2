@@ -2,7 +2,14 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { VALID_IMAGE_TYPES_SINGLE_UPLOAD } from '../shared/media-utils';
-import { getForegroundColor, getPointInRoi, hexaToRGBA, isSupportedImageFormat } from './utils';
+import {
+    getForegroundColor,
+    getMaxMinPoint,
+    getPointInRoi,
+    hexaToRGBA,
+    isSupportedImageFormat,
+    PointAxis,
+} from './utils';
 
 const mockedRoi = {
     x: 0,
@@ -61,5 +68,21 @@ describe('page utils', () => {
 
         expect(getPointInRoi(yUnderRoi, mockedRoi).y).toEqual(mockedRoi.y);
         expect(getPointInRoi(yAboveRoi, mockedRoi).y).toEqual(mockedRoi.height);
+    });
+
+    it('getMaxMinPoint', () => {
+        const points = [
+            { x: 10, y: 20 },
+            { x: 5, y: 30 },
+            { x: 15, y: 10 },
+        ];
+
+        const [minX, maxX] = getMaxMinPoint(points, PointAxis.X);
+        const [minY, maxY] = getMaxMinPoint(points, PointAxis.Y);
+
+        expect(minX).toEqual(5);
+        expect(maxX).toEqual(15);
+        expect(minY).toEqual(10);
+        expect(maxY).toEqual(30);
     });
 });

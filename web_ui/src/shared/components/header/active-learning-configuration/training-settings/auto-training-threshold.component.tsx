@@ -5,15 +5,9 @@ import { FC } from 'react';
 
 import { Content, ContextualHelp, Flex, Radio, RadioGroup, Text } from '@geti/ui';
 
-import { useReconfigAutoTraining } from '../../../../../core/configurable-parameters/hooks/use-reconfig-auto-training.hook';
-import {
-    BooleanGroupParams,
-    ConfigurableParametersTaskChain,
-    NumberGroupParams,
-} from '../../../../../core/configurable-parameters/services/configurable-parameters.interface';
-import { findDynamicRequiredAnnotationsConfig } from '../../../../../core/configurable-parameters/utils';
-import { Task } from '../../../../../core/projects/task.interface';
-import { RequiredAnnotationsSlider } from './required-annotations-slider.component';
+import { NumberGroupParams } from '../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+import { NumberParameter } from '../../../../../core/configurable-parameters/services/configuration.interface';
+import { RequiredAnnotations } from './required-annotations.component';
 
 enum AutoTrainingThresholdOption {
     FIXED = 'Fixed',
@@ -39,21 +33,19 @@ const AutoTrainingThresholdContextualHelp: FC = () => {
 };
 
 interface AutoTrainingThresholdProps {
-    task: Task;
-    requiredImagesAutoTrainingConfig: NumberGroupParams;
-    dynamicRequiredAnnotationsConfig: BooleanGroupParams;
-    autoTrainingOptimisticUpdates: ReturnType<typeof useReconfigAutoTraining>;
-    configParameters: ConfigurableParametersTaskChain[];
+    requiredImagesAutoTrainingConfig: NumberGroupParams | NumberParameter;
+    dynamicRequiredAnnotations: boolean;
+    onUpdateDynamicRequiredAnnotations: (value: boolean) => void;
+    onUpdateRequiredAnnotations: (newNumberOfRequiredAnnotations: number) => void;
 }
 
 export const AutoTrainingThreshold: FC<AutoTrainingThresholdProps> = ({
-    task,
     requiredImagesAutoTrainingConfig,
-    dynamicRequiredAnnotationsConfig,
-    autoTrainingOptimisticUpdates,
-    configParameters,
+    dynamicRequiredAnnotations,
+    onUpdateRequiredAnnotations,
+    onUpdateDynamicRequiredAnnotations,
 }) => {
-    const selectedThresholdOption = dynamicRequiredAnnotationsConfig.value
+    const selectedThresholdOption = dynamicRequiredAnnotations
         ? AutoTrainingThresholdOption.ADAPTIVE
         : AutoTrainingThresholdOption.FIXED;
     const isFixedThreshold = selectedThresholdOption === AutoTrainingThresholdOption.FIXED;
@@ -61,24 +53,7 @@ export const AutoTrainingThreshold: FC<AutoTrainingThresholdProps> = ({
     const handleThresholdOptionChange = (value: string): void => {
         const isAdaptiveSelected = value === AutoTrainingThresholdOption.ADAPTIVE;
 
-        autoTrainingOptimisticUpdates.mutate({
-            configParameters,
-            newConfigParameter: {
-                ...dynamicRequiredAnnotationsConfig,
-                value: isAdaptiveSelected,
-            },
-            onOptimisticUpdate: (config) => {
-                const dynamicRequiredAnnotationsConfigOptimistic = findDynamicRequiredAnnotationsConfig(
-                    task.id,
-                    config
-                );
-                if (dynamicRequiredAnnotationsConfigOptimistic !== undefined) {
-                    dynamicRequiredAnnotationsConfigOptimistic.value = isAdaptiveSelected;
-                }
-
-                return config;
-            },
-        });
+        onUpdateDynamicRequiredAnnotations(isAdaptiveSelected);
     };
 
     return (
@@ -96,11 +71,9 @@ export const AutoTrainingThreshold: FC<AutoTrainingThresholdProps> = ({
             </RadioGroup>
 
             {isFixedThreshold && (
-                <RequiredAnnotationsSlider
-                    task={task}
-                    autoTrainingOptimisticUpdates={autoTrainingOptimisticUpdates}
-                    configParameters={configParameters}
+                <RequiredAnnotations
                     requiredImagesAutoTrainingConfig={requiredImagesAutoTrainingConfig}
+                    onUpdateRequiredAnnotations={onUpdateRequiredAnnotations}
                 />
             )}
         </>

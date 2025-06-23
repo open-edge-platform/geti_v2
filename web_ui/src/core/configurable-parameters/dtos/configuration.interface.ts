@@ -42,26 +42,36 @@ interface ProjectConfigurationTaskConfigsDTO {
     task_id: string;
     training: ProjectConfigurationTaskConfigsTrainingDTO;
     auto_training: ConfigurationParameterDTO[];
-    predictions: ConfigurationParameterDTO[];
 }
 
 type KeyValueParameterDTO = Pick<ConfigurationParameterDTO, 'key' | 'value'>;
 
 export interface ProjectConfigurationUploadPayloadDTO {
-    training?: { constraints: KeyValueParameterDTO[] };
-    auto_training?: KeyValueParameterDTO[];
-    predictions?: KeyValueParameterDTO[];
+    task_configs: {
+        task_id: string;
+        training?: { constraints: KeyValueParameterDTO[] };
+        auto_training?: KeyValueParameterDTO[];
+    }[];
 }
 
 export interface ProjectConfigurationDTO {
     task_configs: ProjectConfigurationTaskConfigsDTO[];
 }
 
+export type DatasetPreparationParametersDTO = {
+    subset_split: ConfigurationParameterDTO[];
+    filtering: Record<string, ConfigurationParameterDTO[]>;
+    augmentation: Record<string, ConfigurationParameterDTO[]>;
+};
+
+export type TrainingParametersDTO = ConfigurationParameterDTO[] | Record<string, ConfigurationParameterDTO[]>[];
+
 export interface TrainingConfigurationDTO {
-    dataset_preparation: Record<string, ConfigurationParameterDTO[]>;
-    training: ConfigurationParameterDTO[];
+    dataset_preparation: DatasetPreparationParametersDTO;
+    training: TrainingParametersDTO;
     evaluation: ConfigurationParameterDTO[];
     advanced_configuration?: StaticParameterDTO[];
+    task_id: string;
 }
 
 export interface TrainingConfigurationUpdatePayloadDTO {

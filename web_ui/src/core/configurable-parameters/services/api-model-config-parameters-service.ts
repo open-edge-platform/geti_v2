@@ -11,10 +11,11 @@ import {
     ConfigurableParametersReconfigureDTO,
     ConfigurableParametersTaskChainDTO,
 } from '../dtos/configurable-parameters.interface';
-import { ProjectConfigurationDTO, ProjectConfigurationUploadPayloadDTO } from '../dtos/configuration.interface';
+import { ProjectConfigurationDTO } from '../dtos/configuration.interface';
 import { ConfigurableParametersTaskChain } from './configurable-parameters.interface';
 import {
     ProjectConfiguration,
+    ProjectConfigurationUploadPayload,
     TrainingConfiguration,
     TrainingConfigurationUpdatePayload,
 } from './configuration.interface';
@@ -27,7 +28,11 @@ import {
     getTrainingConfigurationUpdatePayloadDTO,
 } from './utils';
 
-export type TrainingConfigurationQueryParameters = Partial<{ taskId: string; algorithmId: string; modelId: string }>;
+export type TrainingConfigurationQueryParameters = Partial<{
+    taskId: string;
+    modelManifestId: string | null;
+    modelId: string;
+}>;
 export type ProjectConfigurationQueryParameters = { taskId?: string };
 
 export interface CreateApiModelConfigParametersService {
@@ -55,7 +60,7 @@ export interface CreateApiModelConfigParametersService {
     getProjectConfiguration: (projectIdentifier: ProjectIdentifier) => Promise<ProjectConfiguration>;
     updateProjectConfiguration: (
         projectIdentifier: ProjectIdentifier,
-        payload: ProjectConfigurationUploadPayloadDTO,
+        payload: ProjectConfigurationUploadPayload,
         queryParameters?: ProjectConfigurationQueryParameters
     ) => Promise<void>;
 
@@ -112,7 +117,7 @@ export const createApiModelConfigParametersService: CreateApiService<CreateApiMo
             params: {
                 task_id: queryParameters?.taskId,
                 model_id: queryParameters?.modelId,
-                algorithm_id: queryParameters?.algorithmId,
+                model_manifest_id: queryParameters?.modelManifestId,
             },
         });
 
@@ -138,7 +143,7 @@ export const createApiModelConfigParametersService: CreateApiService<CreateApiMo
             params: {
                 task_id: queryParameters?.taskId,
                 model_id: queryParameters?.modelId,
-                algorithm_id: queryParameters?.algorithmId,
+                model_manifest_id: queryParameters?.modelManifestId,
             },
         });
     };

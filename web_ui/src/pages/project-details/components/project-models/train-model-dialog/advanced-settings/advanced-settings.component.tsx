@@ -3,12 +3,10 @@
 
 import { FC, ReactNode } from 'react';
 
-import { Flex, Item, TabList, TabPanels, Tabs, Text, View } from '@geti/ui';
+import { Item, TabList, TabPanels, Tabs, Text, View } from '@geti/ui';
 
-import { ConfigurableParametersTaskChain } from '../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
-import { Task } from '../../../../../../core/projects/task.interface';
+import { TrainingConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
 import { SupportedAlgorithm } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
-import { TaskSelection } from '../model-types/task-selection.component';
 import { DataManagement } from './data-management/data-management.component';
 import { ModelArchitectures } from './model-architectures/model-architectures.component';
 import { Training } from './training/training.component';
@@ -28,17 +26,16 @@ const ContentWrapper: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 interface AdvancedSettingsProps {
-    tasks: Task[];
-    selectedTask: Task;
-    onTaskChange: (task: Task) => void;
-    isTaskChainProject: boolean;
     algorithms: SupportedAlgorithm[];
     selectedModelTemplateId: string | null;
     onChangeSelectedTemplateId: (modelTemplateId: string | null) => void;
     activeModelTemplateId: string | null;
     isReshufflingSubsetsEnabled: boolean;
     onReshufflingSubsetsEnabledChange: (reshufflingSubsetsEnabled: boolean) => void;
-    configParameters: ConfigurableParametersTaskChain;
+    trainingConfiguration: TrainingConfiguration;
+    onUpdateTrainingConfiguration: (
+        updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
+    ) => void;
     trainFromScratch: boolean;
     onTrainFromScratchChange: (trainFromScratch: boolean) => void;
 }
@@ -49,11 +46,6 @@ interface TabProps {
 }
 
 export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
-    configParameters,
-    tasks,
-    selectedTask,
-    onTaskChange,
-    isTaskChainProject,
     algorithms,
     selectedModelTemplateId,
     onChangeSelectedTemplateId,
@@ -62,6 +54,8 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
     onReshufflingSubsetsEnabledChange,
     trainFromScratch,
     onTrainFromScratchChange,
+    trainingConfiguration,
+    onUpdateTrainingConfiguration,
 }) => {
     const TABS: TabProps[] = [
         {
@@ -79,9 +73,8 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
             name: 'Data management',
             children: (
                 <DataManagement
-                    configParameters={configParameters}
-                    isReshufflingSubsetsEnabled={isReshufflingSubsetsEnabled}
-                    onReshufflingSubsetsEnabledChange={onReshufflingSubsetsEnabledChange}
+                    trainingConfiguration={trainingConfiguration}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />
             ),
         },
@@ -91,7 +84,10 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
                 <Training
                     trainFromScratch={trainFromScratch}
                     onTrainFromScratchChange={onTrainFromScratchChange}
-                    configParameters={configParameters}
+                    isReshufflingSubsetsEnabled={isReshufflingSubsetsEnabled}
+                    onReshufflingSubsetsEnabledChange={onReshufflingSubsetsEnabledChange}
+                    trainingConfiguration={trainingConfiguration}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />
             ),
         },
@@ -102,26 +98,21 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
     ].filter((tab) => tab.children !== undefined);
 
     return (
-        <Flex direction={'column'} gap={'size-100'} height={'100%'}>
-            {isTaskChainProject && (
-                <TaskSelection tasks={tasks} onTaskChange={onTaskChange} selectedTask={selectedTask} />
-            )}
-            <Tabs items={TABS} flex={1} UNSAFE_style={{ overflow: 'hidden' }}>
-                <TabList>
-                    {(tab: TabProps) => (
-                        <Item key={tab.name} textValue={tab.name}>
-                            <Text>{tab.name}</Text>
-                        </Item>
-                    )}
-                </TabList>
-                <TabPanels marginTop={'size-250'} UNSAFE_style={{ overflow: 'hidden' }}>
-                    {(tab: TabProps) => (
-                        <Item key={tab.name} textValue={tab.name}>
-                            <ContentWrapper>{tab.children}</ContentWrapper>
-                        </Item>
-                    )}
-                </TabPanels>
-            </Tabs>
-        </Flex>
+        <Tabs items={TABS} height={'100%'} UNSAFE_style={{ overflow: 'hidden' }}>
+            <TabList>
+                {(tab: TabProps) => (
+                    <Item key={tab.name} textValue={tab.name}>
+                        <Text>{tab.name}</Text>
+                    </Item>
+                )}
+            </TabList>
+            <TabPanels marginTop={'size-250'} UNSAFE_style={{ overflow: 'hidden' }}>
+                {(tab: TabProps) => (
+                    <Item key={tab.name} textValue={tab.name}>
+                        <ContentWrapper>{tab.children}</ContentWrapper>
+                    </Item>
+                )}
+            </TabPanels>
+        </Tabs>
     );
 };

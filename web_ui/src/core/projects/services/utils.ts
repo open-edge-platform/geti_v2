@@ -257,7 +257,10 @@ const isKeypointType = (otherTask: TaskDTO | KeypointTaskDTO): otherTask is Keyp
     return domain !== undefined && isKeypointDetection(domain);
 };
 
-const getKeypointStructure = (structureDTO: KeypointStructureDTO, labels: Label[]): KeypointStructure => {
+export const formatDtoToKeypointStructure = (
+    structureDTO: KeypointStructureDTO,
+    labels: Label[]
+): KeypointStructure => {
     return {
         ...structureDTO,
         positions: structureDTO.positions.map((position) => {
@@ -293,7 +296,7 @@ export const getProjectEntity = (serverProject: ProjectDTO, router = API_URLS): 
             return isKeypointType(task)
                 ? {
                       ...commonStructure,
-                      keypointStructure: getKeypointStructure(task.keypoint_structure, commonStructure.labels),
+                      keypointStructure: formatDtoToKeypointStructure(task.keypoint_structure, commonStructure.labels),
                   }
                 : commonStructure;
         })

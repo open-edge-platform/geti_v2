@@ -4,8 +4,6 @@ import json
 import os
 from unittest.mock import patch
 
-import pytest
-
 from communication.controllers import ExportController
 from communication.job_creation_helpers import JobDuplicatePolicy
 from repos import ZipStorageRepo
@@ -19,7 +17,6 @@ def do_nothing(*args, **kwargs):
     pass
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestExportController:
     def test_submit_project_export_job(self, fxt_ote_id, fxt_project) -> None:
         submitted_job_id = fxt_ote_id(100)

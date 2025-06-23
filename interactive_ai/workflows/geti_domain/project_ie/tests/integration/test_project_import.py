@@ -61,7 +61,6 @@ def fxt_mocked_minio_storage_client():
         yield
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestProjectImport:
     @pytest.mark.parametrize(
         "filename, target_env",

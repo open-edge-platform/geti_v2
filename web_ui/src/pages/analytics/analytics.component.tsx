@@ -3,6 +3,7 @@
 
 import { ComponentProps, FC, useMemo } from 'react';
 
+import { useProductInfo } from '@geti/core/src/platform-utils/hooks/use-platform-utils.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { Heading, View } from '@geti/ui';
 import { DatabaseIcon, LogsIcon, MetricsIcon, TracesIcon } from '@geti/ui/icons';
@@ -10,7 +11,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 import { useIsAnalyticsEnabled } from '../../analytics/analytics-provider.component';
-import { useProductInfo } from '../../core/platform-utils/hooks/use-platform-utils.hook';
 import { ANIMATION_PARAMETERS } from '../../shared/animation-parameters/animation-parameters';
 import { AnalyticsDashboardCard } from './analytics-dashboard-card.component';
 import { DownloadableItem, ExportServerType } from './downloadable-item.component';

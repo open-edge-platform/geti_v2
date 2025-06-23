@@ -7,12 +7,14 @@ import { paths } from '@geti/core';
 import { Divider, Flex, Text, View } from '@geti/ui';
 import { isEmpty, isEqual } from 'lodash-es';
 
-import { useReconfigAutoTraining } from '../../../../../core/configurable-parameters/hooks/use-reconfig-auto-training.hook';
 import {
     BooleanGroupParams,
-    ConfigurableParametersTaskChain,
     NumberGroupParams,
 } from '../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+import {
+    BoolParameter,
+    NumberParameter,
+} from '../../../../../core/configurable-parameters/services/configuration.interface';
 import { useGetRunningJobs } from '../../../../../core/jobs/hooks/use-jobs.hook';
 import { RunningJobProps, RunningTrainingJob } from '../../../../../core/jobs/jobs.interface';
 import { ModelsGroups } from '../../../../../core/models/models.interface';
@@ -34,10 +36,12 @@ interface AutoTrainingSwitchProps {
     task: Task;
     activeModel?: ModelsGroups;
     projectIdentifier: ProjectIdentifier;
-    trainingConfig: BooleanGroupParams | undefined;
-    dynamicRequiredAnnotationsConfig: BooleanGroupParams | undefined;
-    requiredImagesAutoTrainingConfig?: NumberGroupParams | undefined;
-    configParameters: ConfigurableParametersTaskChain[];
+    trainingConfig: BooleanGroupParams | BoolParameter | undefined;
+    dynamicRequiredAnnotationsConfig: BooleanGroupParams | BoolParameter | undefined;
+    requiredImagesAutoTrainingConfig?: NumberGroupParams | NumberParameter | undefined;
+    onUpdateRequiredImagesAutoTraining: (value: number) => void;
+    onUpdateDynamicRequiredAnnotations: (value: boolean) => void;
+    onUpdateAutoTraining: (value: boolean) => void;
     isTaskChainMode: boolean; // project is task chain (project details page) or all tasks mode (annotator page)
 }
 
@@ -99,13 +103,14 @@ export const AutoTrainingSwitch: FC<AutoTrainingSwitchProps> = ({
     activeModel,
     trainingConfig,
     isTaskChainMode,
-    configParameters,
     projectIdentifier,
     dynamicRequiredAnnotationsConfig,
     requiredImagesAutoTrainingConfig,
+    onUpdateAutoTraining,
+    onUpdateRequiredImagesAutoTraining,
+    onUpdateDynamicRequiredAnnotations,
 }) => {
     const [requiredAnnotations] = useRequiredAnnotations(task);
-    const autoTrainingOptimisticUpdates = useReconfigAutoTraining(projectIdentifier);
 
     const { data } = useGetRunningJobs({ projectId: projectIdentifier.projectId });
 
@@ -132,9 +137,8 @@ export const AutoTrainingSwitch: FC<AutoTrainingSwitchProps> = ({
                         <AutoTrainingConfigSwitch
                             task={task}
                             isDisabled={hasRunningJobs}
-                            autoTrainingOptimisticUpdates={autoTrainingOptimisticUpdates}
-                            configParameters={configParameters}
-                            trainingConfig={trainingConfig}
+                            isAutoTrainingEnabled={trainingConfig.value}
+                            onAutoTraining={onUpdateAutoTraining}
                         />
                     )}
 
@@ -142,11 +146,10 @@ export const AutoTrainingSwitch: FC<AutoTrainingSwitchProps> = ({
                         requiredImagesAutoTrainingConfig !== undefined &&
                         dynamicRequiredAnnotationsConfig !== undefined && (
                             <AutoTrainingThreshold
-                                task={task}
-                                autoTrainingOptimisticUpdates={autoTrainingOptimisticUpdates}
-                                configParameters={configParameters}
                                 requiredImagesAutoTrainingConfig={requiredImagesAutoTrainingConfig}
-                                dynamicRequiredAnnotationsConfig={dynamicRequiredAnnotationsConfig}
+                                dynamicRequiredAnnotations={dynamicRequiredAnnotationsConfig.value}
+                                onUpdateDynamicRequiredAnnotations={onUpdateDynamicRequiredAnnotations}
+                                onUpdateRequiredAnnotations={onUpdateRequiredImagesAutoTraining}
                             />
                         )}
                 </Flex>

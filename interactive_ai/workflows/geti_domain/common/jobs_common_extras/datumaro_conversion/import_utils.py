@@ -450,12 +450,12 @@ class ImportUtils:
             if not isinstance(dm_item.media, dm.Image | dm.VideoFrame):
                 continue
             for dm_ann in dm_item.annotations:
-                label_id = getattr(dm_ann, "label", None)
+                label_id_idx = getattr(dm_ann, "label", None)
                 if label_points:
                     # for keypoint annotations, we force the label_id to be 0 which is the first label in the dm dataset
                     label_idx_to_ann_types[0].add(dm_ann.type)
-                elif label_id:
-                    label_idx_to_ann_types[label_id].add(dm_ann.type)
+                elif label_id_idx is not None:
+                    label_idx_to_ann_types[label_id_idx].add(dm_ann.type)
                 # TODO: need to check if this is needed.
                 # for dm_attr_key in dm_ann.attributes:
                 #     if dm_attr_key in label_names:

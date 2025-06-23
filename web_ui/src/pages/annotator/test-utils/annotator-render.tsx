@@ -3,10 +3,10 @@
 
 import { ReactElement, ReactNode } from 'react';
 
+import { CustomFeatureFlags } from '@geti/core';
 import { ApplicationServicesContextProps } from '@geti/core/src/services/application-services-provider.component';
 import { RenderOptions, screen, waitForElementToBeRemoved } from '@testing-library/react';
 
-import { CustomFeatureFlags } from '../../../core/feature-flags/services/feature-flag-service.interface';
 import { ProjectIdentifier } from '../../../core/projects/core.interface';
 import { DatasetIdentifier } from '../../../core/projects/dataset.interface';
 import { getMockedProjectIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';

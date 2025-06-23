@@ -1,11 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Environment, GPUProvider } from '@geti/core/src/platform-utils/dto/utils.interface';
+import { createInMemoryPlatformUtilsService } from '@geti/core/src/platform-utils/services/create-in-memory-platform-utils-service';
 import { Resource, RESOURCE_TYPE } from '@geti/core/src/users/users.interface';
 import { screen } from '@testing-library/react';
 
-import { Environment, GPUProvider } from '../../../core/platform-utils/dto/utils.interface';
-import { createInMemoryPlatformUtilsService } from '../../../core/platform-utils/services/create-in-memory-platform-utils-service';
 import { useIsSaasEnv } from '../../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { getMockedWorkspaceIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import {

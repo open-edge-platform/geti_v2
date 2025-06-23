@@ -7,7 +7,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
 import { KeypointNode } from '../../../../../core/annotations/shapes.interface';
-import { denormalizePoint, EdgeLine, getDefaultLabelStructure, TemplateState } from '../util';
+import { denormalizePoint } from '../../../../../shared/utils';
+import { EdgeLine, TemplateState } from '../../../../utils';
+import { getDefaultLabelStructure } from '../util';
 
 export interface RawStructure {
     points: { label: string; x: number; y: number }[];
