@@ -253,22 +253,7 @@ const getCommonTaskStructure = (task: TaskDTO, domain: DOMAIN) => {
 };
 
 const getEmptyAndBackgroundLabels = (labels: Label[]) => {
-    const emptyLabel = labels.find(isEmptyLabel);
-    const backgroundLabel = labels.find(isBackgroundLabel);
-
-    if (emptyLabel && backgroundLabel) {
-        return [emptyLabel, backgroundLabel];
-    }
-
-    if (backgroundLabel) {
-        return [backgroundLabel];
-    }
-
-    if (emptyLabel) {
-        return [emptyLabel];
-    }
-
-    return [];
+    return labels.filter((label) => isBackgroundLabel(label) || isEmptyLabel(label));
 };
 
 const isKeypointType = (otherTask: TaskDTO | KeypointTaskDTO): otherTask is KeypointTaskDTO => {
