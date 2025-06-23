@@ -283,91 +283,105 @@ describe('Open close nodes', () => {
 describe('LabelTreeViewItem - menu', () => {
     const services = {
         featureFlags: {
-            FEATURE_FLAG_LABELS_REORDERING: false,
+            FEATURE_FLAG_LABELS_REORDERING: true,
         },
     };
 
-    describe('Creation', () => {
-        const getItemComponent = (item: LabelTreeItem, domains: DOMAIN[], isMixedRelation = false): JSX.Element => (
-            <LabelTreeViewItem
-                item={item}
-                actions={{ ...mockedActions, save: saveHandler }}
-                projectLabels={[]}
-                siblings={[]}
-                isCreationInNewProject={true}
-                domains={domains}
-                isEditable={true}
-                isMixedRelation={isMixedRelation}
-                validationErrors={{}}
-                setValidationError={jest.fn()}
-            />
-        );
+    const getItemComponent = (
+        item: LabelTreeItem,
+        domains: DOMAIN[],
+        options = { isNewProject: false, isMixedRelation: false }
+    ): JSX.Element => (
+        <LabelTreeViewItem
+            item={item}
+            actions={{ ...mockedActions, save: saveHandler }}
+            projectLabels={[]}
+            siblings={[]}
+            isCreationInNewProject={options.isNewProject}
+            domains={domains}
+            isEditable={true}
+            isMixedRelation={options.isMixedRelation}
+            validationErrors={{}}
+            setValidationError={jest.fn()}
+        />
+    );
 
+    describe('Creation', () => {
         it('Classification flat structure - delete', async () => {
             const item = getMockedTreeLabel({ name: 'test' });
 
-            render(getItemComponent(item, [DOMAIN.CLASSIFICATION]), services);
+            render(
+                getItemComponent(item, [DOMAIN.CLASSIFICATION], { isNewProject: true, isMixedRelation: false }),
+                services
+            );
 
             expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
 
-            checkNumberOfMenuActions(item.id, 'label', 1);
+            checkNumberOfMenuActions(item.id, 'label', 3);
         });
 
         it('Classification hierarchical structure - label - add group, delete', async () => {
             const item = getMockedTreeLabel({ name: 'test' });
 
-            render(getItemComponent(item, [DOMAIN.CLASSIFICATION], true), services);
+            render(
+                getItemComponent(item, [DOMAIN.CLASSIFICATION], { isNewProject: true, isMixedRelation: true }),
+                services
+            );
 
             expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'add child group button' })).toBeInTheDocument();
-            checkNumberOfMenuActions(item.id, 'label', 2);
+            expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+            checkNumberOfMenuActions(item.id, 'label', 4);
         });
 
         it('Classification hierarchical structure - group - add label, delete', async () => {
             const item = getMockedTreeGroup({ name: 'test' });
 
-            render(getItemComponent(item, [DOMAIN.CLASSIFICATION], true), services);
+            render(
+                getItemComponent(item, [DOMAIN.CLASSIFICATION], { isNewProject: true, isMixedRelation: true }),
+                services
+            );
 
             expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'add child label button' })).toBeInTheDocument();
-            checkNumberOfMenuActions(item.id, 'group', 2);
+            expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+            checkNumberOfMenuActions(item.id, 'group', 4);
         });
 
         it('Detection - delete', async () => {
             const item = getMockedTreeLabel({ name: 'test' });
 
-            render(getItemComponent(item, [DOMAIN.DETECTION]), services);
+            render(
+                getItemComponent(item, [DOMAIN.DETECTION], { isNewProject: true, isMixedRelation: false }),
+                services
+            );
 
             expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
-            checkNumberOfMenuActions(item.id, 'label', 1);
+            expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+            checkNumberOfMenuActions(item.id, 'label', 3);
         });
 
         it('Segmentation - delete', async () => {
             const item = getMockedTreeLabel({ name: 'test' });
 
-            render(getItemComponent(item, [DOMAIN.SEGMENTATION]), services);
+            render(
+                getItemComponent(item, [DOMAIN.SEGMENTATION], { isNewProject: true, isMixedRelation: false }),
+                services
+            );
 
             expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
-            checkNumberOfMenuActions(item.id, 'label', 1);
+            expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+            checkNumberOfMenuActions(item.id, 'label', 3);
         });
     });
 
     describe('Edition', () => {
-        const getItemComponent = (item: LabelTreeItem, domains: DOMAIN[], isMixedRelation = false): JSX.Element => (
-            <LabelTreeViewItem
-                item={item}
-                actions={{ ...mockedActions, save: saveHandler }}
-                projectLabels={[]}
-                siblings={[]}
-                isCreationInNewProject={false}
-                domains={domains}
-                isEditable={true}
-                isMixedRelation={isMixedRelation}
-                validationErrors={{}}
-                setValidationError={jest.fn()}
-            />
-        );
-
         describe('Classification', () => {
             it('New group - add, delete', async () => {
                 const item = getMockedTreeGroup({ name: 'test', state: LabelItemEditionState.NEW });
@@ -376,7 +390,9 @@ describe('LabelTreeViewItem - menu', () => {
 
                 expect(screen.getByRole('button', { name: 'add child label button' })).toBeInTheDocument();
                 expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
-                checkNumberOfMenuActions(item.id, 'group', 2);
+                expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+                expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+                checkNumberOfMenuActions(item.id, 'group', 4);
             });
 
             it('Group - add, delete', async () => {
@@ -386,17 +402,21 @@ describe('LabelTreeViewItem - menu', () => {
 
                 expect(screen.getByRole('button', { name: 'add child label button' })).toBeInTheDocument();
                 expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
-                checkNumberOfMenuActions(item.id, 'group', 2);
+                expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+                expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+                checkNumberOfMenuActions(item.id, 'group', 4);
             });
 
             it('Label hierarchical - add, delete', async () => {
                 const item = getMockedTreeLabel({ name: 'test', state: LabelItemEditionState.IDLE });
 
-                render(getItemComponent(item, [DOMAIN.CLASSIFICATION], true));
+                render(getItemComponent(item, [DOMAIN.CLASSIFICATION], { isNewProject: false, isMixedRelation: true }));
 
                 expect(screen.getByRole('button', { name: 'add child group button' })).toBeInTheDocument();
                 expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
-                checkNumberOfMenuActions(item.id, 'label', 2);
+                expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+                expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+                checkNumberOfMenuActions(item.id, 'label', 4);
             });
         });
 
@@ -406,7 +426,9 @@ describe('LabelTreeViewItem - menu', () => {
             render(getItemComponent(item, [DOMAIN.DETECTION]), services);
 
             expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
-            checkNumberOfMenuActions(item.id, 'label', 1);
+            expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+            checkNumberOfMenuActions(item.id, 'label', 3);
         });
 
         it('Edition - Segmentation - delete', async () => {
@@ -415,7 +437,9 @@ describe('LabelTreeViewItem - menu', () => {
             render(getItemComponent(item, [DOMAIN.SEGMENTATION]), services);
 
             expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
-            checkNumberOfMenuActions(item.id, 'label', 1);
+            expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+            checkNumberOfMenuActions(item.id, 'label', 3);
         });
 
         it('Anomaly - no menu actions', async () => {
@@ -433,7 +457,9 @@ describe('LabelTreeViewItem - menu', () => {
                 render(getItemComponent(item, [DOMAIN.DETECTION]), services);
 
                 expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
-                checkNumberOfMenuActions(item.id, 'label', 1);
+                expect(screen.getByRole('button', { name: 'reorder up label button' })).toBeInTheDocument();
+                expect(screen.getByRole('button', { name: 'reorder down label button' })).toBeInTheDocument();
+                checkNumberOfMenuActions(item.id, 'label', 3);
             });
         });
     });

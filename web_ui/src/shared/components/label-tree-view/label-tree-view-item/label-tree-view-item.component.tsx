@@ -155,6 +155,8 @@ export const LabelTreeViewItem = ({
 
     const canAddLabel = !isAnomalyProject && item.type === LabelItemType.GROUP;
 
+    const areReorderingButtonsVisible = !isAnomalyProject && FEATURE_FLAG_LABELS_REORDERING;
+
     return (
         <li
             className={`spectrum-TreeView-item ${isOpen ? 'is-open' : classes.isClosed} ${classes.lightMode}`}
@@ -207,12 +209,12 @@ export const LabelTreeViewItem = ({
                         actions={{
                             [Actions.REORDER_UP]: {
                                 isEnabled: canReorderUp,
-                                isVisible: FEATURE_FLAG_LABELS_REORDERING,
+                                isVisible: areReorderingButtonsVisible,
                                 onAction: reorderUpHandler,
                             },
                             [Actions.REORDER_DOWN]: {
                                 isEnabled: canReorderDown,
-                                isVisible: FEATURE_FLAG_LABELS_REORDERING,
+                                isVisible: areReorderingButtonsVisible,
                                 onAction: reorderDownHandler,
                             },
                             [Actions.ADD_LABEL]: {

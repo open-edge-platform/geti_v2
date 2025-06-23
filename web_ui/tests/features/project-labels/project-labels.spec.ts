@@ -406,7 +406,7 @@ test.describe('Task chains', () => {
             const saveButton = page.getByRole('button', { name: 'Save' });
             await expect(saveButton).toBeEnabled();
             await saveButton.click();
-            await expect(page.getByText('New Labels Alert: "Label", "Label 2"')).toBeVisible();
+            await expect(page.getByText('New Labels Alert: "Label 2", "Label"')).toBeVisible();
 
             const request = await labelsPage.getSavingLabelsRequest('61012cdb1d38a5e71ef3baf9', "Don't assign");
             const detectionLabelsRequest = request.postDataJSON().pipeline.tasks[1].labels;
