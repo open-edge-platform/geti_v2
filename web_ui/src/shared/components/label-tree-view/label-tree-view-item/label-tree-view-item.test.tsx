@@ -410,7 +410,10 @@ describe('LabelTreeViewItem - menu', () => {
             it('Label hierarchical - add, delete', async () => {
                 const item = getMockedTreeLabel({ name: 'test', state: LabelItemEditionState.IDLE });
 
-                render(getItemComponent(item, [DOMAIN.CLASSIFICATION], { isNewProject: false, isMixedRelation: true }));
+                render(
+                    getItemComponent(item, [DOMAIN.CLASSIFICATION], { isNewProject: false, isMixedRelation: true }),
+                    services
+                );
 
                 expect(screen.getByRole('button', { name: 'add child group button' })).toBeInTheDocument();
                 expect(screen.getByRole('button', { name: 'delete' })).toBeInTheDocument();
