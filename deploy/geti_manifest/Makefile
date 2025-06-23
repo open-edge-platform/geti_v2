@@ -33,7 +33,7 @@ prepare-manifest: get-oras
 	REGISTRY=$(REGISTRY) \
 	envsubst < geti-manifest.yaml.template > geti-manifest.yaml
 
-publish-chart: push-manifest
+build-chart-default: push-manifest
 
 static-code-analysis:
 	@echo "Not applicable"
@@ -56,5 +56,5 @@ publish-image:
 lint-chart:
 	@echo "Not applicable"
 
-build-chart:
+publish-chart:
 	@echo "Not applicable"
