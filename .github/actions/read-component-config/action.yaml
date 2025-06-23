@@ -24,14 +24,17 @@ runs:
     - name: Read component configuration
       id: config
       shell: bash
+      env:
+        COMPONENT_DIR: ${{ inputs.component_dir }}
+        CONFIG_FILE: ${{ inputs.config_file }}
       run: |
         
         get_config_value() {
-          COMPONENT='${{ inputs.component_dir }}' KEY="$1" yq eval -r '
+          COMPONENT="$COMPONENT_DIR" KEY="$1" yq eval -r '
           .defaults as $defaults |
           (.components[env(COMPONENT)] // {}) as $component |
           ($defaults * $component)[env(KEY)]
-          ' ${{ inputs.config_file }}
+          ' "$CONFIG_FILE"
         }
 
         cleanup_type=$(get_config_value "cleanup_type")
@@ -41,7 +44,7 @@ runs:
         echo "integration_builder=$integration_builder" >> $GITHUB_OUTPUT
         
         echo "=== Component Configuration ==="
-        echo "Component: ${{ inputs.component_dir }}"
+        echo "Component: $COMPONENT_DIR"
         echo "cleanup_type: $cleanup_type"
         echo "integration_builder: $integration_builder"
         echo "==============================="

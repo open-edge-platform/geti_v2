@@ -12,7 +12,7 @@ components:
     cleanup_type: all
 
   interactive_ai/workflows/geti_domain/project_ie:
-    integration_tests_builder_container: false
+    integration_builder: false
 
 # Default configuration for unlisted components
 defaults:
