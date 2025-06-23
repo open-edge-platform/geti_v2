@@ -3,7 +3,6 @@
 
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
@@ -60,8 +59,6 @@ export const LabelTreeViewItem = ({
     validationErrors,
     setValidationError,
 }: LabelTreeViewItemProps): JSX.Element => {
-    const { FEATURE_FLAG_LABELS_REORDERING } = useFeatureFlags();
-
     const [isOpen, setIsOpen] = useState<boolean>(item.open);
     const [inEditMode, setInEditMode] = useState<boolean>(item.inEditMode);
 
@@ -155,7 +152,7 @@ export const LabelTreeViewItem = ({
 
     const canAddLabel = !isAnomalyProject && item.type === LabelItemType.GROUP;
 
-    const areReorderingButtonsVisible = !isAnomalyProject && FEATURE_FLAG_LABELS_REORDERING;
+    const areReorderingButtonsVisible = !isAnomalyProject;
 
     return (
         <li
