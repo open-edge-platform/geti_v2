@@ -4,10 +4,11 @@
 import { ActionButton, Tooltip, TooltipTrigger } from '@geti/ui';
 import { SortDown, SortUp } from '@geti/ui/icons';
 
+import { ReorderType } from '../../../../../core/labels/label-tree-view.interface';
 import { MenuButtonProps } from './menu-button.interface';
 
 interface ReorderMenuButtonProps extends MenuButtonProps {
-    type: 'up' | 'down';
+    type: ReorderType;
     isEnabled: boolean;
 }
 
@@ -20,7 +21,6 @@ export const ReorderMenuButton = ({ action, id, type, isEnabled }: ReorderMenuBu
                 isQuiet
                 key={reorderButtonId}
                 onPress={action}
-                id={`${id}-${reorderButtonId}`}
                 data-testid={`${id}-${reorderButtonId}`}
                 aria-label={`reorder ${type} label button`}
                 isDisabled={!isEnabled}

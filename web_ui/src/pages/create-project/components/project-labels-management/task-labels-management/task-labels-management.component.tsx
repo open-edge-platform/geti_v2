@@ -10,6 +10,7 @@ import {
     LabelItemType,
     LabelTreeItem,
     LabelTreeLabelProps,
+    ReorderType,
     SetValidationProps,
     ValidationErrorType,
 } from '../../../../../core/labels/label-tree-view.interface';
@@ -89,7 +90,7 @@ export const TaskLabelsManagement = ({
         setLabels(updated);
     };
 
-    const reorder = (item: LabelTreeItem, mode: 'up' | 'down') => {
+    const reorder = (item: LabelTreeItem, mode: ReorderType) => {
         //TODO: there is also reordering in annotations! - maybe worth to share some code!
         const updated = getReorderedTree(labels, item, mode);
         setLabels(updated);

@@ -11,6 +11,7 @@ import {
     LabelTreeGroupProps,
     LabelTreeItem,
     LabelTreeLabelProps,
+    ReorderType,
 } from '../../../core/labels/label-tree-view.interface';
 import { Group, Label, LABEL_BEHAVIOUR, LabelsRelationType } from '../../../core/labels/label.interface';
 import { getFlattenedItems, getFlattenedLabels } from '../../../core/labels/utils';
@@ -20,7 +21,7 @@ import { hasDifferentId, hasEqualId } from '../../utils';
 import { isNewState } from './label-tree-view-item/utils';
 
 export const ICONS_SIZE_IN_REM = 3.2;
-const MAX_AMOUNT_OF_ICONS = 3;
+const MAX_AMOUNT_OF_ICONS = 4;
 export const LABEL_ITEM_MENU_PLACEHOLDER_WIDTH = MAX_AMOUNT_OF_ICONS * ICONS_SIZE_IN_REM;
 export const getDefaultGroupName = (domain: DOMAIN, parentGroup?: string | null) =>
     getFullGroupName(parentGroup ?? null, `${domain} labels`);
@@ -322,14 +323,21 @@ export const getLabelWithoutDeleted = (labelTree: LabelTreeItem[], deletedItem: 
 export const getReorderedTree = (
     levelItems: LabelTreeItem[],
     itemToMove: LabelTreeItem,
-    mode: 'up' | 'down'
+    mode: ReorderType
 ): LabelTreeItem[] => {
     const index = levelItems.findIndex(hasEqualId(itemToMove.id));
 
     if (index >= 0) {
-        return mode === 'down'
-            ? levelItems.toSpliced(index, 2, levelItems[index + 1], levelItems[index])
-            : levelItems.toSpliced(index - 1, 2, levelItems[index], levelItems[index - 1]);
+        if (mode === 'down') {
+            if (index + 1 < levelItems.length) {
+                return levelItems.toSpliced(index, 2, levelItems[index + 1], levelItems[index]);
+            }
+        } else if (mode === 'up') {
+            if (index - 1 >= 0) {
+                return levelItems.toSpliced(index - 1, 2, levelItems[index], levelItems[index - 1]);
+            }
+        }
+        return levelItems;
     } else {
         return levelItems.map((item) => ({
             ...item,

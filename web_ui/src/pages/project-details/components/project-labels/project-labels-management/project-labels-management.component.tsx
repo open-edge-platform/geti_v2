@@ -9,10 +9,10 @@ import {
     LabelTreeItem,
     LabelTreeLabelProps,
     Readonly,
+    ReorderType,
     SetValidationProps,
     ValidationErrorType,
 } from '../../../../../core/labels/label-tree-view.interface';
-//TODO: przenieść to do folderu komponentu
 import { LabelsRelationType } from '../../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
@@ -75,7 +75,7 @@ export const ProjectLabelsManagement = ({
         setTaskLabelsHandler(updated);
     };
 
-    const reorder = (item: LabelTreeItem, mode: 'up' | 'down') => {
+    const reorder = (item: LabelTreeItem, mode: ReorderType) => {
         //TODO: there is also reordering in annotations! - maybe worth to share some code!
         const updated = getReorderedTree(labelsTree, item, mode);
         setTaskLabelsHandler(updated);

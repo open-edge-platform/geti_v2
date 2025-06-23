@@ -62,11 +62,13 @@ interface SetLabelsValidation {
 
 export type SetValidationProps = SetTreeValidation | SetLabelsValidation;
 
+export type ReorderType = 'up' | 'down';
+
 export interface TreeItemActions {
     save: (editedLabel?: LabelTreeItem, oldId?: string) => void;
     deleteItem: (deletedLabel: LabelTreeItem) => void;
     addChild: (parentId: string | null, groupName: string, type: LabelItemType) => void;
-    reorder: (item: LabelTreeItem, type: 'up' | 'down') => void;
+    reorder: (item: LabelTreeItem, type: ReorderType) => void;
 }
 
 export interface EditableTreeViewProps {
