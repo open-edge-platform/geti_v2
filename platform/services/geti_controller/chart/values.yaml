@@ -24,6 +24,12 @@ global:
     allowed_methods: []
     max_age: 86400s
     allow_credentials: false
+  proxy:
+    enabled: false
+    http_proxy: ""
+    https_proxy: ""
+    no_proxy: ""
+
 
 replicaCount: 1
 

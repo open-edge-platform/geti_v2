@@ -19,3 +19,6 @@ test-integration:
 
 publish-chart:
 	@echo "Not applicable"
+
+lint-chart:
+	@echo "Not applicable"
