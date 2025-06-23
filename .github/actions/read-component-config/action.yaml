@@ -14,7 +14,7 @@ outputs:
   cleanup_type:
     description: 'Type of cleanup to perform'
     value: ${{ steps.config.outputs.cleanup_type }}
-  integration_tests_builder_container:
+  integration_builder:
     description: 'If integration tests should be executed in a builder container'
     value: ${{ steps.config.outputs.integration_builder }}
 
