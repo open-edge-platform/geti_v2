@@ -35,11 +35,13 @@ def fxt_checkpoint(request, tmpdir, monkeypatch: pytest.MonkeyPatch):
     return checkpoint_path
 
 
+@patch("metrics.upload_model_artifact")
 @patch("otx_io.upload_model_artifact")
 @patch("scripts.train.load_trained_model_weights")
 def test_train(
     mock_load_trained_model_weights,
     mock_upload_model_artifact,
+    mock_metrics_upload_model_artifact,
     fxt_config,
     fxt_dir_assets,
     fxt_checkpoint,
@@ -78,3 +80,6 @@ def test_train(
         "exportable-code_fp32_non-xai.whl",
         "exportable-code_fp16_non-xai.whl",
     }
+    mock_metrics_upload_model_artifact.assert_called_once_with(
+        src_filepath=Path(tmpdir) / "metrics.json", dst_filepath=Path("live_metrics/metrics.json")
+    )
