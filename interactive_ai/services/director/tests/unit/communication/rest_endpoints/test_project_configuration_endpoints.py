@@ -82,13 +82,17 @@ class TestProjectConfigurationEndpoints:
                             },
                             "auto_training": [
                                 {"key": "enable", "value": False, "type": "bool", "name": "Enable auto training"},
-                                {"key": "min_images_per_label", "value": 8, "type": "int",
-                                 "name": "Minimum images per label"},
+                                {
+                                    "key": "min_images_per_label",
+                                    "value": 8,
+                                    "type": "int",
+                                    "name": "Minimum images per label",
+                                },
                             ],
                         }
                     ]
                 },
-                f"{API_PROJECT_PATTERN}/project_configuration"
+                f"{API_PROJECT_PATTERN}/project_configuration",
             ),
             (
                 {
@@ -105,12 +109,11 @@ class TestProjectConfigurationEndpoints:
                     },
                     "auto_training": [
                         {"key": "enable", "value": False, "type": "bool", "name": "Enable auto training"},
-                        {"key": "min_images_per_label", "value": 8, "type": "int",
-                         "name": "Minimum images per label"},
+                        {"key": "min_images_per_label", "value": 8, "type": "int", "name": "Minimum images per label"},
                     ],
                 },
-                f"{API_PROJECT_PATTERN}/project_configuration?task_id=detection_1"
-            )
+                f"{API_PROJECT_PATTERN}/project_configuration?task_id=detection_1",
+            ),
         ],
         ids=[
             "Task chain payload",
