@@ -25,6 +25,10 @@ on:
         description: 'The branch, tag or SHA to checkout'
         required: true
         default: ""
+      manifest_registry:
+        description: 'The registry to use for the manifest'
+        type: string
+        default: ""
 
 concurrency:
   group: ${{ github.head_ref || github.ref_name }}
