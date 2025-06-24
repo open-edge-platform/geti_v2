@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { OverlayTriggerState } from '@react-stately/overlays';
@@ -10,7 +11,6 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { CREDIT_COST_PER_IMAGE_OR_VIDEO } from '../../../../../core/credits/credits.interface';
 import { useCreditsQueries } from '../../../../../core/credits/hooks/use-credits-api.hook';
-import { useFeatureFlags } from '../../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { Label } from '../../../../../core/labels/label.interface';
 import { isAnomalous, isExclusive } from '../../../../../core/labels/utils';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';

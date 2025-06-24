@@ -4,13 +4,13 @@
 import { CSSProperties } from 'react';
 
 import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { ActionButton, Divider, Flex, Text, Tooltip, TooltipTrigger, View } from '@geti/ui';
 import { Copy, DownloadIcon } from '@geti/ui/icons';
 import { isEmpty, isFunction } from 'lodash-es';
 import { useNavigate } from 'react-router-dom';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useJobs } from '../../../../core/jobs/hooks/use-jobs.hook';
 import { JobType } from '../../../../core/jobs/jobs.const';
 import { Job, JobExportStatus, JobProjectExportStatus } from '../../../../core/jobs/jobs.interface';

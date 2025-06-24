@@ -6,6 +6,7 @@ import { isEmpty } from 'lodash-es';
 import { DATASET_IMPORT_DOMAIN, DATASET_IMPORT_TASK_TYPE } from '../../../../../core/datasets/dataset.enum';
 import { DatasetImportLabel, DatasetImportSupportedProjectType } from '../../../../../core/datasets/dataset.interface';
 import { TASK_TYPE_TO_DOMAIN } from '../../../../../core/datasets/utils';
+import { Label } from '../../../../../core/labels/label.interface';
 
 // Finds item in provided collection of object if it exists
 const findInScope = (scope: Record<string, unknown>[], find: string): Record<string, unknown> | undefined => {
@@ -86,4 +87,12 @@ export const isTaskChainedProject = (taskType: DATASET_IMPORT_TASK_TYPE | null):
         taskType === DATASET_IMPORT_TASK_TYPE.DETECTION_CLASSIFICATION ||
         taskType === DATASET_IMPORT_TASK_TYPE.DETECTION_SEGMENTATION
     );
+};
+
+export const formatToLabelCommon = (labels: DatasetImportLabel[], labelColorMap: Record<string, string>): Label[] => {
+    return labels.map((label) => ({
+        ...label,
+        id: label.name,
+        color: labelColorMap[label.name],
+    })) as Label[];
 };

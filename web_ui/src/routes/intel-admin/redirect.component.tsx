@@ -2,9 +2,8 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Navigate, Outlet, useParams } from 'react-router-dom';
-
-import { useFeatureFlags } from '../../core/feature-flags/hooks/use-feature-flags.hook';
 
 export const RedirectToTheOrganizations = (): JSX.Element => {
     return <Navigate to={paths.intelAdmin.organizations({})} replace />;

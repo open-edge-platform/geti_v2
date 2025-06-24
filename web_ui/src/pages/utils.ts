@@ -4,17 +4,39 @@
 import { PointerEvent } from 'react';
 
 import { isEmpty } from 'lodash-es';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Annotation, RegionOfInterest } from '../core/annotations/annotation.interface';
 import { clampBetween } from '../core/annotations/math';
-import { Point } from '../core/annotations/shapes.interface';
+import { KeypointNode, Point } from '../core/annotations/shapes.interface';
 import { isEmptyLabel } from '../core/labels/utils';
+import { KeypointStructure } from '../core/projects/task.interface';
 import { VALID_IMAGE_TYPES_SINGLE_UPLOAD } from '../shared/media-utils';
 import { PointerType } from './annotator/tools/tools.interface';
 import { isEraserOrRightButton, isLeftButton, MouseButton } from './buttons-utils';
 
 type PointerSVGElement = PointerEvent<SVGElement>;
 type CallbackPointerVoid = (event: PointerSVGElement) => void;
+
+export interface TemplateState {
+    edges: EdgeLine[];
+    points: KeypointNode[];
+}
+
+export interface TemplateStateWithHistory extends TemplateState {
+    skipHistory?: boolean;
+}
+
+export enum PointAxis {
+    X = 'x',
+    Y = 'y',
+}
+
+export interface EdgeLine {
+    id: string;
+    from: KeypointNode;
+    to: KeypointNode;
+}
 
 export const KEYPOINT_RADIUS = 6;
 
@@ -133,4 +155,23 @@ export const projectPointOnLine = ([startPoint, endPoint]: ProjectLine, point: P
         x: b.x * scale + startPoint.x,
         y: b.y * scale + startPoint.y,
     };
+};
+
+const hasEqualLabelId = (id: string) => (point: KeypointNode) => point.label.id === id;
+
+export const getInitialKeypointStructure = ({ edges, positions }: KeypointStructure): TemplateState => {
+    const linkedEdged = edges.map(({ nodes: [fromId, toId] }) => {
+        const toLabel = positions.find(hasEqualLabelId(fromId));
+        const fromLabel = positions.find(hasEqualLabelId(toId));
+
+        return { id: uuidv4(), from: toLabel, to: fromLabel } as EdgeLine;
+    });
+
+    return { edges: linkedEdged, points: positions };
+};
+
+export const getMaxMinPoint = <T extends Point>(points: T[], pointAxis: PointAxis) => {
+    const minAxisValue = Math.min(...points.map((point) => point[pointAxis]));
+    const maxAxisValue = Math.max(...points.map((point) => point[pointAxis]));
+    return [minAxisValue, maxAxisValue];
 };

@@ -19,7 +19,7 @@ import {
     EntityIdentifier,
     NumberGroupParams,
 } from './services/configurable-parameters.interface';
-import { BoolParameter, NumberParameter } from './services/configuration.interface';
+import { BoolParameter, ConfigurationParameter, NumberParameter } from './services/configuration.interface';
 
 const hasEqualHeader =
     <T extends { header: string }>(toFind: string | null | undefined) =>
@@ -260,4 +260,8 @@ export const isNumberParameter = (input: unknown): input is NumberParameter => {
         (get(input, 'type') === 'float' || get(input, 'type') === 'int') &&
         isNumber(get(input, 'value'))
     );
+};
+
+export const isConfigurationParameter = (input: unknown): input is ConfigurationParameter => {
+    return isObject(input) && 'key' in input && 'name' in input && 'description' in input;
 };

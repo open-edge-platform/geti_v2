@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MEDIA_ANNOTATION_STATUS } from '../base.interface';
+import { MEDIA_ANNOTATION_STATUS, MEDIA_PREPROCESSING_STATUS } from '../base.interface';
 
 export interface AnnotationStatePerTaskDTO {
     task_id: string;
@@ -18,4 +18,7 @@ export interface BaseMediaDTO {
     annotation_state_per_task: AnnotationStatePerTaskDTO[];
     annotation_scene_id?: string;
     last_annotator_id: string | null;
+    preprocessing: {
+        status: MEDIA_PREPROCESSING_STATUS;
+    };
 }

@@ -66,7 +66,7 @@ export type DatasetPreparationParameters = {
     augmentation: Record<string, ConfigurationParameter[]>;
 };
 
-export type TrainingParameters = ConfigurationParameter[] | Record<string, ConfigurationParameter[]>[];
+export type TrainingParameters = (ConfigurationParameter | Record<string, ConfigurationParameter[]>)[];
 
 export interface TrainingConfiguration {
     datasetPreparation: DatasetPreparationParameters;

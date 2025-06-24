@@ -89,3 +89,9 @@
         transform: rotate(90deg);
     }
 }
+
+div:has(> .keypointPreview) {
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+}

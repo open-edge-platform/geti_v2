@@ -25,3 +25,9 @@ def fxt_shard_files_dir(tmpdir):
     os.environ["SHARD_FILES_DIR"] = str(tmpdir)
     yield
     os.environ.pop("SHARD_FILES_DIR")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def ensure_torch_hub_checkpoints():
+    checkpoints_dir = Path.home() / ".cache" / "torch" / "hub" / "checkpoints"
+    checkpoints_dir.mkdir(parents=True, exist_ok=True)

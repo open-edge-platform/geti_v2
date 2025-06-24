@@ -1,0 +1,7 @@
+---
+name: ${COMPONENT_NAME}
+version: ${TAG}
+appVersion: ${TAG}
+apiVersion: v2
+description: OPA bundle
+type: application

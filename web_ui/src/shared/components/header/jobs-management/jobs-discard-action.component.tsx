@@ -3,13 +3,13 @@
 
 import { useState } from 'react';
 
-import { ActionButton, LoadingIndicator, Text } from '@geti/ui';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
+import { ActionButton, Loading, Text } from '@geti/ui';
 import { Delete } from '@geti/ui/icons';
 import { UseMutationResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import clsx from 'clsx';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { Job } from '../../../../core/jobs/jobs.interface';
 import { isJobTrain } from '../../../../core/jobs/utils';
 import { CustomAlertDialog } from '../../alert-dialog/custom-alert-dialog.component';
@@ -28,7 +28,7 @@ interface JobsDiscardActionProps {
 
 const ButtonIcon = ({ isLoading, isCancel }: { isLoading: boolean; isCancel: boolean }) => {
     if (isLoading) {
-        return <LoadingIndicator size='S' marginX='size-100' />;
+        return <Loading mode='inline' size='S' marginX='size-100' />;
     }
 
     if (isCancel) {

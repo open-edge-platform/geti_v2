@@ -3,7 +3,7 @@
 
 //  Dependencies get bundled into the worker
 
-import { OpenCVLoader } from '@geti/smart-tools';
+import { approximateShape, OpenCVLoader } from '@geti/smart-tools';
 import { expose } from 'comlink';
 import type OpenCVTypes from 'OpenCVTypes';
 
@@ -11,7 +11,7 @@ import { Point, Polygon, Rect } from '../core/annotations/shapes.interface';
 import { ShapeType } from '../core/annotations/shapetype.enum';
 import { GrabcutToolType } from '../pages/annotator/tools/grabcut-tool/grabcut-tool.enums';
 import { GrabcutData } from '../pages/annotator/tools/grabcut-tool/grabcut-tool.interface';
-import { approximateShape, getMatFromPoints, getPointsFromMat } from './utils';
+import { getMatFromPoints, getPointsFromMat } from './utils';
 
 declare const self: DedicatedWorkerGlobalScope;
 

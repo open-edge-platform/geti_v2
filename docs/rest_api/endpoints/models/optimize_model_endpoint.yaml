@@ -13,14 +13,12 @@ post:
     - $ref: '../../parameters/path/model_group_id.yaml'
     - $ref: '../../parameters/path/model_id.yaml'
   requestBody:
+    required: false
     content:
       application/json:
         schema:
-          $ref: "../../../../interactive_ai/services/api/schemas/models/requests/optimization_request.yaml"
-        examples:
-          Simple optimize request:
-            value:
-              $ref: "../../examples/models/requests/optimization_request.json"
+          type: object
+          additionalProperties: false
   responses:
     '200':
       description: Optimization job is submitted

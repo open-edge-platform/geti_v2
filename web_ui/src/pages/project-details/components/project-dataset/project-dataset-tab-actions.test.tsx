@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { FeatureFlags } from '@geti/core';
 import { OverlayTriggerState } from '@react-stately/overlays';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { FeatureFlags } from '../../../../core/feature-flags/services/feature-flag-service.interface';
 import { createInMemoryMediaService } from '../../../../core/media/services/in-memory-media-service/in-memory-media-service';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { createInMemoryProjectService } from '../../../../core/projects/services/in-memory-project-service';

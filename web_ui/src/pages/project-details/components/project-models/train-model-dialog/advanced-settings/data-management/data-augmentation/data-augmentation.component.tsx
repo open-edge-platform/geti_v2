@@ -1,48 +1,30 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { FC, useState } from 'react';
-
+import { TrainingConfiguration } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { Accordion } from '../../ui/accordion/accordion.component';
-import { DataAugmentationOption, DataAugmentationOptions } from './data-augmentation-options.component';
+import { isBoolEnableParameter } from '../../utils';
+import {
+    DataAugmentationParameters,
+    DataAugmentationParametersList,
+} from './data-augmentation-parameters-list.component';
 
-const OPTIONS: DataAugmentationOption[] = [
-    {
-        key: 'horizontal_flip',
-        name: 'Horizontal flip',
-        value: false,
-    },
-    {
-        key: 'vertical_flip',
-        name: 'Vertical flip',
-        value: false,
-    },
-    {
-        key: 'gaussian_blur',
-        name: 'Gaussian blur',
-        value: false,
-    },
-    {
-        key: 'hue_saturation_value',
-        name: 'Hue saturation value',
-        value: false,
-    },
-    {
-        key: 'random_rotate',
-        name: 'Random rotate',
-        value: false,
-    },
-];
+interface DataAugmentationProps {
+    parameters: DataAugmentationParameters;
+    onUpdateTrainingConfiguration: (
+        updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
+    ) => void;
+}
 
-export const DataAugmentation: FC = () => {
-    const [options, setOptions] = useState<DataAugmentationOption[]>(OPTIONS);
-
-    const isAnyOptionEnabled = options.some((option) => option.value);
+export const DataAugmentation = ({ parameters, onUpdateTrainingConfiguration }: DataAugmentationProps) => {
+    const isEnabled = Object.values(parameters).some((parametersGroup) =>
+        parametersGroup.some((parameter) => isBoolEnableParameter(parameter) && parameter.value === true)
+    );
 
     return (
         <Accordion>
             <Accordion.Title>
-                Data Augmentation<Accordion.Tag>{isAnyOptionEnabled ? 'Yes' : 'No'}</Accordion.Tag>
+                Data Augmentation<Accordion.Tag>{isEnabled ? 'Yes' : 'No'}</Accordion.Tag>
             </Accordion.Title>
             <Accordion.Content>
                 <Accordion.Description>
@@ -50,7 +32,10 @@ export const DataAugmentation: FC = () => {
                     models.
                 </Accordion.Description>
                 <Accordion.Divider marginY={'size-250'} />
-                <DataAugmentationOptions options={options} onOptionsChange={setOptions} />
+                <DataAugmentationParametersList
+                    parameters={parameters}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
             </Accordion.Content>
         </Accordion>
     );

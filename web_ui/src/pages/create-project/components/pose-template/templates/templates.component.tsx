@@ -6,8 +6,8 @@ import { JointConnection } from '@geti/ui/icons';
 
 import { RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
 import { isNonEmptyArray } from '../../../../../shared/utils';
+import { TemplateState } from '../../../../utils';
 import { useGetProjectsTemplates } from '../hooks/use-get-projects-templates.hook';
-import { TemplateState } from '../util';
 import { animalPose } from './animal-pose.template';
 import { humanFace } from './human-face.template';
 import { humanPose } from './human-pose.template';

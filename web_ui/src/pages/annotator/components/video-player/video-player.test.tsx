@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 
 import { API_URLS } from '@geti/core';
-import { LoadingIndicator } from '@geti/ui';
+import { Loading } from '@geti/ui';
 import { act, fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
 import { createInMemoryAnnotationService } from '../../../../core/annotations/services/in-memory-annotation-service';
@@ -63,7 +63,7 @@ const renderVideoPlayer = async (videoFrame: VideoFrame) => {
             );
         }
 
-        return <LoadingIndicator />;
+        return <Loading mode='inline' />;
     };
 
     await render(<App />, {
@@ -88,7 +88,7 @@ describe('Video player', () => {
         jest.clearAllTimers();
     });
 
-    const videoFrame = getMockedVideoFrameMediaItem({});
+    const { preprocessingStatus, ...videoFrame } = getMockedVideoFrameMediaItem({});
 
     it('Shows video player controls', async () => {
         await renderVideoPlayer(videoFrame);

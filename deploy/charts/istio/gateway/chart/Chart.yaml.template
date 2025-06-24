@@ -5,7 +5,7 @@ icon: https://istio.io/latest/favicons/android-192x192.png
 keywords:
 - istio
 - gateways
-name: istio-gateway
+name: ${COMPONENT_NAME}
 sources:
 - https://github.com/istio/istio
 type: application

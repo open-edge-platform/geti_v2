@@ -10,7 +10,6 @@ import os
 from collections.abc import Iterable
 from enum import Enum
 
-import boto3
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -165,59 +164,6 @@ class SignatureUseCaseCertManager(SignatureUseCase):
             raise SignatureVerificationFailed
 
 
-class SignatureUseCaseKMS(SignatureUseCase):
-    """
-    This class is responsible for generating and verifying signatures through AWS KMS.
-    """
-
-    def __init__(self):
-        try:
-            self._public_key_id = os.environ[KMS_PUBKEY_ENV_NAME]
-            self._private_key_id = os.environ[KMS_PRIVKEY_ENV_NAME]
-        except KeyError:
-            raise SignatureKeysNotFound
-        self.client = boto3.client("kms")
-        self.signing_algorithm = "ECDSA_SHA_384"
-
-    @property
-    def public_key_bytes(self) -> PublicKeyBytes:
-        response = self.client.get_public_key(KeyId=self._public_key_id)
-        return PublicKeyBytes(response["PublicKey"])
-
-    def generate_signature(self, data: bytes | Iterable[bytes]) -> SignatureBytes:
-        digest = self.digest_data(data)
-        response: dict = self.client.sign(
-            KeyId=self._private_key_id,
-            Message=digest,
-            MessageType="DIGEST",
-            SigningAlgorithm=self.signing_algorithm,
-        )
-        return SignatureBytes(response["Signature"])
-
-    def verify(self, data: bytes | Iterable[bytes], signature: bytes, public_key: PublicKeyBytes | None = None) -> None:
-        """
-        Verifies that the data has not been manipulated by checking its digital signature.
-
-        :param data: the binary data to verify
-        :param signature: the signature to check
-        :param public_key: this attribute is ignored and not supported by this class
-        :raises SignatureVerificationFailed: if the signature does not match
-        """
-        # TODO CCVS-135213: verify with expired keys once key rotation is implemented
-        if public_key is not None:
-            logger.warning("The external public key is ignored. Using public key stored in KMS.")
-        digest = self.digest_data(data)
-        response = self.client.verify(
-            KeyId=self._public_key_id,
-            Message=digest,
-            MessageType="DIGEST",
-            Signature=signature,
-            SigningAlgorithm=self.signing_algorithm,
-        )
-        if not response["SignatureValid"]:
-            raise SignatureVerificationFailed
-
-
 class SignatureUseCaseHelper:
     @staticmethod
     def get_signature_use_case() -> SignatureUseCase:
@@ -229,8 +175,6 @@ class SignatureUseCaseHelper:
         """
         key_source = KeySource(os.environ.get(KEY_SOURCE_ENV_NAME, KeySource.CERT_MANAGER.value))
         match key_source:
-            case KeySource.KMS:
-                return SignatureUseCaseKMS()
             case KeySource.CERT_MANAGER:
                 return SignatureUseCaseCertManager()
             case _:

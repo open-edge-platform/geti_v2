@@ -164,8 +164,7 @@ def fxt_export_data_repo(mocked_object_storage_repo_init, fxt_temp_directory):
     return ExportDataRepo(root_path=fxt_temp_directory)
 
 
-URL_IAI_UNITTESTS = "http://s3.toolbox.iotg.sclab.intel.com/test/data/iai-unittests/"
-URL_DATASETS = URL_IAI_UNITTESTS + "datasets/"
+URL_DATASETS = "https://storage.geti.intel.com/test-data/integration-iai/datasets/"
 
 
 def download_file(url: str, file_path: pathlib.Path) -> pathlib.Path:

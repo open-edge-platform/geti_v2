@@ -8,7 +8,7 @@ import { API_URLS } from '../../../../../packages/core/src/services/urls';
 import { getMockedDatasetIdentifier } from '../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { server } from '../../../annotations/services/test-utils';
 import { MEDIA_TYPE } from '../../base-media.interface';
-import { MEDIA_ANNOTATION_STATUS } from '../../base.interface';
+import { MEDIA_ANNOTATION_STATUS, MEDIA_PREPROCESSING_STATUS } from '../../base.interface';
 import { ImageIdentifier } from '../../image.interface';
 import { VideoFrameIdentifier } from '../../video.interface';
 import { createApiMediaService } from './api-media-service';
@@ -43,6 +43,9 @@ const activeMediaResponse = () => {
                     '/api/v1/workspaces/61039c80bd1cde3821dcfca6/projects/61039c81bd1cde3821dcfcad/datasets/dummy/media/videos/6103b96e2360313e324963f2/display/thumb',
                 type: 'video',
                 upload_time: '2021-07-30T08:33:50.399',
+                preprocessing: {
+                    status: MEDIA_PREPROCESSING_STATUS.FINISHED,
+                },
             },
             {
                 id: '61039cccbd1cde3821dcfcb2',
@@ -108,6 +111,7 @@ describe('API media service', () => {
                 width: 600,
             },
             status: MEDIA_ANNOTATION_STATUS.NONE,
+            preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
         });
     });
 
@@ -173,6 +177,7 @@ describe('API media service', () => {
                 frames: 5700,
             },
             status: 'none',
+            preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
         });
     });
 
@@ -241,6 +246,7 @@ describe('API media service', () => {
                         frames: 5700,
                         frameStride: 60,
                     },
+                    preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
                 },
                 {
                     identifier: firstVideoFrameIdentifier,
@@ -263,6 +269,7 @@ describe('API media service', () => {
                         frames: 5700,
                         frameStride: 60,
                     },
+                    preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
                 },
                 {
                     identifier: imageIdentifier,
@@ -281,6 +288,7 @@ describe('API media service', () => {
                         height: 1599,
                         width: 899,
                     },
+                    preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
                 },
             ]);
         });

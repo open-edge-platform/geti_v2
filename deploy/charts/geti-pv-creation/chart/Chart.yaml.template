@@ -1,5 +1,5 @@
 apiVersion: v2
-name: geti-pv-creation
+name: ${COMPONENT_NAME}
 type: application
 description: system volume based on local storage to create pv and pvc
 version: ${TAG}
