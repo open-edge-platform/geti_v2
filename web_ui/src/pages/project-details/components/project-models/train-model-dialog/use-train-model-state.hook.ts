@@ -6,7 +6,10 @@ import { useEffect, useState } from 'react';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isEmpty, isNumber } from 'lodash-es';
 
-import { useTrainingConfigurationQuery } from '../../../../../core/configurable-parameters/hooks/use-training-configuration.hook';
+import {
+    useTrainingConfigurationMutation,
+    useTrainingConfigurationQuery,
+} from '../../../../../core/configurable-parameters/hooks/use-training-configuration.hook';
 import { TrainingConfiguration } from '../../../../../core/configurable-parameters/services/configuration.interface';
 import { TrainingBodyDTO } from '../../../../../core/models/dtos/train-model.interface';
 import { useModels } from '../../../../../core/models/hooks/use-models.hook';
@@ -66,7 +69,7 @@ const useTrainingConfiguration = ({
         setTrainingConfiguration(data);
     }, [data]);
 
-    return [trainingConfiguration, setTrainingConfiguration] as const;
+    return [trainingConfiguration, setTrainingConfiguration, data] as const;
 };
 
 export const useTrainModelState = () => {
@@ -90,7 +93,7 @@ export const useTrainModelState = () => {
 
     const isBasicMode = mode === TrainModelMode.BASIC;
 
-    const [trainingConfiguration, setTrainingConfiguration] = useTrainingConfiguration({
+    const [trainingConfiguration, setTrainingConfiguration, defaultTrainingConfiguration] = useTrainingConfiguration({
         projectIdentifier,
         selectedTaskId: selectedTask.id,
         selectedModelTemplateId,
@@ -108,14 +111,11 @@ export const useTrainModelState = () => {
     };
 
     const constructTrainingBodyDTO = (): TrainingBodyDTO => {
-        const configParam = undefined;
-
         const { totalMedias } = getCreditPrice(selectedTask.id);
         const maxTrainingDatasetSize = FEATURE_FLAG_CREDIT_SYSTEM && isNumber(totalMedias) ? totalMedias : undefined;
 
         return getTrainingBodyDTO({
             modelTemplateId: selectedModelTemplateId ?? '',
-            configParameters: configParam,
             taskId: selectedTask.id,
             trainFromScratch,
             isReshufflingSubsetsEnabled,
@@ -136,6 +136,77 @@ export const useTrainModelState = () => {
         }
     };
 
+    const useTrainModel = () => {
+        const trainingConfigurationMutation = useTrainingConfigurationMutation();
+
+        const { useTrainModelMutation } = useModels();
+        const trainModel = useTrainModelMutation();
+
+        const handleTrainModel = (onSuccess?: () => void) => {
+            // 1. If we are in basic mode, we can directly train the model, without updating the training configuration.
+            // 2. If we are in advanced settings mode, we need to update the training configuration first.
+            // 2.1. If the training configuration fails, we don't want to train the model.
+            // 2.2. If the training configuration succeeds, we can train the model with the updated configuration.
+            // 3. Train model is called.
+            // 3.1. If train model fails, we revert the training configuration to the default one.
+            // 3.2. If train model succeeds, we call the onSuccess callback if provided.
+
+            if (isBasicMode) {
+                trainModel.mutate(
+                    {
+                        projectIdentifier,
+                        body: constructTrainingBodyDTO(),
+                    },
+                    {
+                        onSuccess,
+                    }
+                );
+                return;
+            }
+
+            if (trainingConfiguration === undefined || defaultTrainingConfiguration === undefined) {
+                return;
+            }
+
+            trainingConfigurationMutation.mutate(
+                {
+                    projectIdentifier,
+                    payload: trainingConfiguration,
+                    queryParameters: {
+                        taskId: selectedTask.id,
+                        modelManifestId: selectedModelTemplateId,
+                    },
+                },
+                {
+                    onSuccess: () => {
+                        trainModel.mutate(
+                            { projectIdentifier, body: constructTrainingBodyDTO() },
+                            {
+                                onSuccess,
+                                onError: () => {
+                                    trainingConfigurationMutation.mutate({
+                                        projectIdentifier,
+                                        payload: defaultTrainingConfiguration,
+                                        queryParameters: {
+                                            taskId: selectedTask.id,
+                                            modelManifestId: selectedModelTemplateId,
+                                        },
+                                    });
+                                },
+                            }
+                        );
+                    },
+                }
+            );
+        };
+
+        return {
+            mutate: handleTrainModel,
+            isPending: trainModel.isPending || trainingConfigurationMutation.isPending,
+            error: trainModel.error?.message || trainingConfigurationMutation.error?.message,
+        };
+    };
+
     return {
         isBasicMode,
         openAdvancedSettingsMode,
@@ -146,7 +217,6 @@ export const useTrainModelState = () => {
         algorithms,
         changeTask,
         changeSelectedTemplateId: setSelectedModelTemplateId,
-        trainingBodyDTO: constructTrainingBodyDTO(),
         isTaskChainProject,
         isReshufflingSubsetsEnabled,
         changeReshufflingSubsetsEnabled: setIsReshufflingSubsetsEnabled,
@@ -154,5 +224,6 @@ export const useTrainModelState = () => {
         changeTrainFromScratch: handleTrainFromScratchChange,
         trainingConfiguration,
         updateTrainingConfiguration: setTrainingConfiguration,
+        trainModel: useTrainModel(),
     } as const;
 };

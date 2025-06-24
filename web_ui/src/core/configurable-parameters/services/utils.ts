@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { isObject } from 'lodash-es';
+import { isEmpty, isObject } from 'lodash-es';
 import { v4 as uuidV4 } from 'uuid';
 
 import {
@@ -20,6 +20,7 @@ import {
     TrainingConfigurationUpdatePayloadDTO,
     TrainingParametersDTO,
 } from '../dtos/configuration.interface';
+import { isConfigurationParameter } from '../utils';
 import {
     ConfigurableParametersComponents,
     ConfigurableParametersGroups,
@@ -29,6 +30,7 @@ import {
 } from './configurable-parameters.interface';
 import {
     ConfigurationParameter,
+    KeyValueParameter,
     ProjectConfiguration,
     ProjectConfigurationUploadPayload,
     StaticParameter,
@@ -328,38 +330,130 @@ export const getTrainingConfigurationEntity = (config: TrainingConfigurationDTO)
     return trainingConfiguration;
 };
 
+const getKeyValueParameter = (parameter: ConfigurationParameter | KeyValueParameter): KeyValueParameter => {
+    return {
+        key: parameter.key,
+        value: parameter.value,
+    };
+};
+
+const getObjectEntitiesInKeyValueFormat = (
+    input: Record<string, ConfigurationParameter[]>
+): Record<string, KeyValueParameter[]> => {
+    return Object.entries(input).reduce<Record<string, KeyValueParameter[]>>((acc, [key, parameters]) => {
+        return {
+            ...acc,
+            [key]: parameters.map(getKeyValueParameter),
+        };
+    }, {});
+};
+
 export const getTrainingConfigurationUpdatePayloadDTO = (
     payload: TrainingConfigurationUpdatePayload
 ): TrainingConfigurationUpdatePayloadDTO => {
-    const trainingConfigurationUpdatePayloadDTO: TrainingConfigurationUpdatePayloadDTO = {};
+    const trainingConfigurationUpdatePayloadDTO: TrainingConfigurationUpdatePayloadDTO = {
+        task_id: payload.taskId,
+    };
 
-    if (payload.datasetPreparation !== undefined) {
-        trainingConfigurationUpdatePayloadDTO.dataset_preparation = Object.entries(payload.datasetPreparation).reduce(
+    if (payload.datasetPreparation !== undefined && !isEmpty(payload.datasetPreparation)) {
+        if (payload.datasetPreparation.subsetSplit !== undefined && !isEmpty(payload.datasetPreparation.subsetSplit)) {
+            trainingConfigurationUpdatePayloadDTO.dataset_preparation = {
+                subset_split: payload.datasetPreparation.subsetSplit.map(getKeyValueParameter),
+            };
+        }
+
+        if (payload.datasetPreparation.filtering !== undefined && !isEmpty(payload.datasetPreparation.filtering)) {
+            const filteringPayload = getObjectEntitiesInKeyValueFormat(payload.datasetPreparation.filtering);
+
+            trainingConfigurationUpdatePayloadDTO.dataset_preparation = {
+                ...trainingConfigurationUpdatePayloadDTO.dataset_preparation,
+                filtering: filteringPayload,
+            };
+        }
+
+        if (
+            payload.datasetPreparation.augmentation !== undefined &&
+            !isEmpty(payload.datasetPreparation.augmentation)
+        ) {
+            const augmentationPayload = getObjectEntitiesInKeyValueFormat(payload.datasetPreparation.augmentation);
+
+            trainingConfigurationUpdatePayloadDTO.dataset_preparation = {
+                ...trainingConfigurationUpdatePayloadDTO.dataset_preparation,
+                augmentation: augmentationPayload,
+            };
+        }
+
+        /*trainingConfigurationUpdatePayloadDTO.dataset_preparation = Object.entries(payload.datasetPreparation).reduce(
             (acc, [key, parameters]) => {
+                if (Array.isArray(parameters)) {
+                    if (isEmpty(parameters)) {
+                        return acc;
+                    }
+
+                    return {
+                        ...acc,
+                        [key]: parameters
+                            .filter((parameter) => parameter.key !== 'dataset_size')
+                            .map((parameter) => ({
+                                key: parameter.key,
+                                value: parameter.value,
+                            })),
+                    };
+                }
+
+                const parametersObject: [string, KeyValueParameter[]][] = Object.entries(parameters);
+
+                const keyValueParameters = parametersObject.reduce<Record<string, KeyValueParameter[]>>(
+                    (accLocal, [keyLocal, parametersLocal]) => {
+                        if (isEmpty(parametersLocal)) {
+                            return accLocal;
+                        }
+
+                        return {
+                            ...accLocal,
+                            [keyLocal]: parametersLocal.map((parameter) => ({
+                                key: parameter.key,
+                                value: parameter.value,
+                            })),
+                        };
+                    },
+                    {}
+                );
+
+                if (isEmpty(keyValueParameters)) {
+                    return acc;
+                }
+
                 return {
                     ...acc,
-                    [key]: parameters.map((parameter) => ({
-                        key: parameter.key,
-                        value: parameter.value,
-                    })),
+                    [key]: keyValueParameters,
                 };
             },
             {}
-        );
+        );*/
     }
 
-    if (payload.training !== undefined) {
-        trainingConfigurationUpdatePayloadDTO.training = payload.training.map((parameter) => ({
-            key: parameter.key,
-            value: parameter.value,
-        }));
+    if (payload.training !== undefined && !isEmpty(payload.training)) {
+        trainingConfigurationUpdatePayloadDTO.training = payload.training.map((parameters) => {
+            if (isConfigurationParameter(parameters)) {
+                return getKeyValueParameter(parameters);
+            }
+
+            return getObjectEntitiesInKeyValueFormat(parameters);
+
+            /*const parametersObject: [string, ConfigurationParameter[]][] = Object.entries(parameters);
+
+            return parametersObject.reduce<Record<string, KeyValueParameter[]>>((acc, [key, parametersLocal]) => {
+                return {
+                    ...acc,
+                    [key]: parametersLocal.map(getKeyValueParameter),
+                };
+            }, {});*/
+        });
     }
 
-    if (payload.evaluation !== undefined) {
-        trainingConfigurationUpdatePayloadDTO.evaluation = payload.evaluation.map((parameter) => ({
-            key: parameter.key,
-            value: parameter.value,
-        }));
+    if (payload.evaluation !== undefined && !isEmpty(payload.evaluation)) {
+        trainingConfigurationUpdatePayloadDTO.evaluation = payload.evaluation.map(getKeyValueParameter);
     }
 
     return trainingConfigurationUpdatePayloadDTO;
