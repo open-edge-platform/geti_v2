@@ -23,7 +23,7 @@ $(ORAS):
 remove-oras:
 	rm -rf $(ORAS_DIR)
 
-push-manifest: build-chart
+publish-chart:
 	$(ORAS_BINARY) push $(REGISTRY)/geti/charts/geti-manifest:$(TAG) \
 		--artifact-type=application/text \
 		geti-manifest.yaml
@@ -32,8 +32,6 @@ build-chart: get-oras
 	VERSION=$(TAG) \
 	REGISTRY=$(REGISTRY) \
 	envsubst < geti-manifest.yaml.template > geti-manifest.yaml
-
-publish-chart: push-manifest
 
 static-code-analysis:
 	@echo "Not applicable"
