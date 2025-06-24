@@ -29,7 +29,7 @@ publish-chart: build-chart
 		geti-manifest.yaml
 
 build-chart: get-oras
-	VERSION=$(TAG) \
+	VERSION=$(VERSION) \
 	REGISTRY=$(MANIFEST_REGISTRY) \
 	envsubst < geti-manifest.yaml.template > geti-manifest.yaml
 
