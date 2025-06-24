@@ -23,7 +23,7 @@ $(ORAS):
 remove-oras:
 	rm -rf $(ORAS_DIR)
 
-publish-chart:
+publish-chart: build-chart
 	$(ORAS_BINARY) push $(REGISTRY)/geti/charts/geti-manifest:$(TAG) \
 		--artifact-type=application/text \
 		geti-manifest.yaml
