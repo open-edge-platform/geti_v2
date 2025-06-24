@@ -188,7 +188,7 @@ class ConfigurationsBackwardCompatibility:
                     id_=ID("000000000000000000000001"),
                     workspace_id=project_identifier.workspace_id,
                     project_id=project_identifier.project_id,
-                    model_storage_id=ID(),  # model_storage_id is only used in legacy configuration
+                    model_storage_id=ID("000000000000000000000001"),  # model_storage_id is only used in legacy configuration
                     data=legacy_hyper_parameters,
                 ),
                 ComponentParameters(
