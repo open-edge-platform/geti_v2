@@ -32,14 +32,6 @@ export const LandingPageWorkspace = (): JSX.Element => {
         sortDir: 'dsc',
     });
 
-    const { lastWorkspaceId, setLastWorkspaceId } = useLastWorkspace(organizationId, workspaceId);
-
-    useEffect(() => {
-        if (!isEqual(lastWorkspaceId, workspaceId)) {
-            setLastWorkspaceId(workspaceId);
-        }
-    }, [workspaceId]);
-
     const projectsQuery = useGetProjects({ organizationId, workspaceId }, queryOptions);
 
     const { data, isLoading: isLoadingProjectsQuery } = projectsQuery;
