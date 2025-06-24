@@ -6,7 +6,7 @@ import type OpenCVTypes from 'OpenCVTypes';
 
 let opencv: OpenCVTypes.cv | null = null;
 
-export const waitForOpenCV = async (): Promise<OpenCVTypes.cv> => {
+export const waitForOpenCV = async (): Promise<boolean> => {
     if (opencv) return true;
 
     opencv = await OpenCVLoader();
