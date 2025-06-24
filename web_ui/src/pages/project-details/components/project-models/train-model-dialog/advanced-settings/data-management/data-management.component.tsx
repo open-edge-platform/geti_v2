@@ -27,15 +27,11 @@ const getAugmentationParameters = (configuration: TrainingConfiguration) => {
     return augmentation;
 };
 
-const getTilingParameters = (configuration: TrainingConfiguration) => {
-    return configuration.datasetPreparation.augmentation.tiling;
-};
-
 export const DataManagement: FC<DataManagementProps> = ({ trainingConfiguration, onUpdateTrainingConfiguration }) => {
-    const tilingParameters = getTilingParameters(trainingConfiguration);
     const augmentationParameters = getAugmentationParameters(trainingConfiguration);
     const subsetSplitParameters = trainingConfiguration.datasetPreparation.subsetSplit;
     const filteringParameters = trainingConfiguration.datasetPreparation.filtering;
+    const tilingParameters = trainingConfiguration.datasetPreparation.augmentation.tiling;
 
     return (
         <View>

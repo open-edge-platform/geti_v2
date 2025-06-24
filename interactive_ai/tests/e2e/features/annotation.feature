@@ -38,16 +38,16 @@ Feature: media annotation
       When the user tries to annotate the image 'animal.jpg' with labels 'bird, marsupial'
       Then the request is rejected
 
-#  Scenario: image annotation for keypoint detection
-#    Given a project of type 'keypoint detection' with keypoint structure
-#      """
-#      Keypoints: head, neck, l_shoulder, r_shoulder, hip &
-#      Edges: head-neck, neck-l_shoulder, neck-r_shoulder, neck-hip &
-#      Positions: 0.1, 0.2; 0.3, 0.4; 0.5, 0.6; 0.7, 0.8; 0.9, 0.95
-#      """
-#    And an image called 'animal.jpg'
-#      When the user annotates the image 'animal.jpg' with labels 'head, neck, l_shoulder, r_shoulder, hip'
-#      Then the image 'animal.jpg' has labels 'head, neck, l_shoulder, r_shoulder, hip'
+  Scenario: image annotation for keypoint detection
+    Given a project of type 'keypoint detection' with keypoint structure
+      """
+      Keypoints: head, neck, l_shoulder, r_shoulder, hip &
+      Edges: head-neck, neck-l_shoulder, neck-r_shoulder, neck-hip &
+      Positions: 0.1, 0.2; 0.3, 0.4; 0.5, 0.6; 0.7, 0.8; 0.9, 0.95
+      """
+    And an image called 'animal.jpg'
+      When the user annotates the image 'animal.jpg' with labels 'head, neck, l_shoulder, r_shoulder, hip'
+      Then the image 'animal.jpg' has labels 'head, neck, l_shoulder, r_shoulder, hip'
 
   @smoke
   Scenario: image annotation for object detection

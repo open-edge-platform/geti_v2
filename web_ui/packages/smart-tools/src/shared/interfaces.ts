@@ -1,46 +1,32 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-enum ShapeType {
-    RotatedRect,
-    Rect,
-    Circle,
-    Polygon,
-    Pose,
-}
-
 export interface Point {
     x: number;
     y: number;
 }
 
-export interface Rect {
-    readonly shapeType: ShapeType.Rect;
-    readonly x: number;
-    readonly y: number;
+export interface Rect extends Point {
     readonly width: number;
     readonly height: number;
+    readonly shapeType: 'rect';
+}
+
+export interface RotatedRect extends Point {
+    readonly width: number;
+    readonly height: number;
+    readonly angle: number; // In degrees
+    readonly shapeType: 'rotated-rect';
 }
 
 export interface Circle {
-    readonly shapeType: ShapeType.Circle;
-    readonly x: number;
-    readonly y: number;
+    readonly cx: number;
+    readonly cy: number;
     readonly r: number;
+    readonly shapeType: 'circle';
 }
 
 export interface Polygon {
-    readonly shapeType: ShapeType.Polygon;
     readonly points: Point[];
+    readonly shapeType: 'polygon';
 }
-
-export interface RotatedRect {
-    readonly shapeType: ShapeType.RotatedRect;
-    readonly x: number;
-    readonly y: number;
-    readonly width: number;
-    readonly height: number;
-    readonly angle: number; //degrees
-}
-
-export type Shape = Rect | RotatedRect | Circle | Polygon;

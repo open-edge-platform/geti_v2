@@ -4,7 +4,7 @@
 PACKAGABLE_SUBPROJECTS := $(shell find . -name "Chart.yaml.template" | xargs dirname | xargs dirname)
 
 .PHONY: clean
-clean: clean-go clean-python
+clean: clean-go clean-python clean-packagable
 
 .PHONY: clean-go
 clean-go:
@@ -13,6 +13,10 @@ clean-go:
 .PHONY: clean-python
 clean-python:
 	@$(call run_for_each,$(PY_SUBPROJECTS),Cleaning for Python component,clean)
+
+.PHONY: clean-packagable
+clean-packagable:
+	@$(call run_for_each,$(PACKAGABLE_SUBPROJECTS),Cleaning for packagable components,clean)
 
 .PHONY: build-image
 build-image: build-image-go build-image-python
