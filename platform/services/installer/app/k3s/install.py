@@ -14,7 +14,6 @@
 A module responsible for K3S installation.
 """
 
-import gzip
 import logging
 import os
 import re
@@ -44,7 +43,7 @@ from constants.platform import PLATFORM_NAMESPACE
 from k3s.config import k3s_configuration
 from k3s.detect_ip import get_first_public_ip
 from k3s.detect_selinux import is_selinux_installed
-from platform_utils.install_system_packages import install_packages_with_dnf, extract_tar_file
+from platform_utils.install_system_packages import extract_tar_file, install_packages_with_dnf
 
 logger = logging.getLogger(__name__)
 
@@ -218,8 +217,11 @@ def _prepare_k3s_files_structure():
 
 def _install_k3s_selinux_rpm() -> None:
     if is_selinux_installed():
-        install_packages_with_dnf(packages_path=K3S_SELINUX_OFFLINE_INSTALLATION_FILES_PATH,
-                                  log_file_path=K3S_INSTALL_LOG_FILE_PATH, disable_repos=True)
+        install_packages_with_dnf(
+            packages_path=K3S_SELINUX_OFFLINE_INSTALLATION_FILES_PATH,
+            log_file_path=K3S_INSTALL_LOG_FILE_PATH,
+            disable_repos=True,
+        )
 
 
 def install_k3s(  # noqa: ANN201

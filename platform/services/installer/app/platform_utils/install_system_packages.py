@@ -61,21 +61,19 @@ def install_packages_with_dnf(packages_path: str, log_file_path: str, disable_re
             raise InstallSystemPackagesError from ex
 
 
-def extract_tar_file(tar_file_path: str, destination_dir: str, filter_member: str = None) -> None:
+def extract_tar_file(tar_file_path: str, destination_dir: str, filter_member: str | None = None) -> None:
     """
     Extracts a tar file to the specified destination directory.
     Optionally filters for a specific member name.
     """
     with tarfile.open(tar_file_path, "r:gz") as tar:
-        if filter_member:
-            member = next((m for m in tar.getmembers() if filter_member in m.name), None)
-            if member:
-                member.name = os.path.basename(member.name)
-                tar.extract(member, path=destination_dir)
-                logger.info(f"Extracted {member.name} to {destination_dir}/")
-        else:
-            tar.extractall(path=destination_dir)
-            logger.info(f"Extracted all files to {destination_dir}/")
+        for member in tar.getmembers():
+            if filter_member and filter_member not in member.name:
+                continue
+
+            member.name = os.path.basename(member.name)
+            tar.extract(member, path=destination_dir)
+            logger.info(f"Extracted {member.name} to {destination_dir}/")
 
 
 def _parse_system_packages(os_name: str) -> dict:

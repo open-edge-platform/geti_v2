@@ -76,7 +76,6 @@ from validators.filepath import is_filepath_valid
 from validators.password import is_password_valid
 from validators.path import is_data_folder_valid
 from validators.tls import check_tls_certificates
-from geti_controller.communication import call_install_endpoint
 
 if TYPE_CHECKING:
     from collections.abc import Callable
