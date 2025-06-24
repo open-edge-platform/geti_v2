@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Shape as SmartToolsShape, ShapeType as SmartToolsShapeType } from '@geti/smart-tools/src/shared/interfaces';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { Point, Polygon, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
@@ -58,6 +60,10 @@ export interface RITMMethods {
     load(): void;
     reset(): void;
     cleanMemory(): void;
-    execute(imageArea: RegionOfInterest, points: RITMPoint[], outputShape: ShapeType): Promise<Shape | undefined>;
+    execute(
+        imageArea: RegionOfInterest,
+        points: RITMPoint[],
+        outputShape: SmartToolsShapeType
+    ): Promise<SmartToolsShape | undefined>;
     resetPointMask(): void;
 }
