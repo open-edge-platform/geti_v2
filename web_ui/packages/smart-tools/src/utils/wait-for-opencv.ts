@@ -1,8 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { OpenCVLoader } from '@geti/smart-tools';
 import type OpenCVTypes from 'OpenCVTypes';
+
+import OpenCVLoader from './opencv-loader';
 
 let opencv: OpenCVTypes.cv | null = null;
 
