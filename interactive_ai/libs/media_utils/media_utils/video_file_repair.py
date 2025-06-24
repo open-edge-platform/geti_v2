@@ -48,7 +48,7 @@ class VideoFileRepair:
                 frame_index=frame_index,
             )
             is_valid_video_file = True
-        except Exception:
+        except (Exception, KeyError):
             # Ignore exception. This function will return false if the video is not valid
             logger.info("Video file is invalid and must be repaired")
         return is_valid_video_file
@@ -144,12 +144,16 @@ class VideoFileRepair:
         logger.info(f"Checking video file at {filename} by reading the last frame. Repairing if needed")
 
         # Check the file
-        video_info = VideoDecoder.get_video_information(str(video_binary_repo.get_path_or_presigned_url(filename)))
-        is_valid_video_file = VideoFileRepair.check_frame(
-            video_binary_repo=video_binary_repo,
-            filename=filename,
-            frame_index=video_info.total_frames - 1,
-        )
+        try:
+            video_info = VideoDecoder.get_video_information(str(video_binary_repo.get_path_or_presigned_url(filename)))
+            is_valid_video_file = VideoFileRepair.check_frame(
+                video_binary_repo=video_binary_repo,
+                filename=filename,
+                frame_index=video_info.total_frames - 1,
+            )
+        except (Exception, KeyError):
+            logger.warning(f"The video file at {filename} cannot be read. It is likely corrupt")
+            return False
         if is_valid_video_file:
             logger.info(f"The video file at {filename} was readable, and suitable for further use")
             result = True
