@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from typing import Any
 
 from geti_types import ID, PersistentEntity
 from pydantic import BaseModel, Field, model_validator
@@ -79,7 +78,7 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
 
         # then initialize PersistentEntity with id and ephemeral parameters
         PersistentEntity.__init__(self, id_=project_id, ephemeral=ephemeral)
-        self._task_idx_mapping = {}
+        self._task_idx_mapping: dict[str, int] = {}
 
     @staticmethod
     def default_configuration(project_id: ID, task_ids: list[ID | str]) -> "ProjectConfiguration":
@@ -211,14 +210,9 @@ class PartialProjectConfiguration(ProjectConfiguration):
     to provide only the fields they wish to modify, while leaving others unset.
     """
 
-    task_configs: list[PartialTaskConfig] = Field(
+    task_configs: list[PartialTaskConfig] = Field(  # type: ignore[assignment]
         title="Task configurations", description="List of configurations for all tasks in this project"
     )
 
-    def __init__(self, project_id: ID | None = None, ephemeral: bool = True, **data):
-        # first initialize the Pydantic BaseModel with all arguments
-        BaseModel.__init__(self, **data)
-
-        # then initialize PersistentEntity with id and ephemeral parameters
-        PersistentEntity.__init__(self, id_=project_id, ephemeral=ephemeral)
-        self._task_idx_mapping = {}
+    def __init__(self, project_id: ID = ID(), ephemeral: bool = True, **data):
+        super().__init__(project_id=project_id, ephemeral=ephemeral, **data)
