@@ -3,12 +3,9 @@
 
 from unittest.mock import patch
 
-import pytest
-
 from jobs_common.tasks.utils.logging import init_logger
 
 
-@pytest.mark.JobsComponent
 class TestLogging:
     @patch("jobs_common.tasks.utils.logging.start_common_logger")
     def test_init_logger(self, mock_start_common_logger) -> None:

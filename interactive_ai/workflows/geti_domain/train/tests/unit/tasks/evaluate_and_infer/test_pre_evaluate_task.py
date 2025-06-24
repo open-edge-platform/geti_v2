@@ -21,7 +21,6 @@ from job.utils.train_workflow_data import TrainWorkflowData
 from tests.unit.tasks.utils import TEST_ENV_VARS, return_none
 
 
-@pytest.mark.JobsComponent
 class TestPreEvaluateTask:
     @pytest.fixture
     def mock_dataset(self):

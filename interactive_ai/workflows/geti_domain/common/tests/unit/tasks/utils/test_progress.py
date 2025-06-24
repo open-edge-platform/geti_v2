@@ -19,7 +19,6 @@ from jobs_common.tasks.utils.progress import (
 from jobs_common.tasks.utils.secrets import JobMetadata
 
 
-@pytest.mark.JobsComponent
 class TestProgress:
     @patch("jobs_common.tasks.utils.progress.publish_event")
     def test_report_progress_no_updates(self, mock_publish_event) -> None:

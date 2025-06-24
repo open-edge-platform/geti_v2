@@ -9,7 +9,6 @@ import pytest
 from job.utils.progress_utils import ProgressReporter, WeightedProgressReporter
 
 
-@pytest.mark.JobsComponent
 class TestProgressUtils:
     def test_progress_reporter(self):
         # Arrange

@@ -18,7 +18,6 @@ from jobs_common_extras.mlflow.adapters.definitions import OPENVINO_BIN_KEY, OPE
 from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
 
 
-@pytest.mark.JobsComponent
 class TestGetiOTXInterfaceAdapter:
     @pytest.fixture()
     def fxt_performance(self):

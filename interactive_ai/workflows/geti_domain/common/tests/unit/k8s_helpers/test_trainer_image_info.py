@@ -10,7 +10,6 @@ from iai_core.entities.model import TrainingFramework, TrainingFrameworkType
 from jobs_common.k8s_helpers.trainer_image_info import TrainerImageInfo
 
 
-@pytest.mark.JobsComponent
 class TestTrainerImageInfo:
     @pytest.mark.parametrize(
         "training_framework, feature_flag_otx_version_selection, "

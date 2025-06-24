@@ -3,7 +3,6 @@
 
 """This module tests import workflow"""
 
-import pytest
 from flytekit.core.testing import task_mock
 
 from job.tasks.import_tasks.create_project_from_dataset import create_project_from_dataset
@@ -31,7 +30,6 @@ KEYPOINT_STRUCTURE: dict = {"edges": [], "positions": []}
 USER_ID = "user_id"
 
 
-@pytest.mark.JobsComponent
 class TestImportWorkflow:
     def test_prepare_import_new_project_workflow(self) -> None:
         with task_mock(parse_dataset_for_import_to_new_project) as mock_parse:

@@ -13,7 +13,6 @@ from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfa
 from job.tasks.prepare_and_train.train_helpers import finalize_train, prepare_train
 
 
-@pytest.mark.JobsComponent
 class TestTrainHelpers:
     @pytest.mark.parametrize(
         "feature_flag_setting", [pytest.param(True, id="fp16-enabled"), pytest.param(False, id="fp16-disabled")]

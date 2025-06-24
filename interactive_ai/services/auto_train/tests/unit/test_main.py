@@ -30,7 +30,6 @@ def fxt_auto_train_activation_request(fxt_ote_id):
     )
 
 
-@pytest.mark.AutoTrainControllerComponent
 class TestAutoTrainController:
     @pytest.mark.parametrize("submit_error", [False, True], ids=["Job successfully submitted", "Job submission error"])
     def test_run_controller_loop(self, submit_error, fxt_auto_train_activation_request) -> None:

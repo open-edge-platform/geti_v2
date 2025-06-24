@@ -253,7 +253,6 @@ def fxt_true_scores(fxt_labels):
     }
 
 
-@pytest.mark.JobsComponent
 class TestPercentageCorrectKeypointsMetric:
     def test_get_performance(
         self,
