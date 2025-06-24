@@ -1,7 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import os
 import pathlib
 from collections.abc import Generator
@@ -9,14 +8,14 @@ from unittest.mock import patch
 
 import pytest
 from _pytest.fixtures import FixtureRequest
+from geti_logger_tools.logger_config import initialize_logger
 from iai_core.repos.base.mongo_connector import MongoConnector
 from migration.utils.connection import MongoDBConnection
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_for_logs
 from testcontainers.mongodb import MongoDbContainer
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 os.environ["TEST_METRICS"] = "true"
 os.environ["ENABLE_METRICS"] = "true"

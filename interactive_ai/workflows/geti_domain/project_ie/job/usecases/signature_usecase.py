@@ -5,7 +5,6 @@ This module is responsible for generating and verifying signatures of import/exp
 """
 
 import abc
-import logging
 import os
 from collections.abc import Iterable
 from enum import Enum
@@ -14,12 +13,13 @@ from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
+from geti_logger_tools.logger_config import initialize_logger
 from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
 
 from job.entities.exceptions import SignatureKeysNotFound, SignatureVerificationFailed
 from job.entities.zip_archive import PublicKeyBytes, SignatureBytes
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 KEY_SOURCE_ENV_NAME = "PROJECT_IMPORT_KEY_SOURCE"
 KMS_PUBKEY_ENV_NAME = "KMS_PUBKEY_ID"

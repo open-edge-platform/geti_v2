@@ -1,15 +1,16 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import os
 from datetime import timedelta
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from scheduler.state_machine import StateMachine
 
 from iai_core.utils.time_utils import now
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 MAX_START_TIME_SEC = int(os.environ.get("MAX_START_TIME_SEC", 30))
 logger.info(f"Max workflow start time is {MAX_START_TIME_SEC} second(s)")

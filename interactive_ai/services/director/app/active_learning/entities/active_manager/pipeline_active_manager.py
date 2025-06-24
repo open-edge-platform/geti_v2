@@ -3,10 +3,10 @@
 
 """This module implements the subclasses of PipelineActiveManager"""
 
-import logging
 from collections.abc import Callable, Mapping, Sequence
 
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 
 from active_learning.entities import (
     ActiveLearningProjectConfig,
@@ -29,7 +29,7 @@ from iai_core.entities.model import Model
 from iai_core.repos import ConfigurableParametersRepo
 from iai_core.repos.dataset_storage_filter_repo import DatasetStorageFilterRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class PipelineActiveManager(BaseActiveManager[ActiveLearningProjectConfig]):  # type: ignore[type-arg]

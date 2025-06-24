@@ -3,17 +3,17 @@
 
 """This module defines methods and wrappers to initialize logger for tasks"""
 
-import logging
 import os
 from collections.abc import Callable
 from functools import wraps
 from typing import Any
 
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import ENABLE_TRACING, KafkaTelemetry, LoggerTelemetry
 from opentelemetry import trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 tracer = trace.get_tracer(__name__)
 
 ENV_OPENTELEMETRY_CONTEXT = "OPENTELEMETRY_CONTEXT"

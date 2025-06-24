@@ -1,14 +1,11 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import os
 
-logger = logging.getLogger(__name__)
-if not logger.hasHandlers() and logger.getEffectiveLevel() == logging.WARNING:
-    # Setup the logger if this is imported before the common logger initialization code
-    logging.basicConfig()
-    logger.setLevel(logging.INFO)
+from geti_logger_tools.logger_config import initialize_logger
+
+logger = initialize_logger(__name__)
 
 ##############################################################################
 # Restrictions on media uploads

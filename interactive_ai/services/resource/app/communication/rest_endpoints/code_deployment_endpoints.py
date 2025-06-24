@@ -1,12 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 import pathlib
 from enum import Enum
 from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.background import BackgroundTask
 from starlette.responses import FileResponse, Response
 
@@ -26,7 +26,7 @@ from geti_fastapi_tools.dependencies import (
 )
 from geti_types import ID, ProjectIdentifier
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 api_project_pattern = "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}"
 code_deployment_router = APIRouter(

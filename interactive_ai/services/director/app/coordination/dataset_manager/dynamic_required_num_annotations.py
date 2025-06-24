@@ -2,9 +2,10 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 
-import logging
 from math import ceil, log
 from typing import TYPE_CHECKING
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from coordination.dataset_manager.dataset_counter_config import (
     AnomalyDatasetCounterConfig,
@@ -43,7 +44,7 @@ DRA_ELIGIBLE_TASK_TYPES = [
     TaskType.ROTATED_DETECTION,
 ]
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class DynamicRequiredAnnotations:
@@ -170,7 +171,7 @@ class DynamicRequiredAnnotations:
         if model_performance_score >= MAXIMUM_PERFORMANCE:
             # If the model has already achieved maximum performance, then make the required_images to be dataset size
             required_images = assigned_items_count
-            logging.info(
+            logger.info(
                 f"Updating dynamic required number of annotations for task node {task_node.id_}. "
                 f"Current Performance: {model_performance_score}), "
                 f"Model Performance is already at its maximum ! "
@@ -189,7 +190,7 @@ class DynamicRequiredAnnotations:
                 ((log(1 - target_performance_score) / log(1 - model_performance_score)) - 1) * assigned_items_count
             )
 
-            logging.info(
+            logger.info(
                 f"Updating dynamic required number of annotations for task node {task_node.id_}. "
                 f"Current performance: {model_performance_score},"
                 f"Target performance: {target_performance_score},"

@@ -6,7 +6,7 @@ This module contains the DatasetIEKafkaHandler base class, which is responsible 
 handling incoming Kafka events in the dataset ie MS.
 """
 
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from application.file_object_management import FileObjectManager
 from communication.helpers.job_helper import IMPORT_JOBS, JobType
@@ -15,7 +15,7 @@ from geti_kafka_tools import BaseKafkaHandler, KafkaRawMessage, TopicSubscriptio
 from geti_types import ID, Singleton
 from iai_core.session.session_propagation import setup_session_kafka
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class DatasetIEKafkaHandler(BaseKafkaHandler, metaclass=Singleton):

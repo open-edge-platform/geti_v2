@@ -6,8 +6,9 @@ Converters between objects and their corresponding REST views
 """
 
 import json
-import logging
 from typing import Any
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.views.performance_rest_views import PerformanceRESTViews
 from coordination.dataset_manager.missing_annotations_helper import MissingAnnotations
@@ -17,7 +18,7 @@ from grpc_interfaces.job_submission.pb.job_service_pb2 import JobResponse
 from iai_core.entities.project import Project
 from iai_core.entities.task_node import TaskNode
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class StatusRestViews:

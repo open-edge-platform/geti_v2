@@ -1,11 +1,11 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 from copy import deepcopy
 from http import HTTPStatus
 from typing import Any
 from unittest.mock import ANY, patch
 
+from geti_logger_tools.logger_config import initialize_logger
 from geti_spicedb_tools import SpiceDB
 
 from geti_kafka_tools import publish_event
@@ -13,7 +13,7 @@ from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier
 from iai_core.algorithms import ModelTemplateList
 from iai_core.repos import SuspendedAnnotationScenesRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 MULTICLASS_CLASSIFICATION_PROJECT_DATA: dict[str, Any] = {
     "connections": [

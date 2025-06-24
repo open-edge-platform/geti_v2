@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from resource_management.media_manager import MediaManager
 
@@ -8,7 +8,7 @@ from geti_kafka_tools import BaseKafkaHandler, KafkaRawMessage, TopicSubscriptio
 from geti_types import ID, DatasetStorageIdentifier, Singleton
 from iai_core.session.session_propagation import setup_session_kafka
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ThumbVideoKafkaHandler(BaseKafkaHandler, metaclass=Singleton):

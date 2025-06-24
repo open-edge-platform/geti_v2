@@ -1,7 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import math
 import operator
 from collections.abc import Sequence
@@ -10,6 +9,7 @@ from enum import IntEnum, auto
 from typing import Any
 
 from geti_feature_tools import FeatureFlagProvider
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.views.media_identifier_rest_views import MediaIdentifierRESTViews
 from communication.views.scored_label_rest_views import ScoredLabelRESTViews
@@ -41,7 +41,7 @@ Y = "y"
 ANGLE = "angle"
 IS_VISIBLE = "is_visible"
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class RestShapeType(IntEnum):

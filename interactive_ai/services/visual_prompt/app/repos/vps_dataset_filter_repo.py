@@ -2,13 +2,13 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import functools
 import inspect
-import logging
 import re
 from collections.abc import Callable, Generator
 from dataclasses import dataclass
 from uuid import UUID
 
 from bson import ObjectId
+from geti_logger_tools.logger_config import initialize_logger
 
 from geti_types import ID, DatasetStorageIdentifier, ProjectIdentifier, Session
 from iai_core.repos.base.constants import DATASET_STORAGE_ID_FIELD_NAME
@@ -16,7 +16,7 @@ from iai_core.repos.base.session_repo import QueryAccessMode
 from iai_core.repos.dataset_storage_filter_repo import DatasetStorageFilterRepo
 from iai_core.repos.mappers import IDToMongo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @dataclass

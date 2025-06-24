@@ -1,7 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import os
 import random
 import time
@@ -13,6 +12,7 @@ from io import BytesIO
 from pathlib import Path
 
 import pyarrow as pa
+from geti_logger_tools.logger_config import initialize_logger
 from minio import Minio
 from minio.credentials import IamAwsProvider
 from minio.datatypes import Object
@@ -25,7 +25,7 @@ from mlflow_geti_store.utils import Identifier
 
 S3_ADDRESS = "s3.amazonaws.com"
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 def retry_on_rate_limit(initial_delay: float = 1.0, max_retries: int = 5, max_backoff: float = 20.0) -> Callable:

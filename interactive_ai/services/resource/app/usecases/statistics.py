@@ -1,11 +1,11 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.constants import MAX_OBJECT_SIZES_PER_LABEL
 from communication.exceptions import EvaluationResultNotFoundException, TaskNotFoundException
@@ -46,7 +46,7 @@ from iai_core.repos import (
     VideoRepo,
 )
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class StatisticsItem:

@@ -5,10 +5,9 @@
 Publish kafka message for model activation module
 """
 
-import logging
-
 import grpc
 from geti_kafka_tools import publish_event
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID
 from grpc_interfaces.model_registration.client import ModelRegistrationClient
@@ -22,7 +21,7 @@ from jobs_common.tasks.utils.progress import publish_metadata_update
 from job.utils.model_registration import ModelMapper, ProjectMapper
 from job.utils.train_workflow_data import TrainWorkflowData
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 REGISTER_BY_TASK_ID: bool = True
 

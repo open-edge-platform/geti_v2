@@ -2,16 +2,16 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import copy
-import logging
 from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
+from geti_logger_tools.logger_config import initialize_logger
 
 if TYPE_CHECKING:
     from active_learning.entities import ActiveScore
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class TestActiveScore:
@@ -44,7 +44,7 @@ class TestActiveScore:
         # Inequality on pipeline-level properties
         attr_new_values = {"pipeline_score": 0.99}
         for attr, new_value in attr_new_values.items():
-            logging.info(f"Setting `{attr}` to `{new_value}`")
+            logger.info(f"Setting `{attr}` to `{new_value}`")
             active_score_copy = copy.deepcopy(active_score)
             setattr(active_score_copy, attr, new_value)
             assert active_score_copy != active_score
@@ -55,14 +55,14 @@ class TestActiveScore:
             "score": 0.99,
         }
         for attr, new_value in attr_new_values.items():
-            logging.info(f"Setting task `{attr}` to `{new_value}`")
+            logger.info(f"Setting task `{attr}` to `{new_value}`")
             active_score_copy = copy.deepcopy(active_score)
             setattr(active_score_copy.tasks_scores[task_1_id], attr, new_value)
             assert active_score_copy != active_score
 
         # Inequality on extractor-level properties
         attr, new_value = "score", 0.99
-        logging.info(f"Setting score extractor `{attr}` to `{new_value}`")
+        logger.info(f"Setting score extractor `{attr}` to `{new_value}`")
         active_score_copy = copy.deepcopy(active_score)
         active_score_copy.tasks_scores[task_1_id].extractors_scores["extr_1"] = new_value
         assert active_score_copy != active_score

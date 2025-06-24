@@ -3,11 +3,11 @@
 
 """This module contains the BatchInference class"""
 
-import logging
 import os
 import time
 from collections.abc import Callable, Sequence
 
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_telemetry_tools.tracing.common import tracer
 from geti_types import DatasetStorageIdentifier, ProjectIdentifier
@@ -37,7 +37,7 @@ ASYNC_INFERENCE_MODEL_TEMPLATE_ID_BLACKLIST = [
     "visual_prompting_model",
 ]
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class BatchInference:

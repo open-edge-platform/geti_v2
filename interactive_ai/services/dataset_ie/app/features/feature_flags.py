@@ -5,10 +5,11 @@
 This module contains the FeatureFlagProvider class
 """
 
-import logging
 from enum import Enum, auto
 
-logger = logging.getLogger(__name__)
+from geti_logger_tools.logger_config import initialize_logger
+
+logger = initialize_logger(__name__)
 
 
 class FeatureFlag(Enum):

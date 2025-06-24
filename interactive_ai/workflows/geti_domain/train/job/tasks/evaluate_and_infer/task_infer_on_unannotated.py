@@ -5,10 +5,10 @@
 Task Inference on unannotated dataset module
 """
 
-import logging
 from collections.abc import Callable
 
 from geti_kafka_tools import publish_event
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID
 from iai_core.entities.datasets import DatasetPurpose
@@ -21,7 +21,7 @@ from jobs_common_extras.evaluation.tasks.infer_and_evaluate import BATCH_INFEREN
 from job.tasks.evaluate_and_infer.pipeline_infer_on_unannotated import MAX_UNANNOTATED_MEDIA
 from job.utils.train_workflow_data import TrainWorkflowData
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @unified_tracing

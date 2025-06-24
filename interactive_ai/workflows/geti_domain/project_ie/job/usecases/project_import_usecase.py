@@ -4,7 +4,6 @@
 This module implements the project import usecase.
 """
 
-import logging
 import os
 import tempfile
 import uuid
@@ -16,6 +15,7 @@ from functools import partial
 from bson.binary import UuidRepresentation
 from bson.json_util import DatetimeRepresentation, JSONOptions, loads
 from geti_kafka_tools import publish_event
+from geti_logger_tools.logger_config import initialize_logger
 from geti_spicedb_tools import SpiceDB
 from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier, Session
 from grpc_interfaces.model_registration.client import ModelRegistrationClient
@@ -42,7 +42,7 @@ from job.usecases.update_metrics_usecase import UpdateMetricsUseCase
 from job.utils.file_utils import read_file_in_chunks
 from job.utils.model_registration_utils import ModelMapper, ProjectMapper
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ProjectImportUseCase:

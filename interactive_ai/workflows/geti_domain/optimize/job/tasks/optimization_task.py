@@ -3,9 +3,9 @@
 
 """This module defines Flyte dynamic subworkflow to shard dataset, prepare models and start optimization"""
 
-import logging
 from typing import Optional
 
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools.tracing.common import tracer
 from geti_types import CTX_SESSION_VAR, ID
 from iai_core.entities.model_storage import ModelStorageIdentifier
@@ -24,7 +24,7 @@ from job.models import OptimizationTrainerContext
 from job.tasks.constants import NULL_COMPILED_DATASET_SHARDS_ID
 from job.tasks.helpers import prepare_optimize
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @dynamic(pod_spec=SHARD_DATASET_TASK_POD_SPEC, secret_requests=SECRETS)

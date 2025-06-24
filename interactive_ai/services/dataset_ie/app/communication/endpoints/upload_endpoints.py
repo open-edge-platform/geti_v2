@@ -4,10 +4,10 @@
 This module implements the upload endpoints
 """
 
-import logging
 import os
 
 from fastapi import APIRouter, Body, Depends, File, Header, HTTPException, Request, Response, status
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse
 
 from application.file_object_management import FileObjectManager
@@ -23,7 +23,7 @@ from geti_fastapi_tools.dependencies import setup_session_fastapi
 from geti_fastapi_tools.exceptions import GetiBaseException
 from iai_core.utils.filesystem import MIN_FREE_SPACE_GIB, check_free_space_for_upload
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 router = APIRouter(
     prefix="/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/datasets/uploads",

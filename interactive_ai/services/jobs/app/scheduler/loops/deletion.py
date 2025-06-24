@@ -1,13 +1,13 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from scheduler.state_machine import StateMachine
 
 from geti_types import session_context
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 def run_deletion_loop() -> None:

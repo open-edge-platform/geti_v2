@@ -5,10 +5,10 @@
 This module implements the repository for the AutoTrainActivation
 """
 
-import logging
 from collections.abc import Callable, Sequence
 from typing import Any
 
+from geti_logger_tools.logger_config import initialize_logger
 from pymongo import DESCENDING, IndexModel
 from pymongo.client_session import ClientSession
 from pymongo.command_cursor import CommandCursor
@@ -24,7 +24,7 @@ from iai_core.repos.mappers import IDToMongo
 from iai_core.repos.mappers.cursor_iterator import CursorIterator
 from iai_core.services import ModelService
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ProjectBasedAutoTrainActivationRepo(ProjectBasedSessionRepo[AutoTrainActivation]):

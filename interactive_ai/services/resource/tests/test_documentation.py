@@ -4,14 +4,14 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import json
-import logging
 import os
 
 import jsonschema
+from geti_logger_tools.logger_config import initialize_logger
 
 from geti_fastapi_tools.validation import RestApiValidator
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 annotation_example_to_schema_map = {

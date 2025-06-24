@@ -5,7 +5,6 @@
 
 import abc
 import json
-import logging
 import os
 import tempfile
 from collections.abc import Generator, Iterable, Sequence
@@ -14,6 +13,7 @@ from datetime import datetime, timezone
 from zipfile import ZipFile
 
 from bson import ObjectId, json_util
+from geti_logger_tools.logger_config import initialize_logger
 from iai_core.repos.storage.storage_client import BinaryObjectType
 
 from .exceptions import (
@@ -27,7 +27,7 @@ from .exceptions import (
     ZipBombDetectedError,
 )
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class PublicKeyBytes(bytes):

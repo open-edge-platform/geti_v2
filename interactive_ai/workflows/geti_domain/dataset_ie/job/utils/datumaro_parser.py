@@ -3,11 +3,11 @@
 
 """Parsers to create/update projects from Datumaro dataset"""
 
-import logging
 from collections.abc import Sequence
 from typing import Any
 
 import datumaro as dm
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from iai_core.entities.model_template import TaskType
 from iai_core.factories import ProjectParser
@@ -18,7 +18,7 @@ from jobs_common_extras.datumaro_conversion.definitions import CHAINED_PROJECT_T
 from job.utils.exceptions import DatasetParsingException
 from job.utils.import_utils import ImportUtils
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class DatumaroProjectParser(ProjectParser):

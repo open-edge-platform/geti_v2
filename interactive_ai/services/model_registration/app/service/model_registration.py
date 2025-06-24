@@ -2,17 +2,16 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import asyncio
-import logging
 import os
 import pathlib
 import shutil
-import sys
 from collections.abc import AsyncGenerator
 from zipfile import BadZipFile
 
 import aiofiles
 import grpc
 from botocore.exceptions import ClientError
+from geti_logger_tools.logger_config import initialize_logger
 from grpc_interfaces.model_registration.pb.service_pb2 import (
     ActiveRequest,
     Chunk,
@@ -38,8 +37,7 @@ from service.model_converter import GraphVariant, ModelConverter, UnsupportedMod
 from service.responses import Responses
 from service.s3client import S3Client
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ModelRegistration(ModelRegistrationServicer):

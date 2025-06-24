@@ -3,13 +3,13 @@
 
 """This module defines commands to create task train dataset"""
 
-import logging
 import os
 import shutil
 from uuid import uuid4
 
 import datumaro as dm
 from flytekit.core import utils
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_telemetry_tools.tracing.common import tracer
 from geti_types import DatasetStorageIdentifier
@@ -21,7 +21,7 @@ from jobs_common.commands.interfaces.command import ICommand
 from jobs_common.exceptions import DataShardCreationFailedException
 from jobs_common_extras.datumaro_conversion.sc_extractor import ScExtractorForFlyteJob
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class CreateShardFileCommand(ICommand):

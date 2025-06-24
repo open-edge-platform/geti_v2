@@ -1,9 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import contextvars
-import logging
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import NotEnoughSpaceException
 from communication.rest_data_validator import CodeDeploymentRESTValidator
@@ -23,7 +24,7 @@ from iai_core.utils.filesystem import check_free_space_for_operation
 from iai_core.utils.naming_helpers import slugify
 
 export_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="Code_deployment_worker")
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class CodeDeploymentRESTController:

@@ -2,13 +2,13 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import itertools
-import logging
 import random
 from collections import Counter
 from collections.abc import Mapping, Sequence
 
 import numpy as np
 import pytest
+from geti_logger_tools.logger_config import initialize_logger
 
 from active_learning.algorithms import (
     FeatureReconstructionError,
@@ -27,7 +27,7 @@ from iai_core.entities.shapes import Rectangle
 from iai_core.entities.subset import Subset
 from iai_core.entities.tensor import Tensor
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 random.seed("6371")
 
 

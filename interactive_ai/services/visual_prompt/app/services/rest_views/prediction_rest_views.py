@@ -1,10 +1,11 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 import math
 import operator
 from enum import IntEnum, auto
 from typing import Any
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from services.rest_views.media_identifier_rest_views import MediaIdentifierRESTViews
 from services.rest_views.scored_label_rest_views import ScoredLabelRESTViews
@@ -14,7 +15,7 @@ from geti_types import MediaIdentifierEntity
 from iai_core.entities.shapes import Point, Polygon, Rectangle
 from iai_core.utils.time_utils import now
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 TYPE = "type"
 WIDTH = "width"
 HEIGHT = "height"

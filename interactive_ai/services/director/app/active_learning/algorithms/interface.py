@@ -2,18 +2,18 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import abc
-import logging
 from collections.abc import Sequence
 from dataclasses import dataclass
 
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 
 from active_learning.utils import NullableDataset
 
 from iai_core.entities.dataset_item import DatasetItem
 from iai_core.utils.classes import classproperty
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @dataclass

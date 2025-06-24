@@ -4,16 +4,16 @@
 Optimize workflow
 """
 
-import logging
 from typing import Optional
 
 from flytekit import workflow
+from geti_logger_tools.logger_config import initialize_logger
 from iai_core.entities.model import ModelOptimizationType
 
 from job.tasks.evaluation_task import evaluate_optimized_model_pot
 from job.tasks.optimization_task import shard_dataset_prepare_models_and_start_optimization
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @workflow

@@ -16,6 +16,13 @@ LOGGER_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 NON_CONFIGURABLE_LOGGERS = ["uvicorn.access", "werkzeug", "pika", "aiohttp.access", "geti_logger_tools.logger_config"]
 
 
+class SanitizeLogFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        # Sanitize the log message to prevent log injection
+        record.msg = str(record.msg).replace("\n", " ").replace("\r", " ")
+        return True
+
+
 def get_logging_format(extra_headers: str = "") -> str:
     """
     Get the logging format as a string.
@@ -90,20 +97,14 @@ def initialize_logger(package_name: str, use_async: bool = True, logging_format:
     :return: initialized logger
     """
 
-    class SanitizeLogFilter(logging.Filter):
-        def filter(self, record: logging.LogRecord) -> bool:
-            # Sanitize the log message to prevent log injection
-            record.msg = str(record.msg).replace("\n", "\\n").replace("\r", "\\r")
-            return True
-
+    logger = logging.getLogger(package_name)
+    logger.addFilter(SanitizeLogFilter())
     logging_config_dir = os.getenv("LOGGING_CONFIG_DIR", DEFAULT_CONFIG_DIR)
     config_filepath = f"{logging_config_dir}/{DEFAULT_CONFIG_FILE}"
     if logging_format is None:
         logging_format = get_logging_format()
     logging.basicConfig(level=logging.INFO, format=logging_format, datefmt=LOGGER_DATE_FORMAT, force=True)
 
-    logger = logging.getLogger(package_name)
-    logger.addFilter(SanitizeLogFilter())
     if use_async:
         loop = asyncio.get_event_loop()
         loop.call_soon(refresh_logger, config_filepath)

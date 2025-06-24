@@ -6,13 +6,13 @@ Job manager module
 """
 
 import json
-import logging
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum, auto
 from typing import TYPE_CHECKING, Any
 
+from geti_logger_tools.logger_config import initialize_logger
 from pymongo.client_session import ClientSession
 
 from microservice.exceptions import DuplicateJobFoundException, JobNotCancellableException
@@ -32,7 +32,7 @@ from iai_core.utils.time_utils import now
 if TYPE_CHECKING:
     from iai_core.repos.base import SessionBasedRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @dataclass

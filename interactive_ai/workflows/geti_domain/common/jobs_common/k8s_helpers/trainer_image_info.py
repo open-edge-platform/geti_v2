@@ -5,16 +5,16 @@ Defines train image info
 """
 
 import asyncio
-import logging
 import os
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
+from geti_logger_tools.logger_config import initialize_logger
 from iai_core.entities.model import TrainingFramework, TrainingFrameworkType
 from kubernetes_asyncio import client, config
 from kubernetes_asyncio.config import ConfigException
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 async def get_config_map(namespace: str, name: str = "impt-configuration") -> client.V1ConfigMap:

@@ -4,7 +4,6 @@
 # type: ignore
 
 import copy
-import logging
 import os
 import tempfile
 from collections.abc import Generator, Sequence
@@ -13,6 +12,7 @@ from unittest.mock import patch
 import cv2
 import numpy as np
 import pytest
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.rest_parsers import RestProjectParser
 from service.label_schema_service import LabelSchemaService
@@ -64,7 +64,7 @@ from iai_core.utils.annotation_scene_state_helper import AnnotationSceneStateHel
 from iai_core.utils.deletion_helpers import DeletionHelpers
 from iai_core.utils.project_builder import PersistedProjectBuilder, ProjectBuilder
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 DETECTION_PIPELINE_DATA = {

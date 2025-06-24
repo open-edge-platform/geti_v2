@@ -5,13 +5,13 @@
 
 import io
 import json
-import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
 from enum import Enum, auto
 from typing import Any, NamedTuple, cast
 
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import DatasetStorageIdentifier
 from iai_core.entities.annotation import Annotation, AnnotationScene, AnnotationSceneKind
@@ -54,7 +54,7 @@ from .prediction_to_annotation_converter import (
     VisualPromptingToAnnotationConverter,
 )
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class WeightsKey(Enum):

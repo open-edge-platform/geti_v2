@@ -1,13 +1,13 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID
 from iai_core.entities.evaluation_result import EvaluationPurpose
 from iai_core.repos import EvaluationResultRepo, ProjectRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class UpdateProjectPerformanceUseCase:

@@ -5,12 +5,12 @@
 
 import abc
 import itertools
-import logging
 import math
 import random
 from collections.abc import Iterable, Iterator, Sequence
 
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier
 from iai_core.configuration.elements.component_parameters import ComponentParameters, ComponentType
@@ -24,7 +24,7 @@ from iai_core.utils.type_helpers import SequenceOrSet
 
 from .subset_manager_config import SubsetManagerConfig
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 # Training / validation / testing
 TARGET_SMALL = np.array([0.33, 0.33, 0.33])

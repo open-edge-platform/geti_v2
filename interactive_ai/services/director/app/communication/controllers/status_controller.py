@@ -3,10 +3,10 @@
 
 """This module contains the StatusController"""
 
-import logging
 from typing import Any
 
 from geti_feature_tools import FeatureFlagProvider
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.jobs_client import JobsClient
 from communication.views.status_rest_views import StatusRestViews
@@ -20,7 +20,7 @@ from grpc_interfaces.job_submission.pb.job_service_pb2 import ListJobsResponse
 from iai_core.repos import BinaryRepo
 from iai_core.utils.filesystem import MIN_FREE_SPACE_GIB
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 FREE_SPACE_WARNING_THRESHOLD = 10000000000  # 10GB in bytes
 RUNNING_STATE = "running"
 

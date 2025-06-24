@@ -2,10 +2,10 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import json
-import logging
 
 import pytest
 from bson import ObjectId
+from geti_logger_tools.logger_config import initialize_logger
 
 from model.job import (
     Job,
@@ -40,7 +40,7 @@ DUMMY_METADATA = {
 DUMMY_AUTHOR = ID("author_uid")
 DUMMY_TIME = now()
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @pytest.fixture(autouse=True)

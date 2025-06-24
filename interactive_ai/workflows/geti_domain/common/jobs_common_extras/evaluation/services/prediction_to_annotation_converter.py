@@ -4,7 +4,6 @@
 """This module implements the PredictionToAnnotationConverter services"""
 
 import abc
-import logging
 from collections import defaultdict
 from collections.abc import Generator
 from typing import Any, NamedTuple
@@ -12,6 +11,7 @@ from typing import Any, NamedTuple
 import cv2
 import numpy as np
 from bson import ObjectId
+from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID
 from iai_core.entities.annotation import Annotation
 from iai_core.entities.label import Domain, Label
@@ -32,7 +32,7 @@ from model_api.models.utils import (
 from jobs_common_extras.evaluation.utils.detection_utils import detection2array
 from jobs_common_extras.evaluation.utils.segmentation_utils import create_annotation_from_segmentation_map
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class IPredictionToAnnotationConverter(metaclass=abc.ABCMeta):

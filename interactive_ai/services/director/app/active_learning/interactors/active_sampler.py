@@ -3,9 +3,10 @@
 
 """This module implements the 'sampler' component for Active Learning"""
 
-import logging
 import time
 from typing import cast
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from active_learning.entities import ActiveScoreSuggestionInfo
 from active_learning.entities.active_manager import PipelineActiveManager, TaskActiveManager
@@ -14,7 +15,7 @@ from active_learning.entities.active_manager.base_active_manager import BaseActi
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, MediaIdentifierEntity
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ActiveSampler:

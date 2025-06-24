@@ -4,9 +4,8 @@
 This module implements import utilities
 """
 
-import logging
-
 from geti_feature_tools.feature_flags import FeatureFlagProvider
+from geti_logger_tools.logger_config import initialize_logger
 
 from domain.entities.geti_project_type import GetiProjectType
 from features.feature_flags import FeatureFlag
@@ -15,7 +14,7 @@ from iai_core.entities.label import Domain
 from iai_core.entities.model_template import TaskType, task_type_to_label_domain
 from iai_core.entities.project import Project
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 STR_DETECTION_ORIENTED: str = "detection_oriented"
 

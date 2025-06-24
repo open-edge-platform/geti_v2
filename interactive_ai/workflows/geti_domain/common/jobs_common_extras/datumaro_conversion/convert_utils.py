@@ -4,7 +4,6 @@
 This module implements convert utilities
 """
 
-import logging
 import os.path as osp
 import random
 from collections import defaultdict
@@ -16,6 +15,7 @@ import numpy as np
 from datumaro.components.annotation import NO_GROUP
 from datumaro.components.transformer import ItemTransform
 from datumaro.util import take_by
+from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID, MediaIdentifierEntity
 from iai_core.entities.annotation import Annotation, AnnotationScene, AnnotationSceneKind
 from iai_core.entities.label import Domain, Label, NullLabel
@@ -30,7 +30,7 @@ from media_utils import VideoDecoder
 from jobs_common_extras.datumaro_conversion.definitions import SUPPORTED_DOMAIN_TO_ANNOTATION_TYPES, GetiProjectType
 from jobs_common_extras.datumaro_conversion.import_utils import ImportUtils
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class MediaInfo(NamedTuple):

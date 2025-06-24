@@ -5,7 +5,6 @@
 
 import io
 import json
-import logging
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -13,6 +12,7 @@ from typing import Any
 
 import numpy as np
 import pyarrow as pa
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import ProjectIdentifier
 from iai_core.adapters.binary_interpreters import RAWBinaryInterpreter
@@ -43,7 +43,7 @@ from jobs_common_extras.mlflow.adapters.definitions import (
 from jobs_common_extras.mlflow.adapters.metrics_mapper import PerformanceDeserializer
 from jobs_common_extras.mlflow.repos.binary_repo import MLFlowExperimentBinaryRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 __all__ = ["GetiOTXInterfaceAdapter", "MLFlowLifecycleStage", "MLFlowRunStatus"]

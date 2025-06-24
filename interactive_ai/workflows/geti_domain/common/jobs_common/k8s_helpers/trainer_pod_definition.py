@@ -3,10 +3,10 @@
 """Functions to create trainer pod definition."""
 
 import json
-import logging
 import os
 
 from flytekit import ContainerTask, PodTemplate, current_context
+from geti_logger_tools.logger_config import initialize_logger
 from kubernetes.client import V1Capabilities, V1PodSpec, V1SecurityContext
 from kubernetes.client.models import (
     V1ConfigMapEnvSource,
@@ -32,7 +32,7 @@ __all__ = ["create_flyte_container_task"]
 
 from geti_types import Session
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 PRIMARY_CONTAINER_NAME = "trainer"

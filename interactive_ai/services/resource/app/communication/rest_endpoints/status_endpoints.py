@@ -6,13 +6,14 @@ import logging
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import FailedHealthCheck
 from resource_management.resource_utils import health_check
 
 from geti_fastapi_tools.responses import success_response_rest
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 status_router = APIRouter(tags=["Status"])
 

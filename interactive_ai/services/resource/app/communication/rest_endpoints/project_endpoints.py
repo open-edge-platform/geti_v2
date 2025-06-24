@@ -2,10 +2,10 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import http
-import logging
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, Request
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse, Response
 
 from communication.rest_controllers.annotation_template_controller import AnnotationTemplateRESTController
@@ -29,7 +29,7 @@ from iai_core.repos.project_repo_helpers import ProjectQueryData
 
 DEFAULT_THUMBNAIL_JPG_QUALITY = 85
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 project_api_prefix_url = "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}"
 

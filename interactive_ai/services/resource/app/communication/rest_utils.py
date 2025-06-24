@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import io
-import logging
 import os
 from pathlib import Path
 from typing import Annotated, BinaryIO, TypeVar
@@ -10,6 +9,7 @@ from typing import Annotated, BinaryIO, TypeVar
 import cv2
 import numpy as np
 from fastapi import Query
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import FileResponse, RedirectResponse, Response, StreamingResponse
 
 from communication.constants import DEFAULT_N_PROJECTS_RETURNED, MAX_N_PROJECTS_RETURNED
@@ -21,7 +21,7 @@ API_GATEWAY_VERSION = 10
 CACHE_CONTROL_HEADER = {"Cache-Control": "private, max-age=3600"}
 JPEG_EXTENSION = ".jpg"
 JPEG_MIME_TYPE = "image/jpeg"
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 T = TypeVar("T")
 
 

@@ -9,6 +9,7 @@ import logging
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse
 
 from communication.controllers.status_controller import StatusController
@@ -23,7 +24,7 @@ from geti_fastapi_tools.dependencies import (
 from geti_fastapi_tools.responses import success_response_rest
 from geti_types import ID
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 status_router = APIRouter(
     tags=["Status"],

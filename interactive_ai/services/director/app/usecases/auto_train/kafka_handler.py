@@ -2,7 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from coordination.dataset_manager.dynamic_required_num_annotations import DynamicRequiredAnnotations
 from environment import get_gpu_provider
@@ -16,7 +16,7 @@ from iai_core.repos import ProjectRepo
 from iai_core.services import ModelService
 from iai_core.session.session_propagation import setup_session_kafka
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class AutoTrainingKafkaHandler(BaseKafkaHandler, metaclass=Singleton):

@@ -1,15 +1,14 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
-
 import pytest
+from geti_logger_tools.logger_config import initialize_logger
 
 from geti_types import ID, make_session, session_context
 
 AUTHOR_UID = "test_uid"
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @pytest.fixture

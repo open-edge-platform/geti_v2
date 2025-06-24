@@ -1,7 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
-
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.requests import Request
 
 from communication.http_exceptions import InvalidOperationIdException
@@ -9,7 +8,7 @@ from communication.http_exceptions import InvalidOperationIdException
 from geti_fastapi_tools.dependencies import is_valid_id
 from geti_types import ID
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 def get_export_operation_id(export_operation_id: str) -> ID:

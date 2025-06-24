@@ -5,7 +5,6 @@ This module implements the object storage data repo
 """
 
 import abc
-import logging
 import os
 from collections.abc import Sequence
 
@@ -13,12 +12,13 @@ import boto3
 from botocore.client import BaseClient
 from botocore.config import Config
 from botocore.exceptions import ClientError
+from geti_logger_tools.logger_config import initialize_logger
 
 from application.data_repo_interface import IObjectDataRepo
 
 from geti_types import CTX_SESSION_VAR, ID, Session
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ObjectDataRepo(IObjectDataRepo, metaclass=abc.ABCMeta):

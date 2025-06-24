@@ -1,8 +1,9 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import os
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from model.job import Job
 from scheduler.flyte import Flyte
@@ -10,7 +11,7 @@ from scheduler.state_machine import StateMachine
 
 from geti_types import ID, RequestSource, make_session, session_context
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 BATCH_SIZE = int(os.environ.get("SCHEDULER_RECOVERY_BATCH_SIZE", 50))
 logger.info(f"Recovery batch size is {BATCH_SIZE}")

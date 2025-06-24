@@ -1,13 +1,13 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 from collections.abc import Sequence
 from functools import partial
 from typing import cast
 
 import numpy as np
 import pytest
+from geti_logger_tools.logger_config import initialize_logger
 
 from active_learning.storage.repos import ActiveScoreRepo
 from active_learning.usecases import ActiveScoresUpdateUseCase, ActiveSetRetrievalUseCase
@@ -32,7 +32,7 @@ from iai_core.entities.task_node import TaskNode
 from iai_core.entities.tensor import Tensor
 from iai_core.repos import AnnotationSceneRepo, DatasetRepo, EvaluationResultRepo, MetadataRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class TestActiveLearning:

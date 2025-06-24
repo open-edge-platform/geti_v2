@@ -7,12 +7,12 @@ This module contains the AutoTrainUseCase, that checks the dataset counter to de
 should be auto-trained.
 """
 
-import logging
 import os
 from threading import Thread
 from typing import TYPE_CHECKING
 
 from geti_feature_tools import FeatureFlagProvider
+from geti_logger_tools.logger_config import initialize_logger
 from rx.operators import debounce
 from rx.scheduler import EventLoopScheduler
 from rx.subject import Subject
@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from geti_types import ID
 
 AUTO_TRAIN_AUTHOR = "geti"
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class AutoTrainUseCase:

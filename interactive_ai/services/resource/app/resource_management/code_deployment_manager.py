@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import io
 import json
-import logging
 import os
 import shutil
 import tempfile
@@ -12,6 +11,7 @@ from typing import TYPE_CHECKING
 
 import cv2
 import numpy
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import (
     CodeDeploymentCorruptException,
@@ -43,7 +43,7 @@ from media_utils import get_media_numpy
 if TYPE_CHECKING:
     from iai_core.entities.image import Image
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 DEPLOYMENT_FILENAME_TEMPLATE = "Deployment-%s"
 PATH_TO_DEPLOYMENT_COLLATERALS = os.path.join(os.path.dirname(os.path.dirname(__file__)), "code_deployment")

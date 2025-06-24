@@ -1,7 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import FailedHealthCheck
 from communication.kafka_handlers.annotation_kafka_handler import AnnotationKafkaHandler
@@ -11,7 +11,7 @@ from communication.kafka_handlers.thumb_video_kafka_handler import ThumbVideoKaf
 from geti_kafka_tools import EventProducer
 from iai_core.repos.base.database_client import DatabaseClient
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 def health_check(mongodb_check: bool, kafka_check: bool) -> None:

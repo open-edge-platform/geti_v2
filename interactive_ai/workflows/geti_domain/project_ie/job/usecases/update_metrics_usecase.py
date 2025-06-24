@@ -4,8 +4,7 @@
 This module is responsible for migrating the documents and binaries to the latest version after they have been imported
 """
 
-import logging
-
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import ENABLE_METRICS
 from geti_telemetry_tools.metrics import (
     EmptyInstrumentAttributes,
@@ -19,7 +18,7 @@ from iai_core.entities.image import Image
 from iai_core.entities.video import Video
 from iai_core.repos import ImageRepo, ProjectRepo, VideoRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class UpdateMetricsUseCase:

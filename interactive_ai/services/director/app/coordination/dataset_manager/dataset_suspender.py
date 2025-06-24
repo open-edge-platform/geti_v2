@@ -6,8 +6,9 @@
 This module is responsible for suspending invalid dataset items when labels are added or removed
 """
 
-import logging
 from collections.abc import Sequence
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from geti_types import ID, DatasetStorageIdentifier
 from iai_core.entities.dataset_entities import TaskDataset
@@ -17,7 +18,7 @@ from iai_core.repos import DatasetRepo, ProjectRepo, SuspendedAnnotationScenesRe
 from iai_core.repos.dataset_entity_repo import PipelineDatasetRepo
 from iai_core.utils.dataset_helper import DatasetHelper
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class DatasetSuspender:

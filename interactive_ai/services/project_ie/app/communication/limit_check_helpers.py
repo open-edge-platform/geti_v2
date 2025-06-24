@@ -2,14 +2,14 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 """This module defines helpers used to check limit constraints"""
 
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.constants import MAX_NUMBER_OF_PROJECTS_PER_ORGANIZATION
 from communication.http_exceptions import MaxProjectsReachedException
 
 from iai_core.repos import ProjectRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 def check_max_number_of_projects(include_hidden: bool = False) -> None:

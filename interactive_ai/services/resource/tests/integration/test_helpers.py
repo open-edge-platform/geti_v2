@@ -1,8 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
-
 from _pytest.fixtures import FixtureRequest
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.constants import MAX_UNANNOTATED_DATASET_SIZE
 from tests.utils.test_helpers import register_model_template_from_dict
@@ -23,7 +22,7 @@ from iai_core.utils.annotation_scene_state_helper import AnnotationSceneStateHel
 from iai_core.utils.deletion_helpers import DeletionHelpers
 from iai_core.utils.media_factory import Media2DFactory
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 def auto_wire_task_chain(task_nodes: list[TaskNode]) -> TaskGraph:

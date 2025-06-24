@@ -2,18 +2,16 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import asyncio
-import logging
-import sys
 
 import grpc
 from aiohttp import web
+from geti_logger_tools.logger_config import initialize_logger
 from grpc_interfaces.model_registration.pb.service_pb2_grpc import add_ModelRegistrationServicer_to_server
 
 from service.config import GRPC_SERVICE_PORT
 from service.model_registration import ModelRegistration
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 async def healthz_handler(request):  # noqa: ANN001, ANN201, ARG001
@@ -29,7 +27,7 @@ async def serve():  # noqa: ANN201
     server = grpc.aio.server()
     add_ModelRegistrationServicer_to_server(ModelRegistration(), server)
     server.add_insecure_port(f"[::]:{GRPC_SERVICE_PORT}")
-    logging.info("ModelRegistration Service started.")
+    logger.info("ModelRegistration Service started.")
     await server.start()
 
     runner = web.AppRunner(app, access_log=None)

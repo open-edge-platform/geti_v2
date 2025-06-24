@@ -1,12 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import random
 from collections.abc import Sequence
 
 import numpy as np
 import pytest
+from geti_logger_tools.logger_config import initialize_logger
 
 from tests.fixtures.values import DefaultImageValues
 
@@ -15,7 +15,7 @@ from iai_core.entities.label import Domain, Label, NullLabel
 from iai_core.entities.scored_label import ScoredLabel
 from iai_core.entities.shapes import Ellipse, Point, Polygon, Rectangle
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @pytest.fixture

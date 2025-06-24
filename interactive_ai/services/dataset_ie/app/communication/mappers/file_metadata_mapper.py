@@ -5,9 +5,10 @@ This module implements the mapper to convert FileMetadata to and from
 a serialized representation compatible with MongoDB
 """
 
-import logging
 from datetime import datetime, timezone
 from typing import Any
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from domain.entities.dataset_ie_file_metadata import ExportMetadata, FileMetadata, ImportMetadata
 
@@ -15,7 +16,7 @@ from iai_core.repos.mappers.mongodb_mapper_interface import IMapperSimple
 from iai_core.repos.mappers.mongodb_mappers.id_mapper import IDToMongo
 from iai_core.repos.mappers.mongodb_mappers.primitive_mapper import DatetimeToMongo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 TTL_FIELD_NAME = "updated_date"

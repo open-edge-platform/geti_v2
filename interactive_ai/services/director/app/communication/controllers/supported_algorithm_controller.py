@@ -1,7 +1,8 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 from typing import Any
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.views.model_template_rest_views import ModelTemplateRESTViews
 
@@ -9,7 +10,7 @@ from geti_telemetry_tools import unified_tracing
 from iai_core.algorithms import ModelTemplateList
 from iai_core.entities.model_template import ModelTemplateDeprecationStatus, TaskType
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class SupportedAlgorithmRESTController:

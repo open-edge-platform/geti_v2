@@ -3,8 +3,7 @@
 
 """This module defines commands to create and save CompiledDatasetShard entity to the repo"""
 
-import logging
-
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, DatasetStorageIdentifier
 from iai_core.entities.compiled_dataset_shards import CompiledDatasetShard, CompiledDatasetShards
@@ -14,7 +13,7 @@ from iai_core.repos import CompiledDatasetShardsRepo
 from jobs_common.commands.interfaces.command import ICommand
 from jobs_common.exceptions import DataShardCreationFailedException
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class CreateAndSaveCompiledDatasetShardsCommand(ICommand):

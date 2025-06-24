@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import os
 
 from flyteidl.core.execution_pb2 import WorkflowExecution
+from geti_logger_tools.logger_config import initialize_logger
 
 from model.job_state import JobState
 from scheduler.flyte import Flyte
@@ -13,7 +13,7 @@ from scheduler.state_machine import StateMachine
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, session_context
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 MAX_CANCEL_RETRY_COUNT = int(os.environ.get("MAX_CANCEL_RETRY_COUNT", 5))
 logger.info(f"Max canceling retries number is {MAX_CANCEL_RETRY_COUNT}")

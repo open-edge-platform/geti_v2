@@ -5,10 +5,10 @@
 Endpoints for model tests
 """
 
-import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.controllers.model_test_controller import ModelTestController
 from communication.exceptions import NotEnoughSpaceHTTPException
@@ -25,7 +25,7 @@ from geti_fastapi_tools.dependencies import (
 from geti_types import ID
 from iai_core.utils.filesystem import check_free_space_for_operation
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 model_test_api_prefix_url = "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}"

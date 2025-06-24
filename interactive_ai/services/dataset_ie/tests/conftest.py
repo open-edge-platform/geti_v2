@@ -4,7 +4,6 @@
 This module defines the test configuration
 """
 
-import logging
 import os
 import pathlib
 import shutil
@@ -14,6 +13,7 @@ from unittest.mock import patch
 import jwt
 import pytest
 from _pytest.fixtures import FixtureRequest
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.testclient import TestClient
 from testcontainers.mongodb import MongoDbContainer
 
@@ -33,8 +33,7 @@ from iai_core.utils.deletion_helpers import DeletionHelpers
 payload = {"preferred_username": "testing"}
 ENCODED_TOKEN = jwt.encode(payload=payload, key="secret")
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @pytest.fixture(scope="session", autouse=True)

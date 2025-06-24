@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 from collections.abc import Callable, Generator, Iterable
 
 import cv2
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 from model_api.models.utils import PredictedMask
 from model_api.models.visual_prompting import Prompt, VisualPromptingFeatures
 
@@ -16,7 +16,7 @@ from iai_core.entities.label import Label
 from iai_core.entities.scored_label import LabelSource, ScoredLabel
 from iai_core.entities.shapes import Ellipse, Point, Polygon, Rectangle, Shape
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class LabelIndexConverter:

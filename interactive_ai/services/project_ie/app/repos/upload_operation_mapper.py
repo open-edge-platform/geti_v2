@@ -5,7 +5,7 @@ This module implements the mapper to convert UploadOperation to and from
 a serialized representation compatible with MongoDB
 """
 
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from entities.exceptions import InvalidUploadFileType
 from entities.upload_operation import FileType, UploadOperation
@@ -13,7 +13,7 @@ from entities.upload_operation import FileType, UploadOperation
 from iai_core.repos.mappers.mongodb_mapper_interface import IMapperSimple
 from iai_core.repos.mappers.mongodb_mappers.id_mapper import IDToMongo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class UploadOperationToMongo(IMapperSimple[UploadOperation, dict]):

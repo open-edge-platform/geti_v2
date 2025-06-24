@@ -4,12 +4,12 @@
 """This module implements the 'mapper' component for Active Learning"""
 
 import contextvars
-import logging
 from collections.abc import Sequence
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import cast
 
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 
 from active_learning.entities.active_manager import PipelineActiveManager
 from active_learning.utils.exceptions import (
@@ -31,7 +31,7 @@ from iai_core.entities.subset import Subset
 from iai_core.entities.tensor import Tensor
 from iai_core.repos import DatasetRepo, MetadataRepo, ModelRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 # NOTE: only 1 worker enabled at the moment to prevent race conditions between the

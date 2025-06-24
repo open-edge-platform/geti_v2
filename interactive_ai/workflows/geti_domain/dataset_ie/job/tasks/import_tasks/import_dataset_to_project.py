@@ -3,10 +3,10 @@
 
 """Import dataset to existing project task module"""
 
-import logging
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING, cast
 
+from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID
 from iai_core.entities.model_template import task_type_to_label_domain
 from iai_core.repos import LabelSchemaRepo
@@ -27,7 +27,7 @@ from job.utils.progress_utils import WeightedProgressReporter
 if TYPE_CHECKING:
     from iai_core.entities.label import Label
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class _Steps(IntEnum):

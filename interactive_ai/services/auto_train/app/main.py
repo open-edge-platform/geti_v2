@@ -11,10 +11,11 @@ from grpc_interfaces.job_submission.client import InsufficientBalanceException
 
 setup_telemetry()
 
-import logging
 import os
 import time
 from contextlib import nullcontext
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from controller import AutoTrainController
 from entities import NullAutoTrainActivationRequest
@@ -23,7 +24,7 @@ from exceptions import InvalidAutoTrainRequestError, JobSubmissionError
 from geti_telemetry_tools import ENABLE_TRACING
 from geti_telemetry_tools.tracing.common import tracer_provider
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 tracer = tracer_provider.get_tracer(__name__)
 
 AUTO_TRAIN_CONTROLLER_LOOP_INTERVAL = int(os.environ.get("AUTO_TRAIN_CONTROLLER_LOOP_INTERVAL", 5))  # noqa: PLW1508

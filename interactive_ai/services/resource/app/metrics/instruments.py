@@ -3,9 +3,9 @@
 
 """Resources and utilities to collect metrics in Geti using OpenTelemetry"""
 
-import logging
 from dataclasses import dataclass
 
+from geti_logger_tools.logger_config import initialize_logger
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter  # type: ignore[attr-defined]
 from opentelemetry.metrics import CallbackOptions, Observation  # type: ignore[attr-defined]
 from opentelemetry.sdk.metrics import MeterProvider  # type: ignore[attr-defined]
@@ -24,7 +24,7 @@ from iai_core.repos.leader_election_repo import LeaderElectionRepo
 from iai_core.repos.metrics_reporting_model_storage_repo import MetricsReportingModelStorageRepo
 from iai_core.repos.metrics_reporting_project_repo import MetricsReportingProjectRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class MetricName:

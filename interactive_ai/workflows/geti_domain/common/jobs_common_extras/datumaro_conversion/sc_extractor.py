@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 """This module implements conversion from Geti Dataset to Datumaro dataset."""
 
-import logging
 import os
 import shutil
 from collections import defaultdict
@@ -31,6 +30,7 @@ from datumaro import Video as dm_Video
 from datumaro import VideoFrame as dm_VideoFrame
 from datumaro.components.annotation import GroupType as DmGroupType
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME
+from geti_logger_tools.logger_config import initialize_logger
 from geti_types import (
     ID,
     DatasetStorageIdentifier,
@@ -74,7 +74,7 @@ from media_utils import get_image_bytes, get_media_numpy, get_video_bytes
 if TYPE_CHECKING:
     from iai_core.entities.video_annotation_range import RangeLabels, VideoAnnotationRange
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ScExtractor(dm_DatasetBase):

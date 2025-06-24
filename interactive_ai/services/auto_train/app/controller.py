@@ -3,9 +3,9 @@
 
 """This module contains the core logic of the auto-train controller"""
 
-import logging
 from datetime import datetime, timedelta
 
+from geti_logger_tools.logger_config import initialize_logger
 from grpc import RpcError
 
 from entities import AutoTrainActivationRequest, FeatureFlag, NullAutoTrainActivationRequest
@@ -27,7 +27,7 @@ from iai_core.repos.dataset_entity_repo import PipelineDatasetRepo
 from iai_core.utils.feature_flags import FeatureFlagProvider
 from iai_core.utils.time_utils import now
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 AUTO_TRAIN_AUTHOR = ID("geti")
 last_job_submission_time: dict[ID, datetime] = {}  # dict[task_id, last_job_submission]
@@ -260,7 +260,7 @@ class AutoTrainController:
             del last_job_submission_time[task_id]
         n_remaining = len(last_job_submission_time)
         if n_remaining > 100:
-            logging.warning(
+            logger.warning(
                 "Deleted %s expired items from `last_job_submission_time` but %s still remaining.",
                 len(expired_tasks),
                 n_remaining,

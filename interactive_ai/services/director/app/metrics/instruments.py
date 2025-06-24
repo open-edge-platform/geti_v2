@@ -3,10 +3,10 @@
 
 """Resources and utilities to collect metrics in Geti using OpenTelemetry"""
 
-import logging
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from geti_logger_tools.logger_config import initialize_logger
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter  # type: ignore[attr-defined]
 from opentelemetry.sdk.metrics import MeterProvider  # type: ignore[attr-defined]
 from opentelemetry.sdk.metrics.export import (  # type: ignore[attr-defined]
@@ -20,7 +20,7 @@ from geti_telemetry_tools import DEBUG_METRICS, OTLP_METRICS_RECEIVER, TEST_METR
 from geti_telemetry_tools.metrics.instruments import BaseInstrumentAttributes
 from geti_telemetry_tools.metrics.instruments import MetricName as MetricNameBase
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class MetricName:

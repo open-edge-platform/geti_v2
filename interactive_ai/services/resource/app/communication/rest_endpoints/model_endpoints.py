@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import http
-import logging
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse, Response
 
 from communication.rest_controllers.model_controller import ModelRESTController
@@ -21,7 +21,7 @@ from geti_fastapi_tools.dependencies import (
 )
 from geti_types import ID
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 model_api_prefix_url = "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}"
 model_router = APIRouter(prefix=model_api_prefix_url, tags=["Model"], dependencies=[Depends(setup_session_fastapi)])

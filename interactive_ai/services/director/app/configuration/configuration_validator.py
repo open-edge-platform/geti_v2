@@ -7,8 +7,9 @@ configurable parameters related input to the POST REST endpoints for both the
 director and resource microservice
 """
 
-import logging
 from typing import Any
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import (
     ConfigurationMismatchException,
@@ -31,9 +32,7 @@ from iai_core.entities.model_storage import ModelStorage
 from iai_core.entities.project import Project
 from iai_core.repos import ConfigurableParametersRepo, ModelStorageRepo, TaskNodeRepo
 
-logger = logging.getLogger(__name__)
-BE_VALIDATOR = logging.DEBUG
-IO_VALIDATOR = logging.DEBUG
+logger = initialize_logger(__name__)
 
 
 class ConfigurationValidator:

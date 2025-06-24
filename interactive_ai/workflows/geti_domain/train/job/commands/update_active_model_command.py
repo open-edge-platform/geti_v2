@@ -3,14 +3,13 @@
 
 """This module defines the command to update the active model"""
 
-import logging
-
+from geti_logger_tools.logger_config import initialize_logger
 from iai_core.entities.model_storage import ModelStorage
 from iai_core.entities.task_node import TaskNode
 from iai_core.services.model_service import ModelService
 from jobs_common.commands.interfaces.command import ICommand
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class UpdateActiveModelCommand(ICommand):

@@ -4,12 +4,12 @@
 This module implements the export endpoints
 """
 
-import logging
 import os
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from geti_feature_tools.feature_flags import FeatureFlagProvider
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import FileResponse, JSONResponse, RedirectResponse, Response
 
 from application.export_management import DatasetExportOperationConfig, ExportManager
@@ -43,7 +43,7 @@ router = APIRouter(
     prefix=api_prefix_url + "/organizations/{organization_id}/workspaces/{workspace_id}",
     dependencies=[Depends(setup_session_fastapi)],
 )
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @router.post("/projects/{project_id}/datasets/{dataset_id}:prepare-for-export")

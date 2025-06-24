@@ -3,14 +3,14 @@
 
 """This module contains Project-related utility functions for job creation"""
 
-import logging
 import os
 
+from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID
 from iai_core.repos import ProjectRepo
 
 PROJECT_LOCK_TIME = int(os.environ.get("PROJECT_LOCK_TIME", 8 * 60 * 60))
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 def lock_project(job_type: str, project_id: ID) -> None:

@@ -1,9 +1,9 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 from collections import defaultdict
 
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 from geti_types import MediaIdentifierEntity
 from iai_core.entities.dataset_item import DatasetItem
 from iai_core.entities.datasets import Dataset
@@ -24,7 +24,7 @@ from iai_core.entities.shapes import Keypoint
 
 from .performance_metric import PerformanceMetric
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 DEFAULT_RELATIVE_DISTANCE_THRESHOLD = 0.2
 

@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from usecases.media_preprocessing_status_usecase import MediaPreprocessingStatusUseCase
 
@@ -9,7 +9,7 @@ from geti_types import CTX_SESSION_VAR, ID, Singleton
 from iai_core.entities.dataset_storage import DatasetStorageIdentifier
 from iai_core.session.session_propagation import setup_session_kafka
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class PreprocessingKafkaHandler(BaseKafkaHandler, metaclass=Singleton):

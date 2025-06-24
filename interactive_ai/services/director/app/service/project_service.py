@@ -5,8 +5,9 @@
 This module contains the ProjectService class
 """
 
-import logging
 from functools import lru_cache
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import DatasetStorageNotInProjectException
 from configuration import ComponentRegisterEntry, ConfigurableComponentRegister
@@ -22,7 +23,7 @@ from iai_core.entities.dataset_storage import DatasetStorage, NullDatasetStorage
 from iai_core.entities.project import NullProject, Project
 from iai_core.repos import ConfigurableParametersRepo, ProjectRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ProjectService:

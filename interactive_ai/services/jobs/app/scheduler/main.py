@@ -1,13 +1,13 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import atexit
-import logging
 import os
 import time
 from collections.abc import Callable
 from concurrent.futures.thread import ThreadPoolExecutor
 from multiprocessing import Process
 
+from geti_logger_tools.logger_config import initialize_logger
 from opentelemetry import trace
 
 from scheduler.grpc_api.job_update_service import JobUpdateService
@@ -21,7 +21,7 @@ from scheduler.loops.scheduling import run_scheduling_loop
 
 from geti_telemetry_tools import ENABLE_TRACING, KafkaTelemetry
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 tracer = trace.get_tracer(__name__)  # type: ignore[attr-defined]
 
 SCHEDULER_SCHEDULING_LOOP_INTERVAL = int(os.environ.get("SCHEDULER_SCHEDULING_LOOP_INTERVAL", 1))

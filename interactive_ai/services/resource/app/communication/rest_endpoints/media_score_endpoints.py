@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 from enum import Enum
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse
 
 from communication.constants import MAX_N_MEDIA_RETURNED
@@ -20,7 +20,7 @@ from geti_fastapi_tools.dependencies import (
 )
 from geti_types import ID
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 media_score_api_prefix_url = "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}"
 media_score_router = APIRouter(

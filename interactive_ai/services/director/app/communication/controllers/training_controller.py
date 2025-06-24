@@ -3,10 +3,10 @@
 
 """This module contains the TrainingController"""
 
-import logging
 import os
 
 from geti_feature_tools import FeatureFlagProvider
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.data_validator import TrainingRestValidator
 from communication.exceptions import (
@@ -39,7 +39,7 @@ from iai_core.repos.dataset_entity_repo import PipelineDatasetRepo
 from iai_core.services import ModelService
 from iai_core.utils.filesystem import check_free_space_for_operation
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 # Ratio of dataset items that must be present compared to number of annotations before training can be started
 DATASET_ITEM_TO_ANNOTATION_RATIO = float(os.getenv("DATASET_ITEM_TO_ANNOTATION_RATIO", "0.9"))

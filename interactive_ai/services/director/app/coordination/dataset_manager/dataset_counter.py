@@ -6,8 +6,9 @@
 This module contains classes that keep track of the number of dataset items for a task.
 """
 
-import logging
 from typing import TYPE_CHECKING
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from entities.dataset_item_count import (
     DatasetItemCount,
@@ -36,7 +37,7 @@ if TYPE_CHECKING:
 REQUIRED_ANOMALOUS_IMAGES_FIRST_TRAINING = 3
 ASSIGNED_SUBSETS = [Subset.TRAINING, Subset.VALIDATION, Subset.TESTING]
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class DatasetCounterUseCase:

@@ -6,13 +6,13 @@ Resource Manager module
 """
 
 import asyncio
-import logging
 
 from geti_k8s_tools.calculate_cluster_resources import get_resource_capacity_per_node
+from geti_logger_tools.logger_config import initialize_logger
 
 from geti_types import Singleton
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ResourceManager(metaclass=Singleton):

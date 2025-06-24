@@ -1,10 +1,11 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import os
 
-logger = logging.getLogger(__name__)
+from geti_logger_tools.logger_config import initialize_logger
+
+logger = initialize_logger(__name__)
 
 _ENV_GRAFANA_ENABLED = "GRAFANA_ENABLED"
 _ENV_ENVIRONMENT = "ENVIRONMENT"

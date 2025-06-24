@@ -4,7 +4,6 @@
 # type: ignore
 
 import copy
-import logging
 import os
 import tempfile
 from collections.abc import Generator, Sequence
@@ -18,6 +17,7 @@ import cv2
 import jsonschema
 import numpy as np
 import pytest
+from geti_logger_tools.logger_config import initialize_logger
 
 from coordination.configuration_manager.task_node_config import TaskNodeConfig
 
@@ -77,7 +77,7 @@ __all__ = [
     "RestProjectUpdateParser",
 ]
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 COLOR = "color"

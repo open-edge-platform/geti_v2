@@ -5,10 +5,10 @@
 Training related endpoints
 """
 
-import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.controllers.training_controller import TrainingController
 
@@ -20,7 +20,7 @@ from geti_fastapi_tools.dependencies import (
 )
 from geti_types import ID
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 training_api_prefix_url = "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}"
 

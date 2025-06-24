@@ -6,10 +6,11 @@ This module contains the kafka handlers for model job events and project lifecyc
 handling incoming Kafka events in the director MS.
 """
 
-import logging
 import os
 from datetime import datetime
 from typing import TYPE_CHECKING
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import MissingJobPayloadAttribute
 from metrics.instruments import (
@@ -33,7 +34,7 @@ from iai_core.utils.type_helpers import str2bool
 if TYPE_CHECKING:
     from iai_core.entities.model import Model
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class JobKafkaHandler(BaseKafkaHandler, metaclass=Singleton):

@@ -1,14 +1,14 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import os
 
 from fastapi import APIRouter
+from geti_logger_tools.logger_config import initialize_logger
 
 from environment import get_environment, get_gpu_provider, is_grafana_enabled
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 product_info_router = APIRouter(prefix="/api/v1", tags=["Product Info"])
 

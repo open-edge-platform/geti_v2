@@ -3,8 +3,7 @@
 
 """This module contains Model-related utility functions for job creation"""
 
-import logging
-
+from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID, ProjectIdentifier
 from iai_core.entities.evaluation_result import EvaluationPurpose
 from iai_core.entities.model import Model, ModelDeprecationStatus, NullModel
@@ -12,7 +11,7 @@ from iai_core.entities.model_storage import ModelStorage
 from iai_core.repos import EvaluationResultRepo, ModelRepo
 from iai_core.repos.model_repo import ModelStatusFilter
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 def select_input_model(

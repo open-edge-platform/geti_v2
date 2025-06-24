@@ -1,11 +1,11 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 import sys
 
 import pytest
+from geti_logger_tools.logger_config import initialize_logger
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -2,12 +2,12 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import io
-import logging
 from collections.abc import Callable, Generator, Sequence
 from typing import cast
 from urllib.parse import quote_plus
 
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 from pymongo import DESCENDING, IndexModel
 from pymongo.client_session import ClientSession
 from pymongo.command_cursor import CommandCursor
@@ -25,7 +25,7 @@ from iai_core.repos.mappers import CursorIterator, IDToMongo
 
 FILENAME_PREFIX = "vps_reference_feature"
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class ReferenceFeatureRepo(ProjectBasedSessionRepo[ReferenceFeature]):

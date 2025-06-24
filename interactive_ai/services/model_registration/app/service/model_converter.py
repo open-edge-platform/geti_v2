@@ -2,10 +2,8 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import ctypes
 import json
-import logging
 import os
 import shutil
-import sys
 import tempfile
 import time
 import urllib.request
@@ -15,6 +13,7 @@ from pathlib import Path
 from xml.etree.ElementTree import Element
 
 from defusedxml import ElementTree
+from geti_logger_tools.logger_config import initialize_logger
 from grpc_interfaces.model_registration.pb.service_pb2 import Model, Project
 from model_api.models import (
     AnomalyDetection,
@@ -28,8 +27,7 @@ from model_api.models import (
 from service.config import RESOURCE_MS_PORT, RESOURCE_MS_SERVICE, S3_BUCKETNAME
 from service.s3client import S3Client
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 DEFAULT_ORGANIZATION_ID = "000000000000000000000001"
 LARGE_MODEL_THRESHOLD_BYTES = 50 * 1024 * 1024

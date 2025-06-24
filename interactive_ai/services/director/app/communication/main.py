@@ -6,7 +6,6 @@ Entry point of the director microservice.
 """
 
 import http
-import logging
 import os
 from collections import defaultdict
 from collections.abc import Sequence
@@ -18,6 +17,7 @@ import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
+from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse, Response
 
 from active_learning.communication import ActiveLearningKafkaHandler
@@ -91,7 +91,7 @@ app = FastAPI(lifespan=lifespan)
 # This can not be in the startup event because adding middleware to the app must be done before startup
 if ENABLE_TRACING:
     FastAPITelemetry.instrument(app)
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 app.include_router(active_learning_router)
 app.include_router(configuration_router)

@@ -1,9 +1,9 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import datetime
-import logging
 
 import numpy as np
+from geti_logger_tools.logger_config import initialize_logger
 
 from geti_telemetry_tools import unified_tracing
 from iai_core.entities.label import Label
@@ -24,7 +24,7 @@ from iai_core.entities.metrics import (
     TextMetricsGroup,
 )
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class StatisticsRESTViews:

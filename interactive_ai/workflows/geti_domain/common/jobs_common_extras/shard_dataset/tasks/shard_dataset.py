@@ -3,12 +3,12 @@
 
 """This module defines Flyte task to create task train dataset"""
 
-import logging
 from collections.abc import Callable
 from multiprocessing.pool import AsyncResult, ThreadPool
 from queue import Queue
 
 import flytekit
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import DatasetStorageIdentifier
 from iai_core.entities.compiled_dataset_shards import CompiledDatasetShard
@@ -27,7 +27,7 @@ from jobs_common_extras.shard_dataset.commands.create_shard_file_command import 
 from jobs_common_extras.shard_dataset.commands.map_items_to_shards_command import MapItemsToShardsCommand
 from jobs_common_extras.shard_dataset.commands.upload_shard_file_command import UploadShardFileCommand
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 __all__ = ["SHARD_DATASET_TASK_POD_SPEC", "shard_dataset"]
 

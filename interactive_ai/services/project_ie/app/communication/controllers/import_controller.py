@@ -3,9 +3,9 @@
 
 """Controller for project import related requests"""
 
-import logging
 import os
 
+from geti_logger_tools.logger_config import initialize_logger
 from grpc import RpcError
 
 from communication.http_exceptions import FailedJobSubmissionException
@@ -16,7 +16,7 @@ from communication.models import ImportOperation
 from geti_types import CTX_SESSION_VAR, ID
 from grpc_interfaces.job_submission.client import GRPCJobsClient
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 JOB_SERVICE_GRPC_ADDRESS = os.environ.get("JOB_SERVICE_ADDRESS", "localhost:50051")
 PROJECT_IMPORT_TYPE = "import_project"

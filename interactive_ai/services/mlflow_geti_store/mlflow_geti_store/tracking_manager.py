@@ -5,9 +5,9 @@
 
 from __future__ import annotations
 
-import logging as log
 from typing import TYPE_CHECKING, Literal
 
+from geti_logger_tools.logger_config import initialize_logger as log
 from mlflow.entities import Experiment, ExperimentTag, LifecycleStage, Metric, Param, Run, RunInfo, RunStatus, RunTag
 from mlflow.store.entities.paged_list import PagedList
 from mlflow.utils.search_utils import SearchUtils

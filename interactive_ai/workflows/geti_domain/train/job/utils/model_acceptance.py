@@ -6,17 +6,16 @@ This module contains utility functions for model acceptance, that is the process
 determining whether a newly trained model should be accepted or rejected.
 """
 
-import logging
-
 import numpy as np
 import scipy
+from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ProjectIdentifier
 from iai_core.entities.datasets import Dataset
 from iai_core.entities.evaluation_result import EvaluationPurpose
 from iai_core.entities.model import Model, NullModel
 from jobs_common.jobs.helpers.model_helpers import get_model_accuracy
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 ZTEST_ACCEPTANCE_THRESHOLD = 0.05
 

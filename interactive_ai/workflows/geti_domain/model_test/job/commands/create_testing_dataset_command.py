@@ -3,8 +3,7 @@
 
 """This module defines commands to create datasets"""
 
-import logging
-
+from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID
 from iai_core.entities.dataset_storage import DatasetStorage
 from iai_core.entities.datasets import Dataset, NullDataset
@@ -15,7 +14,7 @@ from jobs_common.exceptions import DatasetCreationFailedException
 from jobs_common.utils.annotation_filter import AnnotationFilter
 from jobs_common.utils.dataset_helpers import DatasetHelpers
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class CreateTaskTestingDatasetCommand(CreateDatasetCommand):

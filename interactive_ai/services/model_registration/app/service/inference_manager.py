@@ -2,19 +2,18 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import asyncio
-import logging
-import sys
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from service.inference_service import InferenceService
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class InferenceManager:
     async def create_inference(self, name: str, namespace: str, storage_name: str, path: str) -> None:
         """Create inferenceservice resource"""
-        logging.info(f"Creating InferenceService for {name}")
+        logger.info(f"Creating InferenceService for {name}")
         inference = InferenceService(name=name, namespace=namespace, storage_name=storage_name, path=path)
         await inference.create()
         create_timeout = 300
@@ -30,11 +29,11 @@ class InferenceManager:
                 break
         else:
             raise RuntimeError(f"Failed to create {name} InferenceService")
-        logging.info(f"Created InferenceService for {name}")
+        logger.info(f"Created InferenceService for {name}")
 
     async def remove_inference(self, name: str, namespace: str) -> None:
         """Deletes specific inferenceservice resource."""
-        logging.info(f"Removing InferenceService for {name}")
+        logger.info(f"Removing InferenceService for {name}")
         deletion_timeout = 600
 
         inference_service: InferenceService | None = await InferenceService.get(name=name, namespace=namespace)  # type: ignore
@@ -54,11 +53,11 @@ class InferenceManager:
 
     async def list_inference(self, namespace: str) -> list[InferenceService]:
         """List registered inferenceservice resources."""
-        logging.info(f"Listing items in InferenceService within namespace `{namespace}`")
+        logger.info(f"Listing items in InferenceService within namespace `{namespace}`")
         return await InferenceService.list(namespace=namespace)  # type: ignore
 
     async def get_inference(self, name: str, namespace: str) -> InferenceService | None:
         """Get specific inferenceservice resource."""
-        logging.info(f"Getting InferenceService for {name}")
+        logger.info(f"Getting InferenceService for {name}")
         inference_service: InferenceService | None = await InferenceService.get(name=name, namespace=namespace)  # type: ignore
         return inference_service

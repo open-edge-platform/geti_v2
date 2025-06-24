@@ -1,15 +1,14 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
-
+from geti_logger_tools.logger_config import initialize_logger
 from minio.deleteobjects import DeleteObject
 
 from iai_core.repos.storage.binary_repo import BinaryRepo
 from iai_core.repos.storage.object_storage import ObjectStorageClient, reinit_client_and_retry_on_timeout
 from iai_core.repos.storage.storage_client import BinaryObjectType
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class MLFlowBinaryRepo(BinaryRepo):

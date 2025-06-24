@@ -1,9 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import NotEnoughSpaceException
 from communication.model_registration_utils import ModelMapper, ProjectMapper
@@ -26,7 +27,7 @@ from iai_core.repos import ModelRepo
 from iai_core.utils.filesystem import check_free_space_for_operation
 
 export_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="Deployment_package_worker")
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 DEPLOYMENT_FILENAME_TEMPLATE = "Deployment-%s"
 

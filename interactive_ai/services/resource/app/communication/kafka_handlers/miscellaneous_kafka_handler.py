@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
+from geti_logger_tools.logger_config import initialize_logger
 
 from repos.mlflow_binary_repo import MLFlowBinaryRepo
 from resource_management.ui_settings_manager import UISettingsManager
@@ -12,7 +12,7 @@ from grpc_interfaces.model_registration.client import ModelRegistrationClient
 from iai_core.repos import VideoAnnotationRangeRepo
 from iai_core.session.session_propagation import setup_session_kafka
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class MiscellaneousKafkaHandler(BaseKafkaHandler, metaclass=Singleton):

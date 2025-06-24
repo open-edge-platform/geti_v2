@@ -3,16 +3,16 @@
 
 """This module defines Flyte task to create task train dataset"""
 
-import logging
 from collections.abc import Callable
 
+from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from iai_core.entities.datasets import Dataset
 from jobs_common_extras.shard_dataset.tasks.shard_dataset import shard_dataset
 
 from job.utils.train_workflow_data import TrainWorkflowData
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @unified_tracing

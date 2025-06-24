@@ -1,13 +1,13 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 from http import HTTPStatus
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration
 from geti_feature_tools import FeatureFlagProvider
+from geti_logger_tools.logger_config import initialize_logger
 
 from communication.controllers.training_configuration_controller import TrainingConfigurationRESTController
 from communication.views.training_configuration_rest_views import TrainingConfigurationRESTViews
@@ -17,7 +17,7 @@ from geti_fastapi_tools.dependencies import get_project_identifier, get_request_
 from geti_fastapi_tools.exceptions import GetiBaseException
 from geti_types import ID, ProjectIdentifier
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 training_configuration_prefix_url = (
     "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}"

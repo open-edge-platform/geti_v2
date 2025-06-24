@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import logging
 import os
 
 from flytekit.remote import FlyteWorkflow, FlyteWorkflowExecution
+from geti_logger_tools.logger_config import initialize_logger
 
 from model.job import Job, JobStepDetails, JobTaskExecutionBranch
 from model.job_state import JobTaskState
@@ -16,7 +16,7 @@ from scheduler.utils import get_main_execution_name, resolve_main_job
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, session_context
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 MAX_START_RETRY_COUNT = int(os.environ.get("MAX_START_RETRY_COUNT", 5))
 logger.info(f"Max start retries number is {MAX_START_RETRY_COUNT}")

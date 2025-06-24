@@ -1,7 +1,8 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 from collections.abc import Sequence
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from service.label_schema_service import LabelSchemaService
 
@@ -19,7 +20,7 @@ from iai_core.utils.annotation_scene_state_helper import AnnotationSceneStateHel
 from iai_core.utils.iteration import grouper
 from iai_core.utils.label_resolver import LabelResolver
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class AnnotationManager:

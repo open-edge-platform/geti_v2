@@ -5,16 +5,16 @@
 Methods to prioritize regular (non GPU-bound) jobs
 """
 
-import logging
 from typing import Any
 
 from bson import ObjectId
+from geti_logger_tools.logger_config import initialize_logger
 
 from model.job_state import JobState
 from policies.duplicate import get_duplicate_check_sub_pipeline
 from policies.job_repo import SessionBasedPolicyJobRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 def get_number_of_running_jobs_by_types(types: list[str]) -> int:

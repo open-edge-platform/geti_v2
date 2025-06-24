@@ -3,9 +3,9 @@
 
 """Prepare dataset for import to new project task module"""
 
-import logging
 from enum import IntEnum, auto
 
+from geti_logger_tools.logger_config import initialize_logger
 from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
 from jobs_common.tasks import flyte_multi_container_task as task
 from jobs_common.tasks.utils.logging import init_logger
@@ -21,7 +21,7 @@ from job.utils.datumaro_parser import get_project_metas_with_labels
 from job.utils.import_utils import ImportUtils
 from job.utils.progress_utils import ProgressReporter
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 @task(pod_spec=IMPORT_EXPORT_TASK_POD_SPEC, secret_requests=SECRETS)

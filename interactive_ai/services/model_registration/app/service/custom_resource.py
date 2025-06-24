@@ -5,19 +5,19 @@
 
 import abc
 import http
-import logging
 import threading
 from collections.abc import AsyncIterator
 from typing import Any, Generic, Optional, TypeVar
 
 import dpath.util
 import yaml
+from geti_logger_tools.logger_config import initialize_logger
 from kubernetes_asyncio import client, config
 from kubernetes_asyncio.client import CoreV1Api, CustomObjectsApi
 from kubernetes_asyncio.client.rest import ApiException
 from kubernetes_asyncio.config import ConfigException
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class K8SApiClient:

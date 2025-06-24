@@ -3,11 +3,11 @@
 
 """This module contains the media endpoints"""
 
-import logging
 from enum import Enum
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, Request, UploadFile
+from geti_logger_tools.logger_config import initialize_logger
 from starlette import status
 from starlette.responses import JSONResponse, Response
 
@@ -44,7 +44,7 @@ GENERIC_DS_RULE = {
         },
     ]
 }
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 media_api_prefix_url = (
     "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/datasets/{dataset_id}"

@@ -3,13 +3,14 @@
 
 """Repos to fetch/store project zip archives from/to S3"""
 
-import logging
 import os
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from .base.storage_repo import StorageRepo
 from geti_types import ID
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 DOWNLOAD_URL_VALIDITY_PERIOD: int = int(os.getenv("DOWNLOAD_URL_VALIDITY_PERIOD", "900"))
 logger.info(f"Pre-signed download URL will be configured to be valid for {DOWNLOAD_URL_VALIDITY_PERIOD} seconds.")

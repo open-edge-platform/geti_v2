@@ -1,7 +1,8 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import logging
 from typing import Any
+
+from geti_logger_tools.logger_config import initialize_logger
 
 from geti_types import ID
 from iai_core.entities.dataset_storage import DatasetStorageIdentifier
@@ -10,7 +11,7 @@ from iai_core.entities.video import Video
 from iai_core.repos import ImageRepo, VideoRepo
 from iai_core.repos.dataset_storage_filter_repo import DatasetStorageFilterRepo
 
-logger = logging.getLogger(__name__)
+logger = initialize_logger(__name__)
 
 
 class MediaPreprocessingStatusUseCase:
