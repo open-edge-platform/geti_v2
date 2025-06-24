@@ -1,0 +1,16 @@
+id: Object_Detection_SSD_MNV2
+name: SSD-MobilenetV2
+
+description: "SSD (Single Shot MultiBox Detector) is a real-time, anchor-based object detection algorithm that performs object localization and classification in a single forward pass. It uses a convolutional backbone and multiple feature maps at different scales to detect objects of various sizes. SSD balances speed and accuracy, making it efficient for deployment on resource-constrained devices."
+stats:
+  gigaflops: 9.4
+  trainable_parameters: 7.6
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 0
+    training_time: 2
+    inference_speed: 3
+
+hyperparameters:
+  training:
+    learning_rate: 0.01
+support_status: deprecated
