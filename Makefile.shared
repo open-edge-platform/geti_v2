@@ -27,10 +27,11 @@ BASE_OTE_V2_IMAGE_TAG             ?= 12.8.1.1.30
 ###
 # component
 ###
-BUILD_DIR                         := ./.build
-CHART_DIR                         := ./chart
-EXTRA_CHART_DIRS                  ?=
-CHART_BUILD_DIR                   := ${BUILD_DIR}/chart
+TARGET_DIR                         := ./.build
+CHART_TARGET_DIR                   := ${TARGET_DIR}/chart
+
+CHART_SRC_DIR                         := ./chart
+EXTRA_CHART_SRC_DIR                  ?=
 
 ###
 # docker extra arguments
@@ -85,27 +86,27 @@ publish-image:
 # helm charts
 ###
 build-chart-default:
-	mkdir -p ${CHART_BUILD_DIR}
-	cp -r ${CHART_DIR}/* ${CHART_BUILD_DIR}/
-	@if [ -n "$(EXTRA_CHART_DIRS)" ]; then \
-        cp $(EXTRA_CHART_DIRS) ${CHART_BUILD_DIR}/; \
+	mkdir -p ${CHART_TARGET_DIR}
+	cp -r ${CHART_SRC_DIR}/* ${CHART_TARGET_DIR}/
+	@if [ -n "$(EXTRA_CHART_SRC_DIR)" ]; then \
+        cp $(EXTRA_CHART_SRC_DIR) ${CHART_TARGET_DIR}/; \
     fi
-	TAG=$(TAG) COMPONENT_NAME=$(COMPONENT_NAME) envsubst < ${CHART_BUILD_DIR}/Chart.yaml.template > ${CHART_BUILD_DIR}/Chart.yaml
-	rm "${CHART_BUILD_DIR}/Chart.yaml.template"
-	helm dependency update ${CHART_BUILD_DIR}
-	helm package ${CHART_BUILD_DIR} --version ${TAG} --destination ${BUILD_DIR}
+	TAG=$(TAG) COMPONENT_NAME=$(COMPONENT_NAME) envsubst < ${CHART_TARGET_DIR}/Chart.yaml.template > ${CHART_TARGET_DIR}/Chart.yaml
+	rm "${CHART_TARGET_DIR}/Chart.yaml.template"
+	helm dependency update ${CHART_TARGET_DIR}
+	helm package ${CHART_TARGET_DIR} --version ${TAG} --destination ${TARGET_DIR}
 
 lint-chart-default: build-chart
 	@echo "Running chart linter for component: ${COMPONENT_NAME}"
-	helm lint --with-subcharts ${CHART_BUILD_DIR}
+	helm lint --with-subcharts ${CHART_TARGET_DIR}
 
 publish-chart-default: build-chart
 	@echo "Publishing chart for component: ${COMPONENT_NAME}"
-	helm push ${BUILD_DIR}/${COMPONENT_NAME}-${TAG}.tgz oci://${CHARTS_REGISTRY}
+	helm push ${TARGET_DIR}/${COMPONENT_NAME}-${TAG}.tgz oci://${CHARTS_REGISTRY}
 
 clean:
-	@echo "Removing: $(BUILD_DIR)"
-	rm -rf $(BUILD_DIR)
+	@echo "Removing: $(TARGET_DIR)"
+	rm -rf $(TARGET_DIR)
 	@if [ -n "$(CLEAN_DIRS)" ]; then \
         echo "Removing: $(CLEAN_DIRS)"; \
         rm -rf $(CLEAN_DIRS); \
