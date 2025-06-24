@@ -1,7 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-include ../../Makefile.shared-python
+include ../../Makefile.shared
 
 ORAS := /usr/local/bin/oras
 ORAS_VERSION := 1.2.3
@@ -23,17 +23,17 @@ $(ORAS):
 remove-oras:
 	rm -rf $(ORAS_DIR)
 
-push-manifest: prepare-manifest
+push-manifest: build-chart
 	$(ORAS_BINARY) push $(REGISTRY)/geti/charts/geti-manifest:$(TAG) \
 		--artifact-type=application/text \
 		geti-manifest.yaml
 
-prepare-manifest: get-oras
+build-chart: get-oras
 	VERSION=$(TAG) \
 	REGISTRY=$(REGISTRY) \
 	envsubst < geti-manifest.yaml.template > geti-manifest.yaml
 
-build-chart-default: push-manifest
+publish-chart: push-manifest
 
 static-code-analysis:
 	@echo "Not applicable"
@@ -54,7 +54,4 @@ publish-image:
 	@echo "Not applicable"
 
 lint-chart:
-	@echo "Not applicable"
-
-publish-chart:
 	@echo "Not applicable"
