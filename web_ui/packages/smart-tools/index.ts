@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 export { default as OpenCVLoader } from './src/utils/opencv-loader';
+export { waitForOpenCV } from './src/utils/wait-for-opencv';
 
 export { Watershed } from './src/watershed/watershed';
 export { type WatershedInstance, type WatershedPolygon } from './src/watershed/interfaces';
@@ -16,4 +17,4 @@ export {
     concatFloat32Arrays,
     stackPlanes,
     isPolygonValid,
-} from './src/utils/utils';
+} from './src/utils/tool-utils';

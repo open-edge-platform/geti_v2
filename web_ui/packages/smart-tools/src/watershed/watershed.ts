@@ -4,7 +4,7 @@
 import type OpenCVTypes from 'OpenCVTypes';
 
 import { Point } from '../shared/interfaces';
-import { approximateShape, formatContourToPoints } from '../utils/utils';
+import { approximateShape, formatContourToPoints } from '../utils/tool-utils';
 import { Marker, WatershedPolygon } from './interfaces';
 
 export class Watershed {

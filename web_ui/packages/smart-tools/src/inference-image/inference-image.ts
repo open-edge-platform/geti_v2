@@ -3,7 +3,7 @@
 
 import type OpenCVTypes from 'OpenCVTypes';
 
-import { formatImageData } from '../utils/utils';
+import { formatImageData } from '../utils/tool-utils';
 
 export class InferenceImage {
     constructor(private CV: OpenCVTypes.cv) {}
