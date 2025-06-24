@@ -11,6 +11,7 @@ import { Navigate } from 'react-router-dom';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { Task } from '../core/projects/task.interface';
+import { useLastWorkspace } from '../hooks/use-last-workspace/use-last-workspace.hook';
 import { useModelIdentifier } from '../hooks/use-model-identifier/use-model-identifier.hook';
 import { useOrganizationIdentifier } from '../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { useDatasetIdentifier } from '../pages/annotator/hooks/use-dataset-identifier.hook';
@@ -18,7 +19,7 @@ import { ErrorLayout } from '../pages/errors/error-layout/error-layout.component
 import { ResourceNotFound } from '../pages/errors/resource-not-found/resource-not-found.component';
 import { useProject } from '../pages/project-details/providers/project-provider/project-provider.component';
 import { useWorkspaceIdentifier } from '../providers/workspaces-provider/use-workspace-identifier.hook';
-import { getLastOpenedWorkspaceKey, LOCAL_STORAGE_KEYS } from '../shared/local-storage-keys';
+import { LOCAL_STORAGE_KEYS } from '../shared/local-storage-keys';
 
 export const RedirectToOptimizedModel = () => {
     const modelIdentifier = useModelIdentifier();
@@ -37,9 +38,7 @@ export const RedirectToWorkspace = () => {
 
     const { useWorkspacesQuery } = useWorkspacesApi(organizationId);
     const { data: workspaces } = useWorkspacesQuery();
-
-    // Redirect to last opened workspace or the first available
-    const [lastWorkspaceId] = useLocalStorage(getLastOpenedWorkspaceKey(organizationId), workspaces.at(0)?.id);
+    const { lastWorkspaceId } = useLastWorkspace(organizationId, workspaces.at(0)?.id);
 
     // Show an error if we are unable to load workspaces
     if (lastWorkspaceId === undefined) {

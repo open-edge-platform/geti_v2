@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key, useEffect } from 'react';
+import { Key } from 'react';
 
 import { paths } from '@geti/core';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
@@ -19,7 +19,6 @@ import {
 } from '@geti/ui';
 import { Add } from '@geti/ui/icons';
 import { useNavigate } from 'react-router-dom';
-import { useLocalStorage } from 'usehooks-ts';
 
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { usePinnedCollapsedItems } from '../../../hooks/use-pinned-collapsed-items/use-pinned-collapsed-items.hook';
@@ -33,7 +32,6 @@ import { EditNameDialog } from '../../../shared/components/edit-name-dialog/edit
 import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
 import { TabItem } from '../../../shared/components/tabs/tabs.interface';
-import { getLastOpenedWorkspaceKey, LOCAL_STORAGE_KEYS } from '../../../shared/local-storage-keys';
 import { getUniqueNameFromArray, hasEqualId } from '../../../shared/utils';
 import { MAX_LENGTH_OF_WORKSPACE_NAME, MIN_LENGTH_OF_WORKSPACE_NAME } from '../../user-management/workspaces/utils';
 import { LandingPageWorkspace as Workspace } from '../landing-page-workspace/landing-page-workspace.component';
@@ -46,8 +44,8 @@ const MAX_NUMBER_OF_DISPLAYED_WORKSPACES = 6;
 const usePinnedCollapsedWorkspaces = () => {
     const navigate = useNavigate();
     const { organizationId } = useOrganizationIdentifier();
-
     const { workspaces, workspaceId: selectedWorkspaceId } = useWorkspaces();
+
     const [pinnedWorkspaces, collapsedWorkspaces, dispatch] = usePinnedCollapsedItems(
         workspaces,
         selectedWorkspaceId,
@@ -99,7 +97,6 @@ export const WorkspacesTabs = (): JSX.Element => {
         handleSelectWorkspace,
     } = usePinnedCollapsedWorkspaces();
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
-    const [, setLastWorkspaceId] = useLocalStorage(getLastOpenedWorkspaceKey(organizationId), selectedWorkspaceId);
     const numberOfWorkspaces = pinnedWorkspaces.length + collapsedWorkspaces.length;
 
     const { items, handleMenuAction, deleteDialog, editDialog } = useWorkspaceActions(numberOfWorkspaces);
@@ -116,10 +113,6 @@ export const WorkspacesTabs = (): JSX.Element => {
         key: id,
         children: <Workspace />,
     }));
-
-    useEffect(() => {
-        setLastWorkspaceId(selectedWorkspaceId);
-    }, [selectedWorkspaceId]);
 
     const collapsedItems = collapsedWorkspaces.map(({ id, name }) => ({ id, name }));
 
