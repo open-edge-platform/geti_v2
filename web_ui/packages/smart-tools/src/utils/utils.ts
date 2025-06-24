@@ -1,9 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import Clipper from '@doodle3d/clipper-js';
 import type OpenCVTypes from 'OpenCVTypes';
 
-import { Point } from '../shared/interfaces';
+import { Point, Polygon } from '../shared/interfaces';
 
 export const formatContourToPoints = (
     mask: OpenCVTypes.Mat,
@@ -25,6 +26,23 @@ export const formatContourToPoints = (
     }
 
     return points;
+};
+
+const POLYGON_VALID_AREA = 4;
+const convertPolygonPoints = (
+    shape: Polygon
+): {
+    X: number;
+    Y: number;
+}[] => {
+    return shape.points.map(({ x, y }: Point) => ({ X: x, Y: y }));
+};
+export const isPolygonValid = (polygon: Polygon | null): boolean => {
+    if (!polygon) return false;
+
+    const sPolygon = new Clipper([convertPolygonPoints(polygon)], true);
+
+    return Math.abs(sPolygon.totalArea()) > POLYGON_VALID_AREA;
 };
 
 // It approximates a contour shape to another shape with less number of vertices
@@ -59,4 +77,54 @@ export const formatImageData = (CV: OpenCVTypes.cv, mat: OpenCVTypes.Mat): Image
     }
 
     return new ImageData(new Uint8ClampedArray(img.data), img.cols, img.rows);
+};
+
+export const concatFloat32Arrays = (arrays: Float32Array[]) => {
+    const totalLength = arrays.reduce((c, a) => c + a.length, 0);
+    const result = new Float32Array(totalLength);
+
+    arrays.reduce((offset, array) => {
+        result.set(array, offset);
+        return offset + array.length;
+    }, 0);
+
+    return result;
+};
+
+export const stackPlanes = (CV: OpenCVTypes.cv, mat: OpenCVTypes.Mat) => {
+    let stackedPlanes: OpenCVTypes.Mat[] = [];
+    let matPlanes: OpenCVTypes.MatVector | null = null;
+
+    try {
+        matPlanes = new CV.MatVector();
+        CV.split(mat, matPlanes);
+
+        stackedPlanes = Array.from(Array(mat.channels()).keys()).map((index) => {
+            // This won't happen, but matPlanes is mutable for the finally block.
+            if (!matPlanes) {
+                throw 'Lost track of matPlanes through loop';
+            }
+
+            return matPlanes.get(index);
+        });
+
+        return concatFloat32Arrays(stackedPlanes.map((m) => m.data32F));
+    } finally {
+        stackedPlanes.map((p) => p.delete());
+        matPlanes?.delete();
+    }
+};
+
+export const loadSource = async (source: string, cacheKey = 'general'): Promise<Response | undefined> => {
+    if (!caches) {
+        return await self.fetch(source);
+    }
+
+    const cache = await caches.open(cacheKey);
+
+    if (!(await cache.match(source))) {
+        await cache.put(source, await self.fetch(source));
+    }
+
+    return cache.match(source);
 };

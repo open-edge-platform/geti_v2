@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { loadSource } from '@geti/smart-tools';
 import type { InferenceSession } from 'onnxruntime-common';
 import * as ort from 'onnxruntime-web';
 
-import { loadSource } from '../../../../../webworkers/utils';
 import { SessionParameters, sessionParams } from '../../wasm-utils';
 
 const loadModel = async (modelPath: string) => {
