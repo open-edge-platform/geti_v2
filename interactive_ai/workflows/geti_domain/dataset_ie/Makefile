@@ -7,7 +7,6 @@ DOCKER_BUILD_CONTEXT := --build-context common=../common \
 						--build-context iai_core=../../../../interactive_ai/libs/iai_core_py \
 						--build-context media_utils=../../../../interactive_ai/libs/media_utils \
 
-# TODO CVS-166211 remove the '-' and 'true' workaround after fixing the tests
 test-unit: venv
 	uv run pytest tests/unit --disable-warnings -v
 
