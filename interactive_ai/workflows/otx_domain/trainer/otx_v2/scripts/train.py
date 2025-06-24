@@ -6,6 +6,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+from metrics import OTXMetricsLogger
 from otx.tools.converter import ConfigConverter
 from otx_io import (
     load_trained_model_weights,
@@ -46,9 +47,10 @@ def train(
     train_kwargs["checkpoint"] = load_trained_model_weights(work_dir=work_dir)
     logger.debug("Loaded trained model weights.")
 
-    # Add progress reporter
+    # Add metrics logger and progress reporter
     train_kwargs["callbacks"] += [ProgressUpdaterCallback(progress_updater=progress_updater)]
-    logger.debug("Added progress reporter.")
+    train_kwargs["logger"] = [OTXMetricsLogger(file_path=work_dir / "metrics.json")]
+    logger.debug("Added metrics logger and progress reporter.")
 
     engine.train(**train_kwargs)
     logger.debug("Training completed.")
