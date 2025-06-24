@@ -370,7 +370,7 @@ def load_trained_model_weights(
     logger.info(f"Listing artifacts under relative path: {src_dir}")
     file_info_set = []
     for obj_info in S3ClientSingleton.instance().list_files(bucket_name=_get_bucket_name(), relative_path=src_dir):
-        file_info_set += [obj_info.object_name]
+        file_info_set += [os.path.basename(obj_info.object_name)]
 
     logger.info("Received file_info_set=%s", file_info_set)
 
@@ -383,9 +383,9 @@ def load_trained_model_weights(
     for src_fname in src_fnames:
         downloaded.append(
             download_model_artifact(
-                src_path=src_dir / src_fname,
+                src_path=Path("inputs") / src_fname,
                 dst_dir_path=work_dir,
-                use_presigned_url=True,
+                use_presigned_url=False,
             )
         )
 

@@ -494,18 +494,18 @@ def test_load_trained_model_weights(
         mock_download_model_artifact.assert_has_calls(
             [
                 call(
-                    src_path=Path("object_name_base/inputs/openvino.bin"),
+                    src_path=Path("inputs/openvino.bin"),
                     dst_dir_path=Path("work_dir"),
-                    use_presigned_url=True,
+                    use_presigned_url=False,
                 ),
                 call(
-                    src_path=Path("object_name_base/inputs/openvino.xml"),
+                    src_path=Path("inputs/openvino.xml"),
                     dst_dir_path=Path("work_dir"),
-                    use_presigned_url=True,
+                    use_presigned_url=False,
                 ),
             ]
         )
     else:
         mock_download_model_artifact.assert_called_once_with(
-            src_path=Path("object_name_base/inputs/model.pth"), dst_dir_path=Path("work_dir"), use_presigned_url=True
+            src_path=Path("inputs/model.pth"), dst_dir_path=Path("work_dir"), use_presigned_url=False
         )
