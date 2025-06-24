@@ -61,21 +61,6 @@ def install_packages_with_dnf(packages_path: str, log_file_path: str, disable_re
             raise InstallSystemPackagesError from ex
 
 
-def extract_tar_file(tar_file_path: str, destination_dir: str, filter_member: str | None = None) -> None:
-    """
-    Extracts a tar file to the specified destination directory.
-    Optionally filters for a specific member name.
-    """
-    with tarfile.open(tar_file_path, "r:gz") as tar:
-        for member in tar.getmembers():
-            if filter_member and filter_member not in member.name:
-                continue
-
-            member.name = os.path.basename(member.name)
-            tar.extract(member, path=destination_dir)
-            logger.info(f"Extracted {member.name} to {destination_dir}/")
-
-
 def _parse_system_packages(os_name: str) -> dict:
     with open(SYSTEM_PACKAGES_PATH) as file:
         data = yaml.safe_load(file)
@@ -146,7 +131,12 @@ def _download_packages(system_packages: dict) -> None:
 
                 # Extract helm tar.gz archive
                 if package["name"] == "helm" and file_name.endswith(".tar.gz"):
-                    extract_tar_file(file_name, OFFLINE_TOOLS_DIR, filter_member="linux-amd64/helm")
+                    with tarfile.open(file_name, "r:gz") as tar:
+                        member = next((m for m in tar.getmembers() if "linux-amd64/helm" in m.name), None)
+                        if member:
+                            member.name = os.path.basename(member.name)
+                            tar.extract(member, path=OFFLINE_TOOLS_DIR)
+                            logger.info(f"Extracted {member.name} to {OFFLINE_TOOLS_DIR}/")
                     shutil.rmtree(file_name, ignore_errors=True)
                     logger.info(f"Removed archive {file_name}")
 
