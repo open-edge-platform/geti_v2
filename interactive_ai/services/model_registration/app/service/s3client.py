@@ -1,13 +1,15 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import logging
 import os
+import sys
 
 import boto3
 from botocore.exceptions import ClientError
-from geti_logger_tools.logger_config import initialize_logger
 
-logger = initialize_logger(__name__)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class S3Client:

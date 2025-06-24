@@ -3,9 +3,9 @@
 
 # ruff: noqa: ARG002
 
+import logging
 from typing import TYPE_CHECKING
 
-from geti_logger_tools.logger_config import initialize_logger
 from mlflow.entities import (
     DatasetInput,
     Experiment,
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
 SEARCH_MAX_RESULTS_THRESHOLD = 50000
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class GetiTrackingStore(AbstractStore):

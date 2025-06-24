@@ -2,12 +2,13 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import asyncio
-
-from geti_logger_tools.logger_config import initialize_logger
+import logging
+import sys
 
 from service.inference_service import InferenceService
 
-logger = initialize_logger(__name__)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class InferenceManager:

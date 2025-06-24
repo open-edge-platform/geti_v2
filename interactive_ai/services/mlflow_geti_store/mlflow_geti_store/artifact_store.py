@@ -3,11 +3,11 @@
 
 # ruff: noqa: ARG002
 
+import logging
 import os
 from collections.abc import Iterable
 from pathlib import Path
 
-from geti_logger_tools.logger_config import initialize_logger
 from mlflow.entities.file_info import FileInfo
 from mlflow.exceptions import ALREADY_EXISTS, BAD_REQUEST, INTERNAL_ERROR, MlflowException
 from mlflow.store.artifact.artifact_repo import ArtifactRepository
@@ -16,7 +16,7 @@ from mlflow_geti_store.artifact_model import DispatchingError, dispatch_artifact
 from mlflow_geti_store.s3_object_storage_client import S3ObjectStorageClientSingleton
 from mlflow_geti_store.utils import ARTIFACT_ROOT_URI_PREFIX, PRESIGNED_URL_SUFFIX
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class GetiArtifactRepository(ArtifactRepository):
