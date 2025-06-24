@@ -83,7 +83,7 @@ class ConfigurationsBackwardCompatibility:
 
         # active_learning_config is fully deprecated, use default values
         active_learning_config = ComponentParameters(
-            id_=ID(),
+            id_=ID("000000000000000000000001"),
             workspace_id=project_identifier.workspace_id,
             project_id=project_identifier.project_id,
             component=ComponentType.PROJECT_ACTIVE_LEARNING,
@@ -97,7 +97,7 @@ class ConfigurationsBackwardCompatibility:
             filtering_parameters.max_annotation_objects.max_annotation_objects
         )
         dataset_config = ComponentParameters(
-            id_=ID(),
+            id_=ID("000000000000000000000001"),
             workspace_id=project_identifier.workspace_id,
             project_id=project_identifier.project_id,
             component=ComponentType.PIPELINE_DATASET_MANAGER,
@@ -185,14 +185,14 @@ class ConfigurationsBackwardCompatibility:
 
             legacy_configurable_parameters = [
                 HyperParameters(
-                    id_=ID(),
+                    id_=ID("000000000000000000000001"),
                     workspace_id=project_identifier.workspace_id,
                     project_id=project_identifier.project_id,
                     model_storage_id=ID(),  # model_storage_id is only used in legacy configuration
                     data=legacy_hyper_parameters,
                 ),
                 ComponentParameters(
-                    id_=ID(),
+                    id_=ID("000000000000000000000001"),
                     workspace_id=project_identifier.workspace_id,
                     project_id=project_identifier.project_id,
                     task_id=task_id,
@@ -200,7 +200,7 @@ class ConfigurationsBackwardCompatibility:
                     data=legacy_subset_manager,
                 ),
                 ComponentParameters(
-                    id_=ID(),
+                    id_=ID("000000000000000000000001"),
                     workspace_id=project_identifier.workspace_id,
                     project_id=project_identifier.project_id,
                     task_id=task_id,
@@ -208,7 +208,7 @@ class ConfigurationsBackwardCompatibility:
                     data=legacy_dataset_counter,
                 ),
                 ComponentParameters(
-                    id_=ID(),
+                    id_=ID("000000000000000000000001"),
                     workspace_id=project_identifier.workspace_id,
                     project_id=project_identifier.project_id,
                     task_id=task_id,
@@ -216,7 +216,7 @@ class ConfigurationsBackwardCompatibility:
                     data=legacy_task_active_learning,
                 ),
                 ComponentParameters(
-                    id_=ID(),
+                    id_=ID("000000000000000000000001"),
                     workspace_id=project_identifier.workspace_id,
                     project_id=project_identifier.project_id,
                     task_id=task_id,
@@ -225,7 +225,7 @@ class ConfigurationsBackwardCompatibility:
                 ),
                 # Note: task dataset manager parameters are an addition and are not present in legacy configurations
                 ComponentParameters(
-                    id_=ID(),
+                    id_=ID("000000000000000000000001"),
                     workspace_id=project_identifier.workspace_id,
                     project_id=project_identifier.project_id,
                     task_id=task_id,
