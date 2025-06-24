@@ -245,10 +245,14 @@ class ConfigurationRESTController:
             global_config, _ = ConfigurationManager.get_full_configuration(
                 workspace_id=workspace_id, project_id=project_id
             )
-            _, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+            project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
                 project_identifier=project.identifier,
                 legacy_global_configuration=global_config,
                 legacy_task_chain_configs=_updated_task_chain_configs,
+            )
+            ProjectConfigurationRESTController.update_configuration(
+                project_identifier=project.identifier,
+                update_configuration=project_configuration,
             )
             for training_configuration in training_configurations:
                 TrainingConfigurationRESTController.update_configuration(
@@ -332,6 +336,11 @@ class ConfigurationRESTController:
                 project_identifier=project.identifier,
                 update_configuration=update_project_configuration,
             )
+            for training_configuration in training_configurations:
+                TrainingConfigurationRESTController.update_configuration(
+                    project_identifier=project.identifier,
+                    update_configuration=training_configuration,
+                )
         else:
             # Save once all configs and entity_identifiers are validated
             ConfigurationManager.save_configuration_list(
@@ -406,10 +415,14 @@ class ConfigurationRESTController:
             global_config, _ = ConfigurationManager.get_full_configuration(
                 workspace_id=workspace_id, project_id=project_id
             )
-            _, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+            project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
                 project_identifier=project.identifier,
                 legacy_global_configuration=global_config,
                 legacy_task_chain_configs=[{"task": task_node, "configurations": updated_configs}],
+            )
+            ProjectConfigurationRESTController.update_configuration(
+                project_identifier=project.identifier,
+                update_configuration=project_configuration,
             )
             TrainingConfigurationRESTController.update_configuration(
                 project_identifier=project.identifier,
