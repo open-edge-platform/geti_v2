@@ -44,8 +44,8 @@ const MAX_NUMBER_OF_DISPLAYED_WORKSPACES = 6;
 const usePinnedCollapsedWorkspaces = () => {
     const navigate = useNavigate();
     const { organizationId } = useOrganizationIdentifier();
-    const { workspaces, workspaceId: selectedWorkspaceId } = useWorkspaces();
 
+    const { workspaces, workspaceId: selectedWorkspaceId } = useWorkspaces();
     const [pinnedWorkspaces, collapsedWorkspaces, dispatch] = usePinnedCollapsedItems(
         workspaces,
         selectedWorkspaceId,
@@ -86,7 +86,6 @@ const usePinnedCollapsedWorkspaces = () => {
 
 export const WorkspacesTabs = (): JSX.Element => {
     const { organizationId } = useOrganizationIdentifier();
-
     const {
         workspaces,
         selectWorkspace,

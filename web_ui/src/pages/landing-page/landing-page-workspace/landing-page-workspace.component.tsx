@@ -1,15 +1,14 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Flex, View } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
-import { isEmpty, isEqual } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 
 import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
 import { ProjectSortingOptions, ProjectsQueryOptions } from '../../../core/projects/services/project-service.interface';
-import { useLastWorkspace } from '../../../hooks/use-last-workspace/use-last-workspace.hook';
 import { useProjectsImportProvider } from '../../../providers/projects-import-provider/projects-import-provider.component';
 import { useWorkspaceIdentifier } from '../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { NotFound } from '../../../shared/components/not-found/not-found.component';
