@@ -96,7 +96,6 @@ def initialize_logger(package_name: str, use_async: bool = True, logging_format:
     :param logging_format: optional, logging format to use instead of the default one
     :return: initialized logger
     """
-
     logger = logging.getLogger(package_name)
     logger.addFilter(SanitizeLogFilter())
     logging_config_dir = os.getenv("LOGGING_CONFIG_DIR", DEFAULT_CONFIG_DIR)
