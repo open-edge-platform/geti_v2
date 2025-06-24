@@ -18,14 +18,18 @@ from communication.exceptions import (
     InvalidConfigurationException,
     TaskNotFoundException,
 )
+from configuration import ConfigurableComponentRegister
 from features.feature_flag import FeatureFlag
 
 import iai_core.configuration.helper as otx_config_helper
 from geti_fastapi_tools.exceptions import InvalidEntityIdentifierException
 from geti_types import ID, ProjectIdentifier
-from iai_core.configuration.elements.component_parameters import ComponentEntityIdentifier
+from iai_core.configuration.elements.component_parameters import ComponentEntityIdentifier, ComponentParameters
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
+from iai_core.configuration.elements.default_model_parameters import DefaultModelParameters
 from iai_core.configuration.elements.entity_identifiers import EntityIdentifier, ModelEntityIdentifier
+from iai_core.configuration.elements.hyper_parameters import HyperParameters
+from iai_core.configuration.enums import ConfigurableParameterType
 from iai_core.configuration.interfaces.configurable_parameters_interface import (
     IConfigurableParameterContainer,
     NullConfigurableParameterContainer,
@@ -177,9 +181,36 @@ class ConfigurationValidator:
             set for the configurable parameters
         :return: Validated configuration object, holding the new values
         """
-        latest_config = ConfigurationValidator._get_latest_config_by_entity_identifier(
-            entity_identifier=entity_identifier
-        )
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
+            project_identifier = ProjectIdentifier(
+                workspace_id=entity_identifier.workspace_id, project_id=entity_identifier.project_id
+            )
+            if entity_identifier.type is ConfigurableParameterType.HYPER_PARAMETERS:
+                latest_config: IConfigurableParameterContainer[ConfigurableParameters] = HyperParameters(
+                    id_=ID("000000000000000000000001"),
+                    workspace_id=project_identifier.workspace_id,
+                    project_id=project_identifier.project_id,
+                    model_storage_id=ID("000000000000000000000001"),  # model_storage_id is only used in legacy configs
+                    data=DefaultModelParameters(),
+                )
+            else:
+                component = entity_identifier.component  # type: ignore[attr-defined]
+                task_node = TaskNodeRepo(project_identifier).get_by_id(entity_identifier.task_id)  # type: ignore[attr-defined]
+                task_type = task_node.task_properties.task_type
+                register_data = ConfigurableComponentRegister[component.name].value
+                config_type = register_data.get_configuration_type(task_type=task_type)
+                latest_config = ComponentParameters(
+                    id_=ID("000000000000000000000001"),
+                    workspace_id=project_identifier.workspace_id,
+                    project_id=project_identifier.project_id,
+                    task_id=task_node.id_,
+                    component=component,
+                    data=config_type(),  # type: ignore[call-arg]
+                )
+        else:
+            latest_config = ConfigurationValidator._get_latest_config_by_entity_identifier(
+                entity_identifier=entity_identifier
+            )
         if latest_config.data is None:
             raise ConfigurationNotFoundException(
                 f"There was an error retrieving the latest configurable parameter "
