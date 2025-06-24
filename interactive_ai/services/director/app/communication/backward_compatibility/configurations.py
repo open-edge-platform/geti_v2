@@ -173,26 +173,12 @@ class ConfigurationsBackwardCompatibility:
             # only contains auto_training enable parameter
             legacy_task_node = legacy_types["task_node"](auto_training=project_task_config.auto_training.enable)
 
-            task_filtering_parameters = task_training_config.global_parameters.dataset_preparation.filtering
-            legacy_pipeline_dataset_manager = legacy_types["pipeline_dataset_manager"](
-                maximum_number_of_annotations=(
-                    task_filtering_parameters.max_annotation_objects.max_annotation_objects
-                    if task_filtering_parameters.max_annotation_objects.enable
-                    else -1
-                ),
-                minimum_annotation_size=(
-                    task_filtering_parameters.min_annotation_pixels.min_annotation_pixels
-                    if task_filtering_parameters.min_annotation_pixels.enable
-                    else -1
-                ),
-            )
-
             legacy_configurable_parameters = [
                 HyperParameters(
                     id_=ID("000000000000000000000001"),
                     workspace_id=project_identifier.workspace_id,
                     project_id=project_identifier.project_id,
-                    model_storage_id=ID("000000000000000000000001"),  # model_storage_id is only used in legacy configuration
+                    model_storage_id=ID("000000000000000000000001"),  # model_storage_id is only used in legacy configs
                     data=legacy_hyper_parameters,
                 ),
                 ComponentParameters(
@@ -237,7 +223,7 @@ class ConfigurationsBackwardCompatibility:
         return legacy_global_config, legacy_task_chain_configs
 
     @classmethod
-    def forward_mapping(  # noqa: PLR0915, C901
+    def forward_mapping(  # noqa: C901
         cls,
         project_identifier: ProjectIdentifier,
         legacy_global_configuration: list[IConfigurableParameterContainer],
@@ -262,7 +248,8 @@ class ConfigurationsBackwardCompatibility:
         # Extract dataset management config from global configuration
         dataset_management_config = next(
             (
-                config for config in legacy_global_configuration
+                config
+                for config in legacy_global_configuration
                 if isinstance(config, DatasetManagementConfig)
                 or (getattr(config, "component", None) == ComponentType.PIPELINE_DATASET_MANAGER)
             ),
@@ -283,7 +270,6 @@ class ConfigurationsBackwardCompatibility:
             legacy_subset_manager = None
             legacy_dataset_counter = None
             legacy_task_node = None
-            legacy_pipeline_dataset_manager = None
             for config in legacy_configs:
                 component_type = getattr(config, "component", None)
                 if isinstance(config, HyperParameters | DefaultModelParameters):
@@ -300,11 +286,6 @@ class ConfigurationsBackwardCompatibility:
                     legacy_dataset_counter = config
                 elif isinstance(config, legacy_config_types["task_node"]) or component_type is ComponentType.TASK_NODE:
                     legacy_task_node = config
-                elif (
-                    isinstance(config, legacy_config_types["pipeline_dataset_manager"])
-                    or component_type is ComponentType.PIPELINE_DATASET_MANAGER
-                ):
-                    legacy_pipeline_dataset_manager = config
             if not legacy_hyperparams:
                 legacy_hyperparams = DefaultModelParameters()
 

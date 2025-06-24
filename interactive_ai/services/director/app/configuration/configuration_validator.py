@@ -10,17 +10,18 @@ director and resource microservice
 import logging
 from typing import Any
 
+from geti_feature_tools import FeatureFlagProvider
+
 from communication.exceptions import (
     ConfigurationMismatchException,
     ConfigurationNotFoundException,
     InvalidConfigurationException,
     TaskNotFoundException,
 )
+from features.feature_flag import FeatureFlag
 
 import iai_core.configuration.helper as otx_config_helper
-from features.feature_flag import FeatureFlag
 from geti_fastapi_tools.exceptions import InvalidEntityIdentifierException
-from geti_feature_tools import FeatureFlagProvider
 from geti_types import ID, ProjectIdentifier
 from iai_core.configuration.elements.component_parameters import ComponentEntityIdentifier
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters

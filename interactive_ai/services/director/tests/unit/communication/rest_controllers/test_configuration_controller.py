@@ -753,6 +753,11 @@ class TestConfigurationRESTController:
                 "update_configuration",
                 return_value=None,
             ) as mock_update_project_config,
+            patch.object(
+                TrainingConfigurationRESTController,
+                "update_configuration",
+                return_value=None,
+            ) as mock_update_training_config,
         ):
             # Act
             result = configuration_controller.set_global_configuration(
@@ -774,6 +779,10 @@ class TestConfigurationRESTController:
         mock_update_project_config.assert_called_once_with(
             project_identifier=fxt_task_chain_project.identifier,
             update_configuration=dummy_project_config,
+        )
+        mock_update_training_config.assert_called_once_with(
+            project_identifier=fxt_task_chain_project.identifier,
+            update_configuration=dummy_training_configs[0],
         )
         compare(result, success_response_rest(), ignore_eq=True)
 
