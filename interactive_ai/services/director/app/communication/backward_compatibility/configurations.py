@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from typing import Any, cast
+from typing import Any
 
 from geti_configuration_tools.hyperparameters import (
     AugmentationParameters,
@@ -89,16 +89,19 @@ class ConfigurationsBackwardCompatibility:
             component=ComponentType.PROJECT_ACTIVE_LEARNING,
             data=ActiveLearningProjectConfig(header="Active Learning"),
         )
+        dataset_management_config = DatasetManagementConfig(header="Dataset Management")
+        dataset_management_config.minimum_annotation_size = (
+            filtering_parameters.min_annotation_pixels.min_annotation_pixels
+        )
+        dataset_management_config.maximum_number_of_annotations = (
+            filtering_parameters.max_annotation_objects.max_annotation_objects
+        )
         dataset_config = ComponentParameters(
             id_=ID("legacy_dataset_management_config"),
             workspace_id=project_identifier.workspace_id,
             project_id=project_identifier.project_id,
             component=ComponentType.PIPELINE_DATASET_MANAGER,
-            data=DatasetManagementConfig(header="Dataset Management"),
-        )
-        dataset_config.minimum_annotation_size = filtering_parameters.min_annotation_pixels.min_annotation_pixels
-        dataset_config.maximum_number_of_annotations = (
-            filtering_parameters.max_annotation_objects.max_annotation_objects
+            data=dataset_management_config,
         )
 
         legacy_global_config: list[IConfigurableParameterContainer[Any]] = [
@@ -185,7 +188,7 @@ class ConfigurationsBackwardCompatibility:
                     id_=ID("legacy_hyper_parameters"),
                     workspace_id=project_identifier.workspace_id,
                     project_id=project_identifier.project_id,
-                    model_storage_id=ID(), # model_storage_id is only used in legacy configuration
+                    model_storage_id=ID(),  # model_storage_id is only used in legacy configuration
                     data=legacy_hyper_parameters,
                 ),
                 ComponentParameters(
