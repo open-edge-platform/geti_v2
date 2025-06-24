@@ -13,13 +13,13 @@ log_level: "INFO"
 desired_disk_free: "30GB"
 render_gid: 0
 accelerator:
-  type: 'cpu'
-  name: ''
+  type: "cpu"
+  name: ""
 dataStoragePath: ""
 
 global:
-  serverAddress: ''
-  grafana_enabled: ''
+  serverAddress: ""
+  grafana_enabled: ""
   s3_credentials_provider: local
   mongodb_credentials_provider: local
   mongodb_address: ""
@@ -68,6 +68,7 @@ feature_flags_data:
   "FEATURE_FLAG_REQ_ACCESS": "false"
   "FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS": "false"
   "FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING": "false"
+  "FEATURE_FLAG_LABELS_REORDERING": "true"
 
 bucket_name_compileddatasetshards: compileddatasetshards
 bucket_name_images: images
