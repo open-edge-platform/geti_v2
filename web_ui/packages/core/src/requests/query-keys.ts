@@ -6,7 +6,10 @@ import {
     PredictionMode,
 } from '../../../../src/core/annotations/services/prediction-service.interface';
 import { VideoPaginationOptions } from '../../../../src/core/annotations/services/video-pagination-options.interface';
-import { TrainingConfigurationQueryParameters } from '../../../../src/core/configurable-parameters/services/api-model-config-parameters-service';
+import {
+    TrainedModelConfigurationQueryParameters,
+    TrainingConfigurationQueryParameters,
+} from '../../../../src/core/configurable-parameters/services/api-model-config-parameters-service';
 import { CreditAccountIdentifier } from '../../../../src/core/credits/credits.interface';
 import {
     GetTransactionsAggregatesQueryOptions,
@@ -505,8 +508,15 @@ const CONFIGURATION_PARAMETERS = {
             projectIdentifier.workspaceId,
             projectIdentifier.projectId,
             queryParameters?.taskId,
-            queryParameters?.modelId,
             queryParameters?.modelManifestId,
+        ] as const,
+    TRAINED_MODEL: (projectIdentifier: ProjectIdentifier, queryParameters: TrainedModelConfigurationQueryParameters) =>
+        [
+            'model-configuration',
+            projectIdentifier.organizationId,
+            projectIdentifier.workspaceId,
+            projectIdentifier.projectId,
+            queryParameters.modelId,
         ] as const,
 };
 

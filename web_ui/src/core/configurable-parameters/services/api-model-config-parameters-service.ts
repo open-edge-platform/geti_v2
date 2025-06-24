@@ -11,9 +11,14 @@ import {
     ConfigurableParametersReconfigureDTO,
     ConfigurableParametersTaskChainDTO,
 } from '../dtos/configurable-parameters.interface';
-import { ProjectConfigurationDTO } from '../dtos/configuration.interface';
+import {
+    ModelTrainingConfigurationDTO,
+    ProjectConfigurationDTO,
+    TrainingConfigurationDTO,
+} from '../dtos/configuration.interface';
 import { ConfigurableParametersTaskChain } from './configurable-parameters.interface';
 import {
+    ModelTrainingConfiguration,
     ProjectConfiguration,
     ProjectConfigurationUploadPayload,
     TrainingConfiguration,
@@ -24,15 +29,20 @@ import {
     getModelConfigEntity,
     getProjectConfigurationEntity,
     getProjectConfigurationUploadPayloadDTO,
+    getTrainedModelConfigurationEntity,
     getTrainingConfigurationEntity,
     getTrainingConfigurationUpdatePayloadDTO,
 } from './utils';
 
-export type TrainingConfigurationQueryParameters = Partial<{
+export interface TrainingConfigurationQueryParameters {
     taskId: string;
     modelManifestId: string | null;
+}
+
+export interface TrainedModelConfigurationQueryParameters {
     modelId: string;
-}>;
+}
+
 export type ProjectConfigurationQueryParameters = { taskId?: string };
 
 export interface CreateApiModelConfigParametersService {
@@ -73,6 +83,11 @@ export interface CreateApiModelConfigParametersService {
         payload: TrainingConfigurationUpdatePayload,
         queryParameters?: TrainingConfigurationQueryParameters
     ) => Promise<void>;
+
+    getTrainedModelConfiguration: (
+        projectIdentifier: ProjectIdentifier,
+        queryParameters: TrainedModelConfigurationQueryParameters
+    ) => Promise<ModelTrainingConfiguration>;
 }
 
 export const createApiModelConfigParametersService: CreateApiService<CreateApiModelConfigParametersService> = (
@@ -113,15 +128,33 @@ export const createApiModelConfigParametersService: CreateApiService<CreateApiMo
         projectIdentifier,
         queryParameters
     ) => {
-        const { data } = await instance.get(router.CONFIGURATION.TRAINING(projectIdentifier), {
-            params: {
-                task_id: queryParameters?.taskId,
-                model_id: queryParameters?.modelId,
-                model_manifest_id: queryParameters?.modelManifestId,
-            },
-        });
+        const { data } = await instance.get<TrainingConfigurationDTO>(
+            router.CONFIGURATION.TRAINING(projectIdentifier),
+            {
+                params: {
+                    task_id: queryParameters?.taskId,
+                    model_manifest_id: queryParameters?.modelManifestId,
+                },
+            }
+        );
 
         return getTrainingConfigurationEntity(data);
+    };
+
+    const getTrainedModelConfiguration: CreateApiModelConfigParametersService['getTrainedModelConfiguration'] = async (
+        projectIdentifier,
+        queryParameters
+    ) => {
+        const { data } = await instance.get<ModelTrainingConfigurationDTO>(
+            router.CONFIGURATION.TRAINING(projectIdentifier),
+            {
+                params: {
+                    model_id: queryParameters.modelId,
+                },
+            }
+        );
+
+        return getTrainedModelConfigurationEntity(data);
     };
 
     const getProjectConfiguration: CreateApiModelConfigParametersService['getProjectConfiguration'] = async (
@@ -142,7 +175,6 @@ export const createApiModelConfigParametersService: CreateApiService<CreateApiMo
         await instance.patch(router.CONFIGURATION.TRAINING(projectIdentifier), payloadDTO, {
             params: {
                 task_id: queryParameters?.taskId,
-                model_id: queryParameters?.modelId,
                 model_manifest_id: queryParameters?.modelManifestId,
             },
         });
@@ -172,5 +204,7 @@ export const createApiModelConfigParametersService: CreateApiService<CreateApiMo
 
         getTrainingConfiguration,
         updateTrainingConfiguration,
+
+        getTrainedModelConfiguration,
     };
 };
