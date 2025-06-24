@@ -92,9 +92,13 @@ class ConfigurationsBackwardCompatibility:
         dataset_management_config = DatasetManagementConfig(header="Dataset Management")
         dataset_management_config.minimum_annotation_size = (
             filtering_parameters.min_annotation_pixels.min_annotation_pixels
+            if filtering_parameters.min_annotation_pixels.enable
+            else -1
         )
         dataset_management_config.maximum_number_of_annotations = (
             filtering_parameters.max_annotation_objects.max_annotation_objects
+            if filtering_parameters.max_annotation_objects.enable
+            else -1
         )
         dataset_config = ComponentParameters(
             id_=ID("000000000000000000000001"),

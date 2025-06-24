@@ -18,7 +18,9 @@ from communication.exceptions import (
 )
 
 import iai_core.configuration.helper as otx_config_helper
+from features.feature_flag import FeatureFlag
 from geti_fastapi_tools.exceptions import InvalidEntityIdentifierException
+from geti_feature_tools import FeatureFlagProvider
 from geti_types import ID, ProjectIdentifier
 from iai_core.configuration.elements.component_parameters import ComponentEntityIdentifier
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
@@ -131,7 +133,10 @@ class ConfigurationValidator:
                     task_id=task_id,
                 )
                 task_model_storages_ids = [ms.id_ for ms in task_model_storages]
-                if model_storage_id not in task_model_storages_ids:
+
+                # Only validate model storage when the feature flag for new configurable parameters is not enabled
+                ff_new_configs = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS)
+                if not ff_new_configs and model_storage_id not in task_model_storages_ids:
                     raise InvalidEntityIdentifierException(
                         f"Model storage with id {model_storage_id} does not belong to task with id {task_id}"
                     )
