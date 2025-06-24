@@ -23,6 +23,7 @@ from active_learning.entities import ActiveLearningProjectConfig
 from configuration import ConfigurableComponentRegister
 
 from geti_types import ID, ProjectIdentifier
+from iai_core.configuration.elements.component_parameters import ComponentParameters
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
 from iai_core.configuration.elements.dataset_manager_parameters import DatasetManagementConfig
 from iai_core.configuration.elements.default_model_parameters import DefaultModelParameters
@@ -81,15 +82,22 @@ class ConfigurationsBackwardCompatibility:
         filtering_parameters = first_task_global_parameters.dataset_preparation.filtering
 
         # active_learning_config is fully deprecated, use default values
-        active_learning_config = cast(
-            "IConfigurableParameterContainer[Any]", ActiveLearningProjectConfig(header="Active Learning")
+        active_learning_config = ComponentParameters(
+            id_=ID("legacy_active_learning_config"),
+            workspace_id=project_identifier.workspace_id,
+            project_id=project_identifier.project_id,
+            component=ComponentType.PROJECT_ACTIVE_LEARNING,
+            data=ActiveLearningProjectConfig(header="Active Learning"),
         )
-        dataset_config = cast(
-            "IConfigurableParameterContainer[Any]", DatasetManagementConfig(header="Dataset Management")
+        dataset_config = ComponentParameters(
+            id_=ID("legacy_dataset_management_config"),
+            workspace_id=project_identifier.workspace_id,
+            project_id=project_identifier.project_id,
+            component=ComponentType.PIPELINE_DATASET_MANAGER,
+            data=DatasetManagementConfig(header="Dataset Management"),
         )
-        dataset_config_obj = cast("DatasetManagementConfig", dataset_config)
-        dataset_config_obj.minimum_annotation_size = filtering_parameters.min_annotation_pixels.min_annotation_pixels
-        dataset_config_obj.maximum_number_of_annotations = (
+        dataset_config.minimum_annotation_size = filtering_parameters.min_annotation_pixels.min_annotation_pixels
+        dataset_config.maximum_number_of_annotations = (
             filtering_parameters.max_annotation_objects.max_annotation_objects
         )
 
@@ -100,7 +108,8 @@ class ConfigurationsBackwardCompatibility:
 
         legacy_task_chain_configs = []
         for task_training_config in all_training_configurations:
-            task_node = TaskNodeRepo(project_identifier).get_by_id(ID(task_training_config.task_id))
+            task_id = ID(task_training_config.task_id)
+            task_node = TaskNodeRepo(project_identifier).get_by_id(task_id)
             project_task_config = project_configuration.get_task_config(task_training_config.task_id)
 
             legacy_hyper_parameters = DefaultModelParameters()
@@ -172,12 +181,54 @@ class ConfigurationsBackwardCompatibility:
             )
 
             legacy_configurable_parameters = [
-                legacy_hyper_parameters,
-                legacy_subset_manager,
-                legacy_dataset_counter,
-                legacy_task_active_learning,
-                legacy_task_node,
-                legacy_pipeline_dataset_manager,
+                HyperParameters(
+                    id_=ID("legacy_hyper_parameters"),
+                    workspace_id=project_identifier.workspace_id,
+                    project_id=project_identifier.project_id,
+                    model_storage_id=ID(), # model_storage_id is only used in legacy configuration
+                    data=legacy_hyper_parameters,
+                ),
+                ComponentParameters(
+                    id_=ID("legacy_subset_manager"),
+                    workspace_id=project_identifier.workspace_id,
+                    project_id=project_identifier.project_id,
+                    task_id=task_id,
+                    component=ComponentType.SUBSET_MANAGER,
+                    data=legacy_subset_manager,
+                ),
+                ComponentParameters(
+                    id_=ID("legacy_dataset_counter"),
+                    workspace_id=project_identifier.workspace_id,
+                    project_id=project_identifier.project_id,
+                    task_id=task_id,
+                    component=ComponentType.DATASET_COUNTER,
+                    data=legacy_dataset_counter,
+                ),
+                ComponentParameters(
+                    id_=ID("legacy_dataset_counter"),
+                    workspace_id=project_identifier.workspace_id,
+                    project_id=project_identifier.project_id,
+                    task_id=task_id,
+                    component=ComponentType.TASK_ACTIVE_LEARNING,
+                    data=legacy_task_active_learning,
+                ),
+                ComponentParameters(
+                    id_=ID("legacy_task_node_config"),
+                    workspace_id=project_identifier.workspace_id,
+                    project_id=project_identifier.project_id,
+                    task_id=task_id,
+                    component=ComponentType.TASK_NODE,
+                    data=legacy_task_node,
+                ),
+                # Note: task dataset manager parameters are an addition and are not present in legacy configurations
+                ComponentParameters(
+                    id_=ID("task_dataset_manager"),
+                    workspace_id=project_identifier.workspace_id,
+                    project_id=project_identifier.project_id,
+                    task_id=task_id,
+                    component=ComponentType.PIPELINE_DATASET_MANAGER,
+                    data=legacy_pipeline_dataset_manager,
+                ),
             ]
             legacy_task_chain_configs.append(
                 {
