@@ -159,6 +159,7 @@ jobs:
       AWS_ROLE: ${{ secrets.AWS_ROLE }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
       REGISTRY: ${{ secrets.REGISTRY }}
+      MANIFEST_REGISTRY: ${{ secrets.MANIFEST_REGISTRY }}
     uses: ./.github/workflows/component.yml
     if: ${{ !contains(needs.get-vars.outputs.filtered-components-list, '[]') }}
     strategy:
@@ -172,6 +173,7 @@ jobs:
       component_dir: ${{ matrix.component }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
       ref: ${{ needs.get-vars.outputs.checkout_ref }}
+      manifest_registry: ${{ github.event.inputs.manifest_registry }}
 
   web-ui-workflow:
     name: Web UI workflow
@@ -183,6 +185,7 @@ jobs:
       AWS_ROLE: ${{ secrets.AWS_ROLE }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
       REGISTRY: ${{ secrets.REGISTRY }}
+      MANIFEST_REGISTRY: ${{ secrets.MANIFEST_REGISTRY }}
     uses: ./.github/workflows/web-ui.yml
     if: ${{ contains(needs.get-vars.outputs.components-list, 'web_ui') }}
     with:

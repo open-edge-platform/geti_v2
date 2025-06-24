@@ -22,6 +22,8 @@ on:
         required: true
       REGISTRY:
         required: true
+      MANIFEST_REGISTRY:
+        required: true
 
 permissions: {} # No permissions by default on workflow level
 
@@ -229,6 +231,7 @@ jobs:
       AWS_ROLE: ${{ secrets.AWS_ROLE }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
       REGISTRY: ${{ secrets.REGISTRY }}
+      MANIFEST_REGISTRY: ${{ secrets.MANIFEST_REGISTRY }}
     uses: ./.github/workflows/component.yml
     with:
       build_version: ${{ inputs.build_version }}
