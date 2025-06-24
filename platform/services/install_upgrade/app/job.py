@@ -5,7 +5,6 @@ import asyncio
 import logging
 import os
 import re
-from contextlib import suppress
 
 import jinja2
 import yaml
@@ -15,14 +14,16 @@ from oras.client import OrasClient
 
 from error import FailedJobError, HelmChartDeployError, ParseDurationError, TimeoutJobError, UnknownJobError
 
-logging.basicConfig(level=logging.INFO)
+LOGGER_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+LOGGER_FORMAT = "%(asctime)s,%(msecs)03d [%(levelname)-8s] [%(name)s:%(lineno)d]: %(message)s"
+logging.basicConfig(level=logging.INFO, format=LOGGER_FORMAT, datefmt=LOGGER_DATE_FORMAT, force=True)
 logger = logging.getLogger(__name__)
 
 GETI_REGISTRY = os.getenv("GETI_REGISTRY", "")
 GETI_MANIFEST_VERSION = os.getenv("GETI_MANIFEST_VERSION", "")
 DATA_FOLDER = os.getenv("DATA_FOLDER", "")
 USERNAME = os.getenv("USERNAME", "")
-PASSWORD = os.getenv("PASSWORD", "")
+PASSWORD_HASH = os.getenv("PASSWORD_HASH", "")
 TLS_CERT = os.getenv("TLS_CERT", "")
 TLS_KEY = os.getenv("TLS_KEY", "")
 PROXY_ENABLED = os.getenv("PROXY_ENABLED", "")
@@ -107,7 +108,7 @@ async def render_jinja_template(template_string: str) -> dict:
     data = {
         "data_folder": DATA_FOLDER,
         "username": USERNAME,
-        "password": PASSWORD,
+        "password_hash": PASSWORD_HASH,
         "tls_cert_file": TLS_CERT,
         "tls_key_file": TLS_KEY,
         "proxy_enabled": PROXY_ENABLED,
@@ -292,7 +293,6 @@ async def run() -> None:
         app,
         host="0.0.0.0",  # noqa S104
         port=8000,
-        log_level="debug",
         access_log=True,
     )
 

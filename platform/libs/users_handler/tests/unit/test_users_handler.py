@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import base64
 import os
 import secrets
 from unittest import mock
@@ -26,8 +25,7 @@ def random_user():
     user_id = TEST_USER_PREFIX + secrets.token_urlsafe(8)
     name = f"Test User {user_id}"
     mail = f"{user_id}@example.com"
-    passwd = utils_string.random_str(32)
-    password = base64.urlsafe_b64encode(passwd.encode()).decode()
+    password = utils_string.random_str(32)
     return name, user_id, mail, password
 
 

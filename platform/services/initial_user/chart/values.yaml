@@ -20,8 +20,6 @@ global:
   enable_local_image_pull_secret: false
   logging_config_dir: "/mnt/logging_config"
   ldap_service_user_secret_name: "impt-ldap-service-user"
-  initial_admin_user_login: ""
-  initial_admin_user_password: ""
   registry_address: ""
   docker_namespace: geti
   running_on_vm: false

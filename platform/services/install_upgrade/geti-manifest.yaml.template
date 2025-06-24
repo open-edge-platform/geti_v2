@@ -133,8 +133,11 @@ spec:
       dataStoragePath: {{ data_folder }}
     global:
       registry_address: "$REGISTRY"
-      initial_admin_user_login: "{{ username }}"
-      initial_admin_user_password: "{{ password }}"
+      login: "{{ username }}"
+      passwordHash: "{{ password_hash }}"
+      dataFolder: {{ data_folder }}
+      tlsCert: {{ tls_cert_file }}
+      tlsKey: {{ tls_key_file }}
       installation_profile: "standard"
       proxy:
         enabled: "{{ proxy_enabled }}"

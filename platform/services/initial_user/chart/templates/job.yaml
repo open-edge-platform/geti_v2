@@ -60,9 +60,15 @@ spec:
           {{- toYaml .Values.securityContext | nindent 12 }}
         env:
         - name: INITIAL_USER_EMAIL
-          value: {{ .Values.global.initial_admin_user_login }}
+          valueFrom:
+            secretKeyRef:
+              key: login
+              name: geti-install-data
         - name: INITIAL_USER_PASSWORD
-          value: "{{ .Values.global.initial_admin_user_password }}"
+          valueFrom:
+            secretKeyRef:
+              key: passwordHash
+              name: geti-install-data
         - name: LDAP_ADMIN_USER
           valueFrom:
             secretKeyRef:

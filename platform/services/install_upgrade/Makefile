@@ -31,6 +31,6 @@ oras-push: prepare-manifest
 		geti-manifest.yaml
 
 prepare-manifest: get-oras
-	VERSION=2.11.0-test-20250606102739 \
+	VERSION=2.11.0-test-20250625104705 \
 	REGISTRY=$(REGISTRY) \
 	envsubst < geti-manifest.yaml.template > geti-manifest.yaml

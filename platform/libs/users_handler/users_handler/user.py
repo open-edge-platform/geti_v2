@@ -66,6 +66,10 @@ class User(UserEntity):
         """
         return cls(uid=body["id"], name=body["name"])
 
+    @abc.abstractmethod
+    def __hash__(self):
+        raise NotImplementedError
+
 
 class NullUser(User):
     """Representation of 'user not found'"""

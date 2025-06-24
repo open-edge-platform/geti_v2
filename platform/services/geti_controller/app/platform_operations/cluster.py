@@ -181,12 +181,6 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
                 ),
             ),
             V1EnvVar(
-                name="PASSWORD",
-                value_from=V1EnvVarSource(
-                    secret_key_ref=V1SecretKeySelector(name="geti-install-data", key="password", optional=True)
-                ),
-            ),
-            V1EnvVar(
                 name="PASSWORD_HASH",
                 value_from=V1EnvVarSource(
                     secret_key_ref=V1SecretKeySelector(name="geti-install-data", key="passwordHash", optional=True)

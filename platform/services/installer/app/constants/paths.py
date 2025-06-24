@@ -14,7 +14,6 @@
 import sys
 from pathlib import Path
 
-from constants.charts import CRDS
 from constants.platform import INTERNAL_REGISTRY_ADDRESS
 
 ###
@@ -72,22 +71,6 @@ DATA_CAN_BE_RESTORED_FLAG = ".can_be_restored.flag"
 TEMPLATES_DIR = f"{getattr(sys, '_MEIPASS', '..')}/templates"
 VERSION_YAML_PATH = f"{getattr(sys, '_MEIPASS', '.')}/version.yaml"
 DATA_FOLDER = "/data"
-
-# TODO remove the paths below when GetiController handles the installtion
-PLATFORM_CRDS_PATHS: list[str] = [
-    f"{CRDS.directory}/charts/cert-manager-{CRDS.name}",
-    f"{CRDS.directory}/charts/flyte-{CRDS.name}",
-    f"{CRDS.directory}/charts/modelmesh-serving-{CRDS.name}",
-]
-
-SIDECAR_ISTIO_CRDS_PATHS: list[str] = [
-    f"{CRDS.directory}/charts/istio-{CRDS.name}",
-]
-
-AMBIENT_ISTIO_CRDS_PATHS: list[str] = [
-    f"{CRDS.directory}/charts/ambient-istio-{CRDS.name}",
-    f"{CRDS.directory}/charts/k8s-gateway-api-{CRDS.name}",
-]
 CONTAINERD_CERT_DIR = "/etc/containerd/certs.d"
 CONTAINERD_CERT_INTERNAL_REGISTRY = f"{CONTAINERD_CERT_DIR}/{INTERNAL_REGISTRY_ADDRESS}"
 HOSTS_TOML_PATH = Path(f"{CONTAINERD_CERT_INTERNAL_REGISTRY}/hosts.toml")

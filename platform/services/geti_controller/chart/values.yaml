@@ -24,6 +24,13 @@ global:
     allowed_methods: []
     max_age: 86400s
     allow_credentials: false
+  proxy:
+    enabled: false
+  login: ""
+  passwordHash: ""
+  tlsCert: ""
+  tlsKey: ""
+  dataFolder: "/data"
 
 replicaCount: 1
 
@@ -81,11 +88,7 @@ timeout: 360s
 
 configuration:
   secretName: geti-install-data
-  login: ""
-  passwordHash: ""
   dataFolder: "/data"
-  tlsCert: ""
-  tlsKey: ""
 
 mountPath: "/data"
 
