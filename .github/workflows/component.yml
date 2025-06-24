@@ -56,7 +56,7 @@ jobs:
     env:
       TAG: ${{ inputs.build_version || github.sha }}
       REGISTRY: ${{ secrets.REGISTRY }}
-      MANIFEST_REGISTRY: ${{ secrets.MANIFEST_REGISTRY }}
+      MANIFEST_REGISTRY: ${{ secrets.REGISTRY }}
       PYTHON_BUILDER_IMAGE: builder-images/python-builder:v0.1
       GO_BUILDER_IMAGE: builder-images/go-builder:v0.1
     steps:
