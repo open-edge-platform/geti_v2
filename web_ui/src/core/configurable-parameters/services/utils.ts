@@ -356,13 +356,13 @@ export const getTrainingConfigurationUpdatePayloadDTO = (
     };
 
     if (payload.datasetPreparation !== undefined && !isEmpty(payload.datasetPreparation)) {
-        if (payload.datasetPreparation.subsetSplit !== undefined && !isEmpty(payload.datasetPreparation.subsetSplit)) {
+        if (!isEmpty(payload.datasetPreparation.subsetSplit)) {
             trainingConfigurationUpdatePayloadDTO.dataset_preparation = {
                 subset_split: payload.datasetPreparation.subsetSplit.map(getKeyValueParameter),
             };
         }
 
-        if (payload.datasetPreparation.filtering !== undefined && !isEmpty(payload.datasetPreparation.filtering)) {
+        if (!isEmpty(payload.datasetPreparation.filtering)) {
             const filteringPayload = getObjectEntitiesInKeyValueFormat(payload.datasetPreparation.filtering);
 
             trainingConfigurationUpdatePayloadDTO.dataset_preparation = {
@@ -371,10 +371,7 @@ export const getTrainingConfigurationUpdatePayloadDTO = (
             };
         }
 
-        if (
-            payload.datasetPreparation.augmentation !== undefined &&
-            !isEmpty(payload.datasetPreparation.augmentation)
-        ) {
+        if (!isEmpty(payload.datasetPreparation.augmentation)) {
             const augmentationPayload = getObjectEntitiesInKeyValueFormat(payload.datasetPreparation.augmentation);
 
             trainingConfigurationUpdatePayloadDTO.dataset_preparation = {
@@ -384,7 +381,7 @@ export const getTrainingConfigurationUpdatePayloadDTO = (
         }
     }
 
-    if (payload.training !== undefined && !isEmpty(payload.training)) {
+    if (!isEmpty(payload.training)) {
         trainingConfigurationUpdatePayloadDTO.training = payload.training.map((parameters) => {
             if (isConfigurationParameter(parameters)) {
                 return getKeyValueParameter(parameters);
@@ -394,7 +391,7 @@ export const getTrainingConfigurationUpdatePayloadDTO = (
         });
     }
 
-    if (payload.evaluation !== undefined && !isEmpty(payload.evaluation)) {
+    if (!isEmpty(payload.evaluation)) {
         trainingConfigurationUpdatePayloadDTO.evaluation = payload.evaluation.map(getKeyValueParameter);
     }
 
