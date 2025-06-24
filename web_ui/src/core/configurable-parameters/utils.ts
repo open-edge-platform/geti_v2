@@ -263,5 +263,5 @@ export const isNumberParameter = (input: unknown): input is NumberParameter => {
 };
 
 export const isConfigurationParameter = (input: unknown): input is ConfigurationParameter => {
-    return isObject(input) && 'key' in input && 'value' in input;
+    return isObject(input) && 'key' in input && 'name' in input && 'description' in input;
 };

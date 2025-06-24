@@ -382,55 +382,6 @@ export const getTrainingConfigurationUpdatePayloadDTO = (
                 augmentation: augmentationPayload,
             };
         }
-
-        /*trainingConfigurationUpdatePayloadDTO.dataset_preparation = Object.entries(payload.datasetPreparation).reduce(
-            (acc, [key, parameters]) => {
-                if (Array.isArray(parameters)) {
-                    if (isEmpty(parameters)) {
-                        return acc;
-                    }
-
-                    return {
-                        ...acc,
-                        [key]: parameters
-                            .filter((parameter) => parameter.key !== 'dataset_size')
-                            .map((parameter) => ({
-                                key: parameter.key,
-                                value: parameter.value,
-                            })),
-                    };
-                }
-
-                const parametersObject: [string, KeyValueParameter[]][] = Object.entries(parameters);
-
-                const keyValueParameters = parametersObject.reduce<Record<string, KeyValueParameter[]>>(
-                    (accLocal, [keyLocal, parametersLocal]) => {
-                        if (isEmpty(parametersLocal)) {
-                            return accLocal;
-                        }
-
-                        return {
-                            ...accLocal,
-                            [keyLocal]: parametersLocal.map((parameter) => ({
-                                key: parameter.key,
-                                value: parameter.value,
-                            })),
-                        };
-                    },
-                    {}
-                );
-
-                if (isEmpty(keyValueParameters)) {
-                    return acc;
-                }
-
-                return {
-                    ...acc,
-                    [key]: keyValueParameters,
-                };
-            },
-            {}
-        );*/
     }
 
     if (payload.training !== undefined && !isEmpty(payload.training)) {
@@ -440,15 +391,6 @@ export const getTrainingConfigurationUpdatePayloadDTO = (
             }
 
             return getObjectEntitiesInKeyValueFormat(parameters);
-
-            /*const parametersObject: [string, ConfigurationParameter[]][] = Object.entries(parameters);
-
-            return parametersObject.reduce<Record<string, KeyValueParameter[]>>((acc, [key, parametersLocal]) => {
-                return {
-                    ...acc,
-                    [key]: parametersLocal.map(getKeyValueParameter),
-                };
-            }, {});*/
         });
     }
 

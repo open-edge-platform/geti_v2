@@ -131,7 +131,7 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
                 </Flex>
             </Content>
 
-            <ButtonGroup UNSAFE_style={{ flexWrap: 'wrap' }}>
+            <ButtonGroup>
                 <Button variant={'secondary'} onPress={onClose}>
                     Cancel
                 </Button>
