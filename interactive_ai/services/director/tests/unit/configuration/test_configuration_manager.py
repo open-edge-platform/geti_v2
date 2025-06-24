@@ -445,7 +445,7 @@ class TestConfigurationManager:
                 task_id=task_id,
                 model_manifest_id=model_template_id,
             )
-            assert len(task_config) == 6
+            assert len(task_config) == 5
             expected_learning_parameters = fxt_training_configuration_task_level.hyperparameters.training
             task_learning_params = task_config[0].learning_parameters
             assert task_learning_params.learning_rate == expected_learning_parameters.learning_rate

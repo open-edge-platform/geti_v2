@@ -3271,7 +3271,7 @@ def fxt_global_config_docs():
                 "header": "Dataset management",
                 "description": "Specify parameters to control how datasets are managed in the system.",
                 "minimum_annotation_size": {
-                    "value": -1,
+                    "value": 10,
                     "default_value": -1,
                     "description": "Minimum size of a shape in pixels. Any shape smaller than this will be ignored "
                     "during training. Setting this to -1 disables the setting.",
@@ -3286,7 +3286,7 @@ def fxt_global_config_docs():
                     "max_value": 1000000,
                 },
                 "maximum_number_of_annotations": {
-                    "value": 500,
+                    "value": 1000,
                     "default_value": -1,
                     "description": "The maximum number of shapes that can be in an annotation. "
                     "Any annotations with more shapes than this number will be ignored during training. "

@@ -223,15 +223,6 @@ class ConfigurationsBackwardCompatibility:
                     component=ComponentType.TASK_NODE,
                     data=legacy_task_node,
                 ),
-                # Note: task dataset manager parameters are an addition and are not present in legacy configurations
-                ComponentParameters(
-                    id_=ID("000000000000000000000001"),
-                    workspace_id=project_identifier.workspace_id,
-                    project_id=project_identifier.project_id,
-                    task_id=task_id,
-                    component=ComponentType.PIPELINE_DATASET_MANAGER,
-                    data=legacy_pipeline_dataset_manager,
-                ),
             ]
             legacy_task_chain_configs.append(
                 {
@@ -266,7 +257,11 @@ class ConfigurationsBackwardCompatibility:
 
         # Extract dataset management config from global configuration
         dataset_management_config = next(
-            (config for config in legacy_global_configuration if isinstance(config, DatasetManagementConfig)),
+            (
+                config for config in legacy_global_configuration
+                if isinstance(config, DatasetManagementConfig)
+                or (getattr(config, "component", None) == ComponentType.PIPELINE_DATASET_MANAGER)
+            ),
             DatasetManagementConfig(header="Dataset Management"),
         )
 
@@ -311,22 +306,10 @@ class ConfigurationsBackwardCompatibility:
 
             # Create new configuration objects
             # 1. Global parameters
-            project_wide_max_annotations = dataset_management_config.maximum_number_of_annotations
-            task_wide_max_annotations = (
-                legacy_pipeline_dataset_manager.maximum_number_of_annotations
-                if legacy_pipeline_dataset_manager
-                else None
-            )
-            max_annotations = (
-                task_wide_max_annotations if task_wide_max_annotations is not None else project_wide_max_annotations
-            )
-            project_wide_min_annotations = dataset_management_config.minimum_annotation_size
-            task_wide_min_annotations = (
-                legacy_pipeline_dataset_manager.minimum_annotation_size if legacy_pipeline_dataset_manager else None
-            )
-            min_annotations = (
-                task_wide_min_annotations if task_wide_min_annotations is not None else project_wide_min_annotations
-            )
+            # Extract maximum and minimum annotation sizes from legacy global dataset management config
+            # this means that all tasks in the project will use the same values
+            max_annotations = dataset_management_config.maximum_number_of_annotations
+            min_annotations = dataset_management_config.minimum_annotation_size
             global_params = {
                 "dataset_preparation": {
                     "subset_split": {
