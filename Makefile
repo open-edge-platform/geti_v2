@@ -26,7 +26,7 @@ build-umbrella-chart: build-chart
 
 clean:
 	echo "Cleaning all projects..."	
-	@for dir in $(PROJECTS); do \
+	@for dir in $(PROJECTS) $(DISTRIB_CHARTS); do \
 		echo "Running make clean in $$dir..."; \
 		$(MAKE) -C $$dir clean; \
 	done
