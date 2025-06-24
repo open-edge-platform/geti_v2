@@ -1,0 +1,20 @@
+# Component Build Configuration
+#
+# This file optimizes CI/CD builds by configuring settings per component.
+# Components not listed here use the 'defaults' section below.
+components:
+  interactive_ai/workflows/otx_domain/trainer/otx_v2/xpu:
+    # Heavy builds requiring cleanup to fit into default GitHub runner disk space
+    cleanup_type: all
+
+  interactive_ai/workflows/otx_domain/trainer/otx_v2/gpu:
+    # Heavy builds requiring cleanup to fit into default GitHub runner disk space
+    cleanup_type: all
+
+  interactive_ai/workflows/geti_domain/project_ie:
+    integration_builder: false
+
+# Default configuration for unlisted components
+defaults:
+  cleanup_type: none
+  integration_builder: true

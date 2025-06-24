@@ -5,9 +5,7 @@ import { useState } from 'react';
 
 import { Button, ButtonGroup, View } from '@geti/ui';
 import { Alert } from '@geti/ui/icons';
-import { v4 as uuidv4 } from 'uuid';
 
-import { KeypointNode } from '../../../../core/annotations/shapes.interface';
 import { Label } from '../../../../core/labels/label.interface';
 import { useProjectActions } from '../../../../core/projects/hooks/use-project-actions.hook';
 import { KeypointTask, Task, TaskMetadata } from '../../../../core/projects/task.interface';
@@ -21,22 +19,10 @@ import { UnsavedChangesDialog } from '../../../../shared/components/unsaved-chan
 import { isNonEmptyString } from '../../../../shared/utils';
 import { InfoSection } from '../../../create-project/components/info-section/info-section.component';
 import { TemplateManager } from '../../../create-project/components/pose-template/template-manager.component';
-import { EdgeLine, getProjectTypeMetadata, TemplateState } from '../../../create-project/components/pose-template/util';
+import { getProjectTypeMetadata } from '../../../create-project/components/pose-template/util';
 import { getLabelsNamesErrors } from '../../../create-project/utils';
+import { getInitialKeypointStructure } from '../../../utils';
 import { useProject } from '../../providers/project-provider/project-provider.component';
-
-const hasEqualLabelId = (id: string) => (point: KeypointNode) => point.label.id === id;
-
-const getInitialKeypointStructure = ({ keypointStructure: { edges, positions } }: KeypointTask): TemplateState => {
-    const linkedEdged = edges.map(({ nodes: [fromId, toId] }) => {
-        const toLabel = positions.find(hasEqualLabelId(fromId));
-        const fromLabel = positions.find(hasEqualLabelId(toId));
-
-        return { id: uuidv4(), from: toLabel, to: fromLabel } as EdgeLine;
-    });
-
-    return { edges: linkedEdged, points: positions };
-};
 
 const groupLabelsByName = (labels: Label[]) => {
     return labels.reduce(
@@ -81,7 +67,7 @@ export const ProjectTemplate = (): JSX.Element => {
 
     const keypointTask = project.tasks.find(isKeypointTask);
     const initialKeypointStructure = keypointTask
-        ? getInitialKeypointStructure(keypointTask)
+        ? getInitialKeypointStructure(keypointTask.keypointStructure)
         : { edges: [], points: [] };
 
     const [keypointStructure, setKeypointStructure] = useState(initialKeypointStructure);

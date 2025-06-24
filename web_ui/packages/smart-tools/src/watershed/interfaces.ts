@@ -10,10 +10,9 @@ export interface WatershedPolygon {
 }
 
 export type Marker = {
+    id: number;
     label: { id: string };
     points: Point[];
-    brushSize: number;
-    id: number;
 };
 
 export interface WatershedInstance {

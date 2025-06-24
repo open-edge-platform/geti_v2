@@ -24,7 +24,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/anomalib/.github/actions/security/zizmor@6e3a6594a1d8867c045bb032e6c10f8673ff025a
+        uses: open-edge-platform/anomalib/.github/actions/security/zizmor@fadfedd5150eb8cd39dfb659ae9bd0eb1c06720d
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -42,7 +42,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Bandit scan
-        uses: open-edge-platform/anomalib/.github/actions/security/bandit@6e3a6594a1d8867c045bb032e6c10f8673ff025a
+        uses: open-edge-platform/anomalib/.github/actions/security/bandit@fadfedd5150eb8cd39dfb659ae9bd0eb1c06720d
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -62,7 +62,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Trivy vulnerability scanner in config mode
-        uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5 # 0.30.0
+        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # 0.31.0
         with:
           scan-type: "config"
           scan-ref: "."
@@ -70,6 +70,6 @@ jobs:
           trivy-config: ".github/trivy_config.yml"
           output: "trivy-results.sarif"
       - name: Upload to code-scanning
-        uses: github/codeql-action/upload-sarif@ff0a06e83cb2de871e5a09832bc6a81e7276941f # v3.28.18
+        uses: github/codeql-action/upload-sarif@ce28f5bb42b7a9f2c824e633a3f6ee835bab6858 # v3.29.0
         with:
           sarif_file: "trivy-results.sarif"

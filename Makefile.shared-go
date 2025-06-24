@@ -23,8 +23,7 @@ GO_BUILD_FLAGS ?= -trimpath -mod=readonly -gcflags="all=-spectre=all" -asmflags=
 OUTPUT_BINARY  ?= service
 
 CLEAN_DIRS := \
-    $(OUTPUT_BINARY) coverage.out \
-    ${CHART_BUILD_DIR}
+    $(OUTPUT_BINARY) coverage.out
 
 deps: ## Clean up and verify modules
 	$(GOCMD) mod tidy

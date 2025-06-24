@@ -35,13 +35,11 @@ RUN apt-get purge -y --auto-remove gpg wget && \
     /tmp/* \
     /usr/share/man/* /usr/share/doc/*
 
-# step 2: get python dependencies
-FROM base AS build
-
 # Copy the service dependencies
 COPY --link --from=libs . libs
 
 WORKDIR /interactive_ai/workflows/otx_domain/trainer/otx_v2
+RUN chown -R 10001:10001 /interactive_ai/workflows/otx_domain/trainer/otx_v2
 
 COPY --link --from=ghcr.io/astral-sh/uv:0.6.12@sha256:515b886e8eb99bcf9278776d8ea41eb4553a794195ef5803aa7ca6258653100d /uv /bin/uv
 
@@ -55,12 +53,6 @@ COPY --link download_pretrained_weights.py download_pretrained_weights.py
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
 RUN uv pip uninstall torch
 RUN uv pip install torch==2.7.0 --default-index https://download.pytorch.org/whl/xpu
-
-# step 3: build final runtime image
-FROM base AS runtime
-
-# Copy the application from the builder
-COPY --link --from=build --chown=10001 /interactive_ai/workflows/otx_domain/trainer/otx_v2 /interactive_ai/workflows/otx_domain/trainer/otx_v2
 
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/workflows/otx_domain/trainer/otx_v2/.venv/bin:/interactive_ai/workflows/otx_domain/trainer/otx_v2:$PATH"

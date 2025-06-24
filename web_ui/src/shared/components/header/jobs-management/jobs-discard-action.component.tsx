@@ -4,7 +4,7 @@
 import { useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-import { ActionButton, LoadingIndicator, Text } from '@geti/ui';
+import { ActionButton, Loading, Text } from '@geti/ui';
 import { Delete } from '@geti/ui/icons';
 import { UseMutationResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -28,7 +28,7 @@ interface JobsDiscardActionProps {
 
 const ButtonIcon = ({ isLoading, isCancel }: { isLoading: boolean; isCancel: boolean }) => {
     if (isLoading) {
-        return <LoadingIndicator size='S' marginX='size-100' />;
+        return <Loading mode='inline' size='S' marginX='size-100' />;
     }
 
     if (isCancel) {
