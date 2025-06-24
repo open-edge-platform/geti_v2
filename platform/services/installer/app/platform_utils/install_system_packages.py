@@ -41,6 +41,43 @@ RETRY_STOP_AFTER_ATTEMPT = 3
 RETRY_WAIT_EXPONENTIAL = 2
 
 
+def install_packages_with_dnf(packages_path: str, log_file_path: str, disable_repos: bool = False) -> None:
+    """
+    Install packages on Red Hat-based systems, using dnf.
+    Optionally disable all repositories.
+    """
+    disable_repos_option = "--disablerepo=*" if disable_repos else ""
+    with open(log_file_path, "a", encoding="utf-8") as log_file:
+        try:
+            subprocess_run(
+                [
+                    "bash",
+                    "-c",
+                    f"dnf install {disable_repos_option} --assumeyes {os.path.abspath(packages_path)}/*.rpm",
+                ],
+                log_file,
+            )
+        except subprocess.CalledProcessError as ex:
+            raise InstallSystemPackagesError from ex
+
+
+def extract_tar_file(tar_file_path: str, destination_dir: str, filter_member: str = None) -> None:
+    """
+    Extracts a tar file to the specified destination directory.
+    Optionally filters for a specific member name.
+    """
+    with tarfile.open(tar_file_path, "r:gz") as tar:
+        if filter_member:
+            member = next((m for m in tar.getmembers() if filter_member in m.name), None)
+            if member:
+                member.name = os.path.basename(member.name)
+                tar.extract(member, path=destination_dir)
+                logger.info(f"Extracted {member.name} to {destination_dir}/")
+        else:
+            tar.extractall(path=destination_dir)
+            logger.info(f"Extracted all files to {destination_dir}/")
+
+
 def _parse_system_packages(os_name: str) -> dict:
     with open(SYSTEM_PACKAGES_PATH) as file:
         data = yaml.safe_load(file)
@@ -111,12 +148,7 @@ def _download_packages(system_packages: dict) -> None:
 
                 # Extract helm tar.gz archive
                 if package["name"] == "helm" and file_name.endswith(".tar.gz"):
-                    with tarfile.open(file_name, "r:gz") as tar:
-                        member = next((m for m in tar.getmembers() if "linux-amd64/helm" in m.name), None)
-                        if member:
-                            member.name = os.path.basename(member.name)
-                            tar.extract(member, path=OFFLINE_TOOLS_DIR)
-                            logger.info(f"Extracted {member.name} to {OFFLINE_TOOLS_DIR}/")
+                    extract_tar_file(file_name, OFFLINE_TOOLS_DIR, filter_member="linux-amd64/helm")
                     shutil.rmtree(file_name, ignore_errors=True)
                     logger.info(f"Removed archive {file_name}")
 
@@ -136,21 +168,6 @@ def _install_packages_from_path_ubuntu(packages_path: str) -> None:
                 ],
                 log_file,
                 env=env,
-            )
-        except subprocess.CalledProcessError as ex:
-            raise InstallSystemPackagesError from ex
-
-
-def _install_packages_from_path_redhat(packages_path: str) -> None:
-    with open(INSTALL_LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
-        try:
-            subprocess_run(
-                [
-                    "bash",
-                    "-c",
-                    f"dnf install --assumeyes {os.path.abspath(packages_path)}/*.rpm",
-                ],
-                log_file,
             )
         except subprocess.CalledProcessError as ex:
             raise InstallSystemPackagesError from ex
@@ -177,9 +194,9 @@ def install_system_packages(config: InstallationConfig | UpgradeConfig) -> None:
 
     logger.info("Installing system packages...")
     if config.local_os.value == SupportedOS.RHEL.value:
-        _install_packages_from_path_redhat(packages_path=REDHAT_PACKAGES_PATH)
+        install_packages_with_dnf(packages_path=REDHAT_PACKAGES_PATH, log_file_path=INSTALL_LOG_FILE_PATH)
         if config.gpu_support.value and config.gpu_provider.value == GPU_PROVIDER_NVIDIA:
-            _install_packages_from_path_redhat(packages_path=REDHAT_NVIDIA_PACKAGES_PATH)
+            install_packages_with_dnf(packages_path=REDHAT_NVIDIA_PACKAGES_PATH, log_file_path=INSTALL_LOG_FILE_PATH)
     else:
         _install_packages_from_path_ubuntu(packages_path=UBUNTU_PACKAGES_PATH)
         if config.gpu_support.value and config.gpu_provider.value == GPU_PROVIDER_NVIDIA:
