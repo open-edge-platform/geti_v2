@@ -1,0 +1,16 @@
+id: Object_Detection_RTMdet_Tiny
+name: RTMdet-Tiny
+
+description: "RTMDet is a real-time object detection algorithm that builds on a unified and scalable architecture optimized for both speed and accuracy. It features an efficient backbone, a strong neck with task-specific design, and a decoupled head for improved classification and localization. "
+stats:
+  gigaflops: 32
+  trainable_parameters: 4.8
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 3
+    training_time: 1
+    inference_speed: 1
+
+hyperparameters:
+  training:
+    learning_rate: 0.0007
+support_status: deprecated
