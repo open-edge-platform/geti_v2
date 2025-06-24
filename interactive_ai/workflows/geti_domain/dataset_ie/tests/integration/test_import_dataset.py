@@ -81,7 +81,6 @@ class IMPORT_EXISTING_ERROR_TEST(Enum):
     WRONG_LABEl_ID = auto()  # not existing label in project
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestImportDataset:
     """
     Integration test the import dataset
@@ -1016,8 +1015,6 @@ class TestImportDataset:
 
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     @pytest.mark.parametrize(
         "dataset_definition,project_type_from,project_type_to",
         [
@@ -1080,8 +1077,6 @@ class TestImportDataset:
 
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     @pytest.mark.parametrize(
         "dataset_definition,project_type_from,project_type_to",
         [
@@ -1169,8 +1164,6 @@ class TestImportDataset:
     )
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     def test_import_with_no_model_templates(
         self,
         mock_from_env_vars,
@@ -1201,8 +1194,6 @@ class TestImportDataset:
 
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     def test_warning_on_importing_single_label_detection_dataset_to_new_project(
         self,
         request,
@@ -1627,8 +1618,6 @@ class TestImportDataset:
 
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     def test_import_multiple_annotation_cls(
         self,
         fxt_dataset_labels,
@@ -1709,8 +1698,6 @@ class TestImportDataset:
 
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     @pytest.mark.parametrize(
         "fxt_project_str,fxt_dm_dataset_str,project_type,n_warnings",
         [
@@ -1837,8 +1824,6 @@ class TestImportDataset:
     )
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     @pytest.mark.parametrize(
         "bad_dataset_test_type,expected_exception",
         [
@@ -1896,8 +1881,6 @@ class TestImportDataset:
     )
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     @pytest.mark.parametrize(
         "test_type, expected_exception",
         [
@@ -2059,8 +2042,6 @@ class TestImportDataset:
 
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     @pytest.mark.parametrize(
         "fxt_project_str,dataset_definition,project_type_from,project_type_to",
         [
@@ -2132,8 +2113,6 @@ class TestImportDataset:
 
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     @pytest.mark.parametrize(
         "fxt_project_str,dataset_definition,project_type_from,project_type_to",
         [
@@ -2253,8 +2232,6 @@ class TestImportDataset:
 
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
-    @pytest.mark.priority_medium
-    @pytest.mark.component
     @pytest.mark.parametrize(
         "fxt_project_str,dataset_definition,project_type_from,project_type_to",
         [
