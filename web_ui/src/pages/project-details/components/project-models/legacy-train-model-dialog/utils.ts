@@ -10,7 +10,7 @@ interface TrainingBody {
     trainFromScratch: boolean;
     isReshufflingSubsetsEnabled: boolean;
     modelTemplateId: string | undefined;
-    configParameters: ConfigurableParametersTaskChain | undefined;
+    configParameters?: ConfigurableParametersTaskChain | undefined;
     maxTrainingDatasetSize?: number;
 }
 

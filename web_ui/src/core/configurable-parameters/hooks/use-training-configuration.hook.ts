@@ -51,8 +51,8 @@ export const useTrainingConfigurationMutation = () => {
         mutationFn: ({ projectIdentifier, payload, queryParameters }) => {
             return configParametersService.updateTrainingConfiguration(projectIdentifier, payload, queryParameters);
         },
-        onSuccess: async (_, { projectIdentifier, queryParameters }) => {
-            await queryClient.invalidateQueries({
+        onSuccess: (_, { projectIdentifier, queryParameters }) => {
+            queryClient.invalidateQueries({
                 queryKey: trainingConfigurationQueryOptions(configParametersService, projectIdentifier, queryParameters)
                     .queryKey,
             });

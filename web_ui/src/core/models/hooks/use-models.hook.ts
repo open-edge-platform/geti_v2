@@ -118,7 +118,6 @@ export const useModels = (): UseModels => {
         return useMutation({
             mutationFn: ({ projectIdentifier, body }: UseTrainModelMutation) =>
                 modelsService.trainModel(projectIdentifier, body),
-            onError,
         });
     };
 

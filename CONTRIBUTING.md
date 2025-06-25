@@ -153,6 +153,8 @@ make tests
 - `lint-chart`: Lint a helm chart
 - `clean-chart`: Clean built charts
 - `publish-chart`: Publish a helm chart
+- `list-image`: List component Docker images
+- `list-umbrella-chart`: List umbrella charts
 
 ## Sign your work
 
