@@ -54,7 +54,7 @@ class TrainingConfigurationRESTController:
                 task_id=task_id,
                 model_id=model_id,
             )
-            if model_hyperparams_dict is None:
+            if not model_hyperparams_dict:
                 model = ModelRepo(model_storage.identifier).get_by_id(model_id)
                 model_hyperparams = ConfigurationsBackwardCompatibility.forward_hyperparameters(
                     legacy_hyperparams=model.configuration.configurable_parameters

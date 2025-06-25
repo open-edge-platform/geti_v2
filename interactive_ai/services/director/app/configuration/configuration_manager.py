@@ -200,7 +200,7 @@ class ConfigurationManager:
             raise ModelNotFoundException(model_id)
 
         ff_enabled = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS)
-        if ff_enabled and (config_dict := model.configuration.display_only_configuration) is not None:
+        if ff_enabled and (config_dict := model.configuration.display_only_configuration):
             # If the new configuration is saved in the model, then use that instead
             full_config = ConfigurationService.get_full_training_configuration(
                 project_identifier=project_identifier,
