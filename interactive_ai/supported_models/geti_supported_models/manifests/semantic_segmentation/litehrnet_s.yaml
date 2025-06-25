@@ -1,0 +1,15 @@
+id: Semantic_Segmentation_LiteHRNet_S
+name: LiteHRNet-S
+
+description: "LiteHRNet-Small is an ultra-efficient version of LiteHRNet optimized for low-power devices. It preserves key architectural strengths like high-resolution features while minimizing parameters and computational cost, ideal for mobile and embedded systems."
+stats:
+  gigaflops: 1.44
+  trainable_parameters: 0.82
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 1
+    training_time: 3
+    inference_speed: 3
+
+hyperparameters:
+  training:
+    learning_rate: 0.001

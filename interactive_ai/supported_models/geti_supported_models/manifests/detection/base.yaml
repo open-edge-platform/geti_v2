@@ -4,19 +4,6 @@ capabilities:
 
 hyperparameters:
   dataset_preparation:
-    augmentation:
-      random_affine:
-        enable: false
-      random_horizontal_flip:
-        enable: false
-      random_vertical_flip:
-        enable: false
-      gaussian_blur:
-        enable: false
-      color_jitter:
-        enable: false
-      random_iou_crop:
-        enable: false
       tiling:
         enable: false
         adaptive_tiling: false

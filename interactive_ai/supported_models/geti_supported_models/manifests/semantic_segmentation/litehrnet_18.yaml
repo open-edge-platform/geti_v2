@@ -1,0 +1,15 @@
+id: Semantic_Segmentation_LiteHRNet_18
+name: LiteHRNet-18
+
+description: "LiteHRNet-18 is a lightweight high-resolution semantic segmentation model that maintains strong spatial detail through parallel multi-resolution branches. It provides a good balance of accuracy and speed, making it well-suited for real-time applications on mid-tier hardware."
+stats:
+  gigaflops: 2.63
+  trainable_parameters: 1.1
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 2
+    training_time: 3
+    inference_speed: 3
+
+hyperparameters:
+  training:
+    learning_rate: 0.001

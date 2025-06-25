@@ -1,0 +1,15 @@
+id: Classification_Deit_Tiny
+name: DeiT-Tiny
+
+description: "DeiT (Data-efficient Image Transformers) is a vision transformer model designed to be efficient in terms of data usage. It uses a distillation technique to train the model with fewer labeled images, making it suitable for scenarios with limited data availability. DeiT-Tiny is the smallest variant, optimized for speed and efficiency while maintaining competitive performance on image classification tasks."
+stats:
+  gigaflops: 4.29
+  trainable_parameters: 5.2
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 2
+    training_time: 3
+    inference_speed: 3
+
+hyperparameters:
+  training:
+    learning_rate: 0.0001

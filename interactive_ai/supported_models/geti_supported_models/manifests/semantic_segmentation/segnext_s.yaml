@@ -1,0 +1,15 @@
+id: Semantic_Segmentation_SegNext_S
+name: SegNext-S
+
+description: "SegNeXt-S builds upon the Tiny version with increased capacity, offering a better accuracy-speed trade-off. It utilizes efficient convolutional blocks and long-range feature integration to provide strong performance for segmentation tasks in real-time and embedded applications. This model works well with 30+ training images."
+stats:
+  gigaflops: 30.93
+  trainable_parameters: 13.9
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 3
+    training_time: 2
+    inference_speed: 2
+
+hyperparameters:
+  training:
+    learning_rate: 0.00006

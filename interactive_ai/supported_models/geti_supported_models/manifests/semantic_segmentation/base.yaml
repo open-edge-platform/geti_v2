@@ -1,0 +1,12 @@
+task: semantic_segmentation
+capabilities:
+  tiling: true
+
+hyperparameters:
+  evaluation:
+    metric: Dice
+  training:
+    max_epochs: 200
+    early_stopping:
+      enable: true
+      patience: 10

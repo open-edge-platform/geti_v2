@@ -1,0 +1,15 @@
+id: Semantic_Segmentation_Dino_V2_Small
+name: Dino-V2-Small
+
+description: "DINOv2-Small is a compact foundational vision transformer model trained using self-supervised learning with the DINOv2 framework. Despite its small size, it captures rich visual representations by aligning image features across views. This model works best with tiny-medium datasets."
+stats:
+  gigaflops: 124.01
+  trainable_parameters: 24.4
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 3
+    training_time: 3
+    inference_speed: 1
+
+hyperparameters:
+  training:
+    learning_rate: 0.001

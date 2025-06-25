@@ -1,0 +1,15 @@
+id: Instance_Segmentation_RTMDet_Tiny
+name: RTMDet-Tiny
+
+description: "RTMDet for instance segmentation extends the real-time object detection framework with mask prediction capabilities. It features a unified, anchor-free architecture with a decoupled head and task-specific neck, enabling high-performance instance segmentation with real-time inference speed."
+stats:
+  gigaflops: 11.8
+  trainable_parameters: 5.6
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 1
+    training_time: 3
+    inference_speed: 3
+
+hyperparameters:
+  training:
+    learning_rate: 0.001

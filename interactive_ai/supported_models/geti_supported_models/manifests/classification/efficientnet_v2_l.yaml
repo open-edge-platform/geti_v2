@@ -1,0 +1,16 @@
+id: Classification_EfficientNet_V2_Large
+name: EfficientNet-V2-Large
+
+description: "EfficientNetV2-Large is a high-capacity image classification model optimized for both accuracy and training efficiency. It leverages progressive learning strategies and architectural improvements to outperform previous models on benchmarks like ImageNet."
+stats:
+  gigaflops: 24.46
+  trainable_parameters: 120.0
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 3
+    training_time: 0
+    inference_speed: 0
+
+hyperparameters:
+  training:
+    learning_rate: 0.01
+support_status: deprecated
