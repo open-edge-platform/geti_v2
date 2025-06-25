@@ -2,9 +2,10 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 """This module implements Job scheduling policy service functionality"""
 
+# pylint: disable=import-error
+
 import logging
 
-# pylint: disable=import-error
 from geti_logger_tools.logger_config import initialize_logger
 
 from geti_telemetry_tools import ENABLE_TRACING, LoggerTelemetry

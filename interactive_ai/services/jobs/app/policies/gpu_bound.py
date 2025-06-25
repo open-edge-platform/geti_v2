@@ -5,10 +5,10 @@
 Methods to prioritize GPU-bound jobs
 """
 
+import logging
 from typing import Any
 
 from bson import ObjectId
-from geti_logger_tools.logger_config import initialize_logger
 
 from model.job import Job
 from model.job_state import JobGpuRequestState, JobState
@@ -16,7 +16,7 @@ from model.mapper.job_mapper import JobMapper
 from policies.duplicate import get_duplicate_check_sub_pipeline
 from policies.job_repo import SessionBasedPolicyJobRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_number_of_reserved_gpus(gpu_jobs_types: list[str]) -> int:

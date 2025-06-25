@@ -4,17 +4,18 @@
 This module defines the test configuration
 """
 
+import logging
 import os
 import pathlib
 from unittest.mock import patch
 
 import pytest
-from geti_logger_tools.logger_config import initialize_logger
 from testcontainers.mongodb import MongoDbContainer
 
 from iai_core.repos.base.mongo_connector import MongoConnector
 
-logger = initialize_logger(__name__)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="session", autouse=True)

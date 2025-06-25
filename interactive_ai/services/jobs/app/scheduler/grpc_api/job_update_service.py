@@ -7,13 +7,13 @@ This module implements the gRPC server for the job scheduler
 """
 
 import json
+import logging
 import os
 from concurrent import futures
 from datetime import datetime
 from json import JSONDecodeError
 
 import grpc
-from geti_logger_tools.logger_config import initialize_logger
 from pymongo.errors import AutoReconnect
 
 from model.job import JobConsumedResource
@@ -36,7 +36,7 @@ from grpc_interfaces.job_update.pb.job_update_service_pb2_grpc import (
 )
 from iai_core.session.session_propagation import setup_session_grpc
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 GRPC_MAX_MESSAGE_SIZE = int(os.environ.get("GRPC_MAX_MESSAGE_SIZE", 128 * 1024**2))
 

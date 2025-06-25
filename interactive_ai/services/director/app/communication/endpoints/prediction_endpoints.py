@@ -5,10 +5,10 @@
 Endpoints to get predictions on media
 """
 
+import logging
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Path, Query
-from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse
 
 from communication.controllers.prediction_controller import PredictionController
@@ -27,7 +27,7 @@ from geti_fastapi_tools.dependencies import (
 )
 from geti_types import ID, ImageIdentifier, MediaIdentifierEntity, VideoFrameIdentifier
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 prediction_api_prefix_url = (
     "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/datasets/{dataset_id}"

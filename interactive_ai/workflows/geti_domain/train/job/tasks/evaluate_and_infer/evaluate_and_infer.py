@@ -5,7 +5,8 @@
 Prepare training data task
 """
 
-from geti_logger_tools.logger_config import initialize_logger
+import logging
+
 from geti_types import ID
 from iai_core.entities.model import NullModel
 from iai_core.repos import ModelRepo
@@ -37,7 +38,7 @@ IDX_STEP_TASK_INFER = 3
 IDX_STEP_PIPELINE_INFER = 4
 STEPS_COUNT = 5
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def report_pre_evaluate_progress(progress: float, message: str) -> None:

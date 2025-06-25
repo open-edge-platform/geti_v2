@@ -4,14 +4,15 @@
 This module is responsible for migrating the documents and binaries to the latest version after they have been imported
 """
 
-from geti_logger_tools.logger_config import initialize_logger
+import logging
+
 from geti_types import CTX_SESSION_VAR, ID, Session
 from iai_core.versioning import DataVersion
 from migration.utils import VersionManager
 
 from job.entities.exceptions import ProjectUpgradeFailedException
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DataMigrationUseCase:

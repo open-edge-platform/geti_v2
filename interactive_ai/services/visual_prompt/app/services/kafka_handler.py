@@ -1,8 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from functools import lru_cache
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from repos.reference_feature_repo import ReferenceFeatureRepo
 
@@ -23,7 +22,7 @@ from iai_core.repos import (
 )
 from iai_core.session.session_propagation import setup_session_kafka
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class VPSKafkaHandler(BaseKafkaHandler, metaclass=Singleton):

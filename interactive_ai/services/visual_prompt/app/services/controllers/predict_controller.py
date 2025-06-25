@@ -1,12 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import logging
 import os
 from typing import Any
 
 import numpy as np
 from fastapi import Request, UploadFile
-from geti_logger_tools.logger_config import initialize_logger
 
 from entities.exceptions import InferenceMediaNotFound, MissingInputMediaException
 from services.models.media_info_payload import MediaInfoPayload
@@ -20,7 +20,7 @@ from iai_core.entities.video import NullVideo, VideoFrame
 from iai_core.repos import ImageRepo, VideoRepo
 from media_utils import get_media_numpy
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class PredictController:

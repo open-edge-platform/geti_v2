@@ -4,8 +4,9 @@
 This module implements validation helpers for dataset IE endpoints
 """
 
+import logging
+
 from bson import ObjectId
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.helpers.http_exceptions import BadRequestGetiBaseException
 from communication.helpers.import_utils import ImportUtils
@@ -17,7 +18,7 @@ from iai_core.entities.dataset_storage import DatasetStorage, NullDatasetStorage
 from iai_core.entities.project import NullProject, Project
 from iai_core.repos import DatasetStorageRepo, ProjectRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_validated_project_type_from_task_type(task_type: str) -> GetiProjectType:

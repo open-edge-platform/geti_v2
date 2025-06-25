@@ -4,13 +4,13 @@
 """This module contains dataclasses and helper functions to easily create metadata and payloads for the jobs client"""
 
 import json
+import logging
 from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, auto
 
 from geti_configuration_tools.training_configuration import TrainingConfiguration
 from geti_feature_tools import FeatureFlagProvider
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import JobCreationFailedException
 from features.feature_flag import FeatureFlag
@@ -24,7 +24,7 @@ from iai_core.entities.project import Project
 from iai_core.entities.task_node import TaskNode
 from iai_core.services import ModelService
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 TRAIN_JOB_PRIORITY = 1
 OPTIMIZE_JOB_PRIORITY = 1

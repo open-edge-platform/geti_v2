@@ -3,7 +3,8 @@
 
 """This module defines commands to create task train dataset"""
 
-from geti_logger_tools.logger_config import initialize_logger
+import logging
+
 from geti_telemetry_tools import unified_tracing
 from iai_core.entities.dataset_storage import DatasetStorage
 from iai_core.entities.datasets import Dataset, NullDataset
@@ -14,7 +15,7 @@ from jobs_common.commands.create_dataset_command import CreateDatasetCommand
 from jobs_common.exceptions import DatasetCreationFailedException
 from jobs_common.utils.dataset_helpers import DatasetHelpers
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class CreateTaskTrainDatasetCommand(CreateDatasetCommand):

@@ -3,6 +3,7 @@
 
 """This module implements the ProjectRestValidator class"""
 
+import logging
 import os
 from collections.abc import Sequence
 from dataclasses import dataclass, fields
@@ -10,7 +11,6 @@ from enum import Enum
 from typing import Any
 
 import jsonschema
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.constants import MAX_NUMBER_OF_CONNECTIONS_IN_CHAIN, MAX_NUMBER_OF_LABELS
 from communication.exceptions import (
@@ -74,7 +74,7 @@ TASKS = "tasks"
 TITLE = "title"
 TO = "to"
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class OperationType(Enum):

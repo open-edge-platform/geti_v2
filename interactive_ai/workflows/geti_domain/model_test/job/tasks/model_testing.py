@@ -4,9 +4,9 @@
 Model testing task
 """
 
+import logging
 from typing import Optional
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID
 from iai_core.entities.datasets import Dataset, DatasetPurpose
 from iai_core.entities.model import ModelFormat
@@ -32,7 +32,7 @@ from job.commands.create_testing_dataset_command import CreateTaskTestingDataset
 
 from .utils import _get_task_node
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @task(pod_spec=INFER_AND_EVALUATE_TASK_POD_SPEC, secret_requests=SECRETS)

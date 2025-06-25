@@ -4,6 +4,7 @@
 This module implements import utilities
 """
 
+import logging
 from collections import defaultdict
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
@@ -12,7 +13,6 @@ from typing import Any
 import datumaro as dm
 from datumaro import ImportErrorPolicy, errors
 from datumaro.components.errors import AnnotationImportError, ItemImportError, MultipleFormatsMatchError
-from geti_logger_tools.logger_config import initialize_logger
 from iai_core.entities.label import Domain
 from iai_core.entities.model_template import TaskType, task_type_to_label_domain
 from iai_core.entities.project import Project
@@ -25,7 +25,7 @@ from jobs_common_extras.datumaro_conversion.definitions import (
     GetiProjectType,
 )
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ScImportErrorPolicy(ImportErrorPolicy):

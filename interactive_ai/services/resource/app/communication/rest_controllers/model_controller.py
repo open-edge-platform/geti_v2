@@ -2,11 +2,10 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import http
 import io
+import logging
 import os
 from typing import Any
 from zipfile import ZipFile, ZipInfo
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import ModelStorageNotActivableException, PurgedModelException, TaskNotFoundException
 from communication.model_registration_utils import ModelMapper, ProjectMapper
@@ -35,7 +34,7 @@ from iai_core.utils.exceptions import (
     SDKModelNotFoundException,
 )
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 # This value is determined by the optimization team.
 FILTER_PRUNING_ENABLED_LIMIT = 1000

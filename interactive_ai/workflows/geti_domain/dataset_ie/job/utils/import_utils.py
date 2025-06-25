@@ -4,6 +4,7 @@
 This module implements import utilities
 """
 
+import logging
 import os.path as osp
 from collections.abc import Callable
 
@@ -20,7 +21,6 @@ from datumaro.components.errors import (
     UnknownFormatError,
 )
 from geti_kafka_tools import publish_event
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier, ProjectIdentifier, VideoFrameIdentifier
 from iai_core.adapters.adapter import ReferenceAdapter
 from iai_core.entities.dataset_storage import DatasetStorage
@@ -58,7 +58,7 @@ from job.utils.exceptions import (
 )
 from job.utils.upload_utils import AnnotationUploadManager, ImageUploadManager, VideoUploadManager
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ImportUtils(BaseImportUtils):

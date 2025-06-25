@@ -4,13 +4,13 @@
 """This module implements the BaseActiveManager"""
 
 import abc
+import logging
 from collections.abc import Callable, Iterator, Sequence
 from functools import partial
 from queue import PriorityQueue
 from typing import Generic
 
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 
 from active_learning.entities import ActiveScore, ActiveScoreSuggestionInfo, ActiveSuggestion
 from active_learning.entities.active_learning_config import ActiveScoreReductionFunction, TActiveLearningConfig
@@ -35,7 +35,7 @@ from iai_core.services import ModelService
 from iai_core.utils.iteration import grouper
 from iai_core.utils.type_helpers import SequenceOrSet
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class BaseActiveManager(Generic[TActiveLearningConfig], metaclass=abc.ABCMeta):  # type: ignore[misc]

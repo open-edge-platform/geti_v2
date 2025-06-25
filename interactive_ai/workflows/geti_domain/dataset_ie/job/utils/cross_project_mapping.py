@@ -3,13 +3,13 @@
 
 import abc
 import copy
+import logging
 from typing import Any, NamedTuple
 
 import datumaro as dm
 from datumaro.components.annotation import GroupType
 from datumaro.components.dataset_base import DatasetInfo
 from datumaro.components.transformer import ItemTransform
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ProjectIdentifier
 from iai_core.entities.model_template import TaskType
 from iai_core.entities.project import Project
@@ -20,7 +20,7 @@ from job.utils.datumaro_parser import DatumaroProjectParser
 from job.utils.exceptions import ResearvedLabelException, UnsupportedMappingException
 from job.utils.import_utils import ImportUtils
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 # TODO: Refactoring and re-design.
 # Whole design of CrossProjectMapper will be changed while refactoring.

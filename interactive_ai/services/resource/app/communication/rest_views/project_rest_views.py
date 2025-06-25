@@ -1,7 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-from geti_logger_tools.logger_config import initialize_logger
+import logging
 
 from communication.rest_views.dataset_storage_rest_views import DatasetStorageRESTViews
 from communication.rest_views.performance_rest_views import PerformanceRESTViews
@@ -12,7 +12,7 @@ from geti_types import ID
 from iai_core.entities.label_schema import LabelSchemaView
 from iai_core.entities.project import Project
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 ARCHIVED = "archived"
 CREATION_TIME = "creation_time"

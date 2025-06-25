@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from geti_logger_tools.logger_config import initialize_logger
+import logging
 
 from communication.rest_views.filtered_dataset_rest_views import FilteredDatasetRESTView
 from usecases.dataset_filter import DatasetFilter
@@ -20,7 +20,7 @@ from iai_core.entities.model_test_result import ModelTestResult
 from iai_core.entities.project import Project
 from iai_core.utils.annotation_scene_state_helper import AnnotationStatePerTask
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MediaScoreRESTViews:

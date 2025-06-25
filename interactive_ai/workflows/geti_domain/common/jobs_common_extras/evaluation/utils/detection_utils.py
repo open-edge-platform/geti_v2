@@ -1,14 +1,15 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import logging
+
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 from iai_core.entities.model import Model
 from model_api.models.utils import Detection
 
 from jobs_common_extras.evaluation.utils.helpers import is_model_legacy_otx_version
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def detection2array(detections: list[Detection]) -> np.ndarray:

@@ -5,6 +5,7 @@
 
 import datetime
 import functools
+import logging
 import os
 import subprocess
 from pathlib import Path
@@ -12,7 +13,6 @@ from typing import BinaryIO
 
 import cv2
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.constants import (
     MAX_IMAGE_SIZE,
@@ -75,7 +75,7 @@ VIDEOS = "videos"
 IMAGE = "image"
 VIDEO = "video"
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 IMAGE_EXT_SAVE_MAPPING: dict[ImageExtensions, ImageExtensions] = {
     # extensions stored natively

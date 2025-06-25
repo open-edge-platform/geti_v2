@@ -4,10 +4,10 @@
 This module implements import endpoint tests
 """
 
+import logging
 from unittest.mock import patch
 
 import pytest
-from geti_logger_tools.logger_config import initialize_logger
 from starlette.testclient import TestClient
 
 from communication.helpers.http_exceptions import (
@@ -21,7 +21,7 @@ from domain.entities.dataset_ie_file_metadata import ImportMetadata
 from geti_types import ID
 from iai_core.entities.model_template import TaskType
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 _params_metadata_error = [
     (FileNotFoundGetiBaseException(), 404),

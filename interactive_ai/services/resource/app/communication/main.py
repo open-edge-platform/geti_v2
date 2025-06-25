@@ -1,6 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import http
+import logging
 import os
 from collections import defaultdict
 from contextlib import asynccontextmanager
@@ -10,7 +11,6 @@ import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse, Response
 
 from communication.kafka_handlers.annotation_kafka_handler import AnnotationKafkaHandler
@@ -76,7 +76,7 @@ app = FastAPI(lifespan=lifespan)
 if ENABLE_TRACING:
     FastAPITelemetry.instrument(app)
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 app.include_router(annotation_router)
 app.include_router(code_deployment_router)

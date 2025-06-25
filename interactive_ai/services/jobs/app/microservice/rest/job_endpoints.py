@@ -5,11 +5,11 @@
 Job endpoints
 """
 
+import logging
 from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, status
-from geti_logger_tools.logger_config import initialize_logger
 
 from microservice.rest.job_controller import JobController
 
@@ -17,7 +17,7 @@ from geti_fastapi_tools.dependencies import get_user_id_fastapi, setup_session_f
 from geti_types import ID
 
 router = APIRouter(prefix="/api/v1", tags=["Jobs"], dependencies=[Depends(setup_session_fastapi)])
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @router.get("/organizations/{organization_id}/workspaces/{workspace_id}/jobs")

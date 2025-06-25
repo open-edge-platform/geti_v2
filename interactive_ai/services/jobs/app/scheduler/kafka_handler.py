@@ -5,10 +5,10 @@
 Module for Flyte events Kafka handler
 """
 
+import logging
 from datetime import datetime
 
 from flytekit.remote import FlyteWorkflowExecution
-from geti_logger_tools.logger_config import initialize_logger
 
 from model.job import Job, JobConsumedResource, JobCost
 from model.job_state import JobTaskState
@@ -24,7 +24,7 @@ from grpc_interfaces.credit_system.client import CreditSystemClient
 from iai_core.session.session_propagation import setup_session_kafka
 from iai_core.utils.time_utils import now
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 WORKFLOW_EXECUTION_EVENT_REQUEST = "com.flyte.resource.flyteidl.admin.WorkflowExecutionEventRequest"
 TASK_EXECUTION_EVENT_REQUEST = "com.flyte.resource.flyteidl.admin.TaskExecutionEventRequest"

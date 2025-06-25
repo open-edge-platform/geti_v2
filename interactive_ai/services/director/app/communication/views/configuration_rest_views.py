@@ -1,12 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import copy
+import logging
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
 from attr import fields_dict
-from geti_logger_tools.logger_config import initialize_logger
 
 from geti_fastapi_tools.exceptions import InvalidEntityIdentifierException
 from geti_telemetry_tools import unified_tracing
@@ -22,7 +22,9 @@ from iai_core.configuration.interfaces.configurable_parameters_interface import 
 from iai_core.configuration.ui_rules.rules import NullUIRules
 from iai_core.entities.task_node import TaskNode
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger("sc_rest_views")
+BE_VIEWS = logging.DEBUG
+IO_VIEWS = logging.DEBUG
 
 COMPONENTS = "components"
 ENTITY_IDENTIFIER = "entity_identifier"

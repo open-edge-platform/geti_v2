@@ -1,9 +1,9 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID, MediaIdentifierEntity
 from iai_core.entities.annotation import AnnotationScene
 from iai_core.entities.dataset_item import DatasetItem
@@ -28,7 +28,7 @@ from .dice_metric import DiceMetric
 from .f_measure_metric import FMeasureMetric
 from .performance_metric import MetricAverageMethod, PerformanceMetric
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AnomalyMetric(PerformanceMetric, ABC):

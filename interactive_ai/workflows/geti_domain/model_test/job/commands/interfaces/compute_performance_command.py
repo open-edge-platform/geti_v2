@@ -3,10 +3,10 @@
 
 """This module implements the interface of commands to compute performance metrics."""
 
+import logging
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-from geti_logger_tools.logger_config import initialize_logger
 from iai_core.entities.datasets import Dataset
 from iai_core.entities.model_test_result import ModelTestResult
 from iai_core.entities.project import Project
@@ -17,7 +17,7 @@ from jobs_common.exceptions import CommandInitializationFailedException
 if TYPE_CHECKING:
     from iai_core.entities.label_schema import LabelSchema
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ComputePerformanceICommand(ICommand):

@@ -3,14 +3,14 @@
 
 """Repos to fetch/store project zip archives from/to S3"""
 
+import logging
 import os
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID
 
 from .base.storage_repo import StorageRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ZipStorageRepo(StorageRepo):

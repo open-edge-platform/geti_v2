@@ -4,13 +4,13 @@
 This module implements progress reporting utilities
 """
 
+import logging
 import sys
 import time
 
-from geti_logger_tools.logger_config import initialize_logger
 from jobs_common.tasks.utils.progress import report_progress, report_task_step_progress
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 MIN_INTERVAL_IN_SEC = 1  # minimum interval to avoid frequent progress update

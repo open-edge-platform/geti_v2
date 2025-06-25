@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from geti_logger_tools.logger_config import initialize_logger
+import logging
 
 from managers.annotation_manager import AnnotationManager
 from service.label_schema_service import LabelSchemaService
@@ -18,7 +18,7 @@ from iai_core.entities.video_annotation_range import RangeLabels, VideoAnnotatio
 from iai_core.repos import AnnotationSceneRepo, VideoAnnotationRangeRepo
 from iai_core.utils.identifier_factory import IdentifierFactory
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class VideoRangeAnnotationManager:

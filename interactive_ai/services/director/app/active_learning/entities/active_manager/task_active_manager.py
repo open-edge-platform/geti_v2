@@ -3,12 +3,12 @@
 
 """This module implements the subclasses of TaskActiveManager"""
 
+import logging
 from collections import defaultdict
 from collections.abc import Callable, Sequence
 from typing import cast
 
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 
 from active_learning.algorithms import (
     FeatureReconstructionError,
@@ -45,7 +45,7 @@ from iai_core.entities.task_node import TaskNode
 from iai_core.repos import ConfigurableParametersRepo, ModelStorageRepo
 from iai_core.repos.dataset_storage_filter_repo import DatasetStorageFilterRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class TaskActiveManager(BaseActiveManager[ActiveLearningTaskConfig]):

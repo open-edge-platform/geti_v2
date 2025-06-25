@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from collections import defaultdict
 from collections.abc import Callable
 
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID, MediaIdentifierEntity
 from iai_core.entities.datasets import Dataset
 from iai_core.entities.label import Label
@@ -27,7 +27,7 @@ from jobs_common_extras.evaluation.utils.accuracy_counter import AccuracyCounter
 
 from .performance_metric import PerformanceMetric
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 CountersPerMediaT = defaultdict[MediaIdentifierEntity, AccuracyCounters]

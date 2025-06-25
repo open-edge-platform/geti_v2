@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from geti_logger_tools.logger_config import initialize_logger
+import logging
 
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, DatasetStorageIdentifier
@@ -8,7 +8,7 @@ from iai_core.entities.annotation import AnnotationScene, AnnotationSceneKind, N
 from iai_core.entities.scored_label import LabelSource
 from iai_core.repos import AnnotationSceneRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ResolveLabelSourceUseCase:

@@ -2,12 +2,12 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import atexit
+import logging
 import os
 import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 
-from geti_logger_tools.logger_config import initialize_logger
 from opentelemetry import trace
 
 from policies import Prioritizer, ResourceManager
@@ -15,7 +15,7 @@ from policies import Prioritizer, ResourceManager
 from geti_telemetry_tools import ENABLE_TRACING
 from geti_types import RequestSource, make_session, session_context
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 tracer = trace.get_tracer(__name__)  # type: ignore[attr-defined]
 
 POLICY_LOOP_INTERVAL = int(os.environ.get("SCHEDULING_POLICY_SERVICE_LOOP_INTERVAL", 1))

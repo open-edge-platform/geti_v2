@@ -1,9 +1,8 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from collections.abc import Sequence
 from datetime import datetime
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from microservice.exceptions import JobNotCancellableException
 from microservice.job_manager import JobManager, JobsAcl, JobSortingField, Pagination, SortDirection, TimestampFilter
@@ -20,10 +19,13 @@ from geti_spicedb_tools import Permissions, SpiceDB, SpiceDBResourceTypes
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, Singleton
 
+BE_CONTROLLER = logging.DEBUG
+IO_CONTROLLER = logging.DEBUG
+
 DEFAULT_N_JOBS_RETURNED = 10
 MAX_N_JOBS_RETURNED = 50
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class JobController(metaclass=Singleton):

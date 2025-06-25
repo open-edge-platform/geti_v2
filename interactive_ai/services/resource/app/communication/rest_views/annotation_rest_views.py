@@ -2,13 +2,12 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from __future__ import annotations
 
+import logging
 import math
 import operator
 from datetime import datetime
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING, Any
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.rest_views.media_identifier_rest_views import MediaIdentifierRESTViews
 from communication.rest_views.scored_label_rest_views import ScoredLabelRESTViews
@@ -50,7 +49,7 @@ Y = "y"
 ANGLE = "angle"
 IS_VISIBLE = "is_visible"
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class RestShapeType(IntEnum):

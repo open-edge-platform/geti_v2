@@ -4,9 +4,9 @@
 Evaluation task module
 """
 
+import logging
 from collections.abc import Callable
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_telemetry_tools.tracing.common import tracer
 from geti_types import ID, ProjectIdentifier
@@ -27,7 +27,7 @@ from jobs_common_extras.evaluation.utils.exceptions import EmptyEvaluationDatase
 from job.utils.model_acceptance import is_model_acceptable
 from job.utils.train_workflow_data import TrainWorkflowData
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @unified_tracing

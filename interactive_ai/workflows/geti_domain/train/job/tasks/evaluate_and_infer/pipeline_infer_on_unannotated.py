@@ -5,9 +5,9 @@
 Pipeline Inference on unannotated dataset module
 """
 
+import logging
 from collections.abc import Callable
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID
 from iai_core.entities.dataset_storage import DatasetStorage
@@ -30,7 +30,7 @@ from jobs_common_extras.evaluation.tasks.infer_and_evaluate import BATCH_INFEREN
 from job.utils.train_workflow_data import TrainWorkflowData
 
 MAX_UNANNOTATED_MEDIA = 500
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @unified_tracing

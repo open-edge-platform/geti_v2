@@ -1,11 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import logging
 from enum import Enum, auto
 
-from geti_logger_tools.logger_config import initialize_logger
-
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class FeatureFlag(Enum):

@@ -5,11 +5,11 @@ This module defines the user-exposed upload endpoints.
 Endpoints only call the relevant controller classes and return the response.
 """
 
+import logging
 import os
 from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, Header
-from geti_logger_tools.logger_config import initialize_logger
 from starlette.requests import Request
 from starlette.responses import Response
 
@@ -23,7 +23,7 @@ from communication.http_exceptions import (
 from geti_fastapi_tools.dependencies import get_file_id, setup_session_fastapi
 from geti_types import ID
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/uploads",

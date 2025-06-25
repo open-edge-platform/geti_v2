@@ -3,6 +3,7 @@
 
 """This module defines a wrapper for flyte Task decorator that enables multi-container tasks to work"""
 
+import logging
 from collections.abc import Callable
 from functools import wraps
 from time import sleep
@@ -10,7 +11,6 @@ from time import sleep
 import requests
 from flytekit import dynamic, task
 from flytekitplugins.pod import Pod
-from geti_logger_tools.logger_config import initialize_logger
 from kubernetes.client import V1ConfigMapKeySelector, V1ConfigMapVolumeSource, V1EnvVarSource, V1ObjectFieldSelector
 from kubernetes.client.models import (
     V1Capabilities,
@@ -29,7 +29,7 @@ from kubernetes.client.models import (
     V1VolumeMount,
 )
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 PRIMARY_CONTAINER_NAME = "flyte-workflow"
 BINARY_STORAGE_MOUNT_PATH = "/binary_data"

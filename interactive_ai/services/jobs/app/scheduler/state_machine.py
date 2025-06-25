@@ -5,11 +5,11 @@
 Job scheduler state machine module
 """
 
+import logging
 from collections.abc import Sequence
 from datetime import datetime
 from typing import Any
 
-from geti_logger_tools.logger_config import initialize_logger
 from pymongo import ReturnDocument
 
 from model.job import Job, JobConsumedResource, JobStepDetails
@@ -24,7 +24,7 @@ from iai_core.repos.base.constants import ORGANIZATION_ID_FIELD_NAME, WORKSPACE_
 from iai_core.repos.mappers import IDToMongo
 from iai_core.utils.time_utils import now
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class StateMachine(metaclass=Singleton):

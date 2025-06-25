@@ -1,7 +1,8 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
+
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID, MediaIdentifierEntity
 from iai_core.entities.annotation import Annotation
 from iai_core.entities.dataset_item import DatasetItem
@@ -24,7 +25,7 @@ from jobs_common_extras.evaluation.utils.evaluation_helpers import get_iou_matri
 
 from .performance_metric import PerformanceMetric
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 BOX_CLASS_INDEX = 4
 BOX_SCORE_INDEX = 5

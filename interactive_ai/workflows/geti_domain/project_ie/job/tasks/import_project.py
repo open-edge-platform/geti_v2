@@ -3,7 +3,8 @@
 
 """Defines the task for project import"""
 
-from geti_logger_tools.logger_config import initialize_logger
+import logging
+
 from geti_types import ID
 from jobs_common.tasks import flyte_multi_container_task as task
 from jobs_common.tasks.utils.logging import init_logger
@@ -15,7 +16,7 @@ from job.tasks import IMPORT_EXPORT_TASK_POD_SPEC
 from job.tasks.secrets import PROJECT_IE_SECRETS, signing_key_env_vars
 from job.usecases import ProjectImportUseCase
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @task(pod_spec=IMPORT_EXPORT_TASK_POD_SPEC, secret_requests=PROJECT_IE_SECRETS)

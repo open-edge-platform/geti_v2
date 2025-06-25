@@ -6,13 +6,13 @@ This module implements the gRPC server for the job service microservice
 """
 
 import json
+import logging
 import os
 from concurrent import futures
 from datetime import datetime
 from json import JSONDecodeError
 
 import grpc
-from geti_logger_tools.logger_config import initialize_logger
 
 from microservice.exceptions import DuplicateJobFoundException
 from microservice.grpc_api.mappers.proto_mapper import JobToProto
@@ -40,7 +40,7 @@ from grpc_interfaces.job_submission.pb.job_service_pb2 import (
 from grpc_interfaces.job_submission.pb.job_service_pb2_grpc import JobServiceServicer, add_JobServiceServicer_to_server
 from iai_core.session.session_propagation import setup_session_grpc
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 GRPC_MAX_MESSAGE_SIZE = int(os.environ.get("GRPC_MAX_MESSAGE_SIZE", 128 * 1024**2))
 

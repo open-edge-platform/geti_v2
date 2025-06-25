@@ -4,12 +4,12 @@
 """This module implements the ICommand abstract interface class."""
 
 import abc
+import logging
 
 from bson import ObjectId
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ICommand(metaclass=abc.ABCMeta):

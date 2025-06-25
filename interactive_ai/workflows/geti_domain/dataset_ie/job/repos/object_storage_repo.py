@@ -4,17 +4,17 @@
 This module implements the object storage repo for dataset ie jobs
 """
 
+import logging
 import os
 from collections.abc import Sequence
 
 import boto3
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
-from geti_logger_tools.logger_config import initialize_logger
 
 from job.utils.exceptions import FileNotFoundException, MissingEnvVariables, WrongS3CredentialsProvider
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ObjectStorageRepo:

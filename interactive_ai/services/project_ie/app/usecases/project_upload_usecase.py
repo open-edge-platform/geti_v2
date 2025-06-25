@@ -4,7 +4,7 @@
 This module implements the project export usecase.
 """
 
-from geti_logger_tools.logger_config import initialize_logger
+import logging
 
 from entities import UploadOperation
 from repos import UploadOperationRepo
@@ -14,7 +14,7 @@ from geti_types import CTX_SESSION_VAR, ID, Session
 
 CHUNK_SIZE = 5 * 2**20
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ProjectUploadUseCase:

@@ -3,9 +3,9 @@
 
 """Repos to interact to fetch/store documents from/to MongoDB collections"""
 
+import logging
 from collections.abc import Callable, Iterable, Iterator
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ProjectIdentifier, Session
 from iai_core.repos import ProjectRepo
 from iai_core.repos.base import ProjectBasedSessionRepo
@@ -18,7 +18,7 @@ from pymongo.collection import Collection
 from pymongo.command_cursor import CommandCursor
 from pymongo.cursor import Cursor
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DocumentRepo(ProjectBasedSessionRepo[None]):  # type: ignore[type-var]

@@ -4,6 +4,7 @@
 This module implements the project export usecase.
 """
 
+import logging
 import os
 import tempfile
 import uuid
@@ -13,7 +14,6 @@ from functools import partial
 
 from bson.binary import UuidRepresentation
 from bson.json_util import DatetimeRepresentation, JSONOptions, dumps
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier, Session
 from iai_core.repos.base import SessionBasedRepo
 from iai_core.utils.iteration import multi_map
@@ -29,7 +29,7 @@ from job.usecases.data_redaction_usecase import ExportDataRedactionUseCase
 from job.usecases.signature_usecase import SignatureUseCaseHelper
 from job.utils.file_utils import read_file_in_chunks
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ProjectExportUseCase:

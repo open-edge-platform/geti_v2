@@ -3,6 +3,7 @@
 
 """This module defines methods and wrappers to work with task progress"""
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
@@ -11,7 +12,6 @@ from typing import Any
 
 from flytekit import current_context
 from geti_kafka_tools import publish_event
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import CTX_SESSION_VAR
 from grpc_interfaces.job_update.client import JobUpdateClient
 from grpc_interfaces.job_update.pb.job_update_service_pb2 import JobUpdateRequest
@@ -19,7 +19,7 @@ from grpc_interfaces.job_update.pb.job_update_service_pb2 import JobUpdateReques
 from jobs_common.exceptions import TaskErrorMessage
 from jobs_common.tasks.utils.secrets import JobMetadata
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass

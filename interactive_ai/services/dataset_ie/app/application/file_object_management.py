@@ -4,9 +4,8 @@
 This module implements the file management usecase if object storage is enabled
 """
 
+import logging
 from typing import cast
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.helpers.http_exceptions import FileNotFoundGetiBaseException
 from communication.repos.file_metadata_repo import FileMetadataRepo
@@ -16,7 +15,7 @@ from domain.entities.dataset_ie_file_metadata import FileMetadata, ImportMetadat
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class FileObjectManager:

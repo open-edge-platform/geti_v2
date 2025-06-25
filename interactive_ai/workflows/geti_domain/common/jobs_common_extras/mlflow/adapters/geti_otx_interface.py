@@ -4,13 +4,13 @@
 """This module defines a command to prepare MLFlow Experiment directory in the S3 bucket."""
 
 import json
+import logging
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
 
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import ProjectIdentifier
 from iai_core.adapters.binary_interpreters import RAWBinaryInterpreter
@@ -39,7 +39,7 @@ from jobs_common_extras.mlflow.adapters.definitions import (
 )
 from jobs_common_extras.mlflow.repos.binary_repo import MLFlowExperimentBinaryRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 __all__ = ["GetiOTXInterfaceAdapter", "MLFlowLifecycleStage", "MLFlowRunStatus"]

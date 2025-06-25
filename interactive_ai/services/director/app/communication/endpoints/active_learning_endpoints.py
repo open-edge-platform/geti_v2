@@ -5,10 +5,10 @@
 Endpoints for active learning.
 """
 
+import logging
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.constants import DEFAULT_N_MEDIA_RETURNED, MAX_N_MEDIA_RETURNED
 from communication.controllers.active_learning_controller import ActiveLearningController
@@ -22,7 +22,7 @@ from geti_fastapi_tools.dependencies import (
 )
 from geti_types import ID
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 active_learning_api_prefix_url = (

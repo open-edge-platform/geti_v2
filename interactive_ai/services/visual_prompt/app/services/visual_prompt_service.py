@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import io
 import json
+import logging
 import os
 import threading
 from collections import defaultdict
@@ -13,7 +14,6 @@ from typing import cast
 
 import cv2
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 from model_api.adapters import OpenvinoAdapter, create_core
 from model_api.models.sam_models import SAMDecoder, SAMImageEncoder
 from model_api.models.visual_prompting import SAMLearnableVisualPrompter, ZSLVisualPromptingResult
@@ -94,7 +94,7 @@ DICE_INTERSECTION = "dice_intersection"
 DICE_CARDINALITY = "dice_cardinality"
 RESIZED_IMAGE_SIZE = 800  # fixed pixel dimensions for the resized image
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 lock = threading.RLock()
 

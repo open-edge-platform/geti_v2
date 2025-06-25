@@ -5,16 +5,16 @@
 Quota module
 """
 
+import logging
 import os
 
 from cachetools import TTLCache, cached
 from cachetools.keys import hashkey
-from geti_logger_tools.logger_config import initialize_logger
 
 from geti_types import ID
 from grpc_interfaces.credit_system.client import CreditSystemClient
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 ORGANIZATION_QUOTA_CACHE_TTL = int(os.environ.get("ORGANIZATION_QUOTA_CACHE_TTL", 3600))
 

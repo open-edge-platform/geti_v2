@@ -1,9 +1,8 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import logging
 from typing import Any
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from geti_fastapi_tools.exceptions import InvalidMediaException
 from geti_telemetry_tools import unified_tracing
@@ -21,7 +20,7 @@ from iai_core.entities.video import Video
 from iai_core.entities.video_annotation_statistics import VideoAnnotationStatistics
 from iai_core.utils.annotation_scene_state_helper import AnnotationStatePerTask
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ActiveSetRESTViews:

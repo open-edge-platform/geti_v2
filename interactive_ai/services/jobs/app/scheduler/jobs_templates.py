@@ -5,15 +5,15 @@
 Module for jobs steps visual representation
 """
 
+import logging
 import os
 from dataclasses import dataclass
 
 import yaml
-from geti_logger_tools.logger_config import initialize_logger
 
 from geti_types import Singleton
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass

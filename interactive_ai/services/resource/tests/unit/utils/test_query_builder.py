@@ -1,12 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import datetime
+import logging
 from copy import deepcopy
 from unittest.mock import patch
 
 import pytest
 from flaky import flaky
-from geti_logger_tools.logger_config import initialize_logger
 
 from usecases.dataset_filter import DatasetFilter, DatasetFilterField, MediaScoreFilterField
 from usecases.query_builder import MediaQueryResult, QueryBuilder, QueryResults
@@ -37,7 +37,7 @@ from iai_core.repos.dataset_storage_filter_repo import DatasetStorageFilterRepo
 from iai_core.services.dataset_storage_filter_service import DatasetStorageFilterService
 from iai_core.utils.constants import DEFAULT_USER_NAME
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class TestQueryBuilder:

@@ -6,10 +6,9 @@
 This module contains the MissingAnnotationsHelper, a helper class to obtain the missing annotations for a task.
 """
 
+import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import LabelNotFoundException
 from coordination.dataset_manager.dataset_counter_config import (
@@ -34,7 +33,7 @@ if TYPE_CHECKING:
 REQUIRED_ANOMALOUS_IMAGES_FIRST_TRAINING = 3
 REQUIRED_ANNOTATIONS_MANUAL_TRAINING = 3
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass

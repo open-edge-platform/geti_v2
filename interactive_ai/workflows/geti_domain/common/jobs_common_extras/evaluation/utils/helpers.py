@@ -1,11 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
+
 import cv2
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 from iai_core.entities.model import Model, TrainingFrameworkType
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def downscale_image(image: np.ndarray, target_largest_size: int) -> np.ndarray:

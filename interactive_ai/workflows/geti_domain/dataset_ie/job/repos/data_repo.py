@@ -6,12 +6,12 @@ This module implements the import export data repo
 
 import abc
 import json
+import logging
 import os
 import shutil
 from collections.abc import Callable
 
 import datumaro as dm
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, Session
 from iai_core.utils.file_management import safely_unzip
@@ -20,7 +20,7 @@ from job.repos.object_storage_repo import ObjectStorageRepo
 from job.utils.exceptions import FileNotFoundException
 from job.utils.import_utils import ImportUtils
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class IDataRepo(metaclass=abc.ABCMeta):

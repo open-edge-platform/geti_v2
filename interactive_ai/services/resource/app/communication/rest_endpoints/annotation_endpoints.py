@@ -1,9 +1,9 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query
-from geti_logger_tools.logger_config import initialize_logger
 from starlette import status
 from starlette.responses import JSONResponse
 
@@ -23,7 +23,7 @@ from geti_fastapi_tools.dependencies import (
 )
 from geti_types import ID, DatasetStorageIdentifier, ImageIdentifier, VideoFrameIdentifier
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 annotation_api_prefix_url = (
     "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/datasets/{dataset_id}"

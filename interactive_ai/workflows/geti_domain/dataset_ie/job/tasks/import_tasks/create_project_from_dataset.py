@@ -3,10 +3,10 @@
 
 """Create project and populate it with import dataset task module"""
 
+import logging
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING, cast
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_spicedb_tools import SpiceDB
 from iai_core.utils.project_builder import PersistedProjectBuilder
 from jobs_common.tasks import flyte_multi_container_task as task
@@ -27,7 +27,7 @@ from job.utils.progress_utils import WeightedProgressReporter
 if TYPE_CHECKING:
     from iai_core.entities.label import Label
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class _Steps(IntEnum):

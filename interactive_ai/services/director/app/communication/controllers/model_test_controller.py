@@ -3,10 +3,10 @@
 
 """This module implements the ModelTestController"""
 
+import logging
 from typing import Any
 
 from geti_feature_tools import FeatureFlagProvider
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.data_validator import ModelTestRestValidator
 from communication.exceptions import (
@@ -52,7 +52,7 @@ from iai_core.repos import (
 )
 from iai_core.utils.deletion_helpers import DeletionHelpers
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ModelTestController:

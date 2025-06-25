@@ -4,9 +4,8 @@
 This module implements the export management usecase
 """
 
+import logging
 from typing import NamedTuple
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.helpers.job_helper import JOB_SERVICE_GRPC_ADDRESS, JobDuplicatePolicy, JobType, serialize_job_key
 from communication.repos.object_storage_repo import ObjectDataRepo
@@ -15,7 +14,7 @@ from domain.entities.dataset_ie_file_metadata import ExportFormat
 from geti_types import CTX_SESSION_VAR, ID, Session
 from grpc_interfaces.job_submission.client import GRPCJobsClient
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DatasetExportOperationConfig(NamedTuple):

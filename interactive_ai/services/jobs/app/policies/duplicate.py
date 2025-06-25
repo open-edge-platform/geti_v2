@@ -6,16 +6,15 @@ Utils for jobs aggregation pipelines.
 Provides method to build a sub-pipeline to filter out jobs with running duplicates.
 """
 
+import logging
 from typing import Any
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from model.job_state import JobState
 from policies.job_repo import SessionBasedPolicyJobRepo
 
 from iai_core.repos.base.session_repo import QueryAccessMode
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_duplicate_check_sub_pipeline() -> list[dict[Any, Any]]:

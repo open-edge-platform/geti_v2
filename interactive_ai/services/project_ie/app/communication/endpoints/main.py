@@ -4,13 +4,13 @@
 This module initializes the FastAPI app and registers the used routers
 """
 
+import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from geti_logger_tools.logger_config import initialize_logger
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
@@ -22,7 +22,7 @@ from geti_fastapi_tools.exceptions import GetiBaseException
 from geti_fastapi_tools.responses import error_response_rest
 from geti_telemetry_tools import ENABLE_TRACING, FastAPITelemetry
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager

@@ -5,10 +5,10 @@
 Prepare training data task
 """
 
+import logging
 import os
 import typing
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools.tracing.common import tracer
 from geti_types import CTX_SESSION_VAR, ID
 from iai_core.utils.type_helpers import str2bool
@@ -34,7 +34,7 @@ IDX_STEP_CREATE_TRAIN_DATASET = 1
 IDX_STEP_SHARD_DATASET = 2
 STEPS_COUNT = 3
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def report_retrieve_train_data_progress(progress: float, message: str) -> None:

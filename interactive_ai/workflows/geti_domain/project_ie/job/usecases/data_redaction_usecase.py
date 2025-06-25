@@ -4,6 +4,7 @@
 This module is responsible for data redaction during the import and export processes.
 """
 
+import logging
 import os
 import random
 import re
@@ -17,13 +18,12 @@ from zipfile import ZipFile
 from bson import ObjectId, UuidRepresentation
 from bson.json_util import JSONOptions, dumps
 from defusedxml import ElementTree
-from geti_logger_tools.logger_config import initialize_logger
 from iai_core.repos.mappers import DatetimeToMongo, MediaIdentifierToMongo
 from iai_core.utils.time_utils import now
 
 from job.entities.exceptions import ExportDataRedactionFailedException, ImportDataRedactionFailedException
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_random_objectid_between_dates(min_date: datetime, max_date: datetime) -> ObjectId:

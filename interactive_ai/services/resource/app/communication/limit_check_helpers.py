@@ -3,8 +3,7 @@
 """This module defines helpers used to check limit constraints"""
 
 import http
-
-from geti_logger_tools.logger_config import initialize_logger
+import logging
 
 from communication.constants import (
     MAX_NUMBER_OF_ANNOTATION_VERSIONS_PER_MEDIA,
@@ -18,7 +17,7 @@ from iai_core.entities.annotation import AnnotationSceneKind
 from iai_core.entities.project import Project
 from iai_core.repos import AnnotationSceneRepo, ImageRepo, ProjectRepo, VideoRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MaxProjectsReachedException(GetiBaseException):

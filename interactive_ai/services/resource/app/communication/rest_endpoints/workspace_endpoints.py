@@ -1,13 +1,14 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import logging
+
 from fastapi import APIRouter
-from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse
 
 from geti_types import CTX_SESSION_VAR, ID, make_session
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 workspace_router = APIRouter(prefix="/api/v1/organizations/{organization_id}", tags=["Workspace"])

@@ -5,9 +5,9 @@
 Get training data task
 """
 
+import logging
 from typing import TYPE_CHECKING
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID
 from iai_core.entities.model import Model
@@ -20,7 +20,7 @@ from job.utils.train_workflow_data import TrainWorkflowData
 if TYPE_CHECKING:
     from iai_core.configuration.elements.hyper_parameters import HyperParameters
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @unified_tracing

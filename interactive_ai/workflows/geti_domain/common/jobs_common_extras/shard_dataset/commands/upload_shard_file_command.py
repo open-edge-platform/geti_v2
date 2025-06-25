@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import logging
 import os
 from pathlib import Path
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import ProjectIdentifier
 
@@ -13,7 +13,7 @@ from jobs_common.exceptions import DataShardCreationFailedException
 from jobs_common.tasks.utils.secrets import JobMetadata
 from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class UploadShardFileCommand(ICommand):

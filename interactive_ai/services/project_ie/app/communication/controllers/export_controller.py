@@ -3,9 +3,9 @@
 
 """Controller for project export related requests"""
 
+import logging
 import os
 
-from geti_logger_tools.logger_config import initialize_logger
 from grpc import RpcError
 from starlette.responses import RedirectResponse
 
@@ -20,7 +20,7 @@ from iai_core.entities.project import NullProject
 from iai_core.repos import ProjectRepo
 from iai_core.utils.naming_helpers import slugify
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 JOB_SERVICE_GRPC_ADDRESS = os.environ.get("JOB_SERVICE_ADDRESS", "localhost:50051")
 PROJECT_EXPORT_TYPE = "export_project"

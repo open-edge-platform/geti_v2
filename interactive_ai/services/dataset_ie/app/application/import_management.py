@@ -4,7 +4,7 @@
 This module implements the import management usecase
 """
 
-from geti_logger_tools.logger_config import initialize_logger
+import logging
 
 from communication.helpers.http_exceptions import (
     BadRequestGetiBaseException,
@@ -22,7 +22,7 @@ from iai_core.entities.label import NullLabel
 from iai_core.entities.project import NullProject
 from iai_core.repos import LabelRepo, ProjectRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ImportManager:

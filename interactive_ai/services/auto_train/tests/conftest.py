@@ -2,12 +2,12 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 
+import logging
 import os
 import pathlib
 from unittest.mock import patch
 
 import pytest
-from geti_logger_tools.logger_config import initialize_logger
 from testcontainers.mongodb import MongoDbContainer
 
 from geti_types import CTX_SESSION_VAR, make_session
@@ -16,7 +16,8 @@ from iai_core.repos.base.mongo_connector import MongoConnector
 CTX_SESSION_VAR.set(make_session())
 os.environ["FEATURE_FLAG_CREDIT_SYSTEM"] = "True"
 
-logger = initialize_logger(__name__)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -1,17 +1,18 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 import os
 import pathlib
 from collections.abc import Generator
 from unittest.mock import patch
 
 import pytest
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import CTX_SESSION_VAR, make_session
 from iai_core.repos.base.mongo_connector import MongoConnector
 from testcontainers.mongodb import MongoDbContainer
 
-logger = initialize_logger(__name__)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 CTX_SESSION_VAR.set(make_session())
 

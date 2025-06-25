@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import logging
 from typing import Optional
 
 import iai_core.configuration.helper as otx_config_helper
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools.tracing.common import unified_tracing
 from geti_types import ID, ProjectIdentifier
 from iai_core.entities.model import (
@@ -26,7 +26,7 @@ from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfa
 
 from job.models import OptimizationConfig, OptimizationTrainerContext
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def _prepare_mlflow_s3_bucket(

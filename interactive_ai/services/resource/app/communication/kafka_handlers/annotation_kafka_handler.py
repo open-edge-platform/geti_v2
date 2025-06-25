@@ -1,13 +1,13 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from geti_logger_tools.logger_config import initialize_logger
+import logging
 
 from geti_kafka_tools import BaseKafkaHandler, KafkaRawMessage, TopicSubscription
 from geti_types import ID, Singleton
 from iai_core.services.dataset_storage_filter_service import DatasetStorageFilterService
 from iai_core.session.session_propagation import setup_session_kafka
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AnnotationKafkaHandler(BaseKafkaHandler, metaclass=Singleton):

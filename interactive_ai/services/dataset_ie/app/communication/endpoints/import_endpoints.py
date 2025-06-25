@@ -4,8 +4,9 @@
 This module implements the import endpoints
 """
 
+import logging
+
 from fastapi import APIRouter, Body, Depends, HTTPException
-from geti_logger_tools.logger_config import initialize_logger
 from starlette.responses import JSONResponse
 
 from application.import_management import ImportManager
@@ -24,7 +25,7 @@ from geti_types import ID
 from iai_core.entities.dataset_storage import NullDatasetStorage
 from iai_core.repos import DatasetStorageRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1", dependencies=[Depends(setup_session_fastapi)])
 
 UNKNOWN_ERROR_DURING_IMPORT = "Unknown error faced during dataset loading"

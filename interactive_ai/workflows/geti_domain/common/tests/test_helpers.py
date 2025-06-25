@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import contextlib
 import itertools
+import logging
 import math
 import os
 import random
@@ -14,7 +15,6 @@ import cv2
 import numpy as np
 import testfixtures.comparison
 from bson import ObjectId
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID, DatasetStorageIdentifier, ImageIdentifier, MediaIdentifierEntity, VideoFrameIdentifier
 from iai_core.adapters.binary_interpreters import NumpyBinaryInterpreter
 from iai_core.algorithms import ModelTemplateList
@@ -64,7 +64,7 @@ from pytest import FixtureRequest
 
 from jobs_common_extras.evaluation.utils.segmentation_utils import create_annotation_from_segmentation_map
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def compare_project(x, y, context):

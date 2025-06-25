@@ -3,9 +3,8 @@
 
 """This module contains the ActiveScoresUpdate use case"""
 
+import logging
 from collections.abc import Sequence
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from active_learning.interactors import ActiveMapper
 
@@ -15,7 +14,7 @@ from geti_types import ID, DatasetStorageIdentifier, MediaIdentifierEntity, Proj
 from iai_core.entities.dataset_storage import NullDatasetStorage
 from iai_core.repos import DatasetStorageRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ActiveScoresUpdateUseCase:

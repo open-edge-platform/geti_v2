@@ -4,9 +4,9 @@
 This module implements the import export metadata repo
 """
 
+import logging
 from collections.abc import Callable
 
-from geti_logger_tools.logger_config import initialize_logger
 from pymongo import DESCENDING, IndexModel
 from pymongo.collection import Collection
 from pymongo.command_cursor import CommandCursor
@@ -21,7 +21,7 @@ from iai_core.repos.base import SessionBasedRepo
 from iai_core.repos.base.mongo_connector import MongoConnector
 from iai_core.repos.mappers import CursorIterator
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 TTL_TIME_IN_SECONDS = 24 * 60 * 60
 

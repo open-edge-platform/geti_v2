@@ -1,12 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from copy import copy
 from typing import Any, cast
 
 import cv2
 import numpy as np
 from bson import ObjectId
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID
 from iai_core.entities.annotation import Annotation
 from iai_core.entities.dataset_item import DatasetItem
@@ -18,7 +18,7 @@ from iai_core.utils.shape_factory import ShapeFactory
 
 from jobs_common_extras.evaluation.utils.helpers import is_model_legacy_otx_version
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 Contour = list[tuple[float, float]]
 ContourInternal = list[tuple[float, float] | None]

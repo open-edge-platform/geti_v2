@@ -3,6 +3,7 @@
 
 """Create export dataset task module"""
 
+import logging
 import os
 from enum import IntEnum, auto
 from typing import Any
@@ -10,7 +11,6 @@ from typing import Any
 from datumaro.components.dataset import StreamDataset
 from datumaro.components.media import Image as dm_Image
 from datumaro.components.media import MediaElement as dm_MediaElement
-from geti_logger_tools.logger_config import initialize_logger
 from geti_types import ID, ProjectIdentifier
 from iai_core.entities.label_schema import LabelSchema, NullLabelSchema
 from iai_core.repos import DatasetStorageRepo, LabelSchemaRepo
@@ -32,7 +32,7 @@ from job.utils.export_utils import ExportUtils
 from job.utils.import_utils import ImportUtils
 from job.utils.progress_utils import WeightedProgressReporter
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class _Steps(IntEnum):

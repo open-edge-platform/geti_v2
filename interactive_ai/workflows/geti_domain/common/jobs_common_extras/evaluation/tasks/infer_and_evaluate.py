@@ -3,10 +3,10 @@
 
 """This module defines Flyte task to infer and evaluate a model on multiple datasets"""
 
+import logging
 from collections.abc import Callable, Sequence
 from os import getenv
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from geti_types import DatasetStorageIdentifier, ProjectIdentifier
 from iai_core.entities.evaluation_result import EvaluationResult
@@ -25,7 +25,7 @@ from jobs_common_extras.evaluation.entities.batch_inference_dataset import Batch
 from jobs_common_extras.evaluation.services.batch_inference import BatchInference
 from jobs_common_extras.evaluation.utils.metrics_helper import MetricsHelper
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "INFER_AND_EVALUATE_TASK_POD_SPEC",

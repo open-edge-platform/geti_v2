@@ -5,9 +5,8 @@
 """This module implements the ConfigurationManager class"""
 
 import functools
+import logging
 from typing import Any
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import AlgorithmNotFoundException, TaskNotFoundException
 from configuration import ComponentRegisterEntry, ConfigurableComponentRegister
@@ -27,7 +26,7 @@ from iai_core.entities.task_node import TaskNode
 from iai_core.repos import ConfigurableParametersRepo, ModelRepo, ModelStorageRepo, ProjectRepo
 from iai_core.services.model_service import ModelService
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ConfigurationManager:

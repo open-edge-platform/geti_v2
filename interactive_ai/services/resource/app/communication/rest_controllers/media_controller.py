@@ -4,13 +4,13 @@
 """This module contains the media controller"""
 
 import json
+import logging
 import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, BinaryIO
 
 import numpy as np
 from fastapi import UploadFile
-from geti_logger_tools.logger_config import initialize_logger
 
 from communication.exceptions import (
     LabelNotFoundException,
@@ -66,7 +66,7 @@ WIDTH = "width"
 MEDIA = "media"
 MEDIA_COUNT = "media_count"
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MediaRESTController(metaclass=Singleton):

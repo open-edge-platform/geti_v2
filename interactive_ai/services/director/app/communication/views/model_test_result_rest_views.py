@@ -5,11 +5,10 @@
 Converters between objects and their corresponding REST views
 """
 
+import logging
 from collections.abc import Sequence
 from enum import Enum, auto
 from typing import Any
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from geti_types import ID
 from iai_core.entities.dataset_storage import NullDatasetStorage
@@ -17,7 +16,7 @@ from iai_core.entities.metrics import ScoreMetric
 from iai_core.entities.model import Model
 from iai_core.entities.model_test_result import ModelTestResult, TestState
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MetricRESTEnum(Enum):

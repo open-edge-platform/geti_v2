@@ -5,11 +5,11 @@
 Converters between objects and their corresponding REST views
 """
 
-from geti_logger_tools.logger_config import initialize_logger
+import logging
 
 from geti_types import ID
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class JobRestViews:

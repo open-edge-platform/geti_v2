@@ -1,10 +1,9 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 import os
 from tempfile import TemporaryDirectory
 from typing import Any
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from geti_kafka_tools import publish_event
 from geti_types import CTX_SESSION_VAR, ID
@@ -17,7 +16,7 @@ from iai_core.utils.constants import DEFAULT_THUMBNAIL_SIZE
 from iai_core.utils.media_factory import Media2DFactory
 from media_utils import VideoDecoder, VideoFrameReader, generate_thumbnail_video
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MediaUploadedUseCase:

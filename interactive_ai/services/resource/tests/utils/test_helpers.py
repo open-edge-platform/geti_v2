@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import contextlib
 import itertools
+import logging
 import math
 import os
 import random
@@ -16,7 +17,6 @@ import cv2
 import numpy as np
 import testfixtures.comparison
 from bson import ObjectId
-from geti_logger_tools.logger_config import initialize_logger
 from pytest import FixtureRequest
 from testfixtures import compare
 
@@ -92,7 +92,7 @@ from iai_core.utils.identifier_factory import IdentifierFactory
 from iai_core.utils.media_factory import Media2DFactory
 from iai_core.utils.project_factory import ProjectFactory
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def compare_project(x, y, context):

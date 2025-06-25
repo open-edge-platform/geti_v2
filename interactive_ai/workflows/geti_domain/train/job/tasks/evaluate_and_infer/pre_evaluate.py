@@ -5,9 +5,9 @@
 Pre-evaluation task module
 """
 
+import logging
 from collections.abc import Callable
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from iai_core.entities.annotation import AnnotationSceneKind
 from iai_core.entities.datasets import Dataset, DatasetPurpose
@@ -22,7 +22,7 @@ from jobs_common_extras.evaluation.utils.exceptions import EmptyEvaluationDatase
 
 from job.utils.train_workflow_data import TrainWorkflowData
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @unified_tracing

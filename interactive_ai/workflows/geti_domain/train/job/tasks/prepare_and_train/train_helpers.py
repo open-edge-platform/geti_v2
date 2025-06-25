@@ -3,8 +3,9 @@
 
 """This module contains the FlyteTaskTrainCommands"""
 
+import logging
+
 import iai_core.configuration.helper as otx_config_helper
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import unified_tracing
 from iai_core.configuration.elements.hyper_parameters import HyperParameters
 from iai_core.entities.datasets import Dataset
@@ -31,7 +32,7 @@ from jobs_common_extras.mlflow.utils.train_output_models import TrainOutputModel
 
 from job.utils.train_workflow_data import TrainWorkflowData
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "finalize_train",

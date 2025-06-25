@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import cast
 
-from geti_logger_tools.logger_config import initialize_logger
 from geti_spicedb_tools import Permissions, SpiceDB
 
 from communication.exceptions import DatasetStorageNotInProjectException, LabelNotFoundException, ProjectLockedException
@@ -41,7 +41,7 @@ TASKS = "tasks"
 TITLE = "title"
 TO = "to"
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass

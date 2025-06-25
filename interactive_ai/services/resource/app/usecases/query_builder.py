@@ -1,10 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 import math
 from dataclasses import dataclass
 from typing import Any
 
-from geti_logger_tools.logger_config import initialize_logger
 from pymongo.collation import Collation
 
 from usecases.dataset_filter import DatasetFilter
@@ -30,7 +30,7 @@ from iai_core.repos.mappers.mongodb_mappers.id_mapper import IDToMongo
 from iai_core.repos.mappers.mongodb_mappers.media_mapper import MediaIdentifierToMongo
 from iai_core.repos.training_revision_filter_repo import _TrainingRevisionFilterRepo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MatchedFramesVideoIdentifier(VideoIdentifier):

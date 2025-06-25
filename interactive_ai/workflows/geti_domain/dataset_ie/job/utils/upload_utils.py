@@ -6,6 +6,7 @@ This module implements upload utilities
 
 import abc
 import datetime
+import logging
 import os.path as osp
 from collections.abc import Callable
 from typing import Any, cast
@@ -15,7 +16,6 @@ import numpy as np
 from datumaro import DatasetItem as dm_DatasetItem
 from datumaro import Label as dm_Label
 from geti_kafka_tools import publish_event
-from geti_logger_tools.logger_config import initialize_logger
 from geti_telemetry_tools import ENABLE_METRICS
 from geti_telemetry_tools.metrics import (
     EmptyInstrumentAttributes,
@@ -53,7 +53,7 @@ from job.utils.constants import (
 )
 from job.utils.exceptions import FileNotFoundException, InvalidMediaException
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class UploadManager(metaclass=abc.ABCMeta):

@@ -5,11 +5,10 @@
 Job prioritizer module
 """
 
+import logging
 import os
 from dataclasses import dataclass
 from typing import Any
-
-from geti_logger_tools.logger_config import initialize_logger
 
 from model.job_state import JobState
 from policies.gpu_bound import mark_next_gpu_bound_jobs_ids_as_ready_for_scheduling_from_submitted_queue
@@ -22,7 +21,7 @@ from geti_types import CTX_SESSION_VAR, ID, Singleton
 from iai_core.repos.base.constants import ORGANIZATION_ID_FIELD_NAME, WORKSPACE_ID_FIELD_NAME
 from iai_core.repos.mappers import IDToMongo
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)

@@ -29,7 +29,7 @@ async def serve():  # noqa: ANN201
     server = grpc.aio.server()
     add_ModelRegistrationServicer_to_server(ModelRegistration(), server)
     server.add_insecure_port(f"[::]:{GRPC_SERVICE_PORT}")
-    logger.info("ModelRegistration Service started.")
+    logging.info("ModelRegistration Service started.")
     await server.start()
 
     runner = web.AppRunner(app, access_log=None)

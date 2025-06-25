@@ -1,14 +1,15 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-from geti_logger_tools.logger_config import initialize_logger
+import logging
+
 from pytest import FixtureRequest
 
 from tests.test_helpers import register_model_template
 
 from iai_core.entities.model_template import ModelTemplate
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ObjectDetection:

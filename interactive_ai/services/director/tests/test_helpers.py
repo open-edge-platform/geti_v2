@@ -1,5 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 import os
 import tempfile
 import unittest
@@ -9,7 +10,6 @@ from typing import Any
 
 import cv2
 import numpy as np
-from geti_logger_tools.logger_config import initialize_logger
 from pytest import FixtureRequest
 from testfixtures import compare
 
@@ -77,7 +77,7 @@ from iai_core.utils.deletion_helpers import DeletionHelpers
 from iai_core.utils.media_factory import Media2DFactory
 from iai_core.utils.project_factory import ProjectFactory
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def auto_wire_task_chain(task_nodes: list[TaskNode]) -> TaskGraph:

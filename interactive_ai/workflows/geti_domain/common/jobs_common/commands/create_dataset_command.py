@@ -3,15 +3,15 @@
 
 """This module defines base create dataset command"""
 
+import logging
 from abc import ABCMeta, abstractmethod
 
-from geti_logger_tools.logger_config import initialize_logger
 from iai_core.entities.dataset_storage import DatasetStorage
 from iai_core.entities.project import Project
 
 from jobs_common.commands.interfaces.command import ICommand
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class CreateDatasetCommand(ICommand, metaclass=ABCMeta):

@@ -5,6 +5,7 @@
 Jobs Scheduler Flyte integration
 """
 
+import logging
 import os
 from enum import Enum
 from typing import cast
@@ -16,7 +17,6 @@ from flytekit.models.filters import ValueIn
 from flytekit.remote import FlyteLaunchPlan, FlyteNode, FlyteRemote, FlyteTask, FlyteWorkflow, FlyteWorkflowExecution
 from flytekit.remote.entities import FlyteBranchNode
 from flytekit.tools.translator import Options
-from geti_logger_tools.logger_config import initialize_logger
 
 from model.job import Job
 from model.telemetry import Telemetry
@@ -26,7 +26,7 @@ from geti_types import Session, Singleton
 PROJECT = os.environ.get("FLYTE_PROJECT", "impt-jobs")
 DOMAIN = os.environ.get("FLYTE_DOMAIN", "production")
 
-logger = initialize_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ExecutionType(Enum):
