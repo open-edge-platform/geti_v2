@@ -21,7 +21,7 @@ def init_logger(package_name: Any) -> Any:
     def decorator(fn: Callable) -> Callable:
         @wraps(fn)
         def wrapper(*args, **kwargs) -> Callable:
-            start_common_logger(package_name=package_name, use_async=False)
+            start_common_logger(package_name=package_name)
             return fn(*args, **kwargs)
 
         return wrapper
