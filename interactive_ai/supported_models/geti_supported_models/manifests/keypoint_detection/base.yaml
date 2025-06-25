@@ -1,0 +1,12 @@
+task: keypoint_detection
+capabilities:
+  xai: false
+
+hyperparameters:
+  evaluation:
+    metric: pck
+  training:
+    max_epochs: 200
+    early_stopping:
+      enable: true
+      patience: 10

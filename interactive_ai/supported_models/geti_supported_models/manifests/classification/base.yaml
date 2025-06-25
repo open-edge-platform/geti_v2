@@ -1,0 +1,26 @@
+task: classification
+
+hyperparameters:
+  dataset_preparation:
+    augmentation:
+      random_affine:
+        enable: false
+      random_horizontal_flip:
+        enable: false
+      random_vertical_flip:
+        enable: false
+      gaussian_blur:
+        enable: false
+      color_jitter:
+        enable: false
+      random_iou_crop:
+        enable: false
+      gaussian_noise:
+        enable: false
+  evaluation:
+    metric: top-1 # ???
+  training:
+    max_epochs: 100
+    early_stopping:
+      enable: true
+      patience: 7

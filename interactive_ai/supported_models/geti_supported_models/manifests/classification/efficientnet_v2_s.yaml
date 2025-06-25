@@ -1,0 +1,15 @@
+id: Classification_EfficientNet_V2_Small
+name: EfficientNet-V2-Small
+
+description: "EfficientNetV2-Small is a compact and fast classification model that combines neural architecture search with training-aware optimizations. It introduces fused MBConv layers for early-stage acceleration and improves training speed while maintaining accuracy, making it ideal for edge and mobile devices."
+stats:
+  gigaflops: 5.76
+  trainable_parameters: 22
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 3
+    training_time: 1
+    inference_speed: 1
+
+hyperparameters:
+  training:
+    learning_rate: 0.0071

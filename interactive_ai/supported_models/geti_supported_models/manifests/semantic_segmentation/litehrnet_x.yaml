@@ -1,0 +1,16 @@
+id: Semantic_Segmentation_LiteHRNet_X
+name: LiteHRNet-X
+
+description: "LiteHRNet-X is an extended variant of LiteHRNet with enhanced capacity or custom scaling. It targets use cases requiring higher accuracy than the standard or small variants, while still benefiting from LiteHRNet's efficient high-resolution processing."
+stats:
+  gigaflops: 9.2
+  trainable_parameters: 1.5
+  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+    accuracy: 2
+    training_time: 0
+    inference_speed: 0
+
+hyperparameters:
+  training:
+    learning_rate: 0.001
+support_status: deprecated
