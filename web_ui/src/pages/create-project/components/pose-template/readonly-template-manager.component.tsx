@@ -50,7 +50,7 @@ export const ReadonlyTemplateManager = ({
 
     if (!isValidStructure) {
         return (
-            <Flex alignContent='center' justifyContent='center'>
+            <Flex alignContent='center' justifyContent='center' data-testid='keypoint readonly template'>
                 <Text>Invalid template structure. Please check your configuration and try again.</Text>
             </Flex>
         );
@@ -60,11 +60,15 @@ export const ReadonlyTemplateManager = ({
         <ZoomProvider>
             <SelectedProvider>
                 <HoveredProvider>
-                    <Flex direction={'column'} height={'100%'} UNSAFE_className={className}>
+                    <Flex
+                        direction={'column'}
+                        height={'100%'}
+                        UNSAFE_className={className}
+                        data-testid='keypoint readonly template'
+                    >
                         <TransformZoom>
                             <div
                                 ref={containerRef}
-                                aria-label='keypoint readonly template'
                                 onContextMenu={(event) => event.preventDefault()}
                                 style={{ width: '100%', overflow: 'hidden', gridArea: 'content' }}
                             >
