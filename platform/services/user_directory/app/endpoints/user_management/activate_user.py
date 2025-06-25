@@ -106,7 +106,6 @@ def verify_payload(handler: UsersHandler, token: str) -> UserType:
             name=JWT_SECRET,
             secrets_list=["key"],
         )["key"]
-        logger.debug(f"secret {secret}")
         unsafe_uid = jwt.decode(
             jwt=token,
             algorithms=[UsersHandler.JWT_ALGORITHM],
