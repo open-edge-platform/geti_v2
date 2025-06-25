@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 
 import pytest
-from scripts.mlflow_io import AsyncCaller
 
 
 @pytest.fixture
@@ -26,13 +25,6 @@ def fxt_shard_files_dir(tmpdir):
     os.environ["SHARD_FILES_DIR"] = str(tmpdir)
     yield
     os.environ.pop("SHARD_FILES_DIR")
-
-
-@pytest.fixture(autouse=True)
-def fxt_async_caller():
-    AsyncCaller().start()
-    yield
-    AsyncCaller().close()
 
 
 @pytest.fixture(scope="session", autouse=True)

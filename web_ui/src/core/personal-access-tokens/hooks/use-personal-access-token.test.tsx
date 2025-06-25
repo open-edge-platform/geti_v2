@@ -3,14 +3,8 @@
 
 import { waitFor } from '@testing-library/react';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
-import {
-    DELETE_MESSAGE,
-    RETRIEVE_ERROR,
-    UPDATE_MESSAGE,
-    usePersonalAccessToken,
-} from './use-personal-access-token.hook';
+import { usePersonalAccessToken } from './use-personal-access-token.hook';
 
 const mockInvalidateQueries = jest.fn();
 jest.mock('@tanstack/react-query', () => ({
@@ -30,12 +24,6 @@ jest.mock('../../../core/personal-access-tokens/in-memory-personal-access-tokens
         deletePersonalAccessToken: mockDeletePersonalAccessToken,
         updatePersonalAccessToken: mockUpdatePersonalAccessToken,
     }),
-}));
-
-const mockAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
 }));
 
 const renderPersonalAccessTokenHook = () => {
@@ -84,10 +72,6 @@ describe('usePersonalAccessToken', () => {
 
             await waitFor(() => {
                 expect(mockInvalidateQueries).not.toHaveBeenCalled();
-                expect(mockAddNotification).toHaveBeenCalledWith({
-                    message: errorMessage,
-                    type: NOTIFICATION_TYPE.ERROR,
-                });
             });
         });
 
@@ -104,10 +88,6 @@ describe('usePersonalAccessToken', () => {
             });
             await waitFor(() => {
                 expect(mockInvalidateQueries).not.toHaveBeenCalled();
-                expect(mockAddNotification).toHaveBeenCalledWith({
-                    message: RETRIEVE_ERROR,
-                    type: NOTIFICATION_TYPE.ERROR,
-                });
             });
         });
     });
@@ -138,10 +118,6 @@ describe('usePersonalAccessToken', () => {
             });
             await waitFor(() => {
                 expect(mockInvalidateQueries).not.toHaveBeenCalled();
-                expect(mockAddNotification).toHaveBeenCalledWith({
-                    message: errorMessage,
-                    type: NOTIFICATION_TYPE.ERROR,
-                });
             });
         });
 
@@ -156,10 +132,6 @@ describe('usePersonalAccessToken', () => {
             });
             await waitFor(() => {
                 expect(mockInvalidateQueries).not.toHaveBeenCalled();
-                expect(mockAddNotification).toHaveBeenCalledWith({
-                    message: DELETE_MESSAGE,
-                    type: NOTIFICATION_TYPE.ERROR,
-                });
             });
         });
     });
@@ -176,10 +148,6 @@ describe('usePersonalAccessToken', () => {
             });
             await waitFor(() => {
                 expect(mockInvalidateQueries).toHaveBeenCalled();
-                expect(mockAddNotification).toHaveBeenCalledWith({
-                    message: UPDATE_MESSAGE,
-                    type: NOTIFICATION_TYPE.DEFAULT,
-                });
             });
         });
 
@@ -196,10 +164,6 @@ describe('usePersonalAccessToken', () => {
             });
             await waitFor(() => {
                 expect(mockInvalidateQueries).not.toHaveBeenCalled();
-                expect(mockAddNotification).toHaveBeenCalledWith({
-                    message: errorMessage,
-                    type: NOTIFICATION_TYPE.ERROR,
-                });
             });
         });
 
@@ -215,10 +179,6 @@ describe('usePersonalAccessToken', () => {
             });
             await waitFor(() => {
                 expect(mockInvalidateQueries).not.toHaveBeenCalled();
-                expect(mockAddNotification).toHaveBeenCalledWith({
-                    message: DELETE_MESSAGE,
-                    type: NOTIFICATION_TYPE.ERROR,
-                });
             });
         });
     });

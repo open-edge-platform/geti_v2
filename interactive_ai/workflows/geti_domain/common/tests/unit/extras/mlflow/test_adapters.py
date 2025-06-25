@@ -23,7 +23,7 @@ class TestGetiOTXInterfaceAdapter:
     @pytest.fixture()
     def fxt_performance(self):
         return Performance(
-            score=ScoreMetric("dummy", 1.0),
+            score=ScoreMetric(name="Model accuracy", value=0.5),
             dashboard_metrics=[
                 LineMetricsGroup(
                     metrics=[CurveMetric(name="dummy", ys=[1, 2, 3], xs=[1, 2, 3])],
@@ -444,29 +444,7 @@ class TestGetiOTXInterfaceAdapter:
         # Arrange
         mock_project_repo.return_value.get_by_id.return_value = fxt_project
         mock_repo.return_value.organization_id = fxt_organization_id
-        performance_dict = {
-            "dashboard_metrics": [
-                {
-                    "metrics": [
-                        {
-                            "name": "dummy",
-                            "type": "curve",
-                            "xs": [1.0, 2.0, 3.0],
-                            "ys": [1.0, 2.0, 3.0],
-                        }
-                    ],
-                    "visualization_info": {
-                        "name": "dummy",
-                        "palette": "DEFAULT",
-                        "type": "LINE",
-                        "x_axis_label": "x",
-                        "y_axis_label": "y",
-                    },
-                }
-            ],
-            "score": {"label_id": None, "name": "dummy", "type": "score", "value": 1.0},
-            "type": "Performance",
-        }
+        performance_dict = {"dummy": [1.0, 2.0, 3.0]}
         mock_repo.return_value.get_by_filename.return_value = json.dumps(performance_dict).encode()
 
         # Act

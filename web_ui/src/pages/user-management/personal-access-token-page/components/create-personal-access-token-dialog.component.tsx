@@ -4,10 +4,14 @@
 import { useEffect, useState } from 'react';
 
 import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Heading, TextField, View } from '@geti/ui';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
+import { get } from 'lodash-es';
 
 import { usePersonalAccessToken } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
 import { CreatePersonalAccessTokenDialogProps } from '../../../../core/personal-access-tokens/personal-access-tokens.interface';
+import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
+import { useNotification } from '../../../../notification/notification.component';
 import { WarningMessage } from '../../../../shared/components/warning-message/warning-message.component';
 import { getDateTimeInISOAndUTCOffsetFormat } from '../../../../shared/utils';
 import { CopyPersonalAccessToken } from './copy-personal-access-token.component';
@@ -23,6 +27,8 @@ enum Steps {
 // NOTE: values set on backend side
 const NAME_MAX_LENGTH = 100;
 const DESCRIPTION_MAX_LENGTH = 1000;
+const CREATE_MESSAGE = 'Personal Access Token was created successfully.';
+export const CREATE_ERROR = 'Personal Access Token was not created due to an error.';
 
 interface PersonalAccessTokenData {
     name: string;
@@ -35,6 +41,7 @@ export const CreatePersonalAccessTokenDialog = ({
     userId,
     triggerState,
 }: CreatePersonalAccessTokenDialogProps) => {
+    const { addNotification } = useNotification();
     const { createPersonalAccessTokenMutation } = usePersonalAccessToken();
 
     const [currentStep, setCurrentStep] = useState(Steps.ExpirationDate);
@@ -62,7 +69,14 @@ export const CreatePersonalAccessTokenDialog = ({
                 userId,
             },
             {
-                onSuccess: () => setCurrentStep(Steps.Copy),
+                onSuccess: () => {
+                    setCurrentStep(Steps.Copy);
+                    addNotification({ message: CREATE_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
+                },
+                onError: (error: AxiosError) => {
+                    const message = get(error, 'message', CREATE_ERROR);
+                    addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
+                },
             }
         );
     };
