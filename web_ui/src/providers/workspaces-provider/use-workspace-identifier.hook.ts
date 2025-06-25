@@ -22,8 +22,7 @@ export const useWorkspaceIdentifier = (): WorkspaceIdentifier => {
         if (!isEqual(lastWorkspaceId, workspaceId)) {
             setLastWorkspaceId(workspaceId);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [workspaceId]);
+    }, [workspaceId, setLastWorkspaceId, lastWorkspaceId]);
 
     return useMemo(() => ({ workspaceId, organizationId }), [workspaceId, organizationId]);
 };
