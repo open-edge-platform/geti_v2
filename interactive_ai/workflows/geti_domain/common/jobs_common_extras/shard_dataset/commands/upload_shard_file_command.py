@@ -11,7 +11,7 @@ from geti_types import ProjectIdentifier
 from jobs_common.commands.interfaces.command import ICommand
 from jobs_common.exceptions import DataShardCreationFailedException
 from jobs_common.tasks.utils.secrets import JobMetadata
-from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
+from jobs_common_extras.otx.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
 
 logger = logging.getLogger(__name__)
 

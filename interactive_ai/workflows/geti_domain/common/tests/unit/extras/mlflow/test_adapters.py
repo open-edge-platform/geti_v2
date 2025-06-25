@@ -14,8 +14,8 @@ from iai_core.entities.metrics import CurveMetric, LineChartInfo, LineMetricsGro
 from iai_core.entities.model import Model, ModelFormat, ModelOptimizationType, ModelPrecision, ModelStatus
 from iai_core.repos.model_repo import ModelRepo
 
-from jobs_common_extras.mlflow.adapters.definitions import OPENVINO_BIN_KEY, OPENVINO_XML_KEY, ClsSubTaskType
-from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
+from jobs_common_extras.otx.adapters.definitions import OPENVINO_BIN_KEY, OPENVINO_XML_KEY, ClsSubTaskType
+from jobs_common_extras.otx.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
 
 
 @pytest.mark.JobsComponent
@@ -32,9 +32,9 @@ class TestGetiOTXInterfaceAdapter:
             ],
         )
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.TemporaryDirectory")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.TemporaryDirectory")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_push_placeholders(
         self,
         mock_repo,
@@ -73,9 +73,9 @@ class TestGetiOTXInterfaceAdapter:
             os.path.join("jobs", fxt_job_metadata.id, "outputs", "logs", ".placeholder"),
         }
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.TemporaryDirectory")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.TemporaryDirectory")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_push_metadata(
         self,
         mock_repo,
@@ -102,13 +102,12 @@ class TestGetiOTXInterfaceAdapter:
         assert saved_file_names == {
             os.path.join("jobs", fxt_job_metadata.id, "metadata.json"),
             os.path.join("jobs", fxt_job_metadata.id, "project.json"),
-            os.path.join("jobs", fxt_job_metadata.id, "run_info.json"),
             os.path.join("jobs", fxt_job_metadata.id, "live_metrics", "progress.json"),
         }
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ModelRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ModelRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_push_input_model(
         self,
         mock_repo,
@@ -150,9 +149,9 @@ class TestGetiOTXInterfaceAdapter:
             dst_filepath=os.path.join("jobs", fxt_job_metadata.id, "inputs", "model.pth"),
         )
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ModelRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ModelRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_push_optimized_input_model(
         self,
         mock_repo,
@@ -211,9 +210,9 @@ class TestGetiOTXInterfaceAdapter:
             ]
         )
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.TemporaryDirectory")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.TemporaryDirectory")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_push_input_configuration(
         self,
         mock_repo,
@@ -251,9 +250,9 @@ class TestGetiOTXInterfaceAdapter:
 
         assert config_dict["sub_task_type"] == ClsSubTaskType.MULTI_CLASS_CLS
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.TemporaryDirectory")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.TemporaryDirectory")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_push_input_dataset(
         self,
         mock_repo,
@@ -287,9 +286,9 @@ class TestGetiOTXInterfaceAdapter:
         assert saved_file_names == {os.path.join("jobs", fxt_job_metadata.id, "inputs", fname)}
 
     @pytest.mark.parametrize("has_additional_model_artifacts", [True, False])
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ModelRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ModelRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_update_output_models(
         self,
         mock_repo,
@@ -398,8 +397,8 @@ class TestGetiOTXInterfaceAdapter:
         else:
             assert expected_filenames == called_filenames
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_pull_output_configuration(
         self,
         mock_repo,
@@ -429,8 +428,8 @@ class TestGetiOTXInterfaceAdapter:
         # Assert
         assert configuration == fxt_configurable_parameters_1
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_pull_metrics(
         self,
         mock_repo,
@@ -464,7 +463,7 @@ class TestGetiOTXInterfaceAdapter:
         # Assert
         assert performance is None
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_pull_metrics_exception(
         self,
         mock_experiments_repo,
@@ -479,7 +478,7 @@ class TestGetiOTXInterfaceAdapter:
 
         # Act
         with patch(
-            "jobs_common_extras.mlflow.adapters.geti_otx_interface.json.loads",
+            "jobs_common_extras.otx.adapters.geti_otx_interface.json.loads",
             side_effect=RuntimeError,
         ):
             performance = adapter.pull_metrics()
@@ -487,8 +486,8 @@ class TestGetiOTXInterfaceAdapter:
         # Assert
         assert performance is None
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_pull_progress(
         self,
         mock_repo,
@@ -508,8 +507,8 @@ class TestGetiOTXInterfaceAdapter:
         # Assert
         assert progress == 1.0
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.ProjectRepo")
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.ProjectRepo")
+    @patch("jobs_common_extras.otx.adapters.geti_otx_interface.OTXBinaryRepo")
     def test_clean(
         self,
         mock_repo,

@@ -85,7 +85,7 @@ class TestEvaluateAndInferTask:
         mocked_finalize_train.assert_called_once_with(
             train_data=train_data.train_data,
             train_output_model_ids=train_data.train_output_model_ids,
-            keep_mlflow_artifacts=False,
+            retain_training_artifacts=False,
         )
         mocked_pre_evaluate_model.assert_called_once_with(
             train_data=train_data.train_data,
@@ -173,7 +173,7 @@ class TestEvaluateAndInferTask:
         mocked_finalize_train.assert_called_once_with(
             train_data=train_data.train_data,
             train_output_model_ids=train_data.train_output_model_ids,
-            keep_mlflow_artifacts=False,
+            retain_training_artifacts=False,
         )
         mocked_pre_evaluate_model.assert_called_once_with(
             train_data=train_data.train_data,
@@ -260,7 +260,7 @@ class TestEvaluateAndInferTask:
         mocked_finalize_train.assert_called_once_with(
             train_data=train_data.train_data,
             train_output_model_ids=train_data.train_output_model_ids,
-            keep_mlflow_artifacts=False,
+            retain_training_artifacts=False,
         )
         mocked_pre_evaluate_model.assert_called_once_with(
             train_data=train_data.train_data,
@@ -345,7 +345,7 @@ class TestEvaluateAndInferTask:
         mocked_finalize_train.assert_called_once_with(
             train_data=train_data.train_data,
             train_output_model_ids=train_data.train_output_model_ids,
-            keep_mlflow_artifacts=False,
+            retain_training_artifacts=False,
         )
         mocked_pre_evaluate_model.assert_called_once_with(
             train_data=train_data.train_data,
@@ -441,7 +441,7 @@ class TestEvaluateAndInferTask:
         mocked_finalize_train.assert_called_once_with(
             train_data=train_data.train_data,
             train_output_model_ids=train_data.train_output_model_ids,
-            keep_mlflow_artifacts=False,
+            retain_training_artifacts=False,
         )
         mocked_pre_evaluate_model.assert_called_once_with(
             train_data=train_data.train_data,
@@ -543,7 +543,7 @@ class TestEvaluateAndInferTask:
         mocked_finalize_train.assert_called_once_with(
             train_data=train_data.train_data,
             train_output_model_ids=train_data.train_output_model_ids,
-            keep_mlflow_artifacts=False,
+            retain_training_artifacts=False,
         )
         mocked_pre_evaluate_model.assert_called_once_with(
             train_data=train_data.train_data,

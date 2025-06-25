@@ -2,7 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import logging
 
-from repos.mlflow_binary_repo import MLFlowBinaryRepo
+from repos.otx_binary_repo import OTXBinaryRepo
 from resource_management.ui_settings_manager import UISettingsManager
 from usecases.update_project_performance_usecase import UpdateProjectPerformanceUseCase
 
@@ -66,4 +66,4 @@ class MiscellaneousKafkaHandler(BaseKafkaHandler, metaclass=Singleton):
             workspace_id=workspace_id,
             project_id=project_id,
         )
-        MLFlowBinaryRepo(identifier=project_identifier).delete_all_under_project_dir()
+        OTXBinaryRepo(identifier=project_identifier).delete_all_under_project_dir()

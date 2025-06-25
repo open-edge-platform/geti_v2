@@ -180,7 +180,7 @@ def prepare_training_data_model_and_start_training(  # noqa: PLR0913
     else:
         report_shard_progress(progress=100, message="Training from sharded dataset is disabled")
 
-    # Step 4 - model entity and mlflow bucket preparation
+    # Step 4 - model entity and bucket preparation
     train_output_models = prepare_train(train_data=train_data, dataset=dataset)
 
     train_output_model_ids = train_output_models.to_train_output_model_ids()

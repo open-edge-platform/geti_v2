@@ -8,7 +8,7 @@ import pytest
 from geti_types import ID
 from iai_core.entities.model import ModelPrecision, ModelStatus
 from jobs_common.features.feature_flag_provider import FeatureFlag
-from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
+from jobs_common_extras.otx.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
 
 from job.tasks.prepare_and_train.train_helpers import finalize_train, prepare_train
 
@@ -56,8 +56,8 @@ class TestTrainHelpers:
         mock_geti_otx_interface_adapter.return_value.push_input_model.assert_called_once()
 
     @patch("job.tasks.prepare_and_train.train_helpers.TrainOutputModels.from_train_output_model_ids")
-    @patch("jobs_common_extras.mlflow.utils.train_output_models.ModelRepo")
-    @patch("jobs_common_extras.mlflow.utils.train_output_models.ModelService")
+    @patch("jobs_common_extras.otx.utils.train_output_models.ModelRepo")
+    @patch("jobs_common_extras.otx.utils.train_output_models.ModelService")
     def test_finalize_train(
         self,
         mock_model_service,

@@ -277,7 +277,7 @@ class TestAutoTrainControllerLoopIntegration:
                         "max_training_dataset_size": 12,
                         "max_number_of_annotations": None,
                         "min_annotation_size": None,
-                        "keep_mlflow_artifacts": False,
+                        "retain_training_artifacts": False,
                     },
                     metadata={
                         "project": {

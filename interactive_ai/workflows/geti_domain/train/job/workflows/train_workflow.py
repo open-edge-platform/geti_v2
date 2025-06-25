@@ -32,7 +32,7 @@ def train_workflow(  # noqa: PLR0913
     reshuffle_subsets: bool = False,
     # Training command
     command: list[str] = ["bash", "-c", "run"],
-    keep_mlflow_artifacts: bool = False,
+    retain_training_artifacts: bool = False,
     hyperparameters: Optional[dict] = None,  # noqa: UP007,
 ) -> None:
     """
@@ -57,11 +57,11 @@ def train_workflow(  # noqa: PLR0913
     annotation scene will be ignored during training.
     :param reshuffle_subsets: Whether to reassign/shuffle all the items to subsets including Test set from scratch
     :param command: Command to be executed on the primary container, e.g., OTX2 trainer pod.
-    :param keep_mlflow_artifacts: If true, do not remove the artifacts in mlflow bucket even if training succeeds.
+    :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
     :param hyperparameters: Dict containing the hyperparameters to be used for training.
     """
-    # Prepare training data, model entities, and mlflow bucket directory
+    # Prepare training data, model entities, and bucket directory
     train_data = prepare_training_data_model_and_start_training(
         project_id=project_id,
         task_id=task_id,
@@ -87,5 +87,5 @@ def train_workflow(  # noqa: PLR0913
         should_activate_model=should_activate_model,
         infer_on_pipeline=infer_on_pipeline,
         from_scratch=from_scratch,
-        keep_mlflow_artifacts=keep_mlflow_artifacts,
+        retain_training_artifacts=retain_training_artifacts,
     )

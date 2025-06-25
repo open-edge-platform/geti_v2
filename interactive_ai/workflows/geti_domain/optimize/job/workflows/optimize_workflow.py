@@ -30,7 +30,7 @@ def optimize_workflow_pot(  # noqa: PLR0913
     max_number_of_annotations: Optional[int] = None,  # noqa: UP007
     # Optimize command
     command: list[str] = ["bash", "-c", "run"],
-    keep_mlflow_artifacts: bool = False,
+    retain_training_artifacts: bool = False,
 ) -> None:
     """
     Runs a model optimization workflow
@@ -44,7 +44,7 @@ def optimize_workflow_pot(  # noqa: PLR0913
     :param num_image_pulling_threads: Number of threads used for pulling image bytes
     :param num_upload_threads: Number of threads used for uploading shard files
     :param command: Command to be executed on the primary container, e.g., OTX2 trainer pod.
-    :param keep_mlflow_artifacts: If true, do not remove the artifacts in mlflow bucket even if training succeeds.
+    :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
     """
 
@@ -66,7 +66,7 @@ def optimize_workflow_pot(  # noqa: PLR0913
         trainer_ctx=optimization_ctx,
         dataset_storage_id=dataset_storage_id,
         model_id=model_id,
-        keep_mlflow_artifacts=keep_mlflow_artifacts,
+        retain_training_artifacts=retain_training_artifacts,
         min_annotation_size=min_annotation_size,
         max_number_of_annotations=max_number_of_annotations,
     )
