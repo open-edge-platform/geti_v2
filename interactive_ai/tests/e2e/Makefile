@@ -74,6 +74,6 @@ generate-scenarios-list:
 	@echo "Generating list of BDD test scenarios..."
 	@for file in features/*.feature; do \
 		grep -h -A10000 "^\s*Feature: " "$$file" | tr -d '\r'; \
-		echo "\n=====\n"; \
+		printf "\n=====\n"; \
 	done > scenarios.txt
 	@echo "List of scenarios saved to scenarios.txt"
