@@ -4,27 +4,14 @@
 import { Key } from 'react';
 
 import { useWorkspacesApi } from '@geti/core/src/workspaces/hooks/use-workspaces.hook';
-import { OverlayTriggerState, useOverlayTriggerState } from '@react-stately/overlays';
+import { useOverlayTriggerState } from '@react-stately/overlays';
 
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { WorkspaceMenuActions } from '../utils';
 
 const MIN_NUMBER_OF_REQUIRED_WORKSPACES = 1;
 
-interface UseWorkspaceActions<TEditMutation = any, TDeleteMutation = any> {
-    items: WorkspaceMenuActions[];
-    handleMenuAction: (key: Key) => void;
-    deleteDialog: {
-        deleteWorkspaceDialogState: OverlayTriggerState;
-        deleteWorkspaceMutation: TDeleteMutation;
-    };
-    editDialog: {
-        editWorkspaceDialogState: OverlayTriggerState;
-        editWorkspaceMutation: TEditMutation;
-    };
-}
-
-export const useWorkspaceActions = (numberOfWorkspaces: number): UseWorkspaceActions => {
+export const useWorkspaceActions = (numberOfWorkspaces: number) => {
     const editWorkspaceDialogState = useOverlayTriggerState({});
     const deleteWorkspaceDialogState = useOverlayTriggerState({});
 
