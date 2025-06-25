@@ -32,11 +32,9 @@ def get_logging_format(extra_headers: str = "") -> str:
 
 def initialize_logger(package_name: str, logging_format: str | None = None) -> logging.Logger:
     """
-    Initialize logger and provide periodical dynamic refresh for its configuration.
-    Adds a filter to sanitize log messages to prevent log injection.
+    Initialize logger and adds a filter to sanitize log messages to prevent log injection.
 
     :param package_name: given name of package for the logger
-    :param use_async: whether to use asyncio for scheduling refresh task (if not then threading)
     :param logging_format: optional, logging format to use instead of the default one
     :return: initialized logger
     """
