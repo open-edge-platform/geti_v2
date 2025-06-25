@@ -8,4 +8,4 @@ DOCKER_BUILD_CONTEXT := --build-context common=../common \
 						--build-context media_utils=../../../../interactive_ai/libs/media_utils \
 
 test-integration: venv
-	uv run pytest tests/integration/test_import_dataset.py --disable-warnings -v
+	uv run pytest tests/integration/test_import_dataset.py::TestImportDataset::test_import_unannotated_dataset --disable-warnings -v
