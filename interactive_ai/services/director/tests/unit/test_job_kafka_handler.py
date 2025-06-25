@@ -2,7 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import os
 from datetime import datetime, timedelta, timezone
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from tests.unit.mocked_method_helpers import return_none
