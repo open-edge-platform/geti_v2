@@ -17,6 +17,7 @@ interface LearningParametersListProps {
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
+    isReadOnly?: boolean;
 }
 
 interface SingleLearningParameterProps {
@@ -24,9 +25,14 @@ interface SingleLearningParameterProps {
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
+    isReadOnly: boolean;
 }
 
-const SingleLearningParameter = ({ parameter, onUpdateTrainingConfiguration }: SingleLearningParameterProps) => {
+const SingleLearningParameter = ({
+    parameter,
+    onUpdateTrainingConfiguration,
+    isReadOnly,
+}: SingleLearningParameterProps) => {
     const handleChange = (inputParameter: ConfigurationParameter) => {
         onUpdateTrainingConfiguration((config) => {
             if (!config) return undefined;
@@ -45,7 +51,7 @@ const SingleLearningParameter = ({ parameter, onUpdateTrainingConfiguration }: S
         });
     };
 
-    return <Parameters key={parameter.key} parameters={[parameter]} onChange={handleChange} />;
+    return <Parameters key={parameter.key} parameters={[parameter]} onChange={handleChange} isReadOnly={isReadOnly} />;
 };
 
 interface LearningParametersGroupProps {
@@ -54,11 +60,13 @@ interface LearningParametersGroupProps {
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
+    isReadOnly: boolean;
 }
 
 const LearningParametersGroup = ({
     groupKey,
     parameters,
+    isReadOnly,
     onUpdateTrainingConfiguration,
 }: LearningParametersGroupProps) => {
     const handleChange = (inputParameter: ConfigurationParameter) => {
@@ -88,7 +96,7 @@ const LearningParametersGroup = ({
         });
     };
 
-    return <Parameters parameters={parameters} onChange={handleChange} />;
+    return <Parameters parameters={parameters} onChange={handleChange} isReadOnly={isReadOnly} />;
 };
 
 export const LearningParametersList = ({
