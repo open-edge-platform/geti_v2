@@ -207,7 +207,9 @@ class ConfigurationManager:
                 task_id=task_id,
                 model_manifest_id=model_storage.model_template_id,
             )
-            model_params = PartialTrainingConfiguration.model_validate({"hyperparameters": config_dict})
+            model_params = PartialTrainingConfiguration.model_validate(
+                {"hyperparameters": config_dict, "task_id": task_id}
+            )
             full_model_config = ConfigurationService.overlay_training_configurations(full_config, model_params)
             project_configuration = ProjectConfigurationRepo(project_identifier).get_project_configuration()
             _, task_chain_config = ConfigurationsBackwardCompatibility.backward_mapping(
