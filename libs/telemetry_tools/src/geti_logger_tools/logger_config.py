@@ -44,5 +44,5 @@ def initialize_logger(package_name: str, logging_format: str | None = None) -> l
     logger.addFilter(SanitizeLogFilter())
     if logging_format is None:
         logging_format = get_logging_format()
-    logging.basicConfig(level=logging.INFO, format=logging_format, datefmt=LOGGER_DATE_FORMAT, force=True)
+    logging.basicConfig(level=LOG_LEVEL, format=logging_format, datefmt=LOGGER_DATE_FORMAT, force=True)
     return logger
