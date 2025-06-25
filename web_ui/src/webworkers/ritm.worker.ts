@@ -3,7 +3,7 @@
 
 // Dependencies get bundled into the worker
 
-import { OpenCVLoader } from '@geti/smart-tools';
+import { approximateShape, OpenCVLoader } from '@geti/smart-tools';
 import { expose } from 'comlink';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
@@ -21,7 +21,7 @@ import {
 } from '../pages/annotator/tools/ritm-tool/ritm-tool.interface';
 import { isPolygonValid } from '../pages/annotator/tools/utils';
 import { sessionParams } from '../pages/annotator/tools/wasm-utils';
-import { approximateShape, concatFloat32Arrays, loadSource, stackPlanes } from './utils';
+import { concatFloat32Arrays, loadSource, stackPlanes } from './utils';
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -359,7 +359,7 @@ const waitForOpenCV = async (): Promise<boolean> => {
     if (CV) {
         return true;
     } else {
-        return OpenCVLoader(self).then((cvInstance: OpenCVTypes.cv) => {
+        return OpenCVLoader().then((cvInstance: OpenCVTypes.cv) => {
             CV = cvInstance;
 
             return true;

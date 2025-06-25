@@ -3,10 +3,10 @@
 
 import { ComponentProps } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Divider, Flex, Item, Picker, Text } from '@geti/ui';
 
 import { InferenceModel } from '../../../../core/annotations/services/visual-prompt-service';
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useModels } from '../../../../core/models/hooks/use-models.hook';
 import { hasActiveModels } from '../../../../core/models/utils';
 import { isAnomalyDomain, isClassificationDomain } from '../../../../core/projects/domains';

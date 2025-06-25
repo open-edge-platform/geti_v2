@@ -50,6 +50,13 @@ class PasswordResetData(BaseModel):
     token: str
 
 
+def _sanitize_input(input_data: str) -> str:
+    """
+    Sanitize input data by removing newlines and carriage returns.
+    """
+    return input_data.replace("\n", "").replace("\r", "")
+
+
 def _send_password_reset_email(user: UserType, exp_period_in_min: int, server_address: str):
     users_handler = UsersHandler(**AUTH_CONFIG)
     secret = get_secrets(
@@ -99,11 +106,13 @@ async def request_password_reset(  # noqa: ANN201
     :param user_data: data payload containing user's email address.
     :param host: 'Host' header value in request
     """
-    server_address = host if host else "intel.com"
+    server_address = _sanitize_input(host) if host else "intel.com"
+    sanitized_email = _sanitize_input(user_data.email)
     try:
-        UsersHandler.is_email_valid(user_data.email)
+        UsersHandler.is_email_valid(sanitized_email)
     except InvalidEmail as msg:
-        logger.error(msg)
+        sanitized_msg = _sanitize_input(str(msg))
+        logger.error(sanitized_msg)
         return PlainTextResponse(ErrorMessages.INVALID_EMAIL, status_code=HTTPStatus.UNPROCESSABLE_ENTITY)
 
     with tracer.start_as_current_span("get-expiration-time-from-cm"):
@@ -117,10 +126,10 @@ async def request_password_reset(  # noqa: ANN201
             return PlainTextResponse(ErrorMessages.SMTP_SERVER_NOT_CONFIGURED, status_code=HTTPStatus.BAD_REQUEST)
 
     with tracer.start_as_current_span("get-user-by-email"):
-        user = await get_user_by_email(user_data.email)
+        user = await get_user_by_email(sanitized_email)
 
     if user is None:
-        logger.error(f"User does not exist {user_data.email}")
+        logger.error(f"User does not exist {sanitized_email}")
     else:
         _send_password_reset_email(user=user, exp_period_in_min=exp_period_in_min, server_address=server_address)
 
@@ -141,7 +150,8 @@ async def check_token_validity(token: str, request: Request, host: Annotated[str
     """
     Validate token, replace it with new one and redirect to UI page.
     """
-    server_address = host if host else "intel.com"
+    server_address = _sanitize_input(host) if host else "intel.com"
+    sanitized_path = _sanitize_input(request.url.path)
     try:
         handler = UsersHandler(**AUTH_CONFIG)
         secret = get_secrets(
@@ -150,15 +160,15 @@ async def check_token_validity(token: str, request: Request, host: Annotated[str
         )["key"]
         user = verify_jwt_token(handler, token)  # removes the token after successful verification
         new_token = handler.generate_replacing_jwt_token(uid=user["uid"], prev_token=token, secret=secret)
-        logger.info(f"Link {request.url.path} is valid to use")
-        redirect_link = f"https://{server_address}{request.url.path.replace('/api/v1/users/', '/')}?token={new_token}"
+        logger.info(f"Link {sanitized_path} is valid to use")
+        redirect_link = f"https://{server_address}{sanitized_path.replace('/api/v1/users/', '/')}?token={new_token}"
         logger.info(f"Redirecting to: {redirect_link}")
         return RedirectResponse(url=redirect_link)
     except UserDoesNotExist:
         logger.exception("User does not exist. Redirecting to error page.")
         return RedirectResponse(url=f"https://{server_address}/registration/users/not-found")
     except (ExpiredSignatureError, BadTokenError):
-        logger.exception(f"Link {request['path']} has already been used or expired. Redirecting to error page.")
+        logger.exception(f"Link {sanitized_path} has already been used or expired. Redirecting to error page.")
         return RedirectResponse(url=f"https://{server_address}/registration/invalid-link")
 
 

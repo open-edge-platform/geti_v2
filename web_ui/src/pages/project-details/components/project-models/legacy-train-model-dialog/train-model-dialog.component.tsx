@@ -3,11 +3,14 @@
 
 import { CSSProperties } from 'react';
 
+import { getErrorMessage } from '@geti/core/src/services/utils';
 import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Flex, Form, Heading, Text } from '@geti/ui';
 import { isFunction } from 'lodash-es';
 
 import { useModels } from '../../../../../core/models/hooks/use-models.hook';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
+import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
+import { useNotification } from '../../../../../notification/notification.component';
 import { ButtonCreditsToConsume } from '../../project-model/components/button-credits-to-consume/button-credits-to-consume.component';
 import { useCanTrainModel } from '../train-model-dialog/use-can-train-model.hook';
 import { NotEnoughAnnotationsDialog } from './not-enough-annotations-dialog.component';
@@ -46,6 +49,7 @@ export const TrainModelDialog = ({ isOpen, onClose, onSuccess }: TrainModelDialo
         handleChangeSelectedTask,
         tasks,
     } = useTrainStateValue();
+    const { addNotification } = useNotification();
 
     const isConfigParamsStep = stepConfig.key === TrainingSteps.CONFIGURABLE_PARAMETERS;
 
@@ -64,6 +68,9 @@ export const TrainModelDialog = ({ isOpen, onClose, onSuccess }: TrainModelDialo
                 onSuccess: () => {
                     handleOnDismiss();
                     isFunction(onSuccess) && onSuccess();
+                },
+                onError: (error) => {
+                    addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
                 },
             }
         );

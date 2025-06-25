@@ -1,11 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Environment, GPUProvider } from '@geti/core/src/platform-utils/dto/utils.interface';
+import { createInMemoryPlatformUtilsService } from '@geti/core/src/platform-utils/services/create-in-memory-platform-utils-service';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { useIsAnalyticsEnabled } from '../../analytics/analytics-provider.component';
-import { Environment, GPUProvider } from '../../core/platform-utils/dto/utils.interface';
-import { createInMemoryPlatformUtilsService } from '../../core/platform-utils/services/create-in-memory-platform-utils-service';
 import { providersRender as render } from '../../test-utils/required-providers-render';
 import { Analytics } from './analytics.component';
 import { ExportServerType } from './downloadable-item.component';

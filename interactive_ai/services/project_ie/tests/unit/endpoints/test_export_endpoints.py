@@ -4,7 +4,6 @@
 from http import HTTPStatus
 from unittest.mock import patch
 
-import pytest
 from starlette.responses import RedirectResponse
 
 from communication.controllers import ExportController
@@ -12,7 +11,6 @@ from communication.controllers import ExportController
 from geti_types import ID
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestProjectExportEndpoints:
     def test_start_project_export(self, fxt_test_app, fxt_session_ctx, fxt_project_identifier, fxt_ote_id) -> None:
         # Arrange

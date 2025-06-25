@@ -3,9 +3,9 @@
 
 import { useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Heading, Text } from '@geti/ui';
 
-import { useFeatureFlags } from '../../../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useTotalCreditPrice } from '../../../../hooks/use-credits-to-consume.hook';
 import { useTrainStateValue } from '../../legacy-train-model-dialog/use-training-state-value/use-training-state-value.hook';
 

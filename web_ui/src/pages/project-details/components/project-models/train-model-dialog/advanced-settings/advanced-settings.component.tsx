@@ -84,9 +84,10 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
                 <Training
                     trainFromScratch={trainFromScratch}
                     onTrainFromScratchChange={onTrainFromScratchChange}
-                    trainingConfiguration={trainingConfiguration}
                     isReshufflingSubsetsEnabled={isReshufflingSubsetsEnabled}
                     onReshufflingSubsetsEnabledChange={onReshufflingSubsetsEnabledChange}
+                    trainingConfiguration={trainingConfiguration}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />
             ),
         },

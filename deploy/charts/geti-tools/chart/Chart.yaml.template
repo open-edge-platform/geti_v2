@@ -1,4 +1,4 @@
-name: geti-tools
+name: ${COMPONENT_NAME}
 apiVersion: v2
 description: Geti external tools Helm chart
 version: ${TAG}

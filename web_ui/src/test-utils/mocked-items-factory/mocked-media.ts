@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { MEDIA_TYPE } from '../../core/media/base-media.interface';
-import { MEDIA_ANNOTATION_STATUS } from '../../core/media/base.interface';
+import { MEDIA_ANNOTATION_STATUS, MEDIA_PREPROCESSING_STATUS } from '../../core/media/base.interface';
 import { Image } from '../../core/media/image.interface';
 import { Video, VideoFrame } from '../../core/media/video.interface';
 
@@ -18,6 +18,7 @@ export const getMockedImageMediaItem = (mediaItem: Partial<Image>): Image => {
         uploadTime: '22 Jun 2022',
         uploaderId: '6b3b8453-92a2-41ef-9725-63badb218504',
         lastAnnotatorId: null,
+        preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
         ...mediaItem,
     };
 };
@@ -39,6 +40,7 @@ export const getMockedVideoMediaItem = (mediaItem: Partial<Video>): Video => {
         uploadTime: '22 Jun 2022',
         uploaderId: 'user@intel.com',
         lastAnnotatorId: null,
+        preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
         ...mediaItem,
     };
 };
@@ -55,6 +57,7 @@ export const getMockedVideoFrameMediaItem = (mediaItem: Partial<VideoFrame>): Vi
         uploadTime: '22 Jun 2022',
         uploaderId: 'user@intel.com',
         lastAnnotatorId: null,
+        preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
         ...mediaItem,
     };
 };

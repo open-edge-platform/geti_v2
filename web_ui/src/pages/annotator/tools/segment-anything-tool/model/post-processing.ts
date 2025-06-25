@@ -1,11 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { approximateShape } from '@geti/smart-tools';
 import type cv from 'OpenCVTypes';
 
 import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from '../../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import { approximateShape } from '../../../../../webworkers/utils';
 import type { SegmentAnythingResult } from './segment-anything-result';
 
 interface PostProcessorConfig {

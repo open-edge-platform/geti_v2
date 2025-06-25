@@ -13,14 +13,8 @@ import { useSelected } from '../../../../../providers/selected-provider/selected
 import { ButtonWithSpectrumTooltip } from '../../../../../shared/components/button-with-tooltip/button-with-tooltip.component';
 import { KeyMap } from '../../../../../shared/keyboard-events/keyboard.interface';
 import { hasDifferentId } from '../../../../../shared/utils';
-import {
-    EdgeLine,
-    isDifferentLabel,
-    isEqualLabel,
-    TemplateState,
-    TemplateStateWithHistory,
-    updateWithLatestPoints,
-} from '../util';
+import { EdgeLine, TemplateState, TemplateStateWithHistory } from '../../../../utils';
+import { isDifferentLabel, isEqualLabel, updateWithLatestPoints } from '../util';
 import { DebouncedTextField } from './debounced-text-field.component';
 import { HexadecimalColorPicker } from './hexadecimal-color-picker.component';
 

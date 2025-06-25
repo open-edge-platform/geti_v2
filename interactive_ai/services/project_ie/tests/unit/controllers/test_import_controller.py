@@ -3,8 +3,6 @@
 import json
 from unittest.mock import patch
 
-import pytest
-
 from communication.controllers import ImportController
 from communication.job_creation_helpers import JobDuplicatePolicy
 from communication.models import ImportOperation
@@ -13,7 +11,6 @@ from geti_types import CTX_SESSION_VAR
 from grpc_interfaces.job_submission.client import GRPCJobsClient
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestImportController:
     def test_submit_project_import_job(self, fxt_ote_id, fxt_session_ctx) -> None:
         import_operation = ImportOperation(

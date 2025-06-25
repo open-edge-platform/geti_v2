@@ -1,10 +1,11 @@
 # Copyright (C) 2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-.PHONY: build clean push static-code-analysis tests test-unit test-integration test-component
+.PHONY: build list-image list-umbrella-chart clean push static-code-analysis tests test-unit test-integration test-component
 .DEFAULT_GOAL := build
 PROJECTS = interactive_ai platform web_ui
 DISTRIB_CHARTS := deploy/charts
+
 
 build-image:
 	echo "Building images for all projects..."
@@ -26,10 +27,18 @@ build-umbrella-chart: build-chart
 
 clean:
 	echo "Cleaning all projects..."	
-	@for dir in $(PROJECTS); do \
+	@for dir in $(PROJECTS) $(DISTRIB_CHARTS); do \
 		echo "Running make clean in $$dir..."; \
 		$(MAKE) -C $$dir clean; \
 	done
+
+list-image:
+	@for dir in $(PROJECTS); do \
+		$(MAKE) -C $$dir list-image; \
+	done
+
+list-umbrella-chart:
+	$(MAKE) -C $(DISTRIB_CHARTS) list-umbrella-chart
 
 publish-image:
 	echo "Pushing all projects..."
