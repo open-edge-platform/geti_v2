@@ -88,6 +88,30 @@ def mongodb_testcontainer() -> Generator[MongoDbContainer, None, None]:
             yield mongo
 
 
+@pytest.fixture(scope="session", autouse=True)
+def fxt_spicedb_server(request: FixtureRequest):
+    container = DockerContainer("ghcr.io/authzed/spicedb:v1.34.0")
+    container.with_bind_ports(50051, 50051)
+    test_dir = pathlib.Path(__file__).parent
+    container.with_volume_mapping((test_dir / "configs/spicedb.zaml").resolve(), "/schema/spicedb.zaml", "ro")
+    container.with_env("SPICEDB_GRPC_PRESHARED_KEY", "test")
+    container.with_command(
+        [
+            "serve-testing",
+            "--skip-release-check",
+            "--load-configs",
+            "/schema/spicedb.zaml",
+        ]
+    )
+    container.start()
+
+    wait_for_logs(container, "grpc server started serving", timeout=30)
+
+    yield container
+
+    container.stop()
+
+
 @pytest.fixture(scope="package")
 def fxt_temp_file(request: FixtureRequest):
     """
@@ -766,27 +790,3 @@ def fxt_keypoint_detection(request: pytest.FixtureRequest) -> bool:
     """Parameterize FEATURE_FLAG_KEYPOINT_DETECTION"""
     TestFeatureFlagProvider.set_flag(FeatureFlag.FEATURE_FLAG_KEYPOINT_DETECTION, request.param)
     return request.param
-
-
-@pytest.fixture(scope="session", autouse=True)
-def fxt_spicedb_server(request: FixtureRequest):
-    container = DockerContainer("ghcr.io/authzed/spicedb:v1.34.0")
-    container.with_bind_ports(50051, 50051)
-    test_dir = pathlib.Path(__file__).parent
-    container.with_volume_mapping((test_dir / "configs/spicedb.zaml").resolve(), "/schema/spicedb.zaml", "ro")
-    container.with_env("SPICEDB_GRPC_PRESHARED_KEY", "test")
-    container.with_command(
-        [
-            "serve-testing",
-            "--skip-release-check",
-            "--load-configs",
-            "/schema/spicedb.zaml",
-        ]
-    )
-    container.start()
-
-    wait_for_logs(container, "grpc server started serving", timeout=30)
-
-    yield container
-
-    container.stop()
