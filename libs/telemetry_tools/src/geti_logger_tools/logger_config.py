@@ -32,7 +32,7 @@ def get_logging_format(extra_headers: str = "") -> str:
 
 def initialize_logger(package_name: str, logging_format: str | None = None) -> logging.Logger:
     """
-    Initialize logger and adds a filter to sanitize log messages to prevent log injection.
+    Initialize logger with a filter to sanitize log messages to prevent log injection.
 
     :param package_name: given name of package for the logger
     :param logging_format: optional, logging format to use instead of the default one
@@ -40,7 +40,11 @@ def initialize_logger(package_name: str, logging_format: str | None = None) -> l
     """
     if logging_format is None:
         logging_format = get_logging_format()
-    logging.basicConfig(level=LOG_LEVEL, format=logging_format, datefmt=LOGGER_DATE_FORMAT, force=True)
-    logger = logging.getLogger(package_name)
-    logger.addFilter(SanitizeLogFilter())
-    return logger
+    logger = logging.getLogger()
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(LOG_LEVEL)
+    stream_handler.setFormatter(logging.Formatter(fmt=logging_format, datefmt=LOGGER_DATE_FORMAT))
+    stream_handler.addFilter(SanitizeLogFilter())
+    logger.addHandler(stream_handler)
+
+    return logging.getLogger(package_name)
