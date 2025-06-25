@@ -70,7 +70,7 @@ export const AuthenticationLayout = (): JSX.Element => {
 
     if (auth.error || loginQuery.isError) return <LoginErrorScreen />;
 
-    if (auth.isLoading || auth.activeNavigator || loginQuery.isPending || loginQuery.isLoading) {
+    if (auth.isLoading || auth.activeNavigator || loginQuery.isPending) {
         return <IntelBrandedLoading />;
     }
 
