@@ -10,7 +10,7 @@ export interface InferenceImageMethods {
 }
 
 export interface InferenceImageInstance {
-    new (): InferenceImageMethods;
+    (): InferenceImageMethods;
 }
 
 export interface InferenceImageWorker extends WebWorker<ImageData> {

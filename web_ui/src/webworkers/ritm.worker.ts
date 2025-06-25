@@ -354,7 +354,7 @@ class RITM {
     }
 }
 
-const waitForOpenCV = async (): Promise<boolean> => {
+const loadOpenCV = async (): Promise<boolean> => {
     if (CV) {
         return true;
     } else {
@@ -366,6 +366,6 @@ const waitForOpenCV = async (): Promise<boolean> => {
     }
 };
 
-const WorkerApi = { RITM, terminate, waitForOpenCV };
+const WorkerApi = { RITM, terminate, loadOpenCV };
 
 expose(WorkerApi);

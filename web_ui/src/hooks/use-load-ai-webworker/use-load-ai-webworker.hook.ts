@@ -15,7 +15,7 @@ export const useLoadAIWebworker = <T extends AlgorithmType>(algorithmType: T) =>
             const baseWorker = getWorker(algorithmType);
             const worker = wrap<MapAlgorithmToWorker[T]>(baseWorker);
 
-            await worker.waitForOpenCV();
+            await worker.loadOpenCV();
 
             return worker;
         },

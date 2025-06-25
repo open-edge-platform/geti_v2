@@ -109,7 +109,7 @@ class SSIM {
     }
 }
 
-const waitForOpenCV = async (): Promise<boolean> => {
+const loadOpenCV = async (): Promise<boolean> => {
     if (CV) {
         return true;
     } else {
@@ -121,6 +121,6 @@ const waitForOpenCV = async (): Promise<boolean> => {
     }
 };
 
-const WorkerApi = { SSIM, terminate, waitForOpenCV };
+const WorkerApi = { SSIM, terminate, loadOpenCV };
 
 expose(WorkerApi);

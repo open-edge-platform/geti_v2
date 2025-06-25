@@ -3,5 +3,5 @@
 export interface WebWorker<T> {
     terminate: () => void;
     optimizePolygon: (value: T) => Promise<T>;
-    waitForOpenCV: () => Promise<boolean>;
+    loadOpenCV: () => Promise<boolean>;
 }
