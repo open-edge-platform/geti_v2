@@ -8,7 +8,7 @@ import { useConfigParameters } from '../../../../../core/configurable-parameters
 import { ConfigurableParametersType } from '../../../../../core/configurable-parameters/services/configurable-parameters.interface';
 import { useModelIdentifier } from '../../../../../hooks/use-model-identifier/use-model-identifier.hook';
 import { ConfigurableParameters } from '../../../../../shared/components/configurable-parameters/configurable-parameters.component';
-import { TrainedModelConfigurationParameters } from './trained-model-configuration-parameters.component';
+import { TrainedModelConfigurationParameters } from './trained-model-configuration-parameters/trained-model-configuration-parameters.component';
 
 interface ModelConfigurableParametersProps {
     taskId: string;
@@ -37,7 +37,7 @@ export const ModelConfigurableParameters = ({ taskId }: ModelConfigurableParamet
     const { FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
 
     if (FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS) {
-        return <TrainedModelConfigurationParameters />;
+        return <TrainedModelConfigurationParameters taskId={taskId} />;
     }
 
     return <LegacyModelConfigurableParameters taskId={taskId} />;

@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Flex } from '@geti/ui';
+
 import {
     ConfigurationParameter,
     TrainingConfiguration,
@@ -89,29 +91,39 @@ const LearningParametersGroup = ({
     return <Parameters parameters={parameters} onChange={handleChange} />;
 };
 
-export const LearningParametersList = ({ parameters, onUpdateTrainingConfiguration }: LearningParametersListProps) => {
-    return parameters.map((parameter) => {
-        if (isConfigurationParameter(parameter)) {
-            return (
-                <SingleLearningParameter
-                    key={parameter.key}
-                    parameter={parameter}
-                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
-                />
-            );
-        }
+export const LearningParametersList = ({
+    parameters,
+    onUpdateTrainingConfiguration,
+    isReadOnly = false,
+}: LearningParametersListProps) => {
+    return (
+        <Flex direction={'column'} width={'100%'} gap={'size-300'}>
+            {parameters.map((parameter) => {
+                if (isConfigurationParameter(parameter)) {
+                    return (
+                        <SingleLearningParameter
+                            key={parameter.key}
+                            parameter={parameter}
+                            onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                            isReadOnly={isReadOnly}
+                        />
+                    );
+                }
 
-        const objectParameters: [string, ConfigurationParameter[]][] = Object.entries(parameter);
+                const objectParameters: [string, ConfigurationParameter[]][] = Object.entries(parameter);
 
-        return objectParameters.map(([key, parametersLocal]) => {
-            return (
-                <LearningParametersGroup
-                    key={key}
-                    groupKey={key}
-                    parameters={parametersLocal}
-                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
-                />
-            );
-        });
-    });
+                return objectParameters.map(([key, parametersLocal]) => {
+                    return (
+                        <LearningParametersGroup
+                            key={key}
+                            groupKey={key}
+                            parameters={parametersLocal}
+                            onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                            isReadOnly={isReadOnly}
+                        />
+                    );
+                });
+            })}
+        </Flex>
+    );
 };
