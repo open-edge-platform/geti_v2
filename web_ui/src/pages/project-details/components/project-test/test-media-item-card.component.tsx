@@ -7,7 +7,6 @@ import { usePress } from 'react-aria';
 import { isVideo } from '../../../../core/media/video.interface';
 import { TestMediaItem } from '../../../../core/tests/test-media.interface';
 import { TestScore } from '../../../../core/tests/tests.interface';
-import { IndicatorWrapper } from '../../../../shared/components/indicator-wrapper/indicator-wrapper.component';
 import { MediaItemView } from '../../../../shared/components/media-item-view/media-item-view.component';
 import { getMediaId } from '../../../media/utils';
 import { SCORE_FORMATTER_OPTIONS } from './utils';
@@ -58,9 +57,20 @@ export const TestMediaItemCard = ({
                 style={{ position: 'relative', width: 'inherit', height: 'inherit', cursor: 'pointer' }}
                 {...pressProps}
             >
-                <IndicatorWrapper top={'size-50'} left={'size-50'} UNSAFE_className={classes.imageScore} id={scoreId}>
+                <View
+                    top={'size-50'}
+                    left={'size-50'}
+                    zIndex={1}
+                    padding={'size-50'}
+                    position={'absolute'}
+                    borderRadius={'small'}
+                    height={'size-200'}
+                    UNSAFE_className={classes.imageScore}
+                    id={scoreId}
+                    UNSAFE_style={{ backgroundColor: 'var(--spectrum-global-color-gray-50)' }}
+                >
                     {formatter.format(Number(labelScore?.value))}
-                </IndicatorWrapper>
+                </View>
 
                 <MediaItemView
                     mediaItem={mediaItem.media}

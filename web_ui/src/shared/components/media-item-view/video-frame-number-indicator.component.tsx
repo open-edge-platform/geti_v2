@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { IndicatorWrapper } from '../indicator-wrapper/indicator-wrapper.component';
+import { View } from '@geti/ui';
 
 import classes from './video-indicator.module.scss';
 
@@ -11,14 +11,20 @@ interface VideoFrameIndicatorProps {
 
 export const VideoFrameNumberIndicator = ({ frameNumber }: VideoFrameIndicatorProps): JSX.Element => {
     return (
-        <IndicatorWrapper
+        <View
             id={'video-frame-indicator-id'}
             data-testid={'video-frame-indicator-id'}
             top={'size-50'}
             right={'size-50'}
+            zIndex={1}
+            padding={'size-50'}
+            position={'absolute'}
+            borderRadius={'small'}
+            height={'size-200'}
             UNSAFE_className={classes.videoFrameText}
+            UNSAFE_style={{ backgroundColor: 'var(--spectrum-global-color-gray-50)' }}
         >
             {frameNumber}F
-        </IndicatorWrapper>
+        </View>
     );
 };
