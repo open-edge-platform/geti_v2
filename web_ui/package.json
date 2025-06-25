@@ -24,7 +24,6 @@
     "@opentelemetry/sdk-trace-web": "^1.26.0",
     "@opentelemetry/semantic-conventions": "^1.27.0",
     "@react-hook/resize-observer": "^2.0.2",
-    "@rsbuild/plugin-node-polyfill": "^1.3.0",
     "@scalar/api-reference-react": "^0.3.166",
     "@tanstack/react-query": "^5.74.11",
     "@tanstack/react-query-devtools": "^5.74.11",
