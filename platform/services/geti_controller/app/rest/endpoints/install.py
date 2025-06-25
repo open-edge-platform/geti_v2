@@ -11,10 +11,12 @@ from platform_operations.cluster import (
     create_cluster_role,
     create_cluster_role_binding,
     create_job,
+    create_service,
     create_service_account,
     deploy_cluster_role,
     deploy_cluster_role_binding,
     deploy_job,
+    deploy_service,
     deploy_service_account,
     load_kube_config,
 )
@@ -78,11 +80,13 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
     if check_config_map_exists(name="impt-configuration", namespace="impt"):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Platform is already installed.")
 
+    se = create_service(name="install-upgrade", namespace="default", selector={"job": "install-upgrade"})
     sa = create_service_account(name="install-upgrade", namespace="default")
     cr = create_cluster_role(name="install-upgrade")
     crb = create_cluster_role_binding(
         name="install-upgrade", service_account_name="install-upgrade", namespace="default"
     )
+    deploy_service(se, namespace="default")
     deploy_service_account(sa, namespace="default")
     deploy_cluster_role(cr)
     deploy_cluster_role_binding(crb)
@@ -91,6 +95,7 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
         registry=GETI_REGISTRY,
         image=f"{GETI_REGISTRY}/geti/install-upgrade:{INSTALL_VERSION}",
         manifest_version=INSTALL_VERSION,
+        port=8000,
     )
     deploy_job(job, namespace="default")
 

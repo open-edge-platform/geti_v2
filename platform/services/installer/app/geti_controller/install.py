@@ -10,9 +10,9 @@ from configuration_models.install_config import InstallationConfig
 from constants.charts import GETI_CONTROLLER_CHART
 from constants.paths import GETI_CONTROLLER_CHART_PATH
 from constants.platform import PLATFORM_NAMESPACE
+from geti_controller.errors import GetiControllerInstallationError
 from platform_configuration.versions import get_target_product_build
 from platform_utils.errors import ChartInstallationError
-from geti_controller.errors import GetiControllerInstallationError
 from platform_utils.helm import upsert_chart
 
 logger = logging.getLogger(__name__)

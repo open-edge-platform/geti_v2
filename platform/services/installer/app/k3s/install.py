@@ -44,6 +44,7 @@ from constants.platform import PLATFORM_NAMESPACE
 from k3s.config import k3s_configuration
 from k3s.detect_ip import get_first_public_ip
 from k3s.detect_selinux import is_selinux_installed
+from platform_utils.install_system_packages import install_packages_with_dnf
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +197,6 @@ def _prepare_k3s_files_structure():
     """
     Prepare k3s files structure. Place binary and images in proper locations.
     """
-
     # Copy k3s binary
     shutil.copy2(f"{K3S_OFFLINE_INSTALLATION_FILES_PATH}/k3s", USR_LOCAL_BIN_PATH)
 
@@ -218,11 +218,11 @@ def _prepare_k3s_files_structure():
 
 def _install_k3s_selinux_rpm() -> None:
     if is_selinux_installed():
-        with open(K3S_INSTALL_LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
-            subprocess_run(
-                ["bash", "-c", f"dnf install --disablerepo=* -y {K3S_SELINUX_OFFLINE_INSTALLATION_FILES_PATH}/*.rpm"],
-                log_file,
-            )
+        install_packages_with_dnf(
+            packages_path=K3S_SELINUX_OFFLINE_INSTALLATION_FILES_PATH,
+            log_file_path=K3S_INSTALL_LOG_FILE_PATH,
+            disable_repos=True,
+        )
 
 
 def install_k3s(  # noqa: ANN201

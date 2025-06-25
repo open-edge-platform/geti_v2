@@ -27,9 +27,11 @@ def mock_environment(mocker):
 def test_install_platform(mocker, mock_environment, version_number, expected_detail, expected_status):
     mocker.patch("rest.endpoints.install.load_kube_config")
     mocker.patch("rest.endpoints.install.check_config_map_exists", return_value=False)
+    mocker.patch("rest.endpoints.install.create_service", return_value=MagicMock())
     mocker.patch("rest.endpoints.install.create_service_account", return_value=MagicMock())
     mocker.patch("rest.endpoints.install.create_cluster_role", return_value=MagicMock())
     mocker.patch("rest.endpoints.install.create_cluster_role_binding", return_value=MagicMock())
+    mocker.patch("rest.endpoints.install.deploy_service")
     mocker.patch("rest.endpoints.install.deploy_service_account")
     mocker.patch("rest.endpoints.install.deploy_cluster_role")
     mocker.patch("rest.endpoints.install.deploy_cluster_role_binding")
