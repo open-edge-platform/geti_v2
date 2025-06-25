@@ -61,10 +61,18 @@ jobs:
           persist-credentials: false
           ref: ${{ inputs.ref || '' }}
 
+      - name: Read component config
+        id: component-config
+        uses: ./.github/actions/read-component-config
+        with:
+          component_dir: ${{ env.COMPONENT_DIR }}
+
       - name: Initial cleanup
+        if: steps.component-config.outputs.cleanup_type == 'initial' || steps.component-config.outputs.cleanup_type == 'all'
         uses: ./.github/actions/cleanup-runner
         with:
           type: 'initial'
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
         with:
@@ -96,13 +104,15 @@ jobs:
 
       - name: Integration testing
         run: |
-          if [[ "${COMPONENT_DIR}" == "interactive_ai/workflows/geti_domain/project_ie" ]]; then
+          if [[ "${{ steps.component-config.outputs.integration_builder }}" == "false" ]]; then
             make -C "${COMPONENT_DIR}" test-integration
           else
             make builder -C "${COMPONENT_DIR}" test-integration
           fi
+      
 
       - name: Pre-build cleanup
+        if: steps.component-config.outputs.cleanup_type == 'pre-build' || steps.component-config.outputs.cleanup_type == 'all'
         uses: ./.github/actions/cleanup-runner
         with:
           type: 'pre-build'

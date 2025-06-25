@@ -2,3 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 include ../../../Makefile.shared
+
+COMPONENT_NAME := configuration
+

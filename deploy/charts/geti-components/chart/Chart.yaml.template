@@ -111,7 +111,8 @@ dependencies:
     version: ${TAG}
     condition: enabled.opa_bundle
   - name: configuration
-    version: 0.0.1
+    repository: "file://../../../../../platform/services/config/.build/chart"
+    version: ${TAG}
     condition: enabled.configuration
   - name: jobs-execution-namespace
     version: v0.1.15

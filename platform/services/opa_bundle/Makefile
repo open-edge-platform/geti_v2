@@ -6,8 +6,8 @@ include ../../../Makefile.shared
 COMPONENT_NAME=opa-bundle
 
 OPA_BUILDER_IMAGE := openpolicyagent/opa:0.66.0
-BUNDLE_BUILD_DIR  := ${BUILD_DIR}/bundle
-EXTRA_CHART_DIRS  := ${BUNDLE_BUILD_DIR}/all.tar.gz
+BUNDLE_BUILD_DIR  := ${TARGET_DIR}/bundle
+EXTRA_CHART_SRC_DIR  := ${BUNDLE_BUILD_DIR}/all.tar.gz
 
 prepare-policies:
 	@echo "Preparing OPA policies"
