@@ -74,15 +74,14 @@ class DefaultModels:
     }
 
     @classmethod
-    def get_model_by_type(cls, task_type: TaskType, default_type: DefaultType) -> str:
+    def get_model_by_type(cls, task_type: TaskType, default_type: DefaultType) -> str | None:
         """
         Retrieve a recommended model architecture for a specific task and optimization preference.
 
         :param task_type: The computer vision task category
         :param default_type: The optimization preference (accuracy, speed, or balance)
-        :return: The name of the recommended model architecture
-        :raises ValueError: If the task_type or default_type is not supported, or if no model
-                           is available for the specified combination
+        :return: The name of the recommended model architecture, or None if no model is available
+        :raises ValueError: If the task_type or default_type is not supported
         """
         if task_type not in cls.default_models_by_task:
             raise ValueError(f"Unknown task type: {task_type}")
@@ -91,34 +90,34 @@ class DefaultModels:
         return cls.default_models_by_task[task_type][default_type]
     
     @classmethod
-    def get_accuracy_model(cls, task_type: TaskType) -> str:
+    def get_accuracy_model(cls, task_type: TaskType) -> str | None:
         """
         Gets the model architecture that prioritizes prediction quality over inference speed.
 
         :param task_type: The computer vision task category
-        :return: The name of the accuracy-optimized model architecture
-        :raises ValueError: If the task_type is not supported or no accuracy model exists for it
+        :return: The name of the accuracy-optimized model architecture, or None if not available
+        :raises ValueError: If the task_type is not supported
         """
         return cls.get_model_by_type(task_type, DefaultType.ACCURACY)
 
     @classmethod
-    def get_speed_model(cls, task_type: TaskType) -> str:
+    def get_speed_model(cls, task_type: TaskType) -> str | None:
         """
         Gets the model architecture that prioritizes inference speed over prediction quality.
 
         :param task_type: The computer vision task category
-        :return: The name of the speed-optimized model architecture
-        :raises ValueError: If the task_type is not supported or no speed model exists for it
+        :return: The name of the speed-optimized model architecture, or None if not available
+        :raises ValueError: If the task_type is not supported
         """
         return cls.get_model_by_type(task_type, DefaultType.SPEED)
 
     @classmethod
-    def get_balanced_model(cls, task_type: TaskType) -> str:
+    def get_balanced_model(cls, task_type: TaskType) -> str | None:
         """
         Gets the model architecture that offers a compromise between accuracy and speed.
 
         :param task_type: The computer vision task category
-        :return: The name of the balanced model architecture
-        :raises ValueError: If the task_type is not supported or no balanced model exists for it
+        :return: The name of the balanced model architecture, or None if not available
+        :raises ValueError: If the task_type is not supported
         """
         return cls.get_model_by_type(task_type, DefaultType.BALANCE)
