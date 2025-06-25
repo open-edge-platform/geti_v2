@@ -4,3 +4,5 @@ export enum WorkspaceMenuActions {
     DELETE = 'Delete workspace',
     EDIT = 'Edit workspace',
 }
+
+export const MAX_NUMBER_OF_DISPLAYED_WORKSPACES = 6;
