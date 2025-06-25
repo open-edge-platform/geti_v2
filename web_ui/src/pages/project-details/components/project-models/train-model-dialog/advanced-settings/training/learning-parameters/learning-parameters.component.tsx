@@ -3,7 +3,6 @@
 
 import { useRef } from 'react';
 
-import { Flex } from '@geti/ui';
 import { isEqual } from 'lodash-es';
 
 import { TrainingConfiguration } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';

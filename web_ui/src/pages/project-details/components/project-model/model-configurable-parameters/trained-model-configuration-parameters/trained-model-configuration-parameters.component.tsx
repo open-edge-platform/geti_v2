@@ -6,46 +6,14 @@ import { isEmpty } from 'lodash-es';
 
 import { useTrainedModelConfigurationQuery } from '../../../../../../core/configurable-parameters/hooks/use-trained-model-configuration.hook';
 import { TrainedModelConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
-import { isConfigurationParameter } from '../../../../../../core/configurable-parameters/utils';
 import { useModelIdentifier } from '../../../../../../hooks/use-model-identifier/use-model-identifier.hook';
-import { LearningParametersList } from '../../../project-models/train-model-dialog/advanced-settings/training/learning-parameters/learning-parameters-list.component';
-import { Accordion } from '../../../project-models/train-model-dialog/advanced-settings/ui/accordion/accordion.component';
+import { ModelTrainingParameters } from './model-training-parameters.component';
 
 import styles from './trained-model-configuration-parameters.module.scss';
 
 interface TrainedModelConfigurationParametersListProps {
     parameters: TrainedModelConfiguration;
 }
-
-const isLearningParameterModified = (parameters: TrainedModelConfiguration['training']): boolean => {
-    return !parameters.every((parameter) => {
-        if (isConfigurationParameter(parameter)) {
-            return parameter.defaultValue === parameter.value;
-        }
-
-        return Object.values(parameter).every((subParameter) => {
-            return subParameter.every((subSubParameter) => {
-                return subSubParameter.defaultValue === subSubParameter.value;
-            });
-        });
-    });
-};
-
-const TrainingParameters = ({ parameters }: { parameters: TrainedModelConfiguration['training'] }) => {
-    const tag = isLearningParameterModified(parameters) ? 'Modified' : 'Default';
-
-    return (
-        <Accordion>
-            <Accordion.Title>
-                Learning parameters
-                <Accordion.Tag>{tag}</Accordion.Tag>
-            </Accordion.Title>
-            <Accordion.Content>
-                <LearningParametersList isReadOnly parameters={parameters} />
-            </Accordion.Content>
-        </Accordion>
-    );
-};
 
 const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelConfigurationParametersListProps) => {
     const tabs = [
@@ -57,7 +25,7 @@ const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelCon
         {
             name: 'Training',
             isVisible: !isEmpty(parameters.training),
-            children: <TrainingParameters parameters={parameters.training} />,
+            children: <ModelTrainingParameters parameters={parameters.training} />,
         },
         {
             name: 'Evaluation',

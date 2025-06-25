@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { Flex } from '@geti/ui';
+import { noop } from 'lodash-es';
 
 import {
     ConfigurationParameter,
@@ -14,7 +15,7 @@ export type LearningParametersType = TrainingConfiguration['training'];
 
 interface LearningParametersListProps {
     parameters: LearningParametersType;
-    onUpdateTrainingConfiguration: (
+    onUpdateTrainingConfiguration?: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
     isReadOnly?: boolean;
@@ -101,7 +102,7 @@ const LearningParametersGroup = ({
 
 export const LearningParametersList = ({
     parameters,
-    onUpdateTrainingConfiguration,
+    onUpdateTrainingConfiguration = noop,
     isReadOnly = false,
 }: LearningParametersListProps) => {
     return (

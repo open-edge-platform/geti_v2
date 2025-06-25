@@ -31,7 +31,6 @@ import {
 } from './configurable-parameters.interface';
 import {
     ConfigurationParameter,
-    ModelTrainingConfiguration,
     KeyValueParameter,
     ProjectConfiguration,
     ProjectConfigurationUploadPayload,
