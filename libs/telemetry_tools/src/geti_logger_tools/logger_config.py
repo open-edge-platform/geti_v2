@@ -15,7 +15,7 @@ LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INF
 class SanitizeLogFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         # Sanitize the log message to prevent log injection
-        record.msg = str(record.msg).replace("\n", " ").replace("\r", " ")
+        record.msg = str(record.msg).replace("\n", "\\n").replace("\r", "\\r")
         return True
 
 

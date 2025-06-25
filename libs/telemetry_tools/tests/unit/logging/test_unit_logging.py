@@ -17,6 +17,6 @@ class TestLogging:
 
         # Check the log output
         for record in caplog.records:
-            assert "\n" not in record.msg
-            assert "\r" not in record.msg
-            assert "This is a test message with newlines." in record.msg
+            assert "\\n" in record.msg
+            assert "\\r" in record.msg
+            assert "This is a test\\nmessage with\\rnewlines." in record.msg
