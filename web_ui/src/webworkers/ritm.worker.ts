@@ -8,6 +8,7 @@ import {
     concatFloat32Arrays,
     isPolygonValid,
     loadSource,
+    opencv,
     OpenCVLoader,
     stackPlanes,
 } from '@geti/smart-tools';
@@ -358,8 +359,8 @@ const loadOpenCV = async (): Promise<boolean> => {
     if (CV) {
         return true;
     } else {
-        return OpenCVLoader().then((cvInstance: OpenCVTypes.cv) => {
-            CV = cvInstance;
+        return OpenCVLoader().then(() => {
+            CV = opencv;
 
             return true;
         });
