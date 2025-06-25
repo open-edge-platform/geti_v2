@@ -129,5 +129,5 @@ def fxt_optimization_trainer_ctx() -> OptimizationTrainerContext:
                 gpu_limits=None,
                 accelerator_name="nvidia",
             ),
-            trainer_image_info=TrainerImageInfo(train_image_name="optimizer", sidecar_image_name="istio"),
+            trainer_image_info=TrainerImageInfo(train_image_name="optimizer"),
         )
