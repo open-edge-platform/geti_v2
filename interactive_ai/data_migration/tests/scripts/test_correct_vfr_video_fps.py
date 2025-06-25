@@ -9,6 +9,7 @@ import pytest
 from bson import ObjectId
 from bson.binary import UUID_SUBTYPE, Binary, UuidRepresentation
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.correct_vfr_video_fps import CorrectVFRVideoFPS
 from migration.utils.connection import MinioStorageClient
@@ -122,7 +123,7 @@ class TestCorrectVideoFPS:
         fxt_videos_after_upgrade,
         fxt_ds_storage_collection,
     ) -> None:
-        mock_db = mongomock.MongoClient(uuidRepresentation="standard").db
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         os.environ["S3_CREDENTIALS_PROVIDER"] = "aws"
 
         video_collection = mock_db.create_collection("video")
