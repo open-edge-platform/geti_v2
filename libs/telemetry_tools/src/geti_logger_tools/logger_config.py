@@ -40,9 +40,9 @@ def initialize_logger(package_name: str, logging_format: str | None = None) -> l
     :param logging_format: optional, logging format to use instead of the default one
     :return: initialized logger
     """
-    logger = logging.getLogger(package_name)
-    logger.addFilter(SanitizeLogFilter())
     if logging_format is None:
         logging_format = get_logging_format()
     logging.basicConfig(level=LOG_LEVEL, format=logging_format, datefmt=LOGGER_DATE_FORMAT, force=True)
+    logger = logging.getLogger(package_name)
+    logger.addFilter(SanitizeLogFilter())
     return logger
