@@ -19,7 +19,7 @@ def fetch_available_versions(geti_registry: str, platform_version: str) -> list[
     """
     try:
         oc = OrasClient(tls_verify=False)
-        tags = oc.get_tags(f"{geti_registry}/geti/geti-manifest")
+        tags = oc.get_tags(f"{geti_registry}/geti/charts/geti-manifest")
         logger.debug(f"Available Geti versions in the registry: {tags}")
 
         current_version = Version(re.match(r"^\d+\.\d+\.\d+", platform_version).group())
@@ -44,7 +44,7 @@ def fetch_manifest(geti_registry: str, version: str) -> dict:
     Returns the parsed contents of the manifest as a dictionary.
     """
     try:
-        target = f"{geti_registry}/geti/geti-manifest:{version}"
+        target = f"{geti_registry}/geti/charts/geti-manifest:{version}"
         oc = OrasClient(tls_verify=False)
         response = oc.pull(target=target, outdir="/tmp")  # noqa S108
         manifest_file = response[0]

@@ -41,7 +41,7 @@ def download_manifest() -> str:
     logger.info("Downloading GETI manifest from the OCI registry...")
     oc = OrasClient(tls_verify=False)
 
-    res = oc.pull(target=f"{GETI_REGISTRY}/geti/geti-manifest:{GETI_MANIFEST_VERSION}", outdir=".")
+    res = oc.pull(target=f"{GETI_REGISTRY}/geti/charts/geti-manifest:{GETI_MANIFEST_VERSION}", outdir=".")
     logger.info("Geti manifest downloaded successfully.")
     logger.debug(f"Downloaded manifest file: {res[0]}")
     return res[0]
