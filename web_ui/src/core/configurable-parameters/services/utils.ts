@@ -36,6 +36,7 @@ import {
     ProjectConfiguration,
     ProjectConfigurationUploadPayload,
     StaticParameter,
+    TrainedModelConfiguration,
     TrainingConfiguration,
     TrainingConfigurationUpdatePayload,
     TrainingParameters,
@@ -328,7 +329,7 @@ export const getTrainingConfigurationEntity = (config: TrainingConfigurationDTO)
 
 export const getTrainedModelConfigurationEntity = (
     config: ModelTrainingConfigurationDTO
-): ModelTrainingConfiguration => {
+): TrainedModelConfiguration => {
     const { task_id, training, dataset_preparation, evaluation, advanced_configuration } = config;
 
     return {
@@ -338,7 +339,8 @@ export const getTrainedModelConfigurationEntity = (
         },
         training: getTrainingParameters(training),
         evaluation: evaluation.map(getParameter),
-        advancedConfiguration: advanced_configuration.map(getStaticParameter),
+        // TODO: remove optional chaining when backend will return empty array instead of undefined
+        advancedConfiguration: advanced_configuration?.map(getStaticParameter),
     };
 };
 

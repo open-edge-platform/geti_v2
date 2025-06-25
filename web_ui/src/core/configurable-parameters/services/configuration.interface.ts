@@ -75,7 +75,7 @@ export interface TrainingConfiguration {
     taskId: string;
 }
 
-export interface ModelTrainingConfiguration extends Omit<TrainingConfiguration, 'datasetPreparation'> {
+export interface TrainedModelConfiguration extends Omit<TrainingConfiguration, 'datasetPreparation'> {
     datasetPreparation: Pick<DatasetPreparationParameters, 'augmentation'>;
     advancedConfiguration: StaticParameter[];
 }

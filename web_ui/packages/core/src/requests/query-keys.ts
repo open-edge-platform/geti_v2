@@ -516,6 +516,7 @@ const CONFIGURATION_PARAMETERS = {
             projectIdentifier.organizationId,
             projectIdentifier.workspaceId,
             projectIdentifier.projectId,
+            queryParameters.taskId,
             queryParameters.modelId,
         ] as const,
 };

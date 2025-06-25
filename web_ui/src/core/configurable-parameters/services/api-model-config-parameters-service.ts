@@ -18,9 +18,9 @@ import {
 } from '../dtos/configuration.interface';
 import { ConfigurableParametersTaskChain } from './configurable-parameters.interface';
 import {
-    ModelTrainingConfiguration,
     ProjectConfiguration,
     ProjectConfigurationUploadPayload,
+    TrainedModelConfiguration,
     TrainingConfiguration,
     TrainingConfigurationUpdatePayload,
 } from './configuration.interface';
@@ -40,6 +40,7 @@ export interface TrainingConfigurationQueryParameters {
 }
 
 export interface TrainedModelConfigurationQueryParameters {
+    taskId: string;
     modelId: string;
 }
 
@@ -81,13 +82,13 @@ export interface CreateApiModelConfigParametersService {
     updateTrainingConfiguration: (
         projectIdentifier: ProjectIdentifier,
         payload: TrainingConfigurationUpdatePayload,
-        queryParameters?: TrainingConfigurationQueryParameters
+        queryParameters: TrainingConfigurationQueryParameters
     ) => Promise<void>;
 
     getTrainedModelConfiguration: (
         projectIdentifier: ProjectIdentifier,
         queryParameters: TrainedModelConfigurationQueryParameters
-    ) => Promise<ModelTrainingConfiguration>;
+    ) => Promise<TrainedModelConfiguration>;
 }
 
 export const createApiModelConfigParametersService: CreateApiService<CreateApiModelConfigParametersService> = (
@@ -150,6 +151,7 @@ export const createApiModelConfigParametersService: CreateApiService<CreateApiMo
             {
                 params: {
                     model_id: queryParameters.modelId,
+                    task_id: queryParameters.taskId,
                 },
             }
         );
@@ -174,8 +176,8 @@ export const createApiModelConfigParametersService: CreateApiService<CreateApiMo
 
         await instance.patch(router.CONFIGURATION.TRAINING(projectIdentifier), payloadDTO, {
             params: {
-                task_id: queryParameters?.taskId,
-                model_manifest_id: queryParameters?.modelManifestId,
+                task_id: queryParameters.taskId,
+                model_manifest_id: queryParameters.modelManifestId,
             },
         });
     };
