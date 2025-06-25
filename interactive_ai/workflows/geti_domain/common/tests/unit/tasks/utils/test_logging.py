@@ -21,4 +21,4 @@ class TestLogging:
         test_function()
 
         # Assert
-        mock_start_common_logger.assert_called_once_with(package_name="package_name", use_async=False)
+        mock_start_common_logger.assert_called_once_with(package_name="package_name")
