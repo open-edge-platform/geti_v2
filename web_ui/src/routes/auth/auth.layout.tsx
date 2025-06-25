@@ -74,9 +74,9 @@ export const AuthenticationLayout = (): JSX.Element => {
 
     if (auth.error) return <LoginErrorScreen />;
 
-    if (loginQuery.isLoading) return <IntelBrandedLoading />;
+    if (loginQuery.isPending || loginQuery.isLoading) return <IntelBrandedLoading />;
 
-    if (loginQuery.isError)  return <LoginErrorScreen />;
+    if (loginQuery.isError) return <LoginErrorScreen />;
 
     return <Outlet />;
 };
