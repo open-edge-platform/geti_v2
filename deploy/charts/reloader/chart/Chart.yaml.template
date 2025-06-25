@@ -13,7 +13,7 @@ maintainers:
   name: rasheedamir
 - email: faizan.ahmad55@outlook.com
   name: faizanahmad055
-name: reloader
+name: ${COMPONENT_NAME}
 sources:
 - https://github.com/stakater/Reloader
 version: ${TAG}

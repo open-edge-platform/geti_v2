@@ -13,13 +13,14 @@ import {
 } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { Accordion } from '../../ui/accordion/accordion.component';
 import { SubsetsDistributionSlider } from './subsets-distribution-slider/subsets-distribution-slider.component';
+import { getSubsetsSizes } from './utils';
 
 import styles from './training-subsets.module.scss';
 
 interface SubsetDistributionStatsProps {
-    trainingCount: number;
-    validationCount: number;
-    testCount: number;
+    trainingSize: number;
+    validationSize: number;
+    testSize: number;
 }
 
 const Tile: FC<{ color: string }> = ({ color }) => {
@@ -28,33 +29,33 @@ const Tile: FC<{ color: string }> = ({ color }) => {
     );
 };
 
-const SubsetDistributionStat: FC<{ count: number; color: string; title: string }> = ({ count, color, title }) => {
+const SubsetDistributionStat: FC<{ size: number; color: string; title: string }> = ({ size, color, title }) => {
     return (
         <Flex alignItems={'center'} gap={'size-50'}>
             <Tile color={color} />
             <Text>
-                {title}: {count}
+                {title}: {size}
             </Text>
         </Flex>
     );
 };
 
-const SubsetDistributionStats: FC<SubsetDistributionStatsProps> = ({ trainingCount, validationCount, testCount }) => {
+const SubsetDistributionStats: FC<SubsetDistributionStatsProps> = ({ trainingSize, validationSize, testSize }) => {
     return (
         <View gridArea={'counts'} backgroundColor={'static-gray-800'} borderRadius={'small'} padding={'size-100'}>
             <Flex alignItems={'center'} justifyContent={'space-between'} UNSAFE_className={styles.statsText}>
                 <Flex alignItems={'center'} gap={'size-200'}>
-                    <SubsetDistributionStat title={'Training'} color={'var(--training-subset)'} count={trainingCount} />
+                    <SubsetDistributionStat title={'Training'} color={'var(--training-subset)'} size={trainingSize} />
                     <SubsetDistributionStat
                         title={'Validation'}
                         color={'var(--validation-subset)'}
-                        count={validationCount}
+                        size={validationSize}
                     />
-                    <SubsetDistributionStat title={'Test'} color={'var(--test-subset)'} count={testCount} />
+                    <SubsetDistributionStat title={'Test'} color={'var(--test-subset)'} size={testSize} />
                 </Flex>
                 <Text>
                     <Text UNSAFE_className={styles.totalStats}>Total: </Text>
-                    {trainingCount + validationCount + testCount} media items
+                    {trainingSize + validationSize + testSize} media items
                 </Text>
             </Flex>
         </View>
@@ -62,9 +63,9 @@ const SubsetDistributionStats: FC<SubsetDistributionStatsProps> = ({ trainingCou
 };
 
 interface SubsetsDistributionProps {
-    trainingSubsetCount: number;
-    validationSubsetCount: number;
-    testSubsetCount: number;
+    trainingSubsetSize: number;
+    validationSubsetSize: number;
+    testSubsetSize: number;
     subsetsDistribution: number[];
     onSubsetsDistributionChange: (values: number[]) => void;
     onSubsetsDistributionChangeEnd: (values: number[]) => void;
@@ -73,9 +74,9 @@ interface SubsetsDistributionProps {
 
 const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
     subsetsDistribution,
-    trainingSubsetCount,
-    testSubsetCount,
-    validationSubsetCount,
+    trainingSubsetSize,
+    testSubsetSize,
+    validationSubsetSize,
     onSubsetsDistributionChange,
     onSubsetsDistributionChangeEnd,
     onSubsetsDistributionReset,
@@ -114,9 +115,9 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
                     <Refresh />
                 </ActionButton>
                 <SubsetDistributionStats
-                    testCount={testSubsetCount}
-                    trainingCount={trainingSubsetCount}
-                    validationCount={validationSubsetCount}
+                    testSize={testSubsetSize}
+                    trainingSize={trainingSubsetSize}
+                    validationSize={validationSubsetSize}
                 />
             </Grid>
         </View>
@@ -139,7 +140,6 @@ const VALIDATION_SUBSET_KEY = 'validation';
 const TRAINING_SUBSET_KEY = 'training';
 
 const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
-    const testSubset = subsetsConfiguration.find((parameter) => parameter.key === TEST_SUBSET_KEY) as NumberParameter;
     const validationSubset = subsetsConfiguration.find(
         (parameter) => parameter.key === VALIDATION_SUBSET_KEY
     ) as NumberParameter;
@@ -150,12 +150,11 @@ const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
     return {
         trainingSubset,
         validationSubset,
-        testSubset,
     };
 };
 
 export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration, onUpdateTrainingConfiguration }) => {
-    const { trainingSubset, validationSubset, testSubset } = getSubsets(subsetsConfiguration);
+    const { trainingSubset, validationSubset } = getSubsets(subsetsConfiguration);
 
     const [subsetsDistribution, setSubsetsDistribution] = useState<number[]>([
         trainingSubset.value,
@@ -221,6 +220,12 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
         });
     };
 
+    const { trainingSubsetSize, validationSubsetSize, testSubsetSize } = getSubsetsSizes(
+        subsetsConfiguration,
+        validationSubsetRatio,
+        testSubsetRatio
+    );
+
     return (
         <Accordion>
             <Accordion.Title>
@@ -239,9 +244,9 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
                 <SubsetsDistribution
                     subsetsDistribution={subsetsDistribution}
                     onSubsetsDistributionChange={setSubsetsDistribution}
-                    testSubsetCount={testSubset.value}
-                    trainingSubsetCount={trainingSubset.value}
-                    validationSubsetCount={validationSubset.value}
+                    testSubsetSize={testSubsetSize}
+                    trainingSubsetSize={trainingSubsetSize}
+                    validationSubsetSize={validationSubsetSize}
                     onSubsetsDistributionChangeEnd={handleUpdateSubsetsConfiguration}
                     onSubsetsDistributionReset={handleSubsetsConfigurationReset}
                 />

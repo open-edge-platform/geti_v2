@@ -55,10 +55,10 @@ const getTilingMode = (tilingParameters: ConfigurationParameter[]): TILING_MODES
     }
 
     if (adaptive?.value === true) {
-        return TILING_MODES.ADAPTIVE;
+        return TILING_MODES.AUTOMATIC;
     }
 
-    return TILING_MODES.MANUAL;
+    return TILING_MODES.CUSTOM;
 };
 
 export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConfiguration }) => {
@@ -103,13 +103,16 @@ export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConf
             return;
         }
 
-        if (tilingMode === TILING_MODES.ADAPTIVE) {
+        if (tilingMode === TILING_MODES.AUTOMATIC) {
             handleUpdateTilingParameter([
                 { ...enableParameter, value: true },
                 { ...adaptiveParameter, value: true },
             ]);
         } else if (tilingMode === TILING_MODES.OFF) {
-            handleUpdateTilingParameter({ ...enableParameter, value: false });
+            handleUpdateTilingParameter([
+                { ...enableParameter, value: false },
+                { ...adaptiveParameter, value: false },
+            ]);
         } else {
             handleUpdateTilingParameter([
                 { ...enableParameter, value: true },
@@ -127,13 +130,13 @@ export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConf
             </Text>
         ),
 
-        [TILING_MODES.ADAPTIVE]: (
+        [TILING_MODES.AUTOMATIC]: (
             <View UNSAFE_className={styles.tilingModeDescription} gridColumn={'2/3'}>
-                Adaptive means that the system will automatically set the parameters based on the images resolution and
+                It means that the system will automatically set the parameters based on the images resolution and
                 annotations size.
             </View>
         ),
-        [TILING_MODES.MANUAL]: (
+        [TILING_MODES.CUSTOM]: (
             <View gridColumn={'1/-1'}>
                 <Parameters parameters={manualTilingParameters} onChange={handleUpdateTilingParameter} />
             </View>

@@ -79,6 +79,7 @@ const renderMockedComponent = async (
 ) => {
     return providersRender(
         <DatasetImportToExistingProjectDialogButtons
+            isImportDisabled={false}
             deletionDialogTriggerState={mockDeletionDialogTriggerState}
             datasetImportItem={datasetImportItem}
             onPrimaryAction={mockOnPrimaryAction}

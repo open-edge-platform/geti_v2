@@ -437,7 +437,7 @@ class TestLabelAdditionRestEndpoint:
                 labels_to_revisit_annotation = annotation_get_response_body["annotations"][0]["labels_to_revisit"]
                 assert task_annotation_state == "to_revisit"
                 assert not labels_to_revisit_full_scene
-                assert labels_to_revisit_annotation == [project_labels[-1].id_]
+                assert labels_to_revisit_annotation == [project_labels[2].id_]
 
     def test_label_addition_detection(
         self,

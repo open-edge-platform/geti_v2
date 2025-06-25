@@ -19,7 +19,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/anomalib/.github/actions/security/zizmor@6e3a6594a1d8867c045bb032e6c10f8673ff025a
+        uses: open-edge-platform/anomalib/.github/actions/security/zizmor@fadfedd5150eb8cd39dfb659ae9bd0eb1c06720d
         with:
           scan-scope: "changed"
           severity-level: "HIGH"

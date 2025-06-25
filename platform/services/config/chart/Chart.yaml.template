@@ -1,5 +1,5 @@
 apiVersion: v2
-name: configuration
+name: ${COMPONENT_NAME}
 description: system configuration
-version: 0.0.1
-appVersion: 0.0.1
+version: ${TAG}
+appVersion: ${TAG}

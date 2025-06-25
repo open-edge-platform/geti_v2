@@ -6,8 +6,6 @@ import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack
 import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import {
     BaseTokenProps,
     CreatePersonalAccessTokenPayload,
@@ -19,14 +17,9 @@ import {
     UsePersonalAccessToken,
 } from '../personal-access-tokens.interface';
 
-export const DELETE_MESSAGE = 'Personal Access Token was not deleted due to an error.';
-export const RETRIEVE_ERROR = 'Personal Access Token was not retrieved due to an error.';
-export const UPDATE_MESSAGE = 'The expiration date has been updated.';
-
 export const usePersonalAccessToken = (): UsePersonalAccessToken => {
     const queryClient = useQueryClient();
     const { personalAccessTokensService } = useApplicationServices();
-    const { addNotification } = useNotification();
 
     const createPersonalAccessTokenMutation = useMutation<
         PersonalAccessToken,
@@ -38,10 +31,6 @@ export const usePersonalAccessToken = (): UsePersonalAccessToken => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SERVICE_ACCOUNTS_API_KEY });
         },
-        onError: (error: AxiosError) => {
-            const message = error?.message ?? RETRIEVE_ERROR;
-            addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
-        },
     });
 
     const deletePersonalAccessTokenMutation = useMutation<void, AxiosError, DeletePersonalAccessTokenPayload>({
@@ -49,10 +38,6 @@ export const usePersonalAccessToken = (): UsePersonalAccessToken => {
             personalAccessTokensService.deletePersonalAccessToken(props),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SERVICE_ACCOUNTS_API_KEY });
-        },
-        onError: (error: AxiosError) => {
-            const message = error?.message ?? DELETE_MESSAGE;
-            addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
         },
     });
 
@@ -65,11 +50,6 @@ export const usePersonalAccessToken = (): UsePersonalAccessToken => {
             personalAccessTokensService.updatePersonalAccessToken(props),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SERVICE_ACCOUNTS_API_KEY });
-            addNotification({ message: UPDATE_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
-        },
-        onError: (error: AxiosError) => {
-            const message = error?.message ?? DELETE_MESSAGE;
-            addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
         },
     });
 
