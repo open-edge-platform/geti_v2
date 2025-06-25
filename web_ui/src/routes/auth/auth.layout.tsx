@@ -68,9 +68,15 @@ export const AuthenticationLayout = (): JSX.Element => {
         return <Outlet />;
     }
 
-    if (auth.isLoading || auth.activeNavigator || loginQuery.isPending) {
+    if (auth.isLoading || auth.activeNavigator) {
         return <IntelBrandedLoading />;
     }
 
-    return <>{auth?.error || loginQuery.isError ? <LoginErrorScreen /> : <Outlet />}</>;
+    if (auth.error) return <LoginErrorScreen />;
+
+    if (loginQuery.isLoading) return <IntelBrandedLoading />;
+
+    if (loginQuery.isError)  return <LoginErrorScreen />;
+
+    return <Outlet />;
 };
