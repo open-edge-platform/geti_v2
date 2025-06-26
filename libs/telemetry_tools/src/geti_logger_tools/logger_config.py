@@ -45,6 +45,16 @@ def initialize_logger(package_name: str, logging_format: str | None = None) -> l
     stream_handler.setLevel(LOG_LEVEL)
     stream_handler.setFormatter(logging.Formatter(fmt=logging_format, datefmt=LOGGER_DATE_FORMAT))
     stream_handler.addFilter(SanitizeLogFilter())
-    logger.addHandler(stream_handler)
+    # Check if an equivalent StreamHandler is already attached
+    for handler in logger.handlers:
+        if (
+            isinstance(handler, logging.StreamHandler)
+            and handler.level == stream_handler.level
+            and handler.formatter._fmt == stream_handler.formatter._fmt
+            and handler.filters == stream_handler.filters
+        ):
+            break
+    else:
+        logger.addHandler(stream_handler)
 
     return logging.getLogger(package_name)
