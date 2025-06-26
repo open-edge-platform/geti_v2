@@ -20,6 +20,7 @@ export interface SettingOptionProps {
 const unFormatText = (text: string) => words(text).join(' ');
 
 export const SettingOption = ({ label, config, onChange }: SettingOptionProps) => {
+    const marginStart = 'size-50';
     const [value, setValue] = useState<number | string>(config.value);
 
     const updateValue = (key: Key) => {
@@ -32,7 +33,7 @@ export const SettingOption = ({ label, config, onChange }: SettingOptionProps) =
             <Flex
                 marginTop={'size-50'}
                 marginBottom={'size-50'}
-                marginStart={'size-250'}
+                marginStart={marginStart}
                 justifyContent={'space-between'}
                 alignItems={'center'}
             >
@@ -54,7 +55,7 @@ export const SettingOption = ({ label, config, onChange }: SettingOptionProps) =
 
             {config.type === 'selection' ? (
                 <Picker
-                    marginStart={'size-250'}
+                    marginStart={marginStart}
                     width={'100%'}
                     aria-label={`${label} selection options`}
                     items={config.options.map((name) => ({ id: name, name }))}
@@ -65,7 +66,7 @@ export const SettingOption = ({ label, config, onChange }: SettingOptionProps) =
                 </Picker>
             ) : (
                 <Slider
-                    marginStart={'size-250'}
+                    marginStart={marginStart}
                     label=' '
                     width={'100%'}
                     value={Number(value)}

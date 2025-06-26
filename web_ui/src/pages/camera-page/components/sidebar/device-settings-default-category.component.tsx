@@ -28,7 +28,7 @@ export const DeviceSettingsDefaultCategory = ({ deviceConfig }: DeviceSettingsDe
     return (
         <Disclosure isHidden={!defaultCategoryAttributesKeys.length}>
             <DisclosureTitle UNSAFE_className={classes.sectionHeader}>{defaultCategory}</DisclosureTitle>
-            <DisclosurePanel>
+            <DisclosurePanel UNSAFE_className={classes.sectionContent}>
                 {defaultCategoryAttributesKeys.map(({ name, config, onChange }) => (
                     <SettingOption key={name} label={name} config={config} onChange={onChange} />
                 ))}

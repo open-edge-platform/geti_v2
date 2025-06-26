@@ -23,7 +23,7 @@ export const OpenSidebar = ({ labels, screenshots, isLivePrediction }: OpenSideb
     const countedLabels = countBy(allLabelIds, identity);
 
     return (
-        <View padding={'size-250'} overflow={'auto'}>
+        <View padding={'size-200'} overflow={'auto'}>
             <SidebarThumbnail screenshots={screenshots} />
             <Divider size={'S'} />
 

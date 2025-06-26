@@ -61,6 +61,7 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
             type: 'selection',
             options: ['Off', 'On'],
             value: isMirrored ? 'On' : 'Off',
+            defaultValue: 'Off',
         } as SettingSelection,
         onChange: (value: number | string) => {
             setIsMirrored(value === 'On');

@@ -9,11 +9,11 @@ export const settingsMetadata: DeviceSettingsMetadata = {
             categoryName: 'Camera color settings',
             attributesKeys: [
                 'brightness',
-                'colorTemperature',
                 'contrast',
                 'saturation',
                 'sharpness',
                 'whiteBalanceMode',
+                'colorTemperature',
             ],
         },
         {
@@ -39,6 +39,11 @@ export const settingsMetadata: DeviceSettingsMetadata = {
             key: 'exposureMode',
             type: 'selection',
             children: ['exposureTime', 'exposureCompensation'],
+        },
+        {
+            key: 'whiteBalanceMode',
+            type: 'selection',
+            children: ['colorTemperature'],
         },
     ],
 };

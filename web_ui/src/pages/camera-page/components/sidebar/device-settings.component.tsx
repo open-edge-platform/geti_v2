@@ -44,7 +44,7 @@ export const DeviceSettings = () => {
     };
 
     return (
-        <View position={'relative'} width={'28rem'}>
+        <View position={'relative'}>
             <Header text={'Camera Settings'} />
 
             <Picker
