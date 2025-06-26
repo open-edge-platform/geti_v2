@@ -35,7 +35,7 @@ class DefaultModels:
     models suitable for various computer vision applications.
     """
 
-    default_models_by_task = {
+    default_models_by_task: dict[TaskType, dict[DefaultType, str | None]] = {
         TaskType.CLASSIFICATION: {
             DefaultType.ACCURACY: "Custom_Image_Classification_EfficientNet-V2-S",
             DefaultType.SPEED: "Custom_Image_Classification_MobileNet-V3-large-1x",
