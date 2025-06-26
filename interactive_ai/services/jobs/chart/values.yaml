@@ -55,7 +55,7 @@ microservice:
     minReplicas: 1
     maxReplicas: 20
     targetCPUUtilizationPercentage: 90
-    targetMemoryUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 90
 
   ingress:
     endpoints:
@@ -74,7 +74,7 @@ scheduler:
   resources:
     requests:
       cpu: 300m
-      memory: 200Mi
+      memory: 300Mi
     limits:
       memory: 500Mi
 
