@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Divider, Flex, Grid, minmax, Text, useMediaQuery, View } from '@geti/ui';
 import { isLargeSizeQuery } from '@geti/ui/theme';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { isAnomalyDomain, isClassificationDomain } from '../../../../core/projects/domains';
 import { FUX_NOTIFICATION_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { UserProjectSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';

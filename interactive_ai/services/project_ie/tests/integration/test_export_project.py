@@ -5,7 +5,6 @@ import json
 import os
 from unittest.mock import patch
 
-import pytest
 from grpc import RpcError
 
 from grpc_interfaces.job_submission.client import GRPCJobsClient
@@ -23,7 +22,6 @@ S3_ENV_VARS = {
 }
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestProjectExport:
     def test_start_export(self, fxt_session_ctx, fxt_test_app, fxt_project, fxt_ote_id) -> None:
         # Arrange

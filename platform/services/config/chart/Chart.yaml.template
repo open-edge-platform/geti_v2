@@ -1,0 +1,5 @@
+apiVersion: v2
+name: ${COMPONENT_NAME}
+description: system configuration
+version: ${TAG}
+appVersion: ${TAG}

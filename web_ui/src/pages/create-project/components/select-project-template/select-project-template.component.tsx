@@ -3,11 +3,11 @@
 
 import { Key, useEffect } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { dimensionValue, useMediaQuery } from '@geti/ui';
 import { isLargeSizeQuery } from '@geti/ui/theme';
 import { omit } from 'lodash-es';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { LabelTreeItem } from '../../../../core/labels/label-tree-view.interface';
 import { LabelsRelationType } from '../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
@@ -38,7 +38,7 @@ interface SelectProjectTemplateProps {
 }
 
 const filterOutKeypointDetection = (tabs: Record<SingleTaskTemplateType, DomainCardsMetadata[]>, isFlagOn: boolean) =>
-    isFlagOn ? tabs : omit(tabs, 'Keypoint Detection');
+    isFlagOn ? tabs : omit(tabs, 'Keypoint detection');
 
 export const SelectProjectTemplate = ({
     animationDirection,

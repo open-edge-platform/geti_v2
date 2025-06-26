@@ -81,10 +81,3 @@ export const getImageDataFromTiffFile = async (file: File): Promise<ImageData> =
 
     return new ImageData(1, 1);
 };
-
-export const getFileFromCanvas = (canvas: HTMLCanvasElement, fileName = '', type = 'image/jpeg') =>
-    new Promise<File>(async (resolve, reject) => {
-        canvas.toBlob((blob) => {
-            blob ? resolve(new File([blob], fileName, { type })) : reject('error retrieving canvas blob file');
-        }, type);
-    });

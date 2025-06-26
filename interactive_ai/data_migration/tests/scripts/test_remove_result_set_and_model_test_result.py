@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 from unittest.mock import patch
 from uuid import UUID
 
@@ -8,6 +7,7 @@ import mongomock
 import pytest
 from bson import ObjectId
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.remove_result_set_and_model_test_result import RemoveResultSetAndModelTestResultMigration
 from migration.utils import MongoDBConnection
@@ -16,7 +16,7 @@ from migration.utils import MongoDBConnection
 class TestRemoveResultSetAndModelTestResultMigration:
     @pytest.mark.parametrize("collection_exists", [True, False], ids=["existing", "non-existing"])
     def test_upgrade_non_project_data(self, collection_exists) -> None:
-        mock_db = mongomock.MongoClient(uuidRepresentation="standard").db
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         if collection_exists:
             mock_db.create_collection("result_set")
             mock_db.create_collection("model_test_result")

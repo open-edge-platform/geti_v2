@@ -9,8 +9,7 @@ SPEC_HASH_FILE := .openapi_spec_hash
 
 venv:
 	$(MAKE) generate_client_if_needed;
-	uv sync
-
+	uv sync --frozen ${PIP_INSTALL_PARAMS}
 check_yaml_spec:
 	@if [ ! -f $(OPENAPI_YAML_SPEC) ]; then \
 		echo "Error: OpenAPI YAML spec file not found at $(OPENAPI_YAML_SPEC)"; \
@@ -49,7 +48,7 @@ tests: venv
 		echo "Selected tags: $(BDD_TAG)"; \
 		TAG_OPTION='--tags=$(BDD_TAG)'; \
 	fi; \
-	uv run -m behave $$TAG_OPTION $$TARGET --junit --junit-directory $(MAKEFILE_DIR)/reports/junit
+	uv run -m behave $$TAG_OPTION $$TARGET --no-skipped --junit --junit-directory $(MAKEFILE_DIR)/reports/junit
 
 test_wip: venv
 	@echo "Running WIP tests..."
@@ -70,3 +69,11 @@ static-code-analysis: venv
 	uv run ruff check --config pyproject.toml
 	uv run ruff format --check --config pyproject.toml
 	uv run mypy features --config-file=pyproject.toml
+
+generate-scenarios-list:
+	@echo "Generating list of BDD test scenarios..."
+	@for file in features/*.feature; do \
+		grep -h -A10000 "^\s*Feature: " "$$file" | tr -d '\r'; \
+		printf "\n=====\n"; \
+	done > scenarios.txt
+	@echo "List of scenarios saved to scenarios.txt"

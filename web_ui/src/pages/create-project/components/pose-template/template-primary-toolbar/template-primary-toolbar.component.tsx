@@ -8,7 +8,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { KeypointNode } from '../../../../../core/annotations/shapes.interface';
 import { CTRL_OR_COMMAND_KEY } from '../../../../../shared/hotkeys';
 import { UndoRedoActions } from '../../../../annotator/core/undo-redo-actions.interface';
-import { EdgeLine } from '../util';
+import { EdgeLine } from '../../../../utils';
 import { HotKeysButton } from './hot-keys-button.component';
 
 interface TemplatePrimaryToolbarProps {

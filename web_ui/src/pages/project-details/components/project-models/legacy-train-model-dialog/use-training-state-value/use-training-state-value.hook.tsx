@@ -3,11 +3,11 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isNumber } from 'lodash-es';
 
 import { ConfigurableParametersTaskChain } from '../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
 import { updateSelectedParameter } from '../../../../../../core/configurable-parameters/utils';
-import { useFeatureFlags } from '../../../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { TrainingBodyDTO } from '../../../../../../core/models/dtos/train-model.interface';
 import { useModels } from '../../../../../../core/models/hooks/use-models.hook';
 import { Task } from '../../../../../../core/projects/task.interface';

@@ -7,11 +7,12 @@ import { Delete, LineMappingLight, Reject } from '@geti/ui/icons';
 import { isKeypointAnnotation } from '../../../../core/annotations/services/utils';
 import { labelFromUser } from '../../../../core/annotations/utils';
 import { AcceptButton } from '../../../../shared/components/quiet-button/accept-button.component';
+import { PointAxis } from '../../../utils';
 import { useVisibleAnnotations } from '../../hooks/use-visible-annotations.hook';
 import { useZoom } from '../../zoom/zoom-provider.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
 import { useKeypointState } from './keypoint-state-provider.component';
-import { getAnnotationInBoundingBox, getInnerPaddedBoundingBox, mirrorPointsAcrossAxis, PointAxis } from './utils';
+import { getAnnotationInBoundingBox, getInnerPaddedBoundingBox, mirrorPointsAcrossAxis } from './utils';
 
 export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { zoomState } = useZoom();

@@ -3,11 +3,11 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { InfiniteData } from '@tanstack/react-query';
 import { isNil } from 'lodash-es';
 import { useParams } from 'react-router-dom';
 
-import { useFeatureFlags } from '../../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useGetScheduledJobs } from '../../../../core/jobs/hooks/use-jobs.hook';
 import { JobsResponse } from '../../../../core/jobs/services/jobs-service.interface';
 import { isJobTrain } from '../../../../core/jobs/utils';

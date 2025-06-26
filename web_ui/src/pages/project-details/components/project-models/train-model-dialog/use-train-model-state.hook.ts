@@ -1,16 +1,21 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { isEmpty, isNumber } from 'lodash-es';
 
-import { useConfigParameters } from '../../../../../core/configurable-parameters/hooks/use-config-parameters.hook';
-import { useFeatureFlags } from '../../../../../core/feature-flags/hooks/use-feature-flags.hook';
+import {
+    useTrainingConfigurationMutation,
+    useTrainingConfigurationQuery,
+} from '../../../../../core/configurable-parameters/hooks/use-training-configuration.hook';
+import { TrainingConfiguration } from '../../../../../core/configurable-parameters/services/configuration.interface';
 import { TrainingBodyDTO } from '../../../../../core/models/dtos/train-model.interface';
 import { useModels } from '../../../../../core/models/hooks/use-models.hook';
 import { ModelsGroups } from '../../../../../core/models/models.interface';
 import { isActiveModel } from '../../../../../core/models/utils';
+import { ProjectIdentifier } from '../../../../../core/projects/core.interface';
 import { Task } from '../../../../../core/projects/task.interface';
 import { useTasksWithSupportedAlgorithms } from '../../../../../core/supported-algorithms/hooks/use-tasks-with-supported-algorithms';
 import { SupportedAlgorithm } from '../../../../../core/supported-algorithms/supported-algorithms.interface';
@@ -40,6 +45,33 @@ const getActiveModelTemplateId = (
     );
 };
 
+const useTrainingConfiguration = ({
+    projectIdentifier,
+    selectedTaskId,
+    selectedModelTemplateId,
+}: {
+    projectIdentifier: ProjectIdentifier;
+    selectedTaskId: string;
+    selectedModelTemplateId: string | null;
+}) => {
+    const { data } = useTrainingConfigurationQuery(projectIdentifier, {
+        modelManifestId: selectedModelTemplateId,
+        taskId: selectedTaskId,
+    });
+
+    const [trainingConfiguration, setTrainingConfiguration] = useState<TrainingConfiguration | undefined>(data);
+
+    useEffect(() => {
+        if (data === undefined) {
+            return;
+        }
+
+        setTrainingConfiguration(data);
+    }, [data]);
+
+    return [trainingConfiguration, setTrainingConfiguration, data] as const;
+};
+
 export const useTrainModelState = () => {
     const [mode, setMode] = useState<TrainModelMode>(TrainModelMode.BASIC);
 
@@ -60,17 +92,12 @@ export const useTrainModelState = () => {
     const [selectedModelTemplateId, setSelectedModelTemplateId] = useState<string | null>(activeModelTemplateId);
 
     const isBasicMode = mode === TrainModelMode.BASIC;
-    const isAdvancedSettingsMode = mode === TrainModelMode.ADVANCED_SETTINGS;
 
-    const { useGetModelConfigParameters } = useConfigParameters(projectIdentifier);
-    const { data: configParameters } = useGetModelConfigParameters(
-        {
-            taskId: selectedTask.id,
-            modelTemplateId: selectedModelTemplateId,
-            editable: true,
-        },
-        { enabled: isAdvancedSettingsMode }
-    );
+    const [trainingConfiguration, setTrainingConfiguration, defaultTrainingConfiguration] = useTrainingConfiguration({
+        projectIdentifier,
+        selectedTaskId: selectedTask.id,
+        selectedModelTemplateId,
+    });
 
     const [isReshufflingSubsetsEnabled, setIsReshufflingSubsetsEnabled] = useState<boolean>(false);
     const [trainFromScratch, setTrainFromScratch] = useState<boolean>(false);
@@ -84,14 +111,11 @@ export const useTrainModelState = () => {
     };
 
     const constructTrainingBodyDTO = (): TrainingBodyDTO => {
-        const configParam = undefined;
-
         const { totalMedias } = getCreditPrice(selectedTask.id);
         const maxTrainingDatasetSize = FEATURE_FLAG_CREDIT_SYSTEM && isNumber(totalMedias) ? totalMedias : undefined;
 
         return getTrainingBodyDTO({
             modelTemplateId: selectedModelTemplateId ?? '',
-            configParameters: configParam,
             taskId: selectedTask.id,
             trainFromScratch,
             isReshufflingSubsetsEnabled,
@@ -112,6 +136,77 @@ export const useTrainModelState = () => {
         }
     };
 
+    const useTrainModel = () => {
+        const trainingConfigurationMutation = useTrainingConfigurationMutation();
+
+        const { useTrainModelMutation } = useModels();
+        const trainModel = useTrainModelMutation();
+
+        const handleTrainModel = (onSuccess?: () => void) => {
+            // 1. If we are in basic mode, we can directly train the model, without updating the training configuration.
+            // 2. If we are in advanced settings mode, we need to update the training configuration first.
+            // 2.1. If the training configuration fails, we don't want to train the model.
+            // 2.2. If the training configuration succeeds, we can train the model with the updated configuration.
+            // 3. Train model is called.
+            // 3.1. If train model fails, we revert the training configuration to the default one.
+            // 3.2. If train model succeeds, we call the onSuccess callback if provided.
+
+            if (isBasicMode) {
+                trainModel.mutate(
+                    {
+                        projectIdentifier,
+                        body: constructTrainingBodyDTO(),
+                    },
+                    {
+                        onSuccess,
+                    }
+                );
+                return;
+            }
+
+            if (trainingConfiguration === undefined || defaultTrainingConfiguration === undefined) {
+                return;
+            }
+
+            trainingConfigurationMutation.mutate(
+                {
+                    projectIdentifier,
+                    payload: trainingConfiguration,
+                    queryParameters: {
+                        taskId: selectedTask.id,
+                        modelManifestId: selectedModelTemplateId,
+                    },
+                },
+                {
+                    onSuccess: () => {
+                        trainModel.mutate(
+                            { projectIdentifier, body: constructTrainingBodyDTO() },
+                            {
+                                onSuccess,
+                                onError: () => {
+                                    trainingConfigurationMutation.mutate({
+                                        projectIdentifier,
+                                        payload: defaultTrainingConfiguration,
+                                        queryParameters: {
+                                            taskId: selectedTask.id,
+                                            modelManifestId: selectedModelTemplateId,
+                                        },
+                                    });
+                                },
+                            }
+                        );
+                    },
+                }
+            );
+        };
+
+        return {
+            mutate: handleTrainModel,
+            isPending: trainModel.isPending || trainingConfigurationMutation.isPending,
+            error: trainModel.error?.message || trainingConfigurationMutation.error?.message,
+        };
+    };
+
     return {
         isBasicMode,
         openAdvancedSettingsMode,
@@ -122,12 +217,13 @@ export const useTrainModelState = () => {
         algorithms,
         changeTask,
         changeSelectedTemplateId: setSelectedModelTemplateId,
-        trainingBodyDTO: constructTrainingBodyDTO(),
         isTaskChainProject,
         isReshufflingSubsetsEnabled,
         changeReshufflingSubsetsEnabled: setIsReshufflingSubsetsEnabled,
-        configParameters,
         trainFromScratch,
         changeTrainFromScratch: handleTrainFromScratchChange,
+        trainingConfiguration,
+        updateTrainingConfiguration: setTrainingConfiguration,
+        trainModel: useTrainModel(),
     } as const;
 };

@@ -3,12 +3,12 @@
 
 import { useEffect, useRef } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { xor } from 'lodash-es';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { WorkspaceIdentifier } from '../../../../packages/core/src/workspaces/services/workspaces.interface';
-import { useFeatureFlags } from '../../feature-flags/hooks/use-feature-flags.hook';
 import { Task } from '../../projects/task.interface';
 import { JobState } from '../jobs.const';
 import { Job } from '../jobs.interface';

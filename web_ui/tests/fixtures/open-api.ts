@@ -1,15 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { CustomFeatureFlags, DEV_FEATURE_FLAGS } from '@geti/core';
 import { test as baseTest, mergeTests } from '@playwright/test';
 import { ResponseComposition, RestContext } from 'msw';
 import { User } from 'oidc-client-ts';
 import OpenAPIBackend from 'openapi-backend';
 
-import {
-    CustomFeatureFlags,
-    DEV_FEATURE_FLAGS,
-} from '../../src/core/feature-flags/services/feature-flag-service.interface';
 import { OpenApiRequest, OpenApiResponse, OperationId } from '../../src/core/server/types';
 import { handleRoute } from './open-api/handle-route';
 import { notFoundHandler, setupOpenApiHandler } from './open-api/setup-open-api-handlers';

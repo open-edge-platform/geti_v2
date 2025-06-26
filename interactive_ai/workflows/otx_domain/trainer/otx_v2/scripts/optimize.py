@@ -9,23 +9,17 @@ from typing import TYPE_CHECKING
 from otx.tools.converter import ConfigConverter
 from otx_io import load_trained_model_weights, save_openvino_exported_model
 from progress_updater import ProgressUpdater, TrainingStage
-from utils import OptimizationType, OTXConfig, PrecisionType, force_mlflow_async_logging, logging_elapsed_time
+from utils import OptimizationType, OTXConfig, PrecisionType, logging_elapsed_time
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from mlflow import MlflowClient
-    from mlflow.entities import Run
-
-logger = logging.getLogger("mlflow_job")
+logger = logging.getLogger("otx_job")
 
 
-@force_mlflow_async_logging()
 @logging_elapsed_time(logger=logger)
 def optimize(
     config: OTXConfig,
-    client: MlflowClient,
-    run: Run,
     dataset_dir: Path,
     work_dir: Path,
 ) -> None:
@@ -45,8 +39,6 @@ def optimize(
         raise ValueError(msg, export_param)
 
     progress_updater = ProgressUpdater(
-        client=client,
-        run=run,
         stage=TrainingStage.OPTIMIZATION,
         n_processes=1,
         interval=2.0,
@@ -60,7 +52,7 @@ def optimize(
         data_root=str(dataset_dir),
     )
 
-    checkpoint = load_trained_model_weights(client=client, run=run, work_dir=work_dir, optimize=True)
+    checkpoint = load_trained_model_weights(work_dir=work_dir, optimize=True)
     if checkpoint is None:
         raise RuntimeError("Cannot get checkpoint for optimization.")
 
@@ -72,8 +64,6 @@ def optimize(
 
     logger.debug("Optimization is completed. Saving optimized models.")
     save_openvino_exported_model(
-        client=client,
-        run=run,
         work_dir=work_dir,
         export_param=export_param,
         exported_path=optimized_path,

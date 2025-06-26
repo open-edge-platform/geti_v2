@@ -3,6 +3,7 @@
 
 import { Key, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import {
     Button,
     ButtonGroup,
@@ -16,6 +17,7 @@ import {
     Item,
     Menu,
     MenuTrigger as SpectrumMenuTrigger,
+    TextField,
     Tooltip,
     TooltipTrigger,
     View,
@@ -23,7 +25,6 @@ import {
 import { ChevronDownSmall } from '@geti/ui/icons';
 import { OverlayTriggerState } from '@react-stately/overlays';
 
-import { useFeatureFlags } from '../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { useStatus } from '../../../core/status/hooks/use-status.hook';
 import { isBelowTooLowFreeDiskSpace } from '../../../core/status/hooks/utils';
 import { useCheckPermission } from '../../../shared/components/has-permission/has-permission.component';
@@ -55,6 +56,7 @@ const useMenuItems = () => {
 export const CreateProjectMenu = ({ openImportDatasetDialog }: CreateProjectMenuProps): JSX.Element => {
     const { data: status } = useStatus();
     const [showImportProjectDialog, setShowImportProjectDialog] = useState(false);
+    const [projectName, setProjectName] = useState('');
 
     const { FEATURE_FLAG_ALLOW_EXTERNAL_KEY_PROJECT_IMPORT } = useFeatureFlags();
 
@@ -75,6 +77,7 @@ export const CreateProjectMenu = ({ openImportDatasetDialog }: CreateProjectMenu
 
     const dismissImportProject = () => {
         setShowImportProjectDialog(false);
+        setProjectName('');
     };
 
     const items = useMenuItems();
@@ -116,6 +119,17 @@ export const CreateProjectMenu = ({ openImportDatasetDialog }: CreateProjectMenu
                                     </InlineAlert>
                                 )}
 
+                                <Flex direction='column' gap='size-200' width={'100%'}>
+                                    <TextField
+                                        label='Project name (optional)'
+                                        value={projectName}
+                                        onChange={setProjectName}
+                                        maxLength={100}
+                                        width={'100%'}
+                                        description={'If no name is provided, the original project name will be used'}
+                                    />
+                                </Flex>
+
                                 <View padding='size-250' backgroundColor='gray-50' height='100%'>
                                     <ProjectImportPanel
                                         options={{
@@ -124,11 +138,9 @@ export const CreateProjectMenu = ({ openImportDatasetDialog }: CreateProjectMenu
                                             // in future versions
                                             skipSignatureVerification: true,
                                             keepOriginalDates: false,
-                                            projectName: '',
+                                            projectName: projectName.trim(),
                                         }}
-                                        onImportProject={() => {
-                                            setShowImportProjectDialog(false);
-                                        }}
+                                        onImportProject={dismissImportProject}
                                     />
                                 </View>
                             </Flex>

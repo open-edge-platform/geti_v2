@@ -77,7 +77,6 @@ migration_metadata_bar = ChangesetMetadata.from_dict(  # type: ignore
 )
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestDataMigrationUseCase:
     def test_upgrade_project_to_current_version(self, request, fxt_session_ctx) -> None:
         # Arrange

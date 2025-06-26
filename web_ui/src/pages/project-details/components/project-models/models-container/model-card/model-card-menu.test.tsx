@@ -1,11 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { FeatureFlags } from '@geti/core';
 import { fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
 import { CreditsService } from '../../../../../../core/credits/services/credits-service.interface';
 import { createInMemoryCreditsService } from '../../../../../../core/credits/services/in-memory-credits-service';
-import { FeatureFlags } from '../../../../../../core/feature-flags/services/feature-flag-service.interface';
 import { createInMemoryModelsService } from '../../../../../../core/models/services/in-memory-models-service';
 import { ModelsService } from '../../../../../../core/models/services/models.interface';
 import { delay } from '../../../../../../shared/utils';

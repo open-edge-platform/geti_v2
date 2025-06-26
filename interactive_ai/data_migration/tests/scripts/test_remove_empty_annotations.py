@@ -8,6 +8,7 @@ import pytest
 from bson import UUID_SUBTYPE, ObjectId, UuidRepresentation
 from bson.binary import Binary
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.remove_empty_annotations import RemoveEmptyAnnotationMigration
 
@@ -49,7 +50,7 @@ def fxt_mongo_uuid(monkeypatch):
 
 class TestRemoveEmptyAnnotationMigration:
     def test_upgrade_project_removes_empty_annotations(self, fxt_organization_id, fxt_workspace_id, fxt_project_id):
-        mock_db = mongomock.MongoClient(uuidRepresentation="standard").db
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         annotation_collection = mock_db.create_collection("annotation_scene")
         annotation_collection.insert_many(
             [

@@ -18,7 +18,6 @@ def fxt_metric_reader_for_testing() -> InMemoryMetricReader:
     return in_memory_metric_reader
 
 
-@pytest.mark.ProjectIEMsComponent
 class TestUpdateMetricsUseCase:
     def test_get_random_objectid_between_dates(
         self, fxt_ote_id, fxt_project_identifier, fxt_metric_reader_for_testing

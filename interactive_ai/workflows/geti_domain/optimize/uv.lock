@@ -7,6 +7,9 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 
+[manifest]
+overrides = [{ name = "cuda-bindings", marker = "sys_platform == 'never'" }]
+
 [[package]]
 name = "adlfs"
 version = "2023.10.0"
@@ -521,18 +524,13 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pywin32", marker = "sys_platform == 'win32'" },
 ]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/aa/1d/863af72fbfe7ffbdd0a58238682d625365649757906c64c0f88557236475/cuda_bindings-12.9.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b2ec34fe4327d9dc9d935fa11c1d61fbec6adbfd271d9b794fb3a60044df49da", size = 12205459 },
-    { url = "https://files.pythonhosted.org/packages/03/30/f5f2da321f72c23af9bb9df947ef5f53a1efe536d8ec4ccdacdfac25174d/cuda_bindings-12.9.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:050e82a8d1ee4d8ac04fc56cf6f98cfea72225447f4a57e477fd455484b88818", size = 12583818 },
-    { url = "https://files.pythonhosted.org/packages/28/f8/fb2de39c185769442c4a7f4aa044b529cd8eb544eef771b97f71d25f1790/cuda_bindings-12.9.0-cp310-cp310-win_amd64.whl", hash = "sha256:03c9335369080309f94a20e458d912ce2b096ec67593b0babc293b9c49148fb9", size = 12077022 },
-]
 
 [[package]]
 name = "cuda-python"
 version = "12.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cuda-bindings" },
+    { name = "cuda-bindings", marker = "sys_platform == 'never'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/24/3c/4475aebeaab9651f2e61000fbe76f91a476d371dbfbf0a1cf46e689af253/cuda_python-12.9.0-py3-none-any.whl", hash = "sha256:926acba49b2c0a0374c61b7c98f337c085199cf51cdfe4d6423c4129c20547a7", size = 7532 },

@@ -6,6 +6,7 @@ from uuid import UUID
 import pytest
 from bson import UUID_SUBTYPE, Binary, ObjectId, UuidRepresentation
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.add_project_type import AddProjectTypeMigration
 from migration.utils import MongoDBConnection
@@ -74,7 +75,7 @@ class TestAddProjectTypeMigration:
         fxt_mongo_client,
     ) -> None:
         # Arrange
-        mock_db = fxt_mongo_client.get_database("geti_test")
+        mock_db: Database = fxt_mongo_client.get_database("geti_test")
         request.addfinalizer(lambda: fxt_mongo_client.drop_database("geti_test"))
         project_collection = mock_db.project
         task_node_collection = mock_db.task_node
@@ -96,4 +97,4 @@ class TestAddProjectTypeMigration:
             )
 
         # Assert
-        assert project_collection.find_one()["project_type"] == "train_1 → train_2"
+        assert project_collection.find_one()["project_type"] == "train_1 → train_2"  # type: ignore[index]

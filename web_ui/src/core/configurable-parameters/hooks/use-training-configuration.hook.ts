@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
-import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
@@ -21,8 +21,9 @@ const trainingConfigurationQueryOptions = (
     queryOptions({
         queryKey: QUERY_KEYS.CONFIGURATION_PARAMETERS.TRAINING(projectIdentifier, queryParameters),
         queryFn: () => {
-            return service.getTrainingConfiguration(projectIdentifier);
+            return service.getTrainingConfiguration(projectIdentifier, queryParameters);
         },
+        placeholderData: keepPreviousData,
     });
 
 export const useTrainingConfigurationQuery = (
@@ -50,8 +51,8 @@ export const useTrainingConfigurationMutation = () => {
         mutationFn: ({ projectIdentifier, payload, queryParameters }) => {
             return configParametersService.updateTrainingConfiguration(projectIdentifier, payload, queryParameters);
         },
-        onSuccess: async (_, { projectIdentifier, queryParameters }) => {
-            await queryClient.invalidateQueries({
+        onSuccess: (_, { projectIdentifier, queryParameters }) => {
+            queryClient.invalidateQueries({
                 queryKey: trainingConfigurationQueryOptions(configParametersService, projectIdentifier, queryParameters)
                     .queryKey,
             });

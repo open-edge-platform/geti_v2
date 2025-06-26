@@ -5,17 +5,22 @@ import { FC, useState } from 'react';
 
 import { ActionButton, Flex, Grid, minmax, Text, View } from '@geti/ui';
 import { Refresh } from '@geti/ui/icons';
-import { noop } from 'lodash-es';
 
+import {
+    ConfigurationParameter,
+    NumberParameter,
+    TrainingConfiguration,
+} from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { Accordion } from '../../ui/accordion/accordion.component';
 import { SubsetsDistributionSlider } from './subsets-distribution-slider/subsets-distribution-slider.component';
+import { getSubsetsSizes } from './utils';
 
 import styles from './training-subsets.module.scss';
 
 interface SubsetDistributionStatsProps {
-    trainingCount: number;
-    validationCount: number;
-    testCount: number;
+    trainingSize: number;
+    validationSize: number;
+    testSize: number;
 }
 
 const Tile: FC<{ color: string }> = ({ color }) => {
@@ -24,33 +29,33 @@ const Tile: FC<{ color: string }> = ({ color }) => {
     );
 };
 
-const SubsetDistributionStat: FC<{ count: number; color: string; title: string }> = ({ count, color, title }) => {
+const SubsetDistributionStat: FC<{ size: number; color: string; title: string }> = ({ size, color, title }) => {
     return (
         <Flex alignItems={'center'} gap={'size-50'}>
             <Tile color={color} />
             <Text>
-                {title}: {count}
+                {title}: {size}
             </Text>
         </Flex>
     );
 };
 
-const SubsetDistributionStats: FC<SubsetDistributionStatsProps> = ({ trainingCount, validationCount, testCount }) => {
+const SubsetDistributionStats: FC<SubsetDistributionStatsProps> = ({ trainingSize, validationSize, testSize }) => {
     return (
         <View gridArea={'counts'} backgroundColor={'static-gray-800'} borderRadius={'small'} padding={'size-100'}>
             <Flex alignItems={'center'} justifyContent={'space-between'} UNSAFE_className={styles.statsText}>
                 <Flex alignItems={'center'} gap={'size-200'}>
-                    <SubsetDistributionStat title={'Training'} color={'var(--training-subset)'} count={trainingCount} />
+                    <SubsetDistributionStat title={'Training'} color={'var(--training-subset)'} size={trainingSize} />
                     <SubsetDistributionStat
                         title={'Validation'}
                         color={'var(--validation-subset)'}
-                        count={validationCount}
+                        size={validationSize}
                     />
-                    <SubsetDistributionStat title={'Test'} color={'var(--test-subset)'} count={testCount} />
+                    <SubsetDistributionStat title={'Test'} color={'var(--test-subset)'} size={testSize} />
                 </Flex>
                 <Text>
                     <Text UNSAFE_className={styles.totalStats}>Total: </Text>
-                    {trainingCount + validationCount + testCount} media items
+                    {trainingSize + validationSize + testSize} media items
                 </Text>
             </Flex>
         </View>
@@ -58,9 +63,9 @@ const SubsetDistributionStats: FC<SubsetDistributionStatsProps> = ({ trainingCou
 };
 
 interface SubsetsDistributionProps {
-    trainingSubsetCount: number;
-    validationSubsetCount: number;
-    testSubsetCount: number;
+    trainingSubsetSize: number;
+    validationSubsetSize: number;
+    testSubsetSize: number;
     subsetsDistribution: number[];
     onSubsetsDistributionChange: (values: number[]) => void;
     onSubsetsDistributionChangeEnd: (values: number[]) => void;
@@ -69,9 +74,9 @@ interface SubsetsDistributionProps {
 
 const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
     subsetsDistribution,
-    trainingSubsetCount,
-    testSubsetCount,
-    validationSubsetCount,
+    trainingSubsetSize,
+    testSubsetSize,
+    validationSubsetSize,
     onSubsetsDistributionChange,
     onSubsetsDistributionChangeEnd,
     onSubsetsDistributionReset,
@@ -110,9 +115,9 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
                     <Refresh />
                 </ActionButton>
                 <SubsetDistributionStats
-                    testCount={testSubsetCount}
-                    trainingCount={trainingSubsetCount}
-                    validationCount={validationSubsetCount}
+                    testSize={testSubsetSize}
+                    trainingSize={trainingSubsetSize}
+                    validationSize={validationSubsetSize}
                 />
             </Grid>
         </View>
@@ -121,26 +126,105 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
 
 const MAX_RATIO_VALUE = 100;
 
-// eslint-disable-next-line
+type SubsetsConfiguration = TrainingConfiguration['datasetPreparation']['subsetSplit'];
+
 interface TrainingSubsetsProps {
-    // TODO: get props for subsets distribution
+    subsetsConfiguration: SubsetsConfiguration;
+    onUpdateTrainingConfiguration: (
+        updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
+    ) => void;
 }
 
-export const TrainingSubsets: FC<TrainingSubsetsProps> = ({}) => {
-    const testSubsetCount = 20;
-    const trainingSubsetCount = 70;
-    const validationSubsetCount = 10;
-    const trainingSubsetRatioProp = 0.7 * 100;
-    const validationSubsetRatioProp = 0.1 * 100;
+const TEST_SUBSET_KEY = 'test';
+const VALIDATION_SUBSET_KEY = 'validation';
+const TRAINING_SUBSET_KEY = 'training';
+
+const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
+    const validationSubset = subsetsConfiguration.find(
+        (parameter) => parameter.key === VALIDATION_SUBSET_KEY
+    ) as NumberParameter;
+    const trainingSubset = subsetsConfiguration.find(
+        (parameter) => parameter.key === TRAINING_SUBSET_KEY
+    ) as NumberParameter;
+
+    return {
+        trainingSubset,
+        validationSubset,
+    };
+};
+
+export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration, onUpdateTrainingConfiguration }) => {
+    const { trainingSubset, validationSubset } = getSubsets(subsetsConfiguration);
 
     const [subsetsDistribution, setSubsetsDistribution] = useState<number[]>([
-        trainingSubsetRatioProp,
-        trainingSubsetRatioProp + validationSubsetRatioProp,
+        trainingSubset.value,
+        trainingSubset.value + validationSubset.value,
     ]);
 
     const trainingSubsetRatio = subsetsDistribution[0];
     const validationSubsetRatio = subsetsDistribution[1] - trainingSubsetRatio;
-    const testSubsetRatio = MAX_RATIO_VALUE - trainingSubsetRatio - validationSubsetRatio;
+    const testSubsetRatio = MAX_RATIO_VALUE - subsetsDistribution[1];
+
+    const handleUpdateSubsetsConfiguration = (values: number[]): void => {
+        onUpdateTrainingConfiguration((config) => {
+            if (!config) return undefined;
+
+            const newConfig = structuredClone(config);
+            const trainingSubsetValue = values[0];
+            const validationSubsetValue = values[1] - trainingSubsetValue;
+            const testSubsetValue = MAX_RATIO_VALUE - values[1];
+
+            const KEY_VALUE_MAP: Record<string, number> = {
+                [TRAINING_SUBSET_KEY]: trainingSubsetValue,
+                [VALIDATION_SUBSET_KEY]: validationSubsetValue,
+                [TEST_SUBSET_KEY]: testSubsetValue,
+            };
+
+            newConfig.datasetPreparation.subsetSplit = config.datasetPreparation.subsetSplit.map((parameter) => {
+                if ([TRAINING_SUBSET_KEY, TEST_SUBSET_KEY, VALIDATION_SUBSET_KEY].includes(parameter.key)) {
+                    return {
+                        ...parameter,
+                        value: KEY_VALUE_MAP[parameter.key],
+                    } as ConfigurationParameter;
+                }
+                return parameter;
+            });
+
+            return newConfig;
+        });
+    };
+
+    const handleSubsetsConfigurationReset = (): void => {
+        setSubsetsDistribution([
+            trainingSubset.defaultValue,
+            trainingSubset.defaultValue + validationSubset.defaultValue,
+        ]);
+
+        onUpdateTrainingConfiguration((config) => {
+            if (config === undefined) return undefined;
+
+            const newConfig = structuredClone(config);
+
+            newConfig.datasetPreparation.subsetSplit = config.datasetPreparation.subsetSplit.map((parameter) => {
+                if ([VALIDATION_SUBSET_KEY, TEST_SUBSET_KEY, TRAINING_SUBSET_KEY].includes(parameter.key)) {
+                    return {
+                        ...parameter,
+                        value: parameter.defaultValue,
+                    } as ConfigurationParameter;
+                }
+
+                return parameter;
+            });
+
+            return newConfig;
+        });
+    };
+
+    const { trainingSubsetSize, validationSubsetSize, testSubsetSize } = getSubsetsSizes(
+        subsetsConfiguration,
+        validationSubsetRatio,
+        testSubsetRatio
+    );
 
     return (
         <Accordion>
@@ -160,11 +244,11 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({}) => {
                 <SubsetsDistribution
                     subsetsDistribution={subsetsDistribution}
                     onSubsetsDistributionChange={setSubsetsDistribution}
-                    testSubsetCount={testSubsetCount}
-                    trainingSubsetCount={trainingSubsetCount}
-                    validationSubsetCount={validationSubsetCount}
-                    onSubsetsDistributionChangeEnd={noop}
-                    onSubsetsDistributionReset={noop}
+                    testSubsetSize={testSubsetSize}
+                    trainingSubsetSize={trainingSubsetSize}
+                    validationSubsetSize={validationSubsetSize}
+                    onSubsetsDistributionChangeEnd={handleUpdateSubsetsConfiguration}
+                    onSubsetsDistributionReset={handleSubsetsConfigurationReset}
                 />
             </Accordion.Content>
         </Accordion>

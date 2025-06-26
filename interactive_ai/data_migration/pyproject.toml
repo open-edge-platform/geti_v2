@@ -18,6 +18,7 @@ dev = [
     "pytest-minio-mock~=0.4",
     "mongomock~=4.3",
     "testcontainers[mongodb]~=4.9",
+    "mypy~=1.15",
 ]
 
 [build-system]

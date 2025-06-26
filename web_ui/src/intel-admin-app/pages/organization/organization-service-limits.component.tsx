@@ -2,10 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { paths } from '@geti/core';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex, View } from '@geti/ui';
 import { useNavigate } from 'react-router-dom';
 
-import { useFeatureFlags } from '../../../core/feature-flags/hooks/use-feature-flags.hook';
 import { Header } from '../../shared/components/header/header.component';
 import { useOrganization } from './hooks/organization.hook';
 import { OrganizationServiceLimitsTable } from './organization-service-limits-table.component';

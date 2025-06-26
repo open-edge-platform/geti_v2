@@ -204,18 +204,17 @@ def _annotate_image_or_frame(  # noqa: C901, PLR0912, PLR0915
                     )
                 )
         case ProjectType.KEYPOINT_DETECTION:
-            raise NotImplementedError("Keypoint annotations are not yet supported")
-            # for label_name in labels:
-            #     x, y = _generate_random_keypoint_coords(media_width=media_width, media_height=media_height)
-            #     annotations.append(
-            #         create_annotations_inner(
-            #             id=str(uuid4()),
-            #             shape=CreateImageAnnotationRequestAnnotationsInnerShape(
-            #                 Keypoint(type="KEYPOINT", x=x, y=y, is_visible=random.choice([True, False]))
-            #             ),
-            #             labels=[label_req_obj_by_name[label_name]],
-            #         )
-            #     )
+            for label_name in labels:
+                x, y = _generate_random_keypoint_coords(media_width=media_width, media_height=media_height)
+                annotations.append(
+                    create_annotations_inner(
+                        id=str(uuid4()),
+                        shape=CreateImageAnnotationRequestAnnotationsInnerShape(
+                            Keypoint(type="KEYPOINT", x=x, y=y, is_visible=random.choice([True, False]))
+                        ),
+                        labels=[label_req_obj_by_name[label_name]],
+                    )
+                )
         case ProjectType.TASK_CHAIN_DETECTION_CLASSIFICATION:
             x, y, w, h = _generate_random_bbox_coords(
                 media_width=media_width,
