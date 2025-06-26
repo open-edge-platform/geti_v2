@@ -15,7 +15,10 @@ test.describe('Registration', () => {
         await page.addInitScript(() => localStorage.clear());
     });
 
-    test('it will let the user request to reset their password', async ({ page, openApi, baseURL }) => {
+    {
+        /* Disabled temporarily: https://jira.devtools.intel.com/browse/ITEP-70558 */
+    }
+    test.skip('it will let the user request to reset their password', async ({ page, openApi, baseURL }) => {
         openApi.registerHandler('notFound', (c, res, ctx) => {
             if (c.request.path === '/users/request_password_reset') {
                 return res(ctx.status(200), ctx.json({ moi: 'houi' }));
