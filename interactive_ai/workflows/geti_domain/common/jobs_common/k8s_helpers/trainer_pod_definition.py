@@ -40,22 +40,10 @@ SIDECAR_CONTAINER_NAME = "mlflow-sidecar"
 
 
 def _create_sidecar_env(
-    organization_id: str,
-    workspace_id: str,
-    project_id: str,
-    job_id: str,
+    identifier_json: str,
     namespace: str,
     role: str = "training_operator",
 ) -> list[V1EnvVar]:
-    identifier_json = json.dumps(
-        {
-            "organization_id": organization_id,
-            "workspace_id": workspace_id,
-            "project_id": project_id,
-            "job_id": job_id,
-        }
-    )
-
     # NOTE: vars below is inherited by the Flyte task who renders this sidecar
     var_s3_host = V1EnvVar(
         name="S3_HOST",
@@ -165,15 +153,21 @@ def create_flyte_container_task(  # noqa: PLR0913
     sidecar_container_image = trainer_image_info.to_sidecar_image_full_name()
     logger.info(f"Create sidecar_container_image={sidecar_container_image}")
 
+    identifier_json = json.dumps(
+        {
+            "organization_id": str(session.organization_id),
+            "workspace_id": str(session.workspace_id),
+            "project_id": project_id,
+            "job_id": job_id,
+        }
+    )
+
     env_from = [
         V1EnvFromSource(config_map_ref=V1ConfigMapEnvSource(name=f"{namespace}-feature-flags")),
         V1EnvFromSource(config_map_ref=V1ConfigMapEnvSource(name=f"{namespace}-s3-bucket-names")),
     ]
     sidecar_env = _create_sidecar_env(
-        organization_id=str(session.organization_id),
-        workspace_id=str(session.workspace_id),
-        project_id=project_id,
-        job_id=job_id,
+        identifier_json=identifier_json,
         namespace=namespace,
     )
 
@@ -218,6 +212,8 @@ def create_flyte_container_task(  # noqa: PLR0913
                 name=PRIMARY_CONTAINER_NAME,
                 image=primary_container_image,
                 env=[
+                    # Identifier JSON
+                    V1EnvVar(name="IDENTIFIER_JSON", value=identifier_json),
                     V1EnvVar(name="SHARD_FILES_DIR", value="/shard_files"),
                     V1EnvVar(name="MLFLOW_TRACKING_URI", value="http://localhost:5000"),
                     V1EnvVar(name="MLFLOW_EXPERIMENT_ID", value=project_id),

@@ -10,17 +10,15 @@ from time import time
 from typing import TYPE_CHECKING, Any
 
 from lightning import Callback, LightningModule, Trainer
-from mlflow.entities import Run, RunTag
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-    from mlflow import MlflowClient
     from torch import Tensor
 
 from geti_kafka_tools import publish_event
 
-logger = logging.getLogger("mlflow_job")
+logger = logging.getLogger("otx_job")
 
 
 class TrainingStage(Enum):
@@ -46,20 +44,16 @@ class ProgressUpdater:
     """
     Progress Updater class
 
-    :param interval: Time interval (seconds) to submit progress report to MLFlow
+    :param interval: Time interval (seconds) to submit progress report
     """
 
     def __init__(
         self,
-        client: MlflowClient,
-        run: Run,
         stage: TrainingStage | None = None,
         n_processes: int = 1,
         interval: float = 2.0,
         complete_per_process: list[int | float] | None = None,
     ) -> None:
-        self.client = client
-        self.run = run
         self.stage = stage
         self.n_processes = n_processes
         self.interval = interval
@@ -95,14 +89,6 @@ class ProgressUpdater:
             + progress * self._complete_per_process[self._current_process_idx]
         )
 
-        self.client.log_batch(
-            run_id=self.run.info.run_id,
-            tags=[
-                RunTag(key=PROGRESS_KEY, value=str(real_progress)),
-                RunTag(key=STAGE_KEY, value=str(self.stage)),
-            ],
-            synchronous=False,
-        )
         execution_id = os.environ.get("EXECUTION_ID", None)
         task_id = os.environ.get("TASK_ID", None)
         if execution_id is not None and task_id is not None:
@@ -114,7 +100,7 @@ class ProgressUpdater:
                     "progress": real_progress,
                     "message": f"Stage: {str(self.stage).title()}",
                 },
-                key=self.run.info.run_id.encode(),
+                key=execution_id.encode(),
                 headers_getter=lambda: [
                     ("organization_id", os.environ.get("SESSION_ORGANIZATION_ID").encode("utf-8")),  # type: ignore
                     ("workspace_id", os.environ.get("SESSION_WORKSPACE_ID").encode("utf-8")),  # type: ignore

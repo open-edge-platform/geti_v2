@@ -1,4 +1,4 @@
-include ../../Makefile.shared-python
+include ../../libs/Makefile.shared-python-libs 
 
 test: test-component
 

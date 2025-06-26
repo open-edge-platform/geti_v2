@@ -69,3 +69,11 @@ static-code-analysis: venv
 	uv run ruff check --config pyproject.toml
 	uv run ruff format --check --config pyproject.toml
 	uv run mypy features --config-file=pyproject.toml
+
+generate-scenarios-list:
+	@echo "Generating list of BDD test scenarios..."
+	@for file in features/*.feature; do \
+		grep -h -A10000 "^\s*Feature: " "$$file" | tr -d '\r'; \
+		printf "\n=====\n"; \
+	done > scenarios.txt
+	@echo "List of scenarios saved to scenarios.txt"

@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { Flex } from '@geti/ui';
+import { Flex, Text } from '@geti/ui';
 import { noop } from 'lodash-es';
 
 import { HoveredProvider } from '../../../../providers/hovered-provider/hovered-provider.component';
@@ -19,12 +19,14 @@ import { createRoi, resizePoints } from './util';
 export interface ReadonlyTemplateManagerProps {
     className: string;
     scaleFactor?: number;
+    isValidStructure?: boolean;
     initialNormalizedState: TemplateState;
 }
 
 export const ReadonlyTemplateManager = ({
     className,
     scaleFactor = 0.8,
+    isValidStructure = true,
     initialNormalizedState,
 }: ReadonlyTemplateManagerProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -46,14 +48,26 @@ export const ReadonlyTemplateManager = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    if (!isValidStructure) {
+        return (
+            <Flex alignContent='center' justifyContent='center' data-testid='keypoint readonly template'>
+                <Text>Invalid template structure. Please check your configuration and try again.</Text>
+            </Flex>
+        );
+    }
+
     return (
         <ZoomProvider>
             <SelectedProvider>
                 <HoveredProvider>
-                    <Flex direction={'column'} height={'100%'} UNSAFE_className={className}>
+                    <Flex
+                        direction={'column'}
+                        height={'100%'}
+                        UNSAFE_className={className}
+                        data-testid='keypoint readonly template'
+                    >
                         <TransformZoom>
                             <div
-                                aria-label='keypoint readonly template'
                                 ref={containerRef}
                                 onContextMenu={(event) => event.preventDefault()}
                                 style={{ width: '100%', overflow: 'hidden', gridArea: 'content' }}

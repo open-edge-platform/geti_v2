@@ -1,14 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
-
 import os
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
-from mlflow import MlflowClient
-from mlflow.entities import Run
 from otx.algo.classification.vit import VisionTransformerForMulticlassCls
 from otx.core.types.export import OTXExportFormatType
 from otx.core.types.label import LabelInfo
@@ -57,11 +53,13 @@ def fxt_exportable_code_side_effect(tmpdir):
     return side_effect
 
 
+@patch("otx_io.upload_model_artifact")
 @patch("otx.engine.engine.Engine.export")
 @patch("scripts.optimize.load_trained_model_weights")
 def test_optimize(
     mock_load_trained_model_weights,
     mock_engine_export,
+    mock_upload_model_artifact,
     fxt_config,
     fxt_dir_assets,
     fxt_exportable_code_side_effect,
@@ -69,22 +67,18 @@ def test_optimize(
     tmpdir,
 ):
     # Arrange
-    mock_run = MagicMock(spec=Run)
-    mock_client = MagicMock(spec=MlflowClient)
     mock_load_trained_model_weights.return_value = fxt_openvino_model
     mock_engine_export.side_effect = fxt_exportable_code_side_effect
 
     # Act
     optimize(
         config=fxt_config,
-        client=mock_client,
-        run=mock_run,
         dataset_dir=fxt_dir_assets,
         work_dir=Path(tmpdir),
     )
 
     # Assert
-    logged_local_paths = [call_args.kwargs["artifact_path"] for call_args in mock_client.log_artifact.call_args_list]
+    logged_local_paths = [call_args.kwargs["dst_filepath"] for call_args in mock_upload_model_artifact.call_args_list]
     logged_local_names = {os.path.basename(path) for path in logged_local_paths}
 
     assert logged_local_names == {
@@ -94,10 +88,3 @@ def test_optimize(
         # Exportable codes
         "exportable-code_int8-pot_non-xai.whl",
     }
-
-    keys = set()
-    for call_args_list in mock_client.log_batch.call_args_list:
-        for key in call_args_list.kwargs:
-            keys.add(key)
-
-    assert "tags" in keys  # ProgressUpdater uses tags

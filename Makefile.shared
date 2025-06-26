@@ -3,7 +3,7 @@
 
 CWD = $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
 
-.PHONY: build-image-default publish-image publish-chart-default lint-chart-default
+.PHONY: build-image-default list-image-default publish-image publish-chart-default lint-chart-default list-umbrella-chart-default
 
 ###
 # version
@@ -77,6 +77,8 @@ build-image-default:
 		-t ${IMAGES_REGISTRY}/${COMPONENT_NAME}:${TAG} \
 		-f ./Dockerfile .
 
+list-image-default:
+	@echo ${IMAGES_REGISTRY}/${COMPONENT_NAME}:${TAG}
 
 publish-image:
 	@echo "Pushing docker image for component: ${COMPONENT_NAME}"
@@ -95,6 +97,9 @@ build-chart-default:
 	rm "${CHART_TARGET_DIR}/Chart.yaml.template"
 	helm dependency update ${CHART_TARGET_DIR}
 	helm package ${CHART_TARGET_DIR} --version ${TAG} --destination ${TARGET_DIR}
+
+list-umbrella-chart-default:
+	@echo ${CHARTS_REGISTRY}/${COMPONENT_NAME}:${TAG}
 
 lint-chart-default: build-chart
 	@echo "Running chart linter for component: ${COMPONENT_NAME}"

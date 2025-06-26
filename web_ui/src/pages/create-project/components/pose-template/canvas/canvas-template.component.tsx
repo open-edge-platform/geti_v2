@@ -167,7 +167,7 @@ export const CanvasTemplate = ({
                     border: '1px solid var(--spectrum-global-color-gray-200)',
                 }}
             >
-                {isAddPointEnabled && nextPointName !== null && (
+                {isAddPointEnabled && (
                     <DrawingBox
                         onAddPoint={handleNewPoint}
                         nextPointName={nextPointName}

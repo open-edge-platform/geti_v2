@@ -76,9 +76,4 @@ export interface TrainingConfiguration {
     taskId: string;
 }
 
-export interface TrainingConfigurationUpdatePayload {
-    datasetPreparation?: Record<string, KeyValueParameter[]>;
-    training?: KeyValueParameter[];
-    evaluation?: KeyValueParameter[];
-    advancedConfiguration?: KeyValueParameter[];
-}
+export type TrainingConfigurationUpdatePayload = TrainingConfiguration;
