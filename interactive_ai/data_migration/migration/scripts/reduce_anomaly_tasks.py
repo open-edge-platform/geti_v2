@@ -86,6 +86,7 @@ class ReduceAnomalyTasksMigration(IMigrationScript):
         db = MongoDBConnection().geti_db
         project_collection = db.get_collection("project")
         annotation_collection = db.get_collection("annotation_scene")
+        annotation_scene_state_collection = db.get_collection("annotation_scene_state")
 
         documents = project_collection.find(filter)
         for doc in documents:
@@ -117,6 +118,12 @@ class ReduceAnomalyTasksMigration(IMigrationScript):
                         update={"$set": {"annotations": global_annotations}},
                     )
                     logger.info(f"Updated annotations for annotation_scene with _id: {annotation_scene['_id']}")
+                for annotation_scene_state in annotation_scene_state_collection.find({"project_id": doc["_id"]}):
+                    if annotation_scene_state["state_per_task"]["annotation_state"] == "PARTIALLY_ANNOTATED":
+                        # PARTIALLY_ANNOTATED used to mean that the media was missing a local annotation.
+                        # That the media is now always considered fully annotated.
+                        annotation_scene_state["state_per_task"]["annotation_state"] = "ANNOTATED"
+                        logger.info(f"Updated annotation_scene_state with _id: {annotation_scene_state['_id']}")
 
     @staticmethod
     def get_preliminary_filter(collection_name: str, organization_id: str, workspace_id: str, project_id: str) -> dict:

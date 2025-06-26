@@ -177,6 +177,19 @@ def fxt_annotation_scene() -> dict:
 
 
 @pytest.fixture
+def fxt_annotation_scene_state() -> dict:
+    return {
+        "_id": ObjectId("test_annotation_state_id"),
+        "workspace_id": WORKSPACE_ID,
+        "organization_id": ORGANIZATION_ID,
+        "project_id": PROJECT_ID,
+        "state_per_task": {
+            "annotation_state": "PARTIALLY_ANNOTATED",
+        },
+    }
+
+
+@pytest.fixture
 def fxt_model() -> dict:
     return {
         "_id": ObjectId("test_model_id"),
@@ -320,6 +333,7 @@ class TestAnomalyReductionProcessMigration:
         lazyfxt_model_storage,
         lazyfxt_task_node,
         fxt_annotation_scene,
+        fxt_annotation_scene_state,
         request,
     ):
         # Arrange
@@ -339,6 +353,7 @@ class TestAnomalyReductionProcessMigration:
         model_storage_collection = mock_db.model_storage
         task_node_collection = mock_db.task_node
         annotation_scene_collection = mock_db.annotation_scene
+        annotation_scene_state_collection = mock_db.annotation_scene_state
 
         project_collection.insert_one(project)
         label_collection.insert_one(label)
@@ -347,8 +362,9 @@ class TestAnomalyReductionProcessMigration:
         model_storage_collection.insert_one(model_storage)
         task_node_collection.insert_one(task_node)
         annotation_scene_collection.insert_one(fxt_annotation_scene)
+        annotation_scene_state_collection.insert_one(fxt_annotation_scene_state)
 
-        # act
+        # Act
         with patch.object(MongoClient, "get_database", return_value=mock_db):
             ReduceAnomalyTasksMigration.upgrade_project(
                 organization_id=str(ORGANIZATION_ID),
@@ -356,7 +372,7 @@ class TestAnomalyReductionProcessMigration:
                 project_id=str(PROJECT_ID),
             )
 
-        # Check that the fields are correctly reduced
+        # Check that the fields have been correctly reduced
         project_after_upgrade = list(project_collection.find(filter={"_id": PROJECT_ID}))
         assert project_after_upgrade[0]["project_type"] == "ANOMALY"
         assert project_after_upgrade[0]["task_graph"]["pipeline_representation"] == "Dataset → Anomaly"
@@ -390,3 +406,6 @@ class TestAnomalyReductionProcessMigration:
             and shape["x2"] == 1
             and shape["y2"] == 1
         )
+
+        annotation_state_after_upgrade = list(annotation_scene_state_collection.find(filter={"project_id": PROJECT_ID}))
+        assert annotation_state_after_upgrade[0]["state_per_task"]["annotation_state"] == "ANNOTATED"
