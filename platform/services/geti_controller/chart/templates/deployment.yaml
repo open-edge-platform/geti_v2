@@ -52,11 +52,11 @@ spec:
             - name: PROXY_ENABLED
               value: "{{ .Values.global.proxy.enabled }}"
             - name: HTTPS_PROXY
-              value: "{{ .Values.global.proxy.httpsProxy }}"
+              value: "{{ .Values.global.proxy.https_proxy }}"
             - name: HTTP_PROXY
-              value: "{{ .Values.global.proxy.httpProxy }}"
+              value: "{{ .Values.global.proxy.http_proxy }}"
             - name: NO_PROXY
-              value: "{{ .Values.global.proxy.noProxy }}"
+              value: "{{ .Values.global.proxy.no_proxy }}"
 {{- if .Values.global.ingress_enabled }}
             - name: PLATFORM_VERSION
               valueFrom:

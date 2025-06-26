@@ -206,6 +206,10 @@ class ResourcesChecksTexts:
     wrong_cpu_amount = "CPU logical cores available: {cpu}. Min: {minimal} cores."
     wrong_mem_amount = "Memory available: {mem} GB. Min: {minimal} GB."
     wrong_disk_amount = "Available disk space: {disk} GB. Min: {minimal} GB."
+    wrong_disk_amount_warning = (
+        "Available disk space: {disk} GB. The suggested minimal space is {minimal} GB. "
+        "Insufficient disk space may lead to issues when handling large datasets."
+    )
     wrong_root_amount = "Available root disk space: {disk} GB. Min: {minimal} GB."
     intel_gpu_driver_displayed = 'Driver: "i915"'
     intel_gpu_no_devices = "No device discovered"

@@ -26,6 +26,9 @@ global:
     allow_credentials: false
   proxy:
     enabled: false
+    https_proxy: ""
+    http_proxy: ""
+    no_proxy: ""
   login: ""
   passwordHash: ""
   tlsCert: ""

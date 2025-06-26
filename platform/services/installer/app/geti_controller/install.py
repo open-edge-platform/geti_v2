@@ -14,6 +14,7 @@ from geti_controller.errors import GetiControllerInstallationError
 from platform_configuration.versions import get_target_product_build
 from platform_utils.errors import ChartInstallationError
 from platform_utils.helm import upsert_chart
+from platform_utils.k8s import encode_data_b64
 
 logger = logging.getLogger(__name__)
 
@@ -41,18 +42,20 @@ def deploy_geti_controller_chart(config: InstallationConfig, charts_dir: str = G
                 "tlsKey": "",
                 "proxy": {
                     "enabled": bool(http_proxy or https_proxy),
-                    "httpProxy": http_proxy if http_proxy is not None else "",
-                    "httpsProxy": https_proxy if https_proxy is not None else "",
-                    "noProxy": no_proxy if no_proxy is not None else "",
+                    "http_proxy": http_proxy if http_proxy is not None else "",
+                    "https_proxy": https_proxy if https_proxy is not None else "",
+                    "no_proxy": no_proxy if no_proxy is not None else "",
                 },
             },
         }
 
         if config.tls_cert_file and config.tls_key_file and config.tls_cert_file.value and config.tls_key_file.value:
             with open(config.tls_cert_file.value, "rb") as cert_file:
-                configuration_data["configuration"]["tlsCert"] = cert_file.read().decode("utf-8")
+                cert_content = cert_file.read()
+                configuration_data["global"]["tlsCert"] = encode_data_b64(cert_content)
             with open(config.tls_key_file.value, "rb") as key_file:
-                configuration_data["configuration"]["tlsKey"] = key_file.read().decode("utf-8")
+                key_content = key_file.read()
+                configuration_data["global"]["tlsKey"] = encode_data_b64(key_content)
 
         values_file_path = os.path.join(charts_dir, "controller_values.yaml")
         with open(values_file_path, "w") as values_file:

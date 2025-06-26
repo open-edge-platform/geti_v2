@@ -14,6 +14,7 @@
 Utility functions related to Kubernetes.
 """
 
+import base64
 import http
 import logging
 from collections import namedtuple
@@ -39,6 +40,14 @@ OPA = Endpoint(name="admission-controller", namespace="opa-istio")
 
 REQUIRED_ENDPOINTS = [ISTIOD, CERT_MANAGER_WEBHOOK, OPA]
 MASTER_NODE_LABEL = "node-role.kubernetes.io/control-plane"
+
+
+def decode_string_b64(data: str) -> str:  # noqa: D103
+    return base64.b64decode(data).decode("utf-8")
+
+
+def encode_data_b64(data: bytes) -> str:  # noqa: D103
+    return base64.b64encode(data).decode("utf-8")
 
 
 def ensure_endpoint() -> Callable:

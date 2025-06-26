@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import asyncio
+import base64
 import logging
 import os
 import re
@@ -51,6 +52,10 @@ class JobManager:
 
 
 job_manager = JobManager()
+
+
+def encode_data_b64(data: str) -> str:  # noqa: D103
+    return base64.b64encode(data.encode("utf-8")).decode("utf-8")
 
 
 @platform_router.get("/progress")
@@ -109,8 +114,8 @@ async def render_jinja_template(template_string: str) -> dict:
         "data_folder": DATA_FOLDER,
         "username": USERNAME,
         "password_hash": PASSWORD_HASH,
-        "tls_cert_file": TLS_CERT,
-        "tls_key_file": TLS_KEY,
+        "tls_cert_file": encode_data_b64(TLS_CERT),
+        "tls_key_file": encode_data_b64(TLS_KEY),
         "proxy_enabled": PROXY_ENABLED,
         "https_proxy": HTTPS_PROXY,
         "http_proxy": HTTP_PROXY,
