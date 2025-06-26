@@ -183,9 +183,11 @@ def fxt_annotation_scene_state() -> dict:
         "workspace_id": WORKSPACE_ID,
         "organization_id": ORGANIZATION_ID,
         "project_id": PROJECT_ID,
-        "state_per_task": {
-            "annotation_state": "PARTIALLY_ANNOTATED",
-        },
+        "state_per_task": [
+            {
+                "annotation_state": "PARTIALLY_ANNOTATED",
+            },
+        ],
     }
 
 
@@ -408,4 +410,4 @@ class TestAnomalyReductionProcessMigration:
         )
 
         annotation_state_after_upgrade = list(annotation_scene_state_collection.find(filter={"project_id": PROJECT_ID}))
-        assert annotation_state_after_upgrade[0]["state_per_task"]["annotation_state"] == "ANNOTATED"
+        assert annotation_state_after_upgrade[0]["state_per_task"][0]["annotation_state"] == "ANNOTATED"

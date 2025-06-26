@@ -79,7 +79,7 @@ class ReduceAnomalyTasksMigration(IMigrationScript):
                 logger.info(f"Performed anomaly reduction for {collection_name} document with with _id: {doc['_id']}")
 
     @classmethod
-    def _update(cls, organization_id: str, workspace_id: str, project_id: str) -> None:
+    def _update(cls, organization_id: str, workspace_id: str, project_id: str) -> None:  # noqa: C901
         filter = cls.get_preliminary_filter(
             collection_name="project", organization_id=organization_id, workspace_id=workspace_id, project_id=project_id
         )
@@ -119,11 +119,12 @@ class ReduceAnomalyTasksMigration(IMigrationScript):
                     )
                     logger.info(f"Updated annotations for annotation_scene with _id: {annotation_scene['_id']}")
                 for annotation_scene_state in annotation_scene_state_collection.find({"project_id": doc["_id"]}):
-                    if annotation_scene_state["state_per_task"]["annotation_state"] == "PARTIALLY_ANNOTATED":
-                        # PARTIALLY_ANNOTATED used to mean that the media was missing a local annotation.
-                        # That the media is now always considered fully annotated.
-                        annotation_scene_state["state_per_task"]["annotation_state"] = "ANNOTATED"
-                        logger.info(f"Updated annotation_scene_state with _id: {annotation_scene_state['_id']}")
+                    for state_per_task in annotation_scene_state["state_per_task"]:
+                        if state_per_task["annotation_state"] == "PARTIALLY_ANNOTATED":
+                            # PARTIALLY_ANNOTATED used to mean that the media was missing a local annotation.
+                            # That the media is now always considered fully annotated.
+                            state_per_task["annotation_state"] = "ANNOTATED"
+                            logger.info(f"Updated annotation_scene_state with _id: {annotation_scene_state['_id']}")
 
     @staticmethod
     def get_preliminary_filter(collection_name: str, organization_id: str, workspace_id: str, project_id: str) -> dict:
