@@ -26,5 +26,6 @@
     & div[class*='spectrum-TabsPanel-tabpanel'] {
         min-width: 0;
         padding-left: var(--spectrum-global-dimension-size-400);
+        overflow-y: auto;
     }
 }

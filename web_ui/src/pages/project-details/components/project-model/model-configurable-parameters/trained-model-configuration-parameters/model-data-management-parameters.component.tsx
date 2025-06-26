@@ -5,12 +5,12 @@ import { Flex, Text, View } from '@geti/ui';
 import { isEmpty, noop } from 'lodash-es';
 
 import { TrainedModelConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
-import { DataAugmentation } from '../../../project-models/train-model-dialog/advanced-settings/data-management/data-augmentation/data-augmentation.component';
+import { DataAugmentationParametersList } from '../../../project-models/train-model-dialog/advanced-settings/data-management/data-augmentation/data-augmentation-parameters-list.component';
+import { isDataAugmentationEnabled } from '../../../project-models/train-model-dialog/advanced-settings/data-management/data-augmentation/data-augmentation.component';
 import { TilingModeTooltip } from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling-modes.component';
 import {
     getCustomTilingParameters,
     getTilingMode,
-    Tiling,
 } from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling.component';
 import { Accordion } from '../../../project-models/train-model-dialog/advanced-settings/ui/accordion/accordion.component';
 import { Parameters } from '../../../project-models/train-model-dialog/advanced-settings/ui/parameters.component';
@@ -67,6 +67,30 @@ const TilingParameters = ({ parameters }: TilingParametersProps) => {
     );
 };
 
+interface DataAugmentationParametersProps {
+    parameters: TrainedModelConfiguration['datasetPreparation']['augmentation'];
+}
+
+const DataAugmentationParameters = ({ parameters }: DataAugmentationParametersProps) => {
+    const isEnabled = isDataAugmentationEnabled(parameters);
+
+    return (
+        <Accordion>
+            <Accordion.Title>
+                Data augmentation
+                <Accordion.Tag>{isEnabled ? 'Yes' : 'No'}</Accordion.Tag>
+            </Accordion.Title>
+            <Accordion.Content>
+                <DataAugmentationParametersList
+                    isReadOnly
+                    parameters={parameters}
+                    onUpdateTrainingConfiguration={noop}
+                />
+            </Accordion.Content>
+        </Accordion>
+    );
+};
+
 export const ModelDataManagementParameters = ({ parameters }: ModelDataManagementParametersProps) => {
     const tilingParameters = parameters.tiling;
     const augmentationParameters = getAugmentationParameters(parameters);
@@ -74,9 +98,7 @@ export const ModelDataManagementParameters = ({ parameters }: ModelDataManagemen
     return (
         <View>
             {!isEmpty(tilingParameters) && <TilingParameters parameters={tilingParameters} />}
-            {!isEmpty(augmentationParameters) && (
-                <DataAugmentation parameters={augmentationParameters} onUpdateTrainingConfiguration={noop} />
-            )}
+            {!isEmpty(augmentationParameters) && <DataAugmentationParameters parameters={augmentationParameters} />}
         </View>
     );
 };
