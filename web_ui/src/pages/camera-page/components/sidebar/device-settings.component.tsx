@@ -19,14 +19,29 @@ const Header = ({ text }: { text: string }) => (
 );
 
 //TODO:
-//fixbug dependencies - changed
-//show after the standup!
 //add tests!
+//debouncing!!!
+//layout
 
 export const DeviceSettings = () => {
     const { categories, dependencies } = settingsMetadata;
 
     const { videoDevices, selectedDeviceId, deviceConfig, setDeviceConfig, setSelectedDeviceId } = useDeviceSettings();
+
+    const updateDeviceConfig = (name: string, value: string | number) => {
+        setDeviceConfig([
+            ...deviceConfig.map((currentConfig) => {
+                if (isEqual(name, currentConfig.name)) {
+                    return {
+                        ...currentConfig,
+                        config: { ...currentConfig.config, value } as SettingMinMax | SettingSelection,
+                    };
+                } else {
+                    return currentConfig;
+                }
+            }),
+        ]);
+    };
 
     return (
         <View position={'relative'} width={'28rem'}>
@@ -56,25 +71,7 @@ export const DeviceSettings = () => {
 
                                 const handleOnChange = (value: number | string) => {
                                     onChange(value);
-
-                                    //TODO: move it to onChange
-                                    //REFRESH VALUE!!! - does not work
-                                    //
-                                    //move it to the hook???
-                                    setDeviceConfig([
-                                        ...deviceConfig.map((currentConfig) => {
-                                            if (isEqual(name, currentConfig.name)) {
-                                                return {
-                                                    ...currentConfig,
-                                                    config: { ...currentConfig.config, value } as
-                                                        | SettingMinMax
-                                                        | SettingSelection,
-                                                };
-                                            } else {
-                                                return currentConfig;
-                                            }
-                                        }),
-                                    ]);
+                                    updateDeviceConfig(name, value);
                                 };
 
                                 return (

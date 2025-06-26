@@ -12,8 +12,8 @@ import { DeviceSettingsDependency } from '../components/sidebar/device-settings-
 const INVALID_CAPABILITIES: CapabilitiesKeys[] = ['groupId', 'deviceId', 'aspectRatio'];
 
 type CapabilitiesKeys = keyof MediaTrackCapabilities;
-export type SettingMinMax = { type: 'minMax'; max: number; min: number; value: number };
-export type SettingSelection = { type: 'selection'; options: string[]; value: string };
+export type SettingMinMax = { type: 'minMax'; max: number; min: number; value: number; defaultValue: number };
+export type SettingSelection = { type: 'selection'; options: string[]; value: string; defaultValue: string };
 export interface DeviceConfiguration {
     name: string;
     config: SettingMinMax | SettingSelection;
@@ -65,8 +65,8 @@ export const mergeSettingAndCapabilities = (
         return {
             name,
             config: isNonEmptyArray(options)
-                ? ({ type: 'selection', value, options } as SettingSelection)
-                : ({ type: 'minMax', value, ...(options as object) } as SettingMinMax),
+                ? ({ type: 'selection', value, defaultValue: value, options } as SettingSelection)
+                : ({ type: 'minMax', value, defaultValue: value, ...(options as object) } as SettingMinMax),
         };
     });
 

@@ -7,7 +7,7 @@ import { DeviceConfiguration } from '../../providers/util';
 import { settingsMetadata } from './device-settings-metadata';
 import { SettingOption } from './setting-option.component';
 
-import classes from './device-settings.module.css'; //TODO: Disclosure -> component???
+import classes from './device-settings.module.css';
 
 interface DeviceSettingsDefaultCategoryProps {
     deviceConfig: DeviceConfiguration[];

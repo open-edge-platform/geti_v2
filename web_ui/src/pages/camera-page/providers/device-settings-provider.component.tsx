@@ -53,8 +53,6 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
     const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(undefined);
     const [isMirrored, setIsMirrored] = useState(false);
 
-    useEffect(() => console.log('deviceConfig', deviceConfig), [deviceConfig]);
-
     const onComponentIsMounted = runWhen<MediaDeviceInfo[]>(isMounted);
 
     const mirrorOption = {
