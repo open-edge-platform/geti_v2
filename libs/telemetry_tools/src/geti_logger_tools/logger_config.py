@@ -43,6 +43,7 @@ def initialize_logger(package_name: str, logging_format: str | None = None) -> l
     logger = logging.getLogger()
     logger.setLevel(LOG_LEVEL)
     stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(LOG_LEVEL)
     stream_handler.setFormatter(logging.Formatter(fmt=logging_format, datefmt=LOGGER_DATE_FORMAT))
     stream_handler.addFilter(SanitizeLogFilter())
 
