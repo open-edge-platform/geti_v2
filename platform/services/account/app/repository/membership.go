@@ -90,7 +90,7 @@ func (r *membershipRepository) FindMemberships(ctx context.Context, req *Members
 		)
 	}
 	if req.SortBy != "" && req.SortDirection != "" {
-		orderQuery, err := common.CreateOrderQuery(models.UserStatus{}, req.SortBy, req.SortDirection)
+		orderQuery, err := common.CreateOrderQuery(models.MembershipResult{}, req.SortBy, req.SortDirection)
 		if err != nil {
 			return nil, 0, err
 		}
