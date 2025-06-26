@@ -17,6 +17,7 @@ export type Marker = {
 
 export interface WatershedInstance {
     executeWatershed: (markers: Marker[], sensitivity: number) => WatershedPolygon[];
+    loadImage: (imageData: ImageData) => void;
     drawMarkers: (markers: Marker[]) => void;
     getPolygons: (markers: Marker[]) => WatershedPolygon[];
     scaleImage: (sensitivity: number) => void;

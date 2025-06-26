@@ -6,14 +6,15 @@ import { expose, proxy, ProxyMarked } from 'comlink';
 
 declare const self: DedicatedWorkerGlobalScope;
 
-const initWatershed = async (imageData: ImageData): Promise<WatershedInstance & ProxyMarked> => {
-    return proxy(new Watershed(opencv, imageData));
+const initWatershed = async (): Promise<WatershedInstance & ProxyMarked> => {
+    await OpenCVLoader();
+
+    return proxy(new Watershed(opencv));
 };
 
 const WorkerApi = {
-    Watershed: initWatershed,
+    build: initWatershed,
     terminate: self.close,
-    loadOpenCV: OpenCVLoader,
 };
 
 expose(WorkerApi);

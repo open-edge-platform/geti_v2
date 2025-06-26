@@ -78,7 +78,7 @@ export const useInteractiveSegmentation = ({
             if (worker) {
                 wsInstance.current = await new worker.RITM();
 
-                await wsInstance.current.load();
+                await wsInstance.current?.load();
 
                 setIsLoading(false);
             }

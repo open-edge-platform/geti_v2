@@ -85,7 +85,7 @@ const useWatershedUndoRedoState = (): [
 };
 
 export const WatershedStateProvider = ({ children }: StateProviderProps): JSX.Element => {
-    const { worker } = useLoadAIWebworker(AlgorithmType.WATERSHED);
+    const { worker: watershed } = useLoadAIWebworker(AlgorithmType.WATERSHED);
 
     const wsInstance = useRef<WatershedInstance | null>(null);
 
@@ -105,8 +105,11 @@ export const WatershedStateProvider = ({ children }: StateProviderProps): JSX.El
     const { mutate, reset: resetMutation } = useMutation({
         mutationFn: async (runWatershedProps: RunWatershedProps) => {
             let polygons: WatershedPolygon[] = [];
-            if (worker && !wsInstance.current) {
-                wsInstance.current = await worker.Watershed(runWatershedProps.imageData);
+
+            if (watershed && !wsInstance.current) {
+                await watershed.loadImage(runWatershedProps.imageData);
+
+                wsInstance.current = watershed;
             }
 
             if (wsInstance.current) {

@@ -29,11 +29,11 @@ export interface SSIMMatch {
     confidence: number;
 }
 
-interface SSIMInstance {
+export interface SSIMInstance {
     new (): Promise<SSIMMethods>;
 }
 
-export interface SSIMWorker extends WebWorker<Rect> {
+export interface SSIMWorker extends WebWorker {
     SSIM: SSIMInstance;
     type: AlgorithmType.SSIM;
 }

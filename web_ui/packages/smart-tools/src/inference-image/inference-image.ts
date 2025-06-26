@@ -4,8 +4,9 @@
 import type OpenCVTypes from 'OpenCVTypes';
 
 import { formatImageData } from '../utils/tool-utils';
+import { InferenceImageInstance } from './interfaces';
 
-export class InferenceImage {
+export class InferenceImage implements InferenceImageInstance {
     constructor(private CV: OpenCVTypes.cv) {}
 
     resize(imageData: ImageData, width: number, height: number): ImageData {

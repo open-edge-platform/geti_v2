@@ -85,6 +85,7 @@ const createFakeSSIM = (shapes: Shape[]) => {
 const mockSSIMWorker = (shapes: Shape[]) => {
     const FakeSSIM = createFakeSSIM(shapes);
 
+    // @ts-expect-error ignore this typescript error until we finish ITEP-66305
     jest.mocked(useLoadAIWebworker).mockImplementation(() => {
         return {
             worker: FakeSSIM,

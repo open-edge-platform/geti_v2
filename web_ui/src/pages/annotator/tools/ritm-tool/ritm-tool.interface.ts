@@ -4,7 +4,7 @@
 import { Shape as SmartToolsShape, ShapeType as SmartToolsShapeType } from '@geti/smart-tools/src/shared/interfaces';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
-import { Point, Polygon, Shape } from '../../../../core/annotations/shapes.interface';
+import { Point, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { AlgorithmType } from '../../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { WebWorker } from '../../../../webworkers/web-worker.interface';
@@ -26,11 +26,11 @@ export interface RITMResult {
     shape: Shape | undefined;
 }
 
-interface RITMInstance {
+export interface RITMInstance {
     new (): Promise<RITMMethods>;
 }
 
-export interface RITMWorker extends WebWorker<Polygon> {
+export interface RITMWorker extends WebWorker {
     RITM: RITMInstance;
     type: AlgorithmType.RITM;
 }
