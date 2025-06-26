@@ -2,7 +2,6 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { defineConfig, loadEnv } from '@rsbuild/core';
-import { pluginNodePolyfill } from '@rsbuild/plugin-node-polyfill';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSass } from '@rsbuild/plugin-sass';
 import { pluginSvgr } from '@rsbuild/plugin-svgr';
@@ -33,8 +32,6 @@ export default defineConfig({
                 exportType: 'named',
             },
         }),
-        // Needed for node functions like 'path'
-        pluginNodePolyfill(),
     ],
     environments: {
         dev: {

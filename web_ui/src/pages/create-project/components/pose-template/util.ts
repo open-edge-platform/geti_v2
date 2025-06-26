@@ -114,15 +114,12 @@ export const resizePoints = (scaleFactor: number, roi: RegionOfInterest, points:
     const newWidth = currentWidth * scaleFactor;
     const newHeight = currentHeight * scaleFactor;
 
-    const scaleX = newWidth / currentWidth;
-    const scaleY = newHeight / currentHeight;
-
     const roiCenterX = roi.x + roi.width / 2;
     const roiCenterY = roi.y + roi.height / 2;
 
     const newPoints = points.map((point) => {
-        const newX = (point.x - minX) * scaleX + minX;
-        const newY = (point.y - minY) * scaleY + minY;
+        const newX = (point.x - minX) * scaleFactor + minX;
+        const newY = (point.y - minY) * scaleFactor + minY;
 
         const offsetX = newX - minX;
         const offsetY = newY - minY;

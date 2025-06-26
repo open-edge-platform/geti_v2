@@ -38,7 +38,7 @@ interface SelectProjectTemplateProps {
 }
 
 const filterOutKeypointDetection = (tabs: Record<SingleTaskTemplateType, DomainCardsMetadata[]>, isFlagOn: boolean) =>
-    isFlagOn ? tabs : omit(tabs, 'Keypoint Detection');
+    isFlagOn ? tabs : omit(tabs, 'Keypoint detection');
 
 export const SelectProjectTemplate = ({
     animationDirection,
