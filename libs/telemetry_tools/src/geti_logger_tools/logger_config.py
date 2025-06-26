@@ -41,16 +41,16 @@ def initialize_logger(package_name: str, logging_format: str | None = None) -> l
     if logging_format is None:
         logging_format = get_logging_format()
     logger = logging.getLogger()
+    logger.setLevel(LOG_LEVEL)
     stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(LOG_LEVEL)
     stream_handler.setFormatter(logging.Formatter(fmt=logging_format, datefmt=LOGGER_DATE_FORMAT))
     stream_handler.addFilter(SanitizeLogFilter())
+
     # Check if an equivalent StreamHandler is already attached
     for handler in logger.handlers:
         if (
             isinstance(handler, logging.StreamHandler)
-            and handler.level == stream_handler.level
-            and handler.formatter._fmt == stream_handler.formatter._fmt
+            and handler.formatter._fmt == stream_handler.formatter._fmt  # type: ignore
             and handler.filters == stream_handler.filters
         ):
             break
