@@ -9,6 +9,7 @@ from uuid import UUID
 import pytest
 from bson import UUID_SUBTYPE, Binary, ObjectId, UuidRepresentation
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.reduce_anomaly_tasks import ReduceAnomalyTasksMigration
 
@@ -352,7 +353,7 @@ class TestAnomalyReductionProcessMigration:
         model_storage = request.getfixturevalue(lazyfxt_model_storage)
         task_node = request.getfixturevalue(lazyfxt_task_node)
 
-        mock_db = fxt_mongo_client.get_database("geti_test")
+        mock_db: Database = fxt_mongo_client.get_database("geti_test")
         request.addfinalizer(lambda: fxt_mongo_client.drop_database("geti_test"))
         project_collection = mock_db.project
         label_collection = mock_db.label
