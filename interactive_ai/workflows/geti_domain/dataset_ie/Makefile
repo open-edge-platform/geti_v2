@@ -6,6 +6,3 @@ DOCKER_BUILD_CONTEXT := --build-context common=../common \
 						--build-context libs=../../../../libs \
 						--build-context iai_core=../../../../interactive_ai/libs/iai_core_py \
 						--build-context media_utils=../../../../interactive_ai/libs/media_utils \
-
-test-integration: venv
-	uv run pytest tests/integration/test_import_dataset.py::TestImportDataset::test_import_unannotated_dataset -v
