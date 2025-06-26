@@ -13,10 +13,10 @@ import {
 } from '../dtos/configurable-parameters.interface';
 import {
     ConfigurationParameterDTO,
-    ModelTrainingConfigurationDTO,
     ProjectConfigurationDTO,
     ProjectConfigurationUploadPayloadDTO,
     StaticParameterDTO,
+    TrainedModelConfigurationDTO,
     TrainingConfigurationDTO,
     TrainingConfigurationUpdatePayloadDTO,
     TrainingParametersDTO,
@@ -326,9 +326,7 @@ export const getTrainingConfigurationEntity = (config: TrainingConfigurationDTO)
     };
 };
 
-export const getTrainedModelConfigurationEntity = (
-    config: ModelTrainingConfigurationDTO
-): TrainedModelConfiguration => {
+export const getTrainedModelConfigurationEntity = (config: TrainedModelConfigurationDTO): TrainedModelConfiguration => {
     const { task_id, training, dataset_preparation, evaluation, advanced_configuration } = config;
 
     return {

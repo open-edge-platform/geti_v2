@@ -12,8 +12,8 @@ import {
     ConfigurableParametersTaskChainDTO,
 } from '../dtos/configurable-parameters.interface';
 import {
-    ModelTrainingConfigurationDTO,
     ProjectConfigurationDTO,
+    TrainedModelConfigurationDTO,
     TrainingConfigurationDTO,
 } from '../dtos/configuration.interface';
 import { ConfigurableParametersTaskChain } from './configurable-parameters.interface';
@@ -146,7 +146,7 @@ export const createApiModelConfigParametersService: CreateApiService<CreateApiMo
         projectIdentifier,
         queryParameters
     ) => {
-        const { data } = await instance.get<ModelTrainingConfigurationDTO>(
+        const { data } = await instance.get<TrainedModelConfigurationDTO>(
             router.CONFIGURATION.TRAINING(projectIdentifier),
             {
                 params: {
