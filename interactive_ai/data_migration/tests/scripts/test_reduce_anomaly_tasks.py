@@ -163,7 +163,7 @@ def fxt_anomaly_segmentation_label_schema(fxt_label_schema) -> dict:
 @pytest.fixture
 def fxt_annotation_scene() -> dict:
     return {
-        "_id": ObjectId("test_annotation_scene_id"),
+        "_id": ObjectId("66a0faf070cdf6d0b2ec5f94"),
         "workspace_id": WORKSPACE_ID,
         "organization_id": ORGANIZATION_ID,
         "project_id": PROJECT_ID,
@@ -179,7 +179,7 @@ def fxt_annotation_scene() -> dict:
 @pytest.fixture
 def fxt_annotation_scene_state() -> dict:
     return {
-        "_id": ObjectId("test_annotation_state_id"),
+        "_id": ObjectId("66a0faf070cdf6d0b2ec5f95"),
         "workspace_id": WORKSPACE_ID,
         "organization_id": ORGANIZATION_ID,
         "project_id": PROJECT_ID,
@@ -194,13 +194,16 @@ def fxt_annotation_scene_state() -> dict:
 @pytest.fixture
 def fxt_model() -> dict:
     return {
-        "_id": ObjectId("test_model_id"),
+        "_id": ObjectId("66a0faf070cdf6d0b2ec5f96"),
+        "workspace_id": WORKSPACE_ID,
+        "organization_id": ORGANIZATION_ID,
+        "project_id": PROJECT_ID,
         "configuration": {
             "label_schema": {
-                "_id": ObjectId("test_label_schema_id"),
+                "_id": ObjectId("66a0faf070cdf6d0b2ec5f97"),
                 "label_groups": [
                     {
-                        "_id": ObjectId("test_label_group_id"),
+                        "_id": ObjectId("66a0faf070cdf6d0b2ec5f98"),
                         "name": "UNDEFINED",
                     }
                 ],
@@ -233,7 +236,10 @@ def fxt_anomaly_segmentation_model(fxt_model) -> dict:
 @pytest.fixture
 def fxt_model_storage() -> dict:
     return {
-        "_id": ObjectId("test_model_storage_id"),
+        "_id": ObjectId("66a0faf070cdf6d0b2ec5f97"),
+        "workspace_id": WORKSPACE_ID,
+        "organization_id": ORGANIZATION_ID,
+        "project_id": PROJECT_ID,
         "model_template_id": "UNDEFINED",
     }
 
@@ -383,10 +389,10 @@ class TestAnomalyReductionProcessMigration:
         assert not project_after_upgrade[0]["performance"]["task_performances"][0].get("local_score")
 
         labels_after_upgrade = list(label_collection.find(filter={"project_id": PROJECT_ID}))
-        assert labels_after_upgrade[0]["label_groups"][0]["name"] == "ANOMALY"
+        assert labels_after_upgrade[0]["domain"] == "ANOMALY"
 
         label_schema_after_upgrade = list(label_schema_collection.find(filter={"project_id": PROJECT_ID}))
-        assert label_schema_after_upgrade[0]["domain"] == "default - anomaly"
+        assert label_schema_after_upgrade[0]["label_groups"][0]["name"] == "default - anomaly"
 
         model_after_upgrade = list(model_collection.find(filter={"project_id": PROJECT_ID}))
         assert model_after_upgrade[0]["configuration"]["label_schema"]["label_groups"][0]["name"] == "default - anomaly"

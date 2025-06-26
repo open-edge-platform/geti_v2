@@ -50,7 +50,7 @@ class ReduceAnomalyTasksMigration(IMigrationScript):
         cls._update(organization_id=organization_id, workspace_id=workspace_id, project_id=project_id)
 
     @classmethod
-    def _reduce(cls, collection_name: str, organization_id: str, workspace_id: str, project_id: str) -> None:
+    def _reduce(cls, collection_name: str, organization_id: str, workspace_id: str, project_id: str) -> None:  # noqa: C901
         filter = cls.get_preliminary_filter(
             collection_name=collection_name,
             organization_id=organization_id,
@@ -60,11 +60,20 @@ class ReduceAnomalyTasksMigration(IMigrationScript):
         db = MongoDBConnection().geti_db
         collection = db.get_collection(collection_name)
 
-        def update_nested_fields(document: dict, fields_to_update: dict, parent_key: str = "") -> None:
+        def update_nested_fields(document: dict, fields_to_update: dict, parent_key: str = "") -> None:  # noqa: C901
             for key, value in document.items():
                 full_key = f"{parent_key}.{key}" if parent_key else key
                 if isinstance(value, dict):
                     update_nested_fields(value, fields_to_update, full_key)
+                elif isinstance(value, list):
+                    for index, item in enumerate(value):
+                        item_key = f"{full_key}.{index}"
+                        if isinstance(item, dict):
+                            update_nested_fields(item, fields_to_update, item_key)
+                        elif isinstance(item, str):
+                            for bad, good in ANOM_STRINGS_MAPPING.items():
+                                if item.find(bad) != -1:
+                                    fields_to_update[item_key] = item.replace(bad, good)
                 elif isinstance(value, str):
                     for bad, good in ANOM_STRINGS_MAPPING.items():
                         if value.find(bad) != -1:
@@ -120,11 +129,18 @@ class ReduceAnomalyTasksMigration(IMigrationScript):
                     logger.info(f"Updated annotations for annotation_scene with _id: {annotation_scene['_id']}")
                 for annotation_scene_state in annotation_scene_state_collection.find({"project_id": doc["_id"]}):
                     for state_per_task in annotation_scene_state["state_per_task"]:
+                        correct_states = []
                         if state_per_task["annotation_state"] == "PARTIALLY_ANNOTATED":
                             # PARTIALLY_ANNOTATED used to mean that the media was missing a local annotation.
                             # That the media is now always considered fully annotated.
                             state_per_task["annotation_state"] = "ANNOTATED"
+                            correct_states.append(state_per_task)
                             logger.info(f"Updated annotation_scene_state with _id: {annotation_scene_state['_id']}")
+                        update = {"$set": {"state_per_task": correct_states}}
+                        annotation_scene_state_collection.update_one(
+                            filter={"_id": annotation_scene_state["_id"]},
+                            update=update,
+                        )
 
     @staticmethod
     def get_preliminary_filter(collection_name: str, organization_id: str, workspace_id: str, project_id: str) -> dict:
