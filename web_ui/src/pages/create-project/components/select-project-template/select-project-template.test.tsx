@@ -97,7 +97,7 @@ describe('Select project template step', () => {
                 { featureFlags: { FEATURE_FLAG_KEYPOINT_DETECTION: true } }
             );
 
-            expect(screen.getByRole('tab', { name: 'Keypoint Detection' })).toBeInTheDocument();
+            expect(screen.getByRole('tab', { name: /Keypoint Detection/i })).toBeInTheDocument();
         });
 
         it('"Keypoint Detection" tab should be hidden if the flag is off', async () => {
@@ -111,7 +111,7 @@ describe('Select project template step', () => {
                 { featureFlags: { FEATURE_FLAG_KEYPOINT_DETECTION: false } }
             );
 
-            expect(screen.queryByRole('tab', { name: 'Keypoint Detection' })).not.toBeInTheDocument();
+            expect(screen.queryByRole('tab', { name: /Keypoint Detection/i })).not.toBeInTheDocument();
         });
     });
 });

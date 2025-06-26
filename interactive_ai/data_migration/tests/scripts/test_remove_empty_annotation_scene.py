@@ -9,6 +9,7 @@ import pytest
 from bson import ObjectId
 from bson.binary import UUID_SUBTYPE, Binary, UuidRepresentation
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.remove_empty_annotation_scene import RemoveEmptyAnnotationSceneMigrationScript
 
@@ -95,7 +96,7 @@ def get_annotation_scene_state(
 class TestRemoveEmptyAnnotationScene:
     def test_remove_empty_annotation_scene_from_db(self, fxt_mongo_id, fxt_mongo_uuid) -> None:
         # Arrange
-        mock_db = mongomock.MongoClient().db
+        mock_db: Database = mongomock.MongoClient().db
         annotation_scene_collection = mock_db.get_collection("annotation_scene")
         annotation_scene_state_collection = mock_db.get_collection("annotation_scene_state")
 

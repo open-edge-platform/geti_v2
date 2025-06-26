@@ -56,3 +56,7 @@ interactive_ai/supported_models/:
   - interactive_ai/libs/supported_algorithm/**
   - libs/Makefile**
   - .github/libs-path-filters.yml
+interactive_ai/data_migration/:
+  - interactive_ai/data_migration/**
+  - libs/Makefile**
+  - .github/libs-path-filters.yml

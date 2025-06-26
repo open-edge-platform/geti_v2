@@ -25,6 +25,7 @@ import { InfoSection } from '../../../../create-project/components/info-section/
 interface DatasetImportToNewProjectDialogButtonsProps {
     deletionDialogTrigger: OverlayTriggerState;
     datasetImportItem: DatasetImportToNewProjectItem | undefined;
+    isCreateDisabled?: boolean;
     onDialogDismiss: () => void;
     onPrimaryAction: () => void;
     isReady: (id: string | undefined) => boolean;
@@ -37,6 +38,7 @@ export const DatasetImportToNewProjectDialogButtons = ({
     isReady,
     onDialogDismiss,
     onPrimaryAction,
+    isCreateDisabled = false,
     datasetImportItem,
     patchDatasetImport,
     deletionDialogTrigger,
@@ -194,7 +196,7 @@ export const DatasetImportToNewProjectDialogButtons = ({
             {
                 name: DATASET_IMPORT_DIALOG_BUTTONS.CREATE,
                 hidden: currentStep !== DATASET_IMPORT_TO_NEW_PROJECT_STEP.LABELS,
-                disabled: !isReady(datasetImportItem?.id),
+                disabled: !isReady(datasetImportItem?.id) || isCreateDisabled,
                 variant: 'accent',
                 action: () => {
                     onPrimaryAction();
@@ -203,6 +205,7 @@ export const DatasetImportToNewProjectDialogButtons = ({
             },
         ],
         [
+            isCreateDisabled,
             abortActiveUpload,
             abortDatasetImportAction,
             currentStep,

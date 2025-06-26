@@ -3,7 +3,6 @@
 
 """This module defines a command to prepare MLFlow Experiment directory in the S3 bucket."""
 
-import io
 import json
 import logging
 import os
@@ -12,7 +11,6 @@ from tempfile import TemporaryDirectory
 from typing import Any
 
 import numpy as np
-import pyarrow as pa
 from geti_telemetry_tools import unified_tracing
 from geti_types import ProjectIdentifier
 from iai_core.adapters.binary_interpreters import RAWBinaryInterpreter
@@ -24,7 +22,6 @@ from iai_core.entities.metrics import CurveMetric, LineChartInfo, MetricsGroup, 
 from iai_core.entities.model import Model, ModelFormat, ModelOptimizationType, ModelStatus
 from iai_core.repos.model_repo import ModelRepo
 from iai_core.repos.project_repo import ProjectRepo
-from pandas import DataFrame
 
 # NOTE: workaround for CVS-156400 -> the following imports are needed for the workaround
 from jobs_common.tasks.utils.progress import report_progress
@@ -40,7 +37,6 @@ from jobs_common_extras.mlflow.adapters.definitions import (
     MLFlowLifecycleStage,
     MLFlowRunStatus,
 )
-from jobs_common_extras.mlflow.adapters.metrics_mapper import PerformanceDeserializer
 from jobs_common_extras.mlflow.repos.binary_repo import MLFlowExperimentBinaryRepo
 
 logger = logging.getLogger(__name__)
@@ -445,42 +441,25 @@ class GetiOTXInterfaceAdapter:
         :return: Performance object, or None if it cannot be loaded.
         """
 
-        # Metrics can be found either in outputs/models/performance.pickle or live_metrics/metrics.arrow
-        model_prefix = os.path.join(self.dst_path_prefix, "outputs", "models")
-        performance_filepath = os.path.join(model_prefix, "performance-json.bin")
+        # Metrics can be found in live_metrics/metrics.json
         live_metrics_prefix = os.path.join(self.dst_path_prefix, "live_metrics")
-        metrics_filepath = os.path.join(live_metrics_prefix, "metrics.arrow")
+        metrics_filepath = os.path.join(live_metrics_prefix, "metrics.json")
 
         performance: Performance | None = None
-        if self.binary_repo.exists(performance_filepath):
-            logger.info("Reading performance metrics from %s", performance_filepath)
-            try:
-                data = self.binary_repo.get_by_filename(
-                    filename=performance_filepath,
-                    binary_interpreter=RAWBinaryInterpreter(),
-                )
-                performance = PerformanceDeserializer.backward(json.loads(data.decode()))
-            except Exception:
-                logger.exception(f"Failed to extract performance metrics from {performance_filepath}")
-        elif self.binary_repo.exists(metrics_filepath):
+        if self.binary_repo.exists(metrics_filepath):
             logger.info("Reading performance metrics from %s", metrics_filepath)
             try:
-                obj = self.binary_repo.storage_client.client.get_object(  # type: ignore
-                    bucket_name=self.binary_repo.storage_client.bucket_name,  # type: ignore
-                    object_name=os.path.join(
-                        self.binary_repo.storage_client.object_name_base,  # type: ignore[attr-defined]
-                        metrics_filepath,
-                    ),  # type: ignore
+                data = self.binary_repo.get_by_filename(
+                    filename=metrics_filepath,
+                    binary_interpreter=RAWBinaryInterpreter(),
                 )
-                table = pa.ipc.RecordBatchFileReader(io.BytesIO(obj.data)).read_all()
-                data_frame = table.to_pandas()
-                performance = self._create_performance_from_arrow(data_frame)
+                metrics_json = json.loads(data)
+                performance = self._create_performance_from_json(metrics_json)
             except Exception:
                 logger.exception(f"Failed to extract performance metrics from {metrics_filepath}")
         else:
             logger.error(
-                "Cannot find any file to extract performance metrics; both `%s` and `%s` are missing.",
-                performance_filepath,
+                "Cannot find file to extract performance metrics; `%s` is missing.",
                 metrics_filepath,
             )
 
@@ -550,12 +529,9 @@ class GetiOTXInterfaceAdapter:
             "progress": 0.0,
         }
 
-    def _create_performance_from_arrow(self, data_frame: DataFrame) -> Performance:
-        grouped = data_frame.groupby("key")
-
+    def _create_performance_from_json(self, metrics_json: dict[str, list[float]]) -> Performance:
         dashboard_metrics = []
-        for name, group in grouped:
-            ys = group["value"].tolist()
+        for name, ys in metrics_json.items():
             xs = [float(x) for x in range(1, len(ys) + 1)]
             metric = CurveMetric(name=name, ys=ys, xs=xs)
 

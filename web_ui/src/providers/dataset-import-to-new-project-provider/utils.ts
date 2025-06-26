@@ -17,7 +17,7 @@ import {
     DatasetImportToNewProjectItem,
     DatasetImportWarning,
 } from '../../core/datasets/dataset.interface';
-import { getFileSize } from '../../shared/utils';
+import { getFileSize, isNonEmptyArray } from '../../shared/utils';
 
 export const getDatasetImportInitialState = (data: {
     id: string;
@@ -100,4 +100,17 @@ export const getImportKeypointTask = (supportedProjectTypes: DatasetImportSuppor
         }
     }
     return null;
+};
+
+export const isValidKeypointStructure = ({ keypointStructure }: DatasetImportKeypointTask) => {
+    return isNonEmptyArray(keypointStructure.edges) && isNonEmptyArray(keypointStructure.positions);
+};
+
+export const isKeypointWithInvalidStructure = (activeDatasetImport?: DatasetImportToNewProjectItem) => {
+    if (!activeDatasetImport) {
+        return false;
+    }
+
+    const keypointTask = getImportKeypointTask(activeDatasetImport.supportedProjectTypes);
+    return Boolean(keypointTask && !isValidKeypointStructure(keypointTask));
 };

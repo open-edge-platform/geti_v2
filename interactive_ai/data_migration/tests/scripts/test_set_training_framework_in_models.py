@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 from copy import deepcopy
 from unittest.mock import patch
 from uuid import UUID, uuid4
@@ -10,6 +9,7 @@ import pytest
 from bson import ObjectId
 from bson.binary import UUID_SUBTYPE, Binary, UuidRepresentation
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.set_training_framework_in_models import SetTrainingFrameworkInModelsMigration
 
@@ -98,7 +98,7 @@ class TestTrainingFrameworkMigration:
         fxt_models_before_upgrade,
         fxt_models_after_upgrade,
     ) -> None:
-        mock_db = mongomock.MongoClient(uuidRepresentation="standard").db
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         model_collection = mock_db.create_collection("model")
         model_collection.insert_many(fxt_models_before_upgrade)
         project_to_upgrade_id = fxt_project_ids[0]

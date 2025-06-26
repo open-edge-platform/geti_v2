@@ -151,8 +151,7 @@ export const getAnnotationInBoundingBox = (points: KeypointNode[], boundingBox: 
 };
 
 export const mirrorPointsAcrossAxis = <T extends Point>(points: T[], pointAxis: PointAxis): T[] => {
-    const minAxisValue = Math.min(...points.map((point) => point[pointAxis]));
-    const maxAxisValue = Math.max(...points.map((point) => point[pointAxis]));
+    const [minAxisValue, maxAxisValue] = getMaxMinPoint(points, pointAxis);
     const axisCenter = (minAxisValue + maxAxisValue) / 2;
 
     return points.map((point) => ({
