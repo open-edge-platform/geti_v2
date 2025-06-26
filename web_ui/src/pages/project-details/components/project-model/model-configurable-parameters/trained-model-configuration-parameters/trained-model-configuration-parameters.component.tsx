@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash-es';
 import { useTrainedModelConfigurationQuery } from '../../../../../../core/configurable-parameters/hooks/use-trained-model-configuration.hook';
 import { TrainedModelConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
 import { useModelIdentifier } from '../../../../../../hooks/use-model-identifier/use-model-identifier.hook';
+import { AdvancedConfigurationParameters } from './advanced-configuration.component';
 import { ModelDataManagementParameters } from './model-data-management-parameters.component';
 import { ModelTrainingParameters } from './model-training-parameters.component';
 
@@ -39,7 +40,7 @@ const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelCon
         {
             name: 'Advanced',
             isVisible: !isEmpty(parameters.advancedConfiguration),
-            children: <>Advanced</>,
+            children: <AdvancedConfigurationParameters parameters={parameters.advancedConfiguration} />,
         },
     ];
 

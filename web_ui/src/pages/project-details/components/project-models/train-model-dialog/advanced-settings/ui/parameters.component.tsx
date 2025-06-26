@@ -4,7 +4,7 @@
 import { FC, ReactNode } from 'react';
 
 import { Grid, minmax, Text, ToggleButtons, View } from '@geti/ui';
-import { isFunction } from 'lodash-es';
+import { isBoolean, isFunction } from 'lodash-es';
 
 import { ConfigurationParameter } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { isBoolEnableParameter } from '../utils';
@@ -45,16 +45,54 @@ interface ParameterLayoutProps {
     marginStart?: string;
 }
 
+interface ParameterNameProps {
+    name: string;
+    description: string;
+    gridColumn?: string;
+    marginStart?: string;
+}
+
+export const ParameterName = ({ name, description, marginStart, gridColumn }: ParameterNameProps) => {
+    return (
+        <Text marginStart={marginStart} gridColumn={gridColumn}>
+            {name}
+            <ParameterTooltip text={description} />
+        </Text>
+    );
+};
+
 const ParameterLayout: FC<ParameterLayoutProps> = ({ header, children, description, onReset, marginStart }) => {
     return (
         <>
-            <Text gridColumn={'1/2'} marginStart={marginStart}>
-                {header}
-                <ParameterTooltip text={description} />
-            </Text>
+            <ParameterName name={header} description={description} gridColumn={'1/2'} marginStart={marginStart} />
             <View gridColumn={'2/3'}>{children}</View>
             {isFunction(onReset) && <ResetButton onPress={onReset} aria-label={`Reset ${header}`} />}
         </>
+    );
+};
+
+interface ParameterReadOnlyProps {
+    parameter: Pick<ConfigurationParameter, 'value' | 'name' | 'description'>;
+    marginStart?: string;
+}
+
+interface ParameterReadOnlyValueProps {
+    value: Pick<ConfigurationParameter, 'value'>['value'];
+}
+
+export const ParameterReadOnlyValue = ({ value }: ParameterReadOnlyValueProps) => {
+    if (isBoolean(value)) {
+        return <Text>{value ? 'On' : 'Off'}</Text>;
+    }
+
+    return <Text>{value}</Text>;
+};
+
+const ParameterReadOnly = ({ parameter, marginStart }: ParameterReadOnlyProps) => {
+    return (
+        <ParameterLayout header={parameter.name} description={parameter.description} marginStart={marginStart}>
+            <ParameterReadOnlyValue value={parameter.value} />
+        </ParameterLayout>
     );
 };
 
@@ -117,19 +155,7 @@ const ParameterField: FC<ParameterFieldProps> = ({ parameter, onChange, isDisabl
 
 export const Parameter = ({ parameter, onChange, isDisabled, marginStart, isReadOnly }: ParameterProps) => {
     if (isReadOnly) {
-        if (isBoolEnableParameter(parameter)) {
-            return (
-                <ParameterLayout header={parameter.name} description={parameter.description} marginStart={marginStart}>
-                    <Text>{parameter.value ? 'On' : 'Off'}</Text>
-                </ParameterLayout>
-            );
-        }
-
-        return (
-            <ParameterLayout header={parameter.name} description={parameter.description} marginStart={marginStart}>
-                <Text>{parameter.value}</Text>
-            </ParameterLayout>
-        );
+        return <ParameterReadOnly parameter={parameter} marginStart={marginStart} />;
     }
 
     const handleReset = () => {
@@ -147,9 +173,6 @@ export const Parameter = ({ parameter, onChange, isDisabled, marginStart, isRead
         </ParameterLayout>
     );
 };
-
-Parameter.Layout = ParameterLayout;
-Parameter.Field = ParameterField;
 
 interface ParametersListProps {
     parameters: ConfigurationParameter[];
