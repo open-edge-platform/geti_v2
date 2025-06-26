@@ -6,6 +6,7 @@ from copy import deepcopy
 from unittest.mock import patch
 from uuid import UUID
 
+import mongomock
 import pytest
 from bson import UUID_SUBTYPE, Binary, ObjectId, UuidRepresentation
 from pymongo import MongoClient
@@ -333,7 +334,6 @@ class TestAnomalyReductionProcessMigration:
     )
     def test_upgrade_project(
         self,
-        fxt_mongo_client,
         fxt_mongo_uuid,
         lazyfxt_project,
         lazyfxt_label,
@@ -353,8 +353,7 @@ class TestAnomalyReductionProcessMigration:
         model_storage = request.getfixturevalue(lazyfxt_model_storage)
         task_node = request.getfixturevalue(lazyfxt_task_node)
 
-        mock_db: Database = fxt_mongo_client.get_database("geti_test")
-        request.addfinalizer(lambda: fxt_mongo_client.drop_database("geti_test"))
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         project_collection = mock_db.project
         label_collection = mock_db.label
         label_schema_collection = mock_db.label_schema
