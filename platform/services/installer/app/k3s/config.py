@@ -98,7 +98,6 @@ class K3sConfiguration:
                 install_k3s_exec_big_str += f"{flag}={arg_name}={arg_value} "
 
         return {
-            "INSTALL_K3S_SKIP_DOWNLOAD": "true",
             "INSTALL_K3S_VERSION": self.version,
             "INSTALL_K3S_EXEC": install_k3s_exec_big_str,
         }

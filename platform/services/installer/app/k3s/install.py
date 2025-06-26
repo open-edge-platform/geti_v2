@@ -22,6 +22,7 @@ import shutil
 import stat
 import subprocess
 import time
+import tempfile
 from typing import IO
 
 import requests
@@ -233,15 +234,18 @@ def install_k3s(  # noqa: ANN201
     Install K3S to current system. Write installation logs to 'logs_dir'. Use optionally 'external_address' to adjust
     produced kubeconfig.
     """
+    tmp = tempfile.NamedTemporaryFile(delete=False)
     try:
-        k3s_script_path = f"{K3S_OFFLINE_INSTALLATION_FILES_PATH}/install.sh"
-        _prepare_k3s_files_structure()
+        _download_script(tmp)
+        tmp.close()
         _install_k3s_selinux_rpm()
-        _run_installer(k3s_script_path=k3s_script_path, logs_file_path=logs_file_path)
+        _run_installer(k3s_script_path=tmp.name, logs_file_path=logs_file_path)
         _update_containerd_config(logs_file_path=logs_file_path)
         _mark_k3s_installation()
     except subprocess.CalledProcessError as ex:
         raise K3SInstallationError from ex
+    finally:
+        os.remove(tmp.name)
 
     if setup_remote_kubeconfig:
         _adjust_k3s_kubeconfig_server_address()
