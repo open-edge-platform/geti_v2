@@ -301,12 +301,6 @@ def display_final_confirmation(config: InstallationConfig) -> None:
 
 
 @click.command()
-@click.option(  # TODO remove later, workaround for Jenkins builds
-    "--config-file",
-    type=click.Path(exists=True, resolve_path=True, dir_okay=False),
-    required=False,
-    help="Config file with installation parameters. When calling installer outside of its directory use absolute path.",
-)
 @click.option(
     "--data-folder",
     type=click.Path(),
@@ -328,12 +322,10 @@ def install(
     password: str,
     tls_cert_file: str | None = None,
     tls_key_file: str | None = None,
-    config_file: str | None = None,  # TODO remove later, workaround for Jenkins builds
 ) -> None:
     """
     Install platform.
     """
-    logger.debug(f"Remove {config_file} param later")  # TODO
     click.echo(InstallCmdTexts.start_message)
     create_logs_dir()
     configure_logging()
