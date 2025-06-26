@@ -53,7 +53,7 @@ export const CloseSidebar = ({ screenshots, isLivePrediction }: CloseSidebarProp
             </TooltipTrigger>
 
             <CustomPopover ref={triggerRef} state={settingsPopoverState} placement='left top'>
-                <View padding='size-300'>
+                <View padding='size-300' overflow={'auto'}>
                     <DeviceSettings />
                 </View>
             </CustomPopover>

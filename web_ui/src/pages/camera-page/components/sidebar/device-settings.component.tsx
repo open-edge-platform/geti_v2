@@ -18,11 +18,6 @@ const Header = ({ text }: { text: string }) => (
     </Flex>
 );
 
-//TODO:
-//add tests!
-//debouncing!!!
-//layout
-
 export const DeviceSettings = () => {
     const { categories, dependencies } = settingsMetadata;
 
