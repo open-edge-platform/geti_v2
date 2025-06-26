@@ -104,6 +104,11 @@ class EventProducer:
         )
         self._producer.poll(0)
 
+    def terminate(self) -> None:
+        logger.info("Terminating producer")
+        self._producer.flush()
+        self._producer = None  # This line releases producer thread & connection to the cluster
+
     def health_check(self) -> bool:
         # Todo: implement CVS-81113
         return True
@@ -133,6 +138,15 @@ def publish_event(
 
     logger.info(f"Publishing Kafka event in topic {topic} : {body_for_logger}")
     EventProducer().publish(topic=topic, body=body, key=key, headers=headers)
+
+
+def terminate_producer() -> None:
+    """
+    Closes event producer & releases all it's resources and cluster connection
+    """
+    if EventProducer._instance is None:
+        return
+    EventProducer().terminate()
 
 
 def _body_for_logger(body: dict) -> dict:

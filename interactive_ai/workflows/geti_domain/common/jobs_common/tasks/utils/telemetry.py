@@ -9,7 +9,7 @@ from collections.abc import Callable
 from functools import wraps
 from typing import Any
 
-from geti_telemetry_tools import ENABLE_TRACING, KafkaTelemetry, LoggerTelemetry
+from geti_telemetry_tools import ENABLE_TRACING, KafkaTelemetry, LoggerTelemetry, terminate_span_exporter
 from opentelemetry import trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
@@ -34,11 +34,14 @@ def task_telemetry(_function: Callable) -> Any:
 
         LoggerTelemetry.instrument()
         KafkaTelemetry.instrument()
-
-        carrier = {"traceparent": OPENTELEMETRY_CONTEXT}
-        logger.debug(f"Using opentelemetry context {OPENTELEMETRY_CONTEXT}")
-        ctx = TraceContextTextMapPropagator().extract(carrier=carrier)
-        with tracer.start_as_current_span(_function.__qualname__, context=ctx):
-            return _function(*args, **kwargs)
+        try:
+            carrier = {"traceparent": OPENTELEMETRY_CONTEXT}
+            logger.debug(f"Using opentelemetry context {OPENTELEMETRY_CONTEXT}")
+            ctx = TraceContextTextMapPropagator().extract(carrier=carrier)
+            with tracer.start_as_current_span(_function.__qualname__, context=ctx):
+                result = _function(*args, **kwargs)
+        finally:
+            terminate_span_exporter()
+        return result
 
     return wrapper

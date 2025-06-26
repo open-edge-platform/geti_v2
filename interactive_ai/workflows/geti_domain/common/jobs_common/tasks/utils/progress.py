@@ -11,7 +11,7 @@ from functools import wraps
 from typing import Any
 
 from flytekit import current_context
-from geti_kafka_tools import publish_event
+from geti_kafka_tools import publish_event, terminate_producer
 from geti_types import CTX_SESSION_VAR
 from grpc_interfaces.job_update.client import JobUpdateClient
 from grpc_interfaces.job_update.pb.job_update_service_pb2 import JobUpdateRequest
@@ -188,6 +188,7 @@ def task_progress(
             finally:
                 if not failed and finish_message is not None:
                     report_progress(progress=finish_progress, message=finish_message)
+                terminate_producer()
 
         return wrapper
 

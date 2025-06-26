@@ -14,7 +14,7 @@ from .config import (
     OTLP_TRACES_RECEIVER,
     TEST_METRICS,
 )
-from .tracing.common import get_context_string, unified_tracing
+from .tracing.common import get_context_string, unified_tracing, terminate_span_exporter
 from .tracing.fastapi.fastapi_telemetry import FastAPITelemetry
 from .tracing.grpc.grpc_telemetry import GrpcClientTelemetry, GrpcServerTelemetry
 from .tracing.kafka.kafka_telemetry import KafkaTelemetry
@@ -37,4 +37,5 @@ __all__ = [
     "LoggerTelemetry",
     "get_context_string",
     "unified_tracing",
+    "terminate_span_exporter",
 ]
