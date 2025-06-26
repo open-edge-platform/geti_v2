@@ -30,8 +30,11 @@ const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelCon
         },
         {
             name: 'Evaluation',
-            isVisible: !isEmpty(parameters.evaluation),
-            children: <>Evaluation</>,
+            /**
+             * Evaluation tab will be supported in the phase 2.
+             */
+            isVisible: false || !isEmpty(parameters.evaluation),
+            children: undefined,
         },
         {
             name: 'Advanced',

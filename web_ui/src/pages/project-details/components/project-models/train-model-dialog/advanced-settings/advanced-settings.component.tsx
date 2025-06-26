@@ -93,7 +93,11 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
         },
         {
             name: 'Evaluation',
-            children: undefined /*<Evaluation evaluationParameters={evaluationParameters} />*/,
+            /**
+             * Evaluation tab will be supported in the phase 2.
+             * <Evaluation evaluationParameters={evaluationParameters} />
+             */
+            children: undefined,
         },
     ].filter((tab) => tab.children !== undefined);
 
