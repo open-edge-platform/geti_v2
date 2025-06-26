@@ -70,7 +70,7 @@ class DefaultModels:
             DefaultType.ACCURACY: None,
             DefaultType.SPEED: "Keypoint_Detection_RTMPose_Tiny",
             DefaultType.BALANCE: None,
-        }
+        },
     }
 
     @classmethod
@@ -88,7 +88,7 @@ class DefaultModels:
         if default_type not in cls.default_models_by_task[task_type]:
             raise ValueError(f"Unknown default type: {default_type} for task: {task_type}")
         return cls.default_models_by_task[task_type][default_type]
-    
+
     @classmethod
     def get_accuracy_model(cls, task_type: TaskType) -> str | None:
         """
