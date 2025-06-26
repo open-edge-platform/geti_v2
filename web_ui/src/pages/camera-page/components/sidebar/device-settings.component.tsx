@@ -2,9 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { Disclosure, DisclosurePanel, DisclosureTitle, Flex, Heading, Item, Key, Picker, View } from '@geti/ui';
+import { isEqual } from 'lodash-es';
 
 import { useDeviceSettings } from '../../providers/device-settings-provider.component';
-import { checkIfDisplaySetting } from '../../providers/util';
+import { checkIfDisplaySetting, SettingMinMax, SettingSelection } from '../../providers/util';
 import { DeviceSettingsDefaultCategory } from './device-settings-default-category.component';
 import { settingsMetadata } from './device-settings-metadata';
 import { SettingOption } from './setting-option.component';
@@ -25,7 +26,7 @@ const Header = ({ text }: { text: string }) => (
 export const DeviceSettings = () => {
     const { categories, dependencies } = settingsMetadata;
 
-    const { videoDevices, selectedDeviceId, deviceConfig, setSelectedDeviceId } = useDeviceSettings();
+    const { videoDevices, selectedDeviceId, deviceConfig, setDeviceConfig, setSelectedDeviceId } = useDeviceSettings();
 
     return (
         <View position={'relative'} width={'28rem'}>
@@ -53,9 +54,37 @@ export const DeviceSettings = () => {
                                 const shouldDisplay = checkIfDisplaySetting(currentOption, deviceConfig, dependencies);
                                 const { name, config, onChange } = currentOption;
 
+                                const handleOnChange = (value: number | string) => {
+                                    onChange(value);
+
+                                    //TODO: move it to onChange
+                                    //REFRESH VALUE!!! - does not work
+                                    //
+                                    //move it to the hook???
+                                    setDeviceConfig([
+                                        ...deviceConfig.map((currentConfig) => {
+                                            if (isEqual(name, currentConfig.name)) {
+                                                return {
+                                                    ...currentConfig,
+                                                    config: { ...currentConfig.config, value } as
+                                                        | SettingMinMax
+                                                        | SettingSelection,
+                                                };
+                                            } else {
+                                                return currentConfig;
+                                            }
+                                        }),
+                                    ]);
+                                };
+
                                 return (
                                     shouldDisplay && (
-                                        <SettingOption key={name} label={name} config={config} onChange={onChange} />
+                                        <SettingOption
+                                            key={`${name}-${shouldDisplay}`}
+                                            label={name}
+                                            config={config}
+                                            onChange={handleOnChange}
+                                        />
                                     )
                                 );
                             }

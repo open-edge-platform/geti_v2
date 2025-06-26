@@ -34,6 +34,7 @@ export interface SettingsContextProps {
     videoDevices: MediaDeviceInfo[];
     selectedDeviceId: string | undefined;
     deviceConfig: DeviceConfiguration[];
+    setDeviceConfig: Dispatch<SetStateAction<DeviceConfiguration[]>>;
     userPermissions: UserCameraPermission;
     loadDeviceCapabilities: (stream: MediaStream) => void;
     setSelectedDeviceId: Dispatch<SetStateAction<string | undefined>>;
@@ -51,6 +52,8 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
     const [userPermissions, setUserPermissions] = useState(UserCameraPermission.PENDING);
     const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(undefined);
     const [isMirrored, setIsMirrored] = useState(false);
+
+    useEffect(() => console.log('deviceConfig', deviceConfig), [deviceConfig]);
 
     const onComponentIsMounted = runWhen<MediaDeviceInfo[]>(isMounted);
 
@@ -106,6 +109,7 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
                 webcamRef,
                 videoDevices,
                 deviceConfig,
+                setDeviceConfig,
                 userPermissions,
                 selectedDeviceId,
                 setSelectedDeviceId,

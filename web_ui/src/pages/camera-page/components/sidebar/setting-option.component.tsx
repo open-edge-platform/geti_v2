@@ -7,6 +7,7 @@ import { ActionButton, Flex, Heading, Item, Picker, Slider, Tooltip, TooltipTrig
 import { Revisit } from '@geti/ui/icons';
 import { capitalize, words } from 'lodash-es';
 
+import { OPTION_VISIBLE } from '../../../annotator/annotation/pose-list/content-menu.component';
 import { DeviceConfiguration } from '../../providers/util';
 
 import classes from './sidebar.module.scss';
@@ -21,10 +22,12 @@ const unFormatText = (text: string) => words(text).join(' ');
 
 export const SettingOption = ({ label, config, onChange }: SettingOptionProps) => {
     const [value, setValue] = useState<number | string>(config.value);
+    console.log('111', value, config.value);
 
     const updateValue = (key: Key) => {
         setValue(String(key));
         onChange(String(key));
+        //TODO: set configValue!!!!
     };
 
     return (
