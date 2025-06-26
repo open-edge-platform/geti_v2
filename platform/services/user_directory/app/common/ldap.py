@@ -1,7 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import base64
 import logging
 import os
 
@@ -37,7 +36,6 @@ class OpenLDAPConnection:
         self.users_handler = UsersHandler(**auth_config)
 
     def create_initial_user(self, uid: str, data: UsersHandlerUser) -> bool:
-        password = base64.b64encode((base64.b64decode(data.password).decode("utf-8")).encode("ascii")).decode("ascii")
         try:
             find_user = self.users_handler.get_user(uid=uid)
             logger.debug(f"Received response from OpenLDAP when searching for user with uid {uid}: {find_user}")
@@ -51,7 +49,7 @@ class OpenLDAPConnection:
                 uid=uid,
                 name=data.first_name if data.first_name is not None else "noname",
                 mail=data.email,
-                password=password,
+                password=data.password,
                 admin=True,
                 registered=True,
             )

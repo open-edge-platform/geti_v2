@@ -62,7 +62,6 @@ class UsersHandlerConnection:
             {"role": "ADMIN", "resource_id": workspace_id, "resource_type": "workspace"},
             {"role": "ADMIN", "resource_id": organization_id, "resource_type": "organization"},
         ]
-        password = base64.b64encode(INITIAL_USER_PASSWORD.encode("ascii")).decode("ascii")
         user_auth_relationships = [
             AuthorizationRelationships(
                 resource_type=role["resource_type"],
@@ -86,7 +85,7 @@ class UsersHandlerConnection:
             uid=uid,
             name=FIND_USER["first_name"],
             mail=FIND_USER["email"],
-            password=password,
+            password=INITIAL_USER_PASSWORD,
             admin=True,
             registered=True,
             authorization_relationships=user_auth_relationships,

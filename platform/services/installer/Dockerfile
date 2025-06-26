@@ -43,11 +43,9 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
 
-# TODO remove templates when installation is handled by the GetiController
 RUN pyinstaller \
     --exclude-module readline \
     --add-data "geti_controller_chart:geti_controller_chart" \
-    --add-data "templates:templates" \
     --add-data "version.yaml:." \
     --add-data "system-packages.yaml:." \
     -F platform_installer.py

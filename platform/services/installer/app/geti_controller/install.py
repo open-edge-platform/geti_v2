@@ -31,17 +31,14 @@ def deploy_geti_controller_chart(config: InstallationConfig, charts_dir: str = G
         no_proxy += f",127.0.0.1,localhost,.{PLATFORM_NAMESPACE},.svc,.cluster.local"
 
         configuration_data = {
-            "configuration": {
-                "login": config.username.value,
-                "passwordHash": config.password_sha.value,
-                "password": config.password.value,
-                "dataFolder": config.data_folder.value,
-                "tlsCert": "",
-                "tlsKey": "",
-            },
             "global": {
                 "ingress_enabled": False,
                 "registry_address": f"{config.geti_image_registry.value}/open-edge-platform",
+                "login": config.username.value,
+                "passwordHash": config.password_sha.value,
+                "dataFolder": config.data_folder.value,
+                "tlsCert": "",
+                "tlsKey": "",
                 "proxy": {
                     "enabled": bool(http_proxy or https_proxy),
                     "httpProxy": http_proxy if http_proxy is not None else "",

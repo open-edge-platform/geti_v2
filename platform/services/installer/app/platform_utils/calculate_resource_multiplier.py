@@ -57,23 +57,3 @@ def k8s_memory_to_kibibytes(k8s_memory: str) -> int:
             # compute bytes and divide by 1024 to return kibybytes
             return int(float(k8s_memory.strip(memory_suffix)) * multiplier // 1024)
     raise ValueError(f"Invalid k8s memory value: {k8s_memory}")
-
-
-def calculate_resource_multiplier(master_node_allocatable_resources: dict) -> float:
-    """
-    Calculate multiplier based on available resourced in node.
-    """
-    allocatable_cpu = k8s_cpu_to_millicpus(master_node_allocatable_resources["cpu"])
-    allocatable_memory = k8s_memory_to_kibibytes(master_node_allocatable_resources["memory"])
-    for threshold in resource_multiplier_thresholds:
-        min_cpu = k8s_cpu_to_millicpus(threshold.min_cpu)
-        max_cpu = k8s_cpu_to_millicpus(threshold.max_cpu) if threshold.max_cpu != "inf" else float("inf")
-        min_memory = k8s_memory_to_kibibytes(threshold.min_memory)
-        max_memory = k8s_memory_to_kibibytes(threshold.max_memory) if threshold.max_memory != "inf" else float("inf")
-        if threshold.resource_multiplier < 1:
-            if min_cpu < allocatable_cpu <= max_cpu or min_memory < allocatable_memory <= max_memory:
-                return threshold.resource_multiplier
-        elif min_cpu < allocatable_cpu <= max_cpu and min_memory < allocatable_memory <= max_memory:
-            return threshold.resource_multiplier
-
-    return 1.0

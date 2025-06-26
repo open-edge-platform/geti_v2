@@ -178,7 +178,7 @@ def run_installation_checks(config: InstallationConfig) -> None:
         sys.exit(1)
 
 
-def monitor_installation_progress(config: InstallationConfig) -> (str, str):
+def monitor_installation_progress(config: InstallationConfig) -> tuple[str, str]:
     """
     Monitor the installation progress and update the user with the current status.
     """
@@ -264,6 +264,7 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
         logger.exception("Error during installation.")
         click.secho("\n" + InstallCmdTexts.installation_failed, fg="red")
         cluster_info_dump(kubeconfig=config.kube_config.value)
+        sys.exit(1)
     finally:
         uninstall_geti_controller_chart(config=config)
         # shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)  # TODO uncomment

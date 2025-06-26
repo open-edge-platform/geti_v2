@@ -26,10 +26,11 @@ global:
     allow_credentials: false
   proxy:
     enabled: false
-    http_proxy: ""
-    https_proxy: ""
-    no_proxy: ""
-
+  login: ""
+  passwordHash: ""
+  tlsCert: ""
+  tlsKey: ""
+  dataFolder: "/data"
 
 replicaCount: 1
 
@@ -87,11 +88,7 @@ timeout: 360s
 
 configuration:
   secretName: geti-install-data
-  login: ""
-  passwordHash: ""
   dataFolder: "/data"
-  tlsCert: ""
-  tlsKey: ""
 
 mountPath: "/data"
 

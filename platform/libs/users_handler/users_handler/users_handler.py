@@ -162,7 +162,7 @@ class UsersHandler:
             salt=salt,
             iterations=iterations,
         )
-        key = kdf.derive(clear_pass)
+        key = kdf.derive(str.encode(clear_pass))
         return "{}{}${}${}".format("{PBKDF2-SHA512}", iterations, self._ab64_encode(salt), self._ab64_encode(key))
 
     def _get_latest_uid_number(self) -> int:
@@ -187,13 +187,12 @@ class UsersHandler:
     def check_password_strength(password: str) -> None:
         """
         Check strength of a new password
-        :param password: base64 URL safe encoded password
+        :param password: decoded password
         """
-        decoded_pass = base64.urlsafe_b64decode(password).decode("ascii")
         check = re.match(
             r"^(?=.*[A-Z])(?=.*[a-z])((?=.*[0-9])|(?=.*[\ !\"#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~]))[A-Za-z0-9\ !\"#$%&'"
             r"()*+,-.\/:;<=>?@\[\\\]^_`{|}~]{8,200}$",
-            decoded_pass,
+            password,
         )
         if check is None:
             error = "Password must have 8-200 characters, at least one capital letter, lower letter, digit or symbol"
@@ -350,7 +349,7 @@ class UsersHandler:
         """
         Creates new user
         :param uid: new user uid, needs to be unique
-        :param password: base64 URL safe encoded user password
+        :param password: user password hash or decoded password
         :param name: new user name
         :param mail: new user mail
         :param admin: boolean, if True user will be created as admin, default False
@@ -363,9 +362,10 @@ class UsersHandler:
         self.validate_unique_entry(uid=uid, mail=mail)
 
         latest_uid = self._get_latest_uid_number()
-        self.check_password_strength(password)
-        password_decoded = base64.urlsafe_b64decode(password)
-        password_hash = self._hash_password(password_decoded)
+
+        if not re.match(r"^\{PBKDF2-SHA512\}", password):
+            self.check_password_strength(password)
+            password = self._hash_password(password)
 
         modslist = {
             "objectClass": ["inetOrgPerson", "posixAccount", "top"],
@@ -376,7 +376,7 @@ class UsersHandler:
             "homeDirectory": [f"/home/users/{uid}"],
             LdapAttr.group: [str(gid)],
             LdapAttr.mail: [mail],
-            LdapAttr.user_password: [password_hash],
+            LdapAttr.user_password: [password],
             LdapAttr.registered: [str(registered)],
         }
         modlist = {key: [v.encode() for v in values] for key, values in modslist.items()}
