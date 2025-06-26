@@ -96,7 +96,7 @@ jobs:
 
       - name: Integration testing
         run: |
-          if [[ "${COMPONENT_DIR}" == "interactive_ai/workflows/geti_domain/project_ie" ]]; then
+          if [[ "${COMPONENT_DIR}" == "interactive_ai/workflows/geti_domain/project_ie" || "${COMPONENT_DIR}" == "interactive_ai/workflows/geti_domain/dataset_ie" ]]; then
             make -C "${COMPONENT_DIR}" test-integration
           else
             make builder -C "${COMPONENT_DIR}" test-integration
