@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash-es';
 import { useTrainedModelConfigurationQuery } from '../../../../../../core/configurable-parameters/hooks/use-trained-model-configuration.hook';
 import { TrainedModelConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
 import { useModelIdentifier } from '../../../../../../hooks/use-model-identifier/use-model-identifier.hook';
+import { ModelDataManagementParameters } from './model-data-management-parameters.component';
 import { ModelTrainingParameters } from './model-training-parameters.component';
 
 import styles from './trained-model-configuration-parameters.module.scss';
@@ -20,7 +21,7 @@ const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelCon
         {
             name: 'Data management',
             isVisible: !isEmpty(parameters.datasetPreparation.augmentation),
-            children: <>Data management</>,
+            children: <ModelDataManagementParameters parameters={parameters.datasetPreparation.augmentation} />,
         },
         {
             name: 'Training',

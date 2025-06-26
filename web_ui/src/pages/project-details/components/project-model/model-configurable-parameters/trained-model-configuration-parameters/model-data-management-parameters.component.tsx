@@ -1,0 +1,82 @@
+// Copyright (C) 2022-2025 Intel Corporation
+// LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+import { Flex, Text, View } from '@geti/ui';
+import { isEmpty, noop } from 'lodash-es';
+
+import { TrainedModelConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
+import { DataAugmentation } from '../../../project-models/train-model-dialog/advanced-settings/data-management/data-augmentation/data-augmentation.component';
+import { TilingModeTooltip } from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling-modes.component';
+import {
+    getCustomTilingParameters,
+    getTilingMode,
+    Tiling,
+} from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling.component';
+import { Accordion } from '../../../project-models/train-model-dialog/advanced-settings/ui/accordion/accordion.component';
+import { Parameters } from '../../../project-models/train-model-dialog/advanced-settings/ui/parameters.component';
+
+interface ModelDataManagementParametersProps {
+    parameters: TrainedModelConfiguration['datasetPreparation']['augmentation'];
+}
+
+const getAugmentationParameters = (parameters: TrainedModelConfiguration['datasetPreparation']['augmentation']) => {
+    const augmentation = structuredClone(parameters);
+
+    delete augmentation['tiling'];
+
+    return augmentation;
+};
+
+interface TilingParametersProps {
+    parameters: TrainedModelConfiguration['datasetPreparation']['augmentation']['tiling'];
+}
+
+interface TilingModeProps {
+    tilingMode: string;
+}
+
+const TilingMode = ({ tilingMode }: TilingModeProps) => {
+    return (
+        <Flex width={'100%'} gap={'size-300'}>
+            <View width={'size-3000'}>
+                <Text>
+                    Tiling mode <TilingModeTooltip />
+                </Text>
+            </View>
+            <Text>{tilingMode}</Text>
+        </Flex>
+    );
+};
+
+const TilingParameters = ({ parameters }: TilingParametersProps) => {
+    const tilingMode = getTilingMode(parameters);
+    const customTilingParameters = getCustomTilingParameters(parameters);
+
+    return (
+        <Accordion>
+            <Accordion.Title>
+                Title <Accordion.Tag>{tilingMode}</Accordion.Tag>
+            </Accordion.Title>
+            <Accordion.Content>
+                <Flex direction={'column'} gap={'size-300'}>
+                    <TilingMode tilingMode={tilingMode} />
+                    <Parameters parameters={customTilingParameters} onChange={noop} isReadOnly />
+                </Flex>
+            </Accordion.Content>
+        </Accordion>
+    );
+};
+
+export const ModelDataManagementParameters = ({ parameters }: ModelDataManagementParametersProps) => {
+    const tilingParameters = parameters.tiling;
+    const augmentationParameters = getAugmentationParameters(parameters);
+
+    return (
+        <View>
+            {!isEmpty(tilingParameters) && <TilingParameters parameters={tilingParameters} />}
+            {!isEmpty(augmentationParameters) && (
+                <DataAugmentation parameters={augmentationParameters} onUpdateTrainingConfiguration={noop} />
+            )}
+        </View>
+    );
+};
