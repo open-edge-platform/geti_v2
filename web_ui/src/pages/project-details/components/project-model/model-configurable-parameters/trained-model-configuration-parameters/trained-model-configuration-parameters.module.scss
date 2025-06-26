@@ -11,7 +11,7 @@
 
         & div[class*='spectrum-Tabs-item'] {
             box-sizing: border-box;
-            border-radius: 4px;
+            border-radius: var(--spectrum-alias-border-radius-regular);
             border: 1px solid var(--spectrum-global-color-gray-400);
             margin: 0;
             padding: 0 var(--spectrum-global-dimension-size-200);
@@ -24,7 +24,7 @@
     }
 
     & div[class*='spectrum-TabsPanel-tabpanel'] {
+        min-width: 0;
         padding-left: var(--spectrum-global-dimension-size-400);
-        padding-top: 10px;
     }
 }

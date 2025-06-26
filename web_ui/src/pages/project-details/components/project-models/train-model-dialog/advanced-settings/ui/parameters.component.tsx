@@ -46,16 +46,14 @@ interface ParameterLayoutProps {
 }
 
 const ParameterLayout: FC<ParameterLayoutProps> = ({ header, children, description, onReset, marginStart }) => {
-    const isResetButtonVisible = isFunction(onReset);
-
     return (
         <>
             <Text gridColumn={'1/2'} marginStart={marginStart}>
                 {header}
                 <ParameterTooltip text={description} />
             </Text>
-            <View gridColumn={`${isResetButtonVisible ? '2/3' : '2/4'}`}>{children}</View>
-            {isResetButtonVisible && <ResetButton onPress={onReset} aria-label={`Reset ${header}`} />}
+            <View gridColumn={'2/3'}>{children}</View>
+            {isFunction(onReset) && <ResetButton onPress={onReset} aria-label={`Reset ${header}`} />}
         </>
     );
 };
@@ -119,6 +117,14 @@ const ParameterField: FC<ParameterFieldProps> = ({ parameter, onChange, isDisabl
 
 export const Parameter = ({ parameter, onChange, isDisabled, marginStart, isReadOnly }: ParameterProps) => {
     if (isReadOnly) {
+        if (isBoolEnableParameter(parameter)) {
+            return (
+                <ParameterLayout header={parameter.name} description={parameter.description} marginStart={marginStart}>
+                    <Text>{parameter.value ? 'On' : 'Off'}</Text>
+                </ParameterLayout>
+            );
+        }
+
         return (
             <ParameterLayout header={parameter.name} description={parameter.description} marginStart={marginStart}>
                 <Text>{parameter.value}</Text>
@@ -153,20 +159,16 @@ interface ParametersListProps {
 
 const ParametersList = ({ parameters, onChange, isReadOnly }: ParametersListProps) => {
     if (isBoolEnableParameter(parameters[0])) {
-        return (
-            <ParametersContainer>
-                {parameters.map((parameter, index) => (
-                    <Parameter
-                        key={parameter.name}
-                        parameter={parameter}
-                        onChange={onChange}
-                        isDisabled={index > 0 && !parameters[0].value}
-                        marginStart={index > 0 ? 'size-150' : undefined}
-                        isReadOnly={isReadOnly}
-                    />
-                ))}
-            </ParametersContainer>
-        );
+        return parameters.map((parameter, index) => (
+            <Parameter
+                key={parameter.name}
+                parameter={parameter}
+                onChange={onChange}
+                isDisabled={index > 0 && !parameters[0].value}
+                marginStart={index > 0 ? 'size-150' : undefined}
+                isReadOnly={isReadOnly}
+            />
+        ));
     }
 
     return parameters.map((parameter) => (
@@ -174,20 +176,12 @@ const ParametersList = ({ parameters, onChange, isReadOnly }: ParametersListProp
     ));
 };
 
-const ParametersContainer = ({ children }: { children: ReactNode }) => {
+export const Parameters = ({ parameters, onChange, isReadOnly = false }: ParametersProps) => {
+    const columns = isReadOnly ? ['size-3000', '1fr'] : ['size-3000', minmax('size-3400', '1fr'), 'size-400'];
+
     return (
-        <Grid columns={['size-3000', minmax('size-3400', '1fr'), 'size-400']} gap={'size-300'} alignItems={'center'}>
-            {children}
+        <Grid columns={columns} gap={'size-300'} alignItems={'center'}>
+            <ParametersList parameters={parameters} onChange={onChange} isReadOnly={isReadOnly} />
         </Grid>
     );
 };
-
-export const Parameters = ({ parameters, onChange, isReadOnly = false }: ParametersProps) => {
-    return (
-        <ParametersContainer>
-            <ParametersList parameters={parameters} onChange={onChange} isReadOnly={isReadOnly} />
-        </ParametersContainer>
-    );
-};
-
-Parameters.Container = ParametersContainer;

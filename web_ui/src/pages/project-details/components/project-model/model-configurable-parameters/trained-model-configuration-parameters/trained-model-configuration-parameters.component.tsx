@@ -49,6 +49,7 @@ const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelCon
             orientation={'vertical'}
             items={visibleTabs}
             UNSAFE_className={styles.tabs}
+            marginTop={'size-100'}
         >
             <TabList>
                 {(item: TabItem) => (
