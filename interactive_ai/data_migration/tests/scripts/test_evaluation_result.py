@@ -267,7 +267,7 @@ class TestEvaluationResultMigration:
         fxt_evaluation_result_model_test,
     ) -> None:
         # Arrange
-        mock_db = mongomock.MongoClient().db
+        mock_db: Database = mongomock.MongoClient().db
         result_set_collection = mock_db.result_set
         evaluation_result_collection = mock_db.evaluation_result
         model_test_result_collection = mock_db.model_test_result
@@ -302,7 +302,7 @@ class TestEvaluationResultMigration:
         fxt_evaluation_result_validation,
     ) -> None:
         # Arrange
-        mock_db = mongomock.MongoClient().db
+        mock_db: Database = mongomock.MongoClient().db
         result_set_collection = mock_db.result_set
         evaluation_result_collection = mock_db.evaluation_result
         result_set_collection.insert_one(fxt_result_set)
@@ -329,7 +329,7 @@ class TestEvaluationResultMigration:
         fxt_evaluation_result_validation,
     ) -> None:
         # Arrange
-        mock_db = mongomock.MongoClient().db
+        mock_db: Database = mongomock.MongoClient().db
 
         result_set_collection = mock_db.result_set
         evaluation_result_collection = mock_db.evaluation_result
@@ -359,7 +359,7 @@ class TestEvaluationResultMigration:
         fxt_evaluation_result_model_test_failed,
     ) -> None:
         # Arrange
-        mock_db = mongomock.MongoClient().db
+        mock_db: Database = mongomock.MongoClient().db
         model_test_result_collection = mock_db.model_test_result
         evaluation_result_collection = mock_db.evaluation_result
         model_test_result_collection.insert_one(fxt_model_test)

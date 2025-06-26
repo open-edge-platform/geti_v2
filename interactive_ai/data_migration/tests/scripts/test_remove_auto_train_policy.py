@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 from collections.abc import Callable
 from functools import partial
 from unittest.mock import patch
@@ -8,6 +7,7 @@ from unittest.mock import patch
 import mongomock
 import pytest
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.remove_auto_train_policy import RemoveAutoTrainPolicyMigration
 
@@ -20,7 +20,7 @@ class TestRemoveAutoTrainPolicyMigration:
             original_fn(collection_name)
             return {"ok": 1.0}
 
-        mock_db = mongomock.MongoClient(uuidRepresentation="standard").db
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         if collection_exists:
             mock_db.create_collection("auto_train_policy")
             assert "auto_train_policy" in mock_db.list_collection_names()
@@ -41,7 +41,7 @@ class TestRemoveAutoTrainPolicyMigration:
 
     @pytest.mark.parametrize("collection_exists", [True, False], ids=["existing", "non-existing"])
     def test_downgrade_non_project_data(self, collection_exists) -> None:
-        mock_db = mongomock.MongoClient(uuidRepresentation="standard").db
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         if collection_exists:
             mock_db.create_collection("auto_train_policy")
             assert "auto_train_policy" in mock_db.list_collection_names()
