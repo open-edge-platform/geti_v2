@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 import requests
 
-URL_IAI_UNITTESTS = "https://storage.geti.intel.com/test-data/integration-iai/"
-URL_VIDEO = URL_IAI_UNITTESTS + "video-repair/"
+URL_IAI_TESTS = "https://storage.geti.intel.com/test-data/integration-iai/"
+URL_VIDEO = URL_IAI_TESTS + "video-repair/"
 SAMPLE_IMAGE = "german_shepherd.jpg"
 REPAIRED_VIDEO = "repaired_video.mp4"
 UNREPAIRABLE_VIDEO = "unrepairable_video.mp4"
