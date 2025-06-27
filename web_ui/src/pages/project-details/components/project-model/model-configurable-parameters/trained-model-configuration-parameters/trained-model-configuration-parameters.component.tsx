@@ -55,7 +55,7 @@ const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelCon
             items={visibleTabs}
             UNSAFE_className={styles.tabs}
             marginTop={'size-100'}
-            maxHeight={'100%'}
+            height={'100%'}
         >
             <TabList>
                 {(item: TabItem) => (
