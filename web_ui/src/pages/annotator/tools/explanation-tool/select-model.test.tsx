@@ -72,6 +72,21 @@ describe('SelectModel', () => {
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
+    it('does not render for keypoint task', async () => {
+        const project = getMockedProject({
+            tasks: [getMockedTask({ id: '1', domain: DOMAIN.KEYPOINT_DETECTION })],
+        });
+        const projectService = createInMemoryProjectService();
+        projectService.getProject = async () => project;
+
+        await render(<SelectModel />, {
+            services: { projectService },
+            featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE: true },
+        });
+
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    });
+
     it('allows the user to switch between visual prompt and active model', async () => {
         const userSettingsService = createInMemoryUserSettingsService();
 

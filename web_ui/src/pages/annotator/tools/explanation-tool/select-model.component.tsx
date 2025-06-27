@@ -9,7 +9,7 @@ import { Divider, Flex, Item, Picker, Text } from '@geti/ui';
 import { InferenceModel } from '../../../../core/annotations/services/visual-prompt-service';
 import { useModels } from '../../../../core/models/hooks/use-models.hook';
 import { hasActiveModels } from '../../../../core/models/utils';
-import { isAnomalyDomain, isClassificationDomain } from '../../../../core/projects/domains';
+import { isAnomalyDomain, isClassificationDomain, isKeypointDetection } from '../../../../core/projects/domains';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
 import { useSelectedInferenceModel } from '../../providers/selected-media-item-provider/use-selected-inference-model';
 
@@ -18,7 +18,12 @@ export const useCanSelectDifferentInferenceModel = () => {
     const { isTaskChainProject, isSingleDomainProject } = useProject();
     const isClassification = isSingleDomainProject(isClassificationDomain) || isSingleDomainProject(isAnomalyDomain);
 
-    if (isClassification || isTaskChainProject || FEATURE_FLAG_VISUAL_PROMPT_SERVICE === false) {
+    if (
+        isClassification ||
+        isTaskChainProject ||
+        isSingleDomainProject(isKeypointDetection) ||
+        FEATURE_FLAG_VISUAL_PROMPT_SERVICE === false
+    ) {
         return false;
     }
 
