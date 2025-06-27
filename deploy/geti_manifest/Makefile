@@ -31,6 +31,7 @@ publish-chart: build-chart
 build-chart: get-oras
 	VERSION=$(VERSION) \
 	REGISTRY=$(MANIFEST_REGISTRY) \
+	TAG=$(TAG) \
 	envsubst < geti-manifest.yaml.template > geti-manifest.yaml
 
 static-code-analysis:

@@ -133,6 +133,7 @@ spec:
       dataStoragePath: {{ data_folder }}
     global:
       registry_address: "$REGISTRY"
+      tag: "$TAG" # TODO temporary solution to get new images, remove when CI will be ready
       login: "{{ username }}"
       passwordHash: "{{ password_hash }}"
       dataFolder: {{ data_folder }}
