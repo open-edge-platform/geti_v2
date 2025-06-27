@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { KeypointAnnotation } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
@@ -17,22 +18,28 @@ import { AnnotatorProviders } from '../../test-utils/annotator-render';
 import { OCCLUDE_TOOLTIP, PoseListActions, VISIBLE_TOOLTIP } from './pose-list-actions.component';
 
 const mockedUpdateAnnotation = jest.fn();
+const mockedRemoveAnnotations = jest.fn();
 jest.mock('../../providers/annotation-scene-provider/annotation-scene-provider.component', () => ({
     ...jest.requireActual('../../providers/annotation-scene-provider/annotation-scene-provider.component'),
     useAnnotationScene: () => ({
         annotations: [],
+        hasShapePointSelected: { current: false },
         updateAnnotation: mockedUpdateAnnotation,
+        removeAnnotations: mockedRemoveAnnotations,
     }),
 }));
 
 const renderApp = async ({
     items,
     selected = [],
+    annotationId = 'test-id',
 }: {
     items: { name: string; isVisible?: boolean }[];
     selected?: string[];
+    annotationId?: string;
 }) => {
     const mockedAnnotation = getMockedAnnotation({
+        id: annotationId,
         shape: {
             shapeType: ShapeType.Pose,
             points: items.map(({ name, isVisible = true }) => ({
@@ -61,6 +68,56 @@ const renderApp = async ({
 describe('PoseListActions', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+    });
+
+    it('delete shortcut', async () => {
+        const annotationId = 'annotation-test-id';
+        await renderApp({
+            annotationId,
+            items: [
+                { name: 'label 1', isVisible: false },
+                { name: 'label 2', isVisible: false },
+            ],
+        });
+
+        await userEvent.keyboard('{Delete}');
+
+        expect(mockedRemoveAnnotations).toHaveBeenCalledWith(
+            expect.arrayContaining([expect.objectContaining({ id: annotationId })])
+        );
+    });
+
+    describe('useToggleSelectAllKeyboardShortcut', () => {
+        it('select all', async () => {
+            const annotationId = 'annotation-test-id';
+            await renderApp({
+                annotationId,
+                items: [
+                    { name: 'label 1', isVisible: false },
+                    { name: 'label 2', isVisible: false },
+                ],
+            });
+
+            expect(screen.getByRole('checkbox', { name: '0 out of 2 points selected' })).toBeVisible();
+            await userEvent.keyboard('{Control>}A');
+
+            expect(screen.getByRole('checkbox', { name: '2 out of 2 points selected' })).toBeVisible();
+        });
+
+        it('deselect all', async () => {
+            await renderApp({
+                selected: ['label 1', 'label 2'],
+                items: [
+                    { name: 'label 1', isVisible: false },
+                    { name: 'label 2', isVisible: false },
+                ],
+            });
+
+            expect(screen.getByRole('checkbox', { name: '2 out of 2 points selected' })).toBeVisible();
+            await userEvent.keyboard('{Control>}D');
+
+            expect(screen.getByRole('checkbox', { name: '0 out of 2 points selected' })).toBeVisible();
+        });
     });
 
     describe('select checkbox', () => {
