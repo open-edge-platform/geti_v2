@@ -1,12 +1,14 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Item, Loading, TabList, TabPanels, Tabs } from '@geti/ui';
+import { Item, Loading, TabList, TabPanels, Tabs, Text } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
 import { useTrainedModelConfigurationQuery } from '../../../../../../core/configurable-parameters/hooks/use-trained-model-configuration.hook';
 import { TrainedModelConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
 import { useModelIdentifier } from '../../../../../../hooks/use-model-identifier/use-model-identifier.hook';
+import { CustomerSupportLink } from '../../../../../../shared/components/customer-support-link/customer-support-link.component';
+import { NotFound } from '../../../../../../shared/components/not-found/not-found.component';
 import { AdvancedConfigurationParameters } from './advanced-configuration.component';
 import { ModelDataManagementParameters } from './model-data-management-parameters.component';
 import { ModelTrainingParameters } from './model-training-parameters.component';
@@ -83,8 +85,21 @@ export const TrainedModelConfigurationParameters = ({ taskId }: TrainedModelConf
     const { modelId, ...projectIdentifier } = useModelIdentifier();
     const { data, isPending } = useTrainedModelConfigurationQuery(projectIdentifier, { modelId, taskId });
 
-    if (isPending || data === undefined) {
+    if (isPending) {
         return <Loading />;
+    }
+
+    if (data === undefined) {
+        return (
+            <NotFound
+                heading={'Training Parameters Unavailable'}
+                content={
+                    <Text>
+                        The model training parameters could not be loaded. Please try again or <CustomerSupportLink />.
+                    </Text>
+                }
+            />
+        );
     }
 
     return <TrainedModelConfigurationParametersList parameters={data} />;
