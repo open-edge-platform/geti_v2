@@ -24,14 +24,6 @@ default allow := false
 # `result["allowed"]` must be set to enable usage of custom body/headers/status
 result["allowed"] := allow
 
-# Set response body for request rejected because of invalid license, to differentiate from other HTTP 403 responses.
-result["body"] := "License is invalid." if {
-    not allow
-    not is_license_valid
-} else := "" if {
-    true
-}
-
 # parsed_path[0] for known health check routes
 health_routes := ["health", "healthz"]
 
@@ -44,12 +36,6 @@ spicedb_address := runtime.env.SPICEDB_ADDRESS
 # Allow traffic to health check endpoints
 allow if {
 	is_health_route
-	http_request.method == "GET"
-}
-
-# Allow traffic to license validity check endpoint
-allow if {
-	http_request.path == "/api/v1/license/valid"
 	http_request.method == "GET"
 }
 
@@ -273,21 +259,4 @@ does_user_have_any_admin_role(user_id) if {
     responses := [response_org.body != null, response_work.body != null]
     some i
     responses[i] == true
-}
-
-default license_validation := "true"
-license_validation := runtime.env.FEATURE_FLAG_LICENSE_VALIDATION
-
-is_license_valid := "true" if license_validation == "false"
-
-else  {
-    license_validation == "true"
-    request := {
-		"url": "http://license:8000/api/v1/license/valid",
-		"method": "GET",
-		"cache": true,
-	}
-
-	response := http.send(request)
-	response.status_code == 200
 }
