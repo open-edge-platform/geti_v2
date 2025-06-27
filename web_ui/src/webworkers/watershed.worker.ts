@@ -1,13 +1,13 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { opencv, OpenCVLoader, Watershed, WatershedInstance } from '@geti/smart-tools';
+import { OpenCVLoader, Watershed, WatershedInstance } from '@geti/smart-tools';
 import { expose, proxy, ProxyMarked } from 'comlink';
 
 declare const self: DedicatedWorkerGlobalScope;
 
 const initWatershed = async (): Promise<WatershedInstance & ProxyMarked> => {
-    await OpenCVLoader();
+    const opencv = await OpenCVLoader();
 
     return proxy(new Watershed(opencv));
 };

@@ -3,7 +3,7 @@
 
 //  Dependencies get bundled into the worker
 
-import { opencv, OpenCVLoader } from '@geti/smart-tools';
+import { OpenCVLoader } from '@geti/smart-tools';
 import { expose } from 'comlink';
 import type OpenCVTypes from 'OpenCVTypes';
 
@@ -25,8 +25,8 @@ const loadOpenCV = async (): Promise<boolean> => {
     if (CV) {
         return true;
     } else {
-        return OpenCVLoader().then(() => {
-            CV = opencv;
+        return OpenCVLoader().then((cvInstance: OpenCVTypes.cv) => {
+            CV = cvInstance;
 
             return true;
         });
