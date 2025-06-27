@@ -95,7 +95,8 @@ export const TrainedModelConfigurationParameters = ({ taskId }: TrainedModelConf
                 heading={'Training Parameters Unavailable'}
                 content={
                     <Text>
-                        The model training parameters could not be loaded. Please try again or <CustomerSupportLink />.
+                        The model training parameters could not be loaded. Please try again or contact{' '}
+                        <CustomerSupportLink />.
                     </Text>
                 }
             />
