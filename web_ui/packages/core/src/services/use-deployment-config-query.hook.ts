@@ -64,7 +64,7 @@ const deploymentConfigurationBasedOnFeatureFlags = (isAdmin: boolean): Deploymen
     };
 };
 
-export const deploymentConfigQueryOptions = (isAdmin: boolean): UseSuspenseQueryOptions<DeploymentConfiguration> => {
+const deploymentConfigQueryOptions = (isAdmin: boolean): UseSuspenseQueryOptions<DeploymentConfiguration> => {
     return {
         queryKey: ['deployment-config', isAdmin],
         queryFn: async (): Promise<DeploymentConfiguration> => {

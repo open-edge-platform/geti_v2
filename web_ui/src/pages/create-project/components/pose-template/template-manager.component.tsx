@@ -27,7 +27,7 @@ import { TemplateSecondaryToolbar } from './template-secondary-toolbar/template-
 import { Templates } from './templates/templates.component';
 import { createRoi } from './util';
 
-export interface TemplateManagerProps {
+interface TemplateManagerProps {
     gap?: Responsive<DimensionValue>;
     children: ReactNode;
     isAddPointEnabled?: boolean;
@@ -41,8 +41,6 @@ const GRID_AREAS = ['primaryToolbar secondaryToolbar', 'primaryToolbar content',
 const GRID_COLUMNS = ['size-600', '1fr'];
 const GRID_ROWS = ['size-600', 'auto', 'size-400'];
 const initialState: TemplateState = { edges: [], points: [] };
-
-export const EMPTY_POINT_MESSAGE = 'Click in an empty space to place a new node';
 
 export const TemplateManager = ({
     gap,

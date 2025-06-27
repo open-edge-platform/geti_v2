@@ -20,8 +20,8 @@ interface PoseListActionsProps {
 export const OCCLUDE_TOOLTIP = 'Mark all as occluded';
 export const VISIBLE_TOOLTIP = 'Mark all as visible';
 
-export const DESELECT_TOOLTIP = 'Deselect all points';
-export const SELECT_TOOLTIP = 'Select all points';
+const DESELECT_TOOLTIP = 'Deselect all points';
+const SELECT_TOOLTIP = 'Select all points';
 
 export const PoseListActions = ({ keypointAnnotation }: PoseListActionsProps) => {
     const isSceneBusy = useIsSceneBusy();

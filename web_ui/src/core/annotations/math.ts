@@ -199,7 +199,7 @@ export const isPointInShape = (shape: Shape, point: Point): boolean => {
 };
 
 export type BoundingBox = Omit<Rect, 'shapeType'>;
-export const getPolygonBoundingBox = (points: Point[]) => {
+const getPolygonBoundingBox = (points: Point[]) => {
     const extremePoints = points.reduce(
         (prev, point) => {
             return {
