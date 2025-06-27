@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
+import base64
 import logging
 from http import HTTPStatus
 
@@ -127,7 +127,10 @@ def create_organization_user(body: CreateUserBody, organization_id: str):  # noq
     try:
         open_ldap = OpenLDAPConnection()
         initial_user = UsersHandlerUser(
-            email=body.email, first_name=body.firstName, password=body.password, roles=body.roles
+            email=body.email,
+            first_name=body.firstName,
+            password=base64.b64decode(body.password).decode("utf-8"),
+            roles=body.roles,
         )
         if not open_ldap.create_initial_user(uid=created_user.id, data=initial_user):
             account_service.delete_user(UserIdRequest(user_id=created_user.id, organization_id=organization_id))
