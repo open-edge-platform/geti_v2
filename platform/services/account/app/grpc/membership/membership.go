@@ -33,7 +33,7 @@ type GRPCServer struct {
 func (s *GRPCServer) GetMemberships(ctx context.Context, req *pb.MembershipRequest) (*pb.ListMembershipResponse, error) {
 	memberships, totalMatchedCount, err := s.Service.GetMemberships(ctx, req)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, status.Error(codes.InvalidArgument, "wrong parameters")
 	}
 
 	memberships_data := &pb.ListMembershipResponse{}
