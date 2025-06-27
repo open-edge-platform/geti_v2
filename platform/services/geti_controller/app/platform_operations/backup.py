@@ -25,7 +25,7 @@ def _get_available_storage() -> int:
 def _get_used_storage() -> int:
     """
     Get used storage in MB for the specified data folder.
-    This calculates the storage used within the persistent volume.
+    This calculates the storage used within the persistent volume and adds a buffer for the backup.
     """
     process = subprocess.run(  # noqa S603
         [
@@ -40,8 +40,8 @@ def _get_used_storage() -> int:
         text=True,
         check=True,
     )
-    used_storage = int(process.stdout.split("\t")[0])
-    logger.debug(f"Used storage for {DATA_FOLDER_PATH}: {used_storage} MB")
+    used_storage = int(process.stdout.split("\t")[0]) + 5000
+    logger.debug(f"Used storage for {DATA_FOLDER_PATH}: {used_storage} MB with 5 GB buffer")
     return used_storage
 
 
@@ -51,8 +51,7 @@ def is_backup_possible() -> bool:
     The check is performed on the persistent volume mounted in the Pod.
     """
     # Calculate required storage (used storage + 5 GB buffer)
-    used_storage = _get_used_storage()
-    required_storage = used_storage + 5000
+    required_storage = _get_used_storage()
     logger.debug(f"Required storage for backup: {required_storage} MB")
 
     available_storage = _get_available_storage()

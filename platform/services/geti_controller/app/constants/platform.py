@@ -1,0 +1,13 @@
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+import os
+
+PLATFORM_VERSION = os.getenv("PLATFORM_VERSION")
+JOB_NAME = "install-upgrade"
+NAMESPACE = "impt"
+DATA_FOLDER_PATH = "/data"  # persistent volume
+GETI_REGISTRY = os.getenv("GETI_REGISTRY")
+MAX_RETRIES = 5
+RETRY_INTERVAL = 5
+INSTALL_VERSION = os.getenv("INSTALL_VERSION")

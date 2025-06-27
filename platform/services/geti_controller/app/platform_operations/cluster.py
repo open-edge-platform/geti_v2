@@ -1,10 +1,13 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import datetime
 import logging
 import os
 import time
+import re
 
+from packaging.version import Version
 from kubernetes import client, config
 from kubernetes.client import (
     RbacV1Subject,
@@ -167,7 +170,6 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
         env=[
             V1EnvVar(name="GETI_REGISTRY", value=registry),
             V1EnvVar(name="GETI_MANIFEST_VERSION", value=manifest_version),
-            V1EnvVar(name="GETI_INSTALL_MODE", value="install"),
             V1EnvVar(
                 name="DATA_FOLDER",
                 value_from=V1EnvVarSource(
@@ -302,3 +304,43 @@ def wait_for_job_creation(namespace: str, job_name: str, timeout: int = 300, int
 
     logger.error(f"Timeout reached: Job '{job_name}' was not created within {timeout} seconds.")
     raise TimeoutError(f"Job '{job_name}' was not created within {timeout} seconds.")
+
+def deploy_service_job(
+        name: str = "service-job",
+        namespace: str = "default",
+        registry: str = None,
+        image_tag: str = None,
+        manifest_version: str = None,
+        port: int = 8000,
+        direction: str = "install",
+) -> None:
+    """
+    Deploys the installation and upgrade job for the platform.
+    This function sets up the necessary Kubernetes resources such as services, service accounts,
+    cluster roles, and bindings, and then deploys the job that performs the installation or upgrade.
+    """
+    current_timestamp = datetime.datetime.now()
+
+    # Format the timestamp as a string
+    timestamp_string = current_timestamp.strftime("%Y%m%d%H%M%S")
+    version = Version(re.match(r"^\d+\.\d+\.\d+", image_tag).group())
+    prepared_name = f"{direction}-job-{version}-{timestamp_string}"
+    load_kube_config()
+    se = create_service(name=name, namespace=namespace, selector={"job": name})
+    sa = create_service_account(name=prepared_name, namespace=namespace)
+    cr = create_cluster_role(name=name)
+    crb = create_cluster_role_binding(
+        name=name, service_account_name=name, namespace=namespace
+    )
+    deploy_service(se, namespace=namespace)
+    deploy_service_account(sa, namespace=namespace)
+    deploy_cluster_role(cr)
+    deploy_cluster_role_binding(crb)
+    job = create_job(
+        name=prepared_name,
+        registry=registry,
+        image=f"{registry}/geti/install-upgrade:{image_tag}",
+        manifest_version=manifest_version,
+        port=port,
+    )
+    deploy_job(job, namespace="default")
