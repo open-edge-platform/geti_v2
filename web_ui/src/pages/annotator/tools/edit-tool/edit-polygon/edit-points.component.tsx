@@ -112,7 +112,7 @@ export const EditPoints = ({
 
             const { target, clientY, clientX } = event;
             const matcher = (element: HTMLElement) =>
-                /^Resize polygon|Click to select point|Click to unselect/.test(
+                /^(Resize polygon|Click to select point|Click to unselect)/.test(
                     element.getAttribute('aria-label') ?? ''
                 );
 
