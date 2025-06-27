@@ -4,4 +4,3 @@
 include ../../../Makefile.shared-python
 
 COMPONENT_NAME := weights_uploader
-DOCKER_BUILD_CONTEXT := --build-context libs=../../../libs
