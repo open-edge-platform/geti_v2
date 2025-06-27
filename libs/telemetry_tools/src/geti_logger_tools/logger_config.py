@@ -12,13 +12,6 @@ NON_CONFIGURABLE_LOGGERS = ["uvicorn.access", "werkzeug", "pika", "aiohttp.acces
 LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO)
 
 
-class SanitizeLogFilter(logging.Filter):
-    def filter(self, record: logging.LogRecord) -> bool:
-        # Sanitize the log message to prevent log injection
-        record.msg = str(record.msg).replace("\n", "\\n").replace("\r", "\\r")
-        return True
-
-
 def get_logging_format(extra_headers: str = "") -> str:
     """
     Get the logging format as a string.
@@ -40,22 +33,5 @@ def initialize_logger(package_name: str, logging_format: str | None = None) -> l
     """
     if logging_format is None:
         logging_format = get_logging_format()
-    logger = logging.getLogger()
-    logger.setLevel(LOG_LEVEL)
-    stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(LOG_LEVEL)
-    stream_handler.setFormatter(logging.Formatter(fmt=logging_format, datefmt=LOGGER_DATE_FORMAT))
-    stream_handler.addFilter(SanitizeLogFilter())
-
-    # Check if an equivalent StreamHandler is already attached
-    for handler in logger.handlers:
-        if (
-            isinstance(handler, logging.StreamHandler)
-            and handler.formatter._fmt == stream_handler.formatter._fmt  # type: ignore
-            and handler.filters == stream_handler.filters
-        ):
-            break
-    else:
-        logger.addHandler(stream_handler)
-
+    logging.basicConfig(level=LOG_LEVEL, format=logging_format, datefmt=LOGGER_DATE_FORMAT, force=True)
     return logging.getLogger(package_name)
