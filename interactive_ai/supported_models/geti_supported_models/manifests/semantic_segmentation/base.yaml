@@ -4,7 +4,7 @@ capabilities:
 
 hyperparameters:
   evaluation:
-    metric: Dice
+    metric: dice
   training:
     max_epochs: 200
     early_stopping:
