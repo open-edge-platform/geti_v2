@@ -5,7 +5,7 @@ description: "SegNeXt-T is a lightweight semantic segmentation model that combin
 stats:
   gigaflops: 12.44
   trainable_parameters: 4.23
-  quality_index:  # scores range from 0 (bad) to 3 (excellent)
+  performance_ratings:  # scores range from 1 (below average) to 3 (excellent)
     accuracy: 2
     training_time: 3
     inference_speed: 3
