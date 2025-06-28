@@ -1,5 +1,5 @@
-id: Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR
-name: LiteHRNet-18
+id: Custom_Semantic_Segmentation_Lite-HRNet-18_OCR
+name: LiteHRNet-18-mod1
 
 description: "LiteHRNet-18 is a lightweight high-resolution semantic segmentation model that maintains strong spatial detail through parallel multi-resolution branches. It provides a good balance of accuracy and speed, making it well-suited for real-time applications on mid-tier hardware."
 stats:
@@ -13,3 +13,4 @@ stats:
 hyperparameters:
   training:
     learning_rate: 0.001
+support_status: obsolete

@@ -1,4 +1,4 @@
-id: Semantic_Segmentation_LiteHRNet_X
+id: Custom_Semantic_Segmentation_Lite-HRNet-x-mod3_OCR
 name: LiteHRNet-X
 
 description: "LiteHRNet-X is an extended variant of LiteHRNet with enhanced capacity or custom scaling. It targets use cases requiring higher accuracy than the standard or small variants, while still benefiting from LiteHRNet's efficient high-resolution processing."

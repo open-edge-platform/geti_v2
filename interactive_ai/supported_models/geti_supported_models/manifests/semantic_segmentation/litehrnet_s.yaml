@@ -1,4 +1,4 @@
-id: Semantic_Segmentation_LiteHRNet_S
+id: Custom_Semantic_Segmentation_Lite-HRNet-s-mod2_OCR
 name: LiteHRNet-S
 
 description: "LiteHRNet-Small is an ultra-efficient version of LiteHRNet optimized for low-power devices. It preserves key architectural strengths like high-resolution features while minimizing parameters and computational cost, ideal for mobile and embedded systems."
