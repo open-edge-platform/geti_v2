@@ -1,4 +1,4 @@
-id: Semantic_Segmentation_SegNext_S
+id: Custom_Semantic_Segmentation_DINOV2_S
 name: SegNext-S
 
 description: "SegNeXt-S builds upon the Tiny version with increased capacity, offering a better accuracy-speed trade-off. It utilizes efficient convolutional blocks and long-range feature integration to provide strong performance for segmentation tasks in real-time and embedded applications. This model works well with 30+ training images."

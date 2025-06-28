@@ -1,4 +1,4 @@
-id: Rotated_Detection_MaskRCNN_ResNet50_V1
+id: Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_ResNet50
 name: MaskRCNN-ResNet50-V1
 
 description: "Mask R-CNN with a ResNet-50 backbone is a widely used instance segmentation model that balances accuracy and speed. The ResNet-50 backbone provides strong feature extraction, while the Mask R-CNN head enables precise object detection and mask prediction for each instance. Note: this version is deprecated, please use v2 if possible."
