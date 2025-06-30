@@ -126,7 +126,7 @@ class VideoFileRepair:
     @staticmethod
     def check_and_repair_video(video_binary_repo: VideoBinaryRepo, filename: str) -> bool:
         """
-        Checks a video by reading the first and last frame.
+        Checks a video for corruption by reading the first and last frames.
         If this fails, try to repair by reconverting the video using ffmpeg.
         The quality scale is zero, making the conversion loss-less.
         Save video to original file location in binary repo.
