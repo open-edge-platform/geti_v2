@@ -15,6 +15,7 @@ from geti_client import (
     ApiException,
     Configuration,
     ConfigurationApi,
+    ConflictException,
     DatasetImportExportApi,
     DatasetsApi,
     DeploymentApi,
@@ -31,6 +32,8 @@ from geti_client import (
 )
 
 BEHAVE_DEBUG_ON_ERROR = True
+
+logger = logging.getLogger(__name__)
 
 
 def setup_debug_on_error(userdata) -> None:
@@ -185,11 +188,15 @@ def _cleanup_project(context: Context) -> None:
     projects_api: ProjectsApi = context.projects_api
     project_id = getattr(context, "project_id", None)
     if project_id is not None:
-        projects_api.delete_project(
-            organization_id=context.organization_id,
-            workspace_id=context.workspace_id,
-            project_id=project_id,
-        )
+        for _ in range(15):
+            try:
+                projects_api.delete_project(
+                    organization_id=context.organization_id,
+                    workspace_id=context.workspace_id,
+                    project_id=project_id,
+                )
+            except ConflictException as e:
+                logger.warning("Could not delete project with %s, probably because it is still locked", project_id)
         delattr(context, "project_id")
 
 
