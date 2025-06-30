@@ -4,8 +4,8 @@
 import os
 
 PLATFORM_VERSION = os.getenv("PLATFORM_VERSION")
-JOB_NAME = "install-upgrade"
-NAMESPACE = "impt"
+SERVICE_NAME = "install-upgrade"
+NAMESPACE = "default"
 DATA_FOLDER_PATH = "/data"  # persistent volume
 GETI_REGISTRY = os.getenv("GETI_REGISTRY")
 MAX_RETRIES = 5
