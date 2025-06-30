@@ -52,6 +52,8 @@ RUN if [ ! -d "/model_templates/anomaly" ]; then \
     fi && \
     find /model_templates -maxdepth 1 -type d -name "anomaly_*" -exec rm -rf {} +
 
+ENV MODEL_TEMPLATES_DIR=/model_templates
+
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/services/director/.venv/bin:$PATH"
 ENV PYTHONPATH="/interactive_ai/services/director:/interactive_ai/services/director/app"

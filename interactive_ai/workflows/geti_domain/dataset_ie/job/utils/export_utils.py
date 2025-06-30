@@ -122,6 +122,7 @@ class ExportUtils:
         return project_type in [
             GetiProjectType.CLASSIFICATION,
             GetiProjectType.ROTATED_DETECTION,
+            GetiProjectType.ANOMALY,
             GetiProjectType.ANOMALY_CLASSIFICATION,
             GetiProjectType.ANOMALY_DETECTION,
             GetiProjectType.ANOMALY_SEGMENTATION,
