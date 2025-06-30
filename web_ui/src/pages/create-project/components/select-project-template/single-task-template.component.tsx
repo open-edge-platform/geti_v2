@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Grid, minmax, repeat, useMediaQuery } from '@geti/ui';
 import { isLargeSizeQuery } from '@geti/ui/theme';
 
@@ -16,7 +15,6 @@ import classes from './project-template.module.scss';
 export const SingleTaskTemplate = ({ cards, metaData, setSelectedDomains }: SingleTemplateProps): JSX.Element => {
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const [selectedSubDomain, setSelectedSubDomain] = useState<SUBDOMAIN>(cards[0].subDomain);
-    const { FEATURE_FLAG_ANOMALY_REDUCTION } = useFeatureFlags();
 
     useEffect(() => {
         const [firstCard] = cards;
@@ -54,9 +52,7 @@ export const SingleTaskTemplate = ({ cards, metaData, setSelectedDomains }: Sing
                         title={
                             // Because of the literature (Anomaly Classification is named as Anomaly Detection) we do
                             // the mapping here
-                            FEATURE_FLAG_ANOMALY_REDUCTION && subDomain === SUBDOMAIN.ANOMALY_CLASSIFICATION
-                                ? SUBDOMAIN.ANOMALY_DETECTION
-                                : subDomain
+                            subDomain === SUBDOMAIN.ANOMALY_CLASSIFICATION ? SUBDOMAIN.ANOMALY_DETECTION : subDomain
                         }
                         isLargeSize={isLargeSize}
                         onPress={() => {

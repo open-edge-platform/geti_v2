@@ -9,8 +9,6 @@ import { test } from '../../../../fixtures/base-test';
 import { waitForLoadingToBeFinished } from '../../../../utils/assertions';
 import { annotatorUrl, media, project } from './../../../../mocks/anomaly/anomaly-classification/mocks';
 
-test.use({ featureFlags: { FEATURE_FLAG_ANOMALY_REDUCTION: false } });
-
 test.describe('Anomaly classification', () => {
     test.beforeEach(({ registerApiResponse }) => {
         registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(project)));

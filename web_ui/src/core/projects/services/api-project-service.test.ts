@@ -22,8 +22,6 @@ import {
     FLAT_LABELS,
     HIERARCHY_LABELS,
     PROJECT_ANOMALY_CLASSIFICATION,
-    PROJECT_ANOMALY_DETECTION,
-    PROJECT_ANOMALY_SEGMENTATION,
     PROJECT_CLASSIFICATION,
     PROJECT_DETECTION,
     PROJECT_DETECTION_CLASSIFICATION,
@@ -577,54 +575,7 @@ describe('API project service', () => {
             expect(project).toStrictEqual(getProjectEntity(PROJECT_KEYPOINT_DETECTION));
         });
 
-        describe('Create anomaly projects [FEATURE_FLAG_ANOMALY_REDUCTION:true]', () => {
-            it('Create Anomaly classification', async () => {
-                server.use(
-                    rest.post(apiRequestUrl(url), (_req, res, ctx) => res(ctx.json(PROJECT_ANOMALY_CLASSIFICATION)))
-                );
-                const project = await projectService.createProject(
-                    workspaceIdentifier,
-                    'test-project',
-                    [DOMAIN.ANOMALY_CLASSIFICATION],
-                    [],
-                    true
-                );
-
-                expect(project).toStrictEqual(getProjectEntity(PROJECT_ANOMALY_CLASSIFICATION));
-            });
-
-            it('Create Anomaly detection', async () => {
-                server.use(
-                    rest.post(apiRequestUrl(url), (_req, res, ctx) => res(ctx.json(PROJECT_ANOMALY_CLASSIFICATION)))
-                );
-                const project = await projectService.createProject(
-                    workspaceIdentifier,
-                    'test-project',
-                    [DOMAIN.ANOMALY_DETECTION],
-                    [],
-                    true
-                );
-
-                expect(project).toStrictEqual(getProjectEntity(PROJECT_ANOMALY_CLASSIFICATION));
-            });
-
-            it('Create Anomaly segmentation', async () => {
-                server.use(
-                    rest.post(apiRequestUrl(url), (_req, res, ctx) => res(ctx.json(PROJECT_ANOMALY_CLASSIFICATION)))
-                );
-                const project = await projectService.createProject(
-                    workspaceIdentifier,
-                    'test-project',
-                    [DOMAIN.ANOMALY_SEGMENTATION],
-                    [],
-                    true
-                );
-
-                expect(project).toStrictEqual(getProjectEntity(PROJECT_ANOMALY_CLASSIFICATION));
-            });
-        });
-
-        describe('Create anomaly projects [FEATURE_FLAG_ANOMALY_REDUCTION:false]', () => {
+        describe('Create anomaly projects', () => {
             it('Create Anomaly classification', async () => {
                 server.use(
                     rest.post(apiRequestUrl(url), (_req, res, ctx) => res(ctx.json(PROJECT_ANOMALY_CLASSIFICATION)))
@@ -640,7 +591,9 @@ describe('API project service', () => {
             });
 
             it('Create Anomaly detection', async () => {
-                server.use(rest.post(apiRequestUrl(url), (_req, res, ctx) => res(ctx.json(PROJECT_ANOMALY_DETECTION))));
+                server.use(
+                    rest.post(apiRequestUrl(url), (_req, res, ctx) => res(ctx.json(PROJECT_ANOMALY_CLASSIFICATION)))
+                );
                 const project = await projectService.createProject(
                     workspaceIdentifier,
                     'test-project',
@@ -648,12 +601,12 @@ describe('API project service', () => {
                     []
                 );
 
-                expect(project).toStrictEqual(getProjectEntity(PROJECT_ANOMALY_DETECTION));
+                expect(project).toStrictEqual(getProjectEntity(PROJECT_ANOMALY_CLASSIFICATION));
             });
 
             it('Create Anomaly segmentation', async () => {
                 server.use(
-                    rest.post(apiRequestUrl(url), (_req, res, ctx) => res(ctx.json(PROJECT_ANOMALY_SEGMENTATION)))
+                    rest.post(apiRequestUrl(url), (_req, res, ctx) => res(ctx.json(PROJECT_ANOMALY_CLASSIFICATION)))
                 );
                 const project = await projectService.createProject(
                     workspaceIdentifier,
@@ -662,7 +615,7 @@ describe('API project service', () => {
                     []
                 );
 
-                expect(project).toStrictEqual(getProjectEntity(PROJECT_ANOMALY_SEGMENTATION));
+                expect(project).toStrictEqual(getProjectEntity(PROJECT_ANOMALY_CLASSIFICATION));
             });
         });
 

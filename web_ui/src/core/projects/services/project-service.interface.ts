@@ -61,17 +61,12 @@ export interface ProjectService {
     createDataset({ projectIdentifier, name }: CreateDatasetBody): Promise<CreateDatasetResponse>;
     deleteDataset(datasetIdentifier: DatasetIdentifier): Promise<DeleteDatasetResponse>;
     updateDataset(datasetIdentifier: DatasetIdentifier, updatedDataset: Dataset): Promise<CreateDatasetResponse>;
-    editProject(
-        projectIdentifier: ProjectIdentifier,
-        body: EditProjectProps,
-        anomalyRevampFlagEnabled?: boolean
-    ): Promise<ProjectProps>;
+    editProject(projectIdentifier: ProjectIdentifier, body: EditProjectProps): Promise<ProjectProps>;
     createProject(
         workspaceIdentifier: WorkspaceIdentifier,
         name: string,
         domains: DOMAIN[],
-        projectTypeMetadata: TaskMetadata[],
-        anomalyRevampFlagEnabled?: boolean
+        projectTypeMetadata: TaskMetadata[]
     ): Promise<CreateProjectProps>;
     exportProject(projectIdentifier: ProjectIdentifier): Promise<ProjectExport>;
     exportProjectStatus(projectIdentifier: ProjectExportIdentifier): Promise<JobProjectExportStatus>;

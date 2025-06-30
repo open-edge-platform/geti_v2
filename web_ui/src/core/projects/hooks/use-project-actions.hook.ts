@@ -1,7 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import {
     InfiniteData,
@@ -116,7 +115,6 @@ export const useProjectActions = (): UseProjectActions => {
     const client = useQueryClient();
     const { addNotification } = useNotification();
     const { projectService } = useApplicationServices();
-    const { FEATURE_FLAG_ANOMALY_REDUCTION } = useFeatureFlags();
 
     const onError = (error: AxiosError) => {
         addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
@@ -161,13 +159,7 @@ export const useProjectActions = (): UseProjectActions => {
 
     const createProjectMutation = useMutation({
         mutationFn: ({ workspaceIdentifier, name, domains, projectTypeMetadata }: UseCreateProjectMutation) =>
-            projectService.createProject(
-                workspaceIdentifier,
-                name,
-                domains,
-                projectTypeMetadata,
-                FEATURE_FLAG_ANOMALY_REDUCTION
-            ),
+            projectService.createProject(workspaceIdentifier, name, domains, projectTypeMetadata),
 
         onError,
         onSettled: (_, __, { workspaceIdentifier }) => {
@@ -182,7 +174,7 @@ export const useProjectActions = (): UseProjectActions => {
         UseEditProjectParamsContext
     >({
         mutationFn: ({ projectIdentifier, project }) => {
-            return projectService.editProject(projectIdentifier, project, FEATURE_FLAG_ANOMALY_REDUCTION);
+            return projectService.editProject(projectIdentifier, project);
         },
         onMutate: ({ projectIdentifier, project }) => {
             const queryKey = QUERY_KEYS.PROJECTS_KEY(projectIdentifier.workspaceId);
@@ -251,11 +243,7 @@ export const useProjectActions = (): UseProjectActions => {
 
             const tasks = getEditTasksEntity(project.tasks, tasksMetadata, shouldRevisit);
 
-            return projectService.editProject(
-                { organizationId, workspaceId, projectId },
-                { ...project, tasks },
-                FEATURE_FLAG_ANOMALY_REDUCTION
-            );
+            return projectService.editProject({ organizationId, workspaceId, projectId }, { ...project, tasks });
         },
 
         onError: (error: AxiosError) => {
