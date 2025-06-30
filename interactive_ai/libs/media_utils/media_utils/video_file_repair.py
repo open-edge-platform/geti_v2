@@ -113,8 +113,8 @@ class VideoFileRepair:
             if is_valid:
                 logger.info(f"Repairing video at {filename} was successful.")
                 return True
-            if os.path.exists(temporary_file_path):
-                os.unlink(temporary_file_path)
+            logger.error(f"Repair completed but video validation failed for {filename}")
+            return False
         except Exception as e:
             # We are not interested in the output. We know it has failed, so the function returns False
             logger.exception(f"Repairing video at {filename} was unsuccessful: {str(e)}")
