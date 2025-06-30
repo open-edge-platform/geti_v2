@@ -8,14 +8,15 @@ import (
 	"auth_proxy/app/utils"
 	"context"
 	"fmt"
+	"io"
+	"strings"
+	"time"
+
 	configPb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	extProcPb "github.com/envoyproxy/go-control-plane/envoy/service/ext_proc/v3"
 	v32 "github.com/envoyproxy/go-control-plane/envoy/type/v3"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"io"
-	"strings"
-	"time"
 )
 
 var logger = utils.InitializeBasicLogger()
@@ -189,7 +190,6 @@ func (h *RequestHandler) handleRequestHeaders(headers *extProcPb.HttpHeaders) {
 }
 
 func (h *RequestHandler) handleByAuthHeader(authorizationHeader string) error {
-	h.Logger.Debugf("Authorization header value: %v\n", authorizationHeader)
 	splitToken := strings.Split(authorizationHeader, "Bearer")
 	if len(splitToken) != 2 {
 		h.setErrorResponse(v32.StatusCode_Unauthorized, "Authorization header is in unexpected format")
@@ -246,7 +246,6 @@ func (h *RequestHandler) handleByAuthHeader(authorizationHeader string) error {
 }
 
 func (h *RequestHandler) handleByApiKeyHeader(apiKeyHeader string) error {
-	h.Logger.Debugf("API Key header value: %s", apiKeyHeader)
 	accessToken := AccessTokenHeader{}
 	if err := accessToken.ParseHeaderValue(apiKeyHeader); err != nil {
 		h.setErrorResponse(v32.StatusCode_BadRequest, "Bad request")
@@ -265,7 +264,7 @@ func (h *RequestHandler) handleByApiKeyHeader(apiKeyHeader string) error {
 
 	accessTokenCache, err := h.Server.Cache.GetAccessTokenCache(patHash)
 	if err == nil {
-		h.Logger.Debugf("Cache HIT for AccessToken related to API key %q", apiKeyHeader)
+		h.Logger.Debugf("Cache HIT for AccessToken")
 		if accessTokenCache.ErrorMsg != "" {
 			h.setErrorResponse(v32.StatusCode_Unauthorized, "Invalid authorization token")
 			return fmt.Errorf("cached error for access token: %s", accessTokenCache.ErrorMsg)
@@ -286,7 +285,7 @@ func (h *RequestHandler) handleByApiKeyHeader(apiKeyHeader string) error {
 		return nil
 	}
 
-	h.Logger.Debugf("Cache MISS for AccessToken related to API key %q", apiKeyHeader)
+	h.Logger.Debugf("Cache MISS for AccessToken")
 
 	token, err := h.dispatchGetPATRequest(patHash)
 	if err != nil {

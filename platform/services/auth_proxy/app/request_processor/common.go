@@ -5,14 +5,15 @@ package request_processor
 
 import (
 	"fmt"
+	"net/url"
+	"time"
+
 	asc "geti.com/account_service_grpc"
 	extProcPb "github.com/envoyproxy/go-control-plane/envoy/service/ext_proc/v3"
 	v32 "github.com/envoyproxy/go-control-plane/envoy/type/v3"
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"net/url"
-	"time"
 )
 
 func (h *RequestHandler) handleExternalRequest(claimsExternal jwt.MapClaims, jwtExternalString string) error {
@@ -167,7 +168,6 @@ func (h *RequestHandler) dispatchGetPATRequest(pathHash string) (*asc.AccessToke
 		h.setErrorResponse(v32.StatusCode_InternalServerError, "Internal server error")
 		return nil, fmt.Errorf("failed to get personal access token with hash '%s', error: %v", pathHash, err)
 	}
-	h.Logger.Debugf("Fetched PAT from the account service: %v", token)
 
 	if token.ExpiresAt.Before(time.Now().UTC()) {
 		h.setErrorResponse(v32.StatusCode_Unauthorized, "Access token is expired")

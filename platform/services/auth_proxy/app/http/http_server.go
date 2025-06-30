@@ -36,7 +36,7 @@ func logRequestMiddleware(next http.Handler) http.Handler {
 
 func handleKeys(w http.ResponseWriter, r *http.Request) {
 	response := jwk.GetJWKs()
-	logger.Debugf("Sending JWKs response: %s", response)
+	logger.Debugf("Sending JWKs response")
 	io.WriteString(w, response)
 }
 
