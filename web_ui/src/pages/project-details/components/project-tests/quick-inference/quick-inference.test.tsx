@@ -379,6 +379,7 @@ describe('QuickInference', () => {
                             config: {
                                 type: 'minMax',
                                 value: 30,
+                                defaultValue: 30,
                                 max: 30,
                                 min: 0,
                             },
@@ -389,6 +390,7 @@ describe('QuickInference', () => {
                             config: {
                                 type: 'minMax',
                                 value: 480,
+                                defaultValue: 480,
                                 max: 1920,
                                 min: 1,
                             },
@@ -399,6 +401,7 @@ describe('QuickInference', () => {
                             config: {
                                 type: 'selection',
                                 value: 'none',
+                                defaultValue: 'none',
                                 options: ['none', 'crop-and-scale'],
                             },
                             onChange: jest.fn(),
@@ -408,6 +411,7 @@ describe('QuickInference', () => {
                             config: {
                                 type: 'minMax',
                                 value: 640,
+                                defaultValue: 640,
                                 max: 1920,
                                 min: 1,
                             },
