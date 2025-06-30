@@ -195,6 +195,7 @@ def _cleanup_project(context: Context) -> None:
                     workspace_id=context.workspace_id,
                     project_id=project_id,
                 )
+                break
             except ApiException as e:
                 logger.warning("Could not delete project with %s, probably because it is still locked", project_id)
                 time.sleep(1)
