@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 import { useFeatureFlags } from '../../feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
-import { ProductInfoEntity, WorkflowId } from '../services/utils.interface';
+import { CheckBackup, ProductInfoEntity, WorkflowId } from '../services/utils.interface';
 
 const placeholderUuid = uuid();
 
@@ -39,5 +39,16 @@ export const useWorkflowId = (): UseQueryResult<WorkflowId, AxiosError> => {
         retry: false,
         enabled: FEATURE_FLAG_ANALYTICS_WORKFLOW_ID,
         placeholderData: placeholderUuid,
+    });
+};
+
+export const useCheckBackup = (): UseQueryResult<CheckBackup, AxiosError> => {
+    const { platformUtilsService } = useApplicationServices();
+
+    return useQuery({
+        queryKey: QUERY_KEYS.PLATFORM_UTILS_KEYS.CHECK_BACKUP,
+        queryFn: () => {
+            return platformUtilsService.checkBackup();
+        },
     });
 };

@@ -527,7 +527,10 @@ const MODEL_CONFIG_PARAMETERS = (
 const PROJECT_SUPPORTED_ALGORITHMS = (projectIdentifier: ProjectIdentifier): string =>
     `${PROJECT(projectIdentifier)}/supported_algorithms`;
 
-const PRODUCT_INFO = `${API_VERSION}/product_info`;
+const PLATFORM = {
+    PRODUCT_INFO: `${API_VERSION}/product_info`,
+    CHECK_BACKUP: `${API_VERSION}/platform/check_backup`,
+};
 
 const WORKFLOW_ID = `${API_VERSION}/users/workflow_id`;
 
@@ -779,7 +782,7 @@ export const API_URLS = {
     EXPORT_OPTIMIZED_MODEL,
     DATASET,
     OPTIMIZE_MODEL,
-    PRODUCT_INFO,
+    PLATFORM,
     USER_REGISTRATION,
     FORGOT_PASSWORD,
     RESET_PASSWORD,

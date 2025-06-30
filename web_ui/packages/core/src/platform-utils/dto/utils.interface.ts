@@ -21,3 +21,7 @@ export interface ProductInfoEntityDTO {
     grafana_enabled: boolean;
     environment?: Environment;
 }
+
+export interface CheckBackupDTO {
+    is_backup_possible: boolean;
+}

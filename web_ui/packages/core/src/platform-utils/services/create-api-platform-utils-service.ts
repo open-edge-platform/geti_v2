@@ -4,16 +4,16 @@
 import { apiClient } from '../../client/axios-instance';
 import { CreateApiService } from '../../services/create-api-service.interface';
 import { API_URLS } from '../../services/urls';
-import { Environment, ProductInfoEntityDTO } from '../dto/utils.interface';
-import { PlatformUtilsService, ProductInfoEntity } from './utils.interface';
+import { CheckBackupDTO, Environment, ProductInfoEntityDTO } from '../dto/utils.interface';
+import { PlatformUtilsService } from './utils.interface';
 
 const isSmtpDefined = (val: string) => val === 'True';
 
 export const createApiPlatformUtilsService: CreateApiService<PlatformUtilsService> = (
-    { instance: platformInstance, router } = { instance: apiClient, router: API_URLS }
+    { instance, router } = { instance: apiClient, router: API_URLS }
 ) => {
-    const getProductInfo = async (): Promise<ProductInfoEntity> => {
-        const { data } = await platformInstance.get<ProductInfoEntityDTO>(router.PRODUCT_INFO);
+    const getProductInfo: PlatformUtilsService['getProductInfo'] = async () => {
+        const { data } = await instance.get<ProductInfoEntityDTO>(router.PLATFORM.PRODUCT_INFO);
 
         return {
             intelEmail: data['intel-email'],
@@ -26,7 +26,16 @@ export const createApiPlatformUtilsService: CreateApiService<PlatformUtilsServic
         };
     };
 
+    const checkBackup: PlatformUtilsService['checkBackup'] = async () => {
+        const { data } = await instance.get<CheckBackupDTO>(router.PLATFORM.CHECK_BACKUP);
+
+        return {
+            isBackupPossible: data.is_backup_possible,
+        };
+    };
+
     return {
         getProductInfo,
+        checkBackup,
     };
 };

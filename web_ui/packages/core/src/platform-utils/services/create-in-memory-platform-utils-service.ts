@@ -2,10 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { Environment, GPUProvider } from '../dto/utils.interface';
-import { PlatformUtilsService, ProductInfoEntity } from './utils.interface';
+import { PlatformUtilsService } from './utils.interface';
 
 export const createInMemoryPlatformUtilsService = (): PlatformUtilsService => {
-    const getProductInfo = async (): Promise<ProductInfoEntity> => {
+    const getProductInfo: PlatformUtilsService['getProductInfo'] = async () => {
         return {
             productVersion: '1.6.0',
             grafanaEnabled: false,
@@ -17,7 +17,14 @@ export const createInMemoryPlatformUtilsService = (): PlatformUtilsService => {
         };
     };
 
+    const checkBackup: PlatformUtilsService['checkBackup'] = () => {
+        return Promise.resolve({
+            isBackupPossible: true,
+        });
+    };
+
     return {
         getProductInfo,
+        checkBackup,
     };
 };

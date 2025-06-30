@@ -17,4 +17,9 @@ export type WorkflowId = string;
 
 export interface PlatformUtilsService {
     getProductInfo: () => Promise<ProductInfoEntity>;
+    checkBackup: () => Promise<CheckBackup>;
+}
+
+export interface CheckBackup {
+    isBackupPossible: boolean;
 }
