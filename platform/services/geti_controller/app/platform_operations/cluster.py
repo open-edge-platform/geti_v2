@@ -98,6 +98,7 @@ def create_cluster_role(name: str) -> V1ClusterRole:
         rules=[
             V1PolicyRule(api_groups=["helm.cattle.io"], resources=["helmcharts"], verbs=["create", "update"]),
             V1PolicyRule(api_groups=["batch"], resources=["jobs"], verbs=["list", "watch"]),
+            V1PolicyRule(api_groups=[""], resources=["secrets"], verbs=["create"]),
         ],
     )
 
@@ -158,6 +159,7 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
     http_proxy = os.getenv("HTTP_PROXY")
     https_proxy = os.getenv("HTTPS_PROXY")
     no_proxy = os.getenv("NO_PROXY") or ""
+    image_registry = os.getenv("IMAGE_REGISTRY") or None
     container = V1Container(
         name=name,
         image=image,
@@ -213,6 +215,10 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
                 value_from=V1EnvVarSource(
                     secret_key_ref=V1SecretKeySelector(name="geti-install-data", key="tlsKey", optional=True)
                 ),
+            ),
+            V1EnvVar(
+                name="IMAGE_REGISTRY",
+                value=image_registry if image_registry else None
             ),
         ],
         ports=[V1ContainerPort(container_port=port)],

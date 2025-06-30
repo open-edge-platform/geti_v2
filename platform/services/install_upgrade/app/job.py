@@ -6,18 +6,21 @@ import base64
 import logging
 import os
 import re
+import sys
 
 import jinja2
 import yaml
 from fastapi import APIRouter, FastAPI
 from kubernetes import client, config, watch
 from oras.client import OrasClient
+from kubernetes.client import V1Secret, V1ObjectMeta
+from kubernetes.client.rest import ApiException
 
 from error import FailedJobError, HelmChartDeployError, ParseDurationError, TimeoutJobError, UnknownJobError
 
 LOGGER_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 LOGGER_FORMAT = "%(asctime)s,%(msecs)03d [%(levelname)-8s] [%(name)s:%(lineno)d]: %(message)s"
-logging.basicConfig(level=logging.INFO, format=LOGGER_FORMAT, datefmt=LOGGER_DATE_FORMAT, force=True)
+logging.basicConfig(level=logging.DEBUG, format=LOGGER_FORMAT, datefmt=LOGGER_DATE_FORMAT, force=True)
 logger = logging.getLogger(__name__)
 
 GETI_REGISTRY = os.getenv("GETI_REGISTRY", "")
@@ -31,6 +34,7 @@ PROXY_ENABLED = os.getenv("PROXY_ENABLED", "")
 HTTPS_PROXY = os.getenv("HTTPS_PROXY", "")
 HTTP_PROXY = os.getenv("HTTP_PROXY", "")
 NO_PROXY = os.getenv("NO_PROXY", "")
+IMAGE_REGISTRY = os.getenv("IMAGE_REGISTRY") or None
 
 platform_router = APIRouter(prefix="/platform", tags=["Platform"])
 
@@ -120,6 +124,8 @@ async def render_jinja_template(template_string: str) -> dict:
         "https_proxy": HTTPS_PROXY,
         "http_proxy": HTTP_PROXY,
         "no_proxy": NO_PROXY,
+        "image_registry": IMAGE_REGISTRY,
+        "geti_registry": GETI_REGISTRY,
     }
 
     # Render the template with the variable
@@ -217,6 +223,71 @@ def parse_timeout(timeout: str) -> int:
     return value
 
 
+def deploy_secret() -> None:
+    """
+    For case when env var was specified during installation of Geti,
+    Secrets will be created in the default namespace to override the registry.
+    This is required to allow the helm charts to pull images from the specified registry.
+    """
+    secret = V1Secret(
+        metadata=V1ObjectMeta(name="external-registry"),
+        string_data={
+            "overrideRegistry": yaml.dump({
+                "global": {
+                    "debian": {"registry": IMAGE_REGISTRY},
+                    "kubectl": {"registry": IMAGE_REGISTRY},
+                    "hub": f"{IMAGE_REGISTRY}/istio",
+                },
+                "env": {"WASM_INSECURE_REGISTRIES": IMAGE_REGISTRY},
+                "postgresql": {"image": {"registry": IMAGE_REGISTRY}},
+                "modelserver": {"image": {"registry": IMAGE_REGISTRY}},
+                "modelmesh-serving": {
+                    "controller": {"image": {"registry": IMAGE_REGISTRY}},
+                    "modelmesh": {"image": {"registry": IMAGE_REGISTRY}},
+                    "runtimeadapter": {"image": {"registry": IMAGE_REGISTRY}},
+                },
+                "account-service": {
+                    "postgresql": {"image": { "registry": IMAGE_REGISTRY}},
+                },
+                "credit-system": {
+                    "postgresql": {"image": {"registry": IMAGE_REGISTRY},},
+                },
+                "initial-user": {
+                    "postgresql": {"image": {"registry": IMAGE_REGISTRY}},
+                },
+                "etcd": {
+                    "image": {"registry": IMAGE_REGISTRY},
+                    "volumePermissions": {"image": {"registry": IMAGE_REGISTRY}},
+                },
+                "kafka": {
+                    "image": {"registry": IMAGE_REGISTRY},
+                    "volumePermissions": {"image": {"registry": IMAGE_REGISTRY}},
+                },
+                "kafka-provisioning": {"image": {"registry": IMAGE_REGISTRY}},
+                "kafka-proxy": {"kafka_proxy": {"image": {"registry": IMAGE_REGISTRY}}},
+                "mongodb": {"image": {"registry": IMAGE_REGISTRY}},
+                "opa": {"image": {"registry": IMAGE_REGISTRY}},
+                "openldap": {"image": {"registry": IMAGE_REGISTRY}},
+                "opentelemetry-collector": {"image": {"registry": IMAGE_REGISTRY}},
+                "seaweed-fs": {"image": {"registry": IMAGE_REGISTRY}},
+                "spice-db": {"postgresql": {"image": {"registry": IMAGE_REGISTRY}}},
+                "xpu-manager": {"image": {"registry": IMAGE_REGISTRY}},
+            }),
+        },
+        type="Opaque",
+    )
+
+    v1 = client.CoreV1Api()
+    try:
+        v1.create_namespaced_secret(namespace="default", body=secret)
+    except ApiException as e:
+        if e.status == 409:
+            logger.warning(f"Secret already exists: {e.body}")
+        else:
+            logger.error(f"An error occurred: {e}")
+            sys.exit(1)
+
+
 async def main(job_manager: JobManager) -> None:
     """
     Main function that orchestrates the installation/upgrade process.
@@ -235,6 +306,8 @@ async def main(job_manager: JobManager) -> None:
         geti_manifest = await download_manifest()
         helm_charts = await load_and_split_file(geti_manifest)
         total_charts = len(helm_charts)
+        if IMAGE_REGISTRY:
+            deploy_secret()
         for index, helm in enumerate(helm_charts):
             rendered_helm = await render_jinja_template(helm)
             try:

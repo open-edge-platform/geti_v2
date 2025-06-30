@@ -9,7 +9,7 @@ rules:
   resources: ["namespaces", "configmaps"]
   verbs: ["get"]
 - apiGroups: [""]
-  resources: ["serviceaccounts"]
+  resources: ["serviceaccounts", "secrets"]
   verbs: ["create"]
 - apiGroups: [""]
   resources: ["services"]
