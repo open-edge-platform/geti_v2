@@ -23,7 +23,6 @@ class VideoFileRepair:
 
     @staticmethod
     def _get_frame(video_binary_repo: VideoBinaryRepo, filename: str, frame_index: int) -> np.ndarray:
-        # Read last frame
         return VideoFrameReader.get_frame_numpy(
             file_location_getter=lambda: str(video_binary_repo.get_path_or_presigned_url(filename=filename)),
             frame_index=frame_index,
@@ -106,16 +105,16 @@ class VideoFileRepair:
             )
             VideoDecoder.reset_reader(file_location=str(file_location))
 
-            # Retry reading last frame again:
-            video_info = VideoDecoder.get_video_information(str(video_binary_repo.get_path_or_presigned_url(filename)))
-            VideoFileRepair._get_frame(
+            # Re-check the video file to see if it was repaired successfully
+            is_valid = VideoFileRepair.check_video(
                 video_binary_repo=video_binary_repo,
                 filename=filename,
-                frame_index=video_info.total_frames - 1,
             )
-            logger.info(f"Repairing video at {filename} was successful.")
-
-            return True
+            if is_valid:
+                logger.info(f"Repairing video at {filename} was successful.")
+                return True
+            if os.path.exists(temporary_file_path):
+                os.unlink(temporary_file_path)
         except Exception as e:
             # We are not interested in the output. We know it has failed, so the function returns False
             logger.exception(f"Repairing video at {filename} was unsuccessful: {str(e)}")
