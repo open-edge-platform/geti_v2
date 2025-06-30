@@ -122,11 +122,11 @@ const renderTrainModelDialog = async ({
     onClose = jest.fn(),
     onSuccess = jest.fn(),
     project = mockedSingleProject,
-    options,
+    services,
 }: {
     onSuccess?: () => void;
     onClose?: () => void;
-    options?: CustomRenderOptions;
+    services?: CustomRenderOptions['services'];
     project?: ProjectProps;
     models?: ModelsGroups[];
 } = {}) => {
@@ -169,13 +169,13 @@ const renderTrainModelDialog = async ({
     ]);
 
     await render(<TrainModel isOpen onClose={onClose} onSuccess={onSuccess} />, {
-        ...options,
+        ...services,
         featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: false },
         services: {
-            ...options?.services,
-            supportedAlgorithmsService: options?.services?.supportedAlgorithmsService ?? supportedAlgorithmsService,
-            modelsService: options?.services?.modelsService ?? modelsService,
-            projectService: options?.services?.projectService ?? projectService,
+            ...services,
+            supportedAlgorithmsService: services?.supportedAlgorithmsService ?? supportedAlgorithmsService,
+            modelsService: services?.modelsService ?? modelsService,
+            projectService: services?.projectService ?? projectService,
         },
     });
 };
@@ -199,10 +199,8 @@ describe('Train model dialog', () => {
             );
 
         await renderTrainModelDialog({
-            options: {
-                services: {
-                    projectService,
-                },
+            services: {
+                projectService,
             },
         });
 
@@ -237,10 +235,8 @@ describe('Train model dialog', () => {
         modelsService.getModels = jest.fn(async () => []);
 
         await renderTrainModelDialog({
-            options: {
-                services: {
-                    modelsService,
-                },
+            services: {
+                modelsService,
             },
         });
 
@@ -296,11 +292,9 @@ describe('Train model dialog', () => {
         configParametersService.updateTrainingConfiguration = jest.fn();
 
         await renderTrainModelDialog({
-            options: {
-                services: {
-                    modelsService,
-                    configParametersService,
-                },
+            services: {
+                modelsService,
+                configParametersService,
             },
         });
 
@@ -326,11 +320,9 @@ describe('Train model dialog', () => {
         configParametersService.getTrainingConfiguration = jest.fn(async () => getMockedTrainingConfiguration());
 
         await renderTrainModelDialog({
-            options: {
-                services: {
-                    modelsService,
-                    configParametersService,
-                },
+            services: {
+                modelsService,
+                configParametersService,
             },
         });
 
@@ -365,11 +357,9 @@ describe('Train model dialog', () => {
         configParametersService.getTrainingConfiguration = jest.fn(async () => getMockedTrainingConfiguration());
 
         await renderTrainModelDialog({
-            options: {
-                services: {
-                    modelsService,
-                    configParametersService,
-                },
+            services: {
+                modelsService,
+                configParametersService,
             },
         });
 
@@ -432,11 +422,9 @@ describe('Train model dialog', () => {
         configParametersService.getTrainingConfiguration = jest.fn(async () => trainingConfiguration);
 
         await renderTrainModelDialog({
-            options: {
-                services: {
-                    modelsService,
-                    configParametersService,
-                },
+            services: {
+                modelsService,
+                configParametersService,
             },
         });
 
@@ -486,10 +474,8 @@ describe('Train model dialog', () => {
         const modelsService = createInMemoryModelsService();
         modelsService.trainModel = jest.fn();
         await renderTrainModelDialog({
-            options: {
-                services: {
-                    modelsService,
-                },
+            services: {
+                modelsService,
             },
         });
 
