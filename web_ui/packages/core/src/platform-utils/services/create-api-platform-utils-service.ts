@@ -7,6 +7,7 @@ import { API_URLS } from '../../services/urls';
 import {
     CheckBackupDTO,
     Environment,
+    PlatformUpgradePayloadDTO,
     PlatformUpgradeProgressDTO,
     PlatformVersionsDTO,
     ProductInfoEntityDTO,
@@ -72,10 +73,20 @@ export const createApiPlatformUtilsService: CreateApiService<PlatformUtilsServic
         };
     };
 
+    const upgradePlatform: PlatformUtilsService['upgradePlatform'] = async ({ version, forceUpgrade }) => {
+        const payloadDTO: PlatformUpgradePayloadDTO = {
+            version_number: version,
+            force_upgrade: forceUpgrade,
+        };
+
+        await instance.post(router.PLATFORM.UPGRADE, payloadDTO);
+    };
+
     return {
         getProductInfo,
         checkPlatformBackup,
         getPlatformVersions,
         getPlatformUpgradeProgress,
+        upgradePlatform,
     };
 };

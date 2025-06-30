@@ -35,10 +35,15 @@ export const createInMemoryPlatformUtilsService = (): PlatformUtilsService => {
         return getMockedPlatformUpgradeProgress();
     };
 
+    const upgradePlatform = async () => {
+        await Promise.resolve();
+    };
+
     return {
         getProductInfo,
         checkPlatformBackup,
         getPlatformVersions,
         getPlatformUpgradeProgress,
+        upgradePlatform,
     };
 };

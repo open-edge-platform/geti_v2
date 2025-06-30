@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 
-import { useCheckBackup, useProductInfo } from '@geti/core/src/platform-utils/hooks/use-platform-utils.hook';
+import { useProductInfo } from '@geti/core/src/platform-utils/hooks/use-platform-utils.hook';
 import { ActionButton, Flex, Heading, Link as SpectrumLink, Text, View } from '@geti/ui';
 import { Link } from 'react-router-dom';
 

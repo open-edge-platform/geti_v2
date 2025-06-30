@@ -20,6 +20,7 @@ export interface PlatformUtilsService {
     checkPlatformBackup: () => Promise<CheckPlatformBackup>;
     getPlatformVersions: () => Promise<PlatformVersion[]>;
     getPlatformUpgradeProgress: () => Promise<PlatformUpgradeProgress>;
+    upgradePlatform: (payload: PlatformUpgradePayload) => Promise<void>;
 }
 
 export interface CheckPlatformBackup {
@@ -41,4 +42,9 @@ export interface PlatformUpgradeProgress {
     progress: string;
     status: PlatformUpgradeProgressStatus;
     message: string;
+}
+
+interface PlatformUpgradePayload {
+    version: string;
+    forceUpgrade?: boolean;
 }

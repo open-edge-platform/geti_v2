@@ -44,3 +44,8 @@ export interface PlatformUpgradeProgressDTO {
     status: PlatformUpgradeProgressStatusDTO;
     message: string;
 }
+
+export interface PlatformUpgradePayloadDTO {
+    version_number: string;
+    force_upgrade?: boolean;
+}
