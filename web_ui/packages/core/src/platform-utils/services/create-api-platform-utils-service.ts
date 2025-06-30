@@ -4,7 +4,13 @@
 import { apiClient } from '../../client/axios-instance';
 import { CreateApiService } from '../../services/create-api-service.interface';
 import { API_URLS } from '../../services/urls';
-import { CheckBackupDTO, Environment, PlatformVersionDTO, ProductInfoEntityDTO } from '../dto/utils.interface';
+import {
+    CheckBackupDTO,
+    Environment,
+    PlatformUpgradeProgressDTO,
+    PlatformVersionDTO,
+    ProductInfoEntityDTO,
+} from '../dto/utils.interface';
 import { PlatformUtilsService } from './utils.interface';
 
 const isSmtpDefined = (val: string) => val === 'True';
@@ -56,9 +62,20 @@ export const createApiPlatformUtilsService: CreateApiService<PlatformUtilsServic
         );
     };
 
+    const getPlatformUpgradeProgress: PlatformUtilsService['getPlatformUpgradeProgress'] = async () => {
+        const { data } = await instance.get<PlatformUpgradeProgressDTO>(router.PLATFORM.UPGRADE_PROGRESS);
+
+        return {
+            progress: data.progress,
+            status: data.status,
+            message: data.message,
+        };
+    };
+
     return {
         getProductInfo,
         checkPlatformBackup,
         getPlatformVersions,
+        getPlatformUpgradeProgress,
     };
 };

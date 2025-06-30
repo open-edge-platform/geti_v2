@@ -34,3 +34,11 @@ export interface PlatformVersionDTO {
     is_current: boolean;
     is_upgrade_required: boolean;
 }
+
+type PlatformUpgradeProgressStatusDTO = 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'ROLLING_BACK' | 'NOT_RUNNING';
+
+export interface PlatformUpgradeProgressDTO {
+    progress: string;
+    status: PlatformUpgradeProgressStatusDTO;
+    message: string;
+}

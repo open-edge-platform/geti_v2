@@ -531,6 +531,7 @@ const PLATFORM = {
     PRODUCT_INFO: `${API_VERSION}/product_info`,
     CHECK_BACKUP: `${API_VERSION}/platform/check_backup`,
     VERSIONS: `${API_VERSION}/platform/versions`,
+    UPGRADE_PROGRESS: `${API_VERSION}/platform/check_installation_upgrade_progress`,
 };
 
 const WORKFLOW_ID = `${API_VERSION}/users/workflow_id`;

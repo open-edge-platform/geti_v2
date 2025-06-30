@@ -19,6 +19,7 @@ export interface PlatformUtilsService {
     getProductInfo: () => Promise<ProductInfoEntity>;
     checkPlatformBackup: () => Promise<CheckPlatformBackup>;
     getPlatformVersions: () => Promise<PlatformVersion[]>;
+    getPlatformUpgradeProgress: () => Promise<PlatformUpgradeProgress>;
 }
 
 export interface CheckPlatformBackup {
@@ -32,4 +33,12 @@ export interface PlatformVersion {
     intelDriversVersion: string;
     isCurrent: boolean;
     isUpgradeRequired: boolean;
+}
+
+type PlatformUpgradeProgressStatus = 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'ROLLING_BACK' | 'NOT_RUNNING';
+
+export interface PlatformUpgradeProgress {
+    progress: string;
+    status: PlatformUpgradeProgressStatus;
+    message: string;
 }

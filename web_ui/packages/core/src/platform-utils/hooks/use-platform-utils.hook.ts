@@ -9,7 +9,13 @@ import { v4 as uuid } from 'uuid';
 import { useFeatureFlags } from '../../feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
-import { CheckPlatformBackup, PlatformVersion, ProductInfoEntity, WorkflowId } from '../services/utils.interface';
+import {
+    CheckPlatformBackup,
+    PlatformUpgradeProgress,
+    PlatformVersion,
+    ProductInfoEntity,
+    WorkflowId,
+} from '../services/utils.interface';
 
 const placeholderUuid = uuid();
 
@@ -60,6 +66,17 @@ export const usePlatformVersions = (): UseQueryResult<PlatformVersion[]> => {
         queryKey: QUERY_KEYS.PLATFORM_UTILS_KEYS.PLATFORM_VERSIONS,
         queryFn: () => {
             return platformUtilsService.getPlatformVersions();
+        },
+    });
+};
+
+export const usePlatformUpgradeProgress = (): UseQueryResult<PlatformUpgradeProgress> => {
+    const { platformUtilsService } = useApplicationServices();
+
+    return useQuery({
+        queryKey: QUERY_KEYS.PLATFORM_UTILS_KEYS.UPGRADE_PROGRESS,
+        queryFn: () => {
+            return platformUtilsService.getPlatformUpgradeProgress();
         },
     });
 };

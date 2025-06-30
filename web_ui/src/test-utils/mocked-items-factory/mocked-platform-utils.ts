@@ -2,7 +2,11 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { Environment, GPUProvider } from '@geti/core/src/platform-utils/dto/utils.interface';
-import { PlatformVersion, ProductInfoEntity } from '@geti/core/src/platform-utils/services/utils.interface';
+import {
+    PlatformUpgradeProgress,
+    PlatformVersion,
+    ProductInfoEntity,
+} from '@geti/core/src/platform-utils/services/utils.interface';
 
 export const getMockedProductInfo = (productInfo: Partial<ProductInfoEntity> = {}): ProductInfoEntity => ({
     productVersion: '1.6.0',
@@ -24,5 +28,16 @@ export const getMockedPlatformVersion = (entity: Partial<PlatformVersion> = {}):
         isCurrent: true,
         isUpgradeRequired: false,
         ...entity,
+    };
+};
+
+export const getMockedPlatformUpgradeProgress = (
+    progress: Partial<PlatformUpgradeProgress> = {}
+): PlatformUpgradeProgress => {
+    return {
+        progress: '100%',
+        status: 'SUCCEEDED',
+        message: 'Upgrade completed successfully',
+        ...progress,
     };
 };
