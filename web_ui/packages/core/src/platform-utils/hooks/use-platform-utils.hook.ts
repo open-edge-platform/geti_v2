@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 import { useFeatureFlags } from '../../feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
-import { CheckBackup, ProductInfoEntity, WorkflowId } from '../services/utils.interface';
+import { CheckPlatformBackup, PlatformVersion, ProductInfoEntity, WorkflowId } from '../services/utils.interface';
 
 const placeholderUuid = uuid();
 
@@ -42,13 +42,24 @@ export const useWorkflowId = (): UseQueryResult<WorkflowId, AxiosError> => {
     });
 };
 
-export const useCheckBackup = (): UseQueryResult<CheckBackup, AxiosError> => {
+export const useCheckPlatformBackup = (): UseQueryResult<CheckPlatformBackup> => {
     const { platformUtilsService } = useApplicationServices();
 
     return useQuery({
         queryKey: QUERY_KEYS.PLATFORM_UTILS_KEYS.CHECK_BACKUP,
         queryFn: () => {
-            return platformUtilsService.checkBackup();
+            return platformUtilsService.checkPlatformBackup();
+        },
+    });
+};
+
+export const usePlatformVersions = (): UseQueryResult<PlatformVersion[]> => {
+    const { platformUtilsService } = useApplicationServices();
+
+    return useQuery({
+        queryKey: QUERY_KEYS.PLATFORM_UTILS_KEYS.PLATFORM_VERSIONS,
+        queryFn: () => {
+            return platformUtilsService.getPlatformVersions();
         },
     });
 };

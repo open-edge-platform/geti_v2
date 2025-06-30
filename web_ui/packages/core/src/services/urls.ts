@@ -530,6 +530,7 @@ const PROJECT_SUPPORTED_ALGORITHMS = (projectIdentifier: ProjectIdentifier): str
 const PLATFORM = {
     PRODUCT_INFO: `${API_VERSION}/product_info`,
     CHECK_BACKUP: `${API_VERSION}/platform/check_backup`,
+    VERSIONS: `${API_VERSION}/platform/versions`,
 };
 
 const WORKFLOW_ID = `${API_VERSION}/users/workflow_id`;

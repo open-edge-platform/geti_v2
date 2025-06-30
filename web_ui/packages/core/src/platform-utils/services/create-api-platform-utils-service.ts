@@ -4,7 +4,7 @@
 import { apiClient } from '../../client/axios-instance';
 import { CreateApiService } from '../../services/create-api-service.interface';
 import { API_URLS } from '../../services/urls';
-import { CheckBackupDTO, Environment, ProductInfoEntityDTO } from '../dto/utils.interface';
+import { CheckBackupDTO, Environment, PlatformVersionDTO, ProductInfoEntityDTO } from '../dto/utils.interface';
 import { PlatformUtilsService } from './utils.interface';
 
 const isSmtpDefined = (val: string) => val === 'True';
@@ -26,7 +26,7 @@ export const createApiPlatformUtilsService: CreateApiService<PlatformUtilsServic
         };
     };
 
-    const checkBackup: PlatformUtilsService['checkBackup'] = async () => {
+    const checkPlatformBackup: PlatformUtilsService['checkPlatformBackup'] = async () => {
         const { data } = await instance.get<CheckBackupDTO>(router.PLATFORM.CHECK_BACKUP);
 
         return {
@@ -34,8 +34,31 @@ export const createApiPlatformUtilsService: CreateApiService<PlatformUtilsServic
         };
     };
 
+    const getPlatformVersions: PlatformUtilsService['getPlatformVersions'] = async () => {
+        const { data } = await instance.get<PlatformVersionDTO[]>(router.PLATFORM.VERSIONS);
+
+        return data.map(
+            ({
+                version,
+                k3s_version,
+                nvidia_drivers_version,
+                intel_drivers_version,
+                is_upgrade_required,
+                is_current,
+            }) => ({
+                version,
+                k3sVersion: k3s_version,
+                nvidiaDriversVersion: nvidia_drivers_version,
+                intelDriversVersion: intel_drivers_version,
+                isCurrent: is_current,
+                isUpgradeRequired: is_upgrade_required,
+            })
+        );
+    };
+
     return {
         getProductInfo,
-        checkBackup,
+        checkPlatformBackup,
+        getPlatformVersions,
     };
 };

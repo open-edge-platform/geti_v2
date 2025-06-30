@@ -25,3 +25,12 @@ export interface ProductInfoEntityDTO {
 export interface CheckBackupDTO {
     is_backup_possible: boolean;
 }
+
+export interface PlatformVersionDTO {
+    version: string;
+    k3s_version: string;
+    nvidia_drivers_version: string;
+    intel_drivers_version: string;
+    is_current: boolean;
+    is_upgrade_required: boolean;
+}

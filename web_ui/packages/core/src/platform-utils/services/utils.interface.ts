@@ -17,9 +17,19 @@ export type WorkflowId = string;
 
 export interface PlatformUtilsService {
     getProductInfo: () => Promise<ProductInfoEntity>;
-    checkBackup: () => Promise<CheckBackup>;
+    checkPlatformBackup: () => Promise<CheckPlatformBackup>;
+    getPlatformVersions: () => Promise<PlatformVersion[]>;
 }
 
-export interface CheckBackup {
+export interface CheckPlatformBackup {
     isBackupPossible: boolean;
+}
+
+export interface PlatformVersion {
+    version: string;
+    k3sVersion: string;
+    nvidiaDriversVersion: string;
+    intelDriversVersion: string;
+    isCurrent: boolean;
+    isUpgradeRequired: boolean;
 }

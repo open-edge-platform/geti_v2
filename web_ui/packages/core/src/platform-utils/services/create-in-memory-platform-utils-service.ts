@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { getMockedPlatformVersion } from '../../../../../src/test-utils/mocked-items-factory/mocked-platform-utils';
 import { Environment, GPUProvider } from '../dto/utils.interface';
 import { PlatformUtilsService } from './utils.interface';
 
@@ -17,14 +18,19 @@ export const createInMemoryPlatformUtilsService = (): PlatformUtilsService => {
         };
     };
 
-    const checkBackup: PlatformUtilsService['checkBackup'] = () => {
+    const checkPlatformBackup: PlatformUtilsService['checkPlatformBackup'] = () => {
         return Promise.resolve({
             isBackupPossible: true,
         });
     };
 
+    const getPlatformVersions: PlatformUtilsService['getPlatformVersions'] = async () => {
+        return [getMockedPlatformVersion()];
+    };
+
     return {
         getProductInfo,
-        checkBackup,
+        checkPlatformBackup,
+        getPlatformVersions,
     };
 };

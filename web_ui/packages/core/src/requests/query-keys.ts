@@ -417,6 +417,7 @@ const PLATFORM_UTILS_KEYS = {
     VERSION_ENTITY_KEY: ['version'],
     WORKFLOW_ID: (userSubjectIdentifier: string) => ['workflow_id', userSubjectIdentifier],
     CHECK_BACKUP: ['check-backup'],
+    PLATFORM_VERSIONS: ['platform-versions'],
 };
 
 const ORGANIZATIONS = (queryOptions: GetOrganizationsQueryOptions) => ['organizations', queryOptions];

@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { Environment, GPUProvider } from '@geti/core/src/platform-utils/dto/utils.interface';
-import { ProductInfoEntity } from '@geti/core/src/platform-utils/services/utils.interface';
+import { PlatformVersion, ProductInfoEntity } from '@geti/core/src/platform-utils/services/utils.interface';
 
 export const getMockedProductInfo = (productInfo: Partial<ProductInfoEntity> = {}): ProductInfoEntity => ({
     productVersion: '1.6.0',
@@ -14,3 +14,15 @@ export const getMockedProductInfo = (productInfo: Partial<ProductInfoEntity> = {
     environment: Environment.ON_PREM,
     ...productInfo,
 });
+
+export const getMockedPlatformVersion = (entity: Partial<PlatformVersion> = {}): PlatformVersion => {
+    return {
+        version: '2.11.0',
+        k3sVersion: 'v1.26.6+k3s1',
+        nvidiaDriversVersion: '525.105.17',
+        intelDriversVersion: '1.6.0',
+        isCurrent: true,
+        isUpgradeRequired: false,
+        ...entity,
+    };
+};
