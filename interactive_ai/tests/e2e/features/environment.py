@@ -3,6 +3,7 @@
 
 import logging
 import os
+import time
 from pathlib import Path
 
 import urllib3
@@ -196,6 +197,7 @@ def _cleanup_project(context: Context) -> None:
                 )
             except ApiException as e:
                 logger.warning("Could not delete project with %s, probably because it is still locked", project_id)
+                time.sleep(1)
         delattr(context, "project_id")
 
 
