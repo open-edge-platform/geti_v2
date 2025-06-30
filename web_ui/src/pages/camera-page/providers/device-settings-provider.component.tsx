@@ -87,7 +87,7 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
     const loadDeviceCapabilities = (stream: MediaStream) => {
         const [videoTrack] = stream.getVideoTracks();
         const filteredValidCapabilities = getValidCapabilities(videoTrack.getCapabilities());
-        const newDevicesConfig = mergeSettingAndCapabilities(filteredValidCapabilities, videoTrack.getSettings());
+        const newDevicesConfig = mergeSettingAndCapabilities(filteredValidCapabilities, videoTrack.getSettings()) || [];
         const fullDevicesConfig = [
             ...newDevicesConfig.map((config) => ({
                 ...config,
