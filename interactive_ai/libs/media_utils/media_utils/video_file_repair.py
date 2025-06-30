@@ -32,9 +32,8 @@ class VideoFileRepair:
     @staticmethod
     def check_video(video_binary_repo: VideoBinaryRepo, filename: str) -> bool:
         """
-        Checks a video by reading the first and last frame and checking for consistency.
+        Checks a video by reading the first and last frames and checking for consistency.
 
-        Return whether this was successful
         :param video_binary_repo: Video binary repo
         :param filename: Video file name
         :return: boolean, whether the file is valid
@@ -45,7 +44,6 @@ class VideoFileRepair:
             last_frame = video_info.total_frames - 1
             last_frames = [VideoFileRepair._get_frame(video_binary_repo, filename, last_frame) for _ in range(2)]
             first_frames = [VideoFileRepair._get_frame(video_binary_repo, filename, 0) for _ in range(2)]
-
             return (last_frames[0] == last_frames[1]).all() and (first_frames[0] == first_frames[1]).all()
         except (Exception, KeyError):
             # Ignore exception. This function will return false if the video is not valid
