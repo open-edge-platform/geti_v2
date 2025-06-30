@@ -8,7 +8,7 @@ import {
     CheckBackupDTO,
     Environment,
     PlatformUpgradeProgressDTO,
-    PlatformVersionDTO,
+    PlatformVersionsDTO,
     ProductInfoEntityDTO,
 } from '../dto/utils.interface';
 import { PlatformUtilsService } from './utils.interface';
@@ -41,9 +41,9 @@ export const createApiPlatformUtilsService: CreateApiService<PlatformUtilsServic
     };
 
     const getPlatformVersions: PlatformUtilsService['getPlatformVersions'] = async () => {
-        const { data } = await instance.get<PlatformVersionDTO[]>(router.PLATFORM.VERSIONS);
+        const { data } = await instance.get<PlatformVersionsDTO>(router.PLATFORM.VERSIONS);
 
-        return data.map(
+        return data.versions.map(
             ({
                 version,
                 k3s_version,
