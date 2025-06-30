@@ -37,13 +37,12 @@ class VideoFileRepair:
         :param filename: Video file name
         :return: boolean, whether the file is valid
         """
-        is_valid_video_file = False
         try:
             video_info = VideoDecoder.get_video_information(str(video_binary_repo.get_path_or_presigned_url(filename)))
             last_frame = video_info.total_frames - 1
             last_frames = [VideoFileRepair._get_frame(video_binary_repo, filename, last_frame) for _ in range(2)]
             first_frames = [VideoFileRepair._get_frame(video_binary_repo, filename, 0) for _ in range(2)]
-            return (last_frames[0] == last_frames[1]).all() and (first_frames[0] == first_frames[1]).all()
+            return np.array_equal(last_frames[0], last_frames[1]) and np.array_equal(first_frames[0], first_frames[1])
         except (Exception, KeyError):
             # Ignore exception. This function will return false if the video is not valid
             logger.info("Video file is invalid and must be repaired")
