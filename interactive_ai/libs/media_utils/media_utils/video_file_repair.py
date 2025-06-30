@@ -46,7 +46,7 @@ class VideoFileRepair:
         except (Exception, KeyError):
             # Ignore exception. This function will return false if the video is not valid
             logger.info("Video file is invalid and must be repaired")
-        return is_valid_video_file
+            return False
 
     @staticmethod
     def attempt_repair(video_binary_repo: VideoBinaryRepo, filename: str) -> bool:
