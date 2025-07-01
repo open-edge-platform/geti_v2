@@ -13,7 +13,7 @@ global:
   enable_local_image_pull_secret: false
   security_headers: ""
   stripped_headers: ""
-  ingress_enabled: false
+  ingress_enabled: true
   istio_gateway_name: "istio-gateway"
   istio_ingress_namespace: "istio-system"
   istio_ambient_mesh: false
@@ -91,7 +91,6 @@ timeout: 360s
 
 configuration:
   secretName: geti-install-data
-  dataFolder: "/data"
 
 mountPath: "/data"
 

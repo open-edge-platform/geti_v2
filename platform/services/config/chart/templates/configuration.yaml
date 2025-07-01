@@ -7,7 +7,7 @@ data:
   # Percent of CPUs on a single machine that can be allocated for training
   serverAddress: "{{ .Values.global.serverAddress }}"
   registry_address: "{{ .Values.global.registry_address }}"
-  tag: "{{ .Chart.AppVersion }}"
+  tag: "{{ .Values.global.tag | default .Chart.AppVersion }}"
   installation_profile: "{{ .Values.global.installation_profile }}"
   mlflow_sidecar_image: "{{ .Values.global.registry_address }}/{{ .Values.global.docker_namespace }}/mlflow-geti-store:{{ .Values.global.tag | default .Chart.AppVersion }}"
   {{- if contains "intel" .Values.accelerator.name }}
@@ -18,8 +18,8 @@ data:
   {{- end }}
   minAllocableCpu: "{{ .Values.minAllocableCpu }}"
   domain: "{{ .Values.domain }}"
-  platformVersion: "{{ .Values.platformVersion }}"
-  buildVersion: "{{ .Values.buildVersion }}"
+  platformVersion: "{{ .Values.platformVersion | default ((split "-" .Chart.AppVersion)._0) }}"
+  buildVersion: "{{ .Values.buildVersion | default .Chart.AppVersion }}"
   intelEmail: "{{ .Values.intelEmail }}"
   dataStoragePath: "{{ .Values.dataStoragePath }}"
   password_reset_expiration: "{{ .Values.password_reset_expiration }}"
