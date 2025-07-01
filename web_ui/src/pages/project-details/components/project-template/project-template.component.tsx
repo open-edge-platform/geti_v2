@@ -98,7 +98,6 @@ export const ProjectTemplate = (): JSX.Element => {
                 <View backgroundColor={'gray-75'} padding={'size-300'} height={'100%'}>
                     <TemplateManager
                         gap={'size-300'}
-                        isAddPointEnabled={false}
                         isTemplatesVisible={false}
                         isLabelOptionsEnabled={false}
                         initialNormalizedState={initialKeypointStructure}
