@@ -64,10 +64,7 @@ export const TemplateManager = ({
 
         setRoi(newRoi);
 
-        undoRedoActions.reset({
-            ...initialNormalizedState,
-            points: initialNormalizedState.points.map((point) => denormalizePoint(point, newRoi)),
-        });
+        undoRedoActions.reset(denormalizeState(initialNormalizedState, newRoi));
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -79,6 +76,13 @@ export const TemplateManager = ({
         setState({ points, edges }, skipHistory);
 
         skipHistory == false && onTemplateChange({ points, edges, roi });
+    };
+
+    const denormalizeState = (normalizedState: TemplateState, currentRoi: RegionOfInterest) => {
+        return {
+            ...normalizedState,
+            points: normalizedState.points.map((point) => denormalizePoint(point, currentRoi)),
+        };
     };
 
     return (
@@ -113,7 +117,7 @@ export const TemplateManager = ({
                                 variant={'secondary'}
                                 marginStart={'auto'}
                                 isDisabled={isEmpty(state.points)}
-                                onPress={() => setState({ points: [], edges: [] })}
+                                onPress={() => setState(denormalizeState(initialNormalizedState, roi))}
                             >
                                 Reset template
                             </Button>
