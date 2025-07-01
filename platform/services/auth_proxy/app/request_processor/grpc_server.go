@@ -116,7 +116,6 @@ func (s *ExtProcServer) Process(processServer extProcPb.ExternalProcessor_Proces
 		if err := processServer.Send(h.Response); err != nil {
 			h.Logger.Errorf("Failed to send response to the ingress gateway: %v", err)
 		}
-		//return nil  TODO check
 	}
 }
 
