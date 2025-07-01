@@ -211,7 +211,7 @@ paths:
     $ref: "./endpoints/code_deployment/download_code_deployment_endpoint.yaml"
 #deployment package endpoints
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/deployment_package:download:
-    $ref: "./endpoints/deployment_package/download_deployment_package_endpoint.yaml"
+    $ref: "./endpoints/code_deployment/download_deployment_package_endpoint.yaml"
 #credit system endpoints
   # credits products
 #  /products:
