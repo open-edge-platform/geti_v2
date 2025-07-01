@@ -26,10 +26,10 @@ spec:
           args:
             - -c
             - |
-              find {{ .Values.global.dataFolder }} -type d -exec chown -v {{ .Values.securityContext.runAsUser }} {} +
+              find {{ .Values.mountPath }} -type d -exec chown -v {{ .Values.securityContext.runAsUser }} {} +
           volumeMounts:
             - name: data-storage
-              mountPath: {{ .Values.global.dataFolder }}
+              mountPath: {{ .Values.mountPath }}
               readOnly: false
           resources:
             {{ toYaml .Values.initResources | nindent 12 }}
@@ -48,7 +48,7 @@ spec:
             - name: INSTALL_VERSION
               value: {{ .Values.global.tag | default .Chart.AppVersion }}
             - name: DATA_FOLDER
-              value: {{ .Values.global.dataFolder }}
+              value: {{ .Values.mountPath }}
             - name: PROXY_ENABLED
               value: "{{ .Values.global.proxy.enabled }}"
             - name: HTTPS_PROXY
@@ -103,7 +103,7 @@ spec:
 {{- if .Values.global.ingress_enabled }}
           volumeMounts:
             - name: data-storage
-              mountPath: {{ .Values.global.dataFolder }}
+              mountPath: {{ .Values.mountPath }}
               readOnly: false
             - name: tmp
               mountPath: /tmp

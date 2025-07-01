@@ -91,7 +91,6 @@ timeout: 360s
 
 configuration:
   secretName: geti-install-data
-  dataFolder: "/data"
 
 mountPath: "/data"
 
