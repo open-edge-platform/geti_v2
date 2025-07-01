@@ -212,6 +212,33 @@ def monitor_installation_progress(config: InstallationConfig) -> tuple[str, str]
     return status, message
 
 
+def run_geti_controller_installation(config: InstallationConfig) -> None:
+    """
+    Deploy temporarily Geti Controller and monitor the platform installation's progress.
+    """
+    try:
+        deploy_geti_controller_chart(config=config)
+        gpu_provider = config.gpu_provider.value if config.gpu_support.value else None
+        controller_response = call_install_endpoint(
+            kube_config=config.kube_config.value, local_os=config.local_os.value, gpu_provider=gpu_provider
+        )
+        logger.info(f"Response from the GetiController installation endpoint: {controller_response}")
+        status, message = monitor_installation_progress(config=config)
+        if status != OperationStatus.SUCCEEDED:
+            raise GetiControllerError(f"Installation failed with status: {status}, message: {message}")
+    except GetiControllerError:
+        logger.exception("Error during installation.")
+        click.secho("\n" + InstallCmdTexts.installation_failed, fg="red")
+        cluster_info_dump(kubeconfig=config.kube_config.value)
+    finally:
+        uninstall_geti_controller_chart(config=config)
+        # shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)  # TODO uncomment
+        if config.lightweight_installer.value:
+            # remove 'tools' dir on failure,
+            # to be able to re-run without any side effects
+            shutil.rmtree(OFFLINE_TOOLS_DIR)
+
+
 def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF100, PLR0915
     """
     Execute platform installation with passed configuration.
@@ -265,26 +292,7 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
         config.master_ip_autodetected.value = get_first_public_ip()
 
     click.echo(InstallCmdTexts.components_installing)
-
-    try:
-        deploy_geti_controller_chart(config=config)
-        controller_response = call_install_endpoint(kube_config=config.kube_config.value)
-        logger.info(f"Response from the GetiController installation endpoint: {controller_response}")
-        status, message = monitor_installation_progress(config=config)
-        if status != OperationStatus.SUCCEEDED:
-            raise GetiControllerError(f"Installation failed with status: {status}, message: {message}")
-    except (StepsError, GetiControllerError):
-        logger.exception("Error during installation.")
-        click.secho("\n" + InstallCmdTexts.installation_failed, fg="red")
-        cluster_info_dump(kubeconfig=config.kube_config.value)
-        sys.exit(1)
-    finally:
-        uninstall_geti_controller_chart(config=config)
-        # shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)  # TODO uncomment
-        if config.lightweight_installer.value:
-            # remove 'tools' dir on failure,
-            # to be able to re-run without any side effects
-            shutil.rmtree(OFFLINE_TOOLS_DIR)
+    run_geti_controller_installation(config)
 
     if config.master_ip_autodetected.value:
         platform_address = config.master_ip_autodetected.value
