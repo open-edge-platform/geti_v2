@@ -3,7 +3,7 @@
 
 import type OpenCVTypes from 'OpenCVTypes';
 
-export interface InferenceImageInstance {
+export interface InferenceImage {
     getImage(imageData: ImageData): OpenCVTypes.Mat;
     resize: (imageData: ImageData, width: number, height: number) => ImageData;
 }
