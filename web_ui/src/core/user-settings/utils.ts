@@ -106,6 +106,9 @@ export const initialGeneralSettingsConfig: GeneralSettingsConfig = {
             end: 0,
         },
     },
+    [GENERAL_SETTINGS_KEYS.UPGRADE_BANNER]: {
+        dismissedVersion: null,
+    },
 };
 
 export const initialTutorialConfig: TutorialConfig = {
