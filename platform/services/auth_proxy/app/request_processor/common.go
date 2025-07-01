@@ -56,7 +56,7 @@ func (h *RequestHandler) getUserDataFromCacheOrService(subject, jwtExternalStrin
 	userDataCache, err := h.Server.Cache.GetUserDataCache(subject)
 	if err == nil {
 		h.Logger.Debugf("Cache HIT for UserData related to JWT %q", jwtExternalString)
-		if authTime, err := GetAuthenticationTime(claimsExternal); err == nil && authTime.After(userDataCache.User.CurrentLoginTime) {
+		if authTime, err := GetAuthenticationTime(claimsExternal); err == nil && authTime.After(userDataCache.CurrentLoginTime) {
 			user, err := h.dispatchGetUserRequest(subject)
 			return user, false, err
 		}
