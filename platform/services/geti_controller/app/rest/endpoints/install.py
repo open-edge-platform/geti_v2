@@ -2,19 +2,16 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import logging
-import os
 
 from fastapi import HTTPException, status
 
+from constants.platform import GETI_REGISTRY, INSTALL_VERSION
 from platform_operations.cluster import check_config_map_exists, deploy_service_job, load_kube_config
 from rest.schema.install import InstallRequest, InstallResponse
 from routers import platform_router
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-
-GETI_REGISTRY = os.getenv("GETI_REGISTRY")
-INSTALL_VERSION = os.getenv("INSTALL_VERSION")
 
 
 @platform_router.post(
