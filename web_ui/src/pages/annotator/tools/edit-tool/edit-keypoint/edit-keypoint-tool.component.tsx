@@ -97,7 +97,7 @@ export const EditKeypointTool = ({ annotation, annotationToolContext }: EditKeyp
         },
     });
 
-    const handleRoteShape = () => {
+    const handleRotateShape = () => {
         isEditing.current = true;
         const rotatedShape = {
             ...localShape,
@@ -130,7 +130,7 @@ export const EditKeypointTool = ({ annotation, annotationToolContext }: EditKeyp
                         pivot={poseLocations.middle}
                         position={{ x: poseLocations.middle.x, y: poseLocations.topWithGap.y }}
                         basePosition={{ x: poseLocations.middle.x, y: poseLocations.top.y }}
-                        onComplete={handleRoteShape}
+                        onComplete={handleRotateShape}
                         onMoveAnchorTo={setAngle}
                     />
 
