@@ -19,7 +19,7 @@ from smtplib import (
     SMTPSenderRefused,
 )
 
-from jinja2 import Environment, select_autoescape
+from jinja2 import Environment
 from service_connection.k8s_client.secrets import get_secrets
 from service_connection.k8s_client.config_maps import get_config_map
 
@@ -130,7 +130,7 @@ class SMTPClient:
         email_template = SMTPClient._get_email_template_from_cm(template=template)
 
         # Create a secure Jinja2 environment with autoescaping enabled
-        env = Environment(autoescape=select_autoescape(["html", "xml"]))
+        env = Environment(autoescape=True)
 
         message_template = env.from_string(email_template["message"])
         topic_template = env.from_string(email_template["topic"])
