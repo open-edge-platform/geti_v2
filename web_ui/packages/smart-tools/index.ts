@@ -3,8 +3,8 @@
 
 export { OpenCVLoader } from './src/utils/opencv-loader';
 
-export { Watershed } from './src/watershed/watershed';
-export { type WatershedInstance, type WatershedPolygon } from './src/watershed/interfaces';
+export { buildWatershedInstance } from './src/watershed/watershed';
+export { type Watershed, type WatershedPolygon } from './src/watershed/interfaces';
 
 export { buildInferenceImageInstance } from './src/inference-image/inference-image';
 export { type InferenceImage } from './src/inference-image/interfaces';

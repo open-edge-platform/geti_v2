@@ -4,10 +4,11 @@
 import type OpenCVTypes from 'OpenCVTypes';
 
 import { Point } from '../shared/interfaces';
+import { OpenCVLoader } from '../utils/opencv-loader';
 import { approximateShape, formatContourToPoints } from '../utils/tool-utils';
-import { Marker, WatershedInstance, WatershedPolygon } from './interfaces';
+import { Marker, WatershedPolygon } from './interfaces';
 
-export class Watershed implements WatershedInstance {
+class Watershed {
     imageData: OpenCVTypes.Mat;
     mask: OpenCVTypes.Mat;
     originalHeight: number = 0;
@@ -155,3 +156,11 @@ export class Watershed implements WatershedInstance {
         return polygons;
     }
 }
+
+const buildWatershedInstance = async (): Promise<Watershed> => {
+    const opencv = await OpenCVLoader();
+
+    return new Watershed(opencv);
+};
+
+export { buildWatershedInstance };
