@@ -17,6 +17,19 @@ spec:
     spec:
       serviceAccountName: {{ include "seaweed-fs.fullname" . }}
       restartPolicy: Never
+      initContainers:
+        - name: wait-for-pod
+          image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
+          command: [ "/bin/bash", "-c" ]
+          args:
+            - >-
+              kubectl wait pods
+              --selector=app=seaweed-fs
+              --timeout=1200s
+              --for=condition=Ready
+              --namespace {{ .Release.Namespace }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
       containers:
         - name: create-microservices-buckets
           image: "{{ .Values.global.registry_address }}/{{ .Values.global.docker_namespace }}/migration-job:{{ .Values.global.tag | default .Chart.Version }}"

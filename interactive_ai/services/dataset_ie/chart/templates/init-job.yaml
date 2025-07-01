@@ -6,6 +6,8 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
   labels:
     app: {{ .Chart.Name }}
+  annotations:
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 3
   template:

@@ -42,7 +42,7 @@ flyte_workflows:
   domain: "production"
 
 jobs:
-  backoffLimit: 3
+  backoffLimit: 10
 
 init:
   resources:

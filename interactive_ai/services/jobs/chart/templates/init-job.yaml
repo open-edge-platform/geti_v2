@@ -6,6 +6,8 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
   labels:
     app: {{ .Chart.Name }}-ms
+  annotations:
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 3
   template:
@@ -87,6 +89,8 @@ metadata:
   labels:
     job_type: init
     app: {{ .Chart.Name }}-scheduler
+  annotations:
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 3
   template:
@@ -241,6 +245,8 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
   labels:
     app: {{ .Chart.Name }}-scheduling-policy
+  annotations:
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 3
   template:

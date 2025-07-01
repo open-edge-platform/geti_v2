@@ -102,7 +102,7 @@ def create_cluster_role(name: str) -> V1ClusterRole:
     return V1ClusterRole(
         metadata=V1ObjectMeta(name=name),
         rules=[
-            V1PolicyRule(api_groups=["helm.cattle.io"], resources=["helmcharts"], verbs=["create", "update"]),
+            V1PolicyRule(api_groups=["helm.cattle.io"], resources=["helmcharts"], verbs=["create", "patch"]),
             V1PolicyRule(api_groups=["batch"], resources=["jobs"], verbs=["list", "watch"]),
         ],
     )
@@ -255,9 +255,20 @@ def is_job_completed_or_failed(namespace: str, job_name: str) -> tuple[bool, str
     Returns (is_finished, status_message)
     """
     try:
+        running_jobs = []
         load_kube_config()
         batch_v1 = client.BatchV1Api()
-        job = batch_v1.read_namespaced_job(name=job_name, namespace=namespace)
+        jobs = batch_v1.list_namespaced_job(namespace=namespace)
+        for job in jobs.items:
+            if job.status.active and job.status.active > 0:
+                match = re.search(r"\d{14}", job.metadata.name)
+                if match:
+                    timestamp = match.group()
+                    running_jobs.append((job.metadata.name, timestamp))
+        latest_job = max(running_jobs, key=lambda x: x[1], default=None)
+        logger.debug(f"Latest job in namespace '{namespace}': {latest_job}")
+
+        job = batch_v1.read_namespaced_job(name=latest_job[0], namespace=namespace)
         status = job.status
 
         if status.succeeded is not None and status.succeeded > 0:
@@ -343,8 +354,8 @@ def deploy_service_job(
     load_kube_config()
     se = create_service(name=name, namespace=namespace, selector={"job": short_name})
     sa = create_service_account(name=prepared_name, namespace=namespace)
-    cr = create_cluster_role(name=name)
-    crb = create_cluster_role_binding(name=name, service_account_name=prepared_name, namespace=namespace)
+    cr = create_cluster_role(name=prepared_name)
+    crb = create_cluster_role_binding(name=prepared_name, service_account_name=prepared_name, namespace=namespace)
     deploy_service(se, namespace=namespace)
     deploy_service_account(sa, namespace=namespace)
     deploy_cluster_role(cr)

@@ -6,6 +6,7 @@ import base64
 import logging
 import os
 import re
+import time
 
 import jinja2
 import yaml
@@ -17,7 +18,7 @@ from error import FailedJobError, HelmChartDeployError, ParseDurationError, Time
 
 LOGGER_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 LOGGER_FORMAT = "%(asctime)s,%(msecs)03d [%(levelname)-8s] [%(name)s:%(lineno)d]: %(message)s"
-logging.basicConfig(level=logging.INFO, format=LOGGER_FORMAT, datefmt=LOGGER_DATE_FORMAT, force=True)
+logging.basicConfig(level=logging.DEBUG, format=LOGGER_FORMAT, datefmt=LOGGER_DATE_FORMAT, force=True)
 logger = logging.getLogger(__name__)
 
 GETI_REGISTRY = os.getenv("GETI_REGISTRY", "")
@@ -149,8 +150,16 @@ async def deploy_helm_charts(manifest: dict) -> None:
             )
         except client.exceptions.ApiException as e:
             if e.status == 409:
-                logger.exception("CR already exists.")
-                raise HelmChartDeployError("Helm chart CR already exists. Please check the logs for more details.")
+                logger.warning("Helm chart already exists, updating the existing CR.")
+                await asyncio.to_thread(
+                    custom_api.patch_namespaced_custom_object,
+                    name=manifest["metadata"]["name"],
+                    namespace="default",
+                    group="helm.cattle.io",
+                    plural="helmcharts",
+                    version="v1",
+                    body=manifest,
+                )
     logger.info("Deployed helm charts successfully.")
 
 
@@ -255,6 +264,7 @@ async def main(job_manager: JobManager) -> None:
                 parse_timeout(rendered_helm["spec"]["timeout"]) if "timeout" in rendered_helm["spec"] else None
             )
             try:
+                time.sleep(5)
                 await wait_for_job_completion(
                     job_name=job_name, namespace=namespace, timeout=parsed_timeout if parsed_timeout else 300
                 )

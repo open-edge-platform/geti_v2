@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ include "seaweed-fs.fullname" . }}
+  annotations:
+    secret.reloader.stakater.com/reload: {{ include "seaweed-fs.fullname" . }}
   labels:
     {{- include "seaweed-fs.labels" . | nindent 4 }}
 spec:
