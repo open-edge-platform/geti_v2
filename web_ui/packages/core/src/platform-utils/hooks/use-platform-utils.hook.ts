@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useAuth } from 'react-oidc-context';
 import { v4 as uuid } from 'uuid';
@@ -11,6 +11,7 @@ import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
 import {
     CheckPlatformBackup,
+    PlatformUpgradePayload,
     PlatformUpgradeProgress,
     PlatformVersion,
     ProductInfoEntity,
@@ -48,7 +49,7 @@ export const useWorkflowId = (): UseQueryResult<WorkflowId, AxiosError> => {
     });
 };
 
-export const useCheckPlatformBackup = (): UseQueryResult<CheckPlatformBackup> => {
+export const useCheckPlatformBackupQuery = (): UseQueryResult<CheckPlatformBackup> => {
     const { platformUtilsService } = useApplicationServices();
 
     return useQuery({
@@ -59,7 +60,7 @@ export const useCheckPlatformBackup = (): UseQueryResult<CheckPlatformBackup> =>
     });
 };
 
-export const usePlatformVersions = (): UseQueryResult<PlatformVersion[]> => {
+export const usePlatformVersionsQuery = (): UseQueryResult<PlatformVersion[]> => {
     const { platformUtilsService } = useApplicationServices();
 
     return useQuery({
@@ -70,7 +71,7 @@ export const usePlatformVersions = (): UseQueryResult<PlatformVersion[]> => {
     });
 };
 
-export const usePlatformUpgradeProgress = (): UseQueryResult<PlatformUpgradeProgress> => {
+export const usePlatformUpgradeProgressQuery = (): UseQueryResult<PlatformUpgradeProgress> => {
     const { platformUtilsService } = useApplicationServices();
 
     return useQuery({
@@ -78,5 +79,13 @@ export const usePlatformUpgradeProgress = (): UseQueryResult<PlatformUpgradeProg
         queryFn: () => {
             return platformUtilsService.getPlatformUpgradeProgress();
         },
+    });
+};
+
+export const usePlatformUpgradeMutation = () => {
+    const { platformUtilsService } = useApplicationServices();
+
+    return useMutation<void, AxiosError, PlatformUpgradePayload>({
+        mutationFn: platformUtilsService.upgradePlatform,
     });
 };

@@ -44,7 +44,7 @@ export interface PlatformUpgradeProgress {
     message: string;
 }
 
-interface PlatformUpgradePayload {
+export interface PlatformUpgradePayload {
     version: string;
     forceUpgrade?: boolean;
 }
