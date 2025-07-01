@@ -1,6 +1,6 @@
 post:
   tags:
-    - Code Deployment
+    - Deployment
   summary: Download the deployment package as a zip file
   description: "Download the deployment package as a zip file, e.g. an archive containing trained model files and graphs for deploying model on OpenVino Model Server or locally using the Geti SDK."
   parameters:
