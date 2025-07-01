@@ -6,10 +6,13 @@ import { CloseSemiBold, EyeSolid } from '@geti/ui/icons';
 import { isEmpty } from 'lodash-es';
 
 import { KeypointAnnotation } from '../../../../core/annotations/annotation.interface';
+import { KeypointNode } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { useSelected } from '../../../../providers/selected-provider/selected-provider.component';
 import { useAnnotatorMode } from '../../hooks/use-annotator-mode';
 import { useIsSceneBusy } from '../../hooks/use-annotator-scene-interaction-state.hook';
+import { useDeleteKeyboardShortcut } from '../../hot-keys/use-delete-keyboard-shortcut/use-delete-keyboard-shortcut';
+import { useToggleSelectAllKeyboardShortcut } from '../../hot-keys/use-toggle-select-all-keyboard-shortcut/use-toggle-select-all-keyboard-shortcut';
 import { useAnnotationScene } from '../../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { blurActiveInput } from '../../tools/utils';
 
@@ -23,11 +26,13 @@ export const VISIBLE_TOOLTIP = 'Mark all as visible';
 const DESELECT_TOOLTIP = 'Deselect all points';
 const SELECT_TOOLTIP = 'Select all points';
 
+const getLabelId = ({ label }: KeypointNode) => label.id;
+
 export const PoseListActions = ({ keypointAnnotation }: PoseListActionsProps) => {
     const isSceneBusy = useIsSceneBusy();
-    const { updateAnnotation } = useAnnotationScene();
+    const { updateAnnotation, removeAnnotations, hasShapePointSelected } = useAnnotationScene();
     const { isActiveLearningMode } = useAnnotatorMode();
-    const { isSelected, addSelected, setSelected } = useSelected();
+    const { isSelected, setSelected } = useSelected();
 
     const selectedPoints = keypointAnnotation.shape.points.filter(({ label }) => isSelected(label.id));
     const isEverythingVisible = selectedPoints.every(({ isVisible }) => isVisible);
@@ -40,12 +45,9 @@ export const PoseListActions = ({ keypointAnnotation }: PoseListActionsProps) =>
     const selectAllPointsAriaLabel = `
     ${selectedPoints.length} out of ${keypointAnnotation.shape.points.length} points selected`;
 
-    const handleSelectAllToggle = () => {
-        if (hasSelectedPoints) {
-            setSelected([]);
-        } else {
-            addSelected(keypointAnnotation.shape.points.map((point) => point.label.id));
-        }
+    const handleSelectAllToggle = (isSelectAll: boolean) => {
+        const selectedIds = isSelectAll ? keypointAnnotation.shape.points.map(getLabelId) : [];
+        setSelected(selectedIds);
     };
 
     const handleSelectedVisibilityToggle = () => {
@@ -59,6 +61,9 @@ export const PoseListActions = ({ keypointAnnotation }: PoseListActionsProps) =>
             },
         });
     };
+
+    useToggleSelectAllKeyboardShortcut(handleSelectAllToggle);
+    useDeleteKeyboardShortcut(removeAnnotations, hasShapePointSelected, [keypointAnnotation]);
 
     return (
         <Flex
@@ -76,7 +81,7 @@ export const PoseListActions = ({ keypointAnnotation }: PoseListActionsProps) =>
                     aria-label={selectAllPointsAriaLabel}
                     isSelected={hasSelectedPoints}
                     isDisabled={isSceneBusy || !isActiveLearningMode}
-                    onChange={handleSelectAllToggle}
+                    onChange={() => handleSelectAllToggle(!hasSelectedPoints)}
                 />
                 <Tooltip>{selectionTooltipText}</Tooltip>
             </TooltipTrigger>

@@ -31,7 +31,6 @@ from job.utils.exceptions import (
 from job.utils.import_utils import ImportUtils
 
 
-@pytest.mark.JobsComponent
 class TestImportUtils:
     @patch("job.utils.import_utils.publish_event")
     def test_publish_project_created_message(self, mock_publish_event):

@@ -1,6 +1,6 @@
 post:
   tags:
-    - Deployment package
+    - Deployment
   summary: Download the deployment package as a zip file
   description: "Download the deployment package as a zip file, e.g. an archive containing trained model files and graphs for deploying model on OpenVino Model Server or locally using the Geti SDK."
   parameters:
@@ -13,12 +13,12 @@ post:
         schema:
           $ref: '../../../../interactive_ai/services/api/schemas/deployment_package/requests/deployment_package_request.yaml'
         examples:
-          Request OpenVino Model Server deployment package for a task chain:
+          Download OpenVino Model Server deployment package for a task chain project:
             value:
-              $ref: "../../examples/deployment_package/requests/deployment_package_request_ovms.json"
-          Request Geti SDK deployment package for a task chain:
+              $ref: "../../examples/code_deployment/requests/deployment_package_request_ovms.json"
+          Download Geti SDK deployment package for a task chain project:
             value:
-              $ref: "../../examples/deployment_package/requests/deployment_package_request_geti_sdk.json"
+              $ref: "../../examples/code_deployment/requests/deployment_package_request_geti_sdk.json"
     required: true
   operationId: DownloadDeploymentPackage
   responses:
@@ -51,4 +51,4 @@ post:
           examples:
             Invalid package type:
               value:
-                $ref: "../../examples/deployment_package/error_responses/invalid_package_type.json"
+                $ref: "../../examples/code_deployment/error_responses/invalid_package_type.json"

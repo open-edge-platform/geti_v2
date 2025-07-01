@@ -202,16 +202,15 @@ paths:
     $ref: "./endpoints/project_import_export/project_export_download_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects:import:
     $ref: "./endpoints/project_import_export/project_import_endpoint.yaml"
-#code deployment endpoints
+#deployment endpoints
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments:prepare:
     $ref: "./endpoints/code_deployment/prepare_code_deployment_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments/{deployment_id}:
     $ref: "./endpoints/code_deployment/get_code_deployment_detail_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments/{deployment_id}/download:
     $ref: "./endpoints/code_deployment/download_code_deployment_endpoint.yaml"
-#deployment package endpoints
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/deployment_package:download:
-    $ref: "./endpoints/deployment_package/download_deployment_package_endpoint.yaml"
+    $ref: "./endpoints/code_deployment/download_deployment_package_endpoint.yaml"
 #credit system endpoints
   # credits products
 #  /products:
@@ -265,7 +264,7 @@ tags:
   - name: Product Info
   - name: Dataset Import/Export
   - name: Project Import/Export
-  - name: Code Deployment
+  - name: Deployment
 #  - name: Credit Products
   - name: Balance
   - name: Credit Accounts

@@ -156,7 +156,6 @@ def tus_upload_head(
     :param file_manager: FileFSManager object used for file management
     :return: upload length and offset of the file in server
     """
-    logger.info(f"Handling head `tus_upload_head`: file_id={file_id}, tus_resumable={tus_resumable}")
     try:
         file_id = get_validated_mongo_id(id=file_id)
 
@@ -210,10 +209,6 @@ def tus_upload_patch(
     :param file_manager: FileFSManager object used for file management
     :return: new offset after the data is appended
     """
-    logger.info(
-        f"Handling patch `tus_upload_patch`: file_id={file_id}, tus_resumable={tus_resumable}, "
-        f"content_type={content_type}, upload_offset={upload_offset}"
-    )
     try:
         file_id = get_validated_mongo_id(id=file_id)
         if data is None or len(data) == 0:
@@ -265,7 +260,6 @@ def tus_delete(
     :param file_id: id of the file to be deleted
     :return: 204 no content response if file is successfully deleted
     """
-    logger.info(f"Handling delete `tus_delete`: file_id={file_id}")
     try:
         file_id = get_validated_mongo_id(id=file_id)
         FileObjectManager().delete_file(file_id)

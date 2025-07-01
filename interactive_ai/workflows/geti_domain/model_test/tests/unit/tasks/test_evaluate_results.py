@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from unittest.mock import patch
 
-import pytest
 from iai_core.repos import MediaScoreRepo, ModelTestResultRepo, ProjectRepo
 
 from job.tasks.model_testing import evaluate_results
@@ -12,7 +11,6 @@ PROJECT_ID = "project_id"
 MODEL_TEST_RESULT_ID = "model_test_result_id"
 
 
-@pytest.mark.JobsComponent
 class TestEvaluateResults:
     @patch("job.tasks.model_testing.evaluate_and_save_results")
     def test_evaluate_results(

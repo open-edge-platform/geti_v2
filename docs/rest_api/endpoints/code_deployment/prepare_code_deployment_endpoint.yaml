@@ -1,6 +1,6 @@
 post:
   tags:
-    - Code Deployment
+    - Deployment
   summary: Prepare code deployment for project
   description: "This endpoint triggers preparation for code deployment for a specific project.
   For single-task projects (Detection, Segmentation, etc), it will export the only model used.

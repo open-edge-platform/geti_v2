@@ -2,14 +2,12 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from unittest.mock import patch
 
-import pytest
 from iai_core.repos import DatasetRepo
 from jobs_common.utils.dataset_helpers import DatasetHelpers
 
 from job.commands.create_testing_dataset_command import CreateTaskTestingDatasetCommand
 
 
-@pytest.mark.JobsComponent
 class TestCreateDatasetCommand:
     def test_create_task_testing_dataset_command(
         self,

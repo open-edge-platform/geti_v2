@@ -3,7 +3,6 @@
 
 from datetime import datetime, timedelta
 
-import pytest
 from bson import ObjectId
 
 from entities import NullAutoTrainActivationRequest
@@ -15,7 +14,6 @@ from repo import SessionBasedAutoTrainActivationRepo
 from iai_core.repos.mappers import DatetimeToMongo
 
 
-@pytest.mark.AutoTrainControllerComponent
 class TestAutoTrainActivationRepo:
     def test_auto_train_activation_repo(self) -> None:
         repo = SessionBasedAutoTrainActivationRepo()

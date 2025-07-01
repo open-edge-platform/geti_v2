@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { InferenceImage, OpenCVLoader } from '@geti/smart-tools';
-import { expose } from 'comlink';
+import { expose, proxy } from 'comlink';
 import type OpenCVTypes from 'OpenCVTypes';
 
 declare const self: DedicatedWorkerGlobalScope;
@@ -21,6 +21,10 @@ const waitForOpenCV = async () => {
     return false;
 };
 
-const WorkerApi = { InferenceImage, waitForOpenCV, terminate: self.close };
+const loadInferenceImage = async () => {
+    return proxy(new InferenceImage(opencv));
+};
+
+const WorkerApi = { InferenceImage: loadInferenceImage, waitForOpenCV, terminate: self.close };
 
 expose(WorkerApi);

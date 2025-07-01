@@ -34,7 +34,6 @@ class ANN(NamedTuple):
     label: int
 
 
-@pytest.mark.JobsComponent
 class TestCrossProjectMapping:
     def test_mapper__check_if_cross_project_mapping_for_new_project(
         self,

@@ -78,7 +78,6 @@ def fxt_task_node(fxt_empty_project):
     )
 
 
-@pytest.mark.AutoTrainControllerComponent
 class TestAutoTrainController:
     @pytest.mark.freeze_time("2024-1-1 0:0:11")
     def test_find_ready_request(self, fxt_auto_train_controller, fxt_auto_train_activation_request) -> None:

@@ -3,13 +3,11 @@
 
 from unittest.mock import patch
 
-import pytest
 from iai_core.repos.storage.binary_repos import VideoBinaryRepo
 
 from media_utils import VideoDecoder, VideoFileRepair
 
 
-@pytest.mark.skip("Video files have to be transfered to public bucket")
 class TestVideoRepair:
     def test_valid(self, request, fxt_dataset_storage_identifier, fxt_repaired_video):
         """
@@ -106,12 +104,11 @@ class TestVideoRepair:
             data_source=str(fxt_unrepairable_video),
         )
         request.addfinalizer(lambda: video_binary_repo.delete_by_filename(unrepairable_video_filename))
-        video_info = VideoDecoder.get_video_information(str(fxt_unrepairable_video))
 
         is_valid = VideoFileRepair.check_frame(
             video_binary_repo=video_binary_repo,
             filename=unrepairable_video_filename,
-            frame_index=video_info.total_frames - 1,
+            frame_index=1,
         )
         assert not is_valid, "Expected to have the unrepairable video file to be invalid after check"
         is_valid = VideoFileRepair.check_and_repair_video(

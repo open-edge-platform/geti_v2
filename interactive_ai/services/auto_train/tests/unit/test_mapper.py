@@ -3,7 +3,6 @@
 
 from datetime import datetime, timezone
 
-import pytest
 from bson import ObjectId
 
 from mapper import AutoTrainActivationToMongo
@@ -11,7 +10,6 @@ from mapper import AutoTrainActivationToMongo
 from iai_core.repos.mappers import DatetimeToMongo
 
 
-@pytest.mark.AutoTrainControllerComponent
 class TestAutoTrainActivationToMongo:
     def test_backward(self, fxt_ote_id) -> None:
         organization_id = fxt_ote_id(1)

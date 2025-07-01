@@ -18,7 +18,6 @@ from tests.fixtures.datasets import DatasetInfo, get_dataset_info, warning_local
 from tests.test_helpers import save_dataset
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestParseDatasetExistingProject:
     """
     Unit test for parse_dataset_existing_project.py

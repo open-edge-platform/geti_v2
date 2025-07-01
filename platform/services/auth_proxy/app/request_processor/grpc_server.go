@@ -117,7 +117,6 @@ func (s *ExtProcServer) Process(processServer extProcPb.ExternalProcessor_Proces
 		if err := processServer.Send(h.Response); err != nil {
 			h.Logger.Errorf("Failed to send response to the ingress gateway: %v", err)
 		}
-		return nil
 	}
 }
 
@@ -269,17 +268,17 @@ func (h *RequestHandler) handleByApiKeyHeader(apiKeyHeader string) error {
 			h.setErrorResponse(v32.StatusCode_Unauthorized, "Invalid authorization token")
 			return fmt.Errorf("cached error for access token: %s", accessTokenCache.ErrorMsg)
 		}
-		if accessTokenCache.AccessTokenData.ExpiresAt.Before(time.Now().UTC()) {
+		if accessTokenCache.ExpiresAt.Before(time.Now().UTC()) {
 			h.setErrorResponse(v32.StatusCode_Unauthorized, "Access token is expired")
 			return fmt.Errorf("access token (%+v) is expired", accessTokenCache.AccessTokenData)
 		}
-		if accessTokenCache.AccessTokenData.OrganizationId == "" {
+		if accessTokenCache.OrganizationId == "" {
 			h.setErrorResponse(v32.StatusCode_Unauthorized, "Invalid authorization token")
 			return fmt.Errorf("access token does not belong to any organization (%+v)", accessTokenCache.AccessTokenData)
 		}
-		if !h.isAuthorizedForRequestedOrganization(accessTokenCache.AccessTokenData.OrganizationId) {
+		if !h.isAuthorizedForRequestedOrganization(accessTokenCache.OrganizationId) {
 			h.setErrorResponse(v32.StatusCode_Unauthorized, "Invalid authorization token")
-			return fmt.Errorf("requested organization ID (%s) differs from the token organization ID (%s)", h.RequestPath, accessTokenCache.AccessTokenData.OrganizationId)
+			return fmt.Errorf("requested organization ID (%s) differs from the token organization ID (%s)", h.RequestPath, accessTokenCache.OrganizationId)
 		}
 		h.GetiJwtSignedString = accessTokenCache.GetiJWT
 		return nil
