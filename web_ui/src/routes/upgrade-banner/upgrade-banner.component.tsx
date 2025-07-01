@@ -55,7 +55,7 @@ const UpgradeBannerContent = () => {
     };
 
     return (
-        <View padding={'size-300'} UNSAFE_className={styles.container} position={'relative'}>
+        <View padding={'size-250'} UNSAFE_className={styles.container} position={'relative'}>
             <Heading margin={0}>🚀 A new version is available!</Heading>
             <Flex alignItems={'center'} justifyContent={'space-between'}>
                 <Text>
