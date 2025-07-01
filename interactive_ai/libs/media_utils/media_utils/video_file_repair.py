@@ -45,7 +45,7 @@ class VideoFileRepair:
             return np.array_equal(last_frames[0], last_frames[1]) and np.array_equal(first_frames[0], first_frames[1])
         except (Exception, KeyError):
             # Ignore exception. This function will return false if the video is not valid
-            logger.info("Video file is invalid and must be repaired")
+            logger.info(f"Video file {filename} is invalid.")
             return False
 
     @staticmethod
