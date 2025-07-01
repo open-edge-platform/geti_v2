@@ -6,7 +6,7 @@ import os
 PLATFORM_VERSION = os.getenv("PLATFORM_VERSION")
 SERVICE_NAME = "install-upgrade"
 NAMESPACE = "default"
-DATA_FOLDER_PATH = "/data"  # persistent volume
+DATA_FOLDER_PATH = os.getenv("DATA_FOLDER")
 GETI_REGISTRY = os.getenv("GETI_REGISTRY")
 MAX_RETRIES = 5
 RETRY_INTERVAL = 5

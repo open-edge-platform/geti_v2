@@ -74,7 +74,7 @@ def upgrade_platform(payload: UpgradeRequest) -> UpgradeResponse:
     if selected_version <= current_version:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Selected version {payload.version_number} "
+            detail=f"Selected version: {payload.version_number} "
             f"is not higher than the current version {PLATFORM_VERSION}.",
         )
 

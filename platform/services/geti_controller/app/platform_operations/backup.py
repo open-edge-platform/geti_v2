@@ -4,9 +4,9 @@
 import logging
 import subprocess
 
-logger = logging.getLogger(__name__)
+from constants.platform import DATA_FOLDER_PATH
 
-DATA_FOLDER_PATH = "/data"  # persistent volume
+logger = logging.getLogger(__name__)
 
 
 def _get_available_storage() -> int:
