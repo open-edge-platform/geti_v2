@@ -2,13 +2,12 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import datetime
+import http
 import logging
 import os
-import time
 import re
-import http
+import time
 
-from packaging.version import Version
 from kubernetes import client, config
 from kubernetes.client import (
     RbacV1Subject,
@@ -31,8 +30,9 @@ from kubernetes.client import (
     V1ServicePort,
 )
 from kubernetes.client.rest import ApiException
+from packaging.version import Version
 
-from constants.platform import SERVICE_NAME, NAMESPACE
+from constants.platform import NAMESPACE, SERVICE_NAME
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -170,7 +170,7 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
     http_proxy = os.getenv("HTTP_PROXY")
     https_proxy = os.getenv("HTTPS_PROXY")
     no_proxy = os.getenv("NO_PROXY") or ""
-    short_name = name.split('-')[0]
+    short_name = name.split("-")[0]
     container = V1Container(
         name=short_name,
         image=image,
@@ -262,12 +262,11 @@ def is_job_completed_or_failed(namespace: str, job_name: str) -> tuple[bool, str
 
         if status.succeeded is not None and status.succeeded > 0:
             return True, "Job completed successfully"
-        elif status.failed is not None and status.failed > 0:
+        if status.failed is not None and status.failed > 0:
             return True, "Job failed"
-        elif status.active is not None and status.active > 0:
+        if status.active is not None and status.active > 0:
             return False, "Job is running"
-        else:
-            return False, "Job status unclear"
+        return False, "Job status unclear"
     except Exception as e:
         logger.error(f"Failed to check job status: {e}")
         return False, f"Error checking job status: {e}"
@@ -289,7 +288,7 @@ def is_job_running(namespace: str) -> bool:
                     running_jobs.append((job.metadata.name, timestamp))
         latest_job = max(running_jobs, key=lambda x: x[1], default=None)
         logger.debug(f"Latest job in namespace '{namespace}': {latest_job}")
-        return True if latest_job[0] else False
+        return bool(latest_job[0])
     except client.exceptions.ApiException as e:
         logger.error(f"Failed to get job status: {e}")
         return False
@@ -311,7 +310,7 @@ def wait_for_job_creation(namespace: str, timeout: int = 300, interval: int = 10
 
     while time.time() - start_time < timeout:
         if is_job_running(namespace):
-            logger.debug(f"Job is now running.")
+            logger.debug("Job is now running.")
             return
         logger.debug(f"Job  not found, retrying in {interval} seconds...")
         time.sleep(interval)
@@ -319,14 +318,15 @@ def wait_for_job_creation(namespace: str, timeout: int = 300, interval: int = 10
     logger.error(f"Timeout reached: Job was not created within {timeout} seconds.")
     raise TimeoutError(f"Job was not created within {timeout} seconds.")
 
+
 def deploy_service_job(
-        name: str = SERVICE_NAME,
-        namespace: str = NAMESPACE,
-        registry: str = None,
-        image_tag: str = None,
-        manifest_version: str = None,
-        port: int = 8000,
-        direction: str = "install",
+    name: str = SERVICE_NAME,
+    namespace: str = NAMESPACE,
+    registry: str | None = None,
+    image_tag: str | None = None,
+    manifest_version: str | None = None,
+    port: int = 8000,
+    direction: str = "install",
 ) -> None:
     """
     Deploys the installation and upgrade job for the platform.
@@ -339,14 +339,12 @@ def deploy_service_job(
     timestamp_string = current_timestamp.strftime("%Y%m%d%H%M%S")
     version = Version(re.match(r"^\d+\.\d+\.\d+", image_tag).group())
     prepared_name = f"{direction}-job-{version}-{timestamp_string}"
-    short_name = prepared_name.split('-')[0]
+    short_name = prepared_name.split("-")[0]
     load_kube_config()
     se = create_service(name=name, namespace=namespace, selector={"job": short_name})
     sa = create_service_account(name=prepared_name, namespace=namespace)
     cr = create_cluster_role(name=name)
-    crb = create_cluster_role_binding(
-        name=name, service_account_name=prepared_name, namespace=namespace
-    )
+    crb = create_cluster_role_binding(name=name, service_account_name=prepared_name, namespace=namespace)
     deploy_service(se, namespace=namespace)
     deploy_service_account(sa, namespace=namespace)
     deploy_cluster_role(cr)

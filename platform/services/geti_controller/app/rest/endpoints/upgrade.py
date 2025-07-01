@@ -4,16 +4,16 @@
 import logging
 import re
 
-from packaging.version import Version
 from fastapi import HTTPException, status
+from packaging.version import Version
 
 from constants.platform import PLATFORM_VERSION
-from platform_operations.cluster import deploy_service_job
-from platform_operations.backup import is_backup_possible, _get_used_storage
+from platform_operations.backup import _get_used_storage, is_backup_possible
 from rest.schema.upgrade import UpgradeRequest, UpgradeResponse
 from routers import platform_router
 
 logger = logging.getLogger(__name__)
+
 
 @platform_router.post(
     path="/upgrade",
@@ -73,17 +73,15 @@ def upgrade_platform(payload: UpgradeRequest) -> UpgradeResponse:
     if selected_version <= current_version:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Selected version {payload.version_number} is not higher than the current version {PLATFORM_VERSION}.",
+            detail=f"Selected version {payload.version_number} "
+            f"is not higher than the current version {PLATFORM_VERSION}.",
         )
 
     if not payload.force_upgrade and not is_backup_possible():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Not enough space to perform backup. Required: {_get_used_storage()} MB"
+            detail=f"Not enough space to perform backup. Required: {_get_used_storage()} MB",
         )
-
-    pass
-
 
     logger.info(f"Upgrade to version {payload.version_number} has started.")
     return UpgradeResponse(detail=f"Upgrade to version {payload.version_number} has started.")
