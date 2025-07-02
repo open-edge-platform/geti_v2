@@ -34,7 +34,7 @@ const UpgradeBannerContent = () => {
     const upgradeBannerConfig = getSettingsOfType(config, GENERAL_SETTINGS_KEYS);
 
     const shouldShowUpgradeBanner =
-        isNewVersionAvailable ||
+        isNewVersionAvailable &&
         upgradeBannerConfig[GENERAL_SETTINGS_KEYS.UPGRADE_BANNER]?.dismissedVersion !== latestVersion?.version;
 
     if (!shouldShowUpgradeBanner) {
