@@ -36,7 +36,7 @@ def get_target_platform_version() -> str:
     """Retrieves target platform version of the running installer from the config file"""
     return (
         PLATFORM_BUILD_VERSION.split("-")[0]
-        if (PLATFORM_BUILD_VERSION)
+        if PLATFORM_BUILD_VERSION
         else yaml.safe_load(open(VERSION_YAML_PATH))["product_version"]
     )
 
