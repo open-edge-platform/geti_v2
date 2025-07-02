@@ -47,7 +47,7 @@ class PartialTrainingConfigurationRepo(ProjectBasedSessionRepo[PartialTrainingCo
 
     @property
     def forward_map(self) -> Callable[[PartialTrainingConfiguration], dict]:
-        return PartialTrainingConfigurationToMongo.forward
+        raise NotImplementedError("This repo can only read documents, not save them")
 
     @property
     def backward_map(self) -> Callable[[dict], PartialTrainingConfiguration]:
