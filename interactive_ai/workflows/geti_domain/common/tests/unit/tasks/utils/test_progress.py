@@ -249,7 +249,9 @@ class TestProgress:
     )
     @patch("jobs_common.tasks.utils.progress.terminate_producer")
     @patch("jobs_common.tasks.utils.progress.report_progress")
-    def test_task_progress_task_error_message(self, mock_report_progress, mock_terminate_producer, mock_from_env_vars) -> None:
+    def test_task_progress_task_error_message(
+        self, mock_report_progress, mock_terminate_producer, mock_from_env_vars
+    ) -> None:
         # Arrange
 
         class CustomException(Exception, TaskErrorMessage):
