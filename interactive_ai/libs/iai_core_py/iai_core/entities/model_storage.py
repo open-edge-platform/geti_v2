@@ -51,6 +51,11 @@ class ModelStorage(PersistentEntity):
         self._creation_date = now() if creation_date is None else creation_date
 
     @property
+    def model_manifest_id(self) -> str:
+        """Get the model manifest ID of the model storage (AKA model_template_id)."""
+        return self.model_template_id
+
+    @property
     def project_identifier(self) -> ProjectIdentifier:
         """Identifier of the project containing the model storage"""
         return ProjectIdentifier(workspace_id=self.workspace_id, project_id=self.project_id)

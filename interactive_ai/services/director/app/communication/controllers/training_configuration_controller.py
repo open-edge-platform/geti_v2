@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from typing import Any
 
+from geti_configuration_tools import ConfigurationOverlayTools
 from geti_configuration_tools.training_configuration import NullTrainingConfiguration, PartialTrainingConfiguration
 
 from communication.backward_compatibility.configurations import ConfigurationsBackwardCompatibility
@@ -121,7 +122,7 @@ class TrainingConfigurationRESTController:
         # configuration is saved as "task level"
         if not update_configuration.model_manifest_id:
             task_config = training_configuration_repo.get_task_only_configuration(task_id)
-            new_config = ConfigurationService.overlay_training_configurations(
+            new_config = ConfigurationOverlayTools.overlay_training_configurations(
                 task_config, update_configuration, validate_full_config=False
             )
             training_configuration_repo.save(new_config)
@@ -137,7 +138,7 @@ class TrainingConfigurationRESTController:
             training_configuration_repo.save(update_configuration)
             return
 
-        new_config = ConfigurationService.overlay_training_configurations(
+        new_config = ConfigurationOverlayTools.overlay_training_configurations(
             current_config,
             update_configuration,
             validate_full_config=False,

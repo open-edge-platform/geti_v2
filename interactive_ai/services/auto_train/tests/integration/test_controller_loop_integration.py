@@ -9,7 +9,7 @@ from bson import ObjectId
 
 from entities import AutoTrainActivationRequest, NullAutoTrainActivationRequest
 from main import run_controller_loop
-from repo import SessionBasedAutoTrainActivationRepo
+from repos.auto_train_activation_repo import SessionBasedAutoTrainActivationRepo
 
 from geti_types import ID, ProjectIdentifier
 from grpc_interfaces.job_submission.client import GRPCJobsClient

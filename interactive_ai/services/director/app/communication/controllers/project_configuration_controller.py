@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from typing import Any
 
+from geti_configuration_tools import ConfigurationOverlayTools
 from geti_configuration_tools.project_configuration import (
     NullProjectConfiguration,
     PartialProjectConfiguration,
@@ -10,7 +11,6 @@ from geti_configuration_tools.project_configuration import (
 
 from communication.exceptions import ProjectConfigurationNotFoundException
 from communication.views.project_configuration_rest_views import ProjectConfigurationRESTViews
-from service.utils import delete_none_from_dict, merge_deep_dict
 from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
 from geti_telemetry_tools import unified_tracing
@@ -70,8 +70,10 @@ class ProjectConfigurationRESTController:
                 )
             # Update existing task config
             current_task_config = current_task_config_map[task_config.task_id]
-            updated_task_config_dict = delete_none_from_dict(task_config.model_dump())
-            merged_task_config_dict = merge_deep_dict(current_task_config.model_dump(), updated_task_config_dict)
+            updated_task_config_dict = ConfigurationOverlayTools.delete_none_from_dict(task_config.model_dump())
+            merged_task_config_dict = ConfigurationOverlayTools.merge_deep_dict(
+                current_task_config.model_dump(), updated_task_config_dict
+            )
             current_task_config_map[task_config.task_id] = TaskConfig.model_validate(merged_task_config_dict)
 
         for _, task_config in current_task_config_map.items():

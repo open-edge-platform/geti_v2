@@ -11,7 +11,7 @@ from pymongo.command_cursor import CommandCursor
 from pymongo.cursor import Cursor
 
 from entities import AutoTrainActivationRequest, NullAutoTrainActivationRequest
-from mapper import AutoTrainActivationToMongo
+from repos.mappers.auto_train_activation_mapper import AutoTrainActivationToMongo
 
 from geti_types import ID
 from iai_core.repos.base import SessionBasedRepo

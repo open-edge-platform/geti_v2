@@ -12,6 +12,7 @@ from geti_types import ID, PersistentEntity, ProjectIdentifier, Session, make_se
 class FeatureFlag(Enum):
     FEATURE_FLAG_CREDIT_SYSTEM = auto()
     FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS = auto()
+    FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS = auto()
 
 
 class AutoTrainActivationRequest(PersistentEntity):

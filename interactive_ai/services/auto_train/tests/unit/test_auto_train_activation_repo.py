@@ -6,10 +6,10 @@ from datetime import datetime, timedelta
 from bson import ObjectId
 
 from entities import NullAutoTrainActivationRequest
+from repos.auto_train_activation_repo import SessionBasedAutoTrainActivationRepo
 
 # Note: if your editor cannot recognize these relative imports, add 'service' to the interpreter paths (PYTHONPATH)
-from mapper import AutoTrainActivationToMongo
-from repo import SessionBasedAutoTrainActivationRepo
+from repos.mappers.auto_train_activation_mapper import AutoTrainActivationToMongo
 
 from iai_core.repos.mappers import DatetimeToMongo
 

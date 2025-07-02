@@ -6,12 +6,14 @@
 import logging
 from datetime import datetime, timedelta
 
+from geti_feature_tools.feature_flags import FeatureFlagProvider
 from grpc import RpcError
 
 from entities import AutoTrainActivationRequest, FeatureFlag, NullAutoTrainActivationRequest
 from exceptions import InvalidAutoTrainRequestError, JobSubmissionError
 from job_creation_helpers import TRAIN_JOB_PRIORITY, TRAIN_JOB_REQUIRED_GPUS, JobDuplicatePolicy, TrainTaskJobData
-from repo import SessionBasedAutoTrainActivationRepo
+from repos.auto_train_activation_repo import SessionBasedAutoTrainActivationRepo
+from repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier, session_context
@@ -24,7 +26,6 @@ from iai_core.entities.model_template import ModelTemplateDeprecationStatus
 from iai_core.entities.project import NullProject
 from iai_core.repos import ConfigurableParametersRepo, DatasetRepo, ModelStorageRepo, ProjectRepo
 from iai_core.repos.dataset_entity_repo import PipelineDatasetRepo
-from iai_core.utils.feature_flags import FeatureFlagProvider
 from iai_core.utils.time_utils import now
 
 logger = logging.getLogger(__name__)
@@ -115,14 +116,9 @@ class AutoTrainController:
            - If a problem occurs when submitting the job to the jobs client
         """
         with session_context(session=auto_train_request.session):
-            config_repo = ConfigurableParametersRepo(project_identifier=auto_train_request.project_identifier)
             model_storage_repo = ModelStorageRepo(project_identifier=auto_train_request.project_identifier)
             project_repo = ProjectRepo()
 
-            dataset_manager_config = config_repo.get_or_create_component_parameters(
-                data_instance_of=DatasetManagementConfig,
-                component=ComponentType.PIPELINE_DATASET_MANAGER,
-            )
             project = project_repo.get_by_id(auto_train_request.project_id)
             if isinstance(project, NullProject):
                 raise InvalidAutoTrainRequestError(
@@ -162,16 +158,38 @@ class AutoTrainController:
                 task_node_id=auto_train_request.task_node_id,
             )
 
-            min_annotation_size = (
-                None
-                if dataset_manager_config.minimum_annotation_size == -1
-                else dataset_manager_config.minimum_annotation_size
-            )
-            max_number_of_annotations = (
-                None
-                if dataset_manager_config.maximum_number_of_annotations == -1
-                else dataset_manager_config.maximum_number_of_annotations
-            )
+            if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
+                config_repo = PartialTrainingConfigurationRepo(project_identifier=auto_train_request.project_identifier)
+                global_parameters = config_repo.get_global_parameters(
+                    task_id=auto_train_request.task_node_id, model_manifest_id=model_storage.model_manifest_id
+                )
+                filtering_parameters = global_parameters.dataset_preparation.filtering
+                min_annotation_size = (
+                    filtering_parameters.min_annotation_pixels.min_annotation_pixels
+                    if filtering_parameters.min_annotation_pixels
+                    else None
+                )
+                max_number_of_annotations = (
+                    filtering_parameters.max_annotation_objects.max_annotation_objects
+                    if filtering_parameters.max_annotation_objects.enable
+                    else None
+                )
+            else:
+                config_repo = ConfigurableParametersRepo(project_identifier=auto_train_request.project_identifier)
+                dataset_manager_config = config_repo.get_or_create_component_parameters(
+                    data_instance_of=DatasetManagementConfig,
+                    component=ComponentType.PIPELINE_DATASET_MANAGER,
+                )
+                min_annotation_size = (
+                    None
+                    if dataset_manager_config.minimum_annotation_size == -1
+                    else dataset_manager_config.minimum_annotation_size
+                )
+                max_number_of_annotations = (
+                    None
+                    if dataset_manager_config.maximum_number_of_annotations == -1
+                    else dataset_manager_config.maximum_number_of_annotations
+                )
 
             keep_mlflow_artifacts = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS)
 
