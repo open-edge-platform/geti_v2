@@ -87,7 +87,7 @@ export const getBrowserPermissions = async () => {
     }
 };
 
-export const checkIfDisplaySetting = (
+export const isSettingVisible = (
     setting: DeviceConfiguration,
     deviceConfig: DeviceConfiguration[],
     dependencies: DeviceSettingsDependency[]

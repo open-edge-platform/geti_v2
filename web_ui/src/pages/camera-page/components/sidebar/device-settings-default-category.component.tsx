@@ -7,7 +7,7 @@ import { DeviceConfiguration } from '../../providers/util';
 import { settingsMetadata } from './device-settings-metadata';
 import { SettingOption } from './setting-option.component';
 
-import classes from './device-settings.module.css';
+import classes from './device-settings-category.module.css';
 
 interface DeviceSettingsDefaultCategoryProps {
     deviceConfig: DeviceConfiguration[];

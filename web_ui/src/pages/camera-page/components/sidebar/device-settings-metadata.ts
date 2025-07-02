@@ -22,7 +22,7 @@ export const settingsMetadata: DeviceSettingsMetadata = {
         },
         {
             categoryName: 'Dimensions',
-            attributesKeys: ['height', 'width', 'resizeMode'],
+            attributesKeys: ['Scale', 'height', 'width', 'resizeMode'],
         },
         {
             categoryName: 'Exposure settings',

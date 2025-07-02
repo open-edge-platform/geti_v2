@@ -1,16 +1,13 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Disclosure, DisclosurePanel, DisclosureTitle, Flex, Heading, Item, Key, Picker, View } from '@geti/ui';
-import { isEqual } from 'lodash-es';
+import { Flex, Heading, Item, Key, Picker, View } from '@geti/ui';
+import { isEqual, isUndefined } from 'lodash-es';
 
 import { useDeviceSettings } from '../../providers/device-settings-provider.component';
-import { checkIfDisplaySetting, SettingMinMax, SettingSelection } from '../../providers/util';
+import { DeviceSettingsCategory } from './device-settings-category.component';
 import { DeviceSettingsDefaultCategory } from './device-settings-default-category.component';
 import { settingsMetadata } from './device-settings-metadata';
-import { SettingOption } from './setting-option.component';
-
-import classes from './device-settings.module.css';
 
 const Header = ({ text }: { text: string }) => (
     <Flex alignItems={'center'} justifyContent={'space-between'}>
@@ -19,24 +16,18 @@ const Header = ({ text }: { text: string }) => (
 );
 
 export const DeviceSettings = () => {
-    const { categories, dependencies } = settingsMetadata;
+    const { categories, defaultCategory } = settingsMetadata;
 
-    const { videoDevices, selectedDeviceId, deviceConfig, setDeviceConfig, setSelectedDeviceId } = useDeviceSettings();
+    const { videoDevices, selectedDeviceId, deviceConfig, setSelectedDeviceId } = useDeviceSettings();
 
-    const updateDeviceConfig = (name: string, value: string | number) => {
-        setDeviceConfig([
-            ...deviceConfig.map((currentConfig) => {
-                if (isEqual(name, currentConfig.name)) {
-                    return {
-                        ...currentConfig,
-                        config: { ...currentConfig.config, value } as SettingMinMax | SettingSelection,
-                    };
-                } else {
-                    return currentConfig;
-                }
-            }),
-        ]);
-    };
+    const settingsMetadataFieldsKeys = categories.reduce(
+        (list: string[], category) => [...list, ...category.attributesKeys],
+        []
+    );
+
+    const defaultCategoryAttributesKeys = deviceConfig?.filter(
+        ({ name }) => !settingsMetadataFieldsKeys.includes(name)
+    );
 
     return (
         <View position={'relative'}>
@@ -54,37 +45,16 @@ export const DeviceSettings = () => {
                 {({ deviceId, label }) => <Item key={deviceId}>{label}</Item>}
             </Picker>
 
-            {categories.map(({ categoryName, attributesKeys }) => (
-                <Disclosure key={categoryName}>
-                    <DisclosureTitle UNSAFE_className={classes.sectionHeader}>{categoryName}</DisclosureTitle>
-                    <DisclosurePanel>
-                        {attributesKeys.map((key) => {
-                            const currentOption = deviceConfig.find((option) => option.name === key);
-                            if (currentOption) {
-                                const shouldDisplay = checkIfDisplaySetting(currentOption, deviceConfig, dependencies);
-                                const { name, config, onChange } = currentOption;
+            {categories.map(({ categoryName, attributesKeys }) => {
+                const configuration = attributesKeys
+                    .map((key) => {
+                        return deviceConfig.find(({ name }) => isEqual(name, key));
+                    })
+                    .filter((config) => !isUndefined(config));
 
-                                const handleOnChange = (value: number | string) => {
-                                    onChange(value);
-                                    updateDeviceConfig(name, value);
-                                };
-
-                                return (
-                                    shouldDisplay && (
-                                        <SettingOption
-                                            key={`${name}-${shouldDisplay}`}
-                                            label={name}
-                                            config={config}
-                                            onChange={handleOnChange}
-                                        />
-                                    )
-                                );
-                            }
-                        })}
-                    </DisclosurePanel>
-                </Disclosure>
-            ))}
-
+                return <DeviceSettingsCategory name={categoryName} configuration={configuration} key={categoryName} />;
+            })}
+            <DeviceSettingsCategory name={defaultCategory} configuration={defaultCategoryAttributesKeys} />
             <DeviceSettingsDefaultCategory deviceConfig={deviceConfig} />
         </View>
     );
