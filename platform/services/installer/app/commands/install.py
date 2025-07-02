@@ -33,7 +33,6 @@ from checks.resources import (
 )
 from checks.user import check_user_id
 from cli_utils.checks import run_checks
-
 from cli_utils.credentials import hash_ldap_password
 from cli_utils.platform_logs import configure_logging, create_logs_dir
 from cli_utils.spinner import click_spinner
@@ -53,7 +52,6 @@ from geti_controller.communication import (
 )
 from geti_controller.errors import GetiControllerError
 from geti_controller.install import deploy_geti_controller_chart
-from geti_controller.uninstall import uninstall_geti_controller_chart
 from k3s.detect_ip import get_first_public_ip, get_master_node_ip_address
 from k3s.install import K3SInstallationError, install_k3s
 from k3s.uninstall import uninstall_k3s
