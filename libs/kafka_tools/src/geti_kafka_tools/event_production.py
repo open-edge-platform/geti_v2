@@ -108,6 +108,7 @@ class EventProducer:
         logger.info("Terminating producer")
         self._producer.flush()
         self._producer = None  # This line releases producer thread & connection to the cluster
+        EventProducer._instance = None
 
     def health_check(self) -> bool:
         # Todo: implement CVS-81113

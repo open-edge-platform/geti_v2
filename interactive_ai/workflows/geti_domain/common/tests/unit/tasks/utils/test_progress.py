@@ -176,8 +176,9 @@ class TestProgress:
         # Assert
         mock_report_progress.assert_called_once_with(progress=-1, message="Starting test function")
 
+    @patch("jobs_common.tasks.utils.progress.terminate_producer")
     @patch("jobs_common.tasks.utils.progress.report_progress")
-    def test_task_progress_finish_message(self, mock_report_progress) -> None:
+    def test_task_progress_finish_message(self, mock_report_progress, mock_terminate_producer) -> None:
         # Arrange
         @task_progress(
             start_message="Starting test function",
@@ -197,6 +198,7 @@ class TestProgress:
                 call(progress=100, message="Test function finished"),
             ]
         )
+        mock_terminate_producer.assert_called_once_with()
 
     @pytest.mark.parametrize(
         "exception, message",
@@ -245,8 +247,9 @@ class TestProgress:
         "from_env_vars",
         return_value=JobMetadata(ID("job_id"), "test_job", "Test jobs", ID("author"), datetime.datetime.now()),
     )
+    @patch("jobs_common.tasks.utils.progress.terminate_producer")
     @patch("jobs_common.tasks.utils.progress.report_progress")
-    def test_task_progress_task_error_message(self, mock_report_progress, mock_from_env_vars) -> None:
+    def test_task_progress_task_error_message(self, mock_report_progress, mock_terminate_producer, mock_from_env_vars) -> None:
         # Arrange
 
         class CustomException(Exception, TaskErrorMessage):
@@ -273,3 +276,4 @@ class TestProgress:
             ]
         )
         mock_from_env_vars.assert_called_once_with()
+        mock_terminate_producer.assert_called_once_with()
