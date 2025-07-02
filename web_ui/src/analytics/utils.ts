@@ -10,7 +10,7 @@ export interface ResourceInfo {
     workflowId: string;
 }
 
-const SERVICE_VERSION = process.env.GETI_VERSION ?? 'dev';
+const SERVICE_VERSION = process.env.GETI_VERSION ?? 'latest';
 const SERVICE_NAME = 'intel-geti';
 
 export const SERVICE_DEFAULT_INFO: Omit<ResourceInfo, 'workflowId'> = {
