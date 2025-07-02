@@ -91,7 +91,7 @@ export const UpgradeBanner = () => {
     }
 
     return (
-        <HasPermission operations={[OPERATION.PLATFORM_UPGRADE]} Fallback={<>dupa</>}>
+        <HasPermission operations={[OPERATION.PLATFORM_UPGRADE]}>
             <UpgradeBannerContent />
         </HasPermission>
     );

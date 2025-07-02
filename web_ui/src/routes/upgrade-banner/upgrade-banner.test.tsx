@@ -73,9 +73,9 @@ describe('UpgradeBanner', () => {
 
         await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
-        expect(screen.getByRole('heading', { name: /a new version is available!/i })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Upgrade' })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /a new version is available!/i })).toBeVisible();
+        expect(screen.getByRole('button', { name: 'Upgrade' })).toBeVisible();
+        expect(screen.getByRole('button', { name: 'Dismiss' })).toBeVisible();
     });
 
     it('does not display banner when feature flag is enabled, current version is different than latest version, but banner was dismissed for the latest version', async () => {
