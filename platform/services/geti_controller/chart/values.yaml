@@ -92,6 +92,8 @@ timeout: 360s
 configuration:
   secretName: geti-install-data
 
+mountPath: "/data"
+
 endpoints:
   - matches:
       - /api/v(.*)/platform/(?:versions|check_installation_upgrade_progress|check_backup)/?
