@@ -9,6 +9,8 @@ import { orderBy } from 'lodash-es';
 import { GENERAL_SETTINGS_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
 import { getSettingsOfType } from '../../core/user-settings/utils';
+import { HasPermission } from '../../shared/components/has-permission/has-permission.component';
+import { OPERATION } from '../../shared/components/has-permission/has-permission.interface';
 
 import styles from './upgrade-banner.module.scss';
 
@@ -88,5 +90,9 @@ export const UpgradeBanner = () => {
         return null;
     }
 
-    return <UpgradeBannerContent />;
+    return (
+        <HasPermission operations={[OPERATION.PLATFORM_UPGRADE]} Fallback={<>dupa</>}>
+            <UpgradeBannerContent />
+        </HasPermission>
+    );
 };
