@@ -104,7 +104,7 @@ class ExportController:
         except Exception as exc:
             logger.exception(
                 "Internal error while generating the pre-signed URL to download the exported project zip (id='%s')",
-                export_operation_id,
+                str(export_operation_id).replace("\n", "").replace("\r", ""),
             )
             raise FailedArchiveDownloadException from exc
 

@@ -83,9 +83,8 @@ const DisabledAnalyticsContent: FC = () => {
     return (
         <View>
             <Heading>
-                Please note that Analytics feature available in the Standard Geti version is not supported in the Lite
-                Intel® Geti™ version. For a detailed comparison of the features available in each version, please
-                refer to our{' '}
+                Please note that Analytics feature is enabled only when the Intel® Geti™ platform has been installed
+                with the --install-telemetry-stack option. For details see our{' '}
                 <Link
                     to={'https://docs.geti.intel.com/docs/user-guide/getting-started/installation/using-geti-installer'}
                     className={styles.docsLink}

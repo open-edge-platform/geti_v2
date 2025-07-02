@@ -16,10 +16,14 @@ interface DataAugmentationProps {
     ) => void;
 }
 
-export const DataAugmentation = ({ parameters, onUpdateTrainingConfiguration }: DataAugmentationProps) => {
-    const isEnabled = Object.values(parameters).some((parametersGroup) =>
+export const isDataAugmentationEnabled = (parameters: DataAugmentationParameters): boolean => {
+    return Object.values(parameters).some((parametersGroup) =>
         parametersGroup.some((parameter) => isBoolEnableParameter(parameter) && parameter.value === true)
     );
+};
+
+export const DataAugmentation = ({ parameters, onUpdateTrainingConfiguration }: DataAugmentationProps) => {
+    const isEnabled = isDataAugmentationEnabled(parameters);
 
     return (
         <Accordion>

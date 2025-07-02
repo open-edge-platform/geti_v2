@@ -3,9 +3,10 @@
 
 import type OpenCVTypes from 'OpenCVTypes';
 
-import { formatImageData } from '../utils/utils';
+import { OpenCVLoader } from '../utils/opencv-loader';
+import { formatImageData } from '../utils/tool-utils';
 
-export class InferenceImage {
+class InferenceImage {
     constructor(private CV: OpenCVTypes.cv) {}
 
     resize(imageData: ImageData, width: number, height: number): ImageData {
@@ -36,3 +37,11 @@ export class InferenceImage {
         return data;
     }
 }
+
+const buildInferenceImageInstance = async (): Promise<InferenceImage> => {
+    const opencv = await OpenCVLoader();
+
+    return new InferenceImage(opencv);
+};
+
+export { buildInferenceImageInstance };

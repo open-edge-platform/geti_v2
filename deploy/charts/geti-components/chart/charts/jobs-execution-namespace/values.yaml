@@ -81,7 +81,6 @@ spicedb:
 training:
   default_trainer_image_name: "impp/otx2-training"
   default_trainer_version: "2.2.0"
-  mlflow_sidecar_image_name: "impp/mlflow-geti-store"
 
 bucket_name_compileddatasetshards: compileddatasetshards
 bucket_name_images: images

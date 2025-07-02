@@ -42,10 +42,6 @@ dependencies:
     version: ${TAG}
     repository: "file://../../../../../interactive_ai/services/media/.build/chart"
     condition: enabled.media
-  - name: mlflow-geti-store
-    version: ${TAG}
-    repository: "file://../../../../../interactive_ai/services/mlflow_geti_store/.build/chart"
-    condition: enabled.mlflow_geti_store
   - name: modelregistration
     version: ${TAG}
     repository: "file://../../../../../interactive_ai/services/model_registration/.build/chart"

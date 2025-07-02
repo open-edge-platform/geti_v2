@@ -38,6 +38,7 @@ export const DEV_FEATURE_FLAGS = {
     FEATURE_FLAG_LABELS_REORDERING: true,
     FEATURE_FLAG_TELEMETRY_STACK: true,
     FEATURE_FLAG_ANNOTATION_HOLE: false,
+    FEATURE_FLAG_PLATFORM_UPGRADE: false,
     // Only used for unit testing
     DEBUG: false,
 };

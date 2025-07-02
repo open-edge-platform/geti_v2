@@ -7,6 +7,3 @@ DOCKER_BUILD_CONTEXT := --build-context common=../common \
 						--build-context iai_core=../../../../interactive_ai/libs/iai_core_py \
 						--build-context media_utils=../../../../interactive_ai/libs/media_utils \
 						--build-context data_migration=../../../../interactive_ai/data_migration \
-
-test-component: venv
-	@echo "test-component not available"

@@ -57,7 +57,7 @@ class TrainingHyperParameters(BaseModel):
     learning_rate: float = Field(
         gt=0, lt=1, default=0.001, title="Learning rate", description="Base learning rate for the optimizer"
     )
-    max_detection_per_image: MaxDetectionPerImage = Field(
+    max_detection_per_image: MaxDetectionPerImage | None = Field(
         default_factory=MaxDetectionPerImage,
         title="Maximum number of detections per image",
         description=(

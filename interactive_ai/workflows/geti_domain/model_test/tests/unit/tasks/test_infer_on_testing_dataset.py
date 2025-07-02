@@ -25,7 +25,6 @@ def fxt_model_base_framework(fxt_model):
     yield model
 
 
-@pytest.mark.JobsComponent
 class TestInferOnTestingDataset:
     def test_infer_on_testing_dataset(
         self,

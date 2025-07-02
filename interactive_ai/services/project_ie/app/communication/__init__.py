@@ -22,7 +22,7 @@ def configure_logger() -> logging.Logger:
 
     # Setup the base logger; immediately after enhance the log records with session
     # and tracing information, as strictly required by the logging format
-    logger = initialize_logger(__name__, use_async=False, logging_format=logging_format)
+    logger = initialize_logger(__name__, logging_format=logging_format)
     if ENABLE_TRACING:
         LoggerTelemetry.instrument()
     enhance_log_records_with_session_info()

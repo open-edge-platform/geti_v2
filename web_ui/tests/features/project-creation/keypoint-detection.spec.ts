@@ -107,6 +107,7 @@ test.describe('Keypoint detection', () => {
             await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
 
             await templateManagerPage.addPoint({ x: 100, y: 100 });
+            await templateManagerPage.addPoint({ x: 200, y: 200 });
 
             await expect(page.getByRole('button', { name: 'Create' })).toBeEnabled();
         });

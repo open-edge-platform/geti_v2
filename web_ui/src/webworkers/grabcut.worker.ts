@@ -21,7 +21,7 @@ const terminate = (): void => {
     self.close();
 };
 
-const waitForOpenCV = async (): Promise<boolean> => {
+const loadOpenCV = async (): Promise<boolean> => {
     if (CV) {
         return true;
     } else {
@@ -316,6 +316,6 @@ class Grabcut {
     }
 }
 
-const WorkerApi = { Grabcut, waitForOpenCV, terminate };
+const WorkerApi = { Grabcut, loadOpenCV, terminate };
 
 expose(WorkerApi);

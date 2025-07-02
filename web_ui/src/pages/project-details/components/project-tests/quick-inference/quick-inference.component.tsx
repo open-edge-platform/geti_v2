@@ -20,6 +20,7 @@ import { Contents } from './contents.component';
 import { HeaderOptions } from './header-options.component';
 import { LiveCameraInference } from './live-camera-inference/live-camera-inference.component';
 import { LivePredictionNotification } from './live-prediction-notification.component';
+import { LiveInferenceMode } from './quick-inference-interfaces';
 import { QuickInferenceProvider, useQuickInference } from './quick-inference-provider.component';
 import { SecondaryToolbar } from './secondary-toolbar.component';
 import { useIsExplanationEnabled } from './use-is-explanation-enabled.hook';
@@ -74,8 +75,6 @@ const LiveFileInference = ({ imageWasUploaded }: { imageWasUploaded: boolean }) 
     );
 };
 
-type LiveInferenceMode = 'Use file' | 'Use camera';
-
 const QuickInferencePage = (): JSX.Element => {
     const { image, annotations, imageWasUploaded, isDisabled, onResetImage } = useQuickInference();
     const settings = useUserGlobalSettings();
@@ -101,7 +100,7 @@ const QuickInferencePage = (): JSX.Element => {
                                 animate={'visible'}
                                 exit={'hidden'}
                             >
-                                <LivePredictionNotification settings={settings} />
+                                <LivePredictionNotification settings={settings} inferenceMode={liveInferenceMode} />
                             </motion.div>
                         )}
                     </AnimatePresence>

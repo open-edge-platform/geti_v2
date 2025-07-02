@@ -3,14 +3,7 @@
 
 from collections.abc import Callable, Sequence
 
-from geti_configuration_tools.project_configuration import (
-    AutoTrainingParameters,
-    NullProjectConfiguration,
-    ProjectConfiguration,
-    TaskConfig,
-    TrainConstraints,
-    TrainingParameters,
-)
+from geti_configuration_tools.project_configuration import NullProjectConfiguration, ProjectConfiguration, TaskConfig
 from pymongo.command_cursor import CommandCursor
 from pymongo.cursor import Cursor
 
@@ -94,22 +87,7 @@ class ProjectConfigurationRepo(ProjectBasedSessionRepo[ProjectConfiguration]):
         if exists:
             return
 
-        default_task_configs = []
-
-        for task_id in task_ids:
-            default_task_configs.append(
-                TaskConfig(
-                    task_id=task_id,
-                    training=TrainingParameters(
-                        constraints=TrainConstraints(),
-                    ),
-                    auto_training=AutoTrainingParameters(),
-                )
-            )
-
-        default_config = ProjectConfiguration(
-            id_=self.generate_id(),
-            project_id=self.identifier.project_id,
-            task_configs=default_task_configs,
+        default_config = ProjectConfiguration.default_configuration(
+            project_id=self.identifier.project_id, task_ids=task_ids
         )
         self.save(default_config)

@@ -69,7 +69,7 @@ interface JobTestMetadata extends JobProjectMetadata {
     };
 }
 
-export interface JobCostConsumed {
+interface JobCostConsumed {
     unit: string;
     amount: number;
     consumingDate: string;

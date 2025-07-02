@@ -30,3 +30,6 @@ export interface Polygon {
     readonly points: Point[];
     readonly shapeType: 'polygon';
 }
+
+export type Shape = Rect | RotatedRect | Circle | Polygon;
+export type ShapeType = Shape['shapeType'];

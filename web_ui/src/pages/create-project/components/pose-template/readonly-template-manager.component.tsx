@@ -16,7 +16,7 @@ import { TemplateState } from '../../../utils';
 import { CanvasTemplate } from './canvas/canvas-template.component';
 import { createRoi, resizePoints } from './util';
 
-export interface ReadonlyTemplateManagerProps {
+interface ReadonlyTemplateManagerProps {
     className: string;
     scaleFactor?: number;
     isValidStructure?: boolean;

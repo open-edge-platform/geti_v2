@@ -30,7 +30,6 @@ _params_metadata_error = [
 ]
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestImportEndpoints:
     @patch("communication.endpoints.import_endpoints.ImportManager")
     def test_prepare_dataset_for_import_endpoint(

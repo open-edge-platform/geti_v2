@@ -21,7 +21,6 @@ from job.utils.train_workflow_data import TrainWorkflowData
 from tests.unit.tasks.utils import TEST_ENV_VARS, return_none
 
 
-@pytest.mark.JobsComponent
 class TestTaskInferenceTask:
     training_dataset_id = "dataset_id"
     train_subset_id = "train_subset_id"

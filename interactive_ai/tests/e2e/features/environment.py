@@ -17,7 +17,7 @@ from geti_client import (
     ConfigurationApi,
     DatasetImportExportApi,
     DatasetsApi,
-    DeploymentPackageApi,
+    DeploymentApi,
     JobsApi,
     MediaApi,
     ModelsApi,
@@ -105,10 +105,10 @@ def fxt_datasets_api(context: Context) -> DatasetsApi:
 
 
 @fixture
-def fxt_deployment_package_api(context: Context) -> DeploymentPackageApi:
+def fxt_deployment_api(context: Context) -> DeploymentApi:
     with context.api_client as api_client:
-        context.deployment_package_api = DeploymentPackageApi(api_client)
-        yield context.deployment_package_api
+        context.deployment_api = DeploymentApi(api_client)
+        yield context.deployment_api
 
 
 @fixture
@@ -221,7 +221,7 @@ def before_all(context: Context) -> None:
     use_fixture(fxt_configuration_api, context)
     use_fixture(fxt_dataset_import_export_api, context)
     use_fixture(fxt_datasets_api, context)
-    use_fixture(fxt_deployment_package_api, context)
+    use_fixture(fxt_deployment_api, context)
     use_fixture(fxt_jobs_api, context)
     use_fixture(fxt_media_api, context)
     use_fixture(fxt_models_api, context)

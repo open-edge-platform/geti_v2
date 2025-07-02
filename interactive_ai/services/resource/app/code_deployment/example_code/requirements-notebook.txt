@@ -4,3 +4,4 @@ jupyterlab>=3.6
 opencv-python>=4.10
 Pillow>=9.4.0
 ipython>=8.10.0
+ipywidgets~=8.1

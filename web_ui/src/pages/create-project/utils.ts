@@ -19,7 +19,7 @@ const NOT_EMPTY_LABELS_VALIDATION_MESSAGE = (domain: DOMAIN): string => {
 
 export const MIN_NUMBER_OF_LABELS_FOR_CLASSIFICATION = 2;
 
-export const MIN_POINTS_MESSAGE = 'The template requires at least one point to be defined.';
+export const MIN_POINTS_MESSAGE = 'A minimum of two points must be defined for the template.';
 export const EMPTY_LABEL_MESSAGE = 'All labels must contain a valid name';
 
 // User can create a project when:
@@ -68,7 +68,7 @@ export const getDuplicateLabelNames = (names: string[]) => {
 };
 
 export const getLabelsNamesErrors = (names: string[]) => {
-    if (names.length < 1) {
+    if (names.length < 2) {
         return MIN_POINTS_MESSAGE;
     }
 

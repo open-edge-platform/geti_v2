@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration
@@ -12,7 +12,8 @@ from storage.repos.partial_training_configuration_repo import PartialTrainingCon
 
 from geti_types import ID
 from iai_core.entities.annotation_scene_state import AnnotationSceneState, AnnotationState
-from iai_core.repos import AnnotationSceneStateRepo, DatasetStorageRepo, TaskNodeRepo
+from iai_core.repos import AnnotationSceneStateRepo, DatasetStorageRepo, ModelRepo, TaskNodeRepo
+from iai_core.repos.mappers.mongodb_mappers.model_mapper import ModelConfigurationToMongo
 
 
 @pytest.fixture
@@ -246,6 +247,7 @@ class TestTrainingConfigurationController:
 
     def test_get_dataset_size(
         self,
+        request,
         fxt_project_identifier,
         fxt_image_identifier,
         fxt_video_frame_identifier,
@@ -254,6 +256,7 @@ class TestTrainingConfigurationController:
     ) -> None:
         task_id = ID("task_id")
         repo = AnnotationSceneStateRepo(fxt_dataset_storage.identifier)
+        request.addfinalizer(lambda: repo.delete_all())
         ann_state_image = AnnotationSceneState(
             media_identifier=fxt_image_identifier,
             annotation_scene_id=fxt_mongo_id(1),
@@ -287,3 +290,47 @@ class TestTrainingConfigurationController:
             )
 
             assert dataset_size == 2  # 1 annotated image + 1 partially annotated video frame
+
+    @patch.object(TaskNodeRepo, "exists", return_value=True)
+    def test_get_legacy_model_configuration(
+        self,
+        fxt_project_identifier,
+        fxt_model_storage,
+        fxt_legacy_model_configuration_doc,
+        fxt_legacy_model_configuration_rest_view,
+    ) -> None:
+        # Arrange
+        task_id = ID("task_id")
+        model_id = ID("model_id")
+        model_config = ModelConfigurationToMongo.backward(
+            fxt_legacy_model_configuration_doc, parameters=fxt_project_identifier
+        )
+        mock_model = MagicMock()
+        mock_model.configuration = model_config
+
+        # Act
+        with (
+            patch.object(
+                ConfigurationService,
+                "get_configuration_from_model",
+                return_value=(None, fxt_model_storage),
+            ) as mock_get_configuration_from_model,
+            patch.object(
+                ModelRepo,
+                "get_by_id",
+                return_value=mock_model,
+            ),
+        ):
+            config_rest = TrainingConfigurationRESTController.get_configuration(
+                project_identifier=fxt_project_identifier,
+                task_id=task_id,
+                model_id=model_id,
+            )
+
+        # Assert
+        mock_get_configuration_from_model.assert_called_once_with(
+            project_identifier=fxt_project_identifier,
+            task_id=task_id,
+            model_id=model_id,
+        )
+        assert config_rest == fxt_legacy_model_configuration_rest_view

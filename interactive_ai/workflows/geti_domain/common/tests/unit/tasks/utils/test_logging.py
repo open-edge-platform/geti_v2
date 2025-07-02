@@ -3,12 +3,9 @@
 
 from unittest.mock import patch
 
-import pytest
-
 from jobs_common.tasks.utils.logging import init_logger
 
 
-@pytest.mark.JobsComponent
 class TestLogging:
     @patch("jobs_common.tasks.utils.logging.start_common_logger")
     def test_init_logger(self, mock_start_common_logger) -> None:
@@ -21,4 +18,4 @@ class TestLogging:
         test_function()
 
         # Assert
-        mock_start_common_logger.assert_called_once_with(package_name="package_name", use_async=False)
+        mock_start_common_logger.assert_called_once_with(package_name="package_name")

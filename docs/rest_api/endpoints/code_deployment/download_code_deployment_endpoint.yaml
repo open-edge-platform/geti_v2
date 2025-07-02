@@ -1,6 +1,6 @@
 get:
   tags:
-    - Code Deployment
+    - Deployment
   summary: Download the deployed code as a zip file
   description: "Download the deployed code as a zip file.
   This endpoint is deprecated. Use the [deployment package endpoint](../deployment_package/download_deployment_package_endpoint.yaml) to prepare and download code deployment."

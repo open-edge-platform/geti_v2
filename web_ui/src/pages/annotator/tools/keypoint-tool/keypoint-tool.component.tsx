@@ -70,10 +70,10 @@ export const KeypointTool = ({ annotationToolContext }: ToolAnnotationContextPro
     };
 
     const handleTranslate = (point: Point) => {
-        currentBoundingBox && handleUpdateSkypeHistory(getClampedBoundingBox(point, currentBoundingBox, roi));
+        currentBoundingBox && handleUpdateSkipHistory(getClampedBoundingBox(point, currentBoundingBox, roi));
     };
 
-    const handleUpdateSkypeHistory = (newBoundingBox: RegionOfInterest, direction?: CursorDirection) => {
+    const handleUpdateSkipHistory = (newBoundingBox: RegionOfInterest, direction?: CursorDirection) => {
         direction && setCursorDirection(direction);
         setCurrentBoundingBox(getMinBoundingBox(newBoundingBox), true);
     };
@@ -86,7 +86,7 @@ export const KeypointTool = ({ annotationToolContext }: ToolAnnotationContextPro
         <SvgToolCanvas image={image}>
             <CrosshairDrawingBox
                 zoom={zoomState.zoom}
-                onMove={handleUpdateSkypeHistory}
+                onMove={handleUpdateSkipHistory}
                 onStart={handleRemoveOldABoundingBox}
                 onComplete={handleAddAnnotation}
             />

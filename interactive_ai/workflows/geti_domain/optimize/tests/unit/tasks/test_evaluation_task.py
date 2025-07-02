@@ -37,7 +37,6 @@ def fxt_secrets(mocker):
     )
 
 
-@pytest.mark.JobsComponent
 @patch.object(jobs_common.tasks.utils.secrets, "set_env_vars", return_value=None)
 @patch.object(jobs_common.tasks.utils.secrets, "setup_session_from_env", return_value=None)
 class TestEvaluationTask:

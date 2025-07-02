@@ -9,7 +9,6 @@ import pytest
 from job.tasks.helpers import finalize_optimize, prepare_optimize
 
 
-@pytest.mark.JobsComponent
 @patch.dict(
     os.environ,
     {

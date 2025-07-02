@@ -1,6 +1,0 @@
----
-name: ${COMPONENT_NAME}
-version: ${TAG}
-apiVersion: v2
-description: MLflow geti store
-appVersion: ${TAG}

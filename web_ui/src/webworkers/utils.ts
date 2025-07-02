@@ -58,32 +58,6 @@ const logMat = (mat: OpenCVTypes.Mat, name: string): void => {
     );
 };
 
-export const concatFloat32Arrays = (arrays: Float32Array[]) => {
-    const totalLength = arrays.reduce((c, a) => c + a.length, 0);
-    const result = new Float32Array(totalLength);
-
-    arrays.reduce((offset, array) => {
-        result.set(array, offset);
-        return offset + array.length;
-    }, 0);
-
-    return result;
-};
-
-export const loadSource = async (source: string, cacheKey = 'general'): Promise<Response | undefined> => {
-    if (!caches) {
-        return await self.fetch(source);
-    }
-
-    const cache = await caches.open(cacheKey);
-
-    if (!(await cache.match(source))) {
-        await cache.put(source, await self.fetch(source));
-    }
-
-    return cache.match(source);
-};
-
 const numberFormatter = new Intl.NumberFormat('en-GB', {
     style: 'unit',
     unit: 'megabyte',
@@ -96,30 +70,6 @@ const reportOpenCVMemoryUsage = (CV: OpenCVTypes.cv, message = '') => {
     const byteLength = CV.asm.memory.buffer.byteLength;
 
     console.info(`${message} OpenCV Memory: ${numberFormatter.format(byteLength / 1024 / 1024)}`);
-};
-
-export const stackPlanes = (CV: OpenCVTypes.cv, mat: OpenCVTypes.Mat) => {
-    let stackedPlanes: OpenCVTypes.Mat[] = [];
-    let matPlanes: OpenCVTypes.MatVector | null = null;
-
-    try {
-        matPlanes = new CV.MatVector();
-        CV.split(mat, matPlanes);
-
-        stackedPlanes = Array.from(Array(mat.channels()).keys()).map((index) => {
-            // This won't happen, but matPlanes is mutable for the finally block.
-            if (!matPlanes) {
-                throw 'Lost track of matPlanes through loop';
-            }
-
-            return matPlanes.get(index);
-        });
-
-        return concatFloat32Arrays(stackedPlanes.map((m) => m.data32F));
-    } finally {
-        stackedPlanes.map((p) => p.delete());
-        matPlanes?.delete();
-    }
 };
 
 export const getBlobFromDataUrl = async (dataUrl: string): Promise<Blob> => {
