@@ -99,6 +99,10 @@ class SSIM {
 
         return results;
     }
+
+    terminate() {
+        self.close();
+    }
 }
 
 const buildSSIMInstance = async (): Promise<SSIM> => {

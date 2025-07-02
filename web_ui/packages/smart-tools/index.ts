@@ -9,6 +9,7 @@ export { type WatershedPolygon } from './src/watershed/interfaces';
 export { buildInferenceImageInstance, InferenceImage } from './src/inference-image/inference-image';
 
 export { buildSSIMInstance, SSIM } from './src/ssim/ssim';
+export { type RunSSIMProps, type SSIMMatch } from './src/ssim/interfaces';
 
 export {
     formatContourToPoints,

@@ -3,6 +3,7 @@
 
 import '@wessberg/pointer-events';
 
+import { RunSSIMProps, SSIM, SSIMMatch } from '@geti/smart-tools';
 import { fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
 import { Shape } from '../../../../core/annotations/shapes.interface';
@@ -24,7 +25,6 @@ import { TaskProvider } from '../../providers/task-provider/task-provider.compon
 import { SecondaryToolbar } from './secondary-toolbar.component';
 import { SSIMStateProvider } from './ssim-state-provider.component';
 import { SSIMTool } from './ssim-tool.component';
-import { RunSSIMProps, SSIMMatch, SSIMMethods } from './ssim-tool.interface';
 import { convertToRect } from './util';
 
 jest.mock('../../providers/annotator-provider/annotator-provider.component', () => ({
@@ -68,29 +68,24 @@ const mockLabels = [
 
 // NOTE: In the future, the way we mock webworkers will change, we will have a clearer
 // separation between the workers and geti, and provide a MockWorker to be able to use with tests
-const createFakeSSIM = (shapes: Shape[]) => {
-    class FakeSSIM implements SSIMMethods {
+const createFakeSSIM = (shapes: Shape[]): Partial<SSIM> => {
+    // @ts-expect-error we only care about executeSSIM
+    class FakeSSIM implements SSIM {
         executeSSIM(_props: RunSSIMProps): SSIMMatch[] {
-            return shapes.map((shape) => ({ shape: convertToRect(shape), confidence: 1 }));
+            return shapes.map((shape) => ({
+                shape: { ...convertToRect(shape), shapeType: 'rect' },
+                confidence: 1,
+            }));
         }
     }
 
-    return {
-        SSIM: FakeSSIM,
-        terminate: () => {
-            console.warn('Worker terminated');
-        },
-    };
+    return new FakeSSIM();
 };
 const mockSSIMWorker = (shapes: Shape[]) => {
     const FakeSSIM = createFakeSSIM(shapes);
 
     // @ts-expect-error ignore this typescript error until we finish ITEP-66305
-    jest.mocked(useLoadAIWebworker).mockImplementation(() => {
-        return {
-            worker: FakeSSIM,
-        };
-    });
+    jest.mocked(useLoadAIWebworker).mockReturnValue({ worker: FakeSSIM });
 };
 
 const renderTool = async (toolSettings: Partial<ToolSettings[ToolType.SSIMTool]> = {}) => {
@@ -145,7 +140,7 @@ const renderTool = async (toolSettings: Partial<ToolSettings[ToolType.SSIMTool]>
 describe('SSIMTool', () => {
     const getAcceptButton = () => screen.getByRole('button', { name: 'accept ssim annotation' });
 
-    afterAll(() => {
+    afterEach(() => {
         jest.clearAllMocks();
     });
 

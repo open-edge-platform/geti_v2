@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { SSIM } from '@geti/smart-tools';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { Rect, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
@@ -29,15 +31,7 @@ export interface SSIMMatch {
     confidence: number;
 }
 
-export interface SSIMInstance {
-    new (): Promise<SSIMMethods>;
-}
-
 export interface SSIMWorker extends WebWorker {
-    SSIM: SSIMInstance;
+    build: () => Promise<SSIM>;
     type: AlgorithmType.SSIM;
-}
-
-export interface SSIMMethods {
-    executeSSIM(runSSIMProps: RunSSIMProps): SSIMMatch[];
 }
