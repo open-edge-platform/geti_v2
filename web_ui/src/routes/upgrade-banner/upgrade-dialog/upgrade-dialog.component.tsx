@@ -59,8 +59,12 @@ const ReleaseNotes = ({ version }: { version: string }) => {
     );
 };
 
-const Version = ({ version }: { version: string }) => {
-    return <Text UNSAFE_className={styles.version}>{version}</Text>;
+const Version = ({ version, id }: { version: string; id: string }) => {
+    return (
+        <Text data-testid={id} UNSAFE_className={styles.version}>
+            {version}
+        </Text>
+    );
 };
 
 const RequiredDrivers = ({ version }: { version: PlatformVersion }) => {
@@ -69,11 +73,11 @@ const RequiredDrivers = ({ version }: { version: PlatformVersion }) => {
             <Text>To proceed with the update, please ensure the following dependencies are installed:</Text>
             <ul className={styles.drivers}>
                 <li>
-                    k3s driver: <Version version={version.k3sVersion} />
+                    k3s driver: <Version id={'k3s-driver-version'} version={version.k3sVersion} />
                 </li>
                 <li>
-                    Nvidia driver: <Version version={version.nvidiaDriversVersion} /> or Intel driver:{' '}
-                    <Version version={version.intelDriversVersion} />
+                    Nvidia driver: <Version id={'nvidia-driver-version'} version={version.nvidiaDriversVersion} /> or
+                    Intel driver: <Version id={'intel-driver-version'} version={version.intelDriversVersion} />
                 </li>
             </ul>
         </View>
@@ -149,8 +153,8 @@ const UpgradeForm = ({ availableVersions, onClose, currentVersion }: UpgradeForm
                     {selectedVersion !== undefined && (
                         <>
                             <Text>
-                                Do you want to upgrade Geti to the version <Version version={selectedVersion.version} />
-                                ?
+                                Do you want to upgrade Geti to the version{' '}
+                                <Version id={'newer-version'} version={selectedVersion.version} />?
                             </Text>
                             <RequiredDrivers version={selectedVersion} />
                             <ReleaseNotes version={selectedVersion.version} />
