@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react';
 
 import { Grabcut, GrabcutData as ToolGrabcutData } from '@geti/smart-tools';
-import { Polygon as ToolPolygon, Rect as ToolRect } from '@geti/smart-tools/src/shared/interfaces';
+import { Polygon as ToolPolygon } from '@geti/smart-tools/src/shared/interfaces';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { Remote } from 'comlink';
 
@@ -30,7 +30,7 @@ const convertGetiDataToGrabcutData = (data: GrabcutData): ToolGrabcutData => {
     return {
         ...data,
         inOrder: data.activeTool === GrabcutToolType.ForegroundTool,
-        inputRect: convertGetiShapeToToolShape(data.inputRect) as ToolRect,
+        inputRect: convertGetiShapeToToolShape(data.inputRect),
     };
 };
 
@@ -66,7 +66,7 @@ export const useGrabcut = ({ showNotificationError, onSuccess }: useGrabcutProps
         onError: showNotificationError,
 
         onSuccess: (data: ToolPolygon, variables: GrabcutData) => {
-            const convertedPolygon = convertToolShapeToGetiShape(data) as Polygon;
+            const convertedPolygon = convertToolShapeToGetiShape(data);
 
             onSuccess(convertedPolygon, variables);
         },
