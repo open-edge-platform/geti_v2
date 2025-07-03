@@ -144,9 +144,12 @@ class ConfigurableParametersRESTViews:
                     key = item["key"]
                     value = item["value"]
                     result[key] = value
-                    if "allowed_values" in item:
-                        # If the parameter has allowed values, add additional field `allowed_values_{key}`
-                        result[f"allowed_values_{key}"] = item["allowed_values"]
+                    if key.startswith("allowed_values_"):
+                        # `allowed_values_` is a reserved prefix used for validation
+                        raise ValueError(
+                            f"The parameter '{key}' cannot be used. The prefix 'allowed_values_' "
+                            f"is reserved for validation purposes and cannot be set directly."
+                        )
                 # If it's a dictionary without a "key" field, it must contain nested models
                 elif isinstance(item, dict):
                     # Process each nested model recursively and merge with result

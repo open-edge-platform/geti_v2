@@ -37,8 +37,6 @@ def ftx_hyperparameters():
             max_epochs=100,
             early_stopping=EarlyStopping(enable=True, patience=10),
             learning_rate=0.001,
-            input_size="32x32",
-            allowed_values_input_size=["32x32", "64x64", "128x128"],
         ),
         evaluation=EvaluationParameters(),
     )
@@ -266,16 +264,6 @@ def fxt_training_configuration_task_level_rest_view(fxt_training_configuration_t
                 "value": 0.001,
             },
             {
-                "key": "input_size",
-                "name": "Input size",
-                "type": "str",
-                "description": "Width and height dimensions for model input images in 'WxH' format (e.g., '512x512'). "
-                "Determines the resolution at which images are processed by the model.",
-                "value": "32x32",
-                "default_value": "32x32",
-                "allowed_values": ["32x32", "64x64", "128x128"],
-            },
-            {
                 "early_stopping": [
                     {
                         "default_value": False,
@@ -359,6 +347,8 @@ def fxt_partial_training_configuration_manifest_level(fxt_mongo_id):
             "training": {
                 "max_epochs": 50,
                 "learning_rate": 0.05,
+                "input_size": "32x32",
+                "allowed_values_input_size": ["32x32", "64x64", "128x128"],
             },
         },
     }

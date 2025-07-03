@@ -90,14 +90,6 @@ class TrainingHyperParameters(BaseModel):
         if self.input_size is None:
             return self
 
-        # Validate allowed_values_input_size exists
-        if self.allowed_values_input_size is None:
-            raise ValueError(
-                "Cannot validate input size: `allowed_values_input_size` is not configured. "
-                "Please make sure a valid model manifest ID is provided, as `allowed_values_input_size` "
-                "is model-specific."
-            )
-
         # validate format is 'WxH' (e.g. '512x512')
         try:
             w, h, *_bin = str(self.input_size).split("x")
@@ -106,7 +98,7 @@ class TrainingHyperParameters(BaseModel):
             raise ValueError(f"Input size '{self.input_size}' is not in the expected format 'WxH' (e.g. '512x512')")
 
         # validate against allowed input sizes if available
-        if input_size not in self.allowed_values_input_size:
+        if self.allowed_values_input_size and input_size not in self.allowed_values_input_size:
             raise ValueError(
                 f"Input size '{input_size}' is not in the list of supported input sizes: "
                 f"{self.allowed_values_input_size}"
