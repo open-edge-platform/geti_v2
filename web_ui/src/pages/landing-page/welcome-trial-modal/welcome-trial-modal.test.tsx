@@ -82,6 +82,7 @@ describe('WelcomeTrialModal', () => {
         fireEvent.click(screen.getByRole('button', { name: /Start exploring now/i }));
 
         expect(mockedSaveConfig).toHaveBeenCalledWith({
+            ...INITIAL_GLOBAL_SETTINGS,
             [GLOBAL_MODALS_KEYS.WELCOME_MODAL]: { isEnabled: false },
             [GLOBAL_MODALS_KEYS.EXHAUSTED_ORGANIZATION_CREDITS_MODAL]: { isEnabled: false },
             [GLOBAL_MODALS_KEYS.LOW_ORGANIZATION_CREDITS_MODAL]: { isEnabled: false },
