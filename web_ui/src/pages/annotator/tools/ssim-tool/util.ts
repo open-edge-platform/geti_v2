@@ -105,7 +105,7 @@ export const convertRunSSIMPropsToToolRunSSIMProps = (runSSIMProps: RunSSIMProps
             shapeType: 'rect',
         },
         shapeType: convertGetiShapeTypeToToolShapeType(runSSIMProps.shapeType),
-        existingAnnotations: runSSIMProps.existingAnnotations.map(convertGetiShapeToToolShape),
+        existingAnnotations: runSSIMProps.existingAnnotations.map((shape) => convertGetiShapeToToolShape(shape)),
     };
 };
 
