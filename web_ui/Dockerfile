@@ -25,7 +25,8 @@ FROM node:22.12-bookworm-slim@sha256:35531c52ce27b6575d69755c73e65d4468dba93a256
 ARG LOCATION=/home/app/web_ui/
 WORKDIR ${LOCATION}
 
-ARG GETI_VERSION=latest
+# The `GETI_VERSION` variable is send by the UI when it submits telemetry data
+ARG GETI_VERSION=development
 ENV GETI_VERSION=$GETI_VERSION
 
 COPY --link package.json ./
