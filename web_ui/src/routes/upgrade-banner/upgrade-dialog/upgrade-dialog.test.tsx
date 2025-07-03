@@ -203,7 +203,7 @@ describe('UpgradeDialog', () => {
 
         expect(
             await screen.findByText(
-                'To continue with the upgrade, you must confirm that you want to skip the backup due to limited disk space.'
+                'To continue with the update, you must confirm that you want to skip the backup due to limited disk space.'
             )
         ).toBeInTheDocument();
         expect(screen.getByRole('checkbox', { name: /skip backup/i })).toBeInTheDocument();

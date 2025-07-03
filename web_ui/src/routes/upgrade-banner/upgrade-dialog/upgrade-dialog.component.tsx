@@ -96,7 +96,7 @@ const SkipBackupAlert = ({ isSkipBackupEnabled, onIsSkipBackupEnabled }: SkipBac
             <Content>
                 <Flex direction={'column'} gap={'size-100'}>
                     <Text>
-                        To continue with the upgrade, you must confirm that you want to skip the backup due to limited
+                        To continue with the update, you must confirm that you want to skip the backup due to limited
                         disk space.
                     </Text>
                     <Checkbox isEmphasized isSelected={isSkipBackupEnabled} onChange={onIsSkipBackupEnabled}>
