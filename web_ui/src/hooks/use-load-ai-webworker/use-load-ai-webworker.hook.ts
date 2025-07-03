@@ -12,6 +12,7 @@ const WORKERS_WITH_BUILD_METHOD = [
     AlgorithmType.WATERSHED,
     AlgorithmType.INFERENCE_IMAGE,
     AlgorithmType.SSIM,
+    AlgorithmType.GRABCUT,
     // TODO: Add the rest of the tools here, one at a time
 ];
 

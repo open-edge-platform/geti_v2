@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { InferenceImage, SSIM, Watershed } from '@geti/smart-tools';
+import { Grabcut, InferenceImage, SSIM, Watershed } from '@geti/smart-tools';
 
 import { InferenceImageWorker } from '../../pages/annotator/components/explanation/inference-image.interface';
-import { GrabcutInstance, GrabcutWorker } from '../../pages/annotator/tools/grabcut-tool/grabcut-tool.interface';
+import { GrabcutWorker } from '../../pages/annotator/tools/grabcut-tool/grabcut-tool.interface';
 import {
     IntelligentScissorsInstance,
     IntelligentScissorsWorker,
@@ -37,7 +37,7 @@ export type MapAlgorithmToWorker = {
 // TODO: We will use this once all tools are moved
 export type MapAlgorithmToInstance = {
     [AlgorithmType.WATERSHED]: Watershed;
-    [AlgorithmType.GRABCUT]: GrabcutInstance;
+    [AlgorithmType.GRABCUT]: Grabcut;
     [AlgorithmType.INTELLIGENT_SCISSORS]: IntelligentScissorsInstance;
     [AlgorithmType.RITM]: RITMMethods;
     [AlgorithmType.SSIM]: SSIM;

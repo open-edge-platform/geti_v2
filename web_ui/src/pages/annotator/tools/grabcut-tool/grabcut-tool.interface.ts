@@ -1,7 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Point, Polygon, Rect } from '../../../../core/annotations/shapes.interface';
+import { Grabcut } from '@geti/smart-tools';
+
+import { Point, Rect } from '../../../../core/annotations/shapes.interface';
 import { AlgorithmType } from '../../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { WebWorker } from '../../../../webworkers/web-worker.interface';
 import { Hotkeys } from '../../providers/annotator-provider/utils';
@@ -18,17 +20,8 @@ export interface GrabcutData {
 }
 
 export interface GrabcutWorker extends WebWorker {
-    Grabcut: GrabcutInstance;
     type: AlgorithmType.GRABCUT;
-}
-
-export interface GrabcutInstance {
-    new (imageData: ImageData): GrabcutMethods;
-}
-
-export interface GrabcutMethods {
-    startGrabcut: (data: Omit<GrabcutData, 'image'>) => Polygon;
-    cleanModels: () => void;
+    build: () => Promise<Grabcut>;
 }
 
 export const GrabcutHotKeys: Pick<Hotkeys, GrabcutToolType> = {
