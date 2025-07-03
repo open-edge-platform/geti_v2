@@ -17,29 +17,15 @@ export interface PoseKeypointProps extends SVGProps<SVGCircleElement> {
     radius?: number;
 }
 
-export const PoseKeypointVisibility = ({ point, radius, ...svgProps }: PoseKeypointProps) => {
-    const { zoomState } = useZoom();
+const usePointFillAndStroke = (point: KeypointNode) => {
+    const { isSelected } = useSelected();
+    const isPointActive = useIsHovered(point.label.id) || isSelected(point.label.id);
 
-    const occludedIconSize = 18 / zoomState.zoom;
-
-    if (!point.isVisible) {
-        return (
-            <CloseBold
-                width={occludedIconSize}
-                height={occludedIconSize}
-                y={point.y - occludedIconSize / 2}
-                x={point.x - occludedIconSize / 2}
-                style={{
-                    fill: point.label.color,
-                    cursor: 'default',
-                    stroke: 'var(--spectrum-gray-900)',
-                    strokeWidth: 2,
-                }}
-            />
-        );
-    }
-
-    return <PoseKeypoint point={point} radius={radius} {...svgProps} />;
+    return {
+        isPointActive,
+        fill: isPointActive ? 'var(--spectrum-gray-900)' : point.label.color,
+        stroke: isPointActive ? point.label.color : 'var(--spectrum-gray-900)',
+    };
 };
 
 export const PoseKeypoints = ({ shape }: KeypointProps) => {
@@ -56,21 +42,45 @@ export const PoseKeypoints = ({ shape }: KeypointProps) => {
     );
 };
 
+export const PoseKeypointVisibility = ({ point, radius, ...svgProps }: PoseKeypointProps) => {
+    const { zoomState } = useZoom();
+    const { fill, stroke, isPointActive } = usePointFillAndStroke(point);
+
+    const occludedIconSize = 18 / zoomState.zoom;
+
+    if (point.isVisible) {
+        return <PoseKeypoint point={point} radius={radius} {...svgProps} />;
+    }
+
+    return (
+        <CloseBold
+            data-testid='close-bold-icon'
+            width={occludedIconSize}
+            height={occludedIconSize}
+            aria-current={isPointActive}
+            y={point.y - occludedIconSize / 2}
+            x={point.x - occludedIconSize / 2}
+            style={{ cursor: 'default', strokeWidth: 2, fill, stroke }}
+        />
+    );
+};
+
 export const PoseKeypoint = ({ point, radius = KEYPOINT_RADIUS, ...svgProps }: PoseKeypointProps) => {
     const { zoomState } = useZoom();
-    const { isSelected } = useSelected();
-    const isPointActive = useIsHovered(point.label.id) || isSelected(point.label.id);
+    const { isPointActive, fill, stroke } = usePointFillAndStroke(point);
 
     const strokeWidth = radius * 0.4;
     const widthMultiplier = isPointActive ? 2 : 1;
 
     return (
         <circle
+            data-testid='point-icon'
             r={radius / zoomState.zoom}
             cx={point.x}
             cy={point.y}
-            fill={isPointActive ? 'var(--spectrum-gray-900)' : point.label.color}
-            stroke={isPointActive ? point.label.color : 'var(--spectrum-gray-900)'}
+            fill={fill}
+            stroke={stroke}
+            aria-current={isPointActive}
             strokeWidth={`calc(${strokeWidth * widthMultiplier} / var(--zoom-level))`}
             fillOpacity={'var(--annotation-fill-opacity)'}
             strokeOpacity={'var(--annotation-border-opacity)'}

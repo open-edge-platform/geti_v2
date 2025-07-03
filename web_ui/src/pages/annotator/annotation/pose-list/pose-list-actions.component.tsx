@@ -20,8 +20,8 @@ interface PoseListActionsProps {
     keypointAnnotation: KeypointAnnotation;
 }
 
-export const OCCLUDE_TOOLTIP = 'Mark all as occluded';
-export const VISIBLE_TOOLTIP = 'Mark all as visible';
+export const OCCLUDE_TOOLTIP = 'Mark selected points as occluded';
+export const VISIBLE_TOOLTIP = 'Mark selected points as visible';
 
 const DESELECT_TOOLTIP = 'Deselect all points';
 const SELECT_TOOLTIP = 'Select all points';
