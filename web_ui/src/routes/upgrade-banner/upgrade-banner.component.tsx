@@ -11,9 +11,9 @@ import { orderBy } from 'lodash-es';
 import { GENERAL_SETTINGS_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
 import { getSettingsOfType } from '../../core/user-settings/utils';
-import { UpgradeDialog } from './upgrade-dialog/upgrade-dialog.component';
 import { HasPermission } from '../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../shared/components/has-permission/has-permission.interface';
+import { UpgradeDialog } from './upgrade-dialog/upgrade-dialog.component';
 
 import styles from './upgrade-banner.module.scss';
 
