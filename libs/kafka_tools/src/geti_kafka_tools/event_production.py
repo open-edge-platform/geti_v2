@@ -106,7 +106,7 @@ class EventProducer:
 
     def terminate(self) -> None:
         logger.info("Terminating producer")
-        self._producer.flush()
+        self._producer.flush(3)
         self._producer = None  # This line releases producer thread & connection to the cluster
         EventProducer._instance = None
 

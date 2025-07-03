@@ -152,7 +152,7 @@ class TestEventProducer:
 
         # Assert
         fxt_producer.assert_called_once()
-        old_producer_instance.flush.assert_called_once_with()
+        old_producer_instance.flush.assert_called_once_with(3)
         assert event_producer._producer is None
 
 
