@@ -171,7 +171,7 @@ describe('ExportDatasetMessage', () => {
 
     it('anomaly segmentation & "datumaro" format', async () => {
         await renderApp({
-            project: getMockedProject([DOMAIN.ANOMALY_SEGMENTATION]),
+            project: getMockedProject([]),
             exportFormat: ExportFormats.DATUMARO,
         });
 

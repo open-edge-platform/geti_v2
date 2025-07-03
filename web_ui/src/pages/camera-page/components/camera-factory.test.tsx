@@ -99,12 +99,7 @@ describe('CameraFactory', () => {
     });
 
     describe('label selector is visible', () => {
-        it.each([
-            DOMAIN.CLASSIFICATION,
-            DOMAIN.ANOMALY_CLASSIFICATION,
-            DOMAIN.ANOMALY_DETECTION,
-            DOMAIN.ANOMALY_SEGMENTATION,
-        ])('task type: %o', async (taskType) => {
+        it.each([DOMAIN.CLASSIFICATION, DOMAIN.ANOMALY_CLASSIFICATION])('task type: %o', async (taskType) => {
             await renderApp({ tasks: [getMockedTask({ domain: taskType, labels: [] })] });
 
             expect(screen.getByRole('button', { name: /Select label/i })).toBeVisible();
@@ -186,7 +181,9 @@ describe('CameraFactory', () => {
             await renderApp({
                 hasDefaultLabel: true,
                 defaultLabelId: mockedLabelOne.id,
-                tasks: [getMockedTask({ domain: DOMAIN.ANOMALY_DETECTION, labels: [mockedLabelOne, mockedLabelTwo] })],
+                tasks: [
+                    getMockedTask({ domain: DOMAIN.ANOMALY_CLASSIFICATION, labels: [mockedLabelOne, mockedLabelTwo] }),
+                ],
             });
 
             selectLabel(mockedLabelOne.name, mockedLabelOne.name);
@@ -206,7 +203,7 @@ describe('CameraFactory', () => {
             await renderApp({
                 hasDefaultLabel: true,
                 defaultLabelId: '1',
-                tasks: [getMockedTask({ domain: DOMAIN.ANOMALY_DETECTION, labels: [mockedLabelOne] })],
+                tasks: [getMockedTask({ domain: DOMAIN.ANOMALY_CLASSIFICATION, labels: [mockedLabelOne] })],
             });
 
             act(() => {

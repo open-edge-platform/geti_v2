@@ -8,19 +8,16 @@ import { providersRender as render } from '../../../test-utils/required-provider
 import { DomainName } from './domain-name.component';
 
 describe('DomainName', () => {
-    const anomalyDomains = [DOMAIN.ANOMALY_DETECTION, DOMAIN.ANOMALY_CLASSIFICATION, DOMAIN.ANOMALY_SEGMENTATION];
-    it.each(anomalyDomains)(`should render Anomaly detection domain`, (domain) => {
-        render(<DomainName domain={domain} />);
+    const anomalyDomain = DOMAIN.ANOMALY_CLASSIFICATION;
 
-        expect(screen.getByText(DOMAIN.ANOMALY_DETECTION)).toBeInTheDocument();
+    it('should render Anomaly detection domain', () => {
+        render(<DomainName domain={anomalyDomain} />);
+        expect(screen.getByText('Anomaly detection')).toBeInTheDocument();
     });
 
-    it.each(Object.values(DOMAIN).filter((domain) => !anomalyDomains.includes(domain)))(
-        'should render %s domain',
-        (domain) => {
-            render(<DomainName domain={domain} />);
+    it.each(Object.values(DOMAIN).filter((domain) => domain !== anomalyDomain))('should render %s domain', (domain) => {
+        render(<DomainName domain={domain} />);
 
-            expect(screen.getByText(domain)).toBeInTheDocument();
-        }
-    );
+        expect(screen.getByText(domain)).toBeInTheDocument();
+    });
 });

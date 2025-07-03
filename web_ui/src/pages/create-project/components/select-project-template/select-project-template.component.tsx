@@ -81,7 +81,7 @@ export const SelectProjectTemplate = ({
 
     const tabs = {
         ...filterOutKeypointDetection(TABS_SINGLE_TEMPLATE, FEATURE_FLAG_KEYPOINT_DETECTION),
-        Anomaly: TABS_SINGLE_TEMPLATE.Anomaly.filter((template) => template.domain === DOMAIN.ANOMALY_CLASSIFICATION),
+        Anomaly: TABS_SINGLE_TEMPLATE.Anomaly,
     };
 
     const ITEMS: TabItem[] = [

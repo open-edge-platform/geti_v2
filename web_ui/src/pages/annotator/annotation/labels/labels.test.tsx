@@ -105,8 +105,8 @@ describe('Labels', (): void => {
 
         const tasks = [
             getMockedTask({
-                id: 'anomaly-segmentation',
-                domain: DOMAIN.ANOMALY_SEGMENTATION,
+                id: 'anomaly-classification',
+                domain: DOMAIN.ANOMALY_CLASSIFICATION,
                 labels: [normalLabel, anomalousLabel],
             }),
         ];
@@ -317,8 +317,8 @@ describe('Labels', (): void => {
 
         const tasks = [
             getMockedTask({
-                id: 'anomaly-segmentation',
-                domain: DOMAIN.ANOMALY_SEGMENTATION,
+                id: 'anomaly-classification',
+                domain: DOMAIN.ANOMALY_CLASSIFICATION,
                 labels: [normalLabel, anomalousLabel],
             }),
         ];

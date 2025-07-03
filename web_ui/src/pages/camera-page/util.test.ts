@@ -21,8 +21,6 @@ describe('camera-page utils', () => {
 
     it('isClassificationOrAnomaly', () => {
         expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.CLASSIFICATION }))).toBe(true);
-        expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.ANOMALY_DETECTION }))).toBe(true);
-        expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.ANOMALY_SEGMENTATION }))).toBe(true);
         expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.ANOMALY_CLASSIFICATION }))).toBe(true);
     });
 

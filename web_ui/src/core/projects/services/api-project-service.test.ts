@@ -608,12 +608,7 @@ describe('API project service', () => {
                 server.use(
                     rest.post(apiRequestUrl(url), (_req, res, ctx) => res(ctx.json(PROJECT_ANOMALY_CLASSIFICATION)))
                 );
-                const project = await projectService.createProject(
-                    workspaceIdentifier,
-                    'test-project',
-                    [DOMAIN.ANOMALY_SEGMENTATION],
-                    []
-                );
+                const project = await projectService.createProject(workspaceIdentifier, 'test-project', [], []);
 
                 expect(project).toStrictEqual(getProjectEntity(PROJECT_ANOMALY_CLASSIFICATION));
             });
