@@ -75,8 +75,11 @@ class ModelStats(BaseModel):
     gigaflops: float = Field(
         gt=0, title="Gigaflops", description="Billions of floating-point operations per second required by the model"
     )
-    trainable_parameters: int = Field(
-        gt=0, title="Trainable parameters", description="Number of trainable parameters in the model"
+    trainable_parameters: float = Field(
+        ge=0.0,
+        default=0.0,
+        title="Trainable parameters (millions)",
+        description="Number of trainable parameters in the model, expressed in millions"
     )
     performance_ratings: PerformanceRatings = Field(
         title="Performance ratings", description="Standardized ratings for model performance metrics"

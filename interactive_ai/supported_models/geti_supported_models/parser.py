@@ -1,6 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
+import os
+from functools import cache
 from importlib import resources
 
 import hiyapyco
@@ -23,8 +24,46 @@ def parse_manifest(*manifest_sources, relative: bool = True) -> ModelManifest:
     :return: A populated Algorithm object containing the parsed manifest data.
     """
     if relative:
-        manifest_sources = tuple(resources.files(manifests).joinpath(path) for path in manifest_sources)
+        manifest_sources = tuple(str(resources.files(manifests).joinpath(path)) for path in manifest_sources)
     yaml_manifest = hiyapyco.load(
         *manifest_sources, method=hiyapyco.METHOD_MERGE, interpolate=True, failonmissingfiles=True
     )
     return ModelManifest(**yaml_manifest)
+
+
+@cache
+def get_model_manifests() -> dict[str, ModelManifest]:
+    """
+    Find and load all model manifest files in the manifests directory.
+
+    Structure:
+    - manifests/base.yaml: Base configuration for all models
+    - manifests/task/base.yaml: Base configuration for specific task type
+    - manifests/task/model.yaml: Model-specific configuration
+
+    :return: A dictionary mapping model manifest IDs to their corresponding ModelManifest objects.
+    """
+    # Get the manifests directory path
+    manifests_dir = resources.files(manifests)
+    root_base_yaml = "base.yaml"
+
+    # Find all model-specific YAML files
+    model_manifests = {}
+
+    # Iterate through task type directories
+    for task_dir in [d for d in manifests_dir.iterdir() if os.path.isdir(d)]:
+        task_base_yaml = os.path.join(task_dir.name, "base.yaml")
+
+        # Find all model files in this task directory
+        for file in task_dir.iterdir():
+            if file.name.endswith(".yaml") and file.name != "base.yaml":
+                model_yaml_path = os.path.join(task_dir.name, file.name)
+
+                # Build dependency chain: base -> task_base -> model
+                dependency_chain = [root_base_yaml, task_base_yaml, model_yaml_path]
+
+                # Parse manifest with all dependencies in order
+                manifest = parse_manifest(*dependency_chain, relative=True)
+                model_manifests[manifest.id] = manifest
+
+    return model_manifests

@@ -41,6 +41,21 @@ class ModelTemplateRESTViews:
         is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
         is_anomaly_task = model_template.task_type.is_anomaly
         task_type = "anomaly" if is_anomaly_reduced and is_anomaly_task else model_template.task_type.name.lower()
+
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
+            # TODO: add tests
+            model_manifest = model_template.model_manifest
+            model_manifest_dict = model_manifest.model_dump()
+            return {
+                "model_manifest_id": model_manifest.id,
+                "task": task_type,
+                "name": model_manifest.name,
+                "description": model_manifest.description,
+                "stats": model_manifest_dict["stats"],
+                "supported_status": model_manifest_dict["supported_status"],
+                "supported_gpus": model_manifest_dict["supported_gpus"],
+                "capabilities": model_manifest_dict["capabilities"],
+            }
         return {
             "name": model_template.name,
             "task_type": task_type,

@@ -27,7 +27,7 @@ from geti_supported_models.model_manifest import (
     NullModelManifest,
     PerformanceRatings,
 )
-from geti_supported_models.parser import parse_manifest
+from geti_supported_models.parser import get_model_manifests, parse_manifest
 
 BASE_MANIFEST_PATH = str(resources.files(manifests).joinpath("base.yaml"))
 TEST_PATH = pathlib.Path(os.path.dirname(__file__))
@@ -91,7 +91,7 @@ class TestModelManifest:
 
     def test_relative_path_parsing(self):
         sources = ("base.yaml", "dummy_base_model_manifest.yaml", "dummy_model_manifest.yaml")
-        expected_paths = [resources.files(manifests).joinpath(path) for path in sources]
+        expected_paths = [str(resources.files(manifests).joinpath(path)) for path in sources]
 
         # Create a more complete mock result with all required nested fields
         mock_yaml_result = {
@@ -145,3 +145,10 @@ class TestModelManifest:
         assert null_model_manifest.stats.trainable_parameters == 1
         assert null_model_manifest.supported_gpus == {}
         assert null_model_manifest.hyperparameters.dataset_preparation.augmentation == AugmentationParameters()
+
+    @pytest.mark.skip(reason="Missing manifests files")
+    def test_get_model_manifests(self):
+        # test that the model manifests can be retrieved without errors
+        model_manifests = get_model_manifests()
+
+        assert len(model_manifests) > 0

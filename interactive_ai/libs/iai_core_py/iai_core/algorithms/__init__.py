@@ -10,6 +10,7 @@ import time
 from dataclasses import dataclass
 from threading import Lock
 
+from geti_supported_models.parser import get_model_manifests
 from iai_core.entities.model_template import (
     ModelTemplate,
     ModelTemplateDeprecationStatus,
@@ -94,6 +95,7 @@ class ModelTemplateList(metaclass=Singleton):
             if current_time < self._model_template_list_last_updated + minimum_duration_between_updates:
                 return
 
+            model_manifests = get_model_manifests()
             self._model_template_list_last_updated = current_time
 
             new_model_template_list: dict[str, ModelTemplateList.Entry] = {}
