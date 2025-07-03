@@ -46,14 +46,18 @@ export const useGrabcut = ({ showNotificationError, onSuccess }: useGrabcutProps
 
     const mutation = useMutation<ToolPolygon, unknown, GrabcutData>({
         mutationFn: async ({ image, ...data }: GrabcutData) => {
-            if (worker && !grabcutRef.current) {
+            if (worker) {
                 await worker.loadImage(image);
 
                 grabcutRef.current = worker;
 
                 const convertedData: ToolGrabcutData = convertGetiDataToGrabcutData({ image, ...data });
 
-                return grabcutRef.current!.startGrabcut(convertedData);
+                if (!grabcutRef.current) {
+                    return Promise.reject(new Error('Could not run Grabcut'));
+                }
+
+                return grabcutRef.current.startGrabcut(convertedData);
             } else {
                 return Promise.reject(new Error('Could not run Grabcut'));
             }

@@ -5,7 +5,7 @@ import { PointerEvent, SVGProps } from 'react';
 
 import Clipper from '@doodle3d/clipper-js';
 import type ClipperShape from '@doodle3d/clipper-js';
-import { Shape as SmartToolsShape } from '@geti/smart-tools/src/shared/interfaces';
+import { Shape as SmartToolsShape, ShapeType as SmartToolsShapeType } from '@geti/smart-tools/src/shared/interfaces';
 import { defer, isEmpty } from 'lodash-es';
 
 import { Annotation, RegionOfInterest } from '../../../core/annotations/annotation.interface';
@@ -419,7 +419,7 @@ export const SENSITIVITY_SLIDER_TOOLTIP =
     'while lower numbers decrease it. Keep in mind that increased precision requires more computing power and time. ' +
     'Adding high-resolution images may further extend the annotation waiting time significantly.';
 
-export const convertGetiShapeTypeToToolShapeType = (shapeType: ShapeType): SmartToolsShape['shapeType'] => {
+export const convertGetiShapeTypeToToolShapeType = (shapeType: ShapeType): SmartToolsShapeType => {
     switch (shapeType) {
         case ShapeType.Rect:
             return 'rect';

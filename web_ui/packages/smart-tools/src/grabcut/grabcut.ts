@@ -17,6 +17,8 @@ class Grabcut {
     constructor(private CV: OpenCVTypes.cv) {}
 
     loadImage(imageData: ImageData) {
+        this.cleanModels();
+
         this.mask = new this.CV.Mat();
         this.bgdModel = new this.CV.Mat();
         this.fgdModel = new this.CV.Mat();
@@ -307,10 +309,25 @@ class Grabcut {
     }
 
     cleanModels(): void {
-        this.img?.delete();
-        this.mask?.delete();
-        this.bgdModel?.delete();
-        this.fgdModel?.delete();
+        if (this.img) {
+            this.img.delete();
+            this.img = null;
+        }
+
+        if (this.mask) {
+            this.mask.delete();
+            this.mask = null;
+        }
+
+        if (this.bgdModel) {
+            this.bgdModel.delete();
+            this.bgdModel = null;
+        }
+
+        if (this.fgdModel) {
+            this.fgdModel.delete();
+            this.fgdModel = null;
+        }
     }
 
     terminate() {
