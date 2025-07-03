@@ -15,6 +15,7 @@ export enum LOCAL_STORAGE_KEYS {
     IMPORT_DATASET_TO_EXISTING_PROJECT = 'importDatasetToExistingProject',
     COPY_ANNOTATION = 'copy-annotation',
     LAST_LOGIN_INFO = 'lastLoginInfo',
+    LAST_OPENED_WORKSPACE = 'lastOpenedWorkspace',
     MEDIA_VIEW_MODE = 'media-view-mode',
     LAST_SELECTED_ORGANIZATION_ID = 'last-selected-organization-id',
 }
@@ -26,3 +27,6 @@ export const getPanelSettingsKey = (projectId: string) => {
 export const getImportDatasetToNewProjectKey = ({ workspaceId, organizationId }: WorkspaceIdentifier) => {
     return `${LOCAL_STORAGE_KEYS.IMPORT_DATASET_TO_NEW_PROJECT}-${organizationId}-${workspaceId}`;
 };
+
+export const getLastOpenedWorkspaceKey = (organizationId: string) =>
+    `${LOCAL_STORAGE_KEYS.LAST_OPENED_WORKSPACE}-${organizationId}`;

@@ -12,7 +12,6 @@ from kubernetes.client.models import (
     V1ConfigMapEnvSource,
     V1ConfigMapKeySelector,
     V1Container,
-    V1ContainerPort,
     V1EmptyDirVolumeSource,
     V1EnvFromSource,
     V1EnvVar,
@@ -35,8 +34,7 @@ from geti_types import Session
 logger = logging.getLogger(__name__)
 
 
-PRIMARY_CONTAINER_NAME = "trainer"
-SIDECAR_CONTAINER_NAME = "mlflow-sidecar"
+CONTAINER_NAME = "trainer"
 
 
 def _create_sidecar_env(
@@ -143,15 +141,12 @@ def create_flyte_container_task(  # noqa: PLR0913
     :param compute_resources: Dataclass for k8s compute resource requests/limits
     :param ephemeral_storage_resources: Dataclass for ephemeral storage requests/limits
     :param trainer_image_info: Dataclass for trainer image selection
-    :param command: Bash command executed by the rendered primary container (trainer)
+    :param command: Bash command executed by the rendered container (trainer)
     :param container_name: Container name
     :param namespace: K8s namespace where config maps are retrieved from
     """
-    primary_container_image = trainer_image_info.to_primary_image_full_name()
-    logger.info(f"Create primary_container_image={primary_container_image}")
-
-    sidecar_container_image = trainer_image_info.to_sidecar_image_full_name()
-    logger.info(f"Create sidecar_container_image={sidecar_container_image}")
+    container_image = trainer_image_info.to_image_full_name()
+    logger.info(f"Create container_image={container_image}")
 
     identifier_json = json.dumps(
         {
@@ -166,12 +161,8 @@ def create_flyte_container_task(  # noqa: PLR0913
         V1EnvFromSource(config_map_ref=V1ConfigMapEnvSource(name=f"{namespace}-feature-flags")),
         V1EnvFromSource(config_map_ref=V1ConfigMapEnvSource(name=f"{namespace}-s3-bucket-names")),
     ]
-    sidecar_env = _create_sidecar_env(
-        identifier_json=identifier_json,
-        namespace=namespace,
-    )
 
-    primary_resources = V1ResourceRequirements(
+    resources = V1ResourceRequirements(
         requests={
             **compute_resources.to_kwargs(is_requests=True),
             "ephemeral-storage": str(ephemeral_storage_resources.requests),
@@ -182,12 +173,7 @@ def create_flyte_container_task(  # noqa: PLR0913
         },
     )
 
-    secondary_resources = V1ResourceRequirements(
-        requests={"cpu": "500m", "memory": "1Gi"},
-        limits={"cpu": "1", "memory": "3Gi"},
-    )
-
-    logger.info(f"Create primary_resources={primary_resources}")
+    logger.info(f"Create resources={resources}")
 
     accelerator_name = compute_resources.accelerator_name
     # We do not have any RuntimeClass for Intel GPU
@@ -209,8 +195,8 @@ def create_flyte_container_task(  # noqa: PLR0913
     pod_spec = V1PodSpec(
         containers=[
             V1Container(
-                name=PRIMARY_CONTAINER_NAME,
-                image=primary_container_image,
+                name=CONTAINER_NAME,
+                image=container_image,
                 env=[
                     # Identifier JSON
                     V1EnvVar(name="IDENTIFIER_JSON", value=identifier_json),
@@ -319,7 +305,7 @@ def create_flyte_container_task(  # noqa: PLR0913
                         value=os.environ.get("S3_CREDENTIALS_PROVIDER", ""),
                     ),
                 ],
-                resources=primary_resources,
+                resources=resources,
                 env_from=env_from,
                 volume_mounts=[
                     V1VolumeMount(mount_path="/dev/shm", name="shared-memory"),  # noqa : S108 # nosec: B108
@@ -327,23 +313,6 @@ def create_flyte_container_task(  # noqa: PLR0913
                 ],
                 security_context=security_context,
             )
-        ],
-        init_containers=[
-            V1Container(
-                command=["run"],
-                name=SIDECAR_CONTAINER_NAME,
-                image=sidecar_container_image,
-                ports=[V1ContainerPort(container_port=5000, name="mlflow-port", protocol="TCP")],
-                env=sidecar_env,
-                env_from=env_from,
-                volume_mounts=[
-                    V1VolumeMount(mount_path="/shard_files", name="shard-files-dir"),
-                ],
-                resources=secondary_resources,
-                # restart_policy="Always" means that it is a native sidecar container.
-                # See https://kubernetes.io/blog/2023/08/25/native-sidecar-containers/
-                restart_policy="Always",
-            ),
         ],
         runtime_class_name=runtime_class_name,
         image_pull_secrets=[V1LocalObjectReference(name="regcred")],
@@ -362,11 +331,11 @@ def create_flyte_container_task(  # noqa: PLR0913
 
     return ContainerTask(
         name=container_name,
-        image=primary_container_image,
+        image=container_image,
         command=command,
         pod_template=PodTemplate(
             pod_spec=pod_spec,
-            primary_container_name=PRIMARY_CONTAINER_NAME,
+            primary_container_name=CONTAINER_NAME,
             annotations={
                 "proxy.istio.io/config": '{ "holdApplicationUntilProxyStarts": true }',
                 "karpenter.sh/do-not-disrupt": "true",

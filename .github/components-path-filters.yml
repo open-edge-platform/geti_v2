@@ -149,11 +149,6 @@ interactive_ai/services/media:
   - Makefile.shared-go
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/services/mlflow_geti_store:
-  - interactive_ai/services/mlflow_geti_store/**
-  - Makefile.shared-python
-  - Makefile.shared
-  - .github/workflows/component.yml
 interactive_ai/services/model_registration:
   - interactive_ai/services/model_registration/**
   - libs/grpc_interfaces/pyproject.toml

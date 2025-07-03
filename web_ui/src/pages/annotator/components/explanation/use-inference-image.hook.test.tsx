@@ -24,22 +24,20 @@ describe('useInferenceImage', () => {
     it('returns resized image when worker is present', async () => {
         const mockResize = jest.fn().mockResolvedValue('resized-image');
         const mockInstance = { resize: mockResize };
-        const mockWorker = {
-            InferenceImage: jest.fn().mockResolvedValue(mockInstance),
-        };
-        jest.mocked(useLoadAIWebworker).mockReturnValue({ worker: mockWorker });
+        // @ts-expect-error We will update all these types later
+        jest.mocked(useLoadAIWebworker).mockReturnValue({ worker: mockInstance });
 
         const { result } = renderHook(() => useInferenceImage(100, 200), { wrapper });
 
         const imageData = { foo: 'bar' } as unknown as ImageData;
         const output = await result.current(imageData);
 
-        expect(mockWorker.InferenceImage).toHaveBeenCalled();
         expect(mockResize).toHaveBeenCalledWith(imageData, 100, 200);
         expect(output).toBe('resized-image');
     });
 
     it('rejects if there is no worker', async () => {
+        // @ts-expect-error We will update all these types later
         jest.mocked(useLoadAIWebworker).mockReturnValue({ worker: undefined });
 
         const { result } = renderHook(() => useInferenceImage(100, 200), { wrapper });

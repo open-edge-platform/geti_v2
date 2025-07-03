@@ -9,5 +9,3 @@ data:
   default_trainer_image_name: "{{ .Values.training.default_trainer_image_name }}"
   # Default Docker image version (tag) of primary container used for model training/hpo/optimize
   default_trainer_version: "{{ .Values.training.default_trainer_version }}"
-  # Docker image name of MLFlow sidecar container used for model training/hpo/optimize
-  mlflow_sidecar_image_name: "{{ .Values.training.mlflow_sidecar_image_name }}"

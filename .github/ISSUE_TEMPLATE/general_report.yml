@@ -1,5 +1,5 @@
 name: 📝 General Issue
-description: Report a bug, request documentation updates, or ask a general question
+description: Report a bug or request documentation updates
 title: "[<type>] <short description>"
 labels: []
 assignees: []
@@ -21,7 +21,7 @@ body:
     attributes:
       label: 📄 Description
       description: Provide a clear and concise description of the issue.
-      placeholder: "Describe the bug, feature, or question..."
+      placeholder: "Feature xyz does not work when..."
     validations:
       required: true
 
@@ -58,6 +58,12 @@ body:
       required: true
 
   - type: input
+    id: hardware
+    attributes:
+      label: Hardware
+      placeholder: "e.g. Intel CPU, GPU, RAM"
+
+  - type: input
     id: os
     attributes:
       label: 🖥️ Operating System
@@ -74,12 +80,6 @@ body:
     attributes:
       label: Python Version (if relevant)
       placeholder: "e.g. 3.10"
-
-  - type: input
-    id: hardware
-    attributes:
-      label: Hardware
-      placeholder: "e.g. Intel CPU, GPU, RAM"
 
   - type: textarea
     id: context

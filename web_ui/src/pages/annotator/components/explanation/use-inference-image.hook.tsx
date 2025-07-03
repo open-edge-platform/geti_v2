@@ -12,10 +12,7 @@ export const useInferenceImage = (width: number, height: number) => {
     const mutation = useMutation({
         mutationFn: async (image: ImageData) => {
             if (worker) {
-                // @ts-expect-error TODO: remove after https://github.com/open-edge-platform/geti/pull/531
-                const instance = await worker.InferenceImage();
-
-                return instance.resize(image, width, height);
+                return worker.resize(image, width, height);
             } else {
                 return Promise.reject('Unable to run inference mutation');
             }

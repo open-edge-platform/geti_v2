@@ -175,5 +175,6 @@ export const getMaxMinPoint = <T extends Point>(points: T[], pointAxis: PointAxi
         ([min, max], point) => [Math.min(min, point[pointAxis]), Math.max(max, point[pointAxis])],
         [Infinity, -Infinity]
     );
+
     return [minAxisValue, maxAxisValue];
 };

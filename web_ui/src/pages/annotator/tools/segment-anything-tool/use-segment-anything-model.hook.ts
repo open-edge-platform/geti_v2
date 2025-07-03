@@ -101,7 +101,6 @@ const useSegmentAnythingWorker = (
             setModelIsLoading(true);
 
             if (worker) {
-                // @ts-expect-error Return type of worker.model is incorrect
                 const model: SegmentAnythingModel = await new worker.model();
 
                 await model.init(algorithmType);

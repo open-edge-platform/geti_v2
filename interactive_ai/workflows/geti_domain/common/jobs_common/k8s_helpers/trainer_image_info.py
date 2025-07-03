@@ -44,7 +44,6 @@ class TrainerImageInfo:
     """Trainer image information."""
 
     train_image_name: str
-    sidecar_image_name: str
     render_gid: int = 0  # Should be non-zero value when training with Intel GPUs
 
     @classmethod
@@ -67,8 +66,6 @@ class TrainerImageInfo:
         msg = "Cannot get `{0}` field from config map `{1}/{2}`"
 
         # This information is from `impt-configuration` config map in the namespace `impt`
-        if (mlflow_sidecar_image := configmap.data.get("mlflow_sidecar_image")) is None:
-            raise ValueError(msg.format("mlflow_sidecar_image", namespace, name))
         if (otx2_image := configmap.data.get("otx2_image")) is None:
             raise ValueError(msg.format("otx2_image", namespace, name))
         if render_gid_value := configmap.data.get("render_gid"):
@@ -79,18 +76,11 @@ class TrainerImageInfo:
             f"Trainer image has been selected {image_name}, where a model has trainer "
             f"identification for {training_framework.version}."
         )
-        return cls(train_image_name=image_name, sidecar_image_name=mlflow_sidecar_image, render_gid=render_gid)
+        return cls(train_image_name=image_name, render_gid=render_gid)
 
-    def to_primary_image_full_name(self) -> str:
-        """Get primary image full name.
+    def to_image_full_name(self) -> str:
+        """Get image full name.
 
         For example, it would be "dev-registry.toolbox.com/impp/ote:2.2.0".
         """
         return self.train_image_name
-
-    def to_sidecar_image_full_name(self) -> str:
-        """Get sidecar image full name.
-
-        For example, it would be "dev-registry.toolbox.com/impp/mlflow-geti-store:2.2.0".
-        """
-        return self.sidecar_image_name

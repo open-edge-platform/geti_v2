@@ -6,8 +6,8 @@ import { Key } from 'react';
 import { useWorkspacesApi } from '@geti/core/src/workspaces/hooks/use-workspaces.hook';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 
-import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { WorkspaceMenuActions } from './utils';
+import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
+import { WorkspaceMenuActions } from '../utils';
 
 const MIN_NUMBER_OF_REQUIRED_WORKSPACES = 1;
 
