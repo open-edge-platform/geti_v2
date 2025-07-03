@@ -3,7 +3,10 @@
 
 import { useState } from 'react';
 
-import { useCheckPlatformBackupQuery } from '@geti/core/src/platform-utils/hooks/use-platform-utils.hook';
+import {
+    useCheckPlatformBackupQuery,
+    usePlatformUpgradeMutation,
+} from '@geti/core/src/platform-utils/hooks/use-platform-utils.hook';
 import { PlatformVersion } from '@geti/core/src/platform-utils/services/utils.interface';
 import {
     Button,
@@ -109,6 +112,7 @@ interface UpgradeFormProps {
 
 const UpgradeForm = ({ availableVersions, onClose, currentVersion }: UpgradeFormProps) => {
     const { data: checkPlatformBackup } = useCheckPlatformBackupQuery();
+    const platformUpgrade = usePlatformUpgradeMutation();
     const isBackupPossible = checkPlatformBackup?.isBackupPossible ?? false;
     const [selectedVersionKey, setSelectedVersionKey] = useState(availableVersions[0].version);
     const selectedVersion = availableVersions.find(({ version }) => version === selectedVersionKey);
@@ -116,6 +120,20 @@ const UpgradeForm = ({ availableVersions, onClose, currentVersion }: UpgradeForm
     const shouldDisplayVersionsPicker = availableVersions.length > 1;
 
     const isUpgradeButtonDisabled = isBackupPossible ? false : !isSkipBackupEnabled;
+
+    const handleUpgrade = () => {
+        platformUpgrade.mutate(
+            {
+                version: selectedVersionKey,
+                forceUpgrade: isBackupPossible ? undefined : isSkipBackupEnabled,
+            },
+            {
+                onSuccess: () => {
+                    onClose();
+                },
+            }
+        );
+    };
 
     return (
         <>
@@ -163,7 +181,9 @@ const UpgradeForm = ({ availableVersions, onClose, currentVersion }: UpgradeForm
                         <Button variant={'secondary'} onPress={onClose}>
                             Cancel
                         </Button>
-                        <Button isDisabled={isUpgradeButtonDisabled}>Upgrade now</Button>
+                        <Button isDisabled={isUpgradeButtonDisabled} onPress={handleUpgrade}>
+                            Upgrade now
+                        </Button>
                     </Flex>
                 </Flex>
             </ButtonGroup>
