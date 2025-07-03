@@ -46,7 +46,7 @@ export const useFuxNotifications = () => {
             settings.config
         );
 
-        const settingToDisable = settings.config.autoTrainingCreditModal.isEnabled
+        const settingToDisable = settings.config[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL].isEnabled
             ? FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL
             : FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION;
 
