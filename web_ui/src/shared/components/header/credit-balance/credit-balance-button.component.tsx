@@ -14,7 +14,6 @@ import { useOverlayTriggerState } from 'react-stately';
 import { useCreditsQueries } from '../../../../core/credits/hooks/use-credits-api.hook';
 import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../../../core/user-settings/hooks/use-global-settings.hook';
-import { getSettingsOfType } from '../../../../core/user-settings/utils';
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { usePrevious } from '../../../../hooks/use-previous/use-previous.hook';
 import { useProject } from '../../../../pages/project-details/providers/project-provider/project-provider.component';
@@ -80,11 +79,8 @@ const CreditBalanceButtonFuxNotification = ({ isDarkMode }: { isDarkMode: boolea
     const fuxState = useOverlayTriggerState({});
     const settings = useUserGlobalSettings();
 
-    const fuxNotificationsConfig = getSettingsOfType(settings.config, FUX_NOTIFICATION_KEYS);
-    const fuxNotificationsSettings = getSettingsOfType(settings.config, FUX_SETTINGS_KEYS);
-    const isFuxNotificationEnabled =
-        fuxNotificationsConfig[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION]?.isEnabled;
-    const firstAutoTrainedProject = fuxNotificationsSettings[FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_PROJECT_ID].value;
+    const isFuxNotificationEnabled = settings.config[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION]?.isEnabled;
+    const firstAutoTrainedProject = settings.config[FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_PROJECT_ID].value;
     const prevFuxEnabled = usePrevious(isFuxNotificationEnabled);
 
     const { useActiveUser } = useUsers();

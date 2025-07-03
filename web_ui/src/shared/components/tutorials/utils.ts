@@ -6,9 +6,12 @@ import {
     FUX_SETTINGS_KEYS,
     TUTORIAL_CARD_KEYS,
 } from '../../../core/user-settings/dtos/user-settings.interface';
-import { UserGlobalSettings, UseSettings } from '../../../core/user-settings/services/user-settings.interface';
 import {
-    getSettingsOfType,
+    UserGlobalSettings,
+    UserProjectSettings,
+    UseSettings,
+} from '../../../core/user-settings/services/user-settings.interface';
+import {
     initialFuxNotificationsConfig,
     initialFuxSettingsConfig,
     initialGeneralSettingsConfig,
@@ -16,11 +19,20 @@ import {
 } from '../../../core/user-settings/utils';
 import { openNewTab } from '../../utils';
 
-export const getTutorialAndFuxNotificationsConfig = (config: UserGlobalSettings) =>
-    getSettingsOfType(config, {
-        ...TUTORIAL_CARD_KEYS,
-        ...FUX_NOTIFICATION_KEYS,
-    });
+const getSettingsOfType = (
+    settings: UserGlobalSettings | UserProjectSettings,
+    enumType: typeof TUTORIAL_CARD_KEYS | typeof FUX_NOTIFICATION_KEYS
+) => {
+    return Object.fromEntries(
+        Object.entries(settings).filter(([key]) => {
+            return Object.values(enumType).includes(key);
+        })
+    );
+};
+
+export const getTutorialAndFuxNotificationsConfig = (config: UserGlobalSettings) => {
+    return getSettingsOfType(config, { ...TUTORIAL_CARD_KEYS, ...FUX_NOTIFICATION_KEYS });
+};
 
 export const dismissTutorial = (
     tutorialKey: TUTORIAL_CARD_KEYS | FUX_NOTIFICATION_KEYS,
@@ -100,9 +112,6 @@ export enum DocsUrl {
     MODELS = 'docs/user-guide/geti-fundamentals/model-training-and-optimization',
     TESTS = 'docs/user-guide/geti-fundamentals/tests-management/tests',
     DEPLOYMENT = 'docs/user-guide/geti-fundamentals/deployments/',
-    MAIN_PAGE = 'docs/user-guide/getting-started/introduction',
-    ANNOTATIONS_VS_PREDICTIONS = 'docs/user-guide/geti-fundamentals/annotations/annotation-editor' +
-        '#annotations-vs-predictions',
     ACTIVE_LEARNING = 'docs/user-guide/learn-geti/active-learning',
     MEDIA_GALLERY = 'docs/user-guide/geti-fundamentals/annotations/annotation-mode#media-gallery',
     ANNOTATION_TOOLS = 'docs/user-guide/geti-fundamentals/annotations/annotation-tools',

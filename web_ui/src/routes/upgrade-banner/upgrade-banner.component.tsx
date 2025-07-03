@@ -10,7 +10,6 @@ import { orderBy } from 'lodash-es';
 
 import { GENERAL_SETTINGS_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
-import { getSettingsOfType } from '../../core/user-settings/utils';
 import { HasPermission } from '../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../shared/components/has-permission/has-permission.interface';
 import { UpgradeDialog } from './upgrade-dialog/upgrade-dialog.component';
@@ -39,12 +38,11 @@ const UpgradeBannerContent = () => {
     const { isNewVersionAvailable, latestVersion, availableVersions, currentVersion } = useUpgradeBanner();
     const { saveConfig, config } = useUserGlobalSettings();
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const upgradeBannerConfig = getSettingsOfType(config, GENERAL_SETTINGS_KEYS);
 
     const shouldShowUpgradeBanner =
         isNewVersionAvailable &&
         currentVersion !== undefined &&
-        upgradeBannerConfig[GENERAL_SETTINGS_KEYS.UPGRADE_BANNER]?.dismissedVersion !== latestVersion?.version;
+        config[GENERAL_SETTINGS_KEYS.UPGRADE_BANNER]?.dismissedVersion !== latestVersion?.version;
 
     if (!shouldShowUpgradeBanner) {
         return null;

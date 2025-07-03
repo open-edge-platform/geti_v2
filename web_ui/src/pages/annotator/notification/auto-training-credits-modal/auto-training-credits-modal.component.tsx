@@ -16,7 +16,6 @@ import { ProjectIdentifier } from '../../../../core/projects/core.interface';
 import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../../../core/user-settings/hooks/use-global-settings.hook';
 import { UserGlobalSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
-import { getSettingsOfType } from '../../../../core/user-settings/utils';
 import { CreditsToConsume } from '../../../../shared/components/header/credit-balance/credits-to-consume.component';
 import { getFuxSetting } from '../../../../shared/components/tutorials/utils';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
@@ -33,13 +32,12 @@ export const AutoTrainingCreditsModalFactory = () => {
     const params = useParams<{ projectId: string }>();
     const settings = useUserGlobalSettings();
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
-    const fuxNotificationsConfig = getSettingsOfType(settings.config, FUX_NOTIFICATION_KEYS);
 
     //we check params.projectId to ensure the page is with a project provider
     if (
         isNil(params.projectId) ||
         !FEATURE_FLAG_CREDIT_SYSTEM ||
-        !fuxNotificationsConfig[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL]?.isEnabled
+        !settings.config[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL].isEnabled
     ) {
         return <></>;
     }
