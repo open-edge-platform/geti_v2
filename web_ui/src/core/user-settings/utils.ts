@@ -213,16 +213,6 @@ export const initialFuxSettingsConfig: FuxSettingsConfig = {
     },
 };
 
-export const initialConfig = {
-    ...initialAnnotatorConfig,
-    ...initialTutorialConfig,
-    ...initialFuxNotificationsConfig,
-    ...initialFuxSettingsConfig,
-    ...initialCanvasConfig,
-    ...initialGlobalModalsConfig,
-    ...initialGeneralSettingsConfig,
-};
-
 export const INITIAL_PROJECT_SETTINGS = {
     ...initialAnnotatorConfig,
     ...initialCanvasConfig,
@@ -235,6 +225,11 @@ export const INITIAL_GLOBAL_SETTINGS = {
     ...initialFuxNotificationsConfig,
     ...initialFuxSettingsConfig,
 } satisfies UserGlobalSettings;
+
+export const initialConfig = {
+    ...INITIAL_GLOBAL_SETTINGS,
+    ...INITIAL_PROJECT_SETTINGS,
+};
 
 export const getSettingsOfType = (
     settings: UserGlobalSettings | UserProjectSettings,
