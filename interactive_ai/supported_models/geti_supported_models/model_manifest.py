@@ -105,7 +105,9 @@ class ModelManifest(BaseModel):
     task: str = Field(title="Task Type", description="Type of machine learning task addressed by the model")
     stats: ModelStats = Field(title="Model Statistics", description="Statistics about the model")
     support_status: ModelManifestDeprecationStatus = Field(
-        title="Support Status", description="Current support level (active, deprecated, or obsolete)"
+        default=ModelManifestDeprecationStatus.ACTIVE,
+        title="Support Status",
+        description="Current support level (active, deprecated, or obsolete)",
     )
     supported_gpus: dict[GPUMaker, bool] = Field(
         title="Supported GPUs", description="Dictionary mapping GPU types to compatibility status"

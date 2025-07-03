@@ -3,7 +3,6 @@
 
 import { useRef } from 'react';
 
-import { Flex } from '@geti/ui';
 import { isEqual } from 'lodash-es';
 
 import { TrainingConfiguration } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
@@ -30,12 +29,10 @@ export const LearningParameters = ({ parameters, onUpdateTrainingConfiguration }
             <Accordion.Content>
                 <Accordion.Description>Specify the details of the learning process</Accordion.Description>
                 <Accordion.Divider marginY={'size-250'} />
-                <Flex direction={'column'} width={'100%'} gap={'size-300'}>
-                    <LearningParametersList
-                        parameters={parameters}
-                        onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
-                    />
-                </Flex>
+                <LearningParametersList
+                    parameters={parameters}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
             </Accordion.Content>
         </Accordion>
     );

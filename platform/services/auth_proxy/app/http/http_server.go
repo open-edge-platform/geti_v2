@@ -37,7 +37,9 @@ func logRequestMiddleware(next http.Handler) http.Handler {
 func handleKeys(w http.ResponseWriter, r *http.Request) {
 	response := jwk.GetJWKs()
 	logger.Debugf("Sending JWKs response: %s", response)
-	io.WriteString(w, response)
+	if _, err := io.WriteString(w, response); err != nil {
+		logger.Errorf("Failed to write JWKs response: %v", err)
+	}
 }
 
 func handleCookies(w http.ResponseWriter, r *http.Request) {

@@ -29,7 +29,6 @@ def fxt_object_storage_repo(mocked_boto3_client):
     return ObjectStorageRepo()
 
 
-@pytest.mark.JobsComponent
 class TestObjectStorageRepo:
     """
     Unit tests for the ObjectStorageRepo class

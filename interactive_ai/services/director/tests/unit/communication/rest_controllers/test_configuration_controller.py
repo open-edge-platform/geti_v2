@@ -1,12 +1,15 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-from unittest.mock import call, patch
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 from testfixtures import compare
 
+from communication.backward_compatibility.configurations import ConfigurationsBackwardCompatibility
 from communication.controllers.configuration_controller import ConfigurationRESTController
+from communication.controllers.project_configuration_controller import ProjectConfigurationRESTController
+from communication.controllers.training_configuration_controller import TrainingConfigurationRESTController
 from communication.data_validator import ConfigurationRestValidator
 from communication.views.configuration_rest_views import ConfigurationRESTViews
 from configuration import ConfigurationValidator
@@ -620,3 +623,311 @@ class TestConfigurationRESTController:
             + subset_parameters.validation_proportion
             == 1.0
         )
+
+    def test_set_task_chain_configuration_with_feature_flag(
+        self,
+        configuration_controller,
+        fxt_task_chain_project,
+        fxt_configuration_dict,
+        fxt_configuration_2,
+        fxt_enable_feature_flag_name,
+    ):
+        # Arrange
+        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
+        project_id = fxt_task_chain_project.id_
+        workspace_id = fxt_task_chain_project.workspace_id
+        dummy_return = [[["a", "b"], ["c", "d"]], [["e", "f"], ["g", "h"]]]
+        dummy_global_config = [MagicMock()]
+        dummy_task_chain_configs = [{"task": MagicMock(), "configurations": [fxt_configuration_2]}]
+        dummy_project_config = MagicMock()
+        dummy_training_configs = [MagicMock(), MagicMock()]
+
+        with (
+            patch.object(
+                ProjectRepo,
+                "get_by_id",
+                return_value=fxt_task_chain_project,
+            ) as mock_get_project,
+            patch.object(
+                ConfigurationRESTViews,
+                "_task_chain_config_from_rest_list",
+                return_value=dummy_return,
+            ) as mock_task_chain_config,
+            patch.object(
+                ConfigurationValidator, "_validate_entity_identifier", return_value=True
+            ) as mock_validate_entity,
+            patch.object(
+                ConfigurationValidator,
+                "_validate_and_update_config_values",
+                return_value=fxt_configuration_2,
+            ) as mock_validate_config,
+            patch.object(
+                ConfigurationManager,
+                "get_full_configuration",
+                return_value=(dummy_global_config, dummy_task_chain_configs),
+            ) as mock_get_full_configuration,
+            patch.object(
+                ConfigurationsBackwardCompatibility,
+                "forward_mapping",
+                return_value=(dummy_project_config, dummy_training_configs),
+            ) as mock_forward_mapping,
+            patch.object(
+                TrainingConfigurationRESTController,
+                "update_configuration",
+                return_value=None,
+            ) as mock_update_training_config,
+        ):
+            # Act
+            result = configuration_controller.set_task_chain_configuration(
+                project_id=project_id,
+                workspace_id=workspace_id,
+                set_request=fxt_configuration_dict,
+            )
+
+        # Assert
+        mock_get_project.assert_called_once_with(project_id)
+        mock_task_chain_config.assert_called_once_with(
+            fxt_configuration_dict["task_chain"],
+            workspace_id=workspace_id,
+            project_id=project_id,
+        )
+        assert mock_validate_entity.call_count > 0
+        assert mock_validate_config.call_count > 0
+        mock_get_full_configuration.assert_called_once_with(workspace_id=workspace_id, project_id=project_id)
+        mock_forward_mapping.assert_called_once()
+        # Verify that update_configuration was called for each training config
+        assert mock_update_training_config.call_count == len(dummy_training_configs)
+        mock_update_training_config.assert_has_calls(
+            [
+                call(project_identifier=fxt_task_chain_project.identifier, update_configuration=config)
+                for config in dummy_training_configs
+            ]
+        )
+        compare(result, success_response_rest(), ignore_eq=True)
+
+    def test_set_global_configuration_with_feature_flag(
+        self,
+        configuration_controller,
+        fxt_task_chain_project,
+        fxt_configuration_dict,
+        fxt_configuration_2,
+        fxt_enable_feature_flag_name,
+    ):
+        # Arrange
+        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
+        project_id = ID("dummy_project_id")
+        workspace_id = ID("dummy_workspace_id")
+        dummy_return = [["a", "b"], ["c", "d"]]
+        dummy_task_chain_config = [{"task": MagicMock(), "configurations": [MagicMock()]}]
+        dummy_project_config = MagicMock()
+        dummy_training_configs = [MagicMock()]
+
+        with (
+            patch.object(
+                ProjectRepo,
+                "get_by_id",
+                return_value=fxt_task_chain_project,
+            ) as mock_get_project,
+            patch.object(
+                ConfigurationRESTViews,
+                "config_list_from_rest_dict",
+                return_value=dummy_return,
+            ) as mock_config_from_rest,
+            patch.object(
+                ConfigurationValidator,
+                "_validate_and_update_config_values",
+                return_value=fxt_configuration_2,
+            ) as mock_validate_config,
+            patch.object(
+                ConfigurationManager,
+                "get_full_configuration",
+                return_value=(None, dummy_task_chain_config),
+            ) as mock_get_full_configuration,
+            patch.object(
+                ConfigurationsBackwardCompatibility,
+                "forward_mapping",
+                return_value=(dummy_project_config, dummy_training_configs),
+            ) as mock_forward_mapping,
+            patch.object(
+                ProjectConfigurationRESTController,
+                "update_configuration",
+                return_value=None,
+            ) as mock_update_project_config,
+            patch.object(
+                TrainingConfigurationRESTController,
+                "update_configuration",
+                return_value=None,
+            ) as mock_update_training_config,
+        ):
+            # Act
+            result = configuration_controller.set_global_configuration(
+                project_id=project_id,
+                workspace_id=workspace_id,
+                set_request=fxt_configuration_dict,
+            )
+
+        # Assert
+        mock_get_project.assert_called_once_with(project_id)
+        mock_config_from_rest.assert_called_once_with(
+            {"components": fxt_configuration_dict["global"]},
+            workspace_id=workspace_id,
+            project_id=project_id,
+        )
+        assert mock_validate_config.call_count > 0
+        mock_get_full_configuration.assert_called_once_with(workspace_id=workspace_id, project_id=project_id)
+        mock_forward_mapping.assert_called_once()
+        mock_update_project_config.assert_called_once_with(
+            project_identifier=fxt_task_chain_project.identifier,
+            update_configuration=dummy_project_config,
+        )
+        mock_update_training_config.assert_called_once_with(
+            project_identifier=fxt_task_chain_project.identifier,
+            update_configuration=dummy_training_configs[0],
+        )
+        compare(result, success_response_rest(), ignore_eq=True)
+
+    def test_set_task_configuration_with_feature_flag(
+        self,
+        configuration_controller,
+        fxt_task_chain_project,
+        fxt_configuration_dict,
+        fxt_configuration_2,
+        fxt_enable_feature_flag_name,
+    ):
+        # Arrange
+        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
+        project_id = fxt_task_chain_project.id_
+        workspace_id = fxt_task_chain_project.workspace_id
+        task_id = fxt_task_chain_project.task_ids[0]
+        dummy_return = [["a", "b"], ["c", "d"]]
+        dummy_global_config = [MagicMock()]
+        dummy_training_config = MagicMock()
+        dummy_training_configs = [dummy_training_config]
+        dummy_project_config = MagicMock()
+
+        with (
+            patch.object(
+                ProjectRepo,
+                "get_by_id",
+                return_value=fxt_task_chain_project,
+            ) as mock_get_project,
+            patch.object(
+                Project,
+                "get_trainable_task_node_by_id",
+                return_value=fxt_task_chain_project.task_graph.tasks[0],
+            ) as mock_get_task,
+            patch.object(
+                ConfigurationRestValidator,
+                "validate_task_configuration",
+                return_value=True,
+            ) as mock_validate_task_config,
+            patch.object(
+                ConfigurationRESTViews,
+                "config_list_from_rest_dict",
+                return_value=dummy_return,
+            ) as mock_config_from_rest,
+            patch.object(
+                ConfigurationValidator, "_validate_entity_identifier", return_value=True
+            ) as mock_validate_entity,
+            patch.object(
+                ConfigurationValidator,
+                "_validate_and_update_config_values",
+                return_value=fxt_configuration_2,
+            ) as mock_validate_config,
+            patch.object(
+                ConfigurationManager,
+                "get_full_configuration",
+                return_value=(dummy_global_config, None),
+            ) as mock_get_full_configuration,
+            patch.object(
+                ConfigurationsBackwardCompatibility,
+                "forward_mapping",
+                return_value=(dummy_project_config, dummy_training_configs),
+            ) as mock_forward_mapping,
+            patch.object(
+                TrainingConfigurationRESTController,
+                "update_configuration",
+                return_value=None,
+            ) as mock_update_training_config,
+        ):
+            # Act
+            result = configuration_controller.set_task_configuration(
+                task_id=task_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                set_request=fxt_configuration_dict,
+            )
+
+        # Assert
+        mock_get_project.assert_called_once_with(project_id)
+        mock_get_task.assert_called_once_with(task_id=task_id)
+        mock_validate_task_config.assert_called_once_with(fxt_configuration_dict)
+        mock_config_from_rest.assert_called_once_with(
+            fxt_configuration_dict,
+            workspace_id=workspace_id,
+            project_id=project_id,
+            task_id=task_id,
+        )
+        assert mock_validate_entity.call_count > 0
+        assert mock_validate_config.call_count > 0
+        mock_get_full_configuration.assert_called_once_with(workspace_id=workspace_id, project_id=project_id)
+        mock_forward_mapping.assert_called_once()
+        mock_update_training_config.assert_called_once_with(
+            project_identifier=fxt_task_chain_project.identifier,
+            update_configuration=dummy_training_config,
+        )
+        compare(result, success_response_rest(), ignore_eq=True)
+
+    def test_set_full_configuration_with_feature_flag(
+        self,
+        configuration_controller,
+        fxt_task_chain_project,
+        fxt_configuration_dict,
+        fxt_enable_feature_flag_name,
+    ):
+        # Arrange
+        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
+        project_id = ID("dummy_project_id")
+        workspace_id = ID("dummy_workspace_id")
+
+        with (
+            patch.object(
+                ProjectRepo,
+                "get_by_id",
+                return_value=fxt_task_chain_project,
+            ),
+            patch.object(
+                ConfigurationRestValidator,
+                "validate_full_configuration",
+                return_value=True,
+            ),
+            patch.object(
+                ConfigurationRESTController,
+                "set_global_configuration",
+                return_value=success_response_rest(),
+            ) as mock_set_global_configuration,
+            patch.object(
+                ConfigurationRESTController,
+                "set_task_chain_configuration",
+                return_value=success_response_rest(),
+            ) as mock_set_task_chain_configuration,
+        ):
+            # Act
+            result = configuration_controller.set_full_configuration(
+                project_id=project_id,
+                workspace_id=workspace_id,
+                set_request=fxt_configuration_dict,
+            )
+
+        # Assert
+        mock_set_global_configuration.assert_called_once_with(
+            project_id=project_id,
+            workspace_id=workspace_id,
+            set_request=fxt_configuration_dict,
+        )
+        mock_set_task_chain_configuration.assert_called_once_with(
+            project_id=project_id,
+            workspace_id=workspace_id,
+            set_request=fxt_configuration_dict,
+        )
+        compare(result, success_response_rest(), ignore_eq=True)

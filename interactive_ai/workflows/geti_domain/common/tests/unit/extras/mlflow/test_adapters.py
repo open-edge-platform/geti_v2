@@ -18,7 +18,6 @@ from jobs_common_extras.experiments.adapters.definitions import OPENVINO_BIN_KEY
 from jobs_common_extras.experiments.adapters.ml_artifacts import MLArtifactsAdapter
 
 
-@pytest.mark.JobsComponent
 class TestMLArtifactsAdapter:
     @pytest.fixture()
     def fxt_performance(self):

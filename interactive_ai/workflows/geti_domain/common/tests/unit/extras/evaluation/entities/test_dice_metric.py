@@ -263,7 +263,6 @@ def fxt_prediction_dataset(fxt_media_factory, fxt_predicted_bbox):
     yield Dataset(id=ID("prediction_dataset_id"), items=dataset_items)
 
 
-@pytest.mark.JobsComponent
 class TestDiceMetric:
     @pytest.mark.parametrize("average", (MetricAverageMethod.MICRO, MetricAverageMethod.MACRO))
     def test_dice_metric_basic(

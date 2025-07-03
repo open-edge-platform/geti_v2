@@ -83,7 +83,6 @@ class TestTrainingConfigurationEndpoints:
 
         # Create a sample REST input payload
         rest_input = {
-            "task_id": "detection_1",
             "model_manifest_id": "model_manifest_123",
             "dataset_preparation": {
                 "subset_split": {
@@ -108,7 +107,7 @@ class TestTrainingConfigurationEndpoints:
             return_value=None,
         ) as mock_update_training_config:
             result = fxt_director_app.patch(
-                f"{API_PROJECT_PATTERN}/training_configuration",
+                f"{API_PROJECT_PATTERN}/training_configuration?task_id=detection_1",
                 json=rest_input,
             )
 

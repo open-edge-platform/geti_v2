@@ -123,7 +123,8 @@ class ZipStorageRepo(StorageRepo):
         etag = s3_response.get("ETag", None)
         if etag is None:
             raise ValueError("Did not receive etag after appending part to multipart upload")
-        logger.debug(f"Uploaded part to file for operation ID {operation_id}.")
+        safe_id = str(operation_id).replace("\n", "").replace("\r", "")
+        logger.debug(f"Uploaded part to file for operation ID {safe_id}.")
         return etag
 
     def complete_multipart_upload(self, operation_id: ID, upload_id: str, parts: list[dict]) -> None:

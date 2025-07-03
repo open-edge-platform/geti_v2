@@ -20,8 +20,7 @@ import {
 } from '@geti/ui';
 import { Calendar } from '@geti/ui/icons';
 import { DateValue, getLocalTimeZone } from '@internationalized/date';
-import { isFunction } from 'lodash-es';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty, isFunction } from 'lodash-es';
 
 interface DateRangePickerSmall
     extends Omit<SpectrumRangeCalendarProps<DateValue>, 'focusedValue' | 'onFocusChange' | 'onChange'> {

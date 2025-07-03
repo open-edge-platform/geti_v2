@@ -15,7 +15,7 @@ export enum TILING_MODES {
     CUSTOM = 'Custom',
 }
 
-const TilingModeTooltip: FC = () => {
+export const TilingModeTooltip: FC = () => {
     return (
         <Tooltip>
             Tiling is a technique that divides high-resolution images into smaller tiles and might be useful to increase
@@ -32,7 +32,7 @@ interface TilingModesProps {
 export const TilingModes: FC<TilingModesProps> = ({ selectedTilingMode, onTilingModeChange }) => {
     return (
         <>
-            <Text UNSAFE_className={styles.title} width={'size-3000'}>
+            <Text UNSAFE_className={styles.title}>
                 Tiling mode <TilingModeTooltip />
             </Text>
             <ToggleButtons

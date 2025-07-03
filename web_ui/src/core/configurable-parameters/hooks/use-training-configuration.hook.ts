@@ -16,7 +16,7 @@ import { TrainingConfigurationUpdatePayload } from '../services/configuration.in
 const trainingConfigurationQueryOptions = (
     service: CreateApiModelConfigParametersService,
     projectIdentifier: ProjectIdentifier,
-    queryParameters?: TrainingConfigurationQueryParameters
+    queryParameters: TrainingConfigurationQueryParameters
 ) =>
     queryOptions({
         queryKey: QUERY_KEYS.CONFIGURATION_PARAMETERS.TRAINING(projectIdentifier, queryParameters),
@@ -28,7 +28,7 @@ const trainingConfigurationQueryOptions = (
 
 export const useTrainingConfigurationQuery = (
     projectIdentifier: ProjectIdentifier,
-    queryParameters?: TrainingConfigurationQueryParameters
+    queryParameters: TrainingConfigurationQueryParameters
 ) => {
     const { configParametersService } = useApplicationServices();
 
@@ -45,7 +45,7 @@ export const useTrainingConfigurationMutation = () => {
         {
             projectIdentifier: ProjectIdentifier;
             payload: TrainingConfigurationUpdatePayload;
-            queryParameters?: TrainingConfigurationQueryParameters;
+            queryParameters: TrainingConfigurationQueryParameters;
         }
     >({
         mutationFn: ({ projectIdentifier, payload, queryParameters }) => {

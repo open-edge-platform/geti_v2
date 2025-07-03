@@ -26,7 +26,6 @@ TRAIN_SUBSET_ID = "train_subset_id"
 COMPILED_DATASET_SHARD_ID = "compiled_dataset_shards_id"
 
 
-@pytest.mark.JobsComponent
 class TestTrainWorkflow:
     @pytest.mark.parametrize("enable_training_from_dataset_shard", [False, True])
     @pytest.mark.parametrize("from_scratch", [True, False])

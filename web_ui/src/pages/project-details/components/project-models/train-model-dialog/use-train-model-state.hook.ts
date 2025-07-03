@@ -72,6 +72,29 @@ const useTrainingConfiguration = ({
     return [trainingConfiguration, setTrainingConfiguration, data] as const;
 };
 
+const useSelectedModelTemplateId = ({
+    algorithms,
+    selectedTaskId,
+    models,
+}: {
+    algorithms: SupportedAlgorithm[];
+    selectedTaskId: string;
+    models: ModelsGroups[] | undefined;
+}) => {
+    const activeModelTemplateId = getActiveModelTemplateId(models, algorithms, selectedTaskId);
+    const [selectedModelTemplateId, setSelectedModelTemplateId] = useState<string | null>(activeModelTemplateId);
+
+    useEffect(() => {
+        if (selectedModelTemplateId !== null) {
+            return;
+        }
+
+        setSelectedModelTemplateId(activeModelTemplateId);
+    }, [selectedModelTemplateId, activeModelTemplateId]);
+
+    return [selectedModelTemplateId, setSelectedModelTemplateId, activeModelTemplateId] as const;
+};
+
 export const useTrainModelState = () => {
     const [mode, setMode] = useState<TrainModelMode>(TrainModelMode.BASIC);
 
@@ -88,8 +111,11 @@ export const useTrainModelState = () => {
     const [selectedTask, setSelectedTask] = useState<Task>(task);
     const algorithms = tasksWithSupportedAlgorithms[selectedTask.id] ?? [];
 
-    const activeModelTemplateId = getActiveModelTemplateId(models, algorithms, selectedTask.id);
-    const [selectedModelTemplateId, setSelectedModelTemplateId] = useState<string | null>(activeModelTemplateId);
+    const [selectedModelTemplateId, setSelectedModelTemplateId, activeModelTemplateId] = useSelectedModelTemplateId({
+        algorithms,
+        selectedTaskId: selectedTask.id,
+        models,
+    });
 
     const isBasicMode = mode === TrainModelMode.BASIC;
 
@@ -101,10 +127,6 @@ export const useTrainModelState = () => {
 
     const [isReshufflingSubsetsEnabled, setIsReshufflingSubsetsEnabled] = useState<boolean>(false);
     const [trainFromScratch, setTrainFromScratch] = useState<boolean>(false);
-
-    if (selectedModelTemplateId === null) {
-        setSelectedModelTemplateId(activeModelTemplateId);
-    }
 
     const openAdvancedSettingsMode = (): void => {
         setMode(TrainModelMode.ADVANCED_SETTINGS);

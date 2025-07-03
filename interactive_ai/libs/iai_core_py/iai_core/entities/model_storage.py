@@ -22,6 +22,7 @@ class ModelStorage(PersistentEntity):
     :param creation_date: Creation date; current time if not specified
     :param ephemeral: True if the ModelStorage instance exists only in memory, False
         if it is backed up by the database
+    :param model_template_id: ID of the model template used by this model storage
     """
 
     def __init__(
@@ -32,6 +33,7 @@ class ModelStorage(PersistentEntity):
         model_template: ModelTemplate,
         creation_date: datetime.datetime | None = None,
         ephemeral: bool = True,
+        model_template_id: str | None = None,
     ) -> None:
         super().__init__(id_=id_, ephemeral=ephemeral)
         self.workspace_id = CTX_SESSION_VAR.get().workspace_id if id_ != ID() else ID()
@@ -43,6 +45,9 @@ class ModelStorage(PersistentEntity):
         )
         self._task_node_id = task_node_id
         self._model_template = model_template
+        self.model_template_id = (
+            model_template_id if model_template_id is not None else model_template.model_template_id
+        )
         self._creation_date = now() if creation_date is None else creation_date
 
     @property

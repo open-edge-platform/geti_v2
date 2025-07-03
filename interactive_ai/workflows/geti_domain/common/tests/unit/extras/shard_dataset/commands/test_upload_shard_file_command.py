@@ -11,7 +11,6 @@ import pytest
 from jobs_common_extras.shard_dataset.commands.upload_shard_file_command import UploadShardFileCommand
 
 
-@pytest.mark.JobsComponent
 class TestUploadShardFileCommand:
     @pytest.fixture
     def fxt_fpath(self, tmp_path: Path) -> str:

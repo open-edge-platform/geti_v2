@@ -1,12 +1,17 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Shape as ToolShape } from '@geti/smart-tools/src/shared/interfaces';
+
 import { RegionOfInterest } from '../../../core/annotations/annotation.interface';
 import { BoundingBox } from '../../../core/annotations/math';
-import { Circle, Point, Rect } from '../../../core/annotations/shapes.interface';
+import { Circle, Point, Rect, Shape } from '../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../core/annotations/shapetype.enum';
 import { getMockedAnnotation } from '../../../test-utils/mocked-items-factory/mocked-annotations';
 import {
+    convertGetiShapeToToolShape,
+    convertGetiShapeTypeToToolShapeType,
+    convertToolShapeToGetiShape,
     isInsideBoundingBox,
     isPointWithinRoi,
     isRectWithinRoi,
@@ -244,6 +249,161 @@ describe('annotator utils', () => {
                 );
                 expect(isInsideBoundingBox(circle)(boundingBox)).toBe(false);
             });
+        });
+    });
+
+    describe('convertToolShapeToGetiShape', () => {
+        it('should convert polygon shape', () => {
+            const shape: ToolShape = {
+                shapeType: 'polygon',
+                points: [
+                    { x: 1, y: 2 },
+                    { x: 3, y: 4 },
+                ],
+            };
+            expect(convertToolShapeToGetiShape(shape)).toEqual({
+                shapeType: ShapeType.Polygon,
+                points: [
+                    { x: 1, y: 2 },
+                    { x: 3, y: 4 },
+                ],
+            });
+        });
+
+        it('should convert rotated-rect shape', () => {
+            const shape: ToolShape = { shapeType: 'rotated-rect', x: 1, y: 2, width: 3, height: 4, angle: 45 };
+            expect(convertToolShapeToGetiShape(shape)).toEqual({
+                shapeType: ShapeType.RotatedRect,
+                x: 1,
+                y: 2,
+                width: 3,
+                height: 4,
+                angle: 45,
+            });
+        });
+
+        it('should convert rect shape', () => {
+            const shape: ToolShape = { shapeType: 'rect', x: 5, y: 6, width: 7, height: 8 };
+            expect(convertToolShapeToGetiShape(shape)).toEqual({
+                shapeType: ShapeType.Rect,
+                x: 5,
+                y: 6,
+                width: 7,
+                height: 8,
+            });
+        });
+
+        it('should convert circle shape', () => {
+            const shape: ToolShape = { shapeType: 'circle', cx: 10, cy: 20, r: 5 };
+            expect(convertToolShapeToGetiShape(shape)).toEqual({
+                shapeType: ShapeType.Circle,
+                x: 10,
+                y: 20,
+                r: 5,
+            });
+        });
+
+        it('should throw error for unknown shape type', () => {
+            // @ts-expect-error error is expected
+            expect(() => convertToolShapeToGetiShape({ shapeType: 'unknown' })).toThrow('Unknown shape type');
+        });
+    });
+
+    describe('convertGetiShapeTypeToToolShapeType', () => {
+        it('should convert Rect', () => {
+            expect(convertGetiShapeTypeToToolShapeType(ShapeType.Rect)).toBe('rect');
+        });
+
+        it('should convert RotatedRect', () => {
+            expect(convertGetiShapeTypeToToolShapeType(ShapeType.RotatedRect)).toBe('rotated-rect');
+        });
+
+        it('should convert Polygon', () => {
+            expect(convertGetiShapeTypeToToolShapeType(ShapeType.Polygon)).toBe('polygon');
+        });
+
+        it('should convert Circle', () => {
+            expect(convertGetiShapeTypeToToolShapeType(ShapeType.Circle)).toBe('circle');
+        });
+
+        it('should throw error for unknown shape type', () => {
+            // @ts-expect-error error is expected
+            expect(() => convertGetiShapeTypeToToolShapeType('unknown')).toThrow('Unknown shape type');
+        });
+    });
+
+    describe('convertGetiShapeToToolShape', () => {
+        it('should convert Rect shape', () => {
+            const shape: Shape = {
+                shapeType: ShapeType.Rect,
+                x: 10,
+                y: 20,
+                width: 30,
+                height: 40,
+            };
+            expect(convertGetiShapeToToolShape(shape)).toEqual({
+                shapeType: 'rect',
+                x: 10,
+                y: 20,
+                width: 30,
+                height: 40,
+            });
+        });
+
+        it('should convert RotatedRect shape', () => {
+            const shape: Shape = {
+                shapeType: ShapeType.RotatedRect,
+                x: 5,
+                y: 6,
+                width: 7,
+                height: 8,
+                angle: 15,
+            };
+            expect(convertGetiShapeToToolShape(shape)).toEqual({
+                shapeType: 'rotated-rect',
+                x: 5,
+                y: 6,
+                width: 7,
+                height: 8,
+                angle: 15,
+            });
+        });
+
+        it('should convert Polygon shape', () => {
+            const shape: Shape = {
+                shapeType: ShapeType.Polygon,
+                points: [
+                    { x: 1, y: 2 },
+                    { x: 3, y: 4 },
+                ],
+            };
+            expect(convertGetiShapeToToolShape(shape)).toEqual({
+                shapeType: 'polygon',
+                points: [
+                    { x: 1, y: 2 },
+                    { x: 3, y: 4 },
+                ],
+            });
+        });
+
+        it('should convert Circle shape', () => {
+            const shape: Shape = {
+                shapeType: ShapeType.Circle,
+                x: 11,
+                y: 22,
+                r: 33,
+            };
+            expect(convertGetiShapeToToolShape(shape)).toEqual({
+                shapeType: 'circle',
+                cx: 11,
+                cy: 22,
+                r: 33,
+            });
+        });
+
+        it('should throw error for unknown shape type', () => {
+            // @ts-expect-error error is expected
+            expect(() => convertGetiShapeToToolShape({ shapeType: 'unknown' })).toThrow('Unknown shape type');
         });
     });
 });

@@ -8,6 +8,8 @@ import {
     DATASET_IMPORT_WARNING_TYPE,
 } from '../../core/datasets/dataset.enum';
 import { getFileSize } from '../../shared/utils';
+import { getMockedUploadItem } from '../../test-utils/mocked-items-factory/mocked-dataset-import';
+import { getMockedKeypointStructureDto } from '../../test-utils/mocked-items-factory/mocked-keypoint';
 import {
     formatDatasetPrepareImportResponse,
     getBytesRemaining,
@@ -15,6 +17,8 @@ import {
     getImportKeypointTask,
     getTimeRemaining,
     isKeypointType,
+    isKeypointWithInvalidStructure,
+    isValidKeypointStructure,
 } from './utils';
 
 jest.mock('../../shared/utils', () => ({
@@ -147,6 +151,108 @@ describe('import to new project utils', () => {
                 },
             ];
             expect(getImportKeypointTask(supportedTypes)).toEqual(keypointTask);
+        });
+    });
+
+    describe('isValidKeypointStructure', () => {
+        const mockedKeypointTask = {
+            title: 'Keypoint Detection',
+            labels: [],
+            taskType: DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION,
+            keypointStructure: getMockedKeypointStructureDto(),
+        };
+
+        it('returns true when keypointStructure has non-empty edges and positions', () => {
+            expect(isValidKeypointStructure(mockedKeypointTask)).toBe(true);
+        });
+
+        it('returns false when keypointStructure has empty edges', () => {
+            expect(
+                isValidKeypointStructure({
+                    ...mockedKeypointTask,
+                    keypointStructure: getMockedKeypointStructureDto({ edges: [] }),
+                })
+            ).toBe(false);
+        });
+
+        it('returns false when keypointStructure has empty positions', () => {
+            expect(
+                isValidKeypointStructure({
+                    ...mockedKeypointTask,
+                    keypointStructure: getMockedKeypointStructureDto({ positions: [] }),
+                })
+            ).toBe(false);
+        });
+    });
+
+    describe('isKeypointWithInvalidStructure', () => {
+        const mockedClassificationTask = {
+            title: 'Classification',
+            taskType: DATASET_IMPORT_TASK_TYPE.CLASSIFICATION,
+            labels: [],
+        };
+        const mockedKeypointTask = {
+            title: 'Keypoint Detection',
+            labels: [],
+            taskType: DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION,
+            keypointStructure: getMockedKeypointStructureDto(),
+        };
+
+        it('returns false when activeDatasetImport is undefined', () => {
+            expect(isKeypointWithInvalidStructure(undefined)).toBe(false);
+        });
+
+        it('returns false when no keypoint task is found', () => {
+            const activeDatasetImport = getMockedUploadItem({
+                supportedProjectTypes: [
+                    {
+                        projectType: DATASET_IMPORT_TASK_TYPE.CLASSIFICATION,
+                        pipeline: {
+                            tasks: [mockedClassificationTask],
+                            connections: [],
+                        },
+                    },
+                ],
+            });
+
+            expect(isKeypointWithInvalidStructure(activeDatasetImport)).toBe(false);
+        });
+
+        it('returns true when keypoint task has invalid structure', () => {
+            const activeDatasetImport = getMockedUploadItem({
+                supportedProjectTypes: [
+                    {
+                        projectType: DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION,
+                        pipeline: {
+                            tasks: [
+                                {
+                                    ...mockedKeypointTask,
+                                    keypointStructure: getMockedKeypointStructureDto({ positions: [] }),
+                                },
+                            ],
+                            connections: [],
+                        },
+                    },
+                ],
+            });
+
+            expect(isKeypointWithInvalidStructure(activeDatasetImport)).toBe(true);
+        });
+
+        it('returns false when keypoint task has valid structure', () => {
+            const activeDatasetImport = getMockedUploadItem({
+                supportedProjectTypes: [
+                    {
+                        projectType: DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION,
+                        pipeline: {
+                            tasks: [mockedKeypointTask],
+                            connections: [],
+                        },
+                    },
+                ],
+            });
+
+            expect(isKeypointWithInvalidStructure(activeDatasetImport)).toBe(false);
         });
     });
 });

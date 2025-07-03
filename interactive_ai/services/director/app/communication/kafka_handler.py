@@ -217,10 +217,8 @@ class JobKafkaHandler(BaseKafkaHandler, metaclass=Singleton):
             model_storage_id=model_storage_id,
         )
         model_repo = ModelRepo(model_storage_identifier)
-        optimize_model = model_repo.get_by_id(optimized_model_id)
-        model_repo.delete_by_id(optimize_model.previous_revision_id)
         model_repo.delete_by_id(optimized_model_id)
-        return [optimize_model.previous_revision_id, optimized_model_id]
+        return [optimized_model_id]
 
     @staticmethod
     def _process_failed_or_canceled_train_job(

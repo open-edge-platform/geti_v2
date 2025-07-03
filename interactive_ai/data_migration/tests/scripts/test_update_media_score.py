@@ -69,7 +69,7 @@ class TestUpdateMediaScoreMigration:
 
         updated_media_score_document = media_score_collection.find_one({"_id": MEDIA_SCORE_ID})
 
-        for score in updated_media_score_document["scores"]:
+        for score in updated_media_score_document["scores"]:  # type: ignore[index]
             assert set(score.keys()) == {"name", "value", "type", "label_id"}
         assert updated_media_score_document == fxt_media_score_document_post_update
 
@@ -90,6 +90,6 @@ class TestUpdateMediaScoreMigration:
 
         downgraded_media_score_document = media_score_collection.find_one({"_id": MEDIA_SCORE_ID})
 
-        for score in downgraded_media_score_document["scores"]:
+        for score in downgraded_media_score_document["scores"]:  # type: ignore[index]
             assert set(score.keys()) == {"metric", "score", "label_id"}
         assert downgraded_media_score_document == fxt_media_score_document_pre_update

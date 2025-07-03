@@ -6,7 +6,10 @@ import {
     PredictionMode,
 } from '../../../../src/core/annotations/services/prediction-service.interface';
 import { VideoPaginationOptions } from '../../../../src/core/annotations/services/video-pagination-options.interface';
-import { TrainingConfigurationQueryParameters } from '../../../../src/core/configurable-parameters/services/api-model-config-parameters-service';
+import {
+    TrainedModelConfigurationQueryParameters,
+    TrainingConfigurationQueryParameters,
+} from '../../../../src/core/configurable-parameters/services/api-model-config-parameters-service';
 import { CreditAccountIdentifier } from '../../../../src/core/credits/credits.interface';
 import {
     GetTransactionsAggregatesQueryOptions,
@@ -413,6 +416,9 @@ const PROJECT_IMPORT_STATUS_KEY = (workspaceId: string, importProjectId: string)
 const PLATFORM_UTILS_KEYS = {
     VERSION_ENTITY_KEY: ['version'],
     WORKFLOW_ID: (userSubjectIdentifier: string) => ['workflow_id', userSubjectIdentifier],
+    CHECK_BACKUP: ['check-backup'],
+    PLATFORM_VERSIONS: ['platform-versions'],
+    UPGRADE_PROGRESS: ['platform-upgrade-progress'],
 };
 
 const ORGANIZATIONS = (queryOptions: GetOrganizationsQueryOptions) => ['organizations', queryOptions];
@@ -505,8 +511,16 @@ const CONFIGURATION_PARAMETERS = {
             projectIdentifier.workspaceId,
             projectIdentifier.projectId,
             queryParameters?.taskId,
-            queryParameters?.modelId,
             queryParameters?.modelManifestId,
+        ] as const,
+    TRAINED_MODEL: (projectIdentifier: ProjectIdentifier, queryParameters: TrainedModelConfigurationQueryParameters) =>
+        [
+            'model-configuration',
+            projectIdentifier.organizationId,
+            projectIdentifier.workspaceId,
+            projectIdentifier.projectId,
+            queryParameters.taskId,
+            queryParameters.modelId,
         ] as const,
 };
 

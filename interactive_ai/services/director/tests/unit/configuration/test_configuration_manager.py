@@ -4,12 +4,15 @@
 ConfigurationManager tests
 """
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 
 from configuration import ConfigurableComponentRegister
 from configuration.configuration_manager import ConfigurationManager
+from features.feature_flag import FeatureFlag
+from service.configuration_service import ConfigurationService
+from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
 import iai_core.configuration.helper as otx_config_helper
 from geti_fastapi_tools.exceptions import ModelNotFoundException
@@ -17,7 +20,7 @@ from geti_types import ID
 from iai_core.configuration.elements.component_parameters import ComponentParameters, ComponentType
 from iai_core.entities.model import NullModel
 from iai_core.entities.model_storage import ModelStorage
-from iai_core.repos import ConfigurableParametersRepo, ModelRepo, ModelStorageRepo, ProjectRepo
+from iai_core.repos import ConfigurableParametersRepo, ModelRepo, ModelStorageRepo, ProjectRepo, TaskNodeRepo
 from iai_core.services.model_service import ModelService
 
 WORKSPACE_ID = ID("workspace_id")
@@ -313,3 +316,197 @@ class TestConfigurationManager:
             assert len(task_chain_configuration) == len(fxt_project_with_detection_task.get_trainable_task_nodes())
             assert task_chain_configuration[0]["task"] == trainable_task
             assert len(task_chain_configuration[0]["configurations"]) == len(per_task_components) + 1
+
+    def test_get_global_configuration_with_feature_flag(self, fxt_enable_feature_flag_name) -> None:
+        # Arrange
+        project_id = ID("project_id")
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+        dummy_config = MagicMock()
+
+        # Act
+        with patch.object(
+            ConfigurationManager, "_get_from_new_configurations", return_value=(dummy_config, [])
+        ) as mock_get_from_new_configurations:
+            global_configuration = ConfigurationManager().get_global_configuration(
+                project_id=project_id,
+                workspace_id=WORKSPACE_ID,
+            )
+
+            # Assert
+            mock_get_from_new_configurations.assert_called_once_with(workspace_id=WORKSPACE_ID, project_id=project_id)
+            assert global_configuration == dummy_config
+
+    def test_get_configuration_for_task_chain_with_feature_flag(self, fxt_enable_feature_flag_name) -> None:
+        # Arrange
+        project_id = ID("project_id")
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+        dummy_config = MagicMock()
+
+        # Act
+        with patch.object(
+            ConfigurationManager, "_get_from_new_configurations", return_value=(None, dummy_config)
+        ) as mock_get_from_new_configurations:
+            task_chain_config = ConfigurationManager().get_configuration_for_task_chain(
+                project_id=project_id,
+                workspace_id=WORKSPACE_ID,
+            )
+
+            # Assert
+            mock_get_from_new_configurations.assert_called_once_with(workspace_id=WORKSPACE_ID, project_id=project_id)
+            assert task_chain_config == dummy_config
+
+    def test_get_from_new_configurations(
+        self,
+        fxt_project_identifier,
+        fxt_project_configuration,
+        fxt_training_configuration_task_level,
+        fxt_enable_feature_flag_name,
+    ):
+        # Arrange
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+        task_ids = [task_config.task_id for task_config in fxt_project_configuration.task_configs]
+        fxt_training_configuration_task_level.task_id = task_ids[0]
+        active_model_storages = [MagicMock(), MagicMock()]
+        active_model_storages[0].model_template_id = "model_template_1"
+        active_model_storages[1].model_template_id = "model_template_2"
+
+        # Act
+        with (
+            patch.object(
+                ProjectConfigurationRepo, "get_project_configuration", return_value=fxt_project_configuration
+            ) as mock_get_project_config,
+            patch.object(
+                ConfigurationService,
+                "get_full_training_configuration",
+                side_effect=[fxt_training_configuration_task_level, fxt_training_configuration_task_level],
+            ) as mock_get_full_training_config,
+            patch.object(
+                ConfigurationManager,
+                "_ConfigurationManager__get_active_model_storage_by_project_and_task_id",
+                side_effect=active_model_storages,
+            ),
+            patch.object(TaskNodeRepo, "get_trainable_task_ids", return_value=task_ids) as mock_get_trainable_task_ids,
+        ):
+            global_config, task_chain_config = ConfigurationManager._get_from_new_configurations(
+                workspace_id=fxt_project_identifier.workspace_id,
+                project_id=fxt_project_identifier.project_id,
+            )
+
+            # Assert
+            mock_get_trainable_task_ids.assert_called_once()
+            mock_get_project_config.assert_called()
+            mock_get_full_training_config.assert_has_calls(
+                [
+                    call(
+                        project_identifier=fxt_project_identifier,
+                        task_id=task_id,
+                        model_manifest_id=model_storage.model_template_id,
+                    )
+                    for task_id, model_storage in zip(task_ids, active_model_storages)
+                ]
+            )
+            assert len(global_config) == 2
+            assert len(task_chain_config) == 2
+
+    def test_get_task_config_from_new_configurations(
+        self,
+        fxt_project_identifier,
+        fxt_project_configuration,
+        fxt_training_configuration_task_level,
+        fxt_enable_feature_flag_name,
+    ):
+        # Arrange
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+        task_id = fxt_project_configuration.task_configs[0].task_id
+        fxt_training_configuration_task_level.task_id = task_id
+        model_template_id = "test_model_template_id"
+
+        # Act
+        with (
+            patch.object(
+                ProjectConfigurationRepo, "get_project_configuration", return_value=fxt_project_configuration
+            ) as mock_get_project_config,
+            patch.object(
+                ConfigurationService,
+                "get_full_training_configuration",
+                return_value=fxt_training_configuration_task_level,
+            ) as mock_get_full_training_config,
+        ):
+            task_config = ConfigurationManager._get_task_config_from_new_configurations(
+                project_identifier=fxt_project_identifier,
+                task_id=task_id,
+                model_template_id=model_template_id,
+            )
+
+            # Assert
+            mock_get_project_config.assert_called_once()
+            mock_get_full_training_config.assert_called_once_with(
+                project_identifier=fxt_project_identifier,
+                task_id=task_id,
+                model_manifest_id=model_template_id,
+            )
+            assert len(task_config) == 5
+            expected_learning_parameters = fxt_training_configuration_task_level.hyperparameters.training
+            task_learning_params = task_config[0].learning_parameters
+            assert task_learning_params.learning_rate == expected_learning_parameters.learning_rate
+            assert task_learning_params.max_epochs == expected_learning_parameters.max_epochs
+            assert task_learning_params.enable_early_stopping == expected_learning_parameters.early_stopping.enable
+
+    def test_get_configuration_for_algorithm_with_feature_flag(
+        self, fxt_enable_feature_flag_name, fxt_project_identifier
+    ) -> None:
+        # Arrange
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+        dummy_config = MagicMock()
+        model_template_id = "test_model_template_id"
+        task_id = ID("test_task_id")
+
+        # Act
+        with patch.object(
+            ConfigurationManager, "_get_task_config_from_new_configurations", return_value=[dummy_config]
+        ) as mock_get_configurations:
+            task_chain_config = ConfigurationManager().get_configuration_for_algorithm(
+                workspace_id=fxt_project_identifier.workspace_id,
+                project_id=fxt_project_identifier.project_id,
+                algorithm_name=model_template_id,
+                task_id=task_id,
+            )
+
+            # Assert
+            mock_get_configurations.assert_called_once_with(
+                project_identifier=fxt_project_identifier, task_id=task_id, model_template_id=model_template_id
+            )
+            assert task_chain_config == dummy_config
+
+    def test_get_active_configuration_for_task_with_feature_flag(
+        self, fxt_enable_feature_flag_name, fxt_project_identifier, fxt_model_storage
+    ) -> None:
+        # Arrange
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+        dummy_config = MagicMock()
+        task_id = ID("test_task_id")
+
+        # Act
+        with (
+            patch.object(
+                ConfigurationManager, "_get_task_config_from_new_configurations", return_value=dummy_config
+            ) as mock_get_configurations,
+            patch.object(
+                ConfigurationManager,
+                "_ConfigurationManager__get_active_model_storage_by_project_and_task_id",
+                return_value=fxt_model_storage,
+            ),
+        ):
+            task_chain_config = ConfigurationManager().get_active_configuration_for_task(
+                workspace_id=fxt_project_identifier.workspace_id,
+                project_id=fxt_project_identifier.project_id,
+                task_id=task_id,
+            )
+
+            # Assert
+            mock_get_configurations.assert_called_once_with(
+                project_identifier=fxt_project_identifier,
+                task_id=task_id,
+                model_template_id=fxt_model_storage.model_template_id,
+            )
+            assert task_chain_config == dummy_config

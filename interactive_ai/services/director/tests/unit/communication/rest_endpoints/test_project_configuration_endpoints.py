@@ -44,7 +44,7 @@ class TestProjectConfigurationEndpoints:
             result = fxt_director_app.get(f"{API_PROJECT_PATTERN}/project_configuration")
 
         # Assert
-        mock_get_project_config.assert_called_once_with(project_identifier=project_identifier)
+        mock_get_project_config.assert_called_once_with(project_identifier=project_identifier, task_id=None)
 
         assert result.status_code == HTTPStatus.OK
         compare(json.loads(result.content), project_config_dict, ignore_eq=True)
@@ -62,13 +62,39 @@ class TestProjectConfigurationEndpoints:
 
         assert result.status_code == HTTPStatus.FORBIDDEN
 
-    def test_update_project_configuration(self, fxt_director_app, fxt_enable_feature_flag_name) -> None:
-        # Arrange
-        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
-
-        # Create a sample REST input payload
-        rest_input = {
-            "task_configs": [
+    @pytest.mark.parametrize(
+        "rest_input, endpoint_url",
+        [
+            (
+                {
+                    "task_configs": [
+                        {
+                            "task_id": "detection_1",
+                            "training": {
+                                "constraints": [
+                                    {
+                                        "key": "min_images_per_label",
+                                        "value": 15,
+                                        "type": "int",
+                                        "name": "Minimum images per label",
+                                    }
+                                ]
+                            },
+                            "auto_training": [
+                                {"key": "enable", "value": False, "type": "bool", "name": "Enable auto training"},
+                                {
+                                    "key": "min_images_per_label",
+                                    "value": 8,
+                                    "type": "int",
+                                    "name": "Minimum images per label",
+                                },
+                            ],
+                        }
+                    ]
+                },
+                f"{API_PROJECT_PATTERN}/project_configuration",
+            ),
+            (
                 {
                     "task_id": "detection_1",
                     "training": {
@@ -85,9 +111,20 @@ class TestProjectConfigurationEndpoints:
                         {"key": "enable", "value": False, "type": "bool", "name": "Enable auto training"},
                         {"key": "min_images_per_label", "value": 8, "type": "int", "name": "Minimum images per label"},
                     ],
-                }
-            ]
-        }
+                },
+                f"{API_PROJECT_PATTERN}/project_configuration?task_id=detection_1",
+            ),
+        ],
+        ids=[
+            "Task chain payload",
+            "Single task payload",
+        ],
+    )
+    def test_update_project_configuration(
+        self, rest_input, endpoint_url, fxt_director_app, fxt_enable_feature_flag_name
+    ) -> None:
+        # Arrange
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
 
         # Act
         with patch.object(
@@ -96,7 +133,7 @@ class TestProjectConfigurationEndpoints:
             return_value=None,
         ) as mock_update_project_config:
             result = fxt_director_app.patch(
-                f"{API_PROJECT_PATTERN}/project_configuration",
+                endpoint_url,
                 json=rest_input,
             )
 

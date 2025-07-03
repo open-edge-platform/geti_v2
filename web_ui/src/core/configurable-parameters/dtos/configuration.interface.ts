@@ -70,8 +70,12 @@ export interface TrainingConfigurationDTO {
     dataset_preparation: DatasetPreparationParametersDTO;
     training: TrainingParametersDTO;
     evaluation: ConfigurationParameterDTO[];
-    advanced_configuration?: StaticParameterDTO[];
     task_id: string;
+}
+
+export interface TrainedModelConfigurationDTO extends Omit<TrainingConfigurationDTO, 'dataset_preparation'> {
+    dataset_preparation: Pick<DatasetPreparationParametersDTO, 'augmentation'>;
+    advanced_configuration: StaticParameterDTO[];
 }
 
 export interface TrainingConfigurationUpdatePayloadDTO {

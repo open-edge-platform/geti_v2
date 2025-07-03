@@ -60,7 +60,7 @@ var logger = utils.InitializeLogger()
 func (s *GRPCServer) GetUsers(ctx context.Context, req *pb.GetUsersRequest) (*pb.ListGetUsersResponse, error) {
 	//Checks request fields in grpc package to return grpc specific codes
 	if req.SortDirection != "asc" && req.SortDirection != "desc" && req.SortDirection != "" {
-		logger.Errorf("Wrong sort direction: %v", internalErrors.NewInvalidReuestError("Wrong sort direction"))
+		logger.Errorf("Wrong sort direction: %v", internalErrors.NewInvalidRequestError("Wrong sort direction"))
 		return nil, status.Errorf(codes.InvalidArgument, "Wrong sort direction")
 	}
 

@@ -4,6 +4,8 @@
 import { Flex, useNumberFormatter, View } from '@geti/ui';
 
 import { Label } from '../../../../../core/labels/label.interface';
+import { isKeypointTask } from '../../../../../core/projects/utils';
+import { useTask } from '../../../providers/task-provider/task-provider.component';
 import { useVideoTimelineQueries } from '../hooks/use-video-timeline-queries.hook';
 
 import classes from './video-annotator.module.scss';
@@ -91,7 +93,9 @@ export const VideoFrameSegment = ({
     isLastFrame,
     isFirstFrame,
 }: VideoFrameSegmentProps): JSX.Element => {
-    const { annotationsQuery, predictionsQuery } = useVideoTimelineQueries(frameNumber);
+    const { tasks } = useTask();
+    const { annotationsQuery, predictionsQuery } = useVideoTimelineQueries(frameNumber, tasks.some(isKeypointTask));
+
     const annotatedLabels = annotationsQuery.data ?? new Set<string>();
     const predictedLabels = predictionsQuery.data ?? new Set<string>();
 

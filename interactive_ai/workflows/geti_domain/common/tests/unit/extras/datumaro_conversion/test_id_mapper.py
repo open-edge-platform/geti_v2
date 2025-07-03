@@ -2,12 +2,9 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from unittest.mock import MagicMock
 
-import pytest
-
 from jobs_common_extras.datumaro_conversion.mappers.id_mapper import MediaNameIDMapper
 
 
-@pytest.mark.CommonComponent
 class TestIDMapper:
     def test_media_name_id_mapper(self):
         mapper = MediaNameIDMapper()

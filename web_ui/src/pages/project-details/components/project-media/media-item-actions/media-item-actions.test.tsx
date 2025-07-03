@@ -53,17 +53,15 @@ describe('MediaItemActions', () => {
     const renderApp = async ({
         mediaItem,
         projectService = createInMemoryProjectService(),
-        FEATURE_FLAG_CLASSIFICATION_RANGES = false,
     }: {
         mediaItem: MediaItem;
         projectService?: ProjectService;
-        FEATURE_FLAG_CLASSIFICATION_RANGES?: boolean;
     }) => {
         return projectRender(
             <MediaProvider>
                 <App mediaItem={mediaItem} />
             </MediaProvider>,
-            { services: { projectService }, featureFlags: { FEATURE_FLAG_CLASSIFICATION_RANGES } }
+            { services: { projectService } }
         );
     };
 
@@ -91,7 +89,7 @@ describe('MediaItemActions', () => {
             .fn()
             .mockResolvedValue(getMockedProject({ tasks: [getMockedTask({ domain: DOMAIN.CLASSIFICATION })] }));
 
-        await renderApp({ mediaItem: mockVideo, projectService, FEATURE_FLAG_CLASSIFICATION_RANGES: true });
+        await renderApp({ mediaItem: mockVideo, projectService });
 
         fireEvent.click(screen.getByRole('button', { name: 'open menu' }));
         Object.values(MediaItemMenuActions).forEach((menuAction) => {
@@ -105,7 +103,7 @@ describe('MediaItemActions', () => {
             .fn()
             .mockResolvedValue(getMockedProject({ tasks: [getMockedTask({ domain: DOMAIN.CLASSIFICATION })] }));
 
-        await renderApp({ mediaItem: mockVideo, projectService, FEATURE_FLAG_CLASSIFICATION_RANGES: true });
+        await renderApp({ mediaItem: mockVideo, projectService });
 
         expect(screen.getByRole('button', { name: 'Quick annotation' })).toBeVisible();
 

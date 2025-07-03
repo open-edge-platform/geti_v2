@@ -8,6 +8,7 @@ import pytest
 from bson import ObjectId
 from minio import Minio
 from pymongo import MongoClient
+from pymongo.database import Database
 from pytest_minio_mock.plugin import MockMinioClient
 
 from migration.scripts.remove_result_media import RemoveResultMediaMigration
@@ -43,7 +44,7 @@ class TestRemoveResultMedia:
         Verifies that only the result media documents are deleted from the metadata collection.
         """
         # Arrange
-        mock_db = mongomock.MongoClient().db
+        mock_db: Database = mongomock.MongoClient().db
         metadata_item_collection = mock_db.metadata_item
         metadata_item_collection.insert_one(fxt_result_media)
         metadata_item_collection.insert_one(fxt_tensor)
@@ -62,9 +63,12 @@ class TestRemoveResultMedia:
         os.environ["S3_CREDENTIALS_PROVIDER"] = "aws"
         minio_client = Minio("s3.amazonaws.com")
         minio_client.make_bucket("resultmedia")
-        minio_client.put_object(bucket_name="resultmedia", object_name="file1.np", data=b"a", length=1)
+        minio_client.put_object(bucket_name="resultmedia", object_name="file1.np", data=b"a", length=1)  # type: ignore[arg-type]
         minio_client.put_object(
-            bucket_name="resultmedia", object_name="organizations/workspaces/projects/file2.np", data=b"b", length=1
+            bucket_name="resultmedia",
+            object_name="organizations/workspaces/projects/file2.np",
+            data=b"b",  # type: ignore[arg-type]
+            length=1,
         )
 
         # Act

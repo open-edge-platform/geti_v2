@@ -92,7 +92,7 @@ def fxt_project_configuration_rest_view(fxt_project_configuration):
                         "value": task_config.auto_training.min_images_per_label,
                         "default_value": auto_training_schema["properties"]["min_images_per_label"]["default"],
                         "max_value": None,
-                        "min_value": 0,
+                        "min_value": 3,
                     },
                 ],
             }

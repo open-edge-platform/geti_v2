@@ -60,9 +60,11 @@ class ImportController:
         )
         if import_operation.project_name:
             job_metadata["project"] = {"name": import_operation.project_name}
+        # Sanitize file_id for logging to prevent log injection
+        safe_file_id = str(import_operation.file_id).replace("\n", "").replace("\r", "")
         logger.info(
             "Submitting request to import project to the job scheduler. Uploaded file id: `%s`",
-            import_operation.file_id,
+            safe_file_id,
         )
         with GRPCJobsClient(
             grpc_address=JOB_SERVICE_GRPC_ADDRESS,
@@ -81,5 +83,5 @@ class ImportController:
                     cancellable=False,
                 )
             except RpcError as rpc_error:
-                logger.exception(f"Could not submit import job for file with id '{import_operation.file_id}'")
+                logger.exception(f"Could not submit import job for file with id '{safe_file_id}'")
                 raise FailedJobSubmissionException from rpc_error

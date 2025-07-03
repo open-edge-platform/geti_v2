@@ -28,7 +28,6 @@ MO_MODEL_ID = "mo_model_id"
 TRAIN_INFERENCE_SUBSET_ID = "train_inference_subset_id"
 
 
-@pytest.mark.JobsComponent
 class TestEvaluateAndInferTask:
     @pytest.mark.parametrize("should_activate_model", [True, False])
     @pytest.mark.parametrize("infer_on_pipeline", [True, False])

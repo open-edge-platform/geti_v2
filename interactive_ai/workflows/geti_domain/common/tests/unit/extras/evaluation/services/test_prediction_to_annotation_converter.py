@@ -33,7 +33,6 @@ from jobs_common_extras.evaluation.services.prediction_to_annotation_converter i
 )
 
 
-@pytest.mark.JobsComponent
 class TestPredictionToAnnotationConverter:
     def test_classification_to_annotation_converter(self, fxt_label_schema_factory):
         # Arrange

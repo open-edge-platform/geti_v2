@@ -46,7 +46,7 @@ const getEnableTilingParameter = (tilingParameters: ConfigurationParameter[]) =>
     return parameter;
 };
 
-const getTilingMode = (tilingParameters: ConfigurationParameter[]): TILING_MODES => {
+export const getTilingMode = (tilingParameters: ConfigurationParameter[]): TILING_MODES => {
     const adaptive = getAdaptiveTilingParameter(tilingParameters);
     const enablingTiling = getEnableTilingParameter(tilingParameters);
 
@@ -61,12 +61,16 @@ const getTilingMode = (tilingParameters: ConfigurationParameter[]): TILING_MODES
     return TILING_MODES.CUSTOM;
 };
 
+export const getCustomTilingParameters = (parameters: ConfigurationParameter[]) => {
+    return parameters.filter(
+        (parameter) => ![ADAPTIVE_TILING_PARAMETER, ENABLE_TILING_PARAMETER].includes(parameter.key)
+    );
+};
+
 export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConfiguration }) => {
     const selectedTilingMode = getTilingMode(tilingParameters);
 
-    const manualTilingParameters = tilingParameters.filter(
-        (parameter) => ![ADAPTIVE_TILING_PARAMETER, ENABLE_TILING_PARAMETER].includes(parameter.key)
-    );
+    const customTilingParameters = getCustomTilingParameters(tilingParameters);
 
     const handleUpdateTilingParameter = (inputParameter: ConfigurationParameter | ConfigurationParameter[]) => {
         onUpdateTrainingConfiguration((config) => {
@@ -138,7 +142,7 @@ export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConf
         ),
         [TILING_MODES.CUSTOM]: (
             <View gridColumn={'1/-1'}>
-                <Parameters parameters={manualTilingParameters} onChange={handleUpdateTilingParameter} />
+                <Parameters parameters={customTilingParameters} onChange={handleUpdateTilingParameter} />
             </View>
         ),
     };

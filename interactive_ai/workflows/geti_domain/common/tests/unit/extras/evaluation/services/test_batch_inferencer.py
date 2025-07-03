@@ -70,7 +70,6 @@ def fxt_model_template_small():
     yield model_template
 
 
-@pytest.mark.JobsComponent
 class TestBatchInference:
     @pytest.mark.parametrize(
         "use_async, model_template_id, async_enabled",
