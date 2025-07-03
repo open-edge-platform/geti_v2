@@ -101,6 +101,7 @@ export const TemplateManager = ({
                             )}
 
                             <LoadFileButton onFileLoaded={setSampleImg} />
+
                             {sampleImg && (
                                 <ButtonWithSpectrumTooltip
                                     isQuiet
