@@ -7,6 +7,7 @@ import pytest
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration
 
 from communication.controllers.training_configuration_controller import TrainingConfigurationRESTController
+from communication.exceptions import NotConfigurableParameterException
 from communication.views.training_configuration_rest_views import TrainingConfigurationRESTViews
 from service.configuration_service import ConfigurationService
 from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
@@ -297,7 +298,7 @@ class TestTrainingConfigurationController:
         assert updated_config.hyperparameters.training.input_size == "64x64"
 
         # check that allowed values cannot be set
-        with pytest.raises(ValueError):
+        with pytest.raises(NotConfigurableParameterException):
             TrainingConfigurationRESTViews.training_configuration_from_rest(error_config_rest)
 
     def test_get_dataset_size(

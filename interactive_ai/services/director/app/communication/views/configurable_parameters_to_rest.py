@@ -5,6 +5,8 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from communication.exceptions import NotConfigurableParameterException
+
 PYDANTIC_BASE_TYPES_MAPPING = {
     "integer": "int",
     "number": "float",
@@ -146,10 +148,7 @@ class ConfigurableParametersRESTViews:
                     result[key] = value
                     if key.startswith("allowed_values_"):
                         # `allowed_values_` is a reserved prefix used for validation
-                        raise ValueError(
-                            f"The parameter '{key}' cannot be used. The prefix 'allowed_values_' "
-                            f"is reserved for validation purposes and cannot be set directly."
-                        )
+                        raise NotConfigurableParameterException(parameter_name=key)
                 # If it's a dictionary without a "key" field, it must contain nested models
                 elif isinstance(item, dict):
                     # Process each nested model recursively and merge with result
