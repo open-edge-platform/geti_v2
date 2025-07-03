@@ -30,6 +30,7 @@ from geti_client import (
     TrainingDatasetVersionsApi,
     WorkspacesApi,
 )
+from geti_client.exceptions import ConflictException
 
 BEHAVE_DEBUG_ON_ERROR = True
 
@@ -196,7 +197,7 @@ def _cleanup_project(context: Context) -> None:
                     project_id=project_id,
                 )
                 break
-            except ApiException as e:
+            except ConflictException:
                 logger.warning("Could not delete project with %s, probably because it is still locked", project_id)
                 time.sleep(1)
         delattr(context, "project_id")
