@@ -117,7 +117,7 @@ interface UpgradeFormProps {
 const UpgradeForm = ({ availableVersions, onClose, currentVersion }: UpgradeFormProps) => {
     const { data: checkPlatformBackup } = useCheckPlatformBackupQuery();
     const platformUpgrade = usePlatformUpgradeMutation();
-    const isBackupPossible = checkPlatformBackup?.isBackupPossible ?? false;
+    const isBackupPossible = checkPlatformBackup === undefined ? true : checkPlatformBackup.isBackupPossible;
     const [selectedVersionKey, setSelectedVersionKey] = useState(availableVersions[0].version);
     const selectedVersion = availableVersions.find(({ version }) => version === selectedVersionKey);
     const [isSkipBackupEnabled, setIsSkipBackupEnabled] = useState<boolean>(false);
