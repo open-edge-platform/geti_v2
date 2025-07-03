@@ -12,7 +12,7 @@ from typing import NamedTuple, cast
 
 from omegaconf import DictConfig, ListConfig, OmegaConf
 
-from geti_supported_models.model_manifest import ModelManifest
+from geti_supported_models.model_manifest import ModelManifest, NullModelManifest
 from geti_supported_models.parser import get_model_manifests
 from iai_core.configuration.elements import metadata_keys
 from iai_core.entities.label import Domain
@@ -594,7 +594,6 @@ class ModelTemplate:
     model_category: ModelCategory = ModelCategory.OTHER
     model_status: ModelTemplateDeprecationStatus = ModelTemplateDeprecationStatus.ACTIVE
     is_default_for_task: bool = False
-    model_manifest: ModelManifest | None = None
 
     def __post_init__(self):
         """Do sanitation checks before loading the hyper-parameters."""
@@ -619,6 +618,14 @@ class ModelTemplate:
     def is_task_global(self) -> bool:
         """Returns ``True`` if the task is global task i.e. if task produces global labels."""
         return self.task_type.is_global
+
+    @property
+    def model_manifest(self) -> ModelManifest:
+        """Get the model manifest for this model template.
+
+        :returns: The model manifest associated with this model template.
+        """
+        return get_model_manifests()[self.model_template_id]
 
 
 class NullModelTemplate(ModelTemplate):
@@ -669,12 +676,9 @@ def _parse_model_template_from_omegaconf(config: DictConfig | ListConfig) -> Mod
         ModelTemplate: The parsed model template.
     """
     # Each model template must have a corresponding model manifest.
-    model_manifests = get_model_manifests()
-    model_manifest = model_manifests[config["model_template_id"]]
     schema = OmegaConf.structured(ModelTemplate)
     config = OmegaConf.merge(schema, config)
     model_template = cast("ModelTemplate", OmegaConf.to_object(config))
-    model_template.model_manifest = model_manifest
     return model_template
 
 

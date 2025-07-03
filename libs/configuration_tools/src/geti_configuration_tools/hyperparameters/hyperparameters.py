@@ -61,15 +61,7 @@ class TrainingHyperParameters(BaseModel):
     learning_rate: float = Field(
         gt=0, lt=1, default=0.001, title="Learning rate", description="Base learning rate for the optimizer"
     )
-    max_detection_per_image: MaxDetectionPerImage = Field(
-        default_factory=MaxDetectionPerImage,
-        title="Maximum number of detections per image",
-        description=(
-            "Maximum number of objects that can be detected in a single image, "
-            "only applicable for instance segmentation models"
-        ),
-    )
-    input_size_width: int | None = Field(
+    input_size: str | None = Field(
         default=None,
         gt=0,
         title="Input size width",
@@ -143,7 +135,7 @@ class TrainingHyperParameters(BaseModel):
 class EvaluationParameters(BaseModel):
     """Parameters for model evaluation."""
 
-    metric: None = Field(
+    metric: str | None = Field(
         default=None, title="Evaluation metric", description="Metric used to evaluate model performance"
     )
 
@@ -151,8 +143,16 @@ class EvaluationParameters(BaseModel):
 class Hyperparameters(BaseModel):
     """Complete set of configurable parameters for model training and evaluation."""
 
-    dataset_preparation: DatasetPreparationParameters
-    training: TrainingHyperParameters
+    dataset_preparation: DatasetPreparationParameters = Field(
+        default_factory=DatasetPreparationParameters,
+        title="Dataset preparation",
+        description="Parameters for preparing the dataset before training",
+    )
+    training: TrainingHyperParameters | None = Field(
+        default=None,
+        title="Training hyperparameters",
+        description="Hyperparameters for the model training process",
+    )
     evaluation: EvaluationParameters
 
 

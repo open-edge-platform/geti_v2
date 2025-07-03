@@ -146,7 +146,7 @@ class TestModelManifest:
         assert null_model_manifest.supported_gpus == {}
         assert null_model_manifest.hyperparameters.dataset_preparation.augmentation == AugmentationParameters()
 
-    @pytest.mark.skip(reason="Missing manifests files")
+    # @pytest.mark.skip(reason="Missing manifests files")
     def test_get_model_manifests(self):
         # test that the model manifests can be retrieved without errors
         model_manifests = get_model_manifests()

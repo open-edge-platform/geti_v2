@@ -73,7 +73,7 @@ class ModelStats(BaseModel):
     """Information about a machine learning model."""
 
     gigaflops: float = Field(
-        gt=0, title="Gigaflops", description="Billions of floating-point operations per second required by the model"
+        ge=0, title="Gigaflops", description="Billions of floating-point operations per second required by the model"
     )
     trainable_parameters: float = Field(
         ge=0.0,
