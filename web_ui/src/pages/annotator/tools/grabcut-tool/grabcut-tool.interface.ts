@@ -17,12 +17,12 @@ export interface GrabcutData {
     activeTool: GrabcutToolType;
 }
 
-export interface GrabcutWorker extends WebWorker<Polygon> {
+export interface GrabcutWorker extends WebWorker {
     Grabcut: GrabcutInstance;
     type: AlgorithmType.GRABCUT;
 }
 
-interface GrabcutInstance {
+export interface GrabcutInstance {
     new (imageData: ImageData): GrabcutMethods;
 }
 

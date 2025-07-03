@@ -95,8 +95,8 @@ export const getPointsEdges = (keypointNodes: KeypointNode[], edges: KeypointStr
 
 export const getPercentageFromPoint = (point: Point, roi: RegionOfInterest) => {
     return {
-        x: ((point.x - roi.x) / roi.width) * 100,
-        y: ((point.y - roi.y) / roi.height) * 100,
+        x: roi.width ? ((point.x - roi.x) / roi.width) * 100 : 0,
+        y: roi.height ? ((point.y - roi.y) / roi.height) * 100 : 0,
     };
 };
 
@@ -172,6 +172,7 @@ export const getDirection = (startPoint: Point, endPoint: Point): CursorDirectio
     if (endPoint.x >= startPoint.x && endPoint.y <= startPoint.y) {
         return CursorDirection.NorthEast;
     }
+
     return CursorDirection.NorthWest;
 };
 
@@ -179,12 +180,15 @@ export const getTemplateWithDirection = (templatePoints: KeypointNode[], cursorD
     if (cursorDirection === CursorDirection.SouthWest) {
         return mirrorPointsAcrossAxis(templatePoints, PointAxis.X);
     }
+
     if (cursorDirection === CursorDirection.NorthEast) {
         return mirrorPointsAcrossAxis(templatePoints, PointAxis.Y);
     }
+
     if (cursorDirection === CursorDirection.NorthWest) {
         return mirrorPointsAcrossAxis(mirrorPointsAcrossAxis(templatePoints, PointAxis.Y), PointAxis.X);
     }
+
     return templatePoints;
 };
 

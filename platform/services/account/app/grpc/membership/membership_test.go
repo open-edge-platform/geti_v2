@@ -56,7 +56,7 @@ func TestGRPCServer_GetMemberships(t *testing.T) {
 
 		_, err := server.GetMemberships(ctx, req)
 		assert.Error(t, err)
-		assert.Equal(t, codes.Internal, status.Code(err))
+		assert.Equal(t, codes.InvalidArgument, status.Code(err))
 	})
 
 	t.Run("Success", func(t *testing.T) {

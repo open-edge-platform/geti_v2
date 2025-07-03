@@ -4,6 +4,7 @@
 import { Divider, Text, View } from '@geti/ui';
 
 import { isVideo, isVideoFrame } from '../../../../../../core/media/video.interface';
+import { isKeypointDetection } from '../../../../../../core/projects/domains';
 import { getKeyName } from '../../../../../../shared/hotkeys';
 import { ToolType } from '../../../../core/annotation-tool-context.interface';
 import { useAnnotatorHotkeys } from '../../../../hooks/use-hotkeys-configuration.hook';
@@ -19,6 +20,7 @@ export const HotKeysList = (): JSX.Element => {
     const { hotkeys } = useAnnotatorHotkeys();
     const { activeDomains } = useTask();
     const { selectedMediaItem } = useSelectedMediaItem();
+    const isKeypointProject = activeDomains.some(isKeypointDetection);
 
     const hotkeysAvailability = useAvailabilityOfHotkeys(activeDomains);
 
@@ -54,7 +56,11 @@ export const HotKeysList = (): JSX.Element => {
             <Divider size={'S'} marginBottom={'size-150'} />
             <HotKeysItem title={'Select all'} shortcut={hotkeys.selectAll} />
             <HotKeysItem title={'Deselect all'} shortcut={hotkeys.deselectAll} />
-            <HotKeysItem title={'Show or hide all'} shortcut={hotkeys.hideAllAnnotations} />
+            <HotKeysItem
+                title={'Show or hide all'}
+                shortcut={hotkeys.hideAllAnnotations}
+                disabled={isKeypointProject}
+            />
             <Divider size={'S'} marginBottom={'size-150'} />
             <HotKeysItem title={'Undo'} shortcut={hotkeys.undo} />
             <HotKeysItem title={'Redo'} shortcut={redoShortcut} />

@@ -5,6 +5,7 @@ import { PointerEvent, SVGProps } from 'react';
 
 import Clipper from '@doodle3d/clipper-js';
 import type ClipperShape from '@doodle3d/clipper-js';
+import { Shape as SmartToolsShape } from '@geti/smart-tools/src/shared/interfaces';
 import { defer, isEmpty } from 'lodash-es';
 
 import { Annotation, RegionOfInterest } from '../../../core/annotations/annotation.interface';
@@ -417,3 +418,87 @@ export const SENSITIVITY_SLIDER_TOOLTIP =
     'Adjust the precision level by selecting a number from the drop-down menu: higher numbers increase precision, ' +
     'while lower numbers decrease it. Keep in mind that increased precision requires more computing power and time. ' +
     'Adding high-resolution images may further extend the annotation waiting time significantly.';
+
+export const convertGetiShapeTypeToToolShapeType = (shapeType: ShapeType): SmartToolsShape['shapeType'] => {
+    switch (shapeType) {
+        case ShapeType.Rect:
+            return 'rect';
+        case ShapeType.RotatedRect:
+            return 'rotated-rect';
+        case ShapeType.Polygon:
+            return 'polygon';
+        case ShapeType.Circle:
+            return 'circle';
+        default:
+            throw new Error('Unknown shape type');
+    }
+};
+
+export const convertToolShapeToGetiShape = (shape: SmartToolsShape): Shape => {
+    switch (shape.shapeType) {
+        case 'polygon':
+            return { shapeType: ShapeType.Polygon, points: shape.points };
+        case 'rotated-rect':
+            return {
+                shapeType: ShapeType.RotatedRect,
+                x: shape.x,
+                y: shape.y,
+                width: shape.width,
+                height: shape.height,
+                angle: shape.angle,
+            };
+        case 'rect':
+            return {
+                shapeType: ShapeType.Rect,
+                x: shape.x,
+                y: shape.y,
+                width: shape.width,
+                height: shape.height,
+            };
+        case 'circle':
+            return {
+                shapeType: ShapeType.Circle,
+                x: shape.cx,
+                y: shape.cy,
+                r: shape.r,
+            };
+        default:
+            throw new Error('Unknown shape type');
+    }
+};
+
+export const convertGetiShapeToToolShape = (shape: Shape): SmartToolsShape => {
+    switch (shape.shapeType) {
+        case ShapeType.Rect:
+            return {
+                shapeType: 'rect',
+                x: shape.x,
+                y: shape.y,
+                width: shape.width,
+                height: shape.height,
+            };
+        case ShapeType.RotatedRect:
+            return {
+                shapeType: 'rotated-rect',
+                x: shape.x,
+                y: shape.y,
+                width: shape.width,
+                height: shape.height,
+                angle: shape.angle,
+            };
+        case ShapeType.Polygon:
+            return {
+                shapeType: 'polygon',
+                points: shape.points,
+            };
+        case ShapeType.Circle:
+            return {
+                shapeType: 'circle',
+                cx: shape.x,
+                cy: shape.y,
+                r: shape.r,
+            };
+        default:
+            throw new Error('Unknown shape type');
+    }
+};

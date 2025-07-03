@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 import { useMutation } from '@tanstack/react-query';
 
@@ -15,8 +15,15 @@ import { useTask } from '../../providers/task-provider/task-provider.component';
 import { StateProviderProps } from '../tools.interface';
 import UndoRedoProvider from '../undo-redo/undo-redo-provider.component';
 import useUndoRedoState from '../undo-redo/use-undo-redo-state';
-import { RunSSIMProps, SSIMMethods, SSIMState } from './ssim-tool.interface';
-import { convertRectToShape, convertToRect, filterSSIMResults, guessNumberOfItemsThreshold } from './util';
+import { RunSSIMProps, SSIMState } from './ssim-tool.interface';
+import {
+    convertRectToShape,
+    convertRunSSIMPropsToToolRunSSIMProps,
+    convertToolMatchesToGetiMatches,
+    convertToRect,
+    filterSSIMResults,
+    guessNumberOfItemsThreshold,
+} from './util';
 
 export interface SSIMStateContextProps {
     reset: () => void;
@@ -37,9 +44,7 @@ const initSSIMState: SSIMState = {
 const SSIMStateContext = createContext<SSIMStateContextProps | undefined>(undefined);
 
 export const SSIMStateProvider = ({ children }: StateProviderProps): JSX.Element => {
-    const { worker } = useLoadAIWebworker(AlgorithmType.SSIM);
-
-    const wsInstance = useRef<SSIMMethods | null>(null);
+    const { worker: ssim } = useLoadAIWebworker(AlgorithmType.SSIM);
 
     const { activeDomains } = useTask();
     const { setIsDrawing } = useAnnotationScene();
@@ -59,21 +64,18 @@ export const SSIMStateProvider = ({ children }: StateProviderProps): JSX.Element
         mutationFn: async (runSSIMProps: RunSSIMProps) => {
             setIsDrawing(true);
 
-            if (!wsInstance.current && worker) {
-                wsInstance.current = await new worker.SSIM();
-            }
-
-            if (wsInstance.current) {
-                return wsInstance.current.executeSSIM(runSSIMProps);
+            if (ssim) {
+                return ssim.executeSSIM(convertRunSSIMPropsToToolRunSSIMProps(runSSIMProps));
             }
 
             return [];
         },
 
         onSuccess: (matches, { existingAnnotations, autoMergeDuplicates: merge, template, roi, shapeType }) => {
+            const ssimMatches = convertToolMatchesToGetiMatches(matches);
             const existingRects = merge ? existingAnnotations.map(convertToRect) : [];
             const absoluteTemplate = { ...template, x: template.x + roi.x, y: template.y + roi.y };
-            const filteredMatches = filterSSIMResults(roi, matches, absoluteTemplate, existingRects);
+            const filteredMatches = filterSSIMResults(roi, ssimMatches, absoluteTemplate, existingRects);
             const threshold = guessNumberOfItemsThreshold(filteredMatches);
 
             updateToolState(
@@ -102,7 +104,6 @@ export const SSIMStateProvider = ({ children }: StateProviderProps): JSX.Element
         resetMutation();
         setSSIMProps(null);
         setPreviewThreshold(null);
-        wsInstance.current = null;
         setIsDrawing(false);
     }, [undoRedoActions, resetMutation, setIsDrawing]);
 

@@ -152,7 +152,7 @@ class IntelligentScissors {
     }
 }
 
-const waitForOpenCV = async (): Promise<boolean> => {
+const loadOpenCV = async (): Promise<boolean> => {
     if (CV) {
         return true;
     } else {
@@ -177,6 +177,6 @@ const optimizeSegments = (segments: Point[][]): Polygon => {
     return { shapeType: ShapeType.Polygon, points };
 };
 
-const WorkerApi = { IntelligentScissors, waitForOpenCV, optimizePolygon, optimizeSegments, terminate };
+const WorkerApi = { IntelligentScissors, loadOpenCV, optimizePolygon, optimizeSegments, terminate };
 
 expose(WorkerApi);

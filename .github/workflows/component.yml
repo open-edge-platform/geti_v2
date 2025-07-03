@@ -105,7 +105,7 @@ jobs:
       - name: Integration testing
         run: |
           if [[ "${{ steps.component-config.outputs.integration_builder }}" == "false" ]]; then
-            make -C "${COMPONENT_DIR}" test-integration
+            sudo apt-get update && sudo apt-get install -y ffmpeg && make -C "${COMPONENT_DIR}" test-integration
           else
             make builder -C "${COMPONENT_DIR}" test-integration
           fi

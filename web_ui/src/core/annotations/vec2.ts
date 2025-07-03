@@ -87,7 +87,7 @@ export const toClipperPoint = ({ x, y }: Vec2): { X: number; Y: number } => {
     return { X: x, Y: y };
 };
 
-export const getAngle = (direction: Vec2): number => {
+const getAngle = (direction: Vec2): number => {
     return Math.atan2(direction.y, direction.x);
 };
 

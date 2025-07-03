@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 
-import pytest
 from iai_core.entities.video import VideoFrame
 from iai_core.repos import ImageRepo, VideoRepo
 
@@ -10,7 +9,6 @@ from media_utils import get_image_bytes, get_image_numpy, get_video_bytes, get_v
 from tests.test_helpers import generate_random_annotated_project
 
 
-@pytest.mark.ScSdkComponent
 class TestMediaUtils:
     def test_get_image_bytes(self, request) -> None:
         project = generate_random_annotated_project(

@@ -12,7 +12,6 @@ from iai_core.entities.model import NullModel
 from job.utils.model_acceptance import is_model_acceptable, proportions_ztest
 
 
-@pytest.mark.JobsComponent
 class TestModelAcceptance:
     @pytest.mark.parametrize(
         "previous_performance, new_performance, num_validation_images, exp_pvalue",

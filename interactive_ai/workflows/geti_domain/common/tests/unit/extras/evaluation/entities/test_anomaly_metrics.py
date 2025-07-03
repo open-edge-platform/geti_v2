@@ -186,7 +186,6 @@ def fxt_prediction_dataset(
     yield Dataset(id=ID("prediction_dataset_id"), items=pred_dataset_items)
 
 
-@pytest.mark.JobsComponent
 class TestAnomalyMetrics:
     def test_global_subsets(self, fxt_ground_truth_dataset, fxt_prediction_dataset):
         gt_subset = AnomalyMetric.get_global_subset(fxt_ground_truth_dataset)

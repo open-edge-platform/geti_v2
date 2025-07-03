@@ -25,7 +25,7 @@ import { SpectrumTableLoadingState } from '../../../../shared/utils';
 import { PersonalAccessTokenMenu } from './personal-access-tokens-menu.component';
 import { sortPersonalAccessTokens } from './utils';
 
-export const enum PERSONAL_ACCESS_TOKENS_TABLE_COLUMNS {
+const enum PERSONAL_ACCESS_TOKENS_TABLE_COLUMNS {
     CREATION_DATE = 'createdAt',
     NAME = 'name',
     DESCRIPTION = 'description',

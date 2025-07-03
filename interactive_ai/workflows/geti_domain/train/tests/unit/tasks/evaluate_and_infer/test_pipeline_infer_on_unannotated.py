@@ -31,7 +31,6 @@ from job.utils.train_workflow_data import TrainWorkflowData
 from tests.unit.tasks.utils import TEST_ENV_VARS, return_none
 
 
-@pytest.mark.JobsComponent
 class TestPipelineInferenceTask:
     model_id = "model_id"
 

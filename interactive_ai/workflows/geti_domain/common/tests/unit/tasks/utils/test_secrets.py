@@ -4,13 +4,11 @@
 import os
 from unittest.mock import MagicMock, call, patch
 
-import pytest
 from geti_types import ID, RequestSource
 
 from jobs_common.tasks.utils.secrets import JobMetadata, env_vars, set_env_vars
 
 
-@pytest.mark.JobsComponent
 class TestSecrets:
     @patch("jobs_common.tasks.utils.secrets.current_context")
     def test_set_env_vars(self, mock_current_context) -> None:

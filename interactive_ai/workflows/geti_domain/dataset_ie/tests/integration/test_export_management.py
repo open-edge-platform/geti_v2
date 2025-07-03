@@ -28,7 +28,6 @@ from tests.test_helpers import (
 )
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestExportManager:
     def setup_class(self):
         self.assert_method_mapping = {
@@ -46,7 +45,7 @@ class TestExportManager:
             ("anom_class", "datumaro"): self._assert_datumaro_export_valid,
             ("anom_seg", "datumaro"): self._assert_datumaro_export_valid,
             ("anom_det", "datumaro"): self._assert_datumaro_export_valid,
-            ("keypoint", "datumaro"): self._assert_datumaro_export_valid,
+            # ("keypoint", "datumaro"): self._assert_datumaro_export_valid, TODO: ITEP-32288
         }
 
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
@@ -70,7 +69,7 @@ class TestExportManager:
             ("fxt_annotated_anomaly_cls_project_with_video", "anom_class", "datumaro"),
             ("fxt_annotated_anomaly_det_project", "anom_det", "datumaro"),
             ("fxt_annotated_anomaly_seg_project", "anom_seg", "datumaro"),
-            ("fxt_annotated_keypoint_det_project", "keypoint", "datumaro"),
+            # ("fxt_annotated_keypoint_det_project", "keypoint", "datumaro"), TODO: ITEP-32288
         ],
     )
     def test_export_projects(

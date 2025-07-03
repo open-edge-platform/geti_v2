@@ -30,3 +30,19 @@ export interface Polygon {
     readonly points: Point[];
     readonly shapeType: 'polygon';
 }
+
+export type Shape = Rect | RotatedRect | Circle | Polygon;
+export type ShapeType = Shape['shapeType'];
+
+export interface RegionOfInterest {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+// Vector has the same interface as Point but can be confusing if used interchangeably
+export interface Vector {
+    x: number;
+    y: number;
+}

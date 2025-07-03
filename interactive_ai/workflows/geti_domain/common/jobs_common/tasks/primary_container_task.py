@@ -311,14 +311,6 @@ def get_flyte_pod_spec(
                             )
                         ),
                     ),
-                    V1EnvVar(
-                        name="MLFLOW_SIDECAR_IMAGE_NAME",
-                        value_from=V1EnvVarSource(
-                            config_map_key_ref=V1ConfigMapKeySelector(
-                                name="impt-training-config", key="mlflow_sidecar_image_name"
-                            )
-                        ),
-                    ),
                     # For the ease of development
                     V1EnvVar(
                         name="OVERWRITE_RESOURCES_CPU_LIMITS",
