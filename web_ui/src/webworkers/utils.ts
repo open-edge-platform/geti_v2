@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { approximateShape } from '@geti/smart-tools';
+import { approximateShape, getMatFromPoints, getPointsFromMat } from '@geti/smart-tools';
 import axios from 'axios';
 import type OpenCVTypes from 'OpenCVTypes';
 
@@ -19,29 +19,6 @@ export const optimizePolygonAndCV = (CV: OpenCVTypes.cv, points: Point[], isClos
     newContour.delete();
 
     return newPoints;
-};
-
-export const getMatFromPoints = (CV: OpenCVTypes.cv, points: Point[], offset = { x: 0, y: 0 }): OpenCVTypes.Mat => {
-    const pointsMat = new CV.Mat(points.length, 1, CV.CV_32SC2);
-
-    points.forEach(({ x, y }, idx) => {
-        pointsMat.intPtr(idx, 0)[0] = x + offset.x;
-        pointsMat.intPtr(idx, 0)[1] = y + offset.y;
-    });
-
-    return pointsMat;
-};
-
-export const getPointsFromMat = (mat: OpenCVTypes.Mat, offset = { x: 0, y: 0 }): Point[] => {
-    const points: Point[] = [];
-
-    for (let row = 0; row < mat.rows; row++) {
-        points.push({
-            x: Math.round(mat.intAt(row, 0) + offset.x),
-            y: Math.round(mat.intAt(row, 1) + offset.y),
-        });
-    }
-    return points;
 };
 
 // For debugging purposes, not being used atm
