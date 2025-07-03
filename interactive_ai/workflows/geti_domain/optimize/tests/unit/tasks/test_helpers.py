@@ -28,7 +28,7 @@ class TestOptimizeHelpers:
     @patch("job.tasks.helpers.lock_project")
     @patch("job.tasks.helpers.publish_metadata_update")
     @patch("job.tasks.helpers.OptimizationTrainerContext")
-    @patch("job.tasks.helpers.GetiOTXInterfaceAdapter")
+    @patch("job.tasks.helpers.MLArtifactsAdapter")
     def test_prepare_optimize(
         self,
         mock_geti_otx_interface_adapter,
@@ -69,7 +69,7 @@ class TestOptimizeHelpers:
         mock_adapter.push_input_model.assert_called_once()
 
     @pytest.mark.parametrize("retain_training_artifacts", [True, False])
-    @patch("job.tasks.helpers.GetiOTXInterfaceAdapter")
+    @patch("job.tasks.helpers.MLArtifactsAdapter")
     @patch("job.tasks.helpers.ModelRepo")
     def test_finalize_optimize(
         self,

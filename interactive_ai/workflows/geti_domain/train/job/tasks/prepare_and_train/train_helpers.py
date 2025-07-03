@@ -27,8 +27,8 @@ from iai_core.repos import ModelRepo
 from jobs_common.exceptions import CommandInitializationFailedException, TrainingPodFailedException
 from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
 from jobs_common.tasks.utils.secrets import JobMetadata
-from jobs_common_extras.otx.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
-from jobs_common_extras.otx.utils.train_output_models import TrainOutputModelIds, TrainOutputModels
+from jobs_common_extras.experiments.adapters.ml_artifacts import MLArtifactsAdapter
+from jobs_common_extras.experiments.utils.train_output_models import TrainOutputModelIds, TrainOutputModels
 
 from job.utils.train_workflow_data import TrainWorkflowData
 
@@ -167,7 +167,7 @@ def _prepare_s3_bucket(
         used to distinguish classification tasks.
         Otherwise, do not add `ClsSubTaskType` value to the configuration file.
     """
-    adapter = GetiOTXInterfaceAdapter(project_identifier=project.identifier, job_metadata=JobMetadata.from_env_vars())
+    adapter = MLArtifactsAdapter(project_identifier=project.identifier, job_metadata=JobMetadata.from_env_vars())
     adapter.push_placeholders()
     adapter.push_metadata()
     adapter.push_input_configuration(
@@ -334,7 +334,7 @@ def finalize_train(
         # Mark the model as successfully trained, but not evaluated
         train_output_models.set_models_status(model_status=ModelStatus.TRAINED_NO_STATS)
 
-        adapter = GetiOTXInterfaceAdapter(
+        adapter = MLArtifactsAdapter(
             project_identifier=project.identifier,
             job_metadata=JobMetadata.from_env_vars(),
         )

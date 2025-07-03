@@ -22,7 +22,7 @@ def _create_unique_name(filepath: str) -> str:
     return f"{name}_{suffix}{ext}"
 
 
-class OTXBinaryRepo(BinaryRepo):
+class ExperimentsBinaryRepo(BinaryRepo):
     object_type = BinaryObjectType.MLFLOW_EXPERIMENTS
 
     def copy_from(self, model_binary_repo: ModelBinaryRepo, src_filename: str, dst_filepath: str) -> str:
@@ -40,7 +40,7 @@ class OTXBinaryRepo(BinaryRepo):
         # TODO: Implement a clean interface for it on the iai-core side.
         # CVS-133877
 
-        model_storage_client, otx_storage_client = self._check_storage_clients(model_binary_repo)
+        model_storage_client, experiments_storage_client = self._check_storage_clients(model_binary_repo)
 
         source = CopySource(
             bucket_name=model_storage_client.bucket_name,
@@ -48,10 +48,10 @@ class OTXBinaryRepo(BinaryRepo):
         )
 
         # Server side copy
-        otx_storage_client.client.copy_object(
-            bucket_name=otx_storage_client.bucket_name,
+        experiments_storage_client.client.copy_object(
+            bucket_name=experiments_storage_client.bucket_name,
             object_name=os.path.join(
-                otx_storage_client.object_name_base,
+                experiments_storage_client.object_name_base,
                 dst_filepath,
             ),
             source=source,
@@ -72,11 +72,11 @@ class OTXBinaryRepo(BinaryRepo):
         # TODO: Implement a clean interface for it on the iai-core side.
         # CVS-133877
 
-        model_storage_client, otx_storage_client = self._check_storage_clients(model_binary_repo)
+        model_storage_client, experiments_storage_client = self._check_storage_clients(model_binary_repo)
 
         source = CopySource(
-            bucket_name=otx_storage_client.bucket_name,
-            object_name=os.path.join(otx_storage_client.object_name_base, src_filepath),
+            bucket_name=experiments_storage_client.bucket_name,
+            object_name=os.path.join(experiments_storage_client.object_name_base, src_filepath),
         )
 
         dst_filename = _create_unique_name(src_filepath)
@@ -97,16 +97,16 @@ class OTXBinaryRepo(BinaryRepo):
     ) -> tuple[ObjectStorageClient, ObjectStorageClient]:
         """Check Both Model and this Binary Repos have ObjectStorageClient."""
         model_storage_client = model_binary_repo.storage_client
-        otx_storage_client = self.storage_client
+        experiments_storage_client = self.storage_client
 
         if not (
             isinstance(model_storage_client, ObjectStorageClient)
-            and isinstance(otx_storage_client, ObjectStorageClient)
+            and isinstance(experiments_storage_client, ObjectStorageClient)
         ):
-            msg = "Both Model and OTX storage clients should be ObjectStorageClient."
+            msg = "Both Model and Experiments storage clients should be ObjectStorageClient."
             raise TypeError(msg)
 
-        return model_storage_client, otx_storage_client
+        return model_storage_client, experiments_storage_client
 
     # TODO CVS-133311 apply retry on rate limit after refactoring
     @reinit_client_and_retry_on_timeout

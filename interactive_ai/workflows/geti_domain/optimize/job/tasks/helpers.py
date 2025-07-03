@@ -22,7 +22,7 @@ from jobs_common.jobs.helpers.project_helpers import lock_project
 from jobs_common.tasks.utils.progress import publish_metadata_update
 from jobs_common.tasks.utils.secrets import JobMetadata
 from jobs_common.utils.annotation_filter import AnnotationFilter
-from jobs_common_extras.otx.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
+from jobs_common_extras.experiments.adapters.ml_artifacts import MLArtifactsAdapter
 
 from job.models import OptimizationConfig, OptimizationTrainerContext
 
@@ -38,7 +38,7 @@ def _prepare_s3_bucket(
     hyper_parameters = input_model.get_previous_trained_revision().configuration.configurable_parameters
     hyper_parameter_dict = otx_config_helper.convert(hyper_parameters, target=dict, enum_to_str=True, id_to_str=True)
 
-    adapter = GetiOTXInterfaceAdapter(
+    adapter = MLArtifactsAdapter(
         project_identifier=project_identifier,
         job_metadata=JobMetadata.from_env_vars(),
     )
@@ -175,7 +175,7 @@ def finalize_optimize(
     :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
     """
-    adapter = GetiOTXInterfaceAdapter(
+    adapter = MLArtifactsAdapter(
         project_identifier=trainer_ctx.project_identifier,
         job_metadata=JobMetadata.from_env_vars(),
     )

@@ -4,7 +4,7 @@
 
 import pytest
 from flytekit.core.testing import task_mock
-from jobs_common_extras.otx.utils.train_output_models import TrainOutputModelIds
+from jobs_common_extras.experiments.utils.train_output_models import TrainOutputModelIds
 
 from job.tasks.evaluate_and_infer.evaluate_and_infer import evaluate_and_infer
 from job.tasks.prepare_and_train.prepare_data_and_train import prepare_training_data_model_and_start_training

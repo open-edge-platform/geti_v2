@@ -27,7 +27,7 @@ from iai_core.repos.project_repo import ProjectRepo
 from jobs_common.tasks.utils.progress import report_progress
 from jobs_common.tasks.utils.secrets import JobMetadata
 from jobs_common_extras.evaluation.utils.helpers import is_model_legacy_otx_version
-from jobs_common_extras.otx.adapters.definitions import (
+from jobs_common_extras.experiments.adapters.definitions import (
     BASE_FRAMEWORK_KEY,
     CONFIG_JSON_KEY,
     ONNX_KEY,
@@ -35,12 +35,12 @@ from jobs_common_extras.otx.adapters.definitions import (
     OPENVINO_XML_KEY,
     ClsSubTaskType,
 )
-from jobs_common_extras.otx.repos.binary_repo import OTXBinaryRepo
+from jobs_common_extras.experiments.repos.binary_repo import ExperimentsBinaryRepo
 
 logger = logging.getLogger(__name__)
 
 
-__all__ = ["GetiOTXInterfaceAdapter"]
+__all__ = ["MLArtifactsAdapter"]
 
 UNAVAILABLE_PERFORMANCE_WARNING = (
     "Performance metrics are not available for the trained model due to an internal error; please contact support."
@@ -53,7 +53,7 @@ def _check_bytes_type(data: bytes | np.ndarray) -> bytes:
     return data
 
 
-class GetiOTXInterfaceAdapter:
+class MLArtifactsAdapter:
     def __init__(
         self,
         project_identifier: ProjectIdentifier,
@@ -61,7 +61,7 @@ class GetiOTXInterfaceAdapter:
     ):
         super().__init__()
         self.project_repo = ProjectRepo()
-        self.binary_repo = OTXBinaryRepo(project_identifier)
+        self.binary_repo = ExperimentsBinaryRepo(project_identifier)
         self.project_identifier = project_identifier
         self.job_metadata = job_metadata
 
