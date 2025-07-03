@@ -36,6 +36,10 @@ class InferenceImage {
 
         return data;
     }
+
+    terminate() {
+        self.close();
+    }
 }
 
 const buildInferenceImageInstance = async (): Promise<InferenceImage> => {
@@ -44,4 +48,4 @@ const buildInferenceImageInstance = async (): Promise<InferenceImage> => {
     return new InferenceImage(opencv);
 };
 
-export { buildInferenceImageInstance };
+export { buildInferenceImageInstance, InferenceImage };

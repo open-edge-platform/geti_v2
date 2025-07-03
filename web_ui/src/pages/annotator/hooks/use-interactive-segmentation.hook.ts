@@ -3,44 +3,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { Shape as SmartToolsShape, ShapeType as SmartToolsShapeType } from '@geti/smart-tools/src/shared/interfaces';
+import { Shape as SmartToolsShape } from '@geti/smart-tools/src/shared/interfaces';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 
-import { Shape } from '../../../core/annotations/shapes.interface';
-import { ShapeType } from '../../../core/annotations/shapetype.enum';
 import { AlgorithmType } from '../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { useLoadAIWebworker } from '../../../hooks/use-load-ai-webworker/use-load-ai-webworker.hook';
 import { useAnnotationScene } from '../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { RITMData, RITMMethods, RITMResult } from '../tools/ritm-tool/ritm-tool.interface';
-
-const convertToolShapeToGetiShape = (shape: SmartToolsShape): Shape => {
-    switch (shape.shapeType) {
-        case 'polygon':
-            return { shapeType: ShapeType.Polygon, points: shape.points };
-        case 'rotated-rect':
-            return {
-                shapeType: ShapeType.RotatedRect,
-                x: shape.x,
-                y: shape.y,
-                width: shape.width,
-                height: shape.height,
-                angle: shape.angle,
-            };
-        default:
-            throw new Error('Unknown shape type');
-    }
-};
-
-const convertGetiShapeToToolShape = (shapeType: ShapeType): SmartToolsShapeType => {
-    switch (shapeType) {
-        case ShapeType.Polygon:
-            return 'polygon';
-        case ShapeType.RotatedRect:
-            return 'rotated-rect';
-        default:
-            throw new Error('Unknown shape type');
-    }
-};
+import { convertGetiShapeTypeToToolShapeType, convertToolShapeToGetiShape } from '../tools/utils';
 
 interface useInteractiveSegmentationProps {
     onSuccess: (result: RITMResult) => void;
@@ -108,7 +78,7 @@ export const useInteractiveSegmentation = ({
             cancelRequested.current = false;
             setIsDrawing(true);
 
-            return wsInstance.current.execute(area, givenPoints, convertGetiShapeToToolShape(outputShape));
+            return wsInstance.current.execute(area, givenPoints, convertGetiShapeTypeToToolShapeType(outputShape));
         },
 
         onError: showNotificationError,

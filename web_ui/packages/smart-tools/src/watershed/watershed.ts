@@ -155,6 +155,10 @@ class Watershed {
 
         return polygons;
     }
+
+    terminate() {
+        self.close();
+    }
 }
 
 const buildWatershedInstance = async (): Promise<Watershed> => {
@@ -163,4 +167,4 @@ const buildWatershedInstance = async (): Promise<Watershed> => {
     return new Watershed(opencv);
 };
 
-export { buildWatershedInstance };
+export { buildWatershedInstance, Watershed };

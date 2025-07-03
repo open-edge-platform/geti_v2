@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { InferenceImage, Watershed } from '@geti/smart-tools';
+import { InferenceImage, SSIM, Watershed } from '@geti/smart-tools';
 
 import { InferenceImageWorker } from '../../pages/annotator/components/explanation/inference-image.interface';
 import { GrabcutInstance, GrabcutWorker } from '../../pages/annotator/tools/grabcut-tool/grabcut-tool.interface';
@@ -15,7 +15,7 @@ import {
     SegmentAnythingDecoderWorker,
     SegmentAnythingEncoderWorker,
 } from '../../pages/annotator/tools/segment-anything-tool/segment-anything.interface';
-import { SSIMInstance, SSIMWorker } from '../../pages/annotator/tools/ssim-tool/ssim-tool.interface';
+import { SSIMWorker } from '../../pages/annotator/tools/ssim-tool/ssim-tool.interface';
 import { WatershedWorker } from '../../pages/annotator/tools/watershed-tool/watershed-tool.interface';
 import { AlgorithmType } from './algorithm.interface';
 
@@ -40,7 +40,7 @@ export type MapAlgorithmToInstance = {
     [AlgorithmType.GRABCUT]: GrabcutInstance;
     [AlgorithmType.INTELLIGENT_SCISSORS]: IntelligentScissorsInstance;
     [AlgorithmType.RITM]: RITMMethods;
-    [AlgorithmType.SSIM]: SSIMInstance;
+    [AlgorithmType.SSIM]: SSIM;
     [AlgorithmType.INFERENCE_IMAGE]: InferenceImage;
     [AlgorithmType.SEGMENT_ANYTHING_ENCODER]: SegmentAnythingModel;
     [AlgorithmType.SEGMENT_ANYTHING_DECODER]: SegmentAnythingModel;

@@ -3,11 +3,13 @@
 
 export { OpenCVLoader } from './src/utils/opencv-loader';
 
-export { buildWatershedInstance } from './src/watershed/watershed';
-export { type Watershed, type WatershedPolygon } from './src/watershed/interfaces';
+export { buildWatershedInstance, Watershed } from './src/watershed/watershed';
+export { type WatershedPolygon } from './src/watershed/interfaces';
 
-export { buildInferenceImageInstance } from './src/inference-image/inference-image';
-export { type InferenceImage } from './src/inference-image/interfaces';
+export { buildInferenceImageInstance, InferenceImage } from './src/inference-image/inference-image';
+
+export { buildSSIMInstance, SSIM } from './src/ssim/ssim';
+export { type RunSSIMProps, type SSIMMatch } from './src/ssim/interfaces';
 
 export {
     formatContourToPoints,
