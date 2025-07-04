@@ -66,9 +66,6 @@ describe('Tutorial utils', () => {
                 [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
                     value: true,
                 },
-                [FUX_SETTINGS_KEYS.USER_DISMISSED_ALL]: {
-                    value: true,
-                },
                 [FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED]: {
                     value: true,
                 },
@@ -119,9 +116,6 @@ describe('Tutorial utils', () => {
             const expectedConfig = {
                 ...INITIAL_GLOBAL_SETTINGS,
                 [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
-                    value: true,
-                },
-                [FUX_SETTINGS_KEYS.USER_DISMISSED_ALL]: {
                     value: true,
                 },
                 [FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED]: {

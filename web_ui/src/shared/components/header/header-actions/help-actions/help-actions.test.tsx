@@ -3,9 +3,8 @@
 
 import { fireEvent, screen } from '@testing-library/react';
 
-import { FUX_SETTINGS_KEYS } from '../../../../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../../../../core/user-settings/hooks/use-global-settings.hook';
-import { initialConfig } from '../../../../../core/user-settings/utils';
+import { INITIAL_GLOBAL_SETTINGS } from '../../../../../core/user-settings/utils';
 import { providersRender as render } from '../../../../../test-utils/required-providers-render';
 import { HelpActions } from './help-actions.component';
 
@@ -28,7 +27,7 @@ describe('Docs actions', () => {
     jest.mocked(useUserGlobalSettings).mockReturnValue({
         isSavingConfig: false,
         saveConfig: mockSaveConfig,
-        config: initialConfig,
+        config: INITIAL_GLOBAL_SETTINGS,
     });
 
     describe('help actions', () => {
@@ -52,10 +51,7 @@ describe('Docs actions', () => {
             fireEvent.click(screen.getByRole('button', { name: 'Documentation actions' }));
             fireEvent.click(screen.getByRole('menuitem', { name: 'Reset help dialogs' }));
 
-            expect(mockSaveConfig).toHaveBeenCalledWith(
-                { ...initialConfig, [FUX_SETTINGS_KEYS.USER_DISMISSED_ALL]: { value: false } },
-                'Help dialogs have been reset.'
-            );
+            expect(mockSaveConfig).toHaveBeenCalledWith(INITIAL_GLOBAL_SETTINGS, 'Help dialogs have been reset.');
         });
     });
 });

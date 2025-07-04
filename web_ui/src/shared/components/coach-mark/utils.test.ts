@@ -5,8 +5,10 @@ import { GETI_SYSTEM_AUTHOR_ID, JobState } from '../../../core/jobs/jobs.const';
 import { Job, JobCount } from '../../../core/jobs/jobs.interface';
 import { FUX_SETTINGS_KEYS } from '../../../core/user-settings/dtos/user-settings.interface';
 import { getMockedJob } from '../../../test-utils/mocked-items-factory/mocked-jobs';
-import { getMockedUserGlobalSettingsObject } from '../../../test-utils/mocked-items-factory/mocked-settings';
-import { getFuxSetting } from '../tutorials/utils';
+import {
+    getMockedUserGlobalSettings,
+    getMockedUserGlobalSettingsObject,
+} from '../../../test-utils/mocked-items-factory/mocked-settings';
 import { onFirstSuccessfulAutoTrainingJob } from './utils';
 
 const getJobResponse = (jobCount: Partial<JobCount> = {}, mockedJobs: Job[] = []) => ({
@@ -27,10 +29,6 @@ const getJobResponse = (jobCount: Partial<JobCount> = {}, mockedJobs: Job[] = []
     ],
 });
 
-jest.mock('../tutorials/utils', () => ({
-    getFuxSetting: jest.fn(),
-}));
-
 describe('CoachMark utils', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -44,48 +42,51 @@ describe('CoachMark utils', () => {
                 getMockedUserGlobalSettingsObject({}),
                 mockedCallback
             )({ pageParams: [undefined], pages: [] });
-            expect(mockedCallback).toBeCalledTimes(0);
+            expect(mockedCallback).toHaveBeenCalledTimes(0);
         });
 
         it('will not call callback when no finished jobs', () => {
             onFirstSuccessfulAutoTrainingJob(getMockedUserGlobalSettingsObject({}), mockedCallback)(getJobResponse());
-            expect(mockedCallback).toBeCalledTimes(0);
+            expect(mockedCallback).toHaveBeenCalledTimes(0);
         });
 
         it('will not call callback when previously autotrained', () => {
-            jest.mocked(getFuxSetting).mockImplementationOnce((setting) => {
-                if (setting === FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED) {
-                    return false;
-                } else {
-                    return true;
-                }
-            });
-            onFirstSuccessfulAutoTrainingJob(getMockedUserGlobalSettingsObject({}), mockedCallback)(getJobResponse());
-            expect(mockedCallback).toBeCalledTimes(0);
+            onFirstSuccessfulAutoTrainingJob(
+                getMockedUserGlobalSettingsObject({
+                    config: getMockedUserGlobalSettings({
+                        [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
+                            value: false,
+                        },
+                    }),
+                }),
+                mockedCallback
+            )(getJobResponse());
+            expect(mockedCallback).toHaveBeenCalledTimes(0);
         });
 
         it('will not call callback when first scheduled autotraining job id doesnt match finished job id', () => {
-            jest.mocked(getFuxSetting).mockImplementationOnce((setting) => {
-                if (setting === FUX_SETTINGS_KEYS.FIRST_AUTOTRAINING_JOB_ID) {
-                    return 'random-job-id';
-                } else {
-                    return true;
-                }
-            });
-            onFirstSuccessfulAutoTrainingJob(getMockedUserGlobalSettingsObject({}), mockedCallback)(getJobResponse());
-            expect(mockedCallback).toBeCalledTimes(0);
+            onFirstSuccessfulAutoTrainingJob(
+                getMockedUserGlobalSettingsObject({
+                    config: getMockedUserGlobalSettings({
+                        [FUX_SETTINGS_KEYS.FIRST_AUTOTRAINING_JOB_ID]: {
+                            value: 'random-job-id',
+                        },
+                    }),
+                }),
+                mockedCallback
+            )(getJobResponse());
+            expect(mockedCallback).toHaveBeenCalledTimes(0);
         });
 
         it('will not call callback when first scheduled job id was not autotrained', () => {
-            jest.mocked(getFuxSetting).mockImplementation((setting) => {
-                if (setting === FUX_SETTINGS_KEYS.FIRST_AUTOTRAINING_JOB_ID) {
-                    return 'first-autotrained-job-id';
-                } else {
-                    return true;
-                }
-            });
             onFirstSuccessfulAutoTrainingJob(
-                getMockedUserGlobalSettingsObject({}),
+                getMockedUserGlobalSettingsObject({
+                    config: getMockedUserGlobalSettings({
+                        [FUX_SETTINGS_KEYS.FIRST_AUTOTRAINING_JOB_ID]: {
+                            value: 'first-autotrained-job-id',
+                        },
+                    }),
+                }),
                 mockedCallback
             )(
                 getJobResponse({ numberOfFinishedJobs: 1 }, [
@@ -97,12 +98,21 @@ describe('CoachMark utils', () => {
                 ])
             );
 
-            expect(mockedCallback).toBeCalledTimes(0);
+            expect(mockedCallback).toHaveBeenCalledTimes(0);
         });
 
         it('will call callback ', () => {
             onFirstSuccessfulAutoTrainingJob(
-                getMockedUserGlobalSettingsObject({}),
+                getMockedUserGlobalSettingsObject({
+                    config: getMockedUserGlobalSettings({
+                        [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
+                            value: true,
+                        },
+                        [FUX_SETTINGS_KEYS.FIRST_AUTOTRAINING_JOB_ID]: {
+                            value: 'first-autotrained-job-id',
+                        },
+                    }),
+                }),
                 mockedCallback
             )(
                 getJobResponse({ numberOfFinishedJobs: 1 }, [
@@ -114,7 +124,7 @@ describe('CoachMark utils', () => {
                 ])
             );
 
-            expect(mockedCallback).toBeCalledTimes(1);
+            expect(mockedCallback).toHaveBeenCalledTimes(1);
         });
     });
 });

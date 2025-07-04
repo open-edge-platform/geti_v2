@@ -190,9 +190,6 @@ export const initialFuxSettingsConfig: FuxSettingsConfig = {
     [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
         value: true,
     },
-    [FUX_SETTINGS_KEYS.USER_DISMISSED_ALL]: {
-        value: false,
-    },
     [FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED]: {
         value: true,
     },

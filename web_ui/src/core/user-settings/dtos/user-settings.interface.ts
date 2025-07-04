@@ -54,7 +54,6 @@ export enum FUX_SETTINGS_KEYS {
     NEVER_ANNOTATED = 'neverAnnotated',
     NEVER_AUTOTRAINED = 'neverAutotrained',
     NEVER_CHECKED_PREDICTIONS = 'neverCheckedPredictions',
-    USER_DISMISSED_ALL = 'userDismissedAll',
     NEVER_SUCCESSFULLY_AUTOTRAINED = 'neverSuccessfullyAutotrained',
     FIRST_AUTOTRAINED_PROJECT_ID = 'firstAutotrainedProjectId',
     FIRST_AUTOTRAINING_JOB_ID = 'firstAutoTrainingJobId',
