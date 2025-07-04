@@ -229,7 +229,6 @@ _internal_defaults_do_not_set:
       "FEATURE_FLAG_SUPPORT_CORS": "false"
       "FEATURE_FLAG_UPLOAD_OTE_WEIGHTS": "true"
       "FEATURE_FLAG_USER_ONBOARDING": "false"
-      "FEATURE_FLAG_VISUAL_PROMPT_SERVICE": "true"
       "FEATURE_FLAG_WORKSPACE_ACTIONS": "false"
       "FEATURE_FLAG_REQ_ACCESS": "false"
       "FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS": "false"
