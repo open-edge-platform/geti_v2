@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 
 import { ActionButton } from '@geti/ui';
 import { Delete, SortUpDown } from '@geti/ui/icons';
-import { isEmpty, isEqual, isNil } from 'lodash-es';
+import { isEqual, isNil } from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
 
 import { RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
@@ -53,7 +53,7 @@ export const CanvasTemplate = ({
     const { zoomState } = useZoom();
     const { setSelected, isSelected } = useSelected();
     const [visibleLabelId, setVisibleLabelId] = useState<null | string>(null);
-    const nextPointName = useRef(isEmpty(points) ? 1 : points.length);
+    const nextPointName = useRef(points.length + 1);
 
     const [ghostLine, setGhostLine] = useState<{ from: KeypointNode; to?: Point } | null>(null);
 
