@@ -87,9 +87,10 @@ def backup_data_folder() -> None:
     backup_location = os.path.join(DATA_FOLDER_PATH, f"backup_data_{PLATFORM_VERSION}")
 
     # Remove the existing backup directory if it exists and create a new one
-    subprocess.run(  # noqa S603
-        ["/bin/sh", "-c", "rm", "-rf", backup_location], capture_output=True, text=True, check=True
-    )
+    if os.path.exists(backup_location):
+        subprocess.run(  # noqa S603
+            ["/bin/sh", "-c", "rm", "-rf", backup_location], capture_output=True, text=True, check=True
+        )
     os.makedirs(backup_location, exist_ok=True)
 
     # Remove all previous backup directories except the current one

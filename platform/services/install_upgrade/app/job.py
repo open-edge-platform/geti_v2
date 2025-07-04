@@ -6,7 +6,6 @@ import base64
 import logging
 import os
 import re
-import time
 
 import jinja2
 import yaml
@@ -151,15 +150,22 @@ async def deploy_helm_charts(manifest: dict) -> None:
         except client.exceptions.ApiException as e:
             if e.status == 409:
                 logger.warning("Helm chart already exists, updating the existing CR.")
-                await asyncio.to_thread(
-                    custom_api.patch_namespaced_custom_object,
-                    name=manifest["metadata"]["name"],
-                    namespace="default",
-                    group="helm.cattle.io",
-                    plural="helmcharts",
-                    version="v1",
-                    body=manifest,
-                )
+                try:
+                    await asyncio.to_thread(
+                        custom_api.patch_namespaced_custom_object,
+                        name=manifest["metadata"]["name"],
+                        namespace="default",
+                        group="helm.cattle.io",
+                        plural="helmcharts",
+                        version="v1",
+                        body=manifest,
+                    )
+                except client.exceptions.ApiException as e:
+                    logger.error(f"Failed to update helm chart CR: {e}")
+                    raise HelmChartDeployError(f"Failed to update helm chart CR: {e}")
+            else:
+                logger.error(f"Failed to create helm chart CR: {e}")
+                raise HelmChartDeployError(f"Failed to create helm chart CR: {e}")
     logger.info("Deployed helm charts successfully.")
 
 
@@ -264,7 +270,7 @@ async def main(job_manager: JobManager) -> None:
                 parse_timeout(rendered_helm["spec"]["timeout"]) if "timeout" in rendered_helm["spec"] else None
             )
             try:
-                time.sleep(5)
+                await asyncio.sleep(5)
                 await wait_for_job_completion(
                     job_name=job_name, namespace=namespace, timeout=parsed_timeout if parsed_timeout else 300
                 )
@@ -336,7 +342,6 @@ async def run() -> None:
             pass
     except asyncio.CancelledError:
         logger.info("Server task correctly cancelled")
-        pass
     logger.info("Task finished successfully")
 
 
