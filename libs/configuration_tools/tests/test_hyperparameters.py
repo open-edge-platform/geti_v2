@@ -12,7 +12,6 @@ from geti_configuration_tools.hyperparameters import (
     EvaluationParameters,
     GaussianBlur,
     Hyperparameters,
-    MaxDetectionPerImage,
     PartialHyperparameters,
     RandomAffine,
     RandomHorizontalFlip,

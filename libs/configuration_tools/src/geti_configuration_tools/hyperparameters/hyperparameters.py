@@ -32,23 +32,6 @@ class EarlyStopping(BaseModel):
     )
 
 
-class MaxDetectionPerImage(BaseModel):
-    enable: bool = Field(
-        default=False,
-        title="Enable maximum detection per image",
-        description="Whether to limit the number of detections per image",
-    )
-    max_detection_per_image: int = Field(
-        default=10000,
-        gt=0,
-        title="Maximum number of detections per image",
-        description=(
-            "Maximum number of objects that can be detected in a single image, "
-            "only applicable for instance segmentation models"
-        ),
-    )
-
-
 class TrainingHyperParameters(BaseModel):
     """Hyperparameters for model training process."""
 

@@ -10,10 +10,10 @@ from dataclasses import dataclass, field
 from enum import Enum, IntEnum, auto
 from typing import NamedTuple, cast
 
+from geti_supported_models.model_manifest import ModelManifest
+from geti_supported_models.parser import get_model_manifests
 from omegaconf import DictConfig, ListConfig, OmegaConf
 
-from geti_supported_models.model_manifest import ModelManifest, NullModelManifest
-from geti_supported_models.parser import get_model_manifests
 from iai_core.configuration.elements import metadata_keys
 from iai_core.entities.label import Domain
 
@@ -675,11 +675,9 @@ def _parse_model_template_from_omegaconf(config: DictConfig | ListConfig) -> Mod
     Returns:
         ModelTemplate: The parsed model template.
     """
-    # Each model template must have a corresponding model manifest.
     schema = OmegaConf.structured(ModelTemplate)
     config = OmegaConf.merge(schema, config)
-    model_template = cast("ModelTemplate", OmegaConf.to_object(config))
-    return model_template
+    return cast("ModelTemplate", OmegaConf.to_object(config))
 
 
 def parse_model_template(model_template_path: str) -> ModelTemplate:
