@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 import pytest
 from pydantic import ValidationError
 
@@ -157,6 +156,8 @@ class TestHyperparameters:
             == expected_params.dataset_preparation.augmentation.random_horizontal_flip
         )
 
+        assert expected_params.training
+        assert params.training
         assert params.training.early_stopping == expected_params.training.early_stopping
         assert params.training.max_epochs == expected_params.training.max_epochs
         assert params.training.learning_rate == expected_params.training.learning_rate
@@ -224,6 +225,7 @@ class TestHyperparameters:
         )
 
         # Verify that specified fields are set correctly
+        assert partial_hyperparams.training
         assert partial_hyperparams.training.learning_rate == 0.005
         assert partial_hyperparams.training.early_stopping.enable is True
 

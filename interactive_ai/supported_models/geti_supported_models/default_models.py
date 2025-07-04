@@ -24,7 +24,7 @@ class TaskType(str, Enum):
     DETECTION = auto()
     ROTATED_DETECTION = auto()
     INSTANCE_SEGMENTATION = auto()
-    SEGMENTATION = auto()
+    SEMANTIC_SEGMENTATION = auto()
     ANOMALY = auto()
     KEYPOINT_DETECTION = auto()
 
@@ -62,7 +62,7 @@ class DefaultModels:
             DefaultType.SPEED: "Custom_Counting_Instance_Segmentation_MaskRCNN_EfficientNetB2B",
             DefaultType.BALANCE: "Custom_Instance_Segmentation_MaskRCNN_ResNet50_v2",
         },
-        TaskType.SEGMENTATION: {
+        TaskType.SEMANTIC_SEGMENTATION: {
             DefaultType.DEFAULT: "Custom_Semantic_Segmentation_DINOV2_S",
             DefaultType.ACCURACY: "Custom_Semantic_Segmentation_DINOV2_S",
             DefaultType.SPEED: "Custom_Semantic_Segmentation_Lite-HRNet-s-mod2_OCR",
@@ -93,7 +93,11 @@ class DefaultModels:
         :raises ValueError: If the task_type or default_type is not supported
         """
         try:
-            _task_type = TaskType[task_type]
+            task_type_str = task_type.upper()
+            if task_type_str == "SEGMENTATION":
+                # legacy support for SEGMENTATION task type
+                task_type_str = "SEMANTIC_SEGMENTATION"
+            _task_type = TaskType[task_type_str]
         except ValueError:
             raise ValueError(f"Unknown task type: {task_type}")
         if default_type not in cls.default_models_by_task[_task_type]:

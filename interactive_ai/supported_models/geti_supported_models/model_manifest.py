@@ -79,7 +79,7 @@ class ModelStats(BaseModel):
         ge=0.0,
         default=0.0,
         title="Trainable parameters (millions)",
-        description="Number of trainable parameters in the model, expressed in millions"
+        description="Number of trainable parameters in the model, expressed in millions",
     )
     performance_ratings: PerformanceRatings = Field(
         title="Performance ratings", description="Standardized ratings for model performance metrics"

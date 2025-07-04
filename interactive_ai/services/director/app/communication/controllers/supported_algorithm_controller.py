@@ -4,9 +4,6 @@ import logging
 from typing import Any
 
 from communication.views.model_template_rest_views import ModelTemplateRESTViews
-from features.feature_flag import FeatureFlag
-from geti_feature_tools import FeatureFlagProvider
-from geti_supported_models.parser import get_model_manifests
 
 from geti_telemetry_tools import unified_tracing
 from iai_core.algorithms import ModelTemplateList

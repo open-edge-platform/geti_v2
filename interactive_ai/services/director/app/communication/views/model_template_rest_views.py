@@ -3,6 +3,7 @@
 from geti_feature_tools import FeatureFlagProvider
 
 from features.feature_flag import FeatureFlag
+from geti_supported_models.supported_models import SupportedModels
 
 from iai_core.entities.model_template import ModelTemplate
 
@@ -43,7 +44,7 @@ class ModelTemplateRESTViews:
         task_type = "anomaly" if is_anomaly_reduced and is_anomaly_task else model_template.task_type.name.lower()
 
         if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            model_manifest = model_template.model_manifest
+            model_manifest = SupportedModels.get_model_manifest_by_id(model_template.model_manifest_id)
             model_manifest_dict = model_manifest.model_dump()
             return {
                 "model_manifest_id": model_manifest.id,

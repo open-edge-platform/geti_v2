@@ -10,8 +10,6 @@ from dataclasses import dataclass, field
 from enum import Enum, IntEnum, auto
 from typing import NamedTuple, cast
 
-from geti_supported_models.model_manifest import ModelManifest
-from geti_supported_models.parser import get_model_manifests
 from omegaconf import DictConfig, ListConfig, OmegaConf
 
 from iai_core.configuration.elements import metadata_keys
@@ -595,6 +593,11 @@ class ModelTemplate:
     model_status: ModelTemplateDeprecationStatus = ModelTemplateDeprecationStatus.ACTIVE
     is_default_for_task: bool = False
 
+    @property
+    def model_manifest_id(self):
+        """Alias for model_template_id"""
+        return self.model_template_id
+
     def __post_init__(self):
         """Do sanitation checks before loading the hyper-parameters."""
         if self.instantiation == InstantiationType.GRPC and self.grpc_address == "":
@@ -618,14 +621,6 @@ class ModelTemplate:
     def is_task_global(self) -> bool:
         """Returns ``True`` if the task is global task i.e. if task produces global labels."""
         return self.task_type.is_global
-
-    @property
-    def model_manifest(self) -> ModelManifest:
-        """Get the model manifest for this model template.
-
-        :returns: The model manifest associated with this model template.
-        """
-        return get_model_manifests()[self.model_template_id]
 
 
 class NullModelTemplate(ModelTemplate):
