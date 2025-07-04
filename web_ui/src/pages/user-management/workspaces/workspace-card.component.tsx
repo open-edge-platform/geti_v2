@@ -5,8 +5,11 @@ import { paths } from '@geti/core';
 import { RESOURCE_TYPE } from '@geti/core/src/users/users.interface';
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
 import { Button, Divider, Flex, Heading, View } from '@geti/ui';
+import { isEmpty } from 'lodash-es';
 import { useNavigate } from 'react-router-dom';
 
+import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
+import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { ActionMenu } from '../../../shared/components/action-menu/action-menu.component';
 import { DeleteDialog } from '../../../shared/components/delete-dialog/delete-dialog.component';
 import { EditNameDialog } from '../../../shared/components/edit-name-dialog/edit-name-dialog.component';
@@ -23,7 +26,14 @@ interface WorkspaceCardProps {
 
 export const WorkspaceCard = ({ workspace, workspaces }: WorkspaceCardProps): JSX.Element => {
     const navigate = useNavigate();
-    const { items, handleMenuAction, deleteDialog, editDialog } = useWorkspaceActions(workspaces.length);
+    const { organizationId } = useOrganizationIdentifier();
+    const { useGetProjectNames } = useProjectActions();
+    const projectsNamesQuery = useGetProjectNames({ organizationId, workspaceId: workspace.id });
+
+    const { items, handleMenuAction, deleteDialog, editDialog, disabledKeys } = useWorkspaceActions(
+        workspaces.length,
+        isEmpty(projectsNamesQuery.data?.projects.length)
+    );
 
     const workspaceActions = items.map((item) => ({ name: item, id: item }));
     const handleSeeMore = (): void => {
@@ -72,6 +82,7 @@ export const WorkspaceCard = ({ workspace, workspaces }: WorkspaceCardProps): JS
                         items={workspaceActions}
                         id={`${workspace.name}-action-menu`}
                         onAction={handleMenuAction}
+                        disabledKeys={disabledKeys}
                     />
                 </HasPermission>
             </Flex>
