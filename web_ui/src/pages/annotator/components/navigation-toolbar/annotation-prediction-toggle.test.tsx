@@ -208,7 +208,7 @@ describe('AnnotationPredictionToggle', () => {
             expect(getPredictionButton()).toHaveAttribute('class', expect.stringContaining('is-selected'));
         });
 
-        it('prediction mode with empty models redirects to ACTIVE_LEARNING', async () => {
+        it('prediction mode with empty models does not redirect to ACTIVE_LEARNING', async () => {
             const mockedUseTask = mockedTaskContextProps({ activeDomains: [DOMAIN.SEGMENTATION] });
 
             const setSpy = await renderApp({
@@ -217,18 +217,6 @@ describe('AnnotationPredictionToggle', () => {
             });
 
             expect(getPredictionButton()).toBeDisabled();
-            expect(setSpy).toHaveBeenLastCalledWith('mode', ANNOTATOR_MODE.ACTIVE_LEARNING);
-        });
-
-        it('prediction mode with empty models does not redirect to ACTIVE_LEARNING when using prompt inference', async () => {
-            const mockedUseTask = mockedTaskContextProps({ activeDomains: [DOMAIN.SEGMENTATION] });
-
-            const setSpy = await renderApp({
-                mockedUseTask,
-                mode: ANNOTATOR_MODE.PREDICTION,
-            });
-
-            expect(getPredictionButton()).toBeEnabled();
             expect(setSpy).not.toHaveBeenCalled();
         });
 
@@ -271,11 +259,11 @@ describe('AnnotationPredictionToggle', () => {
         });
 
         it('annotation is selected by default with empty models', async () => {
-            const setSpy = await renderApp({
+            await renderApp({
                 mode: ANNOTATOR_MODE.PREDICTION,
             });
 
-            expect(setSpy).toHaveBeenLastCalledWith('mode', ANNOTATOR_MODE.ACTIVE_LEARNING);
+            expect(getPredictionButton()).toBeDisabled();
         });
 
         it('segmentation, selecting prediction mode refetch predictions', async () => {
