@@ -62,6 +62,7 @@ export const CanvasTemplate = ({
 
     const isShiftPress = useIsPressed({
         key: KeyMap.Shift,
+        enabled: isAddPointEnabled,
         predicated: isStandAloneShiftKey,
         onKeyDown: () => {
             selectedPoint && setGhostLine({ from: selectedPoint });

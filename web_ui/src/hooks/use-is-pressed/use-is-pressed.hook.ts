@@ -10,11 +10,18 @@ import { KeyMap } from '../../shared/keyboard-events/keyboard.interface';
 
 interface useIsPressedProps {
     key: KeyMap;
+    enabled?: boolean;
     onKeyUp?: (event: KeyboardEvent) => void;
     onKeyDown?: (event: KeyboardEvent) => void;
     predicated?: (event: KeyboardEvent) => boolean;
 }
-export const useIsPressed = ({ key, onKeyDown = noop, onKeyUp = noop, predicated = () => true }: useIsPressedProps) => {
+export const useIsPressed = ({
+    key,
+    enabled = true,
+    onKeyDown = noop,
+    onKeyUp = noop,
+    predicated = () => true,
+}: useIsPressedProps) => {
     const [isPressed, setIsPressed] = useState(false);
     useHotkeys(
         key,
@@ -24,7 +31,7 @@ export const useIsPressed = ({ key, onKeyDown = noop, onKeyUp = noop, predicated
                 onKeyDown(event);
             }
         },
-        { keydown: true }
+        { keydown: true, enabled }
     );
     useHotkeys(
         key,
@@ -34,7 +41,7 @@ export const useIsPressed = ({ key, onKeyDown = noop, onKeyUp = noop, predicated
                 onKeyUp(event);
             }
         },
-        { keyup: true }
+        { keyup: true, enabled }
     );
 
     return isPressed;
