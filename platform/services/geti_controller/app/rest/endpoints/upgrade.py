@@ -3,13 +3,14 @@
 
 import logging
 import re
+import time
 
 from fastapi import HTTPException, status
 from packaging.version import Version
 
-from constants.platform import GETI_REGISTRY, PLATFORM_VERSION
-from platform_operations.backup import _get_used_storage, is_backup_possible
-from platform_operations.cluster import deploy_service_job
+from constants.platform import GETI_REGISTRY, NAMESPACE, PLATFORM_VERSION
+from platform_operations.backup import _get_used_storage, backup_data_folder, is_backup_possible
+from platform_operations.cluster import deploy_service_job, is_job_completed_or_failed, is_job_running
 from rest.schema.upgrade import UpgradeRequest, UpgradeResponse
 from routers import platform_router
 
@@ -83,13 +84,37 @@ def upgrade_platform(payload: UpgradeRequest) -> UpgradeResponse:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Not enough space to perform backup. Required: {_get_used_storage()} MB",
         )
-
+    backup_data_folder()
     deploy_service_job(
         registry=GETI_REGISTRY,
         image_tag=payload.version_number,
         manifest_version=payload.version_number,
         direction="upgrade",
     )
+    while True:
+        time.sleep(10)
+        is_finished, status_message = is_job_completed_or_failed(NAMESPACE)
+        if is_finished:
+            logger.info(f"Job finished: {status_message}")
+            if "successfully" in status_message.lower():
+                pass
+            else:
+                logger.error(f"Job failed: {status_message}")
+                logger.info("Rollback to previous version has started.")
+                # retore_backup
+                # deploy_service_job(
+                #     registry=GETI_REGISTRY,
+                #     image_tag=PLATFORM_VERSION,
+                #     manifest_version=PLATFORM_VERSION,
+                #     direction="upgrade",
+                # )
+            break
+
+        if is_job_running(NAMESPACE):
+            logger.info("Job is running")
+        else:
+            logger.info("Job is not running")
+            break
 
     logger.info(f"Upgrade to version {payload.version_number} has started.")
     return UpgradeResponse(detail=f"Upgrade to version {payload.version_number} has started.")

@@ -24,6 +24,7 @@ from kubernetes.client import (
     V1PodTemplateSpec,
     V1PolicyRule,
     V1RoleRef,
+    V1Secret,
     V1SecretKeySelector,
     V1Service,
     V1ServiceAccount,
@@ -249,7 +250,7 @@ def deploy_job(job: V1Job, namespace: str) -> None:
         logger.error(f"An error occurred: {e}")
 
 
-def is_job_completed_or_failed(namespace: str, job_name: str) -> tuple[bool, str]:
+def is_job_completed_or_failed(namespace: str) -> tuple[bool, str]:
     """
     Check if the job is completed or failed.
     Returns (is_finished, status_message)
@@ -368,3 +369,10 @@ def deploy_service_job(
         port=port,
     )
     deploy_job(job, namespace="default")
+
+
+def _get_secret(secret_name: str, namespace: str = "impt") -> V1Secret:
+    load_kube_config()
+    v1 = client.CoreV1Api()
+    secret: V1Secret = v1.read_namespaced_secret(secret_name, namespace)
+    return secret

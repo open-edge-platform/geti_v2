@@ -98,14 +98,14 @@ def wait_for_service_ready(service_endpoint: str, timeout: int = 300, interval: 
     return False
 
 
-def periodic_progress_check(progress_manager: ProgressManager, job_name: str, interval: int = 10) -> None:
+def periodic_progress_check(progress_manager: ProgressManager, interval: int = 10) -> None:
     """Periodically calls the progress endpoint."""
     logger.info("Starting periodic progress check.")
     service_endpoint = f"http://{SERVICE_NAME}.{NAMESPACE}.svc.cluster.local:8000"
     service_ready = False
 
     while True:
-        is_finished, status_message = is_job_completed_or_failed(NAMESPACE, job_name)
+        is_finished, status_message = is_job_completed_or_failed(NAMESPACE)
 
         if is_finished:
             logger.info(f"Job finished: {status_message}")
@@ -183,7 +183,7 @@ def check_installation_upgrade_progress(background_tasks: BackgroundTasks) -> In
         wait_for_job_creation(NAMESPACE)
 
     if not progress_manager.task_started:
-        background_tasks.add_task(periodic_progress_check, progress_manager, SERVICE_NAME)
+        background_tasks.add_task(periodic_progress_check, progress_manager)
         progress_manager.task_started = True
 
     return progress_manager.get_progress()

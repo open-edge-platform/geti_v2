@@ -12,6 +12,7 @@ class OperationStatus(str, Enum):
     FAILED = "FAILED"
     ROLLING_BACK = "ROLLING_BACK"
     NOT_RUNNING = "NOT_RUNNING"
+    COMPLETED = "COMPLETED"
 
 
 class InstallationUpgradeProgressResponse(BaseModel):
