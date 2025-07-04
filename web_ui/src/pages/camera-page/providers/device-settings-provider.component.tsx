@@ -20,7 +20,7 @@ import { MissingProviderError } from '../../../shared/missing-provider-error';
 import { getVideoDevices } from '../../../shared/navigator-utils';
 import { runWhen } from '../../../shared/utils';
 import { UserCameraPermission } from '../../camera-support/camera.interface';
-import { Ratio, useCustomSettings } from '../hooks/use-custom-settings.hook';
+import { useCustomSettings } from '../hooks/use-custom-settings.hook';
 import {
     applySettings,
     DeviceConfiguration,
@@ -39,7 +39,6 @@ export interface SettingsContextProps {
     loadDeviceCapabilities: (stream: MediaStream) => void;
     setSelectedDeviceId: Dispatch<SetStateAction<string | undefined>>;
     isMirrored: boolean;
-    scale: Ratio | undefined;
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(undefined);
@@ -52,7 +51,7 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
     const [userPermissions, setUserPermissions] = useState(UserCameraPermission.PENDING);
     const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(undefined);
 
-    const { scale, scaleOption, mirrorOption, isMirrored } = useCustomSettings();
+    const { mirrorOption, isMirrored } = useCustomSettings();
     const onComponentIsMounted = runWhen<MediaDeviceInfo[]>(isMounted);
 
     const enhanceConfigWithOnChange = (config: Omit<DeviceConfiguration, 'onChange'>) => ({
@@ -84,7 +83,7 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
         const [videoTrack] = stream.getVideoTracks();
         const filteredValidCapabilities = getValidCapabilities(videoTrack.getCapabilities());
         const newDevicesConfig = mergeSettingAndCapabilities(filteredValidCapabilities, videoTrack.getSettings()) || [];
-        const fullDevicesConfig = [...newDevicesConfig.map(enhanceConfigWithOnChange), mirrorOption, scaleOption];
+        const fullDevicesConfig = [...newDevicesConfig.map(enhanceConfigWithOnChange), mirrorOption];
         setDeviceConfig(fullDevicesConfig);
     };
 
@@ -100,7 +99,6 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
                 setSelectedDeviceId,
                 loadDeviceCapabilities,
                 isMirrored,
-                scale,
             }}
         >
             {children}
