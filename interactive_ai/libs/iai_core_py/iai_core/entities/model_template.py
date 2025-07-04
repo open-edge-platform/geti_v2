@@ -594,8 +594,8 @@ class ModelTemplate:
     is_default_for_task: bool = False
 
     @property
-    def model_manifest_id(self):
-        """Alias for model_template_id"""
+    def model_manifest_id(self) -> str:
+        """Get model manifest ID (Alias for model_template_id)"""
         return self.model_template_id
 
     def __post_init__(self):

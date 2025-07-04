@@ -4,8 +4,9 @@ import os
 from functools import cache
 from importlib import resources
 
-from . import manifests
 from geti_supported_models.model_manifest import ModelManifest, NullModelManifest
+
+from . import manifests
 from .parser import parse_manifest
 
 
