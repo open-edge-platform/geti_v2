@@ -1,6 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import datetime
 import logging
 from typing import Annotated, Any
 
@@ -16,6 +17,7 @@ from geti_fastapi_tools.dependencies import (
     get_task_id,
     get_workspace_id,
     setup_session_fastapi,
+    create_sunset_headers_dependency,
 )
 from geti_types import ID
 from iai_core.utils.filesystem import check_free_space_for_operation
@@ -26,11 +28,19 @@ configuration_prefix_url = "/api/v1/organizations/{organization_id}/workspaces/{
 configuration_router = APIRouter(
     prefix=configuration_prefix_url,
     tags=["Configuration"],
-    dependencies=[Depends(setup_session_fastapi)],
+    dependencies=[
+        Depends(setup_session_fastapi),
+        Depends(
+            create_sunset_headers_dependency(
+                sunset_date=datetime.datetime(2025, 10, 31),
+                docs_url="?", # TODO: add actual link to documentation
+            )
+        ),
+    ],
 )
 
 
-@configuration_router.get("/configuration")
+@configuration_router.get("/configuration", deprecated=True)
 def get_full_configuration(
     organization_id: Annotated[ID, Depends(get_organization_id)],  # noqa: ARG001
     workspace_id: Annotated[ID, Depends(get_workspace_id)],
@@ -42,7 +52,7 @@ def get_full_configuration(
     return ConfigurationRESTController().get_full_configuration(workspace_id=workspace_id, project_id=project_id)
 
 
-@configuration_router.post("/configuration")
+@configuration_router.post("/configuration", deprecated=True)
 def post_full_configuration(
     workspace_id: Annotated[ID, Depends(get_workspace_id)],
     project_id: Annotated[ID, Depends(get_project_id)],
@@ -62,7 +72,7 @@ def post_full_configuration(
     )
 
 
-@configuration_router.get("/configuration/global")
+@configuration_router.get("/configuration/global", deprecated=True)
 def get_global_configuration(
     workspace_id: Annotated[ID, Depends(get_workspace_id)],
     project_id: Annotated[ID, Depends(get_project_id)],
@@ -73,7 +83,7 @@ def get_global_configuration(
     return ConfigurationRESTController().get_global_configuration(workspace_id=workspace_id, project_id=project_id)
 
 
-@configuration_router.post("/configuration/global")
+@configuration_router.post("/configuration/global", deprecated=True)
 def post_global_configuration(
     workspace_id: Annotated[ID, Depends(get_workspace_id)],
     project_id: Annotated[ID, Depends(get_project_id)],
@@ -93,7 +103,7 @@ def post_global_configuration(
     )
 
 
-@configuration_router.get("/configuration/task_chain")
+@configuration_router.get("/configuration/task_chain", deprecated=True)
 def get_task_chain_configuration(
     workspace_id: Annotated[ID, Depends(get_workspace_id)],
     project_id: Annotated[ID, Depends(get_project_id)],
@@ -104,7 +114,7 @@ def get_task_chain_configuration(
     return ConfigurationRESTController().get_task_chain_configuration(workspace_id=workspace_id, project_id=project_id)
 
 
-@configuration_router.post("/configuration/task_chain")
+@configuration_router.post("/configuration/task_chain", deprecated=True)
 def post_task_chain_configuration(
     workspace_id: Annotated[ID, Depends(get_workspace_id)],
     project_id: Annotated[ID, Depends(get_project_id)],
@@ -124,7 +134,7 @@ def post_task_chain_configuration(
     )
 
 
-@configuration_router.get("/configuration/task_chain/{task_id}")
+@configuration_router.get("/configuration/task_chain/{task_id}", deprecated=True)
 def get_task_configuration(
     workspace_id: Annotated[ID, Depends(get_workspace_id)],
     project_id: Annotated[ID, Depends(get_project_id)],
@@ -145,7 +155,7 @@ def get_task_configuration(
     )
 
 
-@configuration_router.post("/configuration/task_chain/{task_id}")
+@configuration_router.post("/configuration/task_chain/{task_id}", deprecated=True)
 def post_task_configuration(
     workspace_id: Annotated[ID, Depends(get_workspace_id)],
     project_id: Annotated[ID, Depends(get_project_id)],

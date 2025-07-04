@@ -4,7 +4,7 @@ from typing import Annotated, Any
 from uuid import UUID
 
 from bson import ObjectId
-from fastapi import Depends, Query, Request
+from fastapi import Depends, Query, Response, Request
 from geti_types.id import ID, DatasetStorageIdentifier, ProjectIdentifier
 from geti_types.session import (
     CTX_SESSION_VAR,
@@ -306,3 +306,25 @@ async def setup_default_session_fastapi() -> Any:
         organization_id=DEFAULT_ORGANIZATION_ID, workspace_id=DEFAULT_WORKSPACE_ID, source=RequestSource.UNKNOWN
     )
     CTX_SESSION_VAR.set(session)
+
+
+def create_sunset_headers_dependency(
+    sunset_date: datetime,
+    docs_url: str,
+):
+    """
+    Create a dependency that adds sunset headers with customizable parameters.
+
+    :param sunset_date: The date when the endpoint will be sunset
+    :param docs_url: URL to deprecation documentation
+
+    :returns: A dependency function that can be used with FastAPI
+    """
+
+    def add_sunset_headers(response: Response):
+        response.headers["Sunset"] = sunset_date.strftime("%a, %d %b %Y %H:%M:%S GMT")
+        response.headers["Deprecation"] = "true"
+        response.headers["Link"] = f'<{docs_url}>; rel="deprecation"'
+        return response
+
+    return add_sunset_headers
