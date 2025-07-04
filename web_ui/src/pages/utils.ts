@@ -49,7 +49,7 @@ export const isSupportedImageFormat = (file: File): boolean => {
 
 export const onValidImageFormat = runWhen((rawFiles: FileList | File[] | null) => {
     const files = formatToFileArray(rawFiles);
-    return isNonEmptyArray(formatToFileArray(files)) && files.every(isSupportedImageFormat);
+    return isNonEmptyArray(files) && files.every(isSupportedImageFormat);
 });
 
 export const isEmptyLabelAnnotation = (annotation: Annotation): boolean => annotation.labels.some(isEmptyLabel);

@@ -27,6 +27,7 @@ describe('LoadFileButton', () => {
         render(<LoadFileButton onFileLoaded={mockOnFileLoaded} />);
 
         const uploadFileElement = screen.getByTestId(/upload-sample-image/i);
+        uploadFileElement.removeAttribute('accept');
 
         await userEvent.upload(uploadFileElement, [inValidFiles]);
 
