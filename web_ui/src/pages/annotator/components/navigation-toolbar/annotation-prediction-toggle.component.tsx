@@ -5,7 +5,6 @@ import { ButtonGroup } from '@geti/ui';
 import { AICPUIcon, Human } from '@geti/ui/icons';
 import { useSearchParams } from 'react-router-dom';
 
-import { useModels } from '../../../../core/models/hooks/use-models.hook';
 import { useFuxNotifications } from '../../../../hooks/use-fux-notifications/use-fux-notifications.hook';
 import { ButtonWithSpectrumTooltip } from '../../../../shared/components/button-with-tooltip/button-with-tooltip.component';
 import { runWhen } from '../../../../shared/utils';
@@ -25,8 +24,6 @@ const isPredictionMode = (mode: ANNOTATOR_MODE) => mode === ANNOTATOR_MODE.PREDI
 export const AnnotationPredictionToggle = (): JSX.Element => {
     const { isTaskChainSecondTask } = useTask();
     const { handleFirstVisitToPredictionMode } = useFuxNotifications();
-    const { useHasActiveModels } = useModels();
-    const { hasActiveModels } = useHasActiveModels();
 
     const { currentMode } = useAnnotatorMode();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -70,7 +67,6 @@ export const AnnotationPredictionToggle = (): JSX.Element => {
                 id='select-prediction-mode'
                 tooltip={'AI prediction'}
                 aria-label='Select prediction mode'
-                isDisabled={!hasActiveModels}
                 onPress={() => {
                     handleChangeMode(ANNOTATOR_MODE.PREDICTION);
                     handleFirstVisitToPredictionMode();

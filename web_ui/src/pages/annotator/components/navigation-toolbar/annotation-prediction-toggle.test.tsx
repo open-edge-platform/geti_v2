@@ -5,12 +5,9 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { useSearchParams } from 'react-router-dom';
 
 import { MediaItem } from '../../../../core/media/media.interface';
-import { ModelsGroups } from '../../../../core/models/models.interface';
-import { hasActiveModels } from '../../../../core/models/utils';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { fakeAnnotationToolContext } from '../../../../test-utils/fake-annotator-context';
 import { getMockedImageMediaItem } from '../../../../test-utils/mocked-items-factory/mocked-media';
-import { getMockedModelsGroup, getMockedModelVersion } from '../../../../test-utils/mocked-items-factory/mocked-model';
 import { mockedProjectContextProps } from '../../../../test-utils/mocked-items-factory/mocked-project';
 import { mockedTaskContextProps } from '../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { projectRender } from '../../../../test-utils/project-provider-render';
@@ -57,14 +54,6 @@ jest.mock('../../providers/selected-media-item-provider/selected-media-item-prov
     useSelectedMediaItem: jest.fn(),
 }));
 
-const mockUseHasActiveModels = jest.fn();
-jest.mock('../../../../core/models/hooks/use-models.hook', () => ({
-    ...jest.requireActual('../../../../core/models/hooks/use-models.hook'),
-    useModels: jest.fn(() => ({
-        useHasActiveModels: mockUseHasActiveModels,
-    })),
-}));
-
 jest.mock('../../hooks/use-annotator-mode', () => ({
     ...jest.requireActual('../../hooks/use-annotator-mode'),
     useAnnotatorMode: jest.fn(),
@@ -75,8 +64,6 @@ jest.mock('../../providers/annotation-tool-provider/annotation-tool-provider.com
     useAnnotationToolContext: jest.fn(),
 }));
 
-const loadedModelData = [getMockedModelsGroup({ modelVersions: [getMockedModelVersion({ isActiveModel: true })] })];
-
 describe('AnnotationPredictionToggle', () => {
     const getAnnotationButton = () => screen.getByRole('button', { name: 'Select annotation mode' });
     const getPredictionButton = () => screen.getByRole('button', { name: 'Select prediction mode' });
@@ -84,7 +71,6 @@ describe('AnnotationPredictionToggle', () => {
     const renderApp = async (
         {
             mode = ANNOTATOR_MODE.ACTIVE_LEARNING,
-            modelData = [] as ModelsGroups[],
             mockPredictionsQuery = { refetch: jest.fn() },
             mockSelectedMediaItemQuery = { refetch: jest.fn() },
             mockedSetExplanationVisible = jest.fn(),
@@ -94,7 +80,6 @@ describe('AnnotationPredictionToggle', () => {
         },
         selectedMediaItem: MediaItem | null = getMockedImageMediaItem({})
     ) => {
-        mockUseHasActiveModels.mockReturnValue({ hasActiveModels: modelData.some(hasActiveModels), isSuccess: true });
         jest.mocked(useTask).mockReturnValue(mockedUseTask);
 
         jest.mocked(useSelectedMediaItem).mockReturnValue({
@@ -142,24 +127,6 @@ describe('AnnotationPredictionToggle', () => {
         jest.clearAllMocks();
     });
 
-    it('prediction is disabled while loading models', async () => {
-        await renderApp({
-            mode: ANNOTATOR_MODE.ACTIVE_LEARNING,
-        });
-
-        expect(getAnnotationButton()).toBeEnabled();
-        expect(getPredictionButton()).toBeDisabled();
-    });
-
-    it('prediction is disabled with empty models', async () => {
-        await renderApp({
-            mode: ANNOTATOR_MODE.ACTIVE_LEARNING,
-        });
-
-        expect(getAnnotationButton()).toBeEnabled();
-        expect(getPredictionButton()).toBeDisabled();
-    });
-
     it('annotation is selected by default', async () => {
         await renderApp({
             mode: undefined,
@@ -175,7 +142,6 @@ describe('AnnotationPredictionToggle', () => {
         const setSpy = await renderApp({
             mockedUseTask,
             mode: ANNOTATOR_MODE.ACTIVE_LEARNING,
-            modelData: loadedModelData,
         });
 
         fireEvent.click(getPredictionButton());
@@ -189,7 +155,6 @@ describe('AnnotationPredictionToggle', () => {
         const setSpy = await renderApp({
             mockedUseTask,
             mode: ANNOTATOR_MODE.PREDICTION,
-            modelData: loadedModelData,
         });
 
         fireEvent.click(getAnnotationButton());
@@ -201,7 +166,6 @@ describe('AnnotationPredictionToggle', () => {
         it('prediction is selected by default', async () => {
             await renderApp({
                 mode: ANNOTATOR_MODE.PREDICTION,
-                modelData: loadedModelData,
             });
 
             expect(getPredictionButton()).toBeEnabled();
@@ -216,7 +180,7 @@ describe('AnnotationPredictionToggle', () => {
                 mode: ANNOTATOR_MODE.PREDICTION,
             });
 
-            expect(getPredictionButton()).toBeDisabled();
+            expect(getPredictionButton()).toBeEnabled();
             expect(setSpy).not.toHaveBeenCalled();
         });
 
@@ -227,7 +191,6 @@ describe('AnnotationPredictionToggle', () => {
 
             const setSpy = await renderApp({
                 mode: ANNOTATOR_MODE.PREDICTION,
-                modelData: loadedModelData,
                 mockedUseTask,
                 mockedSetExplanationVisible,
                 mockedSetShowOverlapAnnotations,
@@ -246,7 +209,6 @@ describe('AnnotationPredictionToggle', () => {
 
             const setSpy = await renderApp({
                 mode: ANNOTATOR_MODE.PREDICTION,
-                modelData: loadedModelData,
                 mockedSetExplanationVisible,
                 mockedSetShowOverlapAnnotations,
             });
@@ -263,7 +225,7 @@ describe('AnnotationPredictionToggle', () => {
                 mode: ANNOTATOR_MODE.PREDICTION,
             });
 
-            expect(getPredictionButton()).toBeDisabled();
+            expect(getPredictionButton()).toBeEnabled();
         });
 
         it('segmentation, selecting prediction mode refetch predictions', async () => {
@@ -273,7 +235,6 @@ describe('AnnotationPredictionToggle', () => {
 
             const setSearchParameters = await renderApp({
                 mode: ANNOTATOR_MODE.ACTIVE_LEARNING,
-                modelData: loadedModelData,
                 mockPredictionsQuery,
                 mockedPredictionsRoiQuery,
                 mockSelectedMediaItemQuery,
@@ -298,7 +259,6 @@ describe('AnnotationPredictionToggle', () => {
             await renderApp(
                 {
                     mode: ANNOTATOR_MODE.ACTIVE_LEARNING,
-                    modelData: loadedModelData,
                     mockPredictionsQuery,
                     mockedPredictionsRoiQuery,
                     mockSelectedMediaItemQuery,
@@ -329,7 +289,6 @@ describe('AnnotationPredictionToggle', () => {
 
             const setSearchParamsSpy = await renderApp({
                 mode,
-                modelData: loadedModelData,
                 mockPredictionsQuery,
                 mockedPredictionsRoiQuery,
                 mockSelectedMediaItemQuery,
