@@ -8,13 +8,13 @@ import pytest
 from _pytest.fixtures import FixtureRequest
 from minio import Minio, S3Error
 
-from repos.otx_binary_repo import OTXBinaryRepo
+from repos.artifact_repo import ArtifactRepo
 
 from geti_types import ProjectIdentifier
 from iai_core.adapters.binary_interpreters import RAWBinaryInterpreter
 
 
-class TestOTXBinaryRepo:
+class TestArtifactRepo:
     @staticmethod
     def __set_env_variables(request: FixtureRequest):
         """
@@ -44,10 +44,10 @@ class TestOTXBinaryRepo:
 
     def test_otx_binary_repo_delete_all(self, request, fxt_project) -> None:
         """
-        Tests delete_all_under_project_dir method in the OTXBinaryRepo
+        Tests delete_all_under_project_dir method in the ArtifactRepo
         """
         self.__set_env_variables(request)
-        otx_binary_repo = OTXBinaryRepo(
+        otx_binary_repo = ArtifactRepo(
             identifier=ProjectIdentifier(
                 workspace_id=fxt_project.workspace_id,
                 project_id=fxt_project.id_,

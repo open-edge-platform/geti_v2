@@ -2,7 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import logging
 
-from repos.otx_binary_repo import OTXBinaryRepo
+from repos.artifact_repo import ArtifactRepo
 from resource_management.ui_settings_manager import UISettingsManager
 from usecases.update_project_performance_usecase import UpdateProjectPerformanceUseCase
 
@@ -66,4 +66,4 @@ class MiscellaneousKafkaHandler(BaseKafkaHandler, metaclass=Singleton):
             workspace_id=workspace_id,
             project_id=project_id,
         )
-        OTXBinaryRepo(identifier=project_identifier).delete_all_under_project_dir()
+        ArtifactRepo(identifier=project_identifier).delete_all_under_project_dir()
