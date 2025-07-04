@@ -1,11 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import {
-    FUX_NOTIFICATION_KEYS,
-    FUX_SETTINGS_KEYS,
-    TUTORIAL_CARD_KEYS,
-} from '../../../core/user-settings/dtos/user-settings.interface';
+import { FUX_NOTIFICATION_KEYS, TUTORIAL_CARD_KEYS } from '../../../core/user-settings/dtos/user-settings.interface';
 import {
     UserGlobalSettings,
     UserProjectSettings,
@@ -97,7 +93,6 @@ export const dismissAllTutorials = async (settings: UseSettings<UserGlobalSettin
     await settings.saveConfig({
         ...settings.config,
         ...tutorialAndFuxNotificationsSettings,
-        [FUX_SETTINGS_KEYS.USER_DISMISSED_ALL]: { value: true },
     });
 };
 
@@ -121,10 +116,4 @@ export enum DocsUrl {
 
 export const onPressLearnMore = (docUrl: string | undefined) => {
     return docUrl ? openNewTab(docUrl) : undefined;
-};
-
-export const getFuxSetting = (key: FUX_SETTINGS_KEYS, settings: UserGlobalSettings): boolean | string | null => {
-    const userDismissedAll = settings[FUX_SETTINGS_KEYS.USER_DISMISSED_ALL];
-
-    return !userDismissedAll.value && settings[key].value;
 };
