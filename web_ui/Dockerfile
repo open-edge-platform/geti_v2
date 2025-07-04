@@ -26,8 +26,8 @@ ARG LOCATION=/home/app/web_ui/
 WORKDIR ${LOCATION}
 
 # The `GETI_VERSION` variable is send by the UI when it submits telemetry data
-ARG GETI_VERSION=development
-ENV GETI_VERSION=$GETI_VERSION
+ARG REACT_APP_GETI_VERSION=development
+ENV REACT_APP_GETI_VERSION=$REACT_APP_GETI_VERSION
 
 COPY --link package.json ./
 COPY --link package-lock.json ./
