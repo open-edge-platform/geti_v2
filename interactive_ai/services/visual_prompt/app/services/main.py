@@ -17,11 +17,9 @@ from starlette.responses import JSONResponse, Response
 from services.endpoints.prompt_endpoints import router as prompt_router
 from services.kafka_handler import VPSKafkaHandler
 from services.visual_prompt_service import VisualPromptService
-from utils.feature_flag import FeatureFlag
 
 from geti_fastapi_tools.exceptions import GetiBaseException
 from geti_fastapi_tools.responses import error_response_rest
-from geti_feature_tools import FeatureFlagProvider
 from geti_telemetry_tools import ENABLE_TRACING, FastAPITelemetry, KafkaTelemetry
 
 logger = logging.getLogger(__name__)
