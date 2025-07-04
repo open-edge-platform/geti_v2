@@ -1,9 +1,9 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from geti_feature_tools import FeatureFlagProvider
+from geti_supported_models.supported_models import SupportedModels
 
 from features.feature_flag import FeatureFlag
-from geti_supported_models.supported_models import SupportedModels
 
 from iai_core.entities.model_template import ModelTemplate
 

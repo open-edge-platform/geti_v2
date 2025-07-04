@@ -2,11 +2,11 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from unittest.mock import MagicMock
 
+from geti_supported_models.supported_models import SupportedModels
 from testfixtures import compare
 
 from communication.views.model_template_rest_views import ModelTemplateRESTViews
 from features.feature_flag import FeatureFlag
-from geti_supported_models.supported_models import SupportedModels
 
 
 class TestSCModelTemplateRESTViews:
