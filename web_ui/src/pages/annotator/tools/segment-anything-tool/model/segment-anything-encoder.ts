@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import type * as Comlink from 'comlink';
-import * as ort from 'onnxruntime-common';
+import { Tensor } from 'onnxruntime-web';
 import type OpenCVTypes from 'OpenCVTypes';
 
 import { OpenCVPreprocessor, OpenCVPreprocessorConfig } from './pre-processing';
@@ -13,7 +13,7 @@ type cv = typeof OpenCVTypes;
 type ModelSession = Session | Comlink.Remote<Session>;
 
 export type EncodingOutput = {
-    encoderResult: ort.Tensor;
+    encoderResult: Tensor;
     originalWidth: number;
     originalHeight: number;
     newWidth: number;

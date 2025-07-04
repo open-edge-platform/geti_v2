@@ -25,3 +25,5 @@ export {
     getPointsFromMat,
     getMatFromPoints,
 } from './src/utils/tool-utils';
+
+export { sessionParams, type SessionParameters } from './src/utils/wasm-utils';
