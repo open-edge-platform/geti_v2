@@ -1,11 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
+from unittest.mock import MagicMock
 
 from testfixtures import compare
 
 from communication.views.model_template_rest_views import ModelTemplateRESTViews
 from features.feature_flag import FeatureFlag
+from geti_supported_models.parser import get_model_manifests
 
 
 class TestSCModelTemplateRESTViews:
@@ -49,3 +50,26 @@ class TestSCModelTemplateRESTViews:
         result = ModelTemplateRESTViews.model_template_to_rest(model_template=fxt_model_template_anomaly_detection)
 
         compare(result, expected_result, ignore_eq=True)
+
+    def test_model_manifest_to_rest(self, fxt_enable_feature_flag_name) -> None:
+        # Arrange
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+        model_manifest = next(iter(get_model_manifests().values()))
+        expected_result = {
+            "model_manifest_id": model_manifest.id,
+            "task": model_manifest.task.lower(),
+            "name": model_manifest.name,
+            "description": model_manifest.description,
+            "stats": model_manifest.stats.model_dump(),
+            "support_status": model_manifest.support_status.name.lower(),
+            "supported_gpus": model_manifest.supported_gpus,
+            "capabilities": model_manifest.capabilities.model_dump(),
+        }
+        mock_model_template = MagicMock()
+        mock_model_template.model_manifest = model_manifest
+
+        # Act
+        rest_view = ModelTemplateRESTViews.model_template_to_rest(mock_model_template)
+
+        # Assert
+        assert rest_view == expected_result
