@@ -69,12 +69,6 @@ describe('PredictionSettings', () => {
         });
     });
 
-    it('does not display model type when FEATURE_FLAG_VISUAL_PROMPT_SERVICE is not enabled', async () => {
-        await render(<PredictionsSettings />, { featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE: false } });
-
-        expect(getModelType()).not.toBeInTheDocument();
-    });
-
     it('does not display model type for classification', async () => {
         const project = getMockedProject({
             tasks: [getMockedTask({ id: '1', domain: DOMAIN.CLASSIFICATION })],
@@ -149,9 +143,6 @@ describe('PredictionSettings', () => {
             services: {
                 userSettingsService,
                 projectService,
-            },
-            featureFlags: {
-                FEATURE_FLAG_VISUAL_PROMPT_SERVICE: true,
             },
         });
 

@@ -3,7 +3,6 @@
 
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { useNavigateToAnnotatorRoute } from '@geti/core/src/services/use-navigate-to-annotator-route.hook';
@@ -73,9 +72,8 @@ const isNotAnnotatedForTask = (annotations: Annotation[], selectedTask: Task | n
 const usePredictionMode = () => {
     const [selectedModel] = useSelectedInferenceModel();
     const { isActiveLearningMode } = useAnnotatorMode();
-    const { FEATURE_FLAG_VISUAL_PROMPT_SERVICE } = useFeatureFlags();
 
-    if (FEATURE_FLAG_VISUAL_PROMPT_SERVICE && selectedModel === InferenceModel.VISUAL_PROMPT) {
+    if (selectedModel === InferenceModel.VISUAL_PROMPT) {
         return PredictionMode.VISUAL_PROMPT;
     }
 

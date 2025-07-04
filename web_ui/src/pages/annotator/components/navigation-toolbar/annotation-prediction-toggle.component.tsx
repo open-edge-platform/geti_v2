@@ -1,12 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useEffect } from 'react';
-
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { ButtonGroup } from '@geti/ui';
 import { AICPUIcon, Human } from '@geti/ui/icons';
-import { isNil } from 'lodash-es';
 import { useSearchParams } from 'react-router-dom';
 
 import { useModels } from '../../../../core/models/hooks/use-models.hook';
@@ -26,45 +22,11 @@ import classes from './navigation-toolbar.module.scss';
 
 const isPredictionMode = (mode: ANNOTATOR_MODE) => mode === ANNOTATOR_MODE.PREDICTION;
 
-const useDefaultMode = () => {
-    const { FEATURE_FLAG_VISUAL_PROMPT_SERVICE } = useFeatureFlags();
-    const { currentMode } = useAnnotatorMode();
-    const { useHasActiveModels } = useModels();
-
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const { hasActiveModels, isSuccess } = useHasActiveModels();
-
-    const isPredictionWithEmptyModels = isPredictionMode(currentMode) && isSuccess && !hasActiveModels;
-
-    useEffect(() => {
-        const hasEmptyModeParams = isNil(searchParams.get('mode'));
-
-        if (FEATURE_FLAG_VISUAL_PROMPT_SERVICE) {
-            return;
-        }
-
-        if (hasEmptyModeParams || isPredictionWithEmptyModels) {
-            searchParams.set('mode', ANNOTATOR_MODE.ACTIVE_LEARNING);
-
-            setSearchParams(searchParams);
-        }
-    }, [
-        currentMode,
-        searchParams,
-        hasActiveModels,
-        isPredictionWithEmptyModels,
-        setSearchParams,
-        FEATURE_FLAG_VISUAL_PROMPT_SERVICE,
-    ]);
-
-    return hasActiveModels;
-};
-
 export const AnnotationPredictionToggle = (): JSX.Element => {
-    const { FEATURE_FLAG_VISUAL_PROMPT_SERVICE } = useFeatureFlags();
     const { isTaskChainSecondTask } = useTask();
     const { handleFirstVisitToPredictionMode } = useFuxNotifications();
+    const { useHasActiveModels } = useModels();
+    const { hasActiveModels } = useHasActiveModels();
 
     const { currentMode } = useAnnotatorMode();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -73,7 +35,6 @@ export const AnnotationPredictionToggle = (): JSX.Element => {
     const { selectedMediaItemQuery } = useSelectedMediaItem();
 
     const updateNewMode = runWhen((newMode: ANNOTATOR_MODE) => currentMode !== newMode);
-    const hasModels = useDefaultMode();
 
     const { selectedMediaItem } = useSelectedMediaItem();
     const handleChangeMode = updateNewMode(async (newMode: ANNOTATOR_MODE) => {
@@ -109,7 +70,7 @@ export const AnnotationPredictionToggle = (): JSX.Element => {
                 id='select-prediction-mode'
                 tooltip={'AI prediction'}
                 aria-label='Select prediction mode'
-                isDisabled={!hasModels && !FEATURE_FLAG_VISUAL_PROMPT_SERVICE}
+                isDisabled={!hasActiveModels}
                 onPress={() => {
                     handleChangeMode(ANNOTATOR_MODE.PREDICTION);
                     handleFirstVisitToPredictionMode();

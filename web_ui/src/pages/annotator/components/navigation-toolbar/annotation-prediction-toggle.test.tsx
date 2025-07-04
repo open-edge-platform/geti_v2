@@ -91,7 +91,6 @@ describe('AnnotationPredictionToggle', () => {
             mockedSetShowOverlapAnnotations = jest.fn(),
             mockedUseTask = mockedTaskContextProps({}),
             mockedPredictionsRoiQuery = { refetch: jest.fn() },
-            FEATURE_FLAG_VISUAL_PROMPT_SERVICE = false,
         },
         selectedMediaItem: MediaItem | null = getMockedImageMediaItem({})
     ) => {
@@ -134,9 +133,7 @@ describe('AnnotationPredictionToggle', () => {
 
         jest.mocked(useSearchParams).mockImplementation(() => [searchParams, setSearchParams]);
 
-        await projectRender(<AnnotationPredictionToggle />, {
-            featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE },
-        });
+        await projectRender(<AnnotationPredictionToggle />);
 
         return setSpy;
     };
@@ -229,7 +226,6 @@ describe('AnnotationPredictionToggle', () => {
             const setSpy = await renderApp({
                 mockedUseTask,
                 mode: ANNOTATOR_MODE.PREDICTION,
-                FEATURE_FLAG_VISUAL_PROMPT_SERVICE: true,
             });
 
             expect(getPredictionButton()).toBeEnabled();
