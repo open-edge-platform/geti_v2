@@ -40,8 +40,7 @@ async def lifespan(app: FastAPI):  # type: ignore # noqa: ANN201
         KafkaTelemetry.instrument()
 
     # Initialize the VisualPromptService by loading the SAM model in memory
-    if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_VISUAL_PROMPT_SERVICE):
-        app.visual_prompt_service = VisualPromptService()  # type: ignore[attr-defined]
+    app.visual_prompt_service = VisualPromptService()  # type: ignore[attr-defined]
 
     yield
 

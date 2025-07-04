@@ -45,7 +45,3 @@ def detect_fixtures(module_name: str) -> list:
 
 
 pytest_plugins = detect_fixtures("tests")
-
-
-# Set VPS FeatureFlag to true
-os.environ["FEATURE_FLAG_VISUAL_PROMPT_SERVICE"] = "True"
