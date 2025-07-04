@@ -7,7 +7,8 @@ import subprocess
 
 logger = logging.getLogger(__name__)
 
-DATA_FOLDER_PATH = os.getenv('DATA_FOLDER')
+DATA_FOLDER_PATH = os.getenv("DATA_FOLDER")
+
 
 def _get_available_storage() -> int:
     """

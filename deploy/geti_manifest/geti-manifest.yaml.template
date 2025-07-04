@@ -85,11 +85,6 @@ spec:
   chart: oci://{{ geti_registry }}/geti/helm/istio-istiod
   version: $VERSION
   targetNamespace: istio-system
-  valuesSecrets:
-    - name: external-registry
-      ignoreUpdates: true
-      keys:
-        - overrideRegistry
   valuesContent: |-
     global:
       proxy:
@@ -104,11 +99,6 @@ spec:
   chart: oci://{{ geti_registry }}/geti/helm/istio-gateway
   version: $VERSION
   targetNamespace: istio-system
-  valuesSecrets:
-    - name: external-registry
-      ignoreUpdates: true
-      keys:
-        - overrideRegistry
   valuesContent: |-
     tls:
       key_file: {{ tls_key_file }}
@@ -124,11 +114,6 @@ spec:
   version: $VERSION
   targetNamespace: impt
   timeout: 20m
-  valuesSecrets:
-    - name: external-registry
-      ignoreUpdates: true
-      keys:
-        - overrideRegistry
   valuesContent: |-
     global:
       registry_address: {{ geti_registry }}
@@ -143,11 +128,6 @@ spec:
   version: $VERSION
   targetNamespace: impt
   timeout: 60m
-  valuesSecrets:
-    - name: external-registry
-      ignoreUpdates: true
-      keys:
-        - overrideRegistry
   valuesContent: |-
     configuration:
       dataStoragePath: {{ data_folder }}
@@ -175,11 +155,6 @@ spec:
   chart: oci://{{ geti_registry }}/geti/helm/modelmesh-serving-addon
   version: $VERSION
   targetNamespace: impt
-  valuesSecrets:
-    - name: external-registry
-      ignoreUpdates: true
-      keys:
-        - overrideRegistry
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
@@ -191,11 +166,6 @@ spec:
   version: $VERSION
   targetNamespace: flyte
   timeout: 20m
-  valuesSecrets:
-    - name: external-registry
-      ignoreUpdates: true
-      keys:
-        - overrideRegistry
   valuesContent: |-
     global:
       registry_address: {{ geti_registry }}

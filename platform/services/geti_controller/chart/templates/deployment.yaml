@@ -48,7 +48,7 @@ spec:
             - name: INSTALL_VERSION
               value: {{ .Values.global.tag | default .Chart.AppVersion }}
             - name: DATA_FOLDER
-              value: {{ .Values.mounthPath }}
+              value: {{ .Values.mountPath }}
             - name: PROXY_ENABLED
               value: "{{ .Values.global.proxy.enabled }}"
             - name: HTTPS_PROXY
@@ -107,7 +107,7 @@ spec:
 {{- if .Values.global.ingress_enabled }}
           volumeMounts:
             - name: data-storage
-              mountPath: {{ .Values.mounthPath }}
+              mountPath: {{ .Values.mountPath }}
               readOnly: false
             - name: tmp
               mountPath: /tmp

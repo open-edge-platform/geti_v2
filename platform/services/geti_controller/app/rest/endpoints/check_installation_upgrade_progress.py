@@ -3,9 +3,16 @@
 
 import logging
 import time
+
 import requests
 from fastapi import BackgroundTasks, status
-from platform_operations.cluster import is_job_running, load_kube_config, wait_for_job_creation, is_job_completed_or_failed
+
+from platform_operations.cluster import (
+    is_job_completed_or_failed,
+    is_job_running,
+    load_kube_config,
+    wait_for_job_creation,
+)
 from rest.schema.check_installation_upgrade_progress import InstallationUpgradeProgressResponse, OperationStatus
 from routers import platform_router
 
@@ -23,9 +30,7 @@ RETRY_INTERVAL = 5
 class ProgressManager:
     def __init__(self):
         self.progress_data = InstallationUpgradeProgressResponse(
-            progress_percentage=0,
-            status=OperationStatus.NOT_RUNNING,
-            message="Progress not started."
+            progress_percentage=0, status=OperationStatus.NOT_RUNNING, message="Progress not started."
         )
         self.task_started = False
 
@@ -110,17 +115,21 @@ def periodic_progress_check(progress_manager: ProgressManager, job_name: str, in
         if is_finished:
             logger.info(f"Job finished: {status_message}")
             if "successfully" in status_message.lower():
-                progress_manager.update_progress({
-                    "progress_percentage": 100,
-                    "status": OperationStatus.COMPLETED,
-                    "message": "Installation/upgrade completed successfully."
-                })
+                progress_manager.update_progress(
+                    {
+                        "progress_percentage": 100,
+                        "status": OperationStatus.COMPLETED,
+                        "message": "Installation/upgrade completed successfully.",
+                    }
+                )
             else:
-                progress_manager.update_progress({
-                    "progress_percentage": 0,
-                    "status": OperationStatus.FAILED,
-                    "message": f"Installation/upgrade failed: {status_message}"
-                })
+                progress_manager.update_progress(
+                    {
+                        "progress_percentage": 0,
+                        "status": OperationStatus.FAILED,
+                        "message": f"Installation/upgrade failed: {status_message}",
+                    }
+                )
             break
 
         if is_job_running(NAMESPACE, job_name):
@@ -135,11 +144,13 @@ def periodic_progress_check(progress_manager: ProgressManager, job_name: str, in
             call_progress_endpoint(progress_manager)
         else:
             logger.info("Job is not running")
-            progress_manager.update_progress({
-                "progress_percentage": 0,
-                "status": OperationStatus.NOT_RUNNING,
-                "message": "Installation/upgrade job is not running."
-            })
+            progress_manager.update_progress(
+                {
+                    "progress_percentage": 0,
+                    "status": OperationStatus.NOT_RUNNING,
+                    "message": "Installation/upgrade job is not running.",
+                }
+            )
             break
 
         time.sleep(interval)
@@ -154,9 +165,7 @@ def periodic_progress_check(progress_manager: ProgressManager, job_name: str, in
             "content": {
                 "application/json": {
                     "example": InstallationUpgradeProgressResponse(
-                        progress_percentage=42,
-                        status=OperationStatus.RUNNING,
-                        message="Installation is in progress."
+                        progress_percentage=42, status=OperationStatus.RUNNING, message="Installation is in progress."
                     )
                 }
             },

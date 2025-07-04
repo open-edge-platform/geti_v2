@@ -98,7 +98,7 @@ def create_cluster_role(name: str) -> V1ClusterRole:
         rules=[
             V1PolicyRule(api_groups=["helm.cattle.io"], resources=["helmcharts"], verbs=["create", "update"]),
             V1PolicyRule(api_groups=["batch"], resources=["jobs"], verbs=["list", "watch"]),
-            V1PolicyRule(api_groups=[""], resources=["secrets"], verbs=["create"]),
+            V1PolicyRule(api_groups=[""], resources=["configmaps"], verbs=["create"]),
         ],
     )
 
@@ -216,10 +216,7 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
                     secret_key_ref=V1SecretKeySelector(name="geti-install-data", key="tlsKey", optional=True)
                 ),
             ),
-            V1EnvVar(
-                name="IMAGE_REGISTRY",
-                value=image_registry if image_registry else None
-            ),
+            V1EnvVar(name="IMAGE_REGISTRY", value=image_registry if image_registry else None),
         ],
         ports=[V1ContainerPort(container_port=port)],
     )
@@ -256,12 +253,11 @@ def is_job_completed_or_failed(namespace: str, job_name: str) -> tuple[bool, str
 
         if status.succeeded is not None and status.succeeded > 0:
             return True, "Job completed successfully"
-        elif status.failed is not None and status.failed > 0:
+        if status.failed is not None and status.failed > 0:
             return True, "Job failed"
-        elif status.active is not None and status.active > 0:
+        if status.active is not None and status.active > 0:
             return False, "Job is running"
-        else:
-            return False, "Job status unclear"
+        return False, "Job status unclear"
     except Exception as e:
         logger.error(f"Failed to check job status: {e}")
         return False, f"Error checking job status: {e}"

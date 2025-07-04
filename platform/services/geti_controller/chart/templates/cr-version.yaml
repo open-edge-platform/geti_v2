@@ -4,21 +4,7 @@ kind: ClusterRole
 metadata:
   name: {{ include "geti-controller.name" . }}-version
 rules:
-- apiGroups: [""]
-  resources: ["namespaces", "configmaps"]
-  verbs: ["get"]
-- apiGroups: [""]
-  resources: ["serviceaccounts"]
-  verbs: ["create"]
-- apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["clusterroles", "clusterrolebindings"]
-  verbs: ["create"]
-- apiGroups: ["batch"]
-  resources: ["jobs"]
-  verbs: ["create", "list", "watch"]
-- apiGroups: ["helm.cattle.io"]
-  resources: ["helmcharts"]
-  verbs: ["create", "update"]
+{{ .Files.Get "files/rules.yaml" }}
 - apiGroups: [""]
   resources: ["pods", "pods/exec"]  # needed for nvidia device plugin communication (different namespace)
   verbs: ["get", "watch", "list"]
