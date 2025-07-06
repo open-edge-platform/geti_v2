@@ -43,7 +43,7 @@ dev = [
     "types-protobuf",
     "grpc-stubs",
     "httpx~=0.26",
-    "pillow==11.1.0",
+    "pillow==11.3.0",
     "retry~=0.9.2",
     "mypy~=1.15",
     "mypy-protobuf==3.5",

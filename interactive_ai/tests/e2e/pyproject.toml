@@ -9,7 +9,7 @@ dependencies = [
     "requests~=2.32",
     "numpy==1.26.4",
     "opencv-python-headless~=4.11",
-    "pillow~=11.1.0",
+    "pillow~=11.3.0",
     "urllib3~=2.3.0",
     "geti_client"
 ]
