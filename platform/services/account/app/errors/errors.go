@@ -26,7 +26,7 @@ type InvalidRequestError struct {
 	BaseError
 }
 
-func NewInvalidReuestError(message string) *InvalidRequestError {
+func NewInvalidRequestError(message string) *InvalidRequestError {
 	return &InvalidRequestError{
 		BaseError: BaseError{
 			Code:    ErrCodeInvalidRequest,
@@ -100,9 +100,8 @@ func NewInternalError(message string) *InternalError {
 	}
 }
 
-
 type DatabaseError struct {
-    BaseError
+	BaseError
 }
 
 func NewDatabaseError(message string, code string) *DatabaseError {
@@ -110,6 +109,6 @@ func NewDatabaseError(message string, code string) *DatabaseError {
 		BaseError: BaseError{
 			Code:    code,
 			Message: message,
-        },
-    }
+		},
+	}
 }

@@ -1,9 +1,9 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+from geti_configuration_tools import ConfigurationOverlayTools
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration, TrainingConfiguration
 
 from service.configuration_service import ConfigurationService
-from service.utils import delete_none_from_dict, merge_deep_dict
 from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_types import ID
@@ -71,10 +71,10 @@ class TestConfigurationService:
         )
 
         # Act
-        full_config_overlay = ConfigurationService.overlay_training_configurations(
+        full_config_overlay = ConfigurationOverlayTools.overlay_training_configurations(
             fxt_training_configuration_task_level, base_partial_config, overlay_config_1, overlay_config_2
         )
-        partial_overlay = ConfigurationService.overlay_training_configurations(
+        partial_overlay = ConfigurationOverlayTools.overlay_training_configurations(
             base_partial_config, overlay_config_1, overlay_config_2, validate_full_config=False
         )
 
@@ -104,9 +104,11 @@ class TestConfigurationService:
         repo.save(fxt_training_configuration_task_level)
         repo.save(fxt_partial_training_configuration_manifest_level)
 
-        overlay_config = merge_deep_dict(
+        overlay_config = ConfigurationOverlayTools.merge_deep_dict(
             fxt_training_configuration_task_level.model_dump(),
-            delete_none_from_dict(fxt_partial_training_configuration_manifest_level.model_dump()),
+            ConfigurationOverlayTools.delete_none_from_dict(
+                fxt_partial_training_configuration_manifest_level.model_dump()
+            ),
         )
         overlay_config["id_"] = ID(
             f"full_training_configuration_{fxt_partial_training_configuration_manifest_level.model_manifest_id}"

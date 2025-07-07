@@ -66,7 +66,7 @@ jest.mock('./pages/camera-page/hooks/use-load-camera-webworker', () => ({
 
 jest.mock('comlink', () => ({
     wrap: jest.fn(() => ({
-        waitForOpenCV: jest.fn(() => Promise.resolve()),
+        loadOpenCV: jest.fn(() => Promise.resolve()),
         terminate: jest.fn(),
     })),
 }));

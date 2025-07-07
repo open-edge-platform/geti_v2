@@ -255,7 +255,6 @@ def fxt_image(fxt_ote_id) -> Image:
     )
 
 
-@pytest.mark.JobsComponent
 class TestInferencer:
     def test_classification_inferencer(
         self,

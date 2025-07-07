@@ -79,7 +79,7 @@ describe('Analytics', () => {
 
         expect(
             screen.getByText(
-                /Please note that Analytics feature available in the Standard Geti version is not supported in the Lite Intel® Geti™ version. For a detailed comparison of the features available in each version/i
+                /Please note that Analytics feature is enabled only when the Intel® Geti™ platform has been installed with the --install-telemetry-stack option./i
             )
         ).toBeInTheDocument();
 

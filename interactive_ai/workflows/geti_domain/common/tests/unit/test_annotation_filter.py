@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import copy
 
-import pytest
 from geti_types import ID
 from iai_core.entities.annotation import Annotation
 from iai_core.entities.dataset_item import DatasetItem
@@ -11,7 +10,6 @@ from iai_core.entities.shapes import Rectangle
 from jobs_common.utils.annotation_filter import AnnotationFilter
 
 
-@pytest.mark.JobsComponent
 class TestMapItemsToShardsCommand:
     def test_filter_annotation_size(self, fxt_dataset_with_images) -> None:
         """Verifies that a too small annotation is filtered out of the dataset item"""

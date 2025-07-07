@@ -3,7 +3,6 @@
 
 import { FC, Key } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { ActionButton, DialogContainer, Flex, Text, Tooltip, TooltipTrigger } from '@geti/ui';
 import { Scope } from '@geti/ui/icons';
 
@@ -63,7 +62,6 @@ export const MediaItemActions: FC<MediaItemActionsProps> = ({
     selectedMediaItemAction,
     onSelectedMediaItemActionChange,
 }) => {
-    const { FEATURE_FLAG_CLASSIFICATION_RANGES } = useFeatureFlags();
     const { isSingleDomainProject } = useProject();
 
     const isAnomalyProject = isSingleDomainProject(isAnomalyDomain);
@@ -73,9 +71,7 @@ export const MediaItemActions: FC<MediaItemActionsProps> = ({
     const isVideoMediaItem = isVideo(mediaItem);
     const videoMediaItemForDialog = isVideoMediaItem ? mediaItem : videoMediaItemQuery.data;
     const shouldShowQuickAnnotation =
-        isVideoMediaItem &&
-        videoMediaItemForDialog !== undefined &&
-        (isAnomalyProject || (isClassificationProject && FEATURE_FLAG_CLASSIFICATION_RANGES));
+        isVideoMediaItem && videoMediaItemForDialog !== undefined && (isAnomalyProject || isClassificationProject);
 
     const isAnomalyVideo = isAnomalyProject && videoMediaItemForDialog !== undefined;
 

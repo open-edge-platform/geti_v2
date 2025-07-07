@@ -4,7 +4,13 @@ from unittest.mock import ANY, MagicMock, patch
 import confluent_kafka
 import pytest
 
-from geti_kafka_tools.event_production import EventProducer, _body_for_logger, json_string_serializer, publish_event
+from geti_kafka_tools.event_production import (
+    EventProducer,
+    _body_for_logger,
+    json_string_serializer,
+    publish_event,
+    terminate_producer,
+)
 
 
 def reset_singleton():
@@ -135,6 +141,20 @@ class TestEventProducer:
         )
         event_producer._producer.poll.assert_called_once_with(0)
 
+    def test_event_producer_terminate(self, fxt_producer, request) -> None:
+        request.addfinalizer(lambda: reset_singleton())
+        # Arrange
+        event_producer = EventProducer()
+        old_producer_instance = event_producer._producer
+
+        # Act
+        event_producer.terminate()
+
+        # Assert
+        fxt_producer.assert_called_once()
+        old_producer_instance.flush.assert_called_once_with(3)
+        assert event_producer._producer is None
+
 
 class TestEventProduction:
     def test_body_for_logger(
@@ -192,3 +212,16 @@ class TestEventProduction:
         producer.publish.assert_called_once_with(
             topic="topic", body={"foo": "bar"}, key=b"event_key", headers=[("foo_header", b"bar_header")]
         )
+
+    @patch("geti_kafka_tools.event_production.EventProducer", autospec=True)
+    def test_terminate_producer(self, mock_event_producer) -> None:
+        # Arrange
+        producer = MagicMock()
+        mock_event_producer.return_value = producer
+
+        # Act
+        terminate_producer()
+
+        # Assert
+        mock_event_producer.assert_called_once_with()
+        producer.terminate.assert_called_once_with()

@@ -93,12 +93,16 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
         },
         {
             name: 'Evaluation',
-            children: undefined /*<Evaluation evaluationParameters={evaluationParameters} />*/,
+            /**
+             * Evaluation tab will be supported in the phase 2.
+             * <Evaluation evaluationParameters={evaluationParameters} />
+             */
+            children: undefined,
         },
     ].filter((tab) => tab.children !== undefined);
 
     return (
-        <Tabs items={TABS} height={'100%'} UNSAFE_style={{ overflow: 'hidden' }}>
+        <Tabs items={TABS} height={'100%'} UNSAFE_style={{ overflow: 'hidden' }} aria-label={'Advanced settings tabs'}>
             <TabList>
                 {(tab: TabProps) => (
                     <Item key={tab.name} textValue={tab.name}>

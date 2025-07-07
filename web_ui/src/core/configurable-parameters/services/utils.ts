@@ -16,6 +16,7 @@ import {
     ProjectConfigurationDTO,
     ProjectConfigurationUploadPayloadDTO,
     StaticParameterDTO,
+    TrainedModelConfigurationDTO,
     TrainingConfigurationDTO,
     TrainingConfigurationUpdatePayloadDTO,
     TrainingParametersDTO,
@@ -34,6 +35,7 @@ import {
     ProjectConfiguration,
     ProjectConfigurationUploadPayload,
     StaticParameter,
+    TrainedModelConfiguration,
     TrainingConfiguration,
     TrainingConfigurationUpdatePayload,
     TrainingParameters,
@@ -310,9 +312,9 @@ const getTrainingParameters = (config: TrainingParametersDTO): TrainingParameter
 };
 
 export const getTrainingConfigurationEntity = (config: TrainingConfigurationDTO): TrainingConfiguration => {
-    const { task_id, training, advanced_configuration, dataset_preparation, evaluation } = config;
+    const { task_id, training, dataset_preparation, evaluation } = config;
 
-    const trainingConfiguration: TrainingConfiguration = {
+    return {
         taskId: task_id,
         datasetPreparation: {
             augmentation: getParametersObject(dataset_preparation.augmentation),
@@ -322,12 +324,21 @@ export const getTrainingConfigurationEntity = (config: TrainingConfigurationDTO)
         training: getTrainingParameters(training),
         evaluation: evaluation.map(getParameter),
     };
+};
 
-    if (advanced_configuration !== undefined) {
-        trainingConfiguration.advancedConfiguration = advanced_configuration.map(getStaticParameter);
-    }
+export const getTrainedModelConfigurationEntity = (config: TrainedModelConfigurationDTO): TrainedModelConfiguration => {
+    const { task_id, training, dataset_preparation, evaluation, advanced_configuration } = config;
 
-    return trainingConfiguration;
+    return {
+        taskId: task_id,
+        datasetPreparation: {
+            augmentation: getParametersObject(dataset_preparation.augmentation),
+        },
+        training: getTrainingParameters(training),
+        evaluation: evaluation.map(getParameter),
+        // TODO: remove optional chaining when backend will return empty array instead of undefined
+        advancedConfiguration: advanced_configuration?.map(getStaticParameter),
+    };
 };
 
 const getKeyValueParameter = (parameter: ConfigurationParameter | KeyValueParameter): KeyValueParameter => {

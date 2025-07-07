@@ -64,7 +64,12 @@ const FilterOption: FC<FilterOptionProps> = ({ option, onOptionChange }) => {
                     onChange={handleFilterValueChange}
                 />
 
-                <Checkbox isEmphasized isSelected={isUnlimited} onChange={handleUnlimitedChange}>
+                <Checkbox
+                    isEmphasized
+                    isSelected={isUnlimited}
+                    onChange={handleUnlimitedChange}
+                    aria-label={`Toggle ${configParameter.name}`}
+                >
                     Unlimited
                 </Checkbox>
             </Flex>

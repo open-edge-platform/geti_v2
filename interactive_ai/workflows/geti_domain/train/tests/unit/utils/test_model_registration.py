@@ -2,14 +2,12 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from unittest.mock import patch
 
-import pytest
 from grpc_interfaces.model_registration.pb.service_pb2 import Connection, Model, Pipeline, Project, Task
 from iai_core.repos import LabelSchemaRepo
 
 from job.utils.model_registration import LabelMapper, ModelMapper, ProjectMapper
 
 
-@pytest.mark.JobsSdkComponent
 class TestModelRegistrationProtoMapper:
     def test_grpc_project_mapper(self, fxt_detection_project, fxt_label_schema):
         project = fxt_detection_project

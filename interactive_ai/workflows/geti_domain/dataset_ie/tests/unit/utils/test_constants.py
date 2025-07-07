@@ -9,7 +9,6 @@ import pytest
 from job.utils.constants import _get_env_var
 
 
-@pytest.mark.JobsComponent
 class TestGetEnvVar:
     @pytest.mark.parametrize(("value", "expected_value"), (("123", 123), ("1e1", 10)))
     @patch("job.utils.constants.os.environ")

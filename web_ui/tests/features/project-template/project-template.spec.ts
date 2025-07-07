@@ -68,6 +68,33 @@ test.describe('Template editor', () => {
         await expect(page.getByLabel('drawing box')).not.toBeInViewport();
     });
 
+    test('reset template button restores points to their original state', async ({
+        page,
+        templateManagerPage,
+        registerApiResponse,
+    }) => {
+        registerApiResponse('GetProjectInfo', (_req, res, ctx) => {
+            return res(ctx.status(200), ctx.json(keypointProject));
+        });
+
+        await page.goto(TEMPLATE_URL, { timeout: 20000 });
+
+        await expect(page.getByRole('button', { name: 'Update Template' })).toBeDisabled();
+
+        const headPoint = page.getByLabel(`keypoint ${labels.head.name} anchor`);
+        const initialPosition = await templateManagerPage.getPosition(headPoint);
+
+        const newPosition = { x: initialPosition.x + 100, y: initialPosition.y + 200 };
+        await templateManagerPage.movePointTo(page, headPoint, newPosition);
+        const currentPosition = await templateManagerPage.getPosition(headPoint);
+        expect(currentPosition).not.toEqual(initialPosition);
+
+        await page.getByRole('button', { name: 'Reset template' }).click();
+
+        const finalPosition = await templateManagerPage.getPosition(headPoint);
+        expect(finalPosition).toEqual(initialPosition);
+    });
+
     test.describe('show unsaved changes popover after modifying the template', () => {
         test('stay on page', async ({ page, templateManagerPage, registerApiResponse }) => {
             registerApiResponse('GetProjectInfo', (_req, res, ctx) => {

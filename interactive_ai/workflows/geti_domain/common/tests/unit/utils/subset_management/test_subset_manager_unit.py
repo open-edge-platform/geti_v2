@@ -25,7 +25,6 @@ def do_nothing(*args, **kwargs):
     pass
 
 
-@pytest.mark.JobsComponent
 class TestSubsetHelper:
     def test_split(
         self,
@@ -427,7 +426,6 @@ class TestSubsetHelper:
         assert np.array_equal(result, np.array(param_fxt_expected_prio))
 
 
-@pytest.mark.JobsComponent
 class TestAnomalySubsetHelper:
     def test_assign_item_to_subset_empty_subset(
         self,

@@ -7,7 +7,7 @@ import { Remote, wrap } from 'comlink';
 import { Screenshot } from '../../camera-support/camera.interface';
 import { useCameraStoreName } from './use-camera-store-name.hook';
 
-export interface CameraWorkerMethods extends LocalForageDbMethodsCore {
+interface CameraWorkerMethods extends LocalForageDbMethodsCore {
     getItems: () => Promise<Screenshot[]>;
     updateMedia: (key: string, screenshot: Omit<Screenshot, 'id'>) => Promise<void>;
     terminate: () => void;

@@ -3,7 +3,7 @@
 
 import { createContext, Dispatch, SetStateAction, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import { type WatershedInstance, type WatershedPolygon } from '@geti/smart-tools';
+import { type Watershed, type WatershedPolygon } from '@geti/smart-tools';
 import { UseMutateFunction, useMutation } from '@tanstack/react-query';
 
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
@@ -85,9 +85,9 @@ const useWatershedUndoRedoState = (): [
 };
 
 export const WatershedStateProvider = ({ children }: StateProviderProps): JSX.Element => {
-    const { worker } = useLoadAIWebworker(AlgorithmType.WATERSHED);
+    const { worker: watershed } = useLoadAIWebworker(AlgorithmType.WATERSHED);
 
-    const wsInstance = useRef<WatershedInstance | null>(null);
+    const wsInstance = useRef<Watershed | null>(null);
 
     const { addNotification } = useNotification();
     const { getToolSettings } = useAnnotationToolContext();
@@ -105,8 +105,11 @@ export const WatershedStateProvider = ({ children }: StateProviderProps): JSX.El
     const { mutate, reset: resetMutation } = useMutation({
         mutationFn: async (runWatershedProps: RunWatershedProps) => {
             let polygons: WatershedPolygon[] = [];
-            if (worker && !wsInstance.current) {
-                wsInstance.current = await worker.Watershed(runWatershedProps.imageData);
+
+            if (watershed && !wsInstance.current) {
+                await watershed.loadImage(runWatershedProps.imageData);
+
+                wsInstance.current = watershed;
             }
 
             if (wsInstance.current) {

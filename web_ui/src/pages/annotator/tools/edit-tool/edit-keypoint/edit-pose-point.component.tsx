@@ -32,7 +32,7 @@ export interface EditPosePointToolProps {
 const CONTEXT_ID = 'Keypoint context menu';
 
 const isResizeKeypointElement = (element: HTMLElement) => {
-    return /^Resize keypoint|cross bold icon/.test(element.getAttribute('aria-label') ?? '');
+    return /^(Resize keypoint|cross bold icon)/.test(element.getAttribute('aria-label') ?? '');
 };
 
 const getContextOption = (isVisible: boolean) => {
@@ -75,6 +75,7 @@ export const EditPosePoint = ({
                     ariaLabel: 'Point visible',
                     handleMenuAction: onToggleVisibility,
                 });
+
                 return;
             }
 

@@ -4,7 +4,6 @@
 
 from unittest.mock import MagicMock, patch
 
-import pytest
 from geti_types import ID
 from iai_core.entities.color import Color
 from iai_core.entities.label import Domain, Label
@@ -17,7 +16,6 @@ from jobs_common_extras.datumaro_conversion.definitions import GetiProjectType
 from job.utils.export_utils import ExportUtils
 
 
-@pytest.mark.JobsComponent
 class TestExportUtils:
     def test_create_voc_label_map_with_detection_labels(self):
         # Arrange

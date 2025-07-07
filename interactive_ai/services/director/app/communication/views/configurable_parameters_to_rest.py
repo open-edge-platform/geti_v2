@@ -5,6 +5,8 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from communication.exceptions import NotConfigurableParameterException
+
 PYDANTIC_BASE_TYPES_MAPPING = {
     "integer": "int",
     "number": "float",
@@ -56,6 +58,9 @@ class ConfigurableParametersRESTViews:
                 "maximum",
                 json_schema.get("exclusiveMaximum", type_any_of.get("maximum", type_any_of.get("exclusiveMaximum"))),
             )
+        if "allowed_values" in json_schema:
+            # If the parameter has allowed values, add them to the REST view
+            rest_view["allowed_values"] = json_schema["allowed_values"]
         return rest_view
 
     @classmethod
@@ -93,7 +98,7 @@ class ConfigurableParametersRESTViews:
             type_any_of = schema.get(PYDANTIC_ANY_OF, [{}])[0]
             pydantic_type = schema.get("type", type_any_of.get("type"))
 
-            if field is None:
+            if field is None or schema.get("validation_only", False):
                 # Do not show None values in the REST view. None parameters means they are not supported
                 continue
 
@@ -141,6 +146,9 @@ class ConfigurableParametersRESTViews:
                     key = item["key"]
                     value = item["value"]
                     result[key] = value
+                    if key.startswith("allowed_values_"):
+                        # `allowed_values_` is a reserved prefix used for validation
+                        raise NotConfigurableParameterException(parameter_name=key)
                 # If it's a dictionary without a "key" field, it must contain nested models
                 elif isinstance(item, dict):
                     # Process each nested model recursively and merge with result

@@ -13,7 +13,6 @@ from job.utils.exceptions import DatasetParsingException
 from job.utils.import_utils import ImportUtils
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestDatumaroProjectParser:
     @pytest.mark.parametrize(
         "fxt_dm_dataset_str, project_type",

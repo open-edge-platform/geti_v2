@@ -40,13 +40,26 @@ class ProjectConfigurationRESTViews(ConfigurableParametersRESTViews):
         }
 
     @classmethod
-    def project_configuration_from_rest(cls, rest_input: dict) -> PartialProjectConfiguration:
+    def project_configuration_from_rest(
+        cls, rest_input: dict, task_id: str | None = None
+    ) -> PartialProjectConfiguration:
         """
         Convert a REST input to a ProjectConfiguration object.
 
         :param rest_input: REST input dictionary
+        :param task_id: Optional task ID to use if not provided in the rest_input (only for single-task rest_input)
         :return: ProjectConfiguration object
         """
+        # payload contains single task configuration
+        if rest_input and "task_configs" not in rest_input:
+            # task_id can be present in both payload and query parameters
+            # if they are provided in both places, the payload content takes precedence
+            if task_id and "task_id" not in rest_input:
+                rest_input["task_id"] = task_id
+            task_data = cls.configurable_parameters_from_rest(rest_input)
+            return PartialProjectConfiguration.model_validate({"task_configs": [task_data]})
+
+        # payload contains task chain configuration
         task_configs = []
         for task_data in rest_input.pop("task_configs", {}):
             task_configs.append(cls.configurable_parameters_from_rest(task_data))

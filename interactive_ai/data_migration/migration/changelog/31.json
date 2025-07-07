@@ -1,4 +1,4 @@
 {
-  "script": "reduce_anomaly_tasks.py",
-  "metadata": "reduce_anomaly_tasks.json"
+  "script": "jobs_project_id_as_object_id.py",
+  "metadata": "jobs_project_id_as_object_id.json"
 }

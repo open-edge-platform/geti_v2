@@ -10,7 +10,6 @@ import { NoTrainedModels } from '../../../../../assets/images';
 import { useModels } from '../../../../../core/models/hooks/use-models.hook';
 import { TUTORIAL_CARD_KEYS } from '../../../../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../../../../core/user-settings/hooks/use-global-settings.hook';
-import { getSettingsOfType } from '../../../../../core/user-settings/utils';
 import { ANIMATION_PARAMETERS } from '../../../../../shared/animation-parameters/animation-parameters';
 import { EmptyData } from '../../../../../shared/components/empty-data/empty-data.component';
 import { useTaskLabels } from '../../../../annotator/annotation/annotation-filter/use-task-labels.hook';
@@ -20,6 +19,7 @@ import { Contents } from './contents.component';
 import { HeaderOptions } from './header-options.component';
 import { LiveCameraInference } from './live-camera-inference/live-camera-inference.component';
 import { LivePredictionNotification } from './live-prediction-notification.component';
+import { LiveInferenceMode } from './quick-inference-interfaces';
 import { QuickInferenceProvider, useQuickInference } from './quick-inference-provider.component';
 import { SecondaryToolbar } from './secondary-toolbar.component';
 import { useIsExplanationEnabled } from './use-is-explanation-enabled.hook';
@@ -74,14 +74,11 @@ const LiveFileInference = ({ imageWasUploaded }: { imageWasUploaded: boolean }) 
     );
 };
 
-type LiveInferenceMode = 'Use file' | 'Use camera';
-
 const QuickInferencePage = (): JSX.Element => {
     const { image, annotations, imageWasUploaded, isDisabled, onResetImage } = useQuickInference();
     const settings = useUserGlobalSettings();
-    const isLivePredictionNotificationVisible = getSettingsOfType(settings.config, TUTORIAL_CARD_KEYS)[
-        TUTORIAL_CARD_KEYS.LIVE_PREDICTION_NOTIFICATION
-    ].isEnabled;
+    const isLivePredictionNotificationVisible =
+        settings.config[TUTORIAL_CARD_KEYS.LIVE_PREDICTION_NOTIFICATION].isEnabled;
     const [liveInferenceMode, setLiveInferenceMode] = useState<LiveInferenceMode>('Use file');
 
     const handleInferenceModeChange = (option: LiveInferenceMode) => {
@@ -101,7 +98,7 @@ const QuickInferencePage = (): JSX.Element => {
                                 animate={'visible'}
                                 exit={'hidden'}
                             >
-                                <LivePredictionNotification settings={settings} />
+                                <LivePredictionNotification settings={settings} inferenceMode={liveInferenceMode} />
                             </motion.div>
                         )}
                     </AnimatePresence>

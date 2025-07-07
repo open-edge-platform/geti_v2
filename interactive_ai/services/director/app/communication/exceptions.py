@@ -623,3 +623,18 @@ class MissingTaskIDException(GetiBaseException):
             error_code="missing_task_id",
             http_status=http.HTTPStatus.BAD_REQUEST,
         )
+
+
+class NotConfigurableParameterException(GetiBaseException):
+    """
+    Exception raised trying to set a non-configurable parameter.
+
+    :param parameter_name: The name of the parameter that is not configurable
+    """
+
+    def __init__(self, parameter_name: str) -> None:
+        super().__init__(
+            message=f"The parameter '{parameter_name}' is not configurable and cannot be set.",
+            error_code="not_configurable_parameter",
+            http_status=http.HTTPStatus.BAD_REQUEST,
+        )

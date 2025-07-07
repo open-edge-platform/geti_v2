@@ -3,6 +3,7 @@
 
 import logging
 import os
+import time
 from pathlib import Path
 
 import urllib3
@@ -17,7 +18,7 @@ from geti_client import (
     ConfigurationApi,
     DatasetImportExportApi,
     DatasetsApi,
-    DeploymentPackageApi,
+    DeploymentApi,
     JobsApi,
     MediaApi,
     ModelsApi,
@@ -29,8 +30,11 @@ from geti_client import (
     TrainingDatasetVersionsApi,
     WorkspacesApi,
 )
+from geti_client.exceptions import ConflictException
 
 BEHAVE_DEBUG_ON_ERROR = True
+
+logger = logging.getLogger(__name__)
 
 
 def setup_debug_on_error(userdata) -> None:
@@ -105,10 +109,10 @@ def fxt_datasets_api(context: Context) -> DatasetsApi:
 
 
 @fixture
-def fxt_deployment_package_api(context: Context) -> DeploymentPackageApi:
+def fxt_deployment_api(context: Context) -> DeploymentApi:
     with context.api_client as api_client:
-        context.deployment_package_api = DeploymentPackageApi(api_client)
-        yield context.deployment_package_api
+        context.deployment_api = DeploymentApi(api_client)
+        yield context.deployment_api
 
 
 @fixture
@@ -185,11 +189,17 @@ def _cleanup_project(context: Context) -> None:
     projects_api: ProjectsApi = context.projects_api
     project_id = getattr(context, "project_id", None)
     if project_id is not None:
-        projects_api.delete_project(
-            organization_id=context.organization_id,
-            workspace_id=context.workspace_id,
-            project_id=project_id,
-        )
+        for _ in range(15):
+            try:
+                projects_api.delete_project(
+                    organization_id=context.organization_id,
+                    workspace_id=context.workspace_id,
+                    project_id=project_id,
+                )
+                break
+            except ConflictException:
+                logger.warning("Could not delete project with %s, probably because it is still locked", project_id)
+                time.sleep(1)
         delattr(context, "project_id")
 
 
@@ -221,7 +231,7 @@ def before_all(context: Context) -> None:
     use_fixture(fxt_configuration_api, context)
     use_fixture(fxt_dataset_import_export_api, context)
     use_fixture(fxt_datasets_api, context)
-    use_fixture(fxt_deployment_package_api, context)
+    use_fixture(fxt_deployment_api, context)
     use_fixture(fxt_jobs_api, context)
     use_fixture(fxt_media_api, context)
     use_fixture(fxt_models_api, context)

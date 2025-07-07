@@ -5,7 +5,6 @@ from iai_core.entities.label import Domain
 from jobs_common_extras.datumaro_conversion.definitions import SUPPORTED_DOMAIN_TO_ANNOTATION_TYPES
 
 
-@pytest.mark.CommonComponent
 class TestDefinitions:
     @pytest.mark.parametrize(
         "domain,ann_types",

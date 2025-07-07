@@ -1,0 +1,9 @@
+{
+    "description": "Change project_id from string to object id in job docs",
+    "supports_downgrade": true,
+    "skip_on_project_import": true,
+    "new_collections": [],
+    "updated_collections": ["job"],
+    "deprecated_collections": [],
+    "affects_binary_data": false
+}

@@ -39,6 +39,10 @@ configuration_example_to_schema_map = {
     "/task_chain_configuration.yaml",
     "configuration/responses/model_configuration_response.json": "configuration/responses/task_configuration.yaml",
 }
+code_deployment_example_to_schema_map = {
+    "code_deployment/requests/deployment_package_request_geti_sdk.json": "deployment_package/requests/deployment_package_request.yaml",  # noqa: E501
+    "code_deployment/requests/deployment_package_request_ovms.json": "deployment_package/requests/deployment_package_request.yaml",  # noqa: E501
+}
 dataset_example_to_schema_map = {
     "datasets/responses/active_dataset_response.json": "datasets/responses/active_set.yaml",
     "datasets/responses/dataset_statistics_response.json": "datasets/responses/dataset_statistics.yaml",

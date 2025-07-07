@@ -5,7 +5,6 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
-import pytest
 from iai_core.entities.shapes import Rectangle
 
 from media_utils import VideoFrameReader
@@ -27,7 +26,6 @@ def get_random_frame(file_location: str, total_frames: int, thread_name: str):
             raise
 
 
-@pytest.mark.ScSdkComponent
 class TestVideoFrameReader:
     def test_reading_video(self, request, fxt_random_annotated_video_factory) -> None:
         """
