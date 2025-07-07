@@ -96,11 +96,10 @@ func createRouter(maxMultipartLimit int64, modelAccessSrv service.ModelAccessSer
 	frameReader := new(frames.FramerReaderImpl)
 	frameExtractor := frames.NewFFmpegCLIFrameExtractor()
 	mediaSrv := service.NewMediaServiceImpl(videoRepo, imageRepo, frameReader)
-	predict := usecase.NewPredict(modelAccessSrv, videoRepo, frameExtractor)
-	explain := usecase.NewExplain(modelAccessSrv, videoRepo, frameExtractor)
+	inferUC := usecase.NewInferImpl(modelAccessSrv, videoRepo, frameExtractor)
 	requestHandler := controllers.NewRequestHandlerImpl(mediaSrv)
 
-	inferenceCtrl := controllers.NewInferenceControllerImpl(modelAccessSrv, cacheSrv, requestHandler, predict, explain)
+	inferenceCtrl := controllers.NewInferenceControllerImpl(modelAccessSrv, cacheSrv, requestHandler, inferUC)
 	pipelineCtrl := controllers.NewPipelineController(inferenceCtrl)
 
 	pipelines := r.Group(baseProjectPath + "/pipelines/:pipeline_id")
