@@ -42,6 +42,16 @@ post:
             Video upload response:
               value:
                 $ref: '../../examples/media/responses/single_video.json'
+    '202':
+      description: Video has been uploaded, preprocessing has been started. The 'size' field represents bits, "duration" is in seconds.
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../interactive_ai/services/api/schemas/media/responses/video.yaml'
+          examples:
+            Video upload response:
+              value:
+                $ref: '../../examples/media/responses/single_video.json'
     '400':
       description: No file provided
       content:
