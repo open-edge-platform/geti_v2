@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import Response as FastAPIResponse
 
@@ -61,10 +61,12 @@ class RestApiDeprecation:
     @staticmethod
     def _convert_date_time_to_unix_timestamp(date_time: str) -> int:
         """
-        Converts a date-time string to a Unix timestamp.
+        Converts a date-time string to a Unix timestamp using UTC timezone.
         Example: "2024-11-24 23:00:00" (GMT+0000) becomes 1732489200.
 
         :param date_time: The date-time string in the format "YYYY-MM-DD HH:MM:SS".
         :return: The Unix timestamp as an integer.
         """
-        return int(datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S").timestamp())
+        dt = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+        dt_utc = dt.replace(tzinfo=timezone.utc)
+        return int(dt_utc.timestamp())
