@@ -61,12 +61,19 @@ describe('ProjectMediaControlPanel', () => {
         deleteMedia: { isPending: false, mutate: jest.fn() },
     };
 
-    const renderApp = async (
-        isInUploadingState = false,
-        isAnomalyProject = false,
+    const renderApp = async ({
         countElements = '',
-        services?: Partial<ApplicationServicesContextProps>
-    ) => {
+        isAnomalyProject = false,
+        isKeypointProject = false,
+        isInUploadingState = false,
+        services,
+    }: {
+        countElements?: string;
+        isAnomalyProject?: boolean;
+        isKeypointProject?: boolean;
+        isInUploadingState?: boolean;
+        services?: Partial<ApplicationServicesContextProps>;
+    }) => {
         jest.mocked(useStatus).mockReturnValue({
             data: { freeSpace: TOO_LOW_FREE_DISK_SPACE_IN_BYTES + 1, totalSpace: 10, runningJobs: 0 },
         } as UseQueryResult<StatusProps, AxiosError>);
@@ -75,6 +82,7 @@ describe('ProjectMediaControlPanel', () => {
             <MediaProvider>
                 <ExportImportDatasetDialogProvider>
                     <ProjectMediaControlPanel
+                        isKeypointProject={isKeypointProject}
                         hasExportImportButtons={!isAnomalyProject}
                         countElements={countElements}
                         uploadMediaCallback={jest.fn}
@@ -98,7 +106,7 @@ describe('ProjectMediaControlPanel', () => {
             isMediaFilterEmpty: true,
         }));
 
-        await renderApp();
+        await renderApp({});
 
         expect(screen.queryByRole('checkbox', { name: SELECT_ALL_LABEL })).not.toBeInTheDocument();
     });
@@ -111,7 +119,7 @@ describe('ProjectMediaControlPanel', () => {
             isMediaFilterEmpty: true,
         }));
 
-        await renderApp();
+        await renderApp({});
 
         expect(screen.getByRole('checkbox', { name: SELECT_ALL_LABEL })).toBeEnabled();
         expect(screen.getByRole('button', { name: SEARCH_MEDIA_LABEL })).toBeEnabled();
@@ -129,7 +137,7 @@ describe('ProjectMediaControlPanel', () => {
             isMediaFilterEmpty: false,
         }));
 
-        await renderApp();
+        await renderApp({});
 
         expect(screen.getByRole('checkbox', { name: SELECT_ALL_LABEL })).toBeEnabled();
         expect(screen.getByRole('button', { name: SEARCH_MEDIA_LABEL })).toBeEnabled();
@@ -147,7 +155,7 @@ describe('ProjectMediaControlPanel', () => {
             isMediaFilterEmpty: false,
         }));
 
-        await renderApp(true);
+        await renderApp({ isInUploadingState: true });
 
         expect(screen.getByRole('checkbox', { name: SELECT_ALL_LABEL })).toBeDisabled();
         expect(screen.getByRole('button', { name: SEARCH_MEDIA_LABEL })).toBeDisabled();
@@ -167,7 +175,7 @@ describe('ProjectMediaControlPanel', () => {
             isMediaFilterEmpty: false,
         }));
 
-        await renderApp();
+        await renderApp({});
         const deleteButton = screen.getByRole('button', { name: DELETE_SELECTED_MEDIA_LABEL });
         expect(deleteButton).toBeEnabled();
 
@@ -183,7 +191,7 @@ describe('ProjectMediaControlPanel', () => {
             isMediaFilterEmpty: false,
         }));
 
-        await renderApp();
+        await renderApp({});
 
         expect(screen.queryByRole('button', { name: DELETE_SELECTED_MEDIA_LABEL })).not.toBeInTheDocument();
     });
@@ -196,7 +204,7 @@ describe('ProjectMediaControlPanel', () => {
             isMediaFilterEmpty: true,
         }));
 
-        await renderApp();
+        await renderApp({});
 
         expect(screen.queryByRole('checkbox', { name: SELECT_ALL_LABEL })).not.toBeInTheDocument();
         expect(screen.queryByRole('button', { name: SEARCH_MEDIA_LABEL })).not.toBeInTheDocument();
@@ -222,7 +230,7 @@ describe('ProjectMediaControlPanel', () => {
             totalVideos,
         }));
 
-        await renderApp();
+        await renderApp({});
 
         expect(screen.getByTestId('selected-items-count-id')).toHaveTextContent(`Selected: ${mediaSelection.length}`);
     });
@@ -237,7 +245,7 @@ describe('ProjectMediaControlPanel', () => {
             isMediaFilterEmpty: false,
         }));
 
-        await renderApp();
+        await renderApp({});
 
         await checkTooltip(screen.getByRole('checkbox', { name: SELECT_ALL_LABEL }), SELECT_ALL_LABEL);
         await checkTooltip(screen.getByRole('button', { name: SEARCH_MEDIA_LABEL }), SEARCH_MEDIA_LABEL);
@@ -262,7 +270,7 @@ describe('ProjectMediaControlPanel', () => {
             totalVideos,
         }));
 
-        await renderApp();
+        await renderApp({});
 
         expect(screen.queryByTestId('selected-items-count-id')).not.toBeInTheDocument();
     });
@@ -285,7 +293,7 @@ describe('ProjectMediaControlPanel', () => {
         }));
 
         const countElements = '4 images';
-        await renderApp(false, false, countElements);
+        await renderApp({ isInUploadingState: false, isAnomalyProject: false, countElements });
 
         expect(screen.getByTestId('count-message-id')).toHaveTextContent(countElements);
     });

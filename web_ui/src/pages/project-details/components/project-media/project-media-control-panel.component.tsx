@@ -17,6 +17,7 @@ import { MediaSearch } from '../../../media/media-actions/media-search.component
 import { MediaSorting } from '../../../media/media-actions/media-sorting.component';
 import { MediaFilter } from '../../../media/media-filter.component';
 import { useMedia } from '../../../media/providers/media-provider.component';
+import { disabledKeypointFilterRules } from '../../../utils';
 import { ExportImportDatasetButtons } from '../project-dataset/export-dataset/export-import-dataset-buttons.component';
 import { MediaCount } from './media-count.component';
 import { DELETE_ANOMALY_VIDEO_WARNING } from './media-item-tooltip-message/utils';
@@ -26,6 +27,7 @@ interface ProjectMediaControlPanelProps {
     viewMode: ViewModes;
     countElements: string;
     isAnomalyProject: boolean;
+    isKeypointProject: boolean;
     hasExportImportButtons: boolean;
     isInUploadingState: boolean;
     setViewMode: Dispatch<SetStateAction<ViewModes>>;
@@ -37,6 +39,7 @@ export const ProjectMediaControlPanel = ({
     viewMode,
     countElements,
     isAnomalyProject,
+    isKeypointProject,
     isInUploadingState,
     hasExportImportButtons,
     setViewMode,
@@ -124,6 +127,7 @@ export const ProjectMediaControlPanel = ({
                             isMediaFetching={isMediaFetching}
                             isMediaFilterEmpty={isMediaFilterEmpty}
                             isDisabled={isInUploadingState}
+                            disabledFilterRules={isKeypointProject ? disabledKeypointFilterRules : []}
                         />
 
                         <MediaViewModes viewMode={viewMode} isDisabled={isInUploadingState} setViewMode={setViewMode} />

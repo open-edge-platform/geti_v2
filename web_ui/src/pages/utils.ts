@@ -10,6 +10,7 @@ import { Annotation, RegionOfInterest } from '../core/annotations/annotation.int
 import { clampBetween } from '../core/annotations/math';
 import { KeypointNode, Point } from '../core/annotations/shapes.interface';
 import { isEmptyLabel } from '../core/labels/utils';
+import { SearchRuleField } from '../core/media/media-filter.interface';
 import { KeypointStructure } from '../core/projects/task.interface';
 import { VALID_IMAGE_TYPES_SINGLE_UPLOAD } from '../shared/media-utils';
 import { formatToFileArray, isNonEmptyArray, runWhen } from '../shared/utils';
@@ -184,3 +185,10 @@ export const getMaxMinPoint = <T extends Point>(points: T[], pointAxis: PointAxi
 
     return [minAxisValue, maxAxisValue];
 };
+
+export const disabledKeypointFilterRules = [
+    SearchRuleField.LabelId,
+    SearchRuleField.ShapeType,
+    SearchRuleField.ShapeAreaPixel,
+    SearchRuleField.ShapeAreaPercentage,
+];
