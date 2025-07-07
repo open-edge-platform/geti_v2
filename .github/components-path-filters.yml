@@ -312,3 +312,7 @@ web_ui:
   - web_ui/**
   - docs/rest_api/**
   - interactive_api/services/api/schemas/**
+web_ui/dex_templates:
+  - web_ui/dex_templates/**
+  - Makefile.shared
+  - .github/workflows/component.yml
