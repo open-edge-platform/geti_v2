@@ -26,22 +26,20 @@ class RestApiDeprecation:
         self.sunset_date = sunset_date
         self.additional_info = additional_info
 
-    def add_headers(self, content: dict) -> FastAPIResponse:
+    def add_headers(self, response: FastAPIResponse) -> FastAPIResponse:
         """
         Adds deprecation headers to the HTTP response.
 
         :param content: The HTTP response object (FastAPIResponse).
         :return: The modified response with deprecation headers.
         """
-        headers = {
-            "Deprecation": self._format_deprecation_date(),
-            "Sunset": self._format_sunset_date_or_version(),
-        }
+        response.headers["Deprecation"] = self._format_deprecation_date()
+        response.headers["Sunset"] = self._format_sunset_date_or_version()
 
         if self.additional_info:
-            headers["Link"] = f'<{self.additional_info}>; rel="deprecation-info"'
+            response.headers["Link"] = f'<{self.additional_info}>; rel="deprecation-info"'
 
-        return FastAPIResponse(content=json.dumps(content), headers=headers)
+        return response
 
     def _format_deprecation_date(self) -> str:
         """Formats the deprecation date as a Unix timestamp."""

@@ -274,7 +274,7 @@ class TestConfigurationRESTEndpoint:
     def test_sunset_headers_are_present(self, fxt_director_app, endpoint, method, mock_function) -> None:
         """Test that sunset headers are present on all deprecated endpoints."""
         # Arrange
-        request_data = {}
+        request_data = {"dummy_response": "data"}
 
         # Act
         with patch.object(
@@ -294,6 +294,6 @@ class TestConfigurationRESTEndpoint:
         assert "Link" in result.headers, f"Missing Link header for {method.upper()} {endpoint}"
 
         # Check header values
-        assert result.headers["Sunset"] == "Fri, 31 Oct 2025 00:00:00 GMT"
-        assert result.headers["Deprecation"] == "true"
-        assert 'rel="deprecation"' in result.headers["Link"]
+        assert result.headers["Sunset"] == "Fri, 31 Oct 2025 23:59:59 GMT"
+        assert result.headers["Deprecation"] == "1753999200" # unix timestamp
+        assert 'rel="deprecation-info"' in result.headers["Link"]

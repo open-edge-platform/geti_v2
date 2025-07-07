@@ -2,8 +2,9 @@ import datetime
 
 import pytest
 from bson import ObjectId
+
+from geti_fastapi_tools.deprecation import RestApiDeprecation
 from geti_types.id import ID, ProjectIdentifier
-from fastapi import Response
 
 from geti_fastapi_tools.dependencies import (
     get_annotation_id,
@@ -23,7 +24,6 @@ from geti_fastapi_tools.dependencies import (
     get_test_id,
     get_video_id,
     get_workspace_id,
-    create_sunset_headers_dependency,
 )
 from geti_fastapi_tools.exceptions import InvalidIDException
 
@@ -144,28 +144,26 @@ class TestDependencies:
         assert get_skiptoken(skiptoken=VALID_OBJECTID) == EXPECTED_OBJECTID
         assert get_skiptoken() == ID(ObjectId.from_datetime(datetime.datetime(1970, 1, 1)))
 
-    def test_create_sunset_headers_dependency(self) -> None:
+    def test_deprecation_headers_dependency(self) -> None:
         """Test that the sunset headers dependency correctly adds headers to the response."""
-        # Test data
-        sunset_date = datetime.datetime(2025, 1, 1, 0, 0, 0)
         docs_url = "https://example.com/docs/deprecation"
+        deprecation = RestApiDeprecation(
+            deprecation_date="2024-12-31",
+            sunset_date="2025-01-01",
+            additional_info=docs_url,
+        )
 
         # Create a mock response
         class MockResponse:
             def __init__(self):
                 self.headers = {}
 
-        # Test with deprecation=True
         response_true = MockResponse()
-        dependency_true = create_sunset_headers_dependency(
-            sunset_date=sunset_date,
-            docs_url=docs_url,
-        )
 
         # Run the dependency
-        dependency_true(response_true)
+        deprecation.add_headers(response_true)
 
         # Check headers are set correctly
-        assert response_true.headers["Sunset"] == "Wed, 01 Jan 2025 00:00:00 GMT"
-        assert response_true.headers["Deprecation"] == "true"
-        assert response_true.headers["Link"] == f'<{docs_url}>; rel="deprecation"'
+        assert response_true.headers["Sunset"] == "Wed, 01 Jan 2025 23:59:59 GMT"
+        assert response_true.headers["Deprecation"] == "1735599600"
+        assert response_true.headers["Link"] == f'<{docs_url}>; rel="deprecation-info"'
