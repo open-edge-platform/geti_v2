@@ -216,7 +216,7 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
                     secret_key_ref=V1SecretKeySelector(name="geti-install-data", key="tlsKey", optional=True)
                 ),
             ),
-            V1EnvVar(name="IMAGE_REGISTRY", value=image_registry if image_registry else None),
+            *([V1EnvVar(name="IMAGE_REGISTRY", value=image_registry)] if image_registry else []),
         ],
         ports=[V1ContainerPort(container_port=port)],
     )

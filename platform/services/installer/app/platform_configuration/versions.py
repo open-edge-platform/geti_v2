@@ -34,13 +34,15 @@ def get_current_platform_version(kubeconfig_path: str) -> str:
 
 def get_target_platform_version() -> str:
     """Retrieves target platform version of the running installer from the config file"""
-    return (
-        PLATFORM_BUILD_VERSION.split("-")[0]
-        if PLATFORM_BUILD_VERSION
-        else yaml.safe_load(open(VERSION_YAML_PATH))["product_version"]
-    )
+    if PLATFORM_BUILD_VERSION:
+        return PLATFORM_BUILD_VERSION.split("-")[0]
+    with open(VERSION_YAML_PATH) as yaml_file:
+        return yaml.safe_load(yaml_file)["product_version"]
 
 
 def get_target_product_build() -> str:
     """Retrieves target build version of the running installer from the config file"""
-    return PLATFORM_BUILD_VERSION or yaml.safe_load(open(VERSION_YAML_PATH))["product_build"]
+    if PLATFORM_BUILD_VERSION:
+        return PLATFORM_BUILD_VERSION
+    with open(VERSION_YAML_PATH) as yaml_file:
+        return yaml.safe_load(yaml_file)["product_build"]
