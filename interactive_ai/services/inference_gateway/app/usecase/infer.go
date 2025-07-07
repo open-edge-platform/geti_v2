@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 
 	sdkentities "geti.com/iai_core/entities"
 	"geti.com/iai_core/frames"
@@ -53,7 +54,8 @@ func (uc *InferImpl) One(
 	request *entities.PredictionRequestData,
 	includeXAI bool,
 ) (string, error) {
-	modelName := request.ProjectID.String() + "-" + request.ModelID.String()
+	replacer := strings.NewReplacer("\n", "", "\r", "")
+	modelName := replacer.Replace(request.ProjectID.String()) + "-" + replacer.Replace(request.ModelID.String())
 
 	inferParams := service.NewInferParameters(
 		request.Media,
@@ -89,7 +91,7 @@ func (uc *InferImpl) Batch(
 		return nil, err
 	}
 
-	c, span := telemetry.Tracer().Start(ctx, "explain-loop")
+	c, span := telemetry.Tracer().Start(ctx, "inference-loop")
 	defer span.End()
 	totalRequests := (request.EndFrame-request.StartFrame)/request.FrameSkip + 1
 	inferResults := make([][]byte, totalRequests)
