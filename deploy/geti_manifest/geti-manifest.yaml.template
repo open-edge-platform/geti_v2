@@ -13,7 +13,7 @@ spec:
   version: $VERSION
   insecureSkipTLSVerify: true
   chart: "oci://{{ geti_registry }}/geti/helm/geti-namespaces"
-   backOffLimit: 0
+  backOffLimit: 0
   failurePolicy: abort
 ---
 apiVersion: helm.cattle.io/v1
