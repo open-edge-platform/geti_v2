@@ -64,7 +64,6 @@ describe('ProjectMediaControlPanel', () => {
     const renderApp = async ({
         countElements = '',
         isAnomalyProject = false,
-        isKeypointProject = false,
         isInUploadingState = false,
         services,
     }: {
@@ -82,7 +81,6 @@ describe('ProjectMediaControlPanel', () => {
             <MediaProvider>
                 <ExportImportDatasetDialogProvider>
                     <ProjectMediaControlPanel
-                        isKeypointProject={isKeypointProject}
                         hasExportImportButtons={!isAnomalyProject}
                         countElements={countElements}
                         uploadMediaCallback={jest.fn}

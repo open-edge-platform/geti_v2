@@ -36,7 +36,7 @@ import { VALID_MEDIA_TYPES_DISPLAY } from '../../../../shared/media-utils';
 import { idMatchingFormat } from '../../../../test-utils/id-utils';
 import { MediaFilterChips } from '../../../media/components/media-filter-chips.component';
 import { useMedia } from '../../../media/providers/media-provider.component';
-import { getMediaId } from '../../../media/utils';
+import { disabledKeypointFilterRules, getMediaId } from '../../../media/utils';
 import { useProject } from '../../providers/project-provider/project-provider.component';
 import { getMatchedMediaCounts, getTotalMediaCounts } from '../../utils';
 import { AnomalyMediaHeaderInformation } from './anomaly-media-header-information.component';
@@ -162,7 +162,7 @@ export const MediaContentBucket = ({
                         viewMode={viewMode}
                         countElements={countElements}
                         isAnomalyProject={isAnomalyProject}
-                        isKeypointProject={isKeypointProject}
+                        disabledFilterRules={isKeypointProject ? disabledKeypointFilterRules : []}
                         hasExportImportButtons={!isAnomalyProject && isKeypointIeEnabled}
                         setViewMode={setViewMode}
                         onCameraSelected={onCameraSelected}

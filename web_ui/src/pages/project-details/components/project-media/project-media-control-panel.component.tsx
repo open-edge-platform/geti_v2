@@ -7,6 +7,7 @@ import { Checkbox, dimensionValue, Flex, Tooltip, TooltipTrigger, View } from '@
 import { Delete } from '@geti/ui/icons';
 import { isEmpty } from 'lodash-es';
 
+import { SearchRuleField } from '../../../../core/media/media-filter.interface';
 import { isVideo } from '../../../../core/media/video.interface';
 import { useSortingParams } from '../../../../hooks/use-sorting-params/use-sorting-params.hook';
 import { MediaViewModes } from '../../../../shared/components/media-view-modes/media-view-modes.component';
@@ -17,7 +18,6 @@ import { MediaSearch } from '../../../media/media-actions/media-search.component
 import { MediaSorting } from '../../../media/media-actions/media-sorting.component';
 import { MediaFilter } from '../../../media/media-filter.component';
 import { useMedia } from '../../../media/providers/media-provider.component';
-import { disabledKeypointFilterRules } from '../../../utils';
 import { ExportImportDatasetButtons } from '../project-dataset/export-dataset/export-import-dataset-buttons.component';
 import { MediaCount } from './media-count.component';
 import { DELETE_ANOMALY_VIDEO_WARNING } from './media-item-tooltip-message/utils';
@@ -27,9 +27,9 @@ interface ProjectMediaControlPanelProps {
     viewMode: ViewModes;
     countElements: string;
     isAnomalyProject: boolean;
-    isKeypointProject: boolean;
-    hasExportImportButtons: boolean;
     isInUploadingState: boolean;
+    hasExportImportButtons: boolean;
+    disabledFilterRules?: SearchRuleField[];
     setViewMode: Dispatch<SetStateAction<ViewModes>>;
     uploadMediaCallback: (files: File[]) => void;
     onCameraSelected: () => void;
@@ -39,8 +39,8 @@ export const ProjectMediaControlPanel = ({
     viewMode,
     countElements,
     isAnomalyProject,
-    isKeypointProject,
     isInUploadingState,
+    disabledFilterRules = [],
     hasExportImportButtons,
     setViewMode,
     onCameraSelected,
@@ -127,7 +127,7 @@ export const ProjectMediaControlPanel = ({
                             isMediaFetching={isMediaFetching}
                             isMediaFilterEmpty={isMediaFilterEmpty}
                             isDisabled={isInUploadingState}
-                            disabledFilterRules={isKeypointProject ? disabledKeypointFilterRules : []}
+                            disabledFilterRules={disabledFilterRules}
                         />
 
                         <MediaViewModes viewMode={viewMode} isDisabled={isInUploadingState} setViewMode={setViewMode} />

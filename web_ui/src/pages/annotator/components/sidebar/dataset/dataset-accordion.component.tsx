@@ -19,8 +19,8 @@ import { MediaFilterChips } from '../../../../media/components/media-filter-chip
 import { MediaSearch } from '../../../../media/media-actions/media-search.component';
 import { MediaSorting } from '../../../../media/media-actions/media-sorting.component';
 import { MediaFilter } from '../../../../media/media-filter.component';
+import { disabledKeypointFilterRules } from '../../../../media/utils';
 import { useProject } from '../../../../project-details/providers/project-provider/project-provider.component';
-import { disabledKeypointFilterRules } from '../../../../utils';
 import { useIsSceneBusy } from '../../../hooks/use-annotator-scene-interaction-state.hook';
 import { useDatasetIdentifier } from '../../../hooks/use-dataset-identifier.hook';
 import { useDataset } from '../../../providers/dataset-provider/dataset-provider.component';
