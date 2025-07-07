@@ -665,12 +665,13 @@ class TestImportDataset:
                 0,
                 GetiProjectType.SEGMENTATION,
             ],
-            [
-                "fxt_single_points_dataset_definition",
-                "datumaro",
-                0,
-                GetiProjectType.KEYPOINT_DETECTION,
-            ],
+            # Disabled, see ITEP-69641
+            # [
+            #     "fxt_single_points_dataset_definition",
+            #     "datumaro",
+            #     0,
+            #     GetiProjectType.KEYPOINT_DETECTION,
+            # ],
         ],
     )
     def test_import_dataset(
