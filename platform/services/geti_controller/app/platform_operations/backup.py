@@ -89,14 +89,14 @@ def backup_data_folder() -> None:
     # Remove the existing backup directory if it exists and create a new one
     if os.path.exists(backup_location):
         subprocess.run(  # noqa S603
-            ["/bin/sh", "-c", "rm", "-rf", backup_location], capture_output=True, text=True, check=True
+            ["/bin/bash", "-c", "rm", "-rf", backup_location], capture_output=True, text=True, check=True
         )
     os.makedirs(backup_location, exist_ok=True)
 
     # Remove all previous backup directories except the current one
     subprocess.run(  # noqa S603
         [
-            "/bin/sh",
+            "/bin/bash",
             "-c",
             f"export GLOBIGNORE={backup_location}; rm -rf {DATA_FOLDER_PATH}/backup_data*; unset GLOBIGNORE",
         ],
@@ -120,7 +120,7 @@ def backup_data_folder() -> None:
     glob_ignore = ":".join(glob_ignore_list)
     subprocess.run(  # noqa S603
         [
-            "/bin/sh",
+            "/bin/bash",
             "-c",
             f"export GLOBIGNORE={glob_ignore}; cp -a {DATA_FOLDER_PATH}/* {backup_location}/; unset GLOBIGNORE",
         ],
