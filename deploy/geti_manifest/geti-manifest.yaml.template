@@ -169,3 +169,4 @@ spec:
   valuesContent: |-
     global:
       registry_address: {{ geti_registry }}
+      tag: "$TAG" # TODO temporary solution to get new images, remove when CI will be ready
