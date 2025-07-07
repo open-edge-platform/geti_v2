@@ -22,14 +22,14 @@ from jobs_common.jobs.helpers.project_helpers import lock_project
 from jobs_common.tasks.utils.progress import publish_metadata_update
 from jobs_common.tasks.utils.secrets import JobMetadata
 from jobs_common.utils.annotation_filter import AnnotationFilter
-from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
+from jobs_common_extras.experiments.adapters.ml_artifacts import MLArtifactsAdapter
 
 from job.models import OptimizationConfig, OptimizationTrainerContext
 
 logger = logging.getLogger(__name__)
 
 
-def _prepare_mlflow_s3_bucket(
+def _prepare_s3_bucket(
     project_identifier: ProjectIdentifier,
     optimization_cfg: OptimizationConfig,
 ) -> None:
@@ -38,7 +38,7 @@ def _prepare_mlflow_s3_bucket(
     hyper_parameters = input_model.get_previous_trained_revision().configuration.configurable_parameters
     hyper_parameter_dict = otx_config_helper.convert(hyper_parameters, target=dict, enum_to_str=True, id_to_str=True)
 
-    adapter = GetiOTXInterfaceAdapter(
+    adapter = MLArtifactsAdapter(
         project_identifier=project_identifier,
         job_metadata=JobMetadata.from_env_vars(),
     )
@@ -72,7 +72,7 @@ def prepare_optimize(
 ) -> OptimizationTrainerContext:
     """Function should be called in prior to model optimization task.
 
-    It creates Geti model entities (dataset shards with model placeholder) and prepares MLFlow experiment buckets for
+    It creates Geti model entities (dataset shards with model placeholder) and prepares buckets for
     the subsequent model optimization task.
 
     :param project_id: project ID
@@ -153,7 +153,7 @@ def prepare_optimize(
 
     trainer_ctx = OptimizationTrainerContext.create_from_config(optimization_cfg=optimization_config)
 
-    _prepare_mlflow_s3_bucket(
+    _prepare_s3_bucket(
         project_identifier=trainer_ctx.project_identifier,
         optimization_cfg=optimization_config,
     )
@@ -164,18 +164,18 @@ def prepare_optimize(
 @unified_tracing
 def finalize_optimize(
     trainer_ctx: OptimizationTrainerContext,
-    keep_mlflow_artifacts: bool = False,
+    retain_training_artifacts: bool = False,
 ) -> None:
     """Function should be called after model optimization task.
 
-    It updates iai-core model entity and clean the directory in the MLFLow experiment bucket.
+    It updates iai-core model entity and clean the directory in the bucket.
 
     :param trainer_ctx: Data class defining data used for optimization and providing helpers to get
         frequently used objects
-    :param keep_mlflow_artifacts: If true, do not remove the artifacts in mlflow bucket even if training succeeds.
+    :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
     """
-    adapter = GetiOTXInterfaceAdapter(
+    adapter = MLArtifactsAdapter(
         project_identifier=trainer_ctx.project_identifier,
         job_metadata=JobMetadata.from_env_vars(),
     )
@@ -186,9 +186,9 @@ def finalize_optimize(
     model_repo = ModelRepo(model_storage_identifier=trainer_ctx.model_storage_identifier)
     model_repo.save(model_to_optimize)
 
-    if keep_mlflow_artifacts:
+    if retain_training_artifacts:
         logger.warning(
-            "Parameter `keep_mlflow_artifacts` is set to true, so the bucket will not be cleaned up. "
+            "Parameter `retain_training_artifacts` is set to true, so the bucket will not be cleaned up. "
             "If you see this warning outside of a development environment, please report it as a bug."
         )
 

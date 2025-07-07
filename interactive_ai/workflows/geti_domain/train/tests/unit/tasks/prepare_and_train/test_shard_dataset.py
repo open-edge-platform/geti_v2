@@ -17,7 +17,6 @@ from job.tasks.prepare_and_train.shard_dataset import shard_dataset_for_train
 from job.utils.train_workflow_data import TrainWorkflowData
 
 
-@pytest.mark.JobsComponent
 class TestShardDatasetTasks:
     @pytest.fixture(params=("fxt_dataset_with_images", "fxt_dataset_with_video_frames"))
     def fxt_dataset(self, request):

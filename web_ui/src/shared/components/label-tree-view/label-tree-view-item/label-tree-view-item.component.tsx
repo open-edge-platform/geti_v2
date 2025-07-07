@@ -3,7 +3,9 @@
 
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex } from '@geti/ui';
+import { isEmpty } from 'lodash-es';
 
 import { getFullGroupName } from '../../../../core/labels/annotator-utils/group-utils';
 import {
@@ -12,6 +14,7 @@ import {
     LabelTreeGroupProps,
     LabelTreeItem,
     LabelTreeLabelProps,
+    TreeItemActions,
 } from '../../../../core/labels/label-tree-view.interface';
 import { filterGroups, filterLabels, getFlattenedItems } from '../../../../core/labels/utils';
 import { DOMAIN } from '../../../../core/projects/core.interface';
@@ -32,10 +35,9 @@ const attrs = {
 
 export interface LabelTreeViewItemProps {
     item: LabelTreeItem;
+    siblings: LabelTreeItem[];
     children?: ReactNode;
-    save: (editedItem?: LabelTreeItem, oldId?: string) => void;
-    addChild: (parentId: string | null, groupName: string, type: LabelItemType) => void;
-    deleteItem: (deletedItem: LabelTreeItem) => void;
+    actions: TreeItemActions;
     projectLabels: LabelTreeItem[];
     isCreationInNewProject?: boolean;
     domains: DOMAIN[];
@@ -47,10 +49,9 @@ export interface LabelTreeViewItemProps {
 
 export const LabelTreeViewItem = ({
     item,
+    siblings,
     children,
-    save,
-    addChild,
-    deleteItem,
+    actions: { addChild, deleteItem, reorder, save },
     projectLabels,
     isCreationInNewProject = false,
     domains,
@@ -59,6 +60,8 @@ export const LabelTreeViewItem = ({
     validationErrors,
     setValidationError,
 }: LabelTreeViewItemProps): JSX.Element => {
+    const { FEATURE_FLAG_LABELS_REORDERING } = useFeatureFlags();
+
     const [isOpen, setIsOpen] = useState<boolean>(item.open);
     const [inEditMode, setInEditMode] = useState<boolean>(item.inEditMode);
 
@@ -129,10 +132,20 @@ export const LabelTreeViewItem = ({
         finishEdition();
     };
 
+    const reorderUpHandler = () => {
+        reorder(item, 'up');
+    };
+    const reorderDownHandler = () => {
+        reorder(item, 'down');
+    };
+
     const isFlatStructure = !isMixedRelation;
 
     const isEditionModeOn = inEditMode || isEditable;
     const canEditItem = isCreationInNewProject || !(item.type === LabelItemType.GROUP && !isNew(item));
+
+    const canReorderUp = !isEmpty(siblings) && siblings[0].id !== item.id;
+    const canReorderDown = !isEmpty(siblings) && siblings[siblings.length - 1].id !== item.id;
 
     const canAddGroup =
         !isAnomalyProject &&
@@ -141,6 +154,8 @@ export const LabelTreeViewItem = ({
         item.type === LabelItemType.LABEL;
 
     const canAddLabel = !isAnomalyProject && item.type === LabelItemType.GROUP;
+
+    const areReorderingButtonsVisible = !isAnomalyProject && FEATURE_FLAG_LABELS_REORDERING;
 
     return (
         <li
@@ -192,16 +207,26 @@ export const LabelTreeViewItem = ({
                         }`}
                         isAvailable={isEditable}
                         actions={{
+                            [Actions.REORDER_UP]: {
+                                isEnabled: canReorderUp,
+                                isVisible: areReorderingButtonsVisible,
+                                onAction: reorderUpHandler,
+                            },
+                            [Actions.REORDER_DOWN]: {
+                                isEnabled: canReorderDown,
+                                isVisible: areReorderingButtonsVisible,
+                                onAction: reorderDownHandler,
+                            },
                             [Actions.ADD_LABEL]: {
-                                isEnabled: canAddLabel,
+                                isVisible: canAddLabel,
                                 onAction: addChildHandler,
                             },
                             [Actions.ADD_GROUP]: {
-                                isEnabled: canAddGroup,
+                                isVisible: canAddGroup,
                                 onAction: addChildHandler,
                             },
                             [Actions.DELETE]: {
-                                isEnabled: !isAnomalyProject,
+                                isVisible: !isAnomalyProject,
                                 onAction: deleteLabelHandler,
                             },
                         }}

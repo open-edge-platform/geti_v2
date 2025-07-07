@@ -3,7 +3,6 @@
 
 """This module tests export workflow"""
 
-import pytest
 from flytekit.core.testing import task_mock
 
 from job.tasks.export_tasks.export_dataset_task import export_dataset_task
@@ -15,7 +14,6 @@ DATASET_ID = "dataset_id"
 EXPORT_FORMAT = "coco"
 
 
-@pytest.mark.JobsComponent
 class TestExportWorkflow:
     def test_export_workflow(self) -> None:
         with task_mock(export_dataset_task) as mock_export_dataset_task:

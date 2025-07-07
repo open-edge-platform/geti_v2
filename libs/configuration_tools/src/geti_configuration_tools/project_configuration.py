@@ -30,8 +30,8 @@ class AutoTrainingParameters(BaseModel):
         description="Whether to dynamically adjust the number of required annotations",
     )
     min_images_per_label: int = Field(
-        ge=0,
-        default=0,
+        ge=3,
+        default=12,
         title="Minimum images per label",
         description="Minimum number of images needed for each label to trigger auto-training",
     )
@@ -78,8 +78,34 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
 
         # then initialize PersistentEntity with id and ephemeral parameters
         PersistentEntity.__init__(self, id_=project_id, ephemeral=ephemeral)
+        self._task_idx_mapping: dict[str, int] = {}
 
-        self._task_idx_mapping = {task_config.task_id: i for i, task_config in enumerate(self.task_configs)}
+    @staticmethod
+    def default_configuration(project_id: ID, task_ids: list[ID | str]) -> "ProjectConfiguration":
+        """
+        Creates a default project configuration given the task IDs
+
+        :param project_id: The ID of the project for which to create the configuration.
+        :param task_ids: A list of task IDs to include in the configuration.
+        :return: A ProjectConfiguration instance with an empty task configuration list.
+        """
+        default_task_configs = []
+
+        for task_id in task_ids:
+            default_task_configs.append(
+                TaskConfig(
+                    task_id=str(task_id),
+                    training=TrainingParameters(
+                        constraints=TrainConstraints(),
+                    ),
+                    auto_training=AutoTrainingParameters(),
+                )
+            )
+
+        return ProjectConfiguration(
+            project_id=project_id,
+            task_configs=default_task_configs,
+        )
 
     @property
     def project_id(self) -> ID:
@@ -90,6 +116,19 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
         title="Task configurations", description="List of configurations for all tasks in this project"
     )
 
+    def _get_task_index(self, task_id: str) -> int:
+        """
+        Returns a mapping of task IDs to their indices in the task_configs list.
+
+        This mapping is used for efficient retrieval of task configurations by ID.
+        """
+        if task_id not in self._task_idx_mapping:
+            self._task_idx_mapping = {task_config.task_id: i for i, task_config in enumerate(self.task_configs)}
+        try:
+            return self._task_idx_mapping[task_id]
+        except KeyError:
+            raise ValueError(f"Task configuration with ID {task_id} not found.")
+
     def get_task_config(self, task_id: str) -> TaskConfig:
         """
         Retrieves the configuration for a specific task by its ID.
@@ -98,9 +137,11 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
         :return: The TaskConfig for the specified task, or None if not found.
         """
         if task_id not in self._task_idx_mapping:
+            self._task_idx_mapping = {task_config.task_id: i for i, task_config in enumerate(self.task_configs)}
+        if task_id not in self._task_idx_mapping:
             raise ValueError(f"Task configuration with ID {task_id} not found.")
 
-        idx = self._task_idx_mapping[task_id]
+        idx = self._get_task_index(task_id)
         return self.task_configs[idx]
 
     def update_task_config(self, task_config: TaskConfig) -> None:
@@ -113,10 +154,7 @@ class ProjectConfiguration(BaseModel, PersistentEntity):
         :param task_config: The new task configuration to update with
         :raises ValueError: If a task configuration with the specified task_id does not exist
         """
-        if task_config.task_id not in self._task_idx_mapping:
-            raise ValueError(f"Task configuration with ID {task_config.task_id} not found.")
-
-        idx = self._task_idx_mapping[task_config.task_id]
+        idx = self._get_task_index(task_config.task_id)
         self.task_configs[idx] = task_config
 
     def __eq__(self, other: object) -> bool:
@@ -164,7 +202,7 @@ class PartialTaskConfig(TaskConfig):
 
 
 @partial_model
-class PartialProjectConfiguration(BaseModel):
+class PartialProjectConfiguration(ProjectConfiguration):
     """
     A partial version of `ProjectConfiguration` where all fields are optional.
 
@@ -172,6 +210,9 @@ class PartialProjectConfiguration(BaseModel):
     to provide only the fields they wish to modify, while leaving others unset.
     """
 
-    task_configs: list[PartialTaskConfig] = Field(
+    task_configs: list[PartialTaskConfig] = Field(  # type: ignore[assignment]
         title="Task configurations", description="List of configurations for all tasks in this project"
     )
+
+    def __init__(self, project_id: ID = ID(), ephemeral: bool = True, **data):
+        super().__init__(project_id=project_id, ephemeral=ephemeral, **data)

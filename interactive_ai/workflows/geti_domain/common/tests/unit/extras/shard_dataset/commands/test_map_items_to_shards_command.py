@@ -9,7 +9,6 @@ from iai_core.entities.video import VideoFrame
 from jobs_common_extras.shard_dataset.commands.map_items_to_shards_command import MapItemsToShardsCommand
 
 
-@pytest.mark.JobsComponent
 class TestMapItemsToShardsCommand:
     def test_image_dataset(self, fxt_dataset_with_images, fxt_subsets) -> None:
         # Arrange

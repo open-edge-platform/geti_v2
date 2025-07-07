@@ -2,11 +2,9 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import os
 
-import pytest
 from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestFeatureFlagProvider:
     @staticmethod
     def set_flag(flag: FeatureFlag, value: bool = True):

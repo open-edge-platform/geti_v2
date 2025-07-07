@@ -1,11 +1,11 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 from unittest.mock import patch
 
 import mongomock
 from bson import ObjectId
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.drop_operation_collection import DropOperationCollectionMigration
 
@@ -13,7 +13,7 @@ from migration.scripts.drop_operation_collection import DropOperationCollectionM
 class TestDropOperationCollectionMigration:
     def test_remove_index_from_annotation_scene(self) -> None:
         # Arrange
-        mock_db = mongomock.MongoClient().db
+        mock_db: Database = mongomock.MongoClient().db
         collection = mock_db.get_collection("operation")
         doc = {
             "_id": ObjectId("66a360141ad051b7b6ab1939"),

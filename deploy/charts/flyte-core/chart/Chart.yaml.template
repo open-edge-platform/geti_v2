@@ -1,5 +1,5 @@
 apiVersion: v2
-name: flyte-core
+name: ${COMPONENT_NAME}
 description: A Helm chart for Flyte core
 type: application
 version: ${TAG}

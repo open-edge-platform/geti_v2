@@ -17,7 +17,6 @@ import { CONTACT_SUPPORT } from '../../core/const';
 import { useCreditsQueries } from '../../core/credits/hooks/use-credits-api.hook';
 import { GLOBAL_MODALS_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
-import { getSettingsOfType } from '../../core/user-settings/utils';
 import { isBalanceLow } from '../../shared/components/header/credit-balance/util';
 import { ONE_MINUTE, openNewTab } from '../../shared/utils';
 
@@ -30,12 +29,9 @@ export const CreditExhaustedModal = ({ organizationId }: CreditExhaustedModalPro
     const numberFormatter = useNumberFormatter({});
     const { useGetOrganizationBalanceQuery } = useCreditsQueries();
 
-    const globalModalsConfig = getSettingsOfType(settings.config, GLOBAL_MODALS_KEYS);
-
-    const isWelcomeModalDisabled = globalModalsConfig[GLOBAL_MODALS_KEYS.WELCOME_MODAL].isEnabled === false;
-    const isExhaustedModalEnabled =
-        globalModalsConfig[GLOBAL_MODALS_KEYS.EXHAUSTED_ORGANIZATION_CREDITS_MODAL].isEnabled;
-    const isLowCreditsModalEnabled = globalModalsConfig[GLOBAL_MODALS_KEYS.LOW_ORGANIZATION_CREDITS_MODAL].isEnabled;
+    const isWelcomeModalDisabled = settings.config[GLOBAL_MODALS_KEYS.WELCOME_MODAL].isEnabled === false;
+    const isExhaustedModalEnabled = settings.config[GLOBAL_MODALS_KEYS.EXHAUSTED_ORGANIZATION_CREDITS_MODAL].isEnabled;
+    const isLowCreditsModalEnabled = settings.config[GLOBAL_MODALS_KEYS.LOW_ORGANIZATION_CREDITS_MODAL].isEnabled;
 
     const { data: organizationBalance, isLoading } = useGetOrganizationBalanceQuery(
         { organizationId },

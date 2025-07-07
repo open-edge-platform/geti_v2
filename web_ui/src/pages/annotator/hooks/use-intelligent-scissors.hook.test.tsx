@@ -34,7 +34,7 @@ jest.mock('../tools/polygon-tool/polygon-state-provider.component', () => ({
 }));
 
 const intelligentScissorMock: IntelligentScissorsWorker = {
-    waitForOpenCV: jest.fn(),
+    loadOpenCV: jest.fn(),
     IntelligentScissors: jest.fn(() => ({
         applyImage: jest.fn(),
         hasInitialPoint: false,

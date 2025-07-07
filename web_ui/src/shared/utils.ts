@@ -7,9 +7,11 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import utc from 'dayjs/plugin/utc.js';
 import { filesize, FileSizeOptionsBase } from 'filesize';
-import { isEmpty, isEqual, isNil, isString, negate } from 'lodash-es';
+import { isEmpty, isEqual, isFunction, isNil, isString, negate } from 'lodash-es';
 import * as yup from 'yup';
 
+import { RegionOfInterest } from '../core/annotations/annotation.interface';
+import { Point } from '../core/annotations/shapes.interface';
 import { DOMAIN } from '../core/projects/core.interface';
 import { Task } from '../core/projects/task.interface';
 import { GetElementType } from '../types-utils/types';
@@ -79,10 +81,12 @@ export const formatLocalToUtc = (date: string, localFormat?: string): string =>
 export const runWhen =
     <T>(predicate: (...args: T[]) => boolean) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (whenTrueFn: (...args: any[]) => void) =>
+    (whenTrueFn: (...args: any[]) => void, whenFalseFn?: (...args: any[]) => void) =>
     (...args: T[]): void => {
         if (predicate(...args)) {
             whenTrueFn(...args);
+        } else {
+            isFunction(whenFalseFn) && whenFalseFn(...args);
         }
     };
 
@@ -289,3 +293,11 @@ export const getDimensionValueFinalValue = (variableName: string): string => {
 
 export const getDownloadNotificationMessage = (exportName: string): string =>
     `Your ${exportName} file is being prepared and will start downloading shortly.`;
+
+export const denormalizePoint = <T extends Point>(point: T, roi: RegionOfInterest): T => {
+    return { ...point, x: point.x * roi.width, y: point.y * roi.height };
+};
+
+export const normalizePoint = <T extends Point>(point: T, roi: RegionOfInterest): T => {
+    return { ...point, x: point.x / roi.width, y: point.y / roi.height };
+};

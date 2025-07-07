@@ -11,7 +11,7 @@ export interface InteractiveAnnotationPoint {
     positive: boolean;
 }
 
-interface SegmentAnythingWorker extends WebWorker<InteractiveAnnotationPoint> {
+interface SegmentAnythingWorker extends WebWorker {
     model: SegmentAnythingModel;
 }
 

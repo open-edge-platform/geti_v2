@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from unittest.mock import patch
 
-import pytest
 from iai_core.repos import DatasetRepo, ModelTestResultRepo, ProjectRepo
 from jobs_common.utils.dataset_helpers import DatasetHelpers
 
@@ -15,7 +14,6 @@ DATASET_STORAGE_ID = "dataset_storage_id"
 MODEL_ID = "model_id"
 
 
-@pytest.mark.JobsComponent
 class TestCreateTestingDataset:
     def test_create_testing_dataset(
         self,

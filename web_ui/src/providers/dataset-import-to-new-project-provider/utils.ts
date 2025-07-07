@@ -12,11 +12,12 @@ import {
     DATASET_IMPORT_TO_NEW_PROJECT_STEP,
 } from '../../core/datasets/dataset.enum';
 import {
+    DatasetImportKeypointTask,
     DatasetImportSupportedProjectType,
     DatasetImportToNewProjectItem,
     DatasetImportWarning,
 } from '../../core/datasets/dataset.interface';
-import { getFileSize } from '../../shared/utils';
+import { getFileSize, isNonEmptyArray } from '../../shared/utils';
 
 export const getDatasetImportInitialState = (data: {
     id: string;
@@ -84,10 +85,32 @@ export const getTimeRemaining = (timeStarted: number, bytesUploaded: number, byt
 export const getBytesRemaining = (bytesRemaining: number): string =>
     bytesRemaining ? `${getFileSize(bytesRemaining)} left` : '';
 
-export const hasKeypointStructure = (supportedProjectTypes: DatasetImportSupportedProjectType[]) => {
-    return supportedProjectTypes.some(
-        ({ projectType, pipeline }) =>
-            projectType === DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION &&
-            pipeline.tasks.some((task) => !isEmpty(task.keypointStructure))
-    );
+export const isKeypointType = (type: string) => {
+    return type === DATASET_IMPORT_TASK_TYPE.KEYPOINT_DETECTION;
+};
+
+export const getImportKeypointTask = (supportedProjectTypes: DatasetImportSupportedProjectType[]) => {
+    for (const { projectType, pipeline } of supportedProjectTypes) {
+        if (isKeypointType(projectType)) {
+            const keypointTask = pipeline.tasks.find((task) => !isEmpty(task?.keypointStructure));
+
+            if (keypointTask) {
+                return keypointTask as DatasetImportKeypointTask;
+            }
+        }
+    }
+    return null;
+};
+
+export const isValidKeypointStructure = ({ keypointStructure }: DatasetImportKeypointTask) => {
+    return isNonEmptyArray(keypointStructure.edges) && isNonEmptyArray(keypointStructure.positions);
+};
+
+export const isKeypointWithInvalidStructure = (activeDatasetImport?: DatasetImportToNewProjectItem) => {
+    if (!activeDatasetImport) {
+        return false;
+    }
+
+    const keypointTask = getImportKeypointTask(activeDatasetImport.supportedProjectTypes);
+    return Boolean(keypointTask && !isValidKeypointStructure(keypointTask));
 };

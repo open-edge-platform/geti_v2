@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 from copy import deepcopy
 from unittest.mock import patch
 from uuid import UUID, uuid4
@@ -10,6 +9,7 @@ import pytest
 from bson import ObjectId
 from bson.binary import UUID_SUBTYPE, Binary, UuidRepresentation
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.set_train_validation_remixing_config_params import (
     SetTrainValidationRemixingConfigParamsMigration,
@@ -172,7 +172,7 @@ class TestSetTrainValidationRemixingConfigParamsMigration:
         fxt_configs_before_upgrade,
         fxt_configs_after_upgrade,
     ) -> None:
-        mock_db = mongomock.MongoClient(uuidRepresentation="standard").db
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         config_params_collection = mock_db.create_collection("configurable_parameters")
         config_params_collection.insert_many(fxt_configs_before_upgrade)
         project_to_upgrade_id = fxt_project_ids[0]

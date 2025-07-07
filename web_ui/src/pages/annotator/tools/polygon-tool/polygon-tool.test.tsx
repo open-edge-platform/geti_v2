@@ -136,6 +136,7 @@ const renderApp = async (annotationToolContext: AnnotationToolContext) => {
     jest.mocked(useAnnotator).mockReturnValue({ activeTool: ToolType.PolygonTool, setActiveTool: jest.fn() });
     // @ts-expect-error We only care about selectedMediaItem tool stuff
     jest.mocked(useSelectedMediaItem).mockReturnValue({ selectedMediaItem });
+    // @ts-expect-error ignore this typescript error until we finish ITEP-66305
     jest.mocked(useLoadAIWebworker).mockImplementation(() => {
         return {
             worker: {

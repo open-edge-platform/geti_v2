@@ -7,7 +7,7 @@ import { screen } from '@testing-library/react';
 
 import { useIsSaasEnv } from '../../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { applicationRender as render } from '../../../test-utils/application-provider-render';
-import { getMockedProductInfo } from '../../../test-utils/mocked-items-factory/mocked-product-info';
+import { getMockedProductInfo } from '../../../test-utils/mocked-items-factory/mocked-platform-utils';
 import {
     getMockedContributorUser,
     getMockedOrganizationAdminUser,

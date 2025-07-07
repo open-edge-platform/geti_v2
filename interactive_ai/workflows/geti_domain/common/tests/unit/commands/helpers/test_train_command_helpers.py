@@ -16,7 +16,6 @@ def return_none(*args, **kwargs) -> None:
     return None
 
 
-@pytest.mark.JobsComponent
 @patch.object(ModelRepo, "__init__", new=return_none)
 class TestTrainCommandHelpers:
     @pytest.mark.parametrize(

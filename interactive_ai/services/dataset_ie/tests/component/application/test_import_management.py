@@ -20,7 +20,6 @@ from grpc_interfaces.job_submission.client import GRPCJobsClient
 from iai_core.entities.label import Domain, Label, NullLabel
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestImportManager:
     def test_submit_prepare_import_to_new_project_job(
         self,

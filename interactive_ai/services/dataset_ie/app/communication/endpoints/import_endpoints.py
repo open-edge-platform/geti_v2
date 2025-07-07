@@ -45,7 +45,6 @@ def prepare_dataset_for_import_endpoint(
     :param user_id: ID of the user who sent the request
     :return: warnings, mappings of each label to possible tasks
     """
-    logger.info(f"Handling post `prepare_dataset_for_import_endpoint`: file_id={file_id}, user_id={user_id}")
     file_id = get_validated_mongo_id(id=file_id)
     check_max_number_of_projects()
     # validate file_id and metadata according to CVS-108914
@@ -85,11 +84,6 @@ def import_project_from_dataset_endpoint(
     :param user_id: ID of the user who sent the request
     :return: id of the project
     """
-    logger.info(
-        f"Handling post `import_project_from_dataset_endpoint`: file_id={file_id}, "
-        f"project_name={project_name}, task_type={task_type}, labels={labels}, "
-        f"keypoint_structure={keypoint_structure}, user_id={user_id}"
-    )
     file_id = get_validated_mongo_id(id=file_id)
     check_max_number_of_projects()
     check_max_number_of_labels(labels=labels)
@@ -143,10 +137,6 @@ def prepare_dataset_for_import_to_existing_project_endpoint(
     :param user_id: ID of the user who sent the request
     :return: warnings, list of labels in the dataset
     """
-    logger.info(
-        f"Handling post `prepare_dataset_for_import_to_existing_project_endpoint`: project_id={project_id}, "
-        f"file_id={file_id}, user_id={user_id}"
-    )
     file_id = get_validated_mongo_id(id=file_id)
 
     try:
@@ -212,11 +202,6 @@ def import_dataset_to_project_endpoint(
     :param labels_map: dictionary mapping datumaro label name to SC label id
     :param user_id: ID of the user who sent the request
     """
-    logger.info(
-        f"Handling post `import_dataset_to_project_endpoint`: project_id={project_id}, "
-        f"file_id={file_id}, dataset_id={dataset_id}, dataset_name={dataset_name}, "
-        f"labels_map={labels_map}, user_id={user_id}"
-    )
     file_id = get_validated_mongo_id(id=file_id)
 
     try:

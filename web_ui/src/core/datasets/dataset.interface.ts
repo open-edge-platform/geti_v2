@@ -83,6 +83,10 @@ export interface DatasetImportTask {
     keypointStructure?: KeypointStructureDTO;
 }
 
+export interface DatasetImportKeypointTask extends DatasetImportTask {
+    keypointStructure: KeypointStructureDTO;
+}
+
 export interface DatasetImportConnection {
     from: string;
     to: string;

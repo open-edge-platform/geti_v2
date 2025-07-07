@@ -4,7 +4,7 @@
 import { FC, ReactNode } from 'react';
 
 import { Grid, minmax, Text, ToggleButtons, View } from '@geti/ui';
-import { isFunction } from 'lodash-es';
+import { isBoolean, isFunction } from 'lodash-es';
 
 import { ConfigurationParameter } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { isBoolEnableParameter } from '../utils';
@@ -16,6 +16,7 @@ import { Tooltip } from './tooltip.component';
 interface ParametersProps {
     parameters: ConfigurationParameter[];
     onChange: (parameter: ConfigurationParameter) => void;
+    isReadOnly?: boolean;
 }
 
 const ParameterTooltip: FC<{ text: string }> = ({ text }) => {
@@ -27,6 +28,7 @@ interface ParameterProps {
     onChange: (parameter: ConfigurationParameter) => void;
     isDisabled?: boolean;
     marginStart?: string;
+    isReadOnly: boolean;
 }
 
 interface ParameterFieldProps {
@@ -38,21 +40,59 @@ interface ParameterFieldProps {
 interface ParameterLayoutProps {
     header: string;
     description: string;
-    onReset: () => void;
+    onReset?: () => void;
     children: ReactNode;
     marginStart?: string;
 }
 
+interface ParameterNameProps {
+    name: string;
+    description: string;
+    gridColumn?: string;
+    marginStart?: string;
+}
+
+export const ParameterName = ({ name, description, marginStart, gridColumn }: ParameterNameProps) => {
+    return (
+        <Text marginStart={marginStart} gridColumn={gridColumn}>
+            {name}
+            <ParameterTooltip text={description} />
+        </Text>
+    );
+};
+
 const ParameterLayout: FC<ParameterLayoutProps> = ({ header, children, description, onReset, marginStart }) => {
     return (
         <>
-            <Text gridColumn={'1/2'} marginStart={marginStart}>
-                {header}
-                <ParameterTooltip text={description} />
-            </Text>
+            <ParameterName name={header} description={description} gridColumn={'1/2'} marginStart={marginStart} />
             <View gridColumn={'2/3'}>{children}</View>
             {isFunction(onReset) && <ResetButton onPress={onReset} aria-label={`Reset ${header}`} />}
         </>
+    );
+};
+
+interface ParameterReadOnlyProps {
+    parameter: Pick<ConfigurationParameter, 'value' | 'name' | 'description'>;
+    marginStart?: string;
+}
+
+interface ParameterReadOnlyValueProps {
+    value: Pick<ConfigurationParameter, 'value'>['value'];
+}
+
+export const ParameterReadOnlyValue = ({ value }: ParameterReadOnlyValueProps) => {
+    if (isBoolean(value)) {
+        return <Text>{value ? 'On' : 'Off'}</Text>;
+    }
+
+    return <Text>{value}</Text>;
+};
+
+const ParameterReadOnly = ({ parameter, marginStart }: ParameterReadOnlyProps) => {
+    return (
+        <ParameterLayout header={parameter.name} description={parameter.description} marginStart={marginStart}>
+            <ParameterReadOnlyValue value={parameter.value} />
+        </ParameterLayout>
     );
 };
 
@@ -113,7 +153,11 @@ const ParameterField: FC<ParameterFieldProps> = ({ parameter, onChange, isDisabl
     }
 };
 
-export const Parameter = ({ parameter, onChange, isDisabled, marginStart }: ParameterProps) => {
+export const Parameter = ({ parameter, onChange, isDisabled, marginStart, isReadOnly }: ParameterProps) => {
+    if (isReadOnly) {
+        return <ParameterReadOnly parameter={parameter} marginStart={marginStart} />;
+    }
+
     const handleReset = () => {
         onChange({ ...parameter, value: parameter.defaultValue } as ConfigurationParameter);
     };
@@ -130,48 +174,37 @@ export const Parameter = ({ parameter, onChange, isDisabled, marginStart }: Para
     );
 };
 
-Parameter.Layout = ParameterLayout;
-Parameter.Field = ParameterField;
-
 interface ParametersListProps {
     parameters: ConfigurationParameter[];
     onChange: (parameter: ConfigurationParameter) => void;
+    isReadOnly: boolean;
 }
 
-const ParametersList = ({ parameters, onChange }: ParametersListProps) => {
+const ParametersList = ({ parameters, onChange, isReadOnly }: ParametersListProps) => {
     if (isBoolEnableParameter(parameters[0])) {
-        return (
-            <ParametersContainer>
-                {parameters.map((parameter, index) => (
-                    <Parameter
-                        key={parameter.name}
-                        parameter={parameter}
-                        onChange={onChange}
-                        isDisabled={index > 0 && !parameters[0].value}
-                        marginStart={index > 0 ? 'size-150' : undefined}
-                    />
-                ))}
-            </ParametersContainer>
-        );
+        return parameters.map((parameter, index) => (
+            <Parameter
+                key={parameter.name}
+                parameter={parameter}
+                onChange={onChange}
+                isDisabled={index > 0 && !parameters[0].value}
+                marginStart={index > 0 ? 'size-150' : undefined}
+                isReadOnly={isReadOnly}
+            />
+        ));
     }
 
-    return parameters.map((parameter) => <Parameter key={parameter.name} parameter={parameter} onChange={onChange} />);
+    return parameters.map((parameter) => (
+        <Parameter key={parameter.name} parameter={parameter} onChange={onChange} isReadOnly={isReadOnly} />
+    ));
 };
 
-const ParametersContainer = ({ children }: { children: ReactNode }) => {
+export const Parameters = ({ parameters, onChange, isReadOnly = false }: ParametersProps) => {
+    const columns = isReadOnly ? ['size-3000', '1fr'] : ['size-3000', minmax('size-3400', '1fr'), 'size-400'];
+
     return (
-        <Grid columns={['size-3000', minmax('size-3400', '1fr'), 'size-400']} gap={'size-300'} alignItems={'center'}>
-            {children}
+        <Grid columns={columns} gap={'size-300'} alignItems={'center'}>
+            <ParametersList parameters={parameters} onChange={onChange} isReadOnly={isReadOnly} />
         </Grid>
     );
 };
-
-export const Parameters = ({ parameters, onChange }: ParametersProps) => {
-    return (
-        <ParametersContainer>
-            <ParametersList parameters={parameters} onChange={onChange} />
-        </ParametersContainer>
-    );
-};
-
-Parameters.Container = ParametersContainer;

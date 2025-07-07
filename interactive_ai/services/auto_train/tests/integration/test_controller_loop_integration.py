@@ -9,7 +9,7 @@ from bson import ObjectId
 
 from entities import AutoTrainActivationRequest, NullAutoTrainActivationRequest
 from main import run_controller_loop
-from repo import SessionBasedAutoTrainActivationRepo
+from repos.auto_train_activation_repo import SessionBasedAutoTrainActivationRepo
 
 from geti_types import ID, ProjectIdentifier
 from grpc_interfaces.job_submission.client import GRPCJobsClient
@@ -277,7 +277,7 @@ class TestAutoTrainControllerLoopIntegration:
                         "max_training_dataset_size": 12,
                         "max_number_of_annotations": None,
                         "min_annotation_size": None,
-                        "keep_mlflow_artifacts": False,
+                        "retain_training_artifacts": False,
                     },
                     metadata={
                         "project": {

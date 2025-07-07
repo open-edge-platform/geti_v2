@@ -6,7 +6,7 @@ from typing import Any
 from communication.data_validator import ConfigurationRestValidator
 from communication.exceptions import InvalidConfigurationException, TaskNotFoundException, TaskNotTrainableException
 from communication.views.configuration_rest_views import ConfigurationRESTViews
-from configuration import ConfigurationValidator
+from configuration.configuration_validator import ConfigurationValidator
 
 from geti_fastapi_tools.exceptions import BadRequestException, BodyMissingRequiredParameters
 from geti_telemetry_tools import unified_tracing

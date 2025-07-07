@@ -46,7 +46,7 @@ const getEnableTilingParameter = (tilingParameters: ConfigurationParameter[]) =>
     return parameter;
 };
 
-const getTilingMode = (tilingParameters: ConfigurationParameter[]): TILING_MODES => {
+export const getTilingMode = (tilingParameters: ConfigurationParameter[]): TILING_MODES => {
     const adaptive = getAdaptiveTilingParameter(tilingParameters);
     const enablingTiling = getEnableTilingParameter(tilingParameters);
 
@@ -55,18 +55,22 @@ const getTilingMode = (tilingParameters: ConfigurationParameter[]): TILING_MODES
     }
 
     if (adaptive?.value === true) {
-        return TILING_MODES.ADAPTIVE;
+        return TILING_MODES.AUTOMATIC;
     }
 
-    return TILING_MODES.MANUAL;
+    return TILING_MODES.CUSTOM;
+};
+
+export const getCustomTilingParameters = (parameters: ConfigurationParameter[]) => {
+    return parameters.filter(
+        (parameter) => ![ADAPTIVE_TILING_PARAMETER, ENABLE_TILING_PARAMETER].includes(parameter.key)
+    );
 };
 
 export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConfiguration }) => {
     const selectedTilingMode = getTilingMode(tilingParameters);
 
-    const manualTilingParameters = tilingParameters.filter(
-        (parameter) => ![ADAPTIVE_TILING_PARAMETER, ENABLE_TILING_PARAMETER].includes(parameter.key)
-    );
+    const customTilingParameters = getCustomTilingParameters(tilingParameters);
 
     const handleUpdateTilingParameter = (inputParameter: ConfigurationParameter | ConfigurationParameter[]) => {
         onUpdateTrainingConfiguration((config) => {
@@ -103,13 +107,16 @@ export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConf
             return;
         }
 
-        if (tilingMode === TILING_MODES.ADAPTIVE) {
+        if (tilingMode === TILING_MODES.AUTOMATIC) {
             handleUpdateTilingParameter([
                 { ...enableParameter, value: true },
                 { ...adaptiveParameter, value: true },
             ]);
         } else if (tilingMode === TILING_MODES.OFF) {
-            handleUpdateTilingParameter({ ...enableParameter, value: false });
+            handleUpdateTilingParameter([
+                { ...enableParameter, value: false },
+                { ...adaptiveParameter, value: false },
+            ]);
         } else {
             handleUpdateTilingParameter([
                 { ...enableParameter, value: true },
@@ -127,15 +134,15 @@ export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConf
             </Text>
         ),
 
-        [TILING_MODES.ADAPTIVE]: (
+        [TILING_MODES.AUTOMATIC]: (
             <View UNSAFE_className={styles.tilingModeDescription} gridColumn={'2/3'}>
-                Adaptive means that the system will automatically set the parameters based on the images resolution and
+                It means that the system will automatically set the parameters based on the images resolution and
                 annotations size.
             </View>
         ),
-        [TILING_MODES.MANUAL]: (
+        [TILING_MODES.CUSTOM]: (
             <View gridColumn={'1/-1'}>
-                <Parameters parameters={manualTilingParameters} onChange={handleUpdateTilingParameter} />
+                <Parameters parameters={customTilingParameters} onChange={handleUpdateTilingParameter} />
             </View>
         ),
     };

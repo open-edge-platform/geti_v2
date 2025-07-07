@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import time
 from contextlib import contextmanager
 from copy import deepcopy
@@ -51,28 +50,6 @@ def logging_elapsed_time(logger: logging.Logger, log_level: int = logging.INFO) 
     return _decorator
 
 
-def force_mlflow_async_logging() -> Callable:
-    """Decorator to set environment variable for asynchronous mlflow logging."""
-
-    def _decorator(func: Callable):
-        @wraps(func)
-        def _wrapped(*args, **kwargs):
-            flag = os.environ.get("MLFLOW_ENABLE_ASYNC_LOGGING", "false").lower() in {"true", "1"}
-            if not flag:
-                os.environ["MLFLOW_ENABLE_ASYNC_LOGGING"] = "True"
-                msg = (
-                    "Environment variable MLFLOW_ENABLE_ASYNC_LOGGING should be True. "
-                    "If not, you can get a performance degradation from synchronous logging."
-                )
-                logging.warning(msg)
-
-            return func(*args, **kwargs)
-
-        return _wrapped
-
-    return _decorator
-
-
 class JobType(str, Enum):
     TRAIN = "train"
     OPTIMIZE_POT = "optimize_pot"
@@ -94,21 +71,6 @@ class PrecisionType(str, Enum):
     INT8 = "INT8"
 
 
-@dataclass(frozen=True)
-class MLFlowTrackerAccessInfo:
-    tracking_uri: str
-    experiment_id: str
-    run_id: str
-
-    @classmethod
-    def from_env_vars(cls) -> MLFlowTrackerAccessInfo:
-        return MLFlowTrackerAccessInfo(
-            tracking_uri=os.environ["MLFLOW_TRACKING_URI"],
-            experiment_id=os.environ["MLFLOW_EXPERIMENT_ID"],
-            run_id=os.environ["MLFLOW_RUN_ID"],
-        )
-
-
 @dataclass
 class ExportParameter:
     """
@@ -119,7 +81,7 @@ class ExportParameter:
     precision: PrecisionType = PrecisionType.FP32
     with_xai: bool = False
 
-    def to_mlflow_artifact_fnames(self) -> list[str]:
+    def to_artifact_fnames(self) -> list[str]:
         fname = "model_"
         precision_name = (
             self.precision.name.lower() + "-pot"

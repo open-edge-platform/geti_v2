@@ -17,8 +17,5 @@ export const isUserInvitedInOrg = ({ userStatus }: OrganizationMetadata) => user
 
 export const isUserActivatedInOrg = ({ userStatus }: OrganizationMetadata) => userStatus === AccountStatus.ACTIVATED;
 
-export const isOrgVisibleAndUserActivatedInOrg = (organization: OrganizationMetadata) =>
-    isOrganizationVisible(organization) && isUserActivatedInOrg(organization);
-
 export const isOrgVisibleAndUserInvitedInOrg = (organization: OrganizationMetadata) =>
     isOrganizationVisible(organization) && isUserInvitedInOrg(organization);

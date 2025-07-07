@@ -72,13 +72,12 @@ export interface TrainingConfiguration {
     datasetPreparation: DatasetPreparationParameters;
     training: TrainingParameters;
     evaluation: ConfigurationParameter[];
-    advancedConfiguration?: StaticParameter[];
     taskId: string;
 }
 
-export interface TrainingConfigurationUpdatePayload {
-    datasetPreparation?: Record<string, KeyValueParameter[]>;
-    training?: KeyValueParameter[];
-    evaluation?: KeyValueParameter[];
-    advancedConfiguration?: KeyValueParameter[];
+export interface TrainedModelConfiguration extends Omit<TrainingConfiguration, 'datasetPreparation'> {
+    datasetPreparation: Pick<DatasetPreparationParameters, 'augmentation'>;
+    advancedConfiguration: StaticParameter[];
 }
+
+export type TrainingConfigurationUpdatePayload = TrainingConfiguration;

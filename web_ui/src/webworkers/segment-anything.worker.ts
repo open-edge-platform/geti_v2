@@ -21,7 +21,7 @@ const terminate = (): void => {
     self.close();
 };
 
-const waitForOpenCV = async (): Promise<boolean> => {
+const loadOpenCV = async (): Promise<boolean> => {
     if (CV) {
         return true;
     } else {
@@ -78,7 +78,7 @@ class SegmentAnythingModelWrapper {
 const WorkerApi = {
     model: SegmentAnythingModelWrapper,
     terminate,
-    waitForOpenCV,
+    loadOpenCV,
 };
 
 expose(WorkerApi);

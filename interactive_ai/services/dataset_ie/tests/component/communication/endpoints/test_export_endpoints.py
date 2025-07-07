@@ -25,7 +25,6 @@ ENV_VARS = {
 }
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestExportEndpoints:
     @patch("communication.endpoints.export_endpoints.ExportManager")
     def test_prepare_dataset_endpoint(

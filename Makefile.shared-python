@@ -24,8 +24,7 @@ PIP_INSTALL_PARAMS   := --trusted-host pypi.org \
 
 CLEAN_DIRS := \
     .venv .pytest_cache .coverage .ruff_cache .mypy_cache \
-    $(find . -name .pytest_cache -type d) \
-    ${CHART_BUILD_DIR}
+    $(find . -name .pytest_cache -type d)
 
 pre-venv:
 	@if ! uv self version | grep ${UV_VERSION}; then \

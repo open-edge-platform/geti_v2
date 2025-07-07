@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from typing import Any
 
+from geti_configuration_tools import ConfigurationOverlayTools
 from geti_configuration_tools.project_configuration import (
     NullProjectConfiguration,
     PartialProjectConfiguration,
@@ -10,7 +11,6 @@ from geti_configuration_tools.project_configuration import (
 
 from communication.exceptions import ProjectConfigurationNotFoundException
 from communication.views.project_configuration_rest_views import ProjectConfigurationRESTViews
-from service.utils import delete_none_from_dict, merge_deep_dict
 from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
 from geti_telemetry_tools import unified_tracing
@@ -22,16 +22,24 @@ class ProjectConfigurationRESTController:
     @unified_tracing
     def get_configuration(
         project_identifier: ProjectIdentifier,
+        task_id: str | None = None,
     ) -> dict[str, Any]:
         """
         Retrieves configuration related to a specific project.
 
         :param project_identifier: Identifier for the project (containing organization_id, workspace_id, and project_id)
+        :param task_id: Optional ID of the task to retrieve configuration for a specific task.
         :return: Dictionary representation of the project configuration
         """
         project_config = ProjectConfigurationRepo(project_identifier).get_project_configuration()
         if isinstance(project_config, NullProjectConfiguration):
             raise ProjectConfigurationNotFoundException(project_identifier.project_id)
+        # return single task configuration
+        if len(project_config.task_configs) == 1 or task_id:
+            _task_id = project_config.task_configs[0].task_id or task_id
+            task_config = project_config.get_task_config(_task_id)
+            return ProjectConfigurationRESTViews.task_config_to_rest(task_config)
+        # return entire task-chain configuration
         return ProjectConfigurationRESTViews.project_configuration_to_rest(project_config)
 
     @staticmethod
@@ -62,8 +70,10 @@ class ProjectConfigurationRESTController:
                 )
             # Update existing task config
             current_task_config = current_task_config_map[task_config.task_id]
-            updated_task_config_dict = delete_none_from_dict(task_config.model_dump())
-            merged_task_config_dict = merge_deep_dict(current_task_config.model_dump(), updated_task_config_dict)
+            updated_task_config_dict = ConfigurationOverlayTools.delete_none_from_dict(task_config.model_dump())
+            merged_task_config_dict = ConfigurationOverlayTools.merge_deep_dict(
+                current_task_config.model_dump(), updated_task_config_dict
+            )
             current_task_config_map[task_config.task_id] = TaskConfig.model_validate(merged_task_config_dict)
 
         for _, task_config in current_task_config_map.items():

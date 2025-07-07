@@ -9,12 +9,10 @@ from unittest.mock import patch
 import cv2
 import datumaro as dm
 import numpy as np
-import pytest
 
 from jobs_common_extras.shard_dataset.commands.create_shard_file_command import CreateShardFileCommand
 
 
-@pytest.mark.JobsComponent
 class TestCreateShardFileCommand:
     def test_create_shard_file_command(
         self,

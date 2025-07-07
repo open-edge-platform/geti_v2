@@ -11,11 +11,11 @@ import styles from './tiling.module.scss';
 
 export enum TILING_MODES {
     OFF = 'Off',
-    ADAPTIVE = 'Adaptive',
-    MANUAL = 'Manual',
+    AUTOMATIC = 'Automatic',
+    CUSTOM = 'Custom',
 }
 
-const TilingModeTooltip: FC = () => {
+export const TilingModeTooltip: FC = () => {
     return (
         <Tooltip>
             Tiling is a technique that divides high-resolution images into smaller tiles and might be useful to increase
@@ -32,11 +32,11 @@ interface TilingModesProps {
 export const TilingModes: FC<TilingModesProps> = ({ selectedTilingMode, onTilingModeChange }) => {
     return (
         <>
-            <Text UNSAFE_className={styles.title} width={'size-3000'}>
+            <Text UNSAFE_className={styles.title}>
                 Tiling mode <TilingModeTooltip />
             </Text>
             <ToggleButtons
-                options={[TILING_MODES.OFF, TILING_MODES.ADAPTIVE, TILING_MODES.MANUAL]}
+                options={[TILING_MODES.OFF, TILING_MODES.AUTOMATIC, TILING_MODES.CUSTOM]}
                 selectedOption={selectedTilingMode}
                 onOptionChange={onTilingModeChange}
             />

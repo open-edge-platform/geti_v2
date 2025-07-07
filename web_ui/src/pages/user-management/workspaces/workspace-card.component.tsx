@@ -12,7 +12,7 @@ import { DeleteDialog } from '../../../shared/components/delete-dialog/delete-di
 import { EditNameDialog } from '../../../shared/components/edit-name-dialog/edit-name-dialog.component';
 import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
-import { useWorkspaceActions } from '../../landing-page/workspaces-tabs/use-workspace-actions.hook';
+import { useWorkspaceActions } from '../../landing-page/workspaces-tabs/hooks/use-workspace-actions.hook';
 import { WorkspaceMenuActions } from '../../landing-page/workspaces-tabs/utils';
 import { MAX_LENGTH_OF_WORKSPACE_NAME, MIN_LENGTH_OF_WORKSPACE_NAME } from './utils';
 

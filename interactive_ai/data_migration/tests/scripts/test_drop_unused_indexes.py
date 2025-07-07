@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import mongomock
 from pymongo import DESCENDING, IndexModel, MongoClient
+from pymongo.database import Database
 
 from migration.scripts.drop_unused_indexes import DropUnusedIndexesMigration
 
@@ -11,7 +12,7 @@ from migration.scripts.drop_unused_indexes import DropUnusedIndexesMigration
 class TestDropUnusedIndexesMigration:
     def test_remove_index_from_annotation_scene(self) -> None:
         # Arrange
-        mock_db = mongomock.MongoClient().db
+        mock_db: Database = mongomock.MongoClient().db
         for collection_name in DropUnusedIndexesMigration.DATASET_BASED_REPOS:
             collection = mock_db.get_collection(collection_name)
             new_indexes = [

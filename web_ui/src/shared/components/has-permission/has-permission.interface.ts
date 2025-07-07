@@ -29,6 +29,7 @@ export enum OPERATION {
     USAGE_TAB,
     WORKSPACE_MANAGEMENT,
     WORKSPACE_CREATION,
+    PLATFORM_UPGRADE,
 }
 
 type PermissionEntity = Omit<Role, 'resourceId'>;

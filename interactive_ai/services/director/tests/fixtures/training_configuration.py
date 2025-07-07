@@ -347,6 +347,8 @@ def fxt_partial_training_configuration_manifest_level(fxt_mongo_id):
             "training": {
                 "max_epochs": 50,
                 "learning_rate": 0.05,
+                "input_size": "32x32",
+                "allowed_values_input_size": ["32x32", "64x64", "128x128"],
             },
         },
     }
@@ -633,6 +635,16 @@ def fxt_training_configuration_full_rest_view(
                 "name": "Learning rate",
                 "type": "float",
                 "value": 0.05,
+            },
+            {
+                "key": "input_size",
+                "name": "Input size",
+                "type": "str",
+                "description": "Width and height dimensions for model input images in 'WxH' format (e.g., '512x512'). "
+                "Determines the resolution at which images are processed by the model.",
+                "value": "32x32",
+                "default_value": "32x32",
+                "allowed_values": ["32x32", "64x64", "128x128"],
             },
             {
                 "early_stopping": [

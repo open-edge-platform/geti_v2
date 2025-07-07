@@ -9,6 +9,7 @@ import { Outlet } from 'react-router-dom';
 import { LandingPageSidebar } from '../pages/landing-page/landing-page-sidebar/landing-page-sidebar.component';
 import { LandingPageHeader as Header } from '../shared/components/header/header.component';
 import { MaintenanceBanner } from './maintenance-banner/maintenance-banner.component';
+import { UpgradeBanner } from './upgrade-banner/upgrade-banner.component';
 
 import classes from './routes.module.scss';
 
@@ -17,9 +18,9 @@ export const LandingPageLayout = (): JSX.Element => {
         <Grid
             height={'100vh'}
             maxHeight={'100vh'}
-            areas={['header header', 'banner banner', 'sidebar content']}
+            areas={['header header', 'banner banner', 'upgrade-banner upgrade-banner', 'sidebar content']}
             columns={{ L: ['size-3400', 'auto'], base: ['size-600', 'auto'] }}
-            rows={['size-800', 'min-content', 'auto']}
+            rows={['size-800', 'min-content', 'min-content', 'auto']}
         >
             <View gridArea={'header'} zIndex={1}>
                 <Header isDarkMode={false} isProject={false} />
@@ -27,6 +28,10 @@ export const LandingPageLayout = (): JSX.Element => {
 
             <View gridArea={'banner'}>
                 <MaintenanceBanner />
+            </View>
+
+            <View gridArea={'upgrade-banner'}>
+                <UpgradeBanner />
             </View>
 
             <View backgroundColor='gray-75' gridArea={'sidebar'}>

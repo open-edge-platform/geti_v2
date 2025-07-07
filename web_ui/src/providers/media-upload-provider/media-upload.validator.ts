@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { isEmpty } from 'lodash-es';
+import { isEmpty, uniq } from 'lodash-es';
 
 import {
     defineMediaType,
@@ -24,6 +24,13 @@ export interface ImageValidationRules {
 export type ImageValidationMessages = Record<keyof ImageValidationRules | 'NOT_VALID_IMAGE', string>;
 
 export const mediaExtensionHandler = (extensions: string[]): string => extensions.map((ext) => `.${ext}`).join(', ');
+
+export const getImageMimeType = (extensions: string[]) => {
+    const isJPG = (ext: string) => ['jpeg', 'jpg'].includes(ext);
+    const getType = (ext: string) => (isJPG(ext) ? `image/jpeg` : `image/${ext}`);
+
+    return uniq(extensions.map(getType));
+};
 
 export const validateImage = (
     file: File,

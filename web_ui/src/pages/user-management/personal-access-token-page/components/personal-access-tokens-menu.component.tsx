@@ -7,11 +7,14 @@ import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { ActionButton, Flex, Item, Menu, MenuTrigger, Text } from '@geti/ui';
 import { Delete, Edit, MoreMenu } from '@geti/ui/icons';
 import { useOverlayTriggerState } from '@react-stately/overlays';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 
 import { usePersonalAccessToken } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
 import { PartialPersonalAccessToken } from '../../../../core/personal-access-tokens/personal-access-tokens.interface';
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
+import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
+import { useNotification } from '../../../../notification/notification.component';
 import { DeleteDialog } from '../../../../shared/components/delete-dialog/delete-dialog.component';
 import { getDateTimeInISOAndUTCOffsetFormat } from '../../../../shared/utils';
 import { UpdatePersonalAccessTokenDialog } from './update-personal-access-token-dialog.component';
@@ -26,7 +29,13 @@ enum PersonalAccessTokenMenuItems {
     DELETE = 'Delete',
 }
 
+const DELETE_MESSAGE = 'Personal Access Token was deleted successfully.';
+const DELETE_ERROR = 'Personal Access Token was not deleted due to an error.';
+const UPDATE_MESSAGE = 'The expiration date has been updated.';
+const UPDATE_ERROR = 'Personal Access Token was not updated due to an error.';
+
 export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps): JSX.Element => {
+    const { addNotification } = useNotification();
     const deleteTriggerState = useOverlayTriggerState({});
     const editTriggerState = useOverlayTriggerState({});
     const { deletePersonalAccessTokenMutation, updatePersonalAccessTokenMutation } = usePersonalAccessToken();
@@ -48,18 +57,40 @@ export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps)
     const handleEdit = (newDate: Date): void => {
         const expiresAt = getDateTimeInISOAndUTCOffsetFormat(dayjs(newDate).endOf('d'));
         if (hasActiveUser) {
-            updatePersonalAccessTokenMutation.mutate({
-                organizationId,
-                userId: activeUser.id,
-                tokenId: token.id,
-                expirationDate: expiresAt,
-            });
+            updatePersonalAccessTokenMutation.mutate(
+                {
+                    organizationId,
+                    userId: activeUser.id,
+                    tokenId: token.id,
+                    expirationDate: expiresAt,
+                },
+                {
+                    onSuccess: () => {
+                        addNotification({ message: UPDATE_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
+                    },
+                    onError: (error: AxiosError) => {
+                        const message = error?.message ?? UPDATE_ERROR;
+                        addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
+                    },
+                }
+            );
         }
     };
 
     const handleDelete = (): void => {
         if (hasActiveUser) {
-            deletePersonalAccessTokenMutation.mutate({ organizationId, userId: activeUser.id, tokenId: token.id });
+            deletePersonalAccessTokenMutation.mutate(
+                { organizationId, userId: activeUser.id, tokenId: token.id },
+                {
+                    onSuccess: () => {
+                        addNotification({ message: DELETE_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
+                    },
+                    onError: (error: AxiosError) => {
+                        const message = error?.message ?? DELETE_ERROR;
+                        addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
+                    },
+                }
+            );
         }
     };
 

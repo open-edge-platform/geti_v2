@@ -25,7 +25,6 @@ MO_MODEL_ID = "mo_model_id"
 HYPER_PARAMETERS_ID = "hyper_parameters_id"
 
 
-@pytest.mark.JobsComponent
 class TestPrepareTrainingDataTask:
     @pytest.mark.parametrize("from_scratch", [True, False])
     @pytest.mark.parametrize("reshuffle_subsets", [True, False])

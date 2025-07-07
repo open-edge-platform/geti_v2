@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { isObject } from 'lodash-es';
+import { isEmpty, isObject } from 'lodash-es';
 import { v4 as uuidV4 } from 'uuid';
 
 import {
@@ -16,10 +16,12 @@ import {
     ProjectConfigurationDTO,
     ProjectConfigurationUploadPayloadDTO,
     StaticParameterDTO,
+    TrainedModelConfigurationDTO,
     TrainingConfigurationDTO,
     TrainingConfigurationUpdatePayloadDTO,
     TrainingParametersDTO,
 } from '../dtos/configuration.interface';
+import { isConfigurationParameter } from '../utils';
 import {
     ConfigurableParametersComponents,
     ConfigurableParametersGroups,
@@ -29,9 +31,11 @@ import {
 } from './configurable-parameters.interface';
 import {
     ConfigurationParameter,
+    KeyValueParameter,
     ProjectConfiguration,
     ProjectConfigurationUploadPayload,
     StaticParameter,
+    TrainedModelConfiguration,
     TrainingConfiguration,
     TrainingConfigurationUpdatePayload,
     TrainingParameters,
@@ -308,9 +312,9 @@ const getTrainingParameters = (config: TrainingParametersDTO): TrainingParameter
 };
 
 export const getTrainingConfigurationEntity = (config: TrainingConfigurationDTO): TrainingConfiguration => {
-    const { task_id, training, advanced_configuration, dataset_preparation, evaluation } = config;
+    const { task_id, training, dataset_preparation, evaluation } = config;
 
-    const trainingConfiguration: TrainingConfiguration = {
+    return {
         taskId: task_id,
         datasetPreparation: {
             augmentation: getParametersObject(dataset_preparation.augmentation),
@@ -320,46 +324,86 @@ export const getTrainingConfigurationEntity = (config: TrainingConfigurationDTO)
         training: getTrainingParameters(training),
         evaluation: evaluation.map(getParameter),
     };
+};
 
-    if (advanced_configuration !== undefined) {
-        trainingConfiguration.advancedConfiguration = advanced_configuration.map(getStaticParameter);
-    }
+export const getTrainedModelConfigurationEntity = (config: TrainedModelConfigurationDTO): TrainedModelConfiguration => {
+    const { task_id, training, dataset_preparation, evaluation, advanced_configuration } = config;
 
-    return trainingConfiguration;
+    return {
+        taskId: task_id,
+        datasetPreparation: {
+            augmentation: getParametersObject(dataset_preparation.augmentation),
+        },
+        training: getTrainingParameters(training),
+        evaluation: evaluation.map(getParameter),
+        // TODO: remove optional chaining when backend will return empty array instead of undefined
+        advancedConfiguration: advanced_configuration?.map(getStaticParameter),
+    };
+};
+
+const getKeyValueParameter = (parameter: ConfigurationParameter | KeyValueParameter): KeyValueParameter => {
+    return {
+        key: parameter.key,
+        value: parameter.value,
+    };
+};
+
+const getObjectEntitiesInKeyValueFormat = (
+    input: Record<string, ConfigurationParameter[]>
+): Record<string, KeyValueParameter[]> => {
+    return Object.entries(input).reduce<Record<string, KeyValueParameter[]>>((acc, [key, parameters]) => {
+        return {
+            ...acc,
+            [key]: parameters.map(getKeyValueParameter),
+        };
+    }, {});
 };
 
 export const getTrainingConfigurationUpdatePayloadDTO = (
     payload: TrainingConfigurationUpdatePayload
 ): TrainingConfigurationUpdatePayloadDTO => {
-    const trainingConfigurationUpdatePayloadDTO: TrainingConfigurationUpdatePayloadDTO = {};
+    const trainingConfigurationUpdatePayloadDTO: TrainingConfigurationUpdatePayloadDTO = {
+        task_id: payload.taskId,
+    };
 
-    if (payload.datasetPreparation !== undefined) {
-        trainingConfigurationUpdatePayloadDTO.dataset_preparation = Object.entries(payload.datasetPreparation).reduce(
-            (acc, [key, parameters]) => {
-                return {
-                    ...acc,
-                    [key]: parameters.map((parameter) => ({
-                        key: parameter.key,
-                        value: parameter.value,
-                    })),
-                };
-            },
-            {}
-        );
+    if (payload.datasetPreparation !== undefined && !isEmpty(payload.datasetPreparation)) {
+        if (!isEmpty(payload.datasetPreparation.subsetSplit)) {
+            trainingConfigurationUpdatePayloadDTO.dataset_preparation = {
+                subset_split: payload.datasetPreparation.subsetSplit.map(getKeyValueParameter),
+            };
+        }
+
+        if (!isEmpty(payload.datasetPreparation.filtering)) {
+            const filteringPayload = getObjectEntitiesInKeyValueFormat(payload.datasetPreparation.filtering);
+
+            trainingConfigurationUpdatePayloadDTO.dataset_preparation = {
+                ...trainingConfigurationUpdatePayloadDTO.dataset_preparation,
+                filtering: filteringPayload,
+            };
+        }
+
+        if (!isEmpty(payload.datasetPreparation.augmentation)) {
+            const augmentationPayload = getObjectEntitiesInKeyValueFormat(payload.datasetPreparation.augmentation);
+
+            trainingConfigurationUpdatePayloadDTO.dataset_preparation = {
+                ...trainingConfigurationUpdatePayloadDTO.dataset_preparation,
+                augmentation: augmentationPayload,
+            };
+        }
     }
 
-    if (payload.training !== undefined) {
-        trainingConfigurationUpdatePayloadDTO.training = payload.training.map((parameter) => ({
-            key: parameter.key,
-            value: parameter.value,
-        }));
+    if (!isEmpty(payload.training)) {
+        trainingConfigurationUpdatePayloadDTO.training = payload.training.map((parameters) => {
+            if (isConfigurationParameter(parameters)) {
+                return getKeyValueParameter(parameters);
+            }
+
+            return getObjectEntitiesInKeyValueFormat(parameters);
+        });
     }
 
-    if (payload.evaluation !== undefined) {
-        trainingConfigurationUpdatePayloadDTO.evaluation = payload.evaluation.map((parameter) => ({
-            key: parameter.key,
-            value: parameter.value,
-        }));
+    if (!isEmpty(payload.evaluation)) {
+        trainingConfigurationUpdatePayloadDTO.evaluation = payload.evaluation.map(getKeyValueParameter);
     }
 
     return trainingConfigurationUpdatePayloadDTO;

@@ -14,6 +14,8 @@ from iai_core.repos.mappers.mongodb_mapper_interface import IMapperSimple
 
 from geti_types import ID
 
+logger = logging.getLogger(__name__)
+
 
 class IDToMongo(IMapperSimple[ID, ObjectId | UUID | str]):
     """MongoDB mapper for `ID` entity"""
@@ -36,8 +38,9 @@ class IDToMongo(IMapperSimple[ID, ObjectId | UUID | str]):
             id_int = int(str(instance))
             return ObjectId(f"{id_int:024d}")
         if len(instance) != 0:
-            logger = logging.getLogger(__name__)
-            logger.warning(f"Warning: Using str instead of ObjectId for {str(instance)}")
+            sanitized_instance = str(instance).replace("\n", "\\n").replace("\r", "\\r")
+            logger.warning(f"Warning: Using str instead of ObjectId for {sanitized_instance}")
+            return sanitized_instance
         return str(instance)
 
     @staticmethod

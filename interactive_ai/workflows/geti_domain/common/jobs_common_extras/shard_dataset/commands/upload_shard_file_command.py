@@ -11,7 +11,7 @@ from geti_types import ProjectIdentifier
 from jobs_common.commands.interfaces.command import ICommand
 from jobs_common.exceptions import DataShardCreationFailedException
 from jobs_common.tasks.utils.secrets import JobMetadata
-from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
+from jobs_common_extras.experiments.adapters.ml_artifacts import MLArtifactsAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -30,14 +30,14 @@ class UploadShardFileCommand(ICommand):
         self.project_identifier = project_identifier
         self.fpath = fpath
         self._binary_filename: str | None = None
-        self._otx_api_adapter = GetiOTXInterfaceAdapter(
+        self._ml_artifacts_api_adapter = MLArtifactsAdapter(
             project_identifier=self.project_identifier, job_metadata=JobMetadata.from_env_vars()
         )
 
     @unified_tracing
     def execute(self) -> None:
         try:
-            self._otx_api_adapter.push_input_dataset(shard_file_local_path=Path(self.fpath))
+            self._ml_artifacts_api_adapter.push_input_dataset(shard_file_local_path=Path(self.fpath))
             self._binary_filename = os.path.basename(self.fpath)
         except Exception as exc:
             logger.exception(f"Could not upload a dataset shard file for Dataset[id={self.dataset_id}]")

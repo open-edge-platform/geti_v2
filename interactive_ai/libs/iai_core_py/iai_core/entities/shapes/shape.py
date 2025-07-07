@@ -9,7 +9,7 @@ import warnings
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING
 
-from shapely.errors import PredicateError, TopologicalError
+from shapely.errors import ShapelyError, TopologicalError
 from shapely.geometry import Polygon as ShapelyPolygon
 
 if TYPE_CHECKING:
@@ -50,7 +50,7 @@ class Shape(metaclass=abc.ABCMeta):
         polygon_shape = other._as_shapely_polygon()
         try:
             return polygon_roi.intersects(polygon_shape)
-        except (PredicateError, TopologicalError) as exception:
+        except (ShapelyError, TopologicalError) as exception:
             raise GeometryException(f"Error calculating intersection: {exception}") from exception
 
     def contains_center(self, other: "Shape") -> bool:

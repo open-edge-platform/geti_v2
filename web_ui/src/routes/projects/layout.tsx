@@ -10,6 +10,7 @@ import { isAnomalyDomain } from '../../core/projects/domains';
 import { ProjectSidebar } from '../../pages/project-details/components/project-sidebar/project-sidebar.component';
 import { useProject } from '../../pages/project-details/providers/project-provider/project-provider.component';
 import { LandingPageHeader as Header } from '../../shared/components/header/header.component';
+import { UpgradeBanner } from '../upgrade-banner/upgrade-banner.component';
 
 import classes from './../routes.module.scss';
 
@@ -21,12 +22,15 @@ export const ProjectLayout = (): JSX.Element => {
         <Grid
             height={'100vh'}
             maxHeight={'100vh'}
-            areas={['header header', 'sidebar content']}
+            areas={['header header', 'upgrade-banner upgrade-banner', 'sidebar content']}
             columns={{ L: ['size-3400', 'auto'], base: ['size-600', 'auto'] }}
-            rows={['size-600', 'auto']}
+            rows={['size-600', 'min-content', 'auto']}
         >
             <View gridArea={'header'}>
                 <Header withBackButton isProject isAnomalyProject={isAnomalyProject} />
+            </View>
+            <View gridArea={'upgrade-banner'}>
+                <UpgradeBanner />
             </View>
             <View backgroundColor='gray-75' gridArea={'sidebar'} position='relative'>
                 <ProjectSidebar project={project} />
