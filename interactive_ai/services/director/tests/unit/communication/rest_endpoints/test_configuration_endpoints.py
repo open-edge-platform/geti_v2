@@ -3,8 +3,8 @@
 import json
 from http import HTTPStatus
 from unittest.mock import patch
-import pytest
 
+import pytest
 from testfixtures import compare
 
 from communication.controllers.configuration_controller import ConfigurationRESTController
@@ -295,5 +295,5 @@ class TestConfigurationRESTEndpoint:
 
         # Check header values
         assert result.headers["Sunset"] == "Fri, 31 Oct 2025 23:59:59 GMT"
-        assert result.headers["Deprecation"] == "1753999200" # unix timestamp
+        assert result.headers["Deprecation"] == "1753999200"  # unix timestamp
         assert 'rel="deprecation-info"' in result.headers["Link"]

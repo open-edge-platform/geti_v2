@@ -1,7 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import datetime
 import logging
 from typing import Annotated, Any
 
@@ -27,7 +26,7 @@ logger = logging.getLogger(__name__)
 deprecation = RestApiDeprecation(
     deprecation_date="2025-08-01",
     sunset_date="2025-10-31",
-    additional_info="?", # TODO: add actual link to documentation
+    additional_info="?",  # TODO: add actual link to documentation
 )
 
 configuration_prefix_url = "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}"
