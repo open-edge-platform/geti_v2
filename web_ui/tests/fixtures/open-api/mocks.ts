@@ -95,6 +95,9 @@ export const disabledFUXSettings = {
     [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
         value: false,
     },
+    [FUX_SETTINGS_KEYS.USER_DISMISSED_ALL]: {
+        value: false,
+    },
     [FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED]: {
         value: false,
     },

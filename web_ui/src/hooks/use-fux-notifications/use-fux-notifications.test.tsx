@@ -6,10 +6,7 @@ import { renderHook } from '@testing-library/react';
 import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
 import { INITIAL_GLOBAL_SETTINGS } from '../../core/user-settings/utils';
-import {
-    getMockedUserGlobalSettings,
-    getMockedUserGlobalSettingsObject,
-} from '../../test-utils/mocked-items-factory/mocked-settings';
+import { getMockedUserGlobalSettingsObject } from '../../test-utils/mocked-items-factory/mocked-settings';
 import { useFuxNotifications } from './use-fux-notifications.hook';
 
 const mockSaveConfig = jest.fn();
@@ -91,32 +88,26 @@ describe('useFuxNotifications', () => {
         });
     });
 
-    it('should never update settings', () => {
-        jest.mocked(useUserGlobalSettings).mockImplementationOnce(() => ({
-            ...mockSettings,
-            config: getMockedUserGlobalSettings({
-                [FUX_SETTINGS_KEYS.NEVER_ANNOTATED]: {
-                    value: false,
+    describe('User dismissed all', () => {
+        it('should never update settings', () => {
+            jest.mocked(useUserGlobalSettings).mockImplementationOnce(() => ({
+                ...mockSettings,
+                config: {
+                    ...mockSettings.config,
+                    [FUX_SETTINGS_KEYS.USER_DISMISSED_ALL]: {
+                        value: true,
+                    },
                 },
-                [FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED]: {
-                    value: false,
-                },
-                [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
-                    value: false,
-                },
-                [FUX_SETTINGS_KEYS.NEVER_CHECKED_PREDICTIONS]: {
-                    value: false,
-                },
-            }),
-        }));
+            }));
 
-        const { result } = renderHook(() => useFuxNotifications());
+            const { result } = renderHook(() => useFuxNotifications());
 
-        result.current.handleFirstAnnotation();
-        result.current.handleFirstAutoTraining('project-id', 'job-id');
-        result.current.handleFirstSuccessfulAutoTraining('model-id');
-        result.current.handleFirstVisitToPredictionMode();
+            result.current.handleFirstAnnotation();
+            result.current.handleFirstAutoTraining('project-id', 'job-id');
+            result.current.handleFirstSuccessfulAutoTraining('model-id');
+            result.current.handleFirstVisitToPredictionMode();
 
-        expect(mockSaveConfig).not.toHaveBeenCalled();
+            expect(mockSaveConfig).not.toHaveBeenCalled();
+        });
     });
 });

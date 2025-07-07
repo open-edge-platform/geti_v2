@@ -3,6 +3,7 @@
 
 import { GETI_SYSTEM_AUTHOR_ID, JobState } from '../../../../core/jobs/jobs.const';
 import { Job, JobCount } from '../../../../core/jobs/jobs.interface';
+import { getFuxSetting } from '../../../../shared/components/tutorials/utils';
 import { getMockedJob } from '../../../../test-utils/mocked-items-factory/mocked-jobs';
 import { getMockedUserGlobalSettingsObject } from '../../../../test-utils/mocked-items-factory/mocked-settings';
 import { onFirstScheduledOrRunningAutoTrainingJob } from './util';
@@ -25,6 +26,10 @@ const getJobResponse = (jobCount: Partial<JobCount> = {}, mockedJobs: Job[] = []
     ],
 });
 
+jest.mock('../../../../shared/components/tutorials/utils', () => ({
+    getFuxSetting: jest.fn(),
+}));
+
 describe('auto-training-credits-modal utils', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -42,6 +47,7 @@ describe('auto-training-credits-modal utils', () => {
         });
 
         it('it is first scheduled auto-training job', () => {
+            jest.mocked(getFuxSetting).mockReturnValue(true);
             onFirstScheduledOrRunningAutoTrainingJob(
                 getMockedUserGlobalSettingsObject(),
                 mockedCallback
@@ -55,6 +61,7 @@ describe('auto-training-credits-modal utils', () => {
         });
 
         it('it is first running auto-training job', () => {
+            jest.mocked(getFuxSetting).mockReturnValue(true);
             onFirstScheduledOrRunningAutoTrainingJob(
                 getMockedUserGlobalSettingsObject(),
                 mockedCallback
@@ -68,6 +75,7 @@ describe('auto-training-credits-modal utils', () => {
         });
 
         it('it is scheduled job but user has previously auto-trained', () => {
+            jest.mocked(getFuxSetting).mockReturnValue(false);
             onFirstScheduledOrRunningAutoTrainingJob(
                 getMockedUserGlobalSettingsObject(),
                 mockedCallback
@@ -89,6 +97,7 @@ describe('auto-training-credits-modal utils', () => {
         });
 
         it('no scheduled jobs', () => {
+            jest.mocked(getFuxSetting).mockReturnValue(true);
             onFirstScheduledOrRunningAutoTrainingJob(
                 getMockedUserGlobalSettingsObject(),
                 mockedCallback
@@ -103,6 +112,7 @@ describe('auto-training-credits-modal utils', () => {
                 ['numberOfCancelledJobs'],
                 ['numberOfFailedJobs'],
             ];
+            jest.mocked(getFuxSetting).mockReturnValue(true);
             test.each(testData)('%s', (jobName) => {
                 onFirstScheduledOrRunningAutoTrainingJob(
                     getMockedUserGlobalSettingsObject(),
