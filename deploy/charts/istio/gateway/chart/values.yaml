@@ -220,7 +220,6 @@ _internal_defaults_do_not_set:
       "FEATURE_FLAG_OIDC_CIDAAS": "false"
       "FEATURE_FLAG_ORG_QUOTAS": "false"
       "FEATURE_FLAG_OTX_VERSION_SELECTION": "true"
-      "FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE": "true"
       "FEATURE_FLAG_SAAS_REQUIRE_INVITATION_LINK": "true"
       "FEATURE_FLAG_MANAGE_USERS": "false"
       "FEATURE_FLAG_MANAGE_USERS_ROLES": "true"
