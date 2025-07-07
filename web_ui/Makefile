@@ -7,7 +7,7 @@ COMPONENT_NAME := web
 # build contexts for web-ui image
 DOCKER_BUILD_CONTEXT := --build-context docs_context=../docs \
 						--build-context api_context=../interactive_ai/services/api \
-                        --build-arg GETI_VERSION=${TAG}
+                        --build-arg REACT_APP_GETI_VERSION=${TAG}
 
 DOCKER_IMAGE_DESCRIPTION := Web UI for Geti
 
