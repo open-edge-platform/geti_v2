@@ -3,6 +3,8 @@
 
 import { PointerEvent, useEffect, useRef, useState } from 'react';
 
+import { RITM_TEMPLATE_SIZE } from '@geti/smart-tools';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { clampBox, clampPointBetweenImage, isPointInShape, pointInRectangle } from '../../../../core/annotations/math';
 import { Rect } from '../../../../core/annotations/shapes.interface';
@@ -26,13 +28,13 @@ import { PointerType, ToolAnnotationContextProps } from '../tools.interface';
 import { drawingStyles } from '../utils';
 import { LoadingAnimation } from './loading-animation.component';
 import { useRITMState } from './ritm-state-provider.component';
-import { RITMPoint, RITMResult, TEMPLATE_SIZE } from './ritm-tool.interface';
+import { RITMPoint, RITMResult } from './ritm-tool.interface';
 import { encapsulatePoints } from './util';
 
 import classes from './ritm.module.scss';
 
 // Adding 1 to prevent template_size, and box size being exact same size, causing some issues.
-const MINIMUM_MARGIN = TEMPLATE_SIZE / 2 + 1;
+const MINIMUM_MARGIN = RITM_TEMPLATE_SIZE / 2 + 1;
 
 export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
     const { defaultLabel, activeDomains } = useTask();
