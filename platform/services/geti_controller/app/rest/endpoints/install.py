@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import logging
+import re
 
 from fastapi import HTTPException, status
 
@@ -54,7 +55,7 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
             detail="Version number is required.",
         )
 
-    if payload.version_number == "invalid_version":  # TODO validation
+    if not re.match(r"^\d+\.\d+\.\d+(?:-[\w\-]+)?$", payload.version_number):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid version number provided.",

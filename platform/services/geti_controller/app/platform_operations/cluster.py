@@ -166,7 +166,9 @@ def deploy_cluster_role_binding(cluster_role_binding: V1ClusterRoleBinding) -> N
         logger.error(f"An error occurred: {e}")
 
 
-def create_job(name: str, image: str, registry: str, manifest_version: str, port: int) -> V1Job:
+def create_job(
+    name: str, image: str, registry: str, manifest_version: str, port: int, gpu_provider: str | None = None
+) -> V1Job:
     """Create a Job object."""
     http_proxy = os.getenv("HTTP_PROXY")
     https_proxy = os.getenv("HTTPS_PROXY")
@@ -182,6 +184,7 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
         env=[
             V1EnvVar(name="GETI_REGISTRY", value=registry),
             V1EnvVar(name="GETI_MANIFEST_VERSION", value=manifest_version),
+            V1EnvVar(name="GPU_PROVIDER", value=gpu_provider or ""),
             V1EnvVar(
                 name="DATA_FOLDER",
                 value_from=V1EnvVarSource(
