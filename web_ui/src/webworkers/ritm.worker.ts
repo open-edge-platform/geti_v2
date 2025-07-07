@@ -49,6 +49,7 @@ class RITM {
 
     async load() {
         env.wasm.wasmPaths = sessionParams.wasmRoot;
+
         this.models = {
             main: await this.loadModel(RITMModels.main),
             preprocess: await this.loadModel(RITMModels.preprocess),
