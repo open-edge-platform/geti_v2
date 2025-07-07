@@ -6,6 +6,9 @@ metadata:
   namespace: impt
   labels:
      {{- include "migration-job.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
 # set on purpose so we will launch migration only once
   backoffLimit: 0
