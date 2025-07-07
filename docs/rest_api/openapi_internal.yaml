@@ -203,12 +203,6 @@ paths:
   /organizations/{organization_id}/workspaces/{workspace_id}/projects:import:
     $ref: "./endpoints/project_import_export/project_import_endpoint.yaml"
 #deployment endpoints
-  /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments:prepare:
-    $ref: "./endpoints/code_deployment/prepare_code_deployment_endpoint.yaml"
-  /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments/{deployment_id}:
-    $ref: "./endpoints/code_deployment/get_code_deployment_detail_endpoint.yaml"
-  /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments/{deployment_id}/download:
-    $ref: "./endpoints/code_deployment/download_code_deployment_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/deployment_package:download:
     $ref: "./endpoints/code_deployment/download_deployment_package_endpoint.yaml"
 #credit system endpoints
