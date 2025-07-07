@@ -7,15 +7,18 @@ export interface SessionParameters {
     wasmRoot?: string | Record<string, string>;
 }
 
-function getWasmUrlPath(filename: string): string {
-    return new URL(`../../../node_modules/onnxruntime-web/dist/${filename}`, import.meta.url).toString();
-}
-
 const wasmPaths = {
-    'ort-wasm.wasm': getWasmUrlPath('ort-wasm.wasm'),
-    'ort-wasm-simd.wasm': getWasmUrlPath('ort-wasm-simd.wasm'),
-    'ort-wasm-threaded.wasm': getWasmUrlPath('ort-wasm-threaded.wasm'),
-    'ort-wasm-simd-threaded.wasm': getWasmUrlPath('ort-wasm-simd-threaded.wasm'),
+    'ort-wasm.wasm': new URL('../../../../node_modules/onnxruntime-web/dist/ort-wasm.wasm', import.meta.url).pathname,
+    'ort-wasm-simd.wasm': new URL('../../../../node_modules/onnxruntime-web/dist/ort-wasm-simd.wasm', import.meta.url)
+        .pathname,
+    'ort-wasm-threaded.wasm': new URL(
+        '../../../../node_modules/onnxruntime-web/dist/ort-wasm-threaded.wasm',
+        import.meta.url
+    ).pathname,
+    'ort-wasm-simd-threaded.wasm': new URL(
+        '../../../../node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm',
+        import.meta.url
+    ).pathname,
 };
 
 export const sessionParams: SessionParameters = {

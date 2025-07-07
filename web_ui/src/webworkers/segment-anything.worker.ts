@@ -3,7 +3,7 @@
 
 //  Dependencies get bundled into the worker
 
-import { OpenCVLoader } from '@geti/smart-tools';
+import { OpenCVLoader, SegmentAnythingModels } from '@geti/smart-tools';
 import { expose } from 'comlink';
 import type OpenCVTypes from 'OpenCVTypes';
 
@@ -50,8 +50,8 @@ class SegmentAnythingModelWrapper {
                 padSize: 1024,
             },
             modelPaths: new Map([
-                ['encoder', new URL('./segment-anything/mobile_sam.encoder.onnx', import.meta.url).toString()],
-                ['decoder', new URL('./segment-anything/sam_vit_h_4b8939.decoder.onnx', import.meta.url).toString()],
+                ['encoder', SegmentAnythingModels.encoder],
+                ['decoder', SegmentAnythingModels.decoder],
             ]),
         };
 

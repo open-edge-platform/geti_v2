@@ -9,6 +9,7 @@ import {
     isPolygonValid,
     loadSource,
     OpenCVLoader,
+    RITMModels,
     sessionParams,
     stackPlanes,
 } from '@geti/smart-tools';
@@ -48,9 +49,10 @@ class RITM {
 
     async load() {
         env.wasm.wasmPaths = sessionParams.wasmRoot;
+
         this.models = {
-            main: await this.loadModel(new URL('./ritm/main.onnx', import.meta.url).toString()),
-            preprocess: await this.loadModel(new URL('./ritm/preprocess.onnx', import.meta.url).toString()),
+            main: await this.loadModel(RITMModels.main),
+            preprocess: await this.loadModel(RITMModels.preprocess),
         };
     }
 
