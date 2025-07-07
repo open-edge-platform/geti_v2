@@ -57,7 +57,11 @@ spec:
               value: "{{ .Values.global.proxy.http_proxy }}"
             - name: NO_PROXY
               value: "{{ .Values.global.proxy.no_proxy }}"
-{{- if .Values.global.ingress_enabled }}
+            {{- if .Values.global.imageRegistry }}
+            - name: IMAGE_REGISTRY
+              value: "{{ .Values.global.imageRegistry }}"
+            {{- end }}
+            {{- if .Values.global.ingress_enabled }}
             - name: PLATFORM_VERSION
               valueFrom:
                 configMapKeyRef:

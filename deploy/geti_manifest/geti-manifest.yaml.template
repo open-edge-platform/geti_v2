@@ -12,8 +12,8 @@ metadata:
 spec:
   version: $VERSION
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/geti-namespaces
-  backOffLimit: 0
+  chart: "oci://{{ geti_registry }}/geti/helm/geti-namespaces"
+   backOffLimit: 0
   failurePolicy: abort
 ---
 apiVersion: helm.cattle.io/v1
@@ -22,7 +22,7 @@ metadata:
   name: reloader
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/reloader
+  chart: "oci://{{ geti_registry }}/geti/helm/reloader"
   version: $VERSION
   targetNamespace: kube-system
   backOffLimit: 0
@@ -34,13 +34,13 @@ metadata:
   name: geti-pv-creation
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/geti-pv-creation
+  chart: "oci://{{ geti_registry }}/geti/helm/geti-pv-creation"
   version: $VERSION
   targetNamespace: impt
   backOffLimit: 0
   failurePolicy: abort
   valuesContent: |-
-    dataStoragePath: {{ data_folder }}
+    dataStoragePath: "{{ data_folder }}"
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
@@ -48,7 +48,7 @@ metadata:
   name: cert-manager
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/cert-manager
+  chart: "oci://{{ geti_registry }}/geti/helm/cert-manager"
   version: $VERSION
   targetNamespace: cert-manager
   backOffLimit: 0
@@ -60,7 +60,7 @@ metadata:
   name: cert-manager-addon
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/cert-manager-addon
+  chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-addon"
   version: $VERSION
   targetNamespace: cert-manager
 ---
@@ -70,7 +70,7 @@ metadata:
   name: cert-manager-istio-csr
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/cert-manager-istio-csr
+  chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-istio-csr"
   version: $VERSION
   targetNamespace: cert-manager
   backOffLimit: 0
@@ -82,7 +82,7 @@ metadata:
   name: istio-base
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/istio-base
+  chart: "oci://{{ geti_registry }}/geti/helm/istio-base"
   version: $VERSION
   targetNamespace: istio-system
   backOffLimit: 0
@@ -94,7 +94,7 @@ metadata:
   name: istio-istiod
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/istio-istiod
+  chart: "oci://{{ geti_registry }}/geti/helm/istio-istiod"
   version: $VERSION
   targetNamespace: istio-system
   backOffLimit: 0
@@ -110,15 +110,15 @@ metadata:
   name: istio-gateway
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/istio-gateway
+  chart: "oci://{{ geti_registry }}/geti/helm/istio-gateway"
   version: $VERSION
   targetNamespace: istio-system
   backOffLimit: 0
   failurePolicy: abort
   valuesContent: |-
     tls:
-      key_file: {{ tls_key_file }}
-      cert_file: {{ tls_cert_file }}
+      key_file: "{{ tls_key_file }}"
+      cert_file: "{{ tls_cert_file }}"
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
@@ -126,7 +126,7 @@ metadata:
   name: geti-tools
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/geti-tools
+  chart: "oci://{{ geti_registry }}/geti/helm/geti-tools"
   version: $VERSION
   targetNamespace: impt
   timeout: 20m
@@ -134,7 +134,7 @@ spec:
   failurePolicy: abort
   valuesContent: |-
     global:
-      registry_address: "$REGISTRY"
+      registry_address: "{{ geti_registry }}"
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
@@ -142,7 +142,7 @@ metadata:
   name: geti-components
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/geti-components
+  chart: "oci://{{ geti_registry }}/geti/helm/geti-components"
   version: $VERSION
   targetNamespace: impt
   timeout: 60m
@@ -150,16 +150,16 @@ spec:
   failurePolicy: abort
   valuesContent: |-
     configuration:
-      dataStoragePath: {{ data_folder }}
+      dataStoragePath: "{{ data_folder }}"
     global:
-      registry_address: "$REGISTRY"
+      registry_address: "{{ geti_registry }}"
       tag: "$TAG" # TODO temporary solution to get new images, remove when CI will be ready
       login: "{{ username }}"
       passwordHash: "{{ password_hash }}"
-      dataFolder: {{ data_folder }}
-      tlsCert: {{ tls_cert_file }}
-      tlsKey: {{ tls_key_file }}
-      installation_profile: "standard"
+      dataFolder: "{{ data_folder }}"
+      tlsCert: "{{ tls_cert_file }}"
+      tlsKey: "{{ tls_key_file }}"
+      imageRegistry: "{{ image_registry }}"
       proxy:
         enabled: "{{ proxy_enabled }}"
         https_proxy: "{{ https_proxy }}"
@@ -172,7 +172,7 @@ metadata:
   name: modelmesh-serving-addon
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/modelmesh-serving-addon
+  chart: "oci://{{ geti_registry }}/geti/helm/modelmesh-serving-addon"
   version: $VERSION
   targetNamespace: impt
 ---
@@ -182,7 +182,7 @@ metadata:
   name: flyte-core
 spec:
   insecureSkipTLSVerify: true
-  chart: oci://$REGISTRY/geti/helm/flyte-core
+  chart: "oci://{{ geti_registry }}/geti/helm/flyte-core"
   version: $VERSION
   targetNamespace: flyte
   timeout: 20m
@@ -190,4 +190,5 @@ spec:
   failurePolicy: abort
   valuesContent: |-
     global:
-      registry_address: "$REGISTRY"
+      registry_address: "{{ geti_registry }}"
+      tag: "$TAG" # TODO temporary solution to get new images, remove when CI will be ready

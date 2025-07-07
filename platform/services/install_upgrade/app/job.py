@@ -6,11 +6,14 @@ import base64
 import logging
 import os
 import re
+import sys
 
 import jinja2
 import yaml
 from fastapi import APIRouter, FastAPI
 from kubernetes import client, config, watch
+from kubernetes.client import V1ConfigMap, V1ObjectMeta
+from kubernetes.client.rest import ApiException
 from oras.client import OrasClient
 
 from error import FailedJobError, HelmChartDeployError, ParseDurationError, TimeoutJobError, UnknownJobError
@@ -31,6 +34,7 @@ PROXY_ENABLED = os.getenv("PROXY_ENABLED", "")
 HTTPS_PROXY = os.getenv("HTTPS_PROXY", "")
 HTTP_PROXY = os.getenv("HTTP_PROXY", "")
 NO_PROXY = os.getenv("NO_PROXY", "")
+IMAGE_REGISTRY = os.getenv("IMAGE_REGISTRY") or None
 
 platform_router = APIRouter(prefix="/platform", tags=["Platform"])
 
@@ -120,6 +124,8 @@ async def render_jinja_template(template_string: str) -> dict:
         "https_proxy": HTTPS_PROXY,
         "http_proxy": HTTP_PROXY,
         "no_proxy": NO_PROXY,
+        "image_registry": IMAGE_REGISTRY,
+        "geti_registry": GETI_REGISTRY,
     }
 
     # Render the template with the variable
@@ -232,6 +238,29 @@ def parse_timeout(timeout: str) -> int:
     return value
 
 
+def update_dns_config() -> None:
+    """
+    For case when env var was specified during installation of Geti,
+    Secrets will be created in the default namespace to override the registry.
+    This is required to allow the helm charts to pull images from the specified registry.
+    """
+    secret = V1ConfigMap(
+        metadata=V1ObjectMeta(name="coredns-custom"),
+        data={"default.override": f"rewrite name docker.io {IMAGE_REGISTRY}"},
+    )
+
+    v1 = client.CoreV1Api()
+    try:
+        v1.create_namespaced_config_map(namespace="kube-system", body=secret)
+    except ApiException as e:
+        if e.status == 409:
+            logger.warning(f"Configmap already exists: {e.body}")
+        else:
+            logger.error(f"An error occurred: {e}")
+            sys.exit(1)
+    logger.info("DNS config updated successfully. ConfigMap 'coredns-custom' created in 'kube-system' namespace.")
+
+
 async def main(job_manager: JobManager) -> None:
     """
     Main function that orchestrates the installation/upgrade process.
@@ -250,6 +279,8 @@ async def main(job_manager: JobManager) -> None:
         geti_manifest = await download_manifest()
         helm_charts = await load_and_split_file(geti_manifest)
         total_charts = len(helm_charts)
+        if IMAGE_REGISTRY:
+            update_dns_config()
         for index, helm in enumerate(helm_charts):
             rendered_helm = await render_jinja_template(helm)
             try:

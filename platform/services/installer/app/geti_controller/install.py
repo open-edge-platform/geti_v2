@@ -46,6 +46,8 @@ def deploy_geti_controller_chart(config: InstallationConfig, charts_dir: str = G
                     "https_proxy": https_proxy if https_proxy is not None else "",
                     "no_proxy": no_proxy if no_proxy is not None else "",
                 },
+                "imageRegistry": config.image_registry.value,
+                "platformVersion": get_target_product_build(),
             },
         }
 

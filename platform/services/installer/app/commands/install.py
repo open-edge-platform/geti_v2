@@ -33,7 +33,6 @@ from checks.resources import (
 )
 from checks.user import check_user_id
 from cli_utils.checks import run_checks
-
 from cli_utils.credentials import hash_ldap_password
 from cli_utils.platform_logs import configure_logging, create_logs_dir
 from cli_utils.spinner import click_spinner
