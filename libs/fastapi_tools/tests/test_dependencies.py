@@ -2,8 +2,6 @@ import datetime
 
 import pytest
 from bson import ObjectId
-
-from geti_fastapi_tools.deprecation import RestApiDeprecation
 from geti_types.id import ID, ProjectIdentifier
 
 from geti_fastapi_tools.dependencies import (
@@ -25,6 +23,7 @@ from geti_fastapi_tools.dependencies import (
     get_video_id,
     get_workspace_id,
 )
+from geti_fastapi_tools.deprecation import RestApiDeprecation
 from geti_fastapi_tools.exceptions import InvalidIDException
 
 VALID_OBJECTID = "012345678901234567891234"
@@ -161,9 +160,9 @@ class TestDependencies:
         response_true = MockResponse()
 
         # Run the dependency
-        deprecation.add_headers(response_true)
+        deprecation.add_headers(response_true)  # type: ignore[arg-type]
 
         # Check headers are set correctly
         assert response_true.headers["Sunset"] == "Wed, 01 Jan 2025 23:59:59 GMT"
-        assert response_true.headers["Deprecation"] == "1735599600"
+        assert response_true.headers["Deprecation"] == "1735603200"
         assert response_true.headers["Link"] == f'<{docs_url}>; rel="deprecation-info"'

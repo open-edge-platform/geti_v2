@@ -1,4 +1,3 @@
-import json
 from datetime import datetime, timezone
 
 from fastapi import Response as FastAPIResponse
