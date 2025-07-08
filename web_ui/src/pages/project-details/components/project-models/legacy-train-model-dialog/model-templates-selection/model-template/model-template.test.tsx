@@ -8,7 +8,7 @@ import {
     LifecycleStage,
     PerformanceCategory,
 } from '../../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { getMockedSupportedAlgorithm } from '../../../../../../../core/supported-algorithms/services/test-utils';
+import { getLegacyMockedSupportedAlgorithm } from '../../../../../../../core/supported-algorithms/services/test-utils';
 import { idMatchingFormat } from '../../../../../../../test-utils/id-utils';
 import { checkTooltip } from '../../../../../../../test-utils/utils';
 import { ModelTemplate } from './model-template.component';
@@ -16,8 +16,8 @@ import { ModelTemplate } from './model-template.component';
 describe('ModelTemplate', () => {
     const activeModelTemplateIdPerTask = 'atts-id';
 
-    const defaultTemplate = getMockedSupportedAlgorithm({
-        summary: 'Cool template',
+    const defaultTemplate = getLegacyMockedSupportedAlgorithm({
+        description: 'Cool template',
         name: 'ATSS',
         gigaflops: 4.3,
         modelSize: 2,
@@ -117,7 +117,7 @@ describe('ModelTemplate', () => {
     });
 
     it('Displays template metadata', () => {
-        const template = getMockedSupportedAlgorithm({ license: 'MIT', gigaflops: 4.3, modelSize: 2 });
+        const template = getLegacyMockedSupportedAlgorithm({ license: 'MIT', gigaflops: 4.3, modelSize: 2 });
         renderApp({ template });
 
         expect(screen.getByText('4.3 GFlops')).toBeVisible();

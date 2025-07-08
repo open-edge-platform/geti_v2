@@ -7,8 +7,8 @@ import { fireEvent, screen } from '@testing-library/react';
 import { ModelsGroups } from '../../../../core/models/models.interface';
 import { mockedArchitectureModels } from '../../../../core/models/services/test-utils';
 import { PerformanceCategory } from '../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { useSupportedAlgorithms } from '../../../../core/supported-algorithms/hooks/use-supported-algorithms.hook';
-import { getMockedSupportedAlgorithm } from '../../../../core/supported-algorithms/services/test-utils';
+import { useLegacySupportedAlgorithms } from '../../../../core/supported-algorithms/hooks/use-supported-algorithms.hook';
+import { getLegacyMockedSupportedAlgorithm } from '../../../../core/supported-algorithms/services/test-utils';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { ModelSelection } from './model-selection.component';
 
@@ -55,13 +55,13 @@ describe('ModelSelection', () => {
 
     it('render all model architectures and performance categories', async () => {
         // @ts-expect-error we only care about modelTemplateId and performanceCategory
-        jest.mocked(useSupportedAlgorithms).mockReturnValue({
+        jest.mocked(useLegacySupportedAlgorithms).mockReturnValue({
             data: [
-                getMockedSupportedAlgorithm({
+                getLegacyMockedSupportedAlgorithm({
                     modelTemplateId: 'Custom_Object_Detection_Gen3_SSD',
                     performanceCategory: PerformanceCategory.SPEED,
                 }),
-                getMockedSupportedAlgorithm({
+                getLegacyMockedSupportedAlgorithm({
                     modelTemplateId: 'Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR',
                     performanceCategory: PerformanceCategory.ACCURACY,
                 }),
@@ -79,9 +79,9 @@ describe('ModelSelection', () => {
 
     it('does not render performance category if it is OTHER', async () => {
         // @ts-expect-error we only care about modelTemplateId and performanceCategory
-        jest.mocked(useSupportedAlgorithms).mockReturnValue({
+        jest.mocked(useLegacySupportedAlgorithms).mockReturnValue({
             data: [
-                getMockedSupportedAlgorithm({
+                getLegacyMockedSupportedAlgorithm({
                     modelTemplateId: 'Custom_Object_Detection_Gen3_SSD',
                     performanceCategory: PerformanceCategory.OTHER,
                 }),

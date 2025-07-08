@@ -10,7 +10,7 @@ import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { createInMemoryProjectService } from '../../../../../core/projects/services/in-memory-project-service';
 import { LifecycleStage } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { createInMemorySupportedAlgorithmsService } from '../../../../../core/supported-algorithms/services/in-memory-supported-algorithms-service';
-import { getMockedSupportedAlgorithm } from '../../../../../core/supported-algorithms/services/test-utils';
+import { getLegacyMockedSupportedAlgorithm } from '../../../../../core/supported-algorithms/services/test-utils';
 import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
 import {
     getMockedModelsGroupAlgorithmDetails,
@@ -40,32 +40,32 @@ const obsoleteActiveModel = getMockedModelsGroupAlgorithmDetails({
 });
 
 const mockedSupportedAlgorithmsForDetection = [
-    getMockedSupportedAlgorithm({
+    getLegacyMockedSupportedAlgorithm({
         name: 'YOLOX',
         domain: DOMAIN.DETECTION,
         modelSize: 200,
         modelTemplateId: 'detection_yolo',
         gigaflops: 1.3,
-        summary: 'YOLO architecture for detection',
+        description: 'YOLO architecture for detection',
         isDefaultAlgorithm: true,
         lifecycleStage: LifecycleStage.OBSOLETE,
     }),
-    getMockedSupportedAlgorithm({
+    getLegacyMockedSupportedAlgorithm({
         name: 'SSD',
         domain: DOMAIN.DETECTION,
         modelSize: 100,
         modelTemplateId: 'detection_ssd',
         gigaflops: 5.4,
-        summary: 'SSD architecture for detection',
+        description: 'SSD architecture for detection',
         isDefaultAlgorithm: false,
     }),
-    getMockedSupportedAlgorithm({
+    getLegacyMockedSupportedAlgorithm({
         name: 'ATTS',
         domain: DOMAIN.DETECTION,
         modelSize: 150,
         modelTemplateId: 'detection_atts',
         gigaflops: 3,
-        summary: 'ATTS architecture for detection',
+        description: 'ATTS architecture for detection',
         isDefaultAlgorithm: false,
         lifecycleStage: LifecycleStage.DEPRECATED,
     }),
@@ -95,7 +95,7 @@ describe('useOpenNotificationToast', () => {
     const supportedAlgorithmsService = createInMemorySupportedAlgorithmsService();
     const modelsService = createInMemoryModelsService();
     projectService.getProject = jest.fn(async () => mockedSingleTaskProject);
-    supportedAlgorithmsService.getProjectSupportedAlgorithms = jest.fn(
+    supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms = jest.fn(
         async () => mockedSupportedAlgorithmsForDetection
     );
     const wrapper = ({ children }: { children: ReactNode }) => {

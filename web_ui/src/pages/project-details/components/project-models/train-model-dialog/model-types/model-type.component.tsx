@@ -53,7 +53,7 @@ export const ModelType: FC<ModelTypeProps> = ({
     renderTag,
     name,
 }) => {
-    const { modelTemplateId, lifecycleStage, summary } = algorithm;
+    const { modelTemplateId, lifecycleStage, description } = algorithm;
     const isSelected = selectedModelTemplateId === modelTemplateId;
 
     const shouldShowActiveTag = modelTemplateId === activeModelTemplateId;
@@ -98,7 +98,7 @@ export const ModelType: FC<ModelTypeProps> = ({
                         <InfoTooltip
                             id={`${name.toLocaleLowerCase()}-summary-id`}
                             tooltipText={
-                                <ModelArchitectureTooltipText description={summary} isDeprecated={isDeprecated} />
+                                <ModelArchitectureTooltipText description={description} isDeprecated={isDeprecated} />
                             }
                             iconColor={isSelected ? 'var(--energy-blue)' : undefined}
                             className={classes.infoTooltip}
