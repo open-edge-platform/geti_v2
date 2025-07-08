@@ -6,6 +6,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     "app": "weight-uploader"
+  annotations:
+    "helm.sh/hook": "post-install"
 spec:
   backoffLimit: 10
   template:

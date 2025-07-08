@@ -71,7 +71,7 @@ def backup_secrets(location: str) -> None:
             if secret_data:
                 secret_file_path = os.path.join(location, f"{secret}.json")
                 with open(secret_file_path, "w", encoding="utf-8") as secret_file:
-                    secret_file.write(secret_data)
+                    secret_file.write(str(secret_data))
                 logger.info(f"Secret '{secret}' backed up successfully.")
             else:
                 logger.warning(f"Secret '{secret}' is empty or not found.")
