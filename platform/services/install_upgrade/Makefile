@@ -5,9 +5,6 @@ include ../../../Makefile.shared-python
 
 COMPONENT_NAME = install-upgrade
 
-static-code-analysis:
-	@echo "Not applicable"
-
 build-chart-default:
 	@echo "Not applicable"
 

@@ -7,7 +7,6 @@ metadata:
   labels:
     app: {{ .Chart.Name }}
   annotations:
-    "helm.sh/hook": pre-install
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 3
