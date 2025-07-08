@@ -21,7 +21,7 @@ import { VideoIdentifier } from '../../../../src/core/media/video.interface';
 import { ModelGroupIdentifier, ModelIdentifier } from '../../../../src/core/models/models.interface';
 import { OrganizationIdentifier } from '../../../../src/core/organizations/organizations.interface';
 import { GetOrganizationsQueryOptions } from '../../../../src/core/organizations/services/organizations-service.interface';
-import { DOMAIN, ProjectIdentifier } from '../../../../src/core/projects/core.interface';
+import { ProjectIdentifier } from '../../../../src/core/projects/core.interface';
 import { DatasetIdentifier } from '../../../../src/core/projects/dataset.interface';
 import { ProjectsQueryOptions } from '../../../../src/core/projects/services/project-service.interface';
 import { Task } from '../../../../src/core/projects/task.interface';
