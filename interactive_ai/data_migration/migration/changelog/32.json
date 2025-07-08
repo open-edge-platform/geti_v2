@@ -1,0 +1,4 @@
+{
+  "script": "drop_code_deployment_collection.py",
+  "metadata": "drop_code_deployment_collection.json"
+}
