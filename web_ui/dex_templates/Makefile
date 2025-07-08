@@ -12,4 +12,5 @@ lint-chart:
 publish-chart:
 	@echo "Publishing chart for component: ${COMPONENT_NAME} NOT IMPLEMENTED"
 
-#dummy
+static-code-analysis:
+	@echo "Not applicable"
