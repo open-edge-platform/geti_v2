@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 from bson import ObjectId
 
-from mapper import AutoTrainActivationToMongo
+from repos.mappers.auto_train_activation_mapper import AutoTrainActivationToMongo
 
 from iai_core.repos.mappers import DatetimeToMongo
 

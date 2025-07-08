@@ -8,9 +8,7 @@ import { InfiniteData } from '@tanstack/react-query';
 import { useGetScheduledJobs } from '../../../../core/jobs/hooks/use-jobs.hook';
 import { JobsResponse } from '../../../../core/jobs/services/jobs-service.interface';
 import { ProjectIdentifier } from '../../../../core/projects/core.interface';
-import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { UserGlobalSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
-import { getSettingsOfType } from '../../../../core/user-settings/utils';
 import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { useNotification } from '../../../../notification/notification.component';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
@@ -54,16 +52,11 @@ export const AutoTrainingStartedNotification = ({ settings }: AutoTrainingStarte
     const { project, projectIdentifier } = useProject();
     const isAutoTrainingOn = useIsAutoTrainingOn({ project, projectIdentifier });
 
-    const fuxSettingsAndNotificationsConfig = getSettingsOfType(settings.config, {
-        ...FUX_SETTINGS_KEYS,
-        ...FUX_NOTIFICATION_KEYS,
-        ...FUX_SETTINGS_KEYS,
-    });
-    const firstAutoTrainingJobId = fuxSettingsAndNotificationsConfig.firstAutoTrainingJobId.value;
+    const firstAutoTrainingJobId = settings.config.firstAutoTrainingJobId.value;
     const queryEnabled =
         isAutoTrainingOn &&
-        !fuxSettingsAndNotificationsConfig.neverAutotrained.value &&
-        !fuxSettingsAndNotificationsConfig.annotatorAutoTrainingStarted.isEnabled;
+        !settings.config.neverAutotrained.value &&
+        !settings.config.annotatorAutoTrainingStarted.isEnabled;
 
     useAutoTrainingStartedNotificationJobs({
         enabled: queryEnabled,

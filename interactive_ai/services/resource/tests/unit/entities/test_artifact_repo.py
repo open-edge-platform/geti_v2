@@ -8,13 +8,13 @@ import pytest
 from _pytest.fixtures import FixtureRequest
 from minio import Minio, S3Error
 
-from repos.mlflow_binary_repo import MLFlowBinaryRepo
+from repos.artifact_repo import ArtifactRepo
 
 from geti_types import ProjectIdentifier
 from iai_core.adapters.binary_interpreters import RAWBinaryInterpreter
 
 
-class TestMLFlowBinaryRepo:
+class TestArtifactRepo:
     @staticmethod
     def __set_env_variables(request: FixtureRequest):
         """
@@ -42,12 +42,12 @@ class TestMLFlowBinaryRepo:
         request.addfinalizer(lambda: remove_env_variable("FEATURE_FLAG_OBJECT_STORAGE_OP"))
         request.addfinalizer(lambda: remove_env_variable("BUCKET_NAME_MLFLOWEXPERIMENTS"))
 
-    def test_mlflow_binary_repo_delete_all(self, request, fxt_project) -> None:
+    def test_otx_binary_repo_delete_all(self, request, fxt_project) -> None:
         """
-        Tests delete_all_under_project_dir method in the MLFlowBinaryRepo
+        Tests delete_all_under_project_dir method in the ArtifactRepo
         """
         self.__set_env_variables(request)
-        mlflow_binary_repo = MLFlowBinaryRepo(
+        otx_binary_repo = ArtifactRepo(
             identifier=ProjectIdentifier(
                 workspace_id=fxt_project.workspace_id,
                 project_id=fxt_project.id_,
@@ -55,7 +55,7 @@ class TestMLFlowBinaryRepo:
         )
 
         with patch.object(Minio, "remove_objects", return_value=[]) as mock_delete:
-            mlflow_binary_repo.delete_all_under_project_dir()
+            otx_binary_repo.delete_all_under_project_dir()
 
         mock_delete.assert_called_once()
 
@@ -64,7 +64,7 @@ class TestMLFlowBinaryRepo:
             patch.object(Minio, "get_object", side_effect=side_effect) as mock_get,
             pytest.raises(FileNotFoundError),
         ):
-            _ = mlflow_binary_repo.get_by_filename(
+            _ = otx_binary_repo.get_by_filename(
                 filename="test_filename",
                 binary_interpreter=RAWBinaryInterpreter(),
             )

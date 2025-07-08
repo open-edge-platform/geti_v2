@@ -19,7 +19,7 @@ from iai_core.services import ModelService
 from iai_core.utils.time_utils import now
 
 from jobs_common.tasks.utils.secrets import JobMetadata
-from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
+from jobs_common_extras.experiments.adapters.ml_artifacts import MLArtifactsAdapter
 
 
 @dataclass_json
@@ -67,7 +67,7 @@ class TrainOutputModels:
     @unified_tracing
     def _reload_from_bucket(self) -> None:
         project_identifier = self.base.get_project().identifier
-        adapter = GetiOTXInterfaceAdapter(
+        adapter = MLArtifactsAdapter(
             project_identifier=project_identifier,
             job_metadata=JobMetadata.from_env_vars(),
         )

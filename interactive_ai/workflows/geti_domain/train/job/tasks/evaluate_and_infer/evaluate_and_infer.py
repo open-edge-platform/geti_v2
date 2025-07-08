@@ -237,7 +237,7 @@ def evaluate_and_infer(
     should_activate_model: bool,
     infer_on_pipeline: bool,
     from_scratch: bool,
-    keep_mlflow_artifacts: bool = False,
+    retain_training_artifacts: bool = False,
 ) -> None:
     """
     Evaluate a trained model & perform inference
@@ -249,14 +249,14 @@ def evaluate_and_infer(
     :param should_activate_model: Whether to activate model after training
     :param infer_on_pipeline: Whether to infer on pipeline
     :param from_scratch: Whether training was from scratch
-    :param keep_mlflow_artifacts: If true, do not remove the artifacts in mlflow bucket even if training succeeds.
+    :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
     :return ModelsIds: trained models IDs
     """
     finalize_train(
         train_data=train_data.train_data,
         train_output_model_ids=train_data.train_output_model_ids,
-        keep_mlflow_artifacts=keep_mlflow_artifacts,
+        retain_training_artifacts=retain_training_artifacts,
     )
 
     # Model has been trained

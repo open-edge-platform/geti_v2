@@ -128,3 +128,26 @@ export const loadSource = async (source: string, cacheKey = 'general'): Promise<
 
     return cache.match(source);
 };
+
+export const getPointsFromMat = (mat: OpenCVTypes.Mat, offset = { x: 0, y: 0 }): Point[] => {
+    const points: Point[] = [];
+
+    for (let row = 0; row < mat.rows; row++) {
+        points.push({
+            x: Math.round(mat.intAt(row, 0) + offset.x),
+            y: Math.round(mat.intAt(row, 1) + offset.y),
+        });
+    }
+    return points;
+};
+
+export const getMatFromPoints = (CV: OpenCVTypes.cv, points: Point[], offset = { x: 0, y: 0 }): OpenCVTypes.Mat => {
+    const pointsMat = new CV.Mat(points.length, 1, CV.CV_32SC2);
+
+    points.forEach(({ x, y }, idx) => {
+        pointsMat.intPtr(idx, 0)[0] = x + offset.x;
+        pointsMat.intPtr(idx, 0)[1] = y + offset.y;
+    });
+
+    return pointsMat;
+};

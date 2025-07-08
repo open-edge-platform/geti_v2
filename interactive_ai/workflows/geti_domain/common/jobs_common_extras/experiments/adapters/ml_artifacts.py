@@ -1,7 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-"""This module defines a command to prepare MLFlow Experiment directory in the S3 bucket."""
+"""This module defines a command to prepare the directory in the S3 bucket."""
 
 import json
 import logging
@@ -27,22 +27,20 @@ from iai_core.repos.project_repo import ProjectRepo
 from jobs_common.tasks.utils.progress import report_progress
 from jobs_common.tasks.utils.secrets import JobMetadata
 from jobs_common_extras.evaluation.utils.helpers import is_model_legacy_otx_version
-from jobs_common_extras.mlflow.adapters.definitions import (
+from jobs_common_extras.experiments.adapters.definitions import (
     BASE_FRAMEWORK_KEY,
     CONFIG_JSON_KEY,
     ONNX_KEY,
     OPENVINO_BIN_KEY,
     OPENVINO_XML_KEY,
     ClsSubTaskType,
-    MLFlowLifecycleStage,
-    MLFlowRunStatus,
 )
-from jobs_common_extras.mlflow.repos.binary_repo import MLFlowExperimentBinaryRepo
+from jobs_common_extras.experiments.repos.binary_repo import ExperimentsBinaryRepo
 
 logger = logging.getLogger(__name__)
 
 
-__all__ = ["GetiOTXInterfaceAdapter", "MLFlowLifecycleStage", "MLFlowRunStatus"]
+__all__ = ["MLArtifactsAdapter"]
 
 UNAVAILABLE_PERFORMANCE_WARNING = (
     "Performance metrics are not available for the trained model due to an internal error; please contact support."
@@ -55,7 +53,7 @@ def _check_bytes_type(data: bytes | np.ndarray) -> bytes:
     return data
 
 
-class GetiOTXInterfaceAdapter:
+class MLArtifactsAdapter:
     def __init__(
         self,
         project_identifier: ProjectIdentifier,
@@ -63,7 +61,7 @@ class GetiOTXInterfaceAdapter:
     ):
         super().__init__()
         self.project_repo = ProjectRepo()
-        self.binary_repo = MLFlowExperimentBinaryRepo(project_identifier)
+        self.binary_repo = ExperimentsBinaryRepo(project_identifier)
         self.project_identifier = project_identifier
         self.job_metadata = job_metadata
 
@@ -112,7 +110,7 @@ class GetiOTXInterfaceAdapter:
     def push_metadata(self) -> None:
         """Push empty metadata files to the root directory.
 
-        It will create the following metadata files: metadata.json, project.json, run_info.json.
+        It will create the following metadata files: metadata.json, project.json.
         """
 
         with TemporaryDirectory() as root:
@@ -124,9 +122,6 @@ class GetiOTXInterfaceAdapter:
 
             with open(os.path.join(prefix, "project.json"), "w") as fp:
                 json.dump(obj=self._create_project_json(), fp=fp)
-
-            with open(os.path.join(prefix, "run_info.json"), "w") as fp:
-                json.dump(obj=self._create_run_info_json(), fp=fp)
 
             prefix_live_metrics = os.path.join(prefix, "live_metrics")
             os.makedirs(prefix_live_metrics)
@@ -326,7 +321,7 @@ class GetiOTXInterfaceAdapter:
                 model.model_status = ModelStatus.SUCCESS
         except Exception:
             logger.exception(
-                f"Failed to pull the trained weights binary for model with ID '{model.id_}' from the MLFlow experiment"
+                f"Failed to pull the trained weights binary for model with ID '{model.id_}' from the bucket"
             )
             model.model_status = ModelStatus.FAILED
             raise  # TODO handle
@@ -436,7 +431,7 @@ class GetiOTXInterfaceAdapter:
 
     @unified_tracing
     def pull_metrics(self) -> Performance | None:
-        """Pull training performance metrics from the MLFlow output artifacts.
+        """Pull training performance metrics from the live metrics.
 
         :return: Performance object, or None if it cannot be loaded.
         """
@@ -511,17 +506,6 @@ class GetiOTXInterfaceAdapter:
             "creation_date": project.creation_date.isoformat(),
             "workspace_id": project.workspace_id,
             "organization_id": self.binary_repo.organization_id,
-        }
-
-    def _create_run_info_json(self) -> dict[str, str | None]:
-        return {
-            "run_uuid": str(self.job_metadata.id),
-            "job_name": self.job_metadata.name,
-            "author": str(self.job_metadata.author),
-            "status": MLFlowRunStatus.SCHEDULED,
-            "start_time": self.job_metadata.start_time.isoformat(),
-            "end_time": None,
-            "lifecycle_stage": MLFlowLifecycleStage.ACTIVE,
         }
 
     def _create_progress_json(self) -> dict[str, str | float]:

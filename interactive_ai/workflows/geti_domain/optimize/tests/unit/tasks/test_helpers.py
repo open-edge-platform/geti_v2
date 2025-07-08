@@ -27,7 +27,7 @@ class TestOptimizeHelpers:
     @patch("job.tasks.helpers.lock_project")
     @patch("job.tasks.helpers.publish_metadata_update")
     @patch("job.tasks.helpers.OptimizationTrainerContext")
-    @patch("job.tasks.helpers.GetiOTXInterfaceAdapter")
+    @patch("job.tasks.helpers.MLArtifactsAdapter")
     def test_prepare_optimize(
         self,
         mock_geti_otx_interface_adapter,
@@ -67,17 +67,17 @@ class TestOptimizeHelpers:
         mock_adapter.push_input_configuration.assert_called_once()
         mock_adapter.push_input_model.assert_called_once()
 
-    @pytest.mark.parametrize("keep_mlflow_artifacts", [True, False])
-    @patch("job.tasks.helpers.GetiOTXInterfaceAdapter")
+    @pytest.mark.parametrize("retain_training_artifacts", [True, False])
+    @patch("job.tasks.helpers.MLArtifactsAdapter")
     @patch("job.tasks.helpers.ModelRepo")
     def test_finalize_optimize(
         self,
         mock_model_repo,
         mock_geti_otx_interface_adapter,
         fxt_optimization_trainer_ctx,
-        keep_mlflow_artifacts,
+        retain_training_artifacts,
     ):
-        finalize_optimize(trainer_ctx=fxt_optimization_trainer_ctx, keep_mlflow_artifacts=keep_mlflow_artifacts)
+        finalize_optimize(trainer_ctx=fxt_optimization_trainer_ctx, retain_training_artifacts=retain_training_artifacts)
 
         mock_adapter = mock_geti_otx_interface_adapter.return_value
 
@@ -85,7 +85,7 @@ class TestOptimizeHelpers:
             fxt_optimization_trainer_ctx.model_to_optimize
         )
         mock_model_repo().save.assert_called_once_with(fxt_optimization_trainer_ctx.model_to_optimize)
-        if keep_mlflow_artifacts:
+        if retain_training_artifacts:
             mock_adapter.clean.assert_not_called()
         else:
             mock_adapter.clean.assert_called_once()

@@ -72,9 +72,6 @@ export enum GENERAL_SETTINGS_KEYS {
     UPGRADE_BANNER = 'upgradeBanner',
 }
 
-export type TutorialKeys = TUTORIAL_CARD_KEYS | FUX_NOTIFICATION_KEYS | FUX_SETTINGS_KEYS;
-export type SettingsKeys = FEATURES_KEYS | TutorialKeys;
-
 export interface SettingsFeature {
     title: string;
     isEnabled: boolean;

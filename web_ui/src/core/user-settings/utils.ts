@@ -213,16 +213,6 @@ export const initialFuxSettingsConfig: FuxSettingsConfig = {
     },
 };
 
-export const initialConfig = {
-    ...initialAnnotatorConfig,
-    ...initialTutorialConfig,
-    ...initialFuxNotificationsConfig,
-    ...initialFuxSettingsConfig,
-    ...initialCanvasConfig,
-    ...initialGlobalModalsConfig,
-    ...initialGeneralSettingsConfig,
-};
-
 export const INITIAL_PROJECT_SETTINGS = {
     ...initialAnnotatorConfig,
     ...initialCanvasConfig,
@@ -236,20 +226,7 @@ export const INITIAL_GLOBAL_SETTINGS = {
     ...initialFuxSettingsConfig,
 } satisfies UserGlobalSettings;
 
-export const getSettingsOfType = (
-    settings: UserGlobalSettings | UserProjectSettings,
-    enumType:
-        | typeof TUTORIAL_CARD_KEYS
-        | typeof FEATURES_KEYS
-        | typeof CANVAS_ADJUSTMENTS_KEYS
-        | typeof FUX_NOTIFICATION_KEYS
-        | typeof FUX_SETTINGS_KEYS
-        | typeof GLOBAL_MODALS_KEYS
-        | typeof GENERAL_SETTINGS_KEYS
-) => {
-    return Object.fromEntries(
-        Object.entries(settings).filter(([key]) => {
-            return Object.values(enumType).includes(key);
-        })
-    );
+export const initialConfig = {
+    ...INITIAL_GLOBAL_SETTINGS,
+    ...INITIAL_PROJECT_SETTINGS,
 };

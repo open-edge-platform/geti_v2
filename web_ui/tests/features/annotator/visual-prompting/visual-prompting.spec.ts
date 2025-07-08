@@ -28,8 +28,6 @@ const expectToSeeAnnotations = async (page: Page, amount: number) => {
 };
 
 test.describe('Visual prompting', () => {
-    test.use({ featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE: true } });
-
     test.beforeEach(async ({ page, registerApiResponse }) => {
         registerStoreSettings(registerApiResponse, disabledFUXSettings);
         registerProjectResponses(registerApiResponse);

@@ -5,7 +5,14 @@ import { PointerEvent, SVGProps } from 'react';
 
 import Clipper from '@doodle3d/clipper-js';
 import type ClipperShape from '@doodle3d/clipper-js';
-import { Shape as SmartToolsShape } from '@geti/smart-tools/src/shared/interfaces';
+import {
+    Shape as SmartToolsShape,
+    ShapeType as SmartToolsShapeType,
+    Circle as ToolCircle,
+    Polygon as ToolPolygon,
+    Rect as ToolRect,
+    RotatedRect as ToolRotatedRect,
+} from '@geti/smart-tools/src/shared/interfaces';
 import { defer, isEmpty } from 'lodash-es';
 
 import { Annotation, RegionOfInterest } from '../../../core/annotations/annotation.interface';
@@ -419,7 +426,7 @@ export const SENSITIVITY_SLIDER_TOOLTIP =
     'while lower numbers decrease it. Keep in mind that increased precision requires more computing power and time. ' +
     'Adding high-resolution images may further extend the annotation waiting time significantly.';
 
-export const convertGetiShapeTypeToToolShapeType = (shapeType: ShapeType): SmartToolsShape['shapeType'] => {
+export const convertGetiShapeTypeToToolShapeType = (shapeType: ShapeType): SmartToolsShapeType => {
     switch (shapeType) {
         case ShapeType.Rect:
             return 'rect';
@@ -434,7 +441,12 @@ export const convertGetiShapeTypeToToolShapeType = (shapeType: ShapeType): Smart
     }
 };
 
-export const convertToolShapeToGetiShape = (shape: SmartToolsShape): Shape => {
+export function convertToolShapeToGetiShape(shape: ToolPolygon): Polygon;
+export function convertToolShapeToGetiShape(shape: ToolRect): Rect;
+export function convertToolShapeToGetiShape(shape: ToolRotatedRect): RotatedRect;
+export function convertToolShapeToGetiShape(shape: ToolCircle): Circle;
+export function convertToolShapeToGetiShape(shape: SmartToolsShape): Shape;
+export function convertToolShapeToGetiShape(shape: SmartToolsShape): Shape {
     switch (shape.shapeType) {
         case 'polygon':
             return { shapeType: ShapeType.Polygon, points: shape.points };
@@ -465,9 +477,14 @@ export const convertToolShapeToGetiShape = (shape: SmartToolsShape): Shape => {
         default:
             throw new Error('Unknown shape type');
     }
-};
+}
 
-export const convertGetiShapeToToolShape = (shape: Shape): SmartToolsShape => {
+export function convertGetiShapeToToolShape(shape: Polygon): ToolPolygon;
+export function convertGetiShapeToToolShape(shape: Rect): ToolRect;
+export function convertGetiShapeToToolShape(shape: RotatedRect): ToolRotatedRect;
+export function convertGetiShapeToToolShape(shape: Circle): ToolCircle;
+export function convertGetiShapeToToolShape(shape: Shape): SmartToolsShape;
+export function convertGetiShapeToToolShape(shape: Shape): SmartToolsShape {
     switch (shape.shapeType) {
         case ShapeType.Rect:
             return {
@@ -501,4 +518,4 @@ export const convertGetiShapeToToolShape = (shape: Shape): SmartToolsShape => {
         default:
             throw new Error('Unknown shape type');
     }
-};
+}

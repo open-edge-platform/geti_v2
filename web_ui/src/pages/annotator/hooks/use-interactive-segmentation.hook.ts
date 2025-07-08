@@ -34,7 +34,7 @@ export const useInteractiveSegmentation = ({
 
     const { worker } = useLoadAIWebworker(AlgorithmType.RITM);
 
-    const wsInstance = useRef<RITMMethods | null>(null);
+    const ritmInstance = useRef<RITMMethods | null>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const cancelRequested = useRef<boolean>(false);
@@ -46,9 +46,9 @@ export const useInteractiveSegmentation = ({
     useEffect(() => {
         const loadWorker = async () => {
             if (worker) {
-                wsInstance.current = await new worker.RITM();
+                ritmInstance.current = await new worker.RITM();
 
-                await wsInstance.current?.load();
+                await ritmInstance.current?.load();
 
                 setIsLoading(false);
             }
@@ -59,8 +59,8 @@ export const useInteractiveSegmentation = ({
         }
 
         return () => {
-            if (wsInstance && wsInstance.current) {
-                wsInstance.current.cleanMemory();
+            if (ritmInstance && ritmInstance.current) {
+                ritmInstance.current.cleanMemory();
             }
         };
     }, [worker]);
@@ -71,14 +71,14 @@ export const useInteractiveSegmentation = ({
 
     const mutation = useMutation({
         mutationFn: ({ area, givenPoints, outputShape }: RITMData) => {
-            if (!wsInstance.current) {
+            if (!ritmInstance.current) {
                 throw 'Interactive segmentation not ready yet';
             }
 
             cancelRequested.current = false;
             setIsDrawing(true);
 
-            return wsInstance.current.execute(area, givenPoints, convertGetiShapeTypeToToolShapeType(outputShape));
+            return ritmInstance.current.execute(area, givenPoints, convertGetiShapeTypeToToolShapeType(outputShape));
         },
 
         onError: showNotificationError,
@@ -96,23 +96,23 @@ export const useInteractiveSegmentation = ({
     });
 
     const cleanMask = () => {
-        wsInstance?.current?.resetPointMask();
+        ritmInstance?.current?.resetPointMask();
     };
 
     const reset = () => {
         setIsDrawing(false);
-        wsInstance?.current?.reset();
+        ritmInstance?.current?.reset();
     };
 
     const loadImage = (imageData: ImageData) => {
-        if (!wsInstance.current) {
+        if (!ritmInstance.current) {
             console.warn('loading image before RITM is loaded...');
 
             return;
         }
 
         reset();
-        wsInstance.current.loadImage(imageData);
+        ritmInstance.current.loadImage(imageData);
     };
 
     return {

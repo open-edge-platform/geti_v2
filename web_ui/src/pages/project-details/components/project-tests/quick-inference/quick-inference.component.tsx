@@ -10,7 +10,6 @@ import { NoTrainedModels } from '../../../../../assets/images';
 import { useModels } from '../../../../../core/models/hooks/use-models.hook';
 import { TUTORIAL_CARD_KEYS } from '../../../../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../../../../core/user-settings/hooks/use-global-settings.hook';
-import { getSettingsOfType } from '../../../../../core/user-settings/utils';
 import { ANIMATION_PARAMETERS } from '../../../../../shared/animation-parameters/animation-parameters';
 import { EmptyData } from '../../../../../shared/components/empty-data/empty-data.component';
 import { useTaskLabels } from '../../../../annotator/annotation/annotation-filter/use-task-labels.hook';
@@ -78,9 +77,8 @@ const LiveFileInference = ({ imageWasUploaded }: { imageWasUploaded: boolean }) 
 const QuickInferencePage = (): JSX.Element => {
     const { image, annotations, imageWasUploaded, isDisabled, onResetImage } = useQuickInference();
     const settings = useUserGlobalSettings();
-    const isLivePredictionNotificationVisible = getSettingsOfType(settings.config, TUTORIAL_CARD_KEYS)[
-        TUTORIAL_CARD_KEYS.LIVE_PREDICTION_NOTIFICATION
-    ].isEnabled;
+    const isLivePredictionNotificationVisible =
+        settings.config[TUTORIAL_CARD_KEYS.LIVE_PREDICTION_NOTIFICATION].isEnabled;
     const [liveInferenceMode, setLiveInferenceMode] = useState<LiveInferenceMode>('Use file');
 
     const handleInferenceModeChange = (option: LiveInferenceMode) => {

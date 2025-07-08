@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 
 import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
-import { getSettingsOfType } from '../../core/user-settings/utils';
 import { getFuxSetting } from '../../shared/components/tutorials/utils';
 
 export const useFuxNotifications = () => {
@@ -47,8 +46,7 @@ export const useFuxNotifications = () => {
             settings.config
         );
 
-        const settingsConfig = getSettingsOfType(settings.config, FUX_NOTIFICATION_KEYS);
-        const settingToDisable = settingsConfig[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL].isEnabled
+        const settingToDisable = settings.config[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL].isEnabled
             ? FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL
             : FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION;
 

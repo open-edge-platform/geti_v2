@@ -40,7 +40,7 @@ class TestOptimize:
                 trainer_ctx=fxt_optimization_trainer_ctx,
                 model_id="model_id",
                 dataset_storage_id="dataset_storage_id",
-                keep_mlflow_artifacts=False,
+                retain_training_artifacts=False,
                 min_annotation_size=None,
                 max_number_of_annotations=None,
             )

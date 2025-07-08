@@ -12,7 +12,7 @@ from iai_core.repos.storage.storage_client import BinaryObjectType
 logger = logging.getLogger(__name__)
 
 
-class MLFlowBinaryRepo(BinaryRepo):
+class ArtifactRepo(BinaryRepo):
     object_type = BinaryObjectType.MLFLOW_EXPERIMENTS
 
     # TODO CVS-133311 apply retry on rate limit after refactoring

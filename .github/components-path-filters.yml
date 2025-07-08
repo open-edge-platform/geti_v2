@@ -272,7 +272,7 @@ interactive_ai/workflows/geti_domain/train:
   - interactive_ai/workflows/geti_domain/train/**
   - interactive_ai/workflows/geti_domain/common/jobs_common
   - interactive_ai/workflows/geti_domain/common/jobs_common_extras/evaluation
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/mlflow
+  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/experiments
   - interactive_ai/workflows/geti_domain/common/jobs_common_extras/shard_dataset
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**

@@ -8,7 +8,7 @@ import pytest
 from geti_types import ID
 from iai_core.entities.model import ModelPrecision, ModelStatus
 from jobs_common.features.feature_flag_provider import FeatureFlag
-from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
+from jobs_common_extras.experiments.adapters.ml_artifacts import MLArtifactsAdapter
 
 from job.tasks.prepare_and_train.train_helpers import finalize_train, prepare_train
 
@@ -17,12 +17,12 @@ class TestTrainHelpers:
     @pytest.mark.parametrize(
         "feature_flag_setting", [pytest.param(True, id="fp16-enabled"), pytest.param(False, id="fp16-disabled")]
     )
-    @patch("job.tasks.prepare_and_train.train_helpers.GetiOTXInterfaceAdapter")
+    @patch("job.tasks.prepare_and_train.train_helpers.MLArtifactsAdapter")
     @patch("job.tasks.prepare_and_train.train_helpers.ModelRepo")
     def test_prepare_train(
         self,
         mock_model_repo,
-        mock_geti_otx_interface_adapter,
+        mock_ml_artifacts_adapter,
         feature_flag_setting,
         mock_train_data,
         fxt_dataset_with_images,
@@ -49,14 +49,14 @@ class TestTrainHelpers:
         assert output_model_ids.mo_fp16_without_xai == "3"
         assert output_model_ids.onnx == "4"
 
-        mock_geti_otx_interface_adapter.return_value.push_placeholders.assert_called_once()
-        mock_geti_otx_interface_adapter.return_value.push_metadata.assert_called_once()
-        mock_geti_otx_interface_adapter.return_value.push_input_configuration.assert_called_once()
-        mock_geti_otx_interface_adapter.return_value.push_input_model.assert_called_once()
+        mock_ml_artifacts_adapter.return_value.push_placeholders.assert_called_once()
+        mock_ml_artifacts_adapter.return_value.push_metadata.assert_called_once()
+        mock_ml_artifacts_adapter.return_value.push_input_configuration.assert_called_once()
+        mock_ml_artifacts_adapter.return_value.push_input_model.assert_called_once()
 
     @patch("job.tasks.prepare_and_train.train_helpers.TrainOutputModels.from_train_output_model_ids")
-    @patch("jobs_common_extras.mlflow.utils.train_output_models.ModelRepo")
-    @patch("jobs_common_extras.mlflow.utils.train_output_models.ModelService")
+    @patch("jobs_common_extras.experiments.utils.train_output_models.ModelRepo")
+    @patch("jobs_common_extras.experiments.utils.train_output_models.ModelService")
     def test_finalize_train(
         self,
         mock_model_service,
@@ -69,14 +69,14 @@ class TestTrainHelpers:
     ) -> None:
         # Arrange
         mock_from_train_output_model_ids.return_value = fxt_train_output_models
-        mock_geti_otx_interface_adapter = MagicMock(spec=GetiOTXInterfaceAdapter)
-        mock_geti_otx_interface_adapter.pull_output_configuration.return_value = fxt_configurable_parameters_1
+        mock_ml_artifacts_adapter = MagicMock(spec=MLArtifactsAdapter)
+        mock_ml_artifacts_adapter.pull_output_configuration.return_value = fxt_configurable_parameters_1
 
         # Act
         with patch.object(
-            GetiOTXInterfaceAdapter,
+            MLArtifactsAdapter,
             "__new__",
-            return_value=mock_geti_otx_interface_adapter,
+            return_value=mock_ml_artifacts_adapter,
         ):
             finalize_train(
                 train_data=mock_train_data,
@@ -84,9 +84,9 @@ class TestTrainHelpers:
             )
 
         # Assert
-        mock_geti_otx_interface_adapter.clean.assert_called_once()
-        mock_geti_otx_interface_adapter.update_output_models.assert_called_once()
-        mock_geti_otx_interface_adapter.pull_metrics.assert_called_once()
+        mock_ml_artifacts_adapter.clean.assert_called_once()
+        mock_ml_artifacts_adapter.update_output_models.assert_called_once()
+        mock_ml_artifacts_adapter.pull_metrics.assert_called_once()
 
         for model, call_args in zip(
             fxt_train_output_models.get_all_models(),
@@ -95,4 +95,4 @@ class TestTrainHelpers:
             assert call_args.kwargs["model"] == model
             assert call_args.kwargs["model_status"] == ModelStatus.TRAINED_NO_STATS
 
-        mock_geti_otx_interface_adapter.pull_output_configuration.assert_not_called()
+        mock_ml_artifacts_adapter.pull_output_configuration.assert_not_called()

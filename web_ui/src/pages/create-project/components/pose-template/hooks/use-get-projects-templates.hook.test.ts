@@ -9,6 +9,7 @@ import { getMockedLabel } from '../../../../../test-utils/mocked-items-factory/m
 import { getMockedProject } from '../../../../../test-utils/mocked-items-factory/mocked-project';
 import { getMockedKeypointTask } from '../../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { renderHookWithProviders } from '../../../../../test-utils/render-hook-with-providers';
+import { PROJECT_TEMPLATE_SUFFIX } from '../templates/utils';
 import { useGetProjectsTemplates } from './use-get-projects-templates.hook';
 
 describe('useGetProjectsTemplates', () => {
@@ -65,6 +66,7 @@ describe('useGetProjectsTemplates', () => {
         await waitFor(() => {
             expect(result.current).toEqual([
                 {
+                    id: `${PROJECT_TEMPLATE_SUFFIX}-${projects.at(0)?.id}`,
                     name: projects[0].name,
                     template: {
                         edges: [{ from: point1.label.name, to: point2.label.name }],
@@ -75,6 +77,7 @@ describe('useGetProjectsTemplates', () => {
                     },
                 },
                 {
+                    id: `${PROJECT_TEMPLATE_SUFFIX}-${projects.at(1)?.id}`,
                     name: projects[1].name,
                     template: {
                         edges: [{ from: point2.label.name, to: point1.label.name }],

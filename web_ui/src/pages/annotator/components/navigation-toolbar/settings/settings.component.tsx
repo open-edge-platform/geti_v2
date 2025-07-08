@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import {
     ActionButton,
@@ -24,13 +24,8 @@ import { isEqual, isNil } from 'lodash-es';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { isClassificationDomain } from '../../../../../core/projects/domains';
-import {
-    AnnotatorSettingsConfig,
-    FEATURES_KEYS,
-    SettingsKeys,
-} from '../../../../../core/user-settings/dtos/user-settings.interface';
+import { AnnotatorSettingsConfig, FEATURES_KEYS } from '../../../../../core/user-settings/dtos/user-settings.interface';
 import { UserProjectSettings, UseSettings } from '../../../../../core/user-settings/services/user-settings.interface';
-import { getSettingsOfType } from '../../../../../core/user-settings/utils';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
 import { getPanelSettingsKey } from '../../../../../shared/local-storage-keys';
 import { useTask } from '../../../providers/task-provider/task-provider.component';
@@ -59,23 +54,15 @@ export const Settings = ({ settings, isDarkMode = false }: SettingsProps): JSX.E
     const isSingleClassification =
         tasks.length === 1 && !isNil(selectedTask) && isClassificationDomain(selectedTask.domain);
 
-    const config = useMemo(
-        () =>
-            getSettingsOfType(settings.config, {
-                ...FEATURES_KEYS,
-            }),
-        [settings.config]
-    ) as AnnotatorSettingsConfig;
-
     // Used for temporary state before the user saves the changes
-    const [tempConfig, setTempConfig] = useState<AnnotatorSettingsConfig>(config);
-    const hasUnsavedChanges = !isEqual(tempConfig, config);
+    const [tempConfig, setTempConfig] = useState<AnnotatorSettingsConfig>(settings.config);
+    const hasUnsavedChanges = !isEqual(tempConfig, settings.config);
 
     useEffect(() => {
-        setTempConfig(config);
-    }, [config]);
+        setTempConfig(settings.config);
+    }, [settings.config]);
 
-    const handleToggleFeature = (isEnabled: boolean, feature: SettingsKeys) => {
+    const handleToggleFeature = (isEnabled: boolean, feature: keyof AnnotatorSettingsConfig) => {
         setTempConfig((prevConfig) => {
             if (containsFeatureConfig(prevConfig)) {
                 return {

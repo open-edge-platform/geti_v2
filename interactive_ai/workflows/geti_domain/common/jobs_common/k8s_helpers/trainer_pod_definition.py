@@ -201,10 +201,6 @@ def create_flyte_container_task(  # noqa: PLR0913
                     # Identifier JSON
                     V1EnvVar(name="IDENTIFIER_JSON", value=identifier_json),
                     V1EnvVar(name="SHARD_FILES_DIR", value="/shard_files"),
-                    V1EnvVar(name="MLFLOW_TRACKING_URI", value="http://localhost:5000"),
-                    V1EnvVar(name="MLFLOW_EXPERIMENT_ID", value=project_id),
-                    V1EnvVar(name="MLFLOW_RUN_ID", value=job_id),
-                    V1EnvVar(name="MLFLOW_ENABLE_ASYNC_LOGGING", value="1"),
                     V1EnvVar(name="MODEL_TEMPLATES_DIR", value="/model_templates"),
                     V1EnvVar(name="LOGGING_CONFIG_DIR", value="/mnt/logging_config"),
                     V1EnvVar(name="EXECUTION_ID", value=current_context().execution_id.name),

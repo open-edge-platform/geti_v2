@@ -8,10 +8,11 @@ import pytest
 from grpc import RpcError
 
 from controller import AUTO_TRAIN_AUTHOR, AutoTrainController, last_job_submission_time
-from entities import AutoTrainActivationRequest, NullAutoTrainActivationRequest
+from entities import AutoTrainActivationRequest, FeatureFlag, NullAutoTrainActivationRequest
 from exceptions import InvalidAutoTrainRequestError, JobSubmissionError
 from job_creation_helpers import TRAIN_JOB_PRIORITY, TrainTaskJobData
-from repo import SessionBasedAutoTrainActivationRepo
+from repos.auto_train_activation_repo import SessionBasedAutoTrainActivationRepo
+from repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_types import Session
 from grpc_interfaces.job_submission.client import GRPCJobsClient
@@ -156,6 +157,67 @@ class TestAutoTrainController:
         mock_get_dataset_config.assert_called_once_with(
             data_instance_of=DatasetManagementConfig,
             component=ComponentType.PIPELINE_DATASET_MANAGER,
+        )
+        mock_get_project.assert_called_once_with(fxt_auto_train_activation_request.project_id)
+        mock_get_trainable_task_node.assert_called_once_with(task_id=fxt_auto_train_activation_request.task_node_id)
+        MOCK_JOBS_CLIENT.submit.assert_called_with(
+            priority=TRAIN_JOB_PRIORITY,
+            cost=[SubmitJobRequest.CostRequest(unit="images")],
+            job_name="Training",
+            job_type="train",
+            key=dummy_train_job_key,
+            payload=dummy_train_job_payload,
+            metadata=dummy_train_job_metadata,
+            duplicate_policy="replace",
+            author=AUTO_TRAIN_AUTHOR,
+            project_id=fxt_auto_train_activation_request.project_id,
+            gpu_num_required=1,
+            cancellable=True,
+        )
+
+    def test_submit_train_job_with_new_config_ff(
+        self,
+        fxt_enable_feature_flag_name,
+        fxt_auto_train_controller,
+        fxt_auto_train_activation_request,
+        fxt_empty_project,
+        fxt_model_storage,
+        fxt_task_node,
+    ) -> None:
+        # Arrange
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+        dummy_global_config = MagicMock()
+        dummy_train_job_key = "dummy_job_key"
+        dummy_train_job_payload = "dummy_job_payload"
+        dummy_train_job_metadata = "dummy_job_metadata"
+
+        # Act
+        with (
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_global_parameters",
+                return_value=dummy_global_config,
+            ) as mock_get_dataset_config,
+            patch.object(ProjectRepo, "get_by_id", return_value=fxt_empty_project) as mock_get_project,
+            patch.object(
+                Project, "get_trainable_task_node_by_id", return_value=fxt_task_node
+            ) as mock_get_trainable_task_node,
+            patch.object(ModelStorageRepo, "get_by_id", return_value=fxt_model_storage),
+            patch.object(TrainTaskJobData, "create_key", return_value=dummy_train_job_key),
+            patch.object(TrainTaskJobData, "create_payload", return_value=dummy_train_job_payload),
+            patch.object(
+                TrainTaskJobData,
+                "create_metadata",
+                return_value=dummy_train_job_metadata,
+            ),
+            patch.object(AutoTrainController, "get_num_dataset_items", return_value=0),
+        ):
+            fxt_auto_train_controller.submit_train_job(fxt_auto_train_activation_request)
+
+        # Assert
+        mock_get_dataset_config.assert_called_once_with(
+            task_id=fxt_auto_train_activation_request.task_node_id,
+            model_manifest_id=fxt_model_storage.model_manifest_id,
         )
         mock_get_project.assert_called_once_with(fxt_auto_train_activation_request.project_id)
         mock_get_trainable_task_node.assert_called_once_with(task_id=fxt_auto_train_activation_request.task_node_id)

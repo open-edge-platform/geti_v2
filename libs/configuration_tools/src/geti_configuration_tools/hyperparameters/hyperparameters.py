@@ -1,7 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from geti_configuration_tools.utils import partial_model
 
@@ -65,6 +65,54 @@ class TrainingHyperParameters(BaseModel):
             "only applicable for instance segmentation models"
         ),
     )
+    input_size: str | None = Field(
+        default=None,
+        title="Input size",
+        description=(
+            "Width and height dimensions for model input images in 'WxH' format (e.g., '512x512'). "
+            "Determines the resolution at which images are processed by the model."
+        ),
+        json_schema_extra={},
+    )
+    allowed_values_input_size: list[str] | None = Field(
+        default=None,
+        title="Supported input sizes",
+        description=(
+            "List of supported input sizes for the model in 'WxH' format (e.g., ['512x512', '640x640']). "
+            "Only these dimensions will be accepted."
+        ),
+        json_schema_extra={"validation_only": True},
+    )
+
+    @model_validator(mode="after")
+    def validate_input_size(self) -> "TrainingHyperParameters":
+        # skip validation if not set
+        if self.input_size is None:
+            return self
+
+        # validate format is 'WxH' (e.g. '512x512')
+        try:
+            w, h, *_bin = str(self.input_size).split("x")
+            input_size = f"{int(w)}x{int(h)}"
+        except ValueError:
+            raise ValueError(f"Input size '{self.input_size}' is not in the expected format 'WxH' (e.g. '512x512')")
+
+        # validate against allowed input sizes if available
+        if self.allowed_values_input_size and input_size not in self.allowed_values_input_size:
+            raise ValueError(
+                f"Input size '{input_size}' is not in the list of supported input sizes: "
+                f"{self.allowed_values_input_size}"
+            )
+
+        # Update the model's json_schema to include allowed values for input_size
+        # Note: existing json_schema_extra cannot be overwritten, otherwise it will absent from model_json_schema()
+        self.model_fields["input_size"].json_schema_extra.update(  # type: ignore[union-attr]
+            {
+                "allowed_values": self.allowed_values_input_size,  # type:ignore[dict-item]
+                "default_value": input_size,
+            }
+        )
+        return self
 
 
 class EvaluationParameters(BaseModel):

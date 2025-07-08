@@ -27,8 +27,8 @@ from iai_core.repos import ModelRepo
 from jobs_common.exceptions import CommandInitializationFailedException, TrainingPodFailedException
 from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
 from jobs_common.tasks.utils.secrets import JobMetadata
-from jobs_common_extras.mlflow.adapters.geti_otx_interface import GetiOTXInterfaceAdapter
-from jobs_common_extras.mlflow.utils.train_output_models import TrainOutputModelIds, TrainOutputModels
+from jobs_common_extras.experiments.adapters.ml_artifacts import MLArtifactsAdapter
+from jobs_common_extras.experiments.utils.train_output_models import TrainOutputModelIds, TrainOutputModels
 
 from job.utils.train_workflow_data import TrainWorkflowData
 
@@ -133,7 +133,7 @@ class _ModelBuilder:
 
 
 @unified_tracing
-def _prepare_mlflow_s3_bucket(
+def _prepare_s3_bucket(
     project: Project,
     label_schema: LabelSchema,
     model_template_id: str,
@@ -142,14 +142,14 @@ def _prepare_mlflow_s3_bucket(
     export_parameters: dict[str, str | bool] | list[dict[str, str | bool]],
     optimization_type: ModelOptimizationType = ModelOptimizationType.NONE,
 ) -> None:
-    """Prepare files required for MLFlow based model training, optimize.
+    """Prepare files required for model training, optimize.
 
     It constructs a directory structure to the following S3 path:
     `mlflowexperiments/organizations/<org-id>/workspaces/<ws-id>/projects/<proj-id>/jobs/<job-id>`
 
     This is a list of files which is created by this function:
 
-    - <root>: metadata.json, project.json, run_info.json
+    - <root>: metadata.json, project.json
     - <root>/inputs: .placeholder, config.json, model.pth
     - <root>/live_metrics: .placeholder
     - <root>/outputs/models: .placeholder
@@ -167,7 +167,7 @@ def _prepare_mlflow_s3_bucket(
         used to distinguish classification tasks.
         Otherwise, do not add `ClsSubTaskType` value to the configuration file.
     """
-    adapter = GetiOTXInterfaceAdapter(project_identifier=project.identifier, job_metadata=JobMetadata.from_env_vars())
+    adapter = MLArtifactsAdapter(project_identifier=project.identifier, job_metadata=JobMetadata.from_env_vars())
     adapter.push_placeholders()
     adapter.push_metadata()
     adapter.push_input_configuration(
@@ -206,7 +206,7 @@ def _get_export_parameters(
 def prepare_train(train_data: TrainWorkflowData, dataset: Dataset) -> TrainOutputModels:
     """Function should be called in prior to model training Flyte task.
 
-    It creates iai-core model entities and prepares MLFlow experiment buckets for
+    It creates iai-core model entities and prepares buckets for
     the subsequent model training Flyte task.
 
     :param train_data: Data class defining data used for training and providing helpers to get
@@ -289,7 +289,7 @@ def prepare_train(train_data: TrainWorkflowData, dataset: Dataset) -> TrainOutpu
         id_to_str=True,
     )
 
-    _prepare_mlflow_s3_bucket(
+    _prepare_s3_bucket(
         project=project,
         label_schema=label_schema,
         model_template_id=model_storage.model_template.model_template_id,
@@ -305,18 +305,18 @@ def prepare_train(train_data: TrainWorkflowData, dataset: Dataset) -> TrainOutpu
 def finalize_train(
     train_data: TrainWorkflowData,
     train_output_model_ids: TrainOutputModelIds,
-    keep_mlflow_artifacts: bool = False,
+    retain_training_artifacts: bool = False,
 ) -> None:
     """Function should be called after model training Flyte task.
 
     It decides whether the model training is failed or not. If succeeded, update
-    iai-core model entity status and clean the directory in the MLFLow experiment bucket.
+    iai-core model entity status and clean the directory in the bucket.
 
     :param train_data: Data class defining data used for training and providing helpers to get
         frequently used objects
     :param train_output_model_ids: IDs of output models created from the previous command,
         PrepareFlyteTaskTrainCommand
-    :param keep_mlflow_artifacts: If true, do not remove the artifacts in mlflow bucket even if training succeeds.
+    :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
     """
     try:
@@ -334,15 +334,15 @@ def finalize_train(
         # Mark the model as successfully trained, but not evaluated
         train_output_models.set_models_status(model_status=ModelStatus.TRAINED_NO_STATS)
 
-        adapter = GetiOTXInterfaceAdapter(
+        adapter = MLArtifactsAdapter(
             project_identifier=project.identifier,
             job_metadata=JobMetadata.from_env_vars(),
         )
 
         # If succeeded, clean the directory under the mlflowexperiments bucket
-        if keep_mlflow_artifacts:
+        if retain_training_artifacts:
             logger.warning(
-                "Parameter `keep_mlflow_artifacts` is set to true, so the bucket will not be cleaned up. "
+                "Parameter `retain_training_artifacts` is set to true, so the bucket will not be cleaned up. "
                 "If you see this warning outside of a development environment, please report it as a bug."
             )
         else:

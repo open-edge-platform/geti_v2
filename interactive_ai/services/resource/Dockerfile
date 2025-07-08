@@ -3,7 +3,7 @@ FROM python:3.10-slim-bookworm@sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2
 FROM base AS build
 
 # Install Git and clone the OTX at the specified tag
-ARG OTX_RELEASE_TAG=2.4.2
+ARG OTX_RELEASE_TAG=2.4.5
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

@@ -8,6 +8,7 @@ import functools
 import logging
 from typing import Any, cast
 
+from geti_configuration_tools import ConfigurationOverlayTools
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration
 from geti_feature_tools import FeatureFlagProvider
 
@@ -210,7 +211,7 @@ class ConfigurationManager:
             model_params = PartialTrainingConfiguration.model_validate(
                 {"hyperparameters": config_dict, "task_id": task_id}
             )
-            full_model_config = ConfigurationService.overlay_training_configurations(full_config, model_params)
+            full_model_config = ConfigurationOverlayTools.overlay_training_configurations(full_config, model_params)
             project_configuration = ProjectConfigurationRepo(project_identifier).get_project_configuration()
             _, task_chain_config = ConfigurationsBackwardCompatibility.backward_mapping(
                 project_identifier=project_identifier,
