@@ -128,21 +128,13 @@ class ModelManifest(BaseModel):
     @computed_field # type: ignore[misc]
     @cached_property
     def is_default_model(self) -> bool:
-        """
-        Indicates whether this model is the default for its task type.
-
-        This field is computed based on whether the model is set as the default for its task.
-        """
+        """Returns whether this model is the default one for its task type"""
         return DefaultModels.get_default_model(self.task) == self.id
 
     @computed_field # type: ignore[misc]
     @cached_property
     def model_category(self) -> str | None:
-        """
-        Returns the default category for this model based on its task type.
-
-        This field is computed based on the task type of the model.
-        """
+        """Returns the category for which this model is recommended (accuracy, speed, or balance)"""
         if DefaultModels.get_accuracy_model(self.task) == self.id:
             return DefaultCategory.ACCURACY.name.lower()
         if DefaultModels.get_speed_model(self.task) == self.id:
@@ -184,3 +176,13 @@ class NullModelManifest(ModelManifest):
         )
     )
     capabilities: Capabilities = Field(default=Capabilities(xai=False, tiling=False))
+
+    @computed_field  # type: ignore[misc]
+    @cached_property
+    def is_default_model(self) -> bool:
+        return False
+
+    @computed_field  # type: ignore[misc]
+    @cached_property
+    def model_category(self) -> str | None:
+        return None
