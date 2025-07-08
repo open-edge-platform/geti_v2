@@ -106,17 +106,15 @@ def create_project_from_dataset(
         progress_callback=progress_reporter.report,
     )
     keypoint_structure_positions: list | None = None
-    if (
-        project_type == GetiProjectType.KEYPOINT_DETECTION
-        and ImportUtils.get_exported_project_type(dm_dataset.infos()) != GetiProjectType.KEYPOINT_DETECTION
-    ):
-        raise UnsupportedMappingException(
-            "It is not possible to create a keypoint detection project from a dataset that was not exported from Geti. "
-            "Please first create a keypoint detection project in Geti, then import your dataset into it by mapping the "
-            "labels from the dataset to the keypoint detection project."
-        )
-        # Functionality left in for future use
-        # keypoint_structure_positions = ImportUtils.get_keypoint_structure_positions(dm_dataset=dm_dataset)
+    if project_type == GetiProjectType.KEYPOINT_DETECTION:
+        try:
+            keypoint_structure_positions = ImportUtils.get_keypoint_structure_positions(dm_dataset=dm_dataset)
+        except ValueError:
+            raise UnsupportedMappingException(
+                "It is not possible to create a keypoint detection project from a dataset that was not exported from "
+                "Geti. Please first create a keypoint detection project in Geti, then import your dataset into it by "
+                "mapping the labels from the dataset to the keypoint detection project."
+            )
 
     # Create project
     parser_kwargs = {

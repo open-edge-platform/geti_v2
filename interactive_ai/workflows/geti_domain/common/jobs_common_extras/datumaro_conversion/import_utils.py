@@ -474,6 +474,13 @@ class ImportUtils:
         :param dm_dataset: datumaro dataset
         :return: list of keypoint structure positions
         """
+        # See ITEP-69641 for more details
+        if not dm_dataset.categories().get(dm.AnnotationType.points).items[0].positions:
+            raise ValueError(
+                "The dataset does not contain keypoint structure positions. "
+                "Please export the dataset from Geti to include keypoint structure positions."
+            )
+
         keypoint_structure_positions = []
         labels: PointsCategories = dm_dataset.categories().get(dm.AnnotationType.points).items[0].labels
         for dm_item in dm_dataset:
