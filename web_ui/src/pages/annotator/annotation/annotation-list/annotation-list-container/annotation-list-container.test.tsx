@@ -152,8 +152,8 @@ describe('Annotation list container', () => {
 
         const tasks = [
             getMockedTask({
-                id: 'anomaly-classification',
-                domain: DOMAIN.CLASSIFICATION,
+                id: 'anomaly-segmentation',
+                domain: DOMAIN.ANOMALY_SEGMENTATION,
                 labels: [normalLabel, anomalousLabel],
             }),
         ];

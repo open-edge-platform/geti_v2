@@ -6,6 +6,8 @@ import { expect, Locator } from '@playwright/test';
 import { AnnotationDTO } from '../../../../src/core/annotations/dtos/annotation.interface';
 import { annotatorTest as test } from '../../../fixtures/annotator-test';
 import * as anomalyClassificationMock from './../../../mocks/anomaly/anomaly-classification/mocks';
+import * as anomalyDetectionMock from './../../../mocks/anomaly/anomaly-detection/mocks';
+import * as anomalySegmentationMock from './../../../mocks/anomaly/anomaly-segmentation/mocks';
 import * as classification from './../../../mocks/classification/mocks';
 import * as detectionClassification from './../../../mocks/detection-classification/mocks';
 import * as detectionOrientedMock from './../../../mocks/detection-oriented/mocks';
@@ -177,6 +179,68 @@ test.describe('ActiveTool', () => {
             await expectToolToBeInvisible(objectColoringTool.getTool());
             await expectToolToBeInvisible(quickSelectionTool.getTool());
             await expectToolToBeInvisible(interactiveSegmentationTool.getTool());
+            await expectToolToBeInvisible(rotatedBoundingBoxTool.getTool());
+        });
+
+        test('Anomaly detection', async ({
+            registerApiResponse,
+            page,
+            boundingBoxTool,
+            selectionTool,
+            circleTool,
+            detectionAssistantTool,
+            objectColoringTool,
+            quickSelectionTool,
+            interactiveSegmentationTool,
+            rotatedBoundingBoxTool,
+            polygonTool,
+        }) => {
+            registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(anomalyDetectionMock.project)));
+            registerApiResponse('GetImageDetail', (_, res, ctx) => res(ctx.json(anomalyDetectionMock.media)));
+
+            await page.goto(anomalyDetectionMock.annotatorUrl);
+
+            await expectToolToBeActive(boundingBoxTool.getTool());
+
+            await expectToolToBeVisible(selectionTool.getTool());
+            await expectToolToBeVisible(detectionAssistantTool.getTool());
+
+            await expectToolToBeInvisible(polygonTool.getTool());
+            await expectToolToBeInvisible(rotatedBoundingBoxTool.getTool());
+            await expectToolToBeInvisible(circleTool.getTool());
+            await expectToolToBeInvisible(objectColoringTool.getTool());
+            await expectToolToBeInvisible(quickSelectionTool.getTool());
+            await expectToolToBeInvisible(interactiveSegmentationTool.getTool());
+        });
+
+        test('Anomaly segmentation', async ({
+            registerApiResponse,
+            page,
+            boundingBoxTool,
+            selectionTool,
+            circleTool,
+            detectionAssistantTool,
+            objectColoringTool,
+            quickSelectionTool,
+            interactiveSegmentationTool,
+            polygonTool,
+            rotatedBoundingBoxTool,
+        }) => {
+            registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(anomalySegmentationMock.project)));
+            registerApiResponse('GetImageDetail', (_, res, ctx) => res(ctx.json(anomalySegmentationMock.media)));
+
+            await page.goto(anomalySegmentationMock.annotatorUrl);
+
+            await expectToolToBeActive(polygonTool.getTool());
+
+            await expectToolToBeVisible(selectionTool.getTool());
+            await expectToolToBeVisible(boundingBoxTool.getTool());
+            await expectToolToBeVisible(detectionAssistantTool.getTool());
+            await expectToolToBeVisible(circleTool.getTool());
+            await expectToolToBeVisible(objectColoringTool.getTool());
+            await expectToolToBeVisible(quickSelectionTool.getTool());
+            await expectToolToBeVisible(interactiveSegmentationTool.getTool());
+
             await expectToolToBeInvisible(rotatedBoundingBoxTool.getTool());
         });
 

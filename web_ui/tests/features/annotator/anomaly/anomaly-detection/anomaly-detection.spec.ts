@@ -27,7 +27,7 @@ test.describe('Anomaly detection', () => {
 
         await checkDetectionTools(page);
 
-        await checkCommonElements(page, DOMAIN.ANOMALY_CLASSIFICATION);
+        await checkCommonElements(page, DOMAIN.ANOMALY_DETECTION);
     });
 
     test('It does not allow the user to select the active set', async ({ page }) => {

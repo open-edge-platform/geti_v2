@@ -1489,8 +1489,8 @@ describe('Anomaly localization tasks', () => {
 
     const tasks = [
         getMockedTask({
-            id: 'anomaly-classification',
-            domain: DOMAIN.ANOMALY_CLASSIFICATION,
+            id: 'anomaly-segmentation',
+            domain: DOMAIN.ANOMALY_SEGMENTATION,
             labels: [normalLabel, anomalousLabel],
         }),
     ];

@@ -12,7 +12,11 @@ import { Label, LABEL_BEHAVIOUR } from '../../../../core/labels/label.interface'
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { getLabeledShape } from '../../utils';
 
-export const WATERSHED_SUPPORTED_DOMAINS = [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE, ,];
+export const WATERSHED_SUPPORTED_DOMAINS = [
+    DOMAIN.SEGMENTATION,
+    DOMAIN.SEGMENTATION_INSTANCE,
+    DOMAIN.ANOMALY_SEGMENTATION,
+];
 
 export const BACKGROUND_LABEL_MARKER_ID = 1;
 const BACKGROUND_LABEL_ID = uuidv4();

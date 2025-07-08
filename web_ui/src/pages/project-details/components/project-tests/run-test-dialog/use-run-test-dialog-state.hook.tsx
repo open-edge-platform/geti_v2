@@ -129,7 +129,8 @@ export const useRunTestDialogState = ({ handleClose, preselectedModel, modelsGro
 
     const [selectedMetric, setSelectedMetric] = useState<MetricType | null>(null);
 
-    const shouldShowMetricPicker = project.domains.includes(DOMAIN.ANOMALY_DETECTION) || project.domains.includes();
+    const shouldShowMetricPicker =
+        project.domains.includes(DOMAIN.ANOMALY_DETECTION) || project.domains.includes(DOMAIN.ANOMALY_SEGMENTATION);
 
     const isRunTestDisabled =
         Boolean(errorInTestName) ||

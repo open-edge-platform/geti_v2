@@ -5,6 +5,7 @@ import { paths } from '@geti/core';
 import { expect, Page } from '@playwright/test';
 
 import { DOMAIN } from '../../src/core/projects/core.interface';
+import { clickOutsidePopover } from '../utils/mouse';
 import { test as baseTest } from './base-test';
 import { AnnotationListPage } from './page-objects/annotator/annotation-list-page';
 import { AnnotatorPage } from './page-objects/annotator/annotator-page';
@@ -124,11 +125,19 @@ export const checkCommonElements = async (page: Page, domain: DOMAIN) => {
     await expect(page.getByRole('button', { name: 'Canvas adjustments' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Show dialog with hotkeys' })).toBeVisible();
 
-    if (![DOMAIN.ANOMALY_CLASSIFICATION].includes(domain)) {
+    if (![DOMAIN.ANOMALY_DETECTION, DOMAIN.ANOMALY_CLASSIFICATION, DOMAIN.ANOMALY_SEGMENTATION].includes(domain)) {
         await expect(page.getByTestId('required-annotations-value')).toBeVisible();
     }
 
-    await expect(page.getByLabel('Project score')).toBeVisible();
+    if ([DOMAIN.ANOMALY_DETECTION, DOMAIN.ANOMALY_SEGMENTATION].includes(domain)) {
+        await page.getByRole('button', { name: 'project performance' }).click();
+
+        await expect(page.getByText('Project performance')).toBeVisible();
+
+        await clickOutsidePopover(page);
+    } else {
+        await expect(page.getByLabel('Project score')).toBeVisible();
+    }
 
     await expect(page.getByRole('button', { name: 'Jobs in progress' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Documentation actions' })).toBeVisible();

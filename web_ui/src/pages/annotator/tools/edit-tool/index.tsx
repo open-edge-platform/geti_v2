@@ -22,6 +22,6 @@ export const EditTool: ToolProps = {
         DOMAIN.SEGMENTATION_INSTANCE,
         DOMAIN.ANOMALY_CLASSIFICATION,
         DOMAIN.ANOMALY_DETECTION,
-        ,
+        DOMAIN.ANOMALY_SEGMENTATION,
     ],
 };

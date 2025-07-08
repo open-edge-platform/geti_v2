@@ -23,8 +23,8 @@ export const SSIM_SUPPORTED_DOMAINS = [
     DOMAIN.DETECTION_ROTATED_BOUNDING_BOX,
     DOMAIN.SEGMENTATION,
     DOMAIN.SEGMENTATION_INSTANCE,
-    DOMAIN.ANOMALY_CLASSIFICATION,
-    ,
+    DOMAIN.ANOMALY_DETECTION,
+    DOMAIN.ANOMALY_SEGMENTATION,
 ];
 
 export const guessNumberOfItemsThreshold = (matches: SSIMMatch[], confidenceThreshold = 0.9): number => {

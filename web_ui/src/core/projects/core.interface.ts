@@ -9,6 +9,8 @@ export interface ProjectIdentifier extends WorkspaceIdentifier {
 
 export enum DOMAIN {
     ANOMALY_CLASSIFICATION = 'Anomaly classification',
+    ANOMALY_DETECTION = 'Anomaly detection',
+    ANOMALY_SEGMENTATION = 'Anomaly segmentation',
     CLASSIFICATION = 'Classification',
     CROP = 'Crop',
     DETECTION = 'Detection',

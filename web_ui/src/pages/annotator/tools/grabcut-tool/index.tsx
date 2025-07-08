@@ -17,7 +17,7 @@ export const GrabcutTool: ToolProps = {
     type: ToolType.GrabcutTool,
     label: ToolLabel.GrabcutTool,
     StateProvider: GrabcutStateProvider,
-    supportedDomains: [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE],
+    supportedDomains: [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE, DOMAIN.ANOMALY_SEGMENTATION],
     tooltip: {
         img: QuickSelectionImg,
         url: 'docs/user-guide/geti-fundamentals/annotations/annotation-tools#object-selection-tool',
