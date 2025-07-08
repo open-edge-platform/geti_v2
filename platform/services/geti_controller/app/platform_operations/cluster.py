@@ -98,7 +98,7 @@ def create_cluster_role(name: str) -> V1ClusterRole:
         rules=[
             V1PolicyRule(api_groups=["helm.cattle.io"], resources=["helmcharts"], verbs=["create", "update"]),
             V1PolicyRule(api_groups=["batch"], resources=["jobs"], verbs=["list", "watch"]),
-            V1PolicyRule(api_groups=[""], resources=["configmaps"], verbs=["create"]),
+            V1PolicyRule(api_groups=[""], resources=["secrets"], verbs=["create", "patch", "update"]),
         ],
     )
 

@@ -12,7 +12,7 @@ import jinja2
 import yaml
 from fastapi import APIRouter, FastAPI
 from kubernetes import client, config, watch
-from kubernetes.client import V1ConfigMap, V1ObjectMeta
+from kubernetes.client import V1Secret, V1ObjectMeta
 from kubernetes.client.rest import ApiException
 from oras.client import OrasClient
 
@@ -223,27 +223,70 @@ def parse_timeout(timeout: str) -> int:
     return value
 
 
-def update_dns_config() -> None:
+def deploy_secret() -> None:
     """
     For case when env var was specified during installation of Geti,
     Secrets will be created in the default namespace to override the registry.
     This is required to allow the helm charts to pull images from the specified registry.
     """
-    secret = V1ConfigMap(
-        metadata=V1ObjectMeta(name="coredns-custom"),
-        data={"default.override": f"rewrite name docker.io {IMAGE_REGISTRY}"},
+    secret = V1Secret(
+        metadata=V1ObjectMeta(name="external-registry"),
+        string_data={
+            "overrideRegistry": yaml.dump({
+                "global": {
+                    "debian": {"registry": IMAGE_REGISTRY},
+                    "kubectl": {"registry": IMAGE_REGISTRY},
+                    "hub": f"{IMAGE_REGISTRY}/istio",
+                },
+                "env": {"WASM_INSECURE_REGISTRIES": IMAGE_REGISTRY},
+                "postgresql": {"image": {"registry": IMAGE_REGISTRY}},
+                "modelserver": {"image": {"registry": IMAGE_REGISTRY}},
+                "modelmesh-serving": {
+                    "controller": {"image": {"registry": IMAGE_REGISTRY}},
+                    "modelmesh": {"image": {"registry": IMAGE_REGISTRY}},
+                    "runtimeadapter": {"image": {"registry": IMAGE_REGISTRY}},
+                },
+                "account-service": {
+                    "postgresql": {"image": { "registry": IMAGE_REGISTRY}},
+                },
+                "credit-system": {
+                    "postgresql": {"image": {"registry": IMAGE_REGISTRY},},
+                },
+                "initial-user": {
+                    "postgresql": {"image": {"registry": IMAGE_REGISTRY}},
+                },
+                "etcd": {
+                    "image": {"registry": IMAGE_REGISTRY},
+                    "volumePermissions": {"image": {"registry": IMAGE_REGISTRY}},
+                },
+                "kafka": {
+                    "image": {"registry": IMAGE_REGISTRY},
+                    "volumePermissions": {"image": {"registry": IMAGE_REGISTRY}},
+                },
+                "kafka-provisioning": {"image": {"registry": IMAGE_REGISTRY}},
+                "kafka-proxy": {"kafka_proxy": {"image": {"registry": IMAGE_REGISTRY}}},
+                "mongodb": {"image": {"registry": IMAGE_REGISTRY}},
+                "opa": {"image": {"registry": IMAGE_REGISTRY}},
+                "openldap": {"image": {"registry": IMAGE_REGISTRY}},
+                "opentelemetry-collector": {"image": {"registry": IMAGE_REGISTRY}},
+                "seaweed-fs": {"image": {"registry": IMAGE_REGISTRY}},
+                "spice-db": {"postgresql": {"image": {"registry": IMAGE_REGISTRY}}},
+                "xpu-manager": {"image": {"registry": IMAGE_REGISTRY}},
+            }),
+        },
+        type="Opaque",
     )
 
     v1 = client.CoreV1Api()
     try:
-        v1.create_namespaced_config_map(namespace="kube-system", body=secret)
+        v1.create_namespaced_secret(namespace="default", body=secret)
     except ApiException as e:
         if e.status == 409:
-            logger.warning(f"Configmap already exists: {e.body}")
+            logger.warning(f"Secret already exists: {e.body}")
         else:
             logger.error(f"An error occurred: {e}")
             sys.exit(1)
-    logger.info("DNS config updated successfully. ConfigMap 'coredns-custom' created in 'kube-system' namespace.")
+    logger.info("Configuration for external registry deployed.")
 
 
 async def main(job_manager: JobManager) -> None:
@@ -265,7 +308,7 @@ async def main(job_manager: JobManager) -> None:
         helm_charts = await load_and_split_file(geti_manifest)
         total_charts = len(helm_charts)
         if IMAGE_REGISTRY:
-            update_dns_config()
+            deploy_secret()
         for index, helm in enumerate(helm_charts):
             rendered_helm = await render_jinja_template(helm)
             try:
