@@ -49,7 +49,7 @@ export const useInteractiveSegmentation = ({
             if (worker) {
                 ritmInstance.current = worker;
 
-                await ritmInstance.current!.load();
+                await ritmInstance.current?.load();
 
                 setIsLoading(false);
             }

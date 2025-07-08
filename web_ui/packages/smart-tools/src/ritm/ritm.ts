@@ -11,7 +11,7 @@ import { OpenCVLoader } from '../utils/opencv-loader';
 import { approximateShape, concatFloat32Arrays, isPolygonValid, loadSource, stackPlanes } from '../utils/tool-utils';
 import { sessionParams } from '../utils/wasm-utils';
 import { MainModelResponse, Models, RITMContour, RITMPoint } from './interfaces';
-import { RITMModels } from './models';
+import { RITMModels } from './models/models';
 
 export const RITM_TEMPLATE_SIZE = 384;
 
