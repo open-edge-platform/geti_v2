@@ -6,10 +6,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "account-service.labels" . | nindent 4 }}
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
+  ttlSecondsAfterFinished: 120
   backoffLimit: 3
   template:
     metadata:

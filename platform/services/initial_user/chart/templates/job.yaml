@@ -4,9 +4,8 @@ metadata:
   name: {{ include "initial-user.name" . }}
   namespace: {{ .Release.Namespace }}
   labels: {{- include "initial-user.labels" . | nindent 4 }}
-  annotations:
-    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
+  ttlSecondsAfterFinished: 120
   backoffLimit: 3
   template:
     {{- if not .Values.global.istio_ambient_mesh }}
