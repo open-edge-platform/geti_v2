@@ -3,7 +3,7 @@
 
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
-import { env, InferenceSession, Tensor } from 'onnxruntime-web';
+import * as ort from 'onnxruntime-web';
 import type OpenCVTypes from 'OpenCVTypes';
 
 import { Point, Polygon, RegionOfInterest, Shape, ShapeType } from '../shared/interfaces';
@@ -23,7 +23,7 @@ class RITM {
     constructor(private CV: OpenCVTypes.cv) {}
 
     async load() {
-        env.wasm.wasmPaths = sessionParams.wasmRoot;
+        ort.env.wasm.wasmPaths = sessionParams.wasmRoot;
 
         this.models = {
             main: await this.loadModel(RITMModels.main),
@@ -31,14 +31,14 @@ class RITM {
         };
     }
 
-    async loadModel(source: string): Promise<InferenceSession> {
+    async loadModel(source: string): Promise<ort.InferenceSession> {
         const data = await (await loadSource(source))?.arrayBuffer();
 
         if (!data) {
             throw 'Could not load model';
         }
 
-        return InferenceSession.create(data);
+        return ort.InferenceSession.create(data);
     }
 
     loadImage(imageData: ImageData) {
@@ -218,7 +218,7 @@ class RITM {
         return resultContour;
     }
 
-    buildResultMask(mask: Tensor, box: OpenCVTypes.Rect): OpenCVTypes.Mat {
+    buildResultMask(mask: ort.Tensor, box: OpenCVTypes.Rect): OpenCVTypes.Mat {
         let normalMat: OpenCVTypes.Mat | null = null;
         try {
             this.sigmoid(mask);
@@ -277,13 +277,13 @@ class RITM {
 
             const shape = [1, 3, templateSize.height, templateSize.width];
 
-            return new Tensor('float32', data, shape);
+            return new ort.Tensor('float32', data, shape);
         } finally {
             normal?.forEach((m) => m.delete());
         }
     }
 
-    buildImageTensor(box: OpenCVTypes.Rect, templateSize: OpenCVTypes.Size): Tensor {
+    buildImageTensor(box: OpenCVTypes.Rect, templateSize: OpenCVTypes.Size): ort.Tensor {
         if (!this.image) {
             throw 'buildImageTensor requires imageData to be loaded';
         }
@@ -299,7 +299,7 @@ class RITM {
             const shape = [1, 3, templateSize.height, templateSize.width];
             const data = stackPlanes(this.CV, dst);
 
-            return new Tensor('float32', data, shape);
+            return new ort.Tensor('float32', data, shape);
         } finally {
             dst?.delete();
         }
@@ -337,7 +337,7 @@ class RITM {
         }
     }
 
-    async runPreProcess(pointTensor: Tensor): Promise<Tensor> {
+    async runPreProcess(pointTensor: ort.Tensor): Promise<ort.Tensor> {
         if (!this.models) {
             throw 'RITM Model needs to be loaded before running preprocess';
         }
@@ -345,7 +345,7 @@ class RITM {
         return (await this.models.preprocess.run({ points: pointTensor })).coord_features;
     }
 
-    async runMainModel(points: Tensor, image: Tensor): Promise<MainModelResponse> {
+    async runMainModel(points: ort.Tensor, image: ort.Tensor): Promise<MainModelResponse> {
         if (!this.models) {
             throw 'RITM Model needs to be loaded before running HRNet';
         }
@@ -355,7 +355,7 @@ class RITM {
         return this.models.main.run(tensors) as unknown as Promise<MainModelResponse>;
     }
 
-    sigmoid(mask: Tensor) {
+    sigmoid(mask: ort.Tensor) {
         const data = ndarray(mask.data as Float32Array, [...mask.dims]);
         const ones = ndarray(new Float32Array(mask.data.length), [...mask.dims]);
 
