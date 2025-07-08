@@ -98,7 +98,7 @@ class DefaultModels:
                 # legacy support for SEGMENTATION task type
                 task_type_str = "SEMANTIC_SEGMENTATION"
             _task_type = TaskType[task_type_str]
-        except ValueError:
+        except KeyError:
             raise ValueError(f"Unknown task type: {task_type}")
         if default_type not in cls.default_models_by_task[_task_type]:
             raise ValueError(f"Unknown default type: {default_type} for task: {task_type}")
