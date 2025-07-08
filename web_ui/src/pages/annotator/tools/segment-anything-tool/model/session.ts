@@ -10,7 +10,7 @@ const loadModel = async (modelPath: string) => {
 };
 
 export class Session {
-    ortSession: ort.InferenceSession | undefined;
+    ortSession: InferenceSession | undefined;
     params: SessionParameters;
 
     constructor() {
