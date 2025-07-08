@@ -55,6 +55,8 @@ class ModelTemplateRESTViews:
                 "support_status": model_manifest.support_status.name.lower(),
                 "supported_gpus": model_manifest_dict["supported_gpus"],
                 "capabilities": model_manifest_dict["capabilities"],
+                "is_default_model": model_manifest.is_default_model,
+                "performance_category": model_manifest.model_category or "other",
             }
         return {
             "name": model_template.name,

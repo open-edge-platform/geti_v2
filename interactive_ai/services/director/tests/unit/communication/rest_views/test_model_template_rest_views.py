@@ -64,6 +64,8 @@ class TestSCModelTemplateRESTViews:
             "support_status": model_manifest.support_status.name.lower(),
             "supported_gpus": model_manifest.supported_gpus,
             "capabilities": model_manifest.capabilities.model_dump(),
+            "is_default_model": model_manifest.is_default_model,
+            "performance_category": model_manifest.model_category or "other",
         }
         mock_model_template = MagicMock()
         mock_model_template.model_manifest_id = model_manifest.id

@@ -3,7 +3,7 @@
 from enum import Enum, auto
 
 
-class DefaultType(str, Enum):
+class DefaultCategory(str, Enum):
     """Model optimization preference categories.
 
     Defines the trade-off preference between accuracy and inference speed:
@@ -37,53 +37,53 @@ class DefaultModels:
     models suitable for various computer vision applications.
     """
 
-    default_models_by_task: dict[TaskType, dict[DefaultType, str | None]] = {
+    default_models_by_task: dict[TaskType, dict[DefaultCategory, str | None]] = {
         TaskType.CLASSIFICATION: {
-            DefaultType.DEFAULT: "Custom_Image_Classification_EfficientNet-V2-S",
-            DefaultType.ACCURACY: "Custom_Image_Classification_EfficientNet-V2-S",
-            DefaultType.SPEED: "Custom_Image_Classification_MobileNet-V3-large-1x",
-            DefaultType.BALANCE: "Custom_Image_Classification_EfficinetNet-B0",
+            DefaultCategory.DEFAULT: "Custom_Image_Classification_EfficientNet-V2-S",
+            DefaultCategory.ACCURACY: "Custom_Image_Classification_EfficientNet-V2-S",
+            DefaultCategory.SPEED: "Custom_Image_Classification_MobileNet-V3-large-1x",
+            DefaultCategory.BALANCE: "Custom_Image_Classification_EfficinetNet-B0",
         },
         TaskType.DETECTION: {
-            DefaultType.DEFAULT: "Object_Detection_DFine_X",
-            DefaultType.ACCURACY: "Object_Detection_DFine_X",
-            DefaultType.SPEED: "Object_Detection_YOLOX_S",
-            DefaultType.BALANCE: "Custom_Object_Detection_Gen3_ATSS",
+            DefaultCategory.DEFAULT: "Object_Detection_DFine_X",
+            DefaultCategory.ACCURACY: "Object_Detection_DFine_X",
+            DefaultCategory.SPEED: "Object_Detection_YOLOX_S",
+            DefaultCategory.BALANCE: "Custom_Object_Detection_Gen3_ATSS",
         },
         TaskType.ROTATED_DETECTION: {
-            DefaultType.DEFAULT: "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_ResNet50",
-            DefaultType.ACCURACY: "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_ResNet50",
-            DefaultType.SPEED: "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_EfficientNetB2B",
-            DefaultType.BALANCE: None,
+            DefaultCategory.DEFAULT: "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_ResNet50",
+            DefaultCategory.ACCURACY: "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_ResNet50",
+            DefaultCategory.SPEED: "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_EfficientNetB2B",
+            DefaultCategory.BALANCE: None,
         },
         TaskType.INSTANCE_SEGMENTATION: {
-            DefaultType.DEFAULT: "Custom_Counting_Instance_Segmentation_MaskRCNN_SwinT_FP16",
-            DefaultType.ACCURACY: "Custom_Counting_Instance_Segmentation_MaskRCNN_SwinT_FP16",
-            DefaultType.SPEED: "Custom_Counting_Instance_Segmentation_MaskRCNN_EfficientNetB2B",
-            DefaultType.BALANCE: "Custom_Instance_Segmentation_MaskRCNN_ResNet50_v2",
+            DefaultCategory.DEFAULT: "Custom_Counting_Instance_Segmentation_MaskRCNN_SwinT_FP16",
+            DefaultCategory.ACCURACY: "Custom_Counting_Instance_Segmentation_MaskRCNN_SwinT_FP16",
+            DefaultCategory.SPEED: "Custom_Counting_Instance_Segmentation_MaskRCNN_EfficientNetB2B",
+            DefaultCategory.BALANCE: "Custom_Instance_Segmentation_MaskRCNN_ResNet50_v2",
         },
         TaskType.SEMANTIC_SEGMENTATION: {
-            DefaultType.DEFAULT: "Custom_Semantic_Segmentation_DINOV2_S",
-            DefaultType.ACCURACY: "Custom_Semantic_Segmentation_DINOV2_S",
-            DefaultType.SPEED: "Custom_Semantic_Segmentation_Lite-HRNet-s-mod2_OCR",
-            DefaultType.BALANCE: "Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR",
+            DefaultCategory.DEFAULT: "Custom_Semantic_Segmentation_DINOV2_S",
+            DefaultCategory.ACCURACY: "Custom_Semantic_Segmentation_DINOV2_S",
+            DefaultCategory.SPEED: "Custom_Semantic_Segmentation_Lite-HRNet-s-mod2_OCR",
+            DefaultCategory.BALANCE: "Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR",
         },
         TaskType.ANOMALY: {
-            DefaultType.DEFAULT: "ote_anomaly_uflow",
-            DefaultType.ACCURACY: "ote_anomaly_uflow",
-            DefaultType.SPEED: "ote_anomaly_classification_padim",
-            DefaultType.BALANCE: None,
+            DefaultCategory.DEFAULT: "ote_anomaly_uflow",
+            DefaultCategory.ACCURACY: "ote_anomaly_uflow",
+            DefaultCategory.SPEED: "ote_anomaly_classification_padim",
+            DefaultCategory.BALANCE: None,
         },
         TaskType.KEYPOINT_DETECTION: {
-            DefaultType.DEFAULT: "Keypoint_Detection_RTMPose_Tiny",
-            DefaultType.ACCURACY: None,
-            DefaultType.SPEED: "Keypoint_Detection_RTMPose_Tiny",
-            DefaultType.BALANCE: None,
+            DefaultCategory.DEFAULT: "Keypoint_Detection_RTMPose_Tiny",
+            DefaultCategory.ACCURACY: None,
+            DefaultCategory.SPEED: "Keypoint_Detection_RTMPose_Tiny",
+            DefaultCategory.BALANCE: None,
         },
     }
 
     @classmethod
-    def get_model_by_type(cls, task_type: str, default_type: DefaultType) -> str | None:
+    def get_model_by_type(cls, task_type: str, default_type: DefaultCategory) -> str | None:
         """
         Retrieve a recommended model architecture for a specific task and optimization preference.
 
@@ -113,7 +113,7 @@ class DefaultModels:
         :return: The name of the default model architecture, or None if not available
         :raises ValueError: If the task_type is not supported
         """
-        return cls.get_model_by_type(task_type, DefaultType.DEFAULT)
+        return cls.get_model_by_type(task_type, DefaultCategory.DEFAULT)
 
     @classmethod
     def get_accuracy_model(cls, task_type: str) -> str | None:
@@ -124,7 +124,7 @@ class DefaultModels:
         :return: The name of the accuracy-optimized model architecture, or None if not available
         :raises ValueError: If the task_type is not supported
         """
-        return cls.get_model_by_type(task_type, DefaultType.ACCURACY)
+        return cls.get_model_by_type(task_type, DefaultCategory.ACCURACY)
 
     @classmethod
     def get_speed_model(cls, task_type: str) -> str | None:
@@ -135,7 +135,7 @@ class DefaultModels:
         :return: The name of the speed-optimized model architecture, or None if not available
         :raises ValueError: If the task_type is not supported
         """
-        return cls.get_model_by_type(task_type, DefaultType.SPEED)
+        return cls.get_model_by_type(task_type, DefaultCategory.SPEED)
 
     @classmethod
     def get_balanced_model(cls, task_type: str) -> str | None:
@@ -146,4 +146,4 @@ class DefaultModels:
         :return: The name of the balanced model architecture, or None if not available
         :raises ValueError: If the task_type is not supported
         """
-        return cls.get_model_by_type(task_type, DefaultType.BALANCE)
+        return cls.get_model_by_type(task_type, DefaultCategory.BALANCE)
