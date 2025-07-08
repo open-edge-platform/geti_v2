@@ -45,15 +45,16 @@ class ModelTemplateRESTViews:
 
         if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
             model_manifest = SupportedModels.get_model_manifest_by_id(model_template.model_manifest_id)
+            model_manifest_dict = model_manifest.model_dump()
             return {
                 "model_manifest_id": model_manifest.id,
                 "task": model_manifest.task,
                 "name": model_manifest.name,
                 "description": model_manifest.description,
-                "stats": model_manifest.stats.model_dump(),
+                "stats": model_manifest_dict["stats"],
                 "support_status": model_manifest.support_status.name.lower(),
-                "supported_gpus": model_manifest.supported_gpus.model_dump(),
-                "capabilities": model_manifest.capabilities.model_dump(),
+                "supported_gpus": model_manifest_dict["supported_gpus"],
+                "capabilities": model_manifest_dict["capabilities"],
                 "is_default_model": model_manifest.is_default_model,
                 "performance_category": model_manifest.model_category or "other",
             }
