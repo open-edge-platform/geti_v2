@@ -10,34 +10,19 @@ import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { ProjectIdentifier } from '../../projects/core.interface';
 import { LegacySupportedAlgorithm, SupportedAlgorithm } from '../supported-algorithms.interface';
 
-export const useLegacySupportedAlgorithms = (
-    projectIdentifier: ProjectIdentifier
-): UseQueryResult<LegacySupportedAlgorithm[], AxiosError> => {
-    const { supportedAlgorithmsService } = useApplicationServices();
-
-    const { FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
-
-    return useQuery<LegacySupportedAlgorithm[], AxiosError>({
-        queryKey: QUERY_KEYS.SUPPORTED_ALGORITHMS(),
-        queryFn: () => {
-            return supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms(projectIdentifier);
-        },
-        meta: { notifyOnError: true },
-        enabled: !FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS,
-    });
-};
-
 export const useSupportedAlgorithms = (
     projectIdentifier: ProjectIdentifier
-): UseQueryResult<SupportedAlgorithm[], AxiosError> => {
+): UseQueryResult<SupportedAlgorithm[] | LegacySupportedAlgorithm[], AxiosError> => {
     const { supportedAlgorithmsService } = useApplicationServices();
     const { FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
 
-    return useQuery<SupportedAlgorithm[], AxiosError>({
+    return useQuery<SupportedAlgorithm[] | LegacySupportedAlgorithm[], AxiosError>({
         queryKey: QUERY_KEYS.SUPPORTED_ALGORITHMS(),
         queryFn: () => {
-            return supportedAlgorithmsService.getProjectSupportedAlgorithms(projectIdentifier);
+            if (FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS) {
+                return supportedAlgorithmsService.getProjectSupportedAlgorithms(projectIdentifier);
+            }
+            return supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms(projectIdentifier);
         },
-        enabled: FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS,
     });
 };

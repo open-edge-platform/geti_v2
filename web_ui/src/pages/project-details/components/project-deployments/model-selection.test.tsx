@@ -7,7 +7,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { ModelsGroups } from '../../../../core/models/models.interface';
 import { mockedArchitectureModels } from '../../../../core/models/services/test-utils';
 import { PerformanceCategory } from '../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { useLegacySupportedAlgorithms } from '../../../../core/supported-algorithms/hooks/use-supported-algorithms.hook';
+import { useSupportedAlgorithms } from '../../../../core/supported-algorithms/hooks/use-supported-algorithms.hook';
 import { getLegacyMockedSupportedAlgorithm } from '../../../../core/supported-algorithms/services/test-utils';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { ModelSelection } from './model-selection.component';
@@ -55,7 +55,7 @@ describe('ModelSelection', () => {
 
     it('render all model architectures and performance categories', async () => {
         // @ts-expect-error we only care about modelTemplateId and performanceCategory
-        jest.mocked(useLegacySupportedAlgorithms).mockReturnValue({
+        jest.mocked(useSupportedAlgorithms).mockReturnValue({
             data: [
                 getLegacyMockedSupportedAlgorithm({
                     modelTemplateId: 'Custom_Object_Detection_Gen3_SSD',
@@ -79,7 +79,7 @@ describe('ModelSelection', () => {
 
     it('does not render performance category if it is OTHER', async () => {
         // @ts-expect-error we only care about modelTemplateId and performanceCategory
-        jest.mocked(useLegacySupportedAlgorithms).mockReturnValue({
+        jest.mocked(useSupportedAlgorithms).mockReturnValue({
             data: [
                 getLegacyMockedSupportedAlgorithm({
                     modelTemplateId: 'Custom_Object_Detection_Gen3_SSD',

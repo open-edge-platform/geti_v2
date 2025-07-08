@@ -8,7 +8,7 @@ import { capitalize, isEmpty } from 'lodash-es';
 
 import { useModels } from '../../../../core/models/hooks/use-models.hook';
 import { PerformanceCategory } from '../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { useLegacySupportedAlgorithms } from '../../../../core/supported-algorithms/hooks/use-supported-algorithms.hook';
+import { useSupportedAlgorithms } from '../../../../core/supported-algorithms/hooks/use-supported-algorithms.hook';
 import { useProjectIdentifier } from '../../../../hooks/use-project-identifier/use-project-identifier';
 import { WarningMessage } from '../../../../shared/components/warning-message/warning-message.component';
 import { hasEqualId } from '../../../../shared/utils';
@@ -27,7 +27,7 @@ import { ModelInfo } from './model-info.component';
 export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSelectionProps): JSX.Element => {
     const projectIdentifier = useProjectIdentifier();
     const { useModelQuery } = useModels();
-    const { data: legacySupportedAlgorithms } = useLegacySupportedAlgorithms(projectIdentifier);
+    const { data: legacySupportedAlgorithms } = useSupportedAlgorithms(projectIdentifier);
 
     const [localModelConfiguration, setLocalModelConfiguration] = useState<ModelConfiguration>({
         selectedVersionId: selectedModel.versionId || models[0].modelVersions[0].groupId,

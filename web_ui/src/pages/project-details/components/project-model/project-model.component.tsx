@@ -11,7 +11,7 @@ import { isVisualPromptModelGroup } from '../../../../core/annotations/services/
 import { useModels } from '../../../../core/models/hooks/use-models.hook';
 import { ModelIdentifier, ModelsGroups } from '../../../../core/models/models.interface';
 import { LifecycleStage } from '../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { useLegacySupportedAlgorithms } from '../../../../core/supported-algorithms/hooks/use-supported-algorithms.hook';
+import { useSupportedAlgorithms } from '../../../../core/supported-algorithms/hooks/use-supported-algorithms.hook';
 import { useModelIdentifier } from '../../../../hooks/use-model-identifier/use-model-identifier.hook';
 import { PageLayout } from '../../../../shared/components/page-layout/page-layout.component';
 import { Tabs } from '../../../../shared/components/tabs/tabs.component';
@@ -51,7 +51,7 @@ const MODEL_TABS_TO_PATH = {
 };
 
 const useGroupIsActiveLifecycle = (modelIdentifier: ModelIdentifier, modelGroup: ModelsGroups | undefined) => {
-    const { data: supportedAlgorithms } = useLegacySupportedAlgorithms(modelIdentifier);
+    const { data: supportedAlgorithms } = useSupportedAlgorithms(modelIdentifier);
 
     const group = supportedAlgorithms?.find(({ name }) => modelGroup?.groupName === name);
 

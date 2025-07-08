@@ -3,13 +3,11 @@
 
 import { useMemo } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-
 import { useProjectIdentifier } from '../../../hooks/use-project-identifier/use-project-identifier';
 import { isNotCropDomain } from '../../../shared/utils';
 import { useProjectActions } from '../../projects/hooks/use-project-actions.hook';
 import { TaskWithSupportedAlgorithms } from '../supported-algorithms.interface';
-import { useLegacySupportedAlgorithms, useSupportedAlgorithms } from './use-supported-algorithms.hook';
+import { useSupportedAlgorithms } from './use-supported-algorithms.hook';
 
 interface UseTasksWithSupportedAlgorithms {
     tasksWithSupportedAlgorithms: TaskWithSupportedAlgorithms;
@@ -19,17 +17,15 @@ export const useTasksWithSupportedAlgorithms = (): UseTasksWithSupportedAlgorith
     const projectIdentifier = useProjectIdentifier();
     const { useGetProject } = useProjectActions();
     const { data: project } = useGetProject(projectIdentifier);
-    const { FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
 
-    const { data: legacySupportedAlgorithms } = useLegacySupportedAlgorithms(projectIdentifier);
     const { data: supportedAlgorithms } = useSupportedAlgorithms(projectIdentifier);
 
-    const tasksWithSupportedAlgorithms: TaskWithSupportedAlgorithms = useMemo(() => {
+    const tasksWithSupportedAlgorithms = useMemo(() => {
         if (supportedAlgorithms === undefined || project?.tasks === undefined) {
             return {};
         }
 
-        return project.tasks.reduce<TaskWithSupportedAlgorithms>((prev, curr) => {
+        return project.tasks.reduce((prev, curr) => {
             if (!isNotCropDomain(curr.domain)) {
                 return prev;
             }
@@ -43,28 +39,7 @@ export const useTasksWithSupportedAlgorithms = (): UseTasksWithSupportedAlgorith
         }, {});
     }, [supportedAlgorithms, project?.tasks]);
 
-    const legacyTasksWithSupportedAlgorithms: TaskWithSupportedAlgorithms = useMemo(() => {
-        if (legacySupportedAlgorithms === undefined || project?.tasks === undefined) {
-            return {};
-        }
-
-        return project.tasks.reduce<TaskWithSupportedAlgorithms>((prev, curr) => {
-            if (!isNotCropDomain(curr.domain)) {
-                return prev;
-            }
-
-            return {
-                [curr.id]: legacySupportedAlgorithms.filter(
-                    ({ domain }) => isNotCropDomain(domain) && domain === curr.domain
-                ),
-                ...prev,
-            };
-        }, {});
-    }, [project?.tasks, legacySupportedAlgorithms]);
-
     return {
-        tasksWithSupportedAlgorithms: FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS
-            ? tasksWithSupportedAlgorithms
-            : legacyTasksWithSupportedAlgorithms,
+        tasksWithSupportedAlgorithms,
     };
 };
