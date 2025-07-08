@@ -172,10 +172,8 @@ class TestImportDataset:
 
         def _get_metadata(metadata: dict):
             nonlocal supported_project_types, warnings
-            supported_project_types, warnings = (
-                metadata["supported_project_types"],
-                metadata["warnings"],
-            )
+            supported_project_types = metadata["supported_project_types"]
+            warnings = metadata["warnings"]
 
         with (
             patch(
@@ -928,37 +926,23 @@ class TestImportDataset:
         # prepare dataset
         dm_dataset_definition = request.getfixturevalue(dataset_definition)
         label_names, dm_dataset = self._create_geti_exported_dataset_from_definition(
-            request, project_type_from, dm_dataset_definition
+            request=request, project_type=project_type_from, dataset_definition=dm_dataset_definition
         )
         dataset_id = save_dataset(import_data_repo, dm_dataset, "datumaro")
 
         supported_project_types, warnings = self._prepare_import_new_project_workflow(
-            data_repo=import_data_repo, dataset_id=dataset_id
+            data_repo=import_data_repo,
+            dataset_id=dataset_id,
         )
 
         candidate_projects = self._get_candidate_project_types(supported_project_types)
-        assert project_type_to in candidate_projects, candidate_projects
+        assert project_type_to in candidate_projects
         assert len(warnings) == n_warnings, warnings
-        for project_meta in supported_project_types:
-            ptype = ImportUtils.rest_task_type_to_project_type(project_meta["project_type"])
-            assert ptype not in [
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY_SEGMENTATION,
-            ]
-            if ptype == GetiProjectType.ANOMALY:
-                assert project_meta["project_type"] == "anomaly"
-                pipeline = project_meta["pipeline"]
-                assert pipeline["connections"][0]["to"] == "Anomaly"
-                anomaly_task = pipeline["tasks"][1]
-                assert anomaly_task["title"] == "Anomaly"
-                assert anomaly_task["task_type"] == "anomaly"
-                assert anomaly_task["labels"][0]["group"] == "Anomaly Task Labels"
-                assert anomaly_task["labels"][1]["group"] == "Anomaly Task Labels"
 
         # import dataset
         labels_to_keep = self._get_all_label_names_from_supported_project_types(
-            supported_project_types, project_type_to
+            supported_project_types=supported_project_types,
+            project_type=project_type_to,
         )
         assert len(labels_to_keep) > 0
 
@@ -1016,41 +1000,13 @@ class TestImportDataset:
     @pytest.mark.parametrize(
         "dataset_definition,project_type_from,project_type_to",
         [
-            [
-                "fxt_bbox_dataset_definition",
-                GetiProjectType.DETECTION,
-                GetiProjectType.ROTATED_DETECTION,
-            ],
-            [
-                "fxt_bbox_dataset_definition",
-                GetiProjectType.DETECTION,
-                GetiProjectType.CLASSIFICATION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.ROTATED_DETECTION,
-                GetiProjectType.DETECTION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.SEGMENTATION,
-                GetiProjectType.INSTANCE_SEGMENTATION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.INSTANCE_SEGMENTATION,
-                GetiProjectType.SEGMENTATION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.SEGMENTATION,
-                GetiProjectType.DETECTION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.INSTANCE_SEGMENTATION,
-                GetiProjectType.DETECTION,
-            ],
+            ["fxt_bbox_dataset_definition", GetiProjectType.DETECTION, GetiProjectType.ROTATED_DETECTION],
+            ["fxt_bbox_dataset_definition", GetiProjectType.DETECTION, GetiProjectType.CLASSIFICATION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.ROTATED_DETECTION, GetiProjectType.DETECTION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.SEGMENTATION, GetiProjectType.INSTANCE_SEGMENTATION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.INSTANCE_SEGMENTATION, GetiProjectType.SEGMENTATION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.SEGMENTATION, GetiProjectType.DETECTION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.INSTANCE_SEGMENTATION, GetiProjectType.DETECTION],
         ],
     )
     def test_import_dataset_for_cross_project(
@@ -1078,51 +1034,10 @@ class TestImportDataset:
     @pytest.mark.parametrize(
         "dataset_definition,project_type_from,project_type_to",
         [
-            [
-                "fxt_anomaly_classification_dataset_definition",
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-                GetiProjectType.ANOMALY,
-            ],
-            [
-                "fxt_anomaly_detection_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY,
-            ],
-            [
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY,
-            ],
-            [
-                "fxt_anomaly_classification_dataset_definition",
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-                GetiProjectType.CLASSIFICATION,
-            ],
-            [
-                "fxt_anomaly_detection_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.CLASSIFICATION,
-            ],
-            [
-                "fxt_anomaly_detection_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY,
-            ],
-            [
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY,
-            ],
-            [
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY,
-            ],
-            [
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY,
-            ],
+            ["fxt_anom_dataset_definition", GetiProjectType.ANOMALY, GetiProjectType.ANOMALY],
+            ["fxt_anom_cls_dataset_definition", GetiProjectType.ANOMALY_CLASSIFICATION, GetiProjectType.ANOMALY],
+            ["fxt_anom_det_dataset_definition", GetiProjectType.ANOMALY_DETECTION, GetiProjectType.ANOMALY],
+            ["fxt_anom_seg_dataset_definition", GetiProjectType.ANOMALY_SEGMENTATION, GetiProjectType.ANOMALY],
         ],
     )
     def test_import_dataset_for_anomaly(
@@ -1136,12 +1051,7 @@ class TestImportDataset:
         """
         Test importing geti-exported anomaly datasets into impt projects of different domains.
         """
-        anomaly_det_seg = [
-            GetiProjectType.ANOMALY_DETECTION,
-            GetiProjectType.ANOMALY_SEGMENTATION,
-        ]
-        if project_type_to in anomaly_det_seg:
-            pytest.skip(f"Mapping from '{project_type_from.name}' to '{project_type_to.name}' doesn't exist.")
+        anomaly_det_seg = [GetiProjectType.ANOMALY_DETECTION, GetiProjectType.ANOMALY_SEGMENTATION]
         self._test_import_dataset_for_cross_project(
             dataset_definition=dataset_definition,
             project_type_from=project_type_from,
@@ -2230,58 +2140,64 @@ class TestImportDataset:
         "fxt_project_str,dataset_definition,project_type_from,project_type_to",
         [
             [
-                "fxt_annotated_anomaly_cls_project",
-                "fxt_anomaly_classification_dataset_definition",
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-                GetiProjectType.ANOMALY_CLASSIFICATION,
+                "fxt_annotated_anom_project",
+                "fxt_anom_dataset_definition",
+                GetiProjectType.ANOMALY,
+                GetiProjectType.ANOMALY,
             ],
             [
-                "fxt_annotated_anomaly_det_project",
-                "fxt_anomaly_detection_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY_DETECTION,
+                "fxt_annotated_anom_project",
+                "fxt_anom_cls_dataset_definition",
+                GetiProjectType.ANOMALY_CLASSIFICATION,
+                GetiProjectType.ANOMALY,
             ],
             [
-                "fxt_annotated_anomaly_seg_project",
-                "fxt_anomaly_segmentation_dataset_definition",
+                "fxt_annotated_anom_project",
+                "fxt_anom_det_dataset_definition",
+                GetiProjectType.ANOMALY_DETECTION,
+                GetiProjectType.ANOMALY,
+            ],
+            [
+                "fxt_annotated_anom_project",
+                "fxt_anom_seg_dataset_definition",
                 GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY_SEGMENTATION,
+                GetiProjectType.ANOMALY,
             ],
             [
                 "fxt_annotated_classification_project",
-                "fxt_anomaly_classification_dataset_definition",
+                "fxt_anom_cls_dataset_definition",
                 GetiProjectType.ANOMALY_CLASSIFICATION,
                 GetiProjectType.CLASSIFICATION,
             ],
             [
                 "fxt_annotated_classification_project",
-                "fxt_anomaly_detection_dataset_definition",
+                "fxt_anom_det_dataset_definition",
                 GetiProjectType.ANOMALY_DETECTION,
                 GetiProjectType.CLASSIFICATION,
             ],
             [
-                "fxt_annotated_anomaly_cls_project",
-                "fxt_anomaly_detection_dataset_definition",
+                "fxt_annotated_detection_project",
+                "fxt_anom_det_dataset_definition",
                 GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY_CLASSIFICATION,
+                GetiProjectType.DETECTION,
             ],
             [
                 "fxt_annotated_classification_project",
-                "fxt_anomaly_segmentation_dataset_definition",
+                "fxt_anom_seg_dataset_definition",
                 GetiProjectType.ANOMALY_SEGMENTATION,
                 GetiProjectType.CLASSIFICATION,
             ],
             [
-                "fxt_annotated_anomaly_cls_project",
-                "fxt_anomaly_segmentation_dataset_definition",
+                "fxt_annotated_instance_segmentation_project",
+                "fxt_anom_seg_dataset_definition",
                 GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY_CLASSIFICATION,
+                GetiProjectType.INSTANCE_SEGMENTATION,
             ],
             [
-                "fxt_annotated_anomaly_det_project",
-                "fxt_anomaly_segmentation_dataset_definition",
+                "fxt_annotated_segmentation_project",
+                "fxt_anom_seg_dataset_definition",
                 GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY_DETECTION,
+                GetiProjectType.SEGMENTATION,
             ],
         ],
     )

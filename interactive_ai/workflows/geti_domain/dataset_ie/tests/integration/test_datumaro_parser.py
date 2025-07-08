@@ -435,33 +435,16 @@ class TestDatumaroProjectParser:
             ["fxt_datumaro_dataset", GetiProjectType.CLASSIFICATION],
             ["fxt_datumaro_dataset", GetiProjectType.DETECTION],
             ["fxt_datumaro_dataset_segmentation", GetiProjectType.SEGMENTATION],
-            [
-                "fxt_datumaro_dataset_instances_segmentation",
-                GetiProjectType.INSTANCE_SEGMENTATION,
-            ],
+            ["fxt_datumaro_dataset_instances_segmentation", GetiProjectType.INSTANCE_SEGMENTATION],
             ["fxt_datumaro_dataset_multi_label", GetiProjectType.CLASSIFICATION],
             ["fxt_datumaro_dataset_hierarchical", GetiProjectType.CLASSIFICATION],
-            [
-                "fxt_datumaro_dataset_rotated_detection",
-                GetiProjectType.ROTATED_DETECTION,
-            ],
-            [
-                "fxt_datumaro_dataset_anomaly_cls",
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-            ],
-            ["fxt_datumaro_dataset_anomaly_det", GetiProjectType.ANOMALY_DETECTION],
-            [
-                "fxt_datumaro_dataset_anomaly_seg",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-            ],
-            [
-                "fxt_datumaro_dataset_chained_det_cls",
-                GetiProjectType.CHAINED_DETECTION_CLASSIFICATION,
-            ],
-            [
-                "fxt_datumaro_dataset_chained_det_seg",
-                GetiProjectType.CHAINED_DETECTION_SEGMENTATION,
-            ],
+            ["fxt_datumaro_dataset_rotated_detection", GetiProjectType.ROTATED_DETECTION],
+            ["fxt_datumaro_dataset_anomaly", GetiProjectType.ANOMALY],
+            ["fxt_datumaro_dataset_anomaly_cls", GetiProjectType.ANOMALY],
+            ["fxt_datumaro_dataset_anomaly_det", GetiProjectType.ANOMALY],
+            ["fxt_datumaro_dataset_anomaly_seg", GetiProjectType.ANOMALY],
+            ["fxt_datumaro_dataset_chained_det_cls", GetiProjectType.CHAINED_DETECTION_CLASSIFICATION],
+            ["fxt_datumaro_dataset_chained_det_seg", GetiProjectType.CHAINED_DETECTION_SEGMENTATION],
         ],
     )
     def test_generate_pipeline_data(

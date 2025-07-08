@@ -356,6 +356,9 @@ SUPPORTED_CROSS_PROJECT_MAPPINGS: dict[GetiProjectType, dict[GetiProjectType, An
         GetiProjectType.SEGMENTATION: CrossProjectConverterBase,
         GetiProjectType.CHAINED_DETECTION_SEGMENTATION: CrossProjectConverterSegToDetSeg,
     },
+    GetiProjectType.ANOMALY: {
+        GetiProjectType.CLASSIFICATION: CrossProjectConverterBase,
+    },
     GetiProjectType.ANOMALY_CLASSIFICATION: {
         GetiProjectType.ANOMALY: CrossProjectConverterBase,
         GetiProjectType.CLASSIFICATION: CrossProjectConverterBase,
@@ -363,13 +366,10 @@ SUPPORTED_CROSS_PROJECT_MAPPINGS: dict[GetiProjectType, dict[GetiProjectType, An
     GetiProjectType.ANOMALY_DETECTION: {
         GetiProjectType.ANOMALY: CrossProjectConverterBase,
         GetiProjectType.CLASSIFICATION: CrossProjectConverterAnomalyDetSegToCls,
-        GetiProjectType.ANOMALY_CLASSIFICATION: CrossProjectConverterAnomalyDetSegToCls,
     },
     GetiProjectType.ANOMALY_SEGMENTATION: {
         GetiProjectType.ANOMALY: CrossProjectConverterBase,
         GetiProjectType.CLASSIFICATION: CrossProjectConverterAnomalyDetSegToCls,
-        GetiProjectType.ANOMALY_CLASSIFICATION: CrossProjectConverterAnomalyDetSegToCls,
-        GetiProjectType.ANOMALY_DETECTION: CrossProjectConverterSegToDet,
     },
     GetiProjectType.CHAINED_DETECTION_SEGMENTATION: {
         GetiProjectType.DETECTION: CrossProjectConverterDetSegToDet,

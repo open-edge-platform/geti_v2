@@ -13,7 +13,11 @@ from iai_core.entities.model_template import TaskType
 from iai_core.factories import ProjectParser
 from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
 from jobs_common_extras.datumaro_conversion.convert_utils import ConvertUtils
-from jobs_common_extras.datumaro_conversion.definitions import CHAINED_PROJECT_TYPES, GetiProjectType
+from jobs_common_extras.datumaro_conversion.definitions import (
+    ANOMALY_PROJECT_TYPES,
+    CHAINED_PROJECT_TYPES,
+    GetiProjectType,
+)
 
 from job.utils.exceptions import DatasetParsingException
 from job.utils.import_utils import ImportUtils
@@ -583,32 +587,34 @@ def get_filtered_supported_project_types(
     :return: A list of supported Geti project types
     """
     exported_project_type = ImportUtils.get_exported_project_type(dm_infos)
+    supported_project_types = []
+
     if exported_project_type != GetiProjectType.UNKNOWN:
-        filtered_supported_project_types = [exported_project_type]
+        if exported_project_type in ANOMALY_PROJECT_TYPES:
+            supported_project_types = [GetiProjectType.ANOMALY]
+        else:
+            supported_project_types = [exported_project_type]
     else:
-        filtered_supported_project_types = []
         ann_types = set()
         for types in label_to_ann_types.values():
             ann_types.update(types)
         if dm.AnnotationType.label in ann_types:
-            filtered_supported_project_types.append(GetiProjectType.CLASSIFICATION)
+            supported_project_types.append(GetiProjectType.CLASSIFICATION)
         if dm.AnnotationType.bbox in ann_types:
-            filtered_supported_project_types.append(GetiProjectType.DETECTION)
+            supported_project_types.append(GetiProjectType.DETECTION)
         if (
             dm.AnnotationType.polygon in ann_types
             or dm.AnnotationType.ellipse in ann_types
             or dm.AnnotationType.mask in ann_types
         ):
-            filtered_supported_project_types.extend(
-                [GetiProjectType.SEGMENTATION, GetiProjectType.INSTANCE_SEGMENTATION]
-            )
+            supported_project_types.extend([GetiProjectType.SEGMENTATION, GetiProjectType.INSTANCE_SEGMENTATION])
         if (
             FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_KEYPOINT_DETECTION)
             and dm.AnnotationType.points in ann_types
         ):
-            filtered_supported_project_types.append(GetiProjectType.KEYPOINT_DETECTION)
+            supported_project_types.append(GetiProjectType.KEYPOINT_DETECTION)
 
-    return filtered_supported_project_types
+    return supported_project_types
 
 
 @unified_tracing

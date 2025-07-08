@@ -408,6 +408,12 @@ def fxt_datumaro_dataset_multi_label(fxt_test_dataset_generator) -> dm.Dataset:
 
 
 @pytest.fixture
+def fxt_datumaro_dataset_anomaly(fxt_test_dataset_generator) -> dm.Dataset:
+    # anomaly classification dataset = anomaly dataset
+    return fxt_test_dataset_generator("datumaro_mini_anomaly_cls.zip", "datumaro")
+
+
+@pytest.fixture
 def fxt_datumaro_dataset_anomaly_cls(fxt_test_dataset_generator) -> dm.Dataset:
     return fxt_test_dataset_generator("datumaro_mini_anomaly_cls.zip", "datumaro")
 
@@ -650,22 +656,44 @@ def fxt_expected_pipeline_by_project_parser():
                 ],
             },
         },
-        "fxt_datumaro_dataset_anomaly_cls": {
-            GetiProjectType.ANOMALY_CLASSIFICATION: {
-                "connections": [{"from": "Dataset", "to": "Anomaly Classification"}],
+        "fxt_datumaro_dataset_anomaly": {
+            GetiProjectType.ANOMALY: {
+                "connections": [{"from": "Dataset", "to": "Anomaly"}],
                 "tasks": [
                     {"title": "Dataset", "task_type": "dataset", "labels": []},
                     {
-                        "title": "Anomaly Classification",
-                        "task_type": "anomaly_classification",
+                        "title": "Anomaly",
+                        "task_type": "anomaly",
                         "labels": [
                             {
                                 "name": "Normal",
-                                "group": "default - Anomaly classification task",
+                                "group": "Anomaly Task Labels",
                             },
                             {
                                 "name": "Anomalous",
-                                "group": "default - Anomaly classification task",
+                                "group": "Anomaly Task Labels",
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+        "fxt_datumaro_dataset_anomaly_cls": {
+            GetiProjectType.ANOMALY: {
+                "connections": [{"from": "Dataset", "to": "Anomaly"}],
+                "tasks": [
+                    {"title": "Dataset", "task_type": "dataset", "labels": []},
+                    {
+                        "title": "Anomaly",
+                        "task_type": "anomaly",
+                        "labels": [
+                            {
+                                "name": "Normal",
+                                "group": "Anomaly Task Labels",
+                            },
+                            {
+                                "name": "Anomalous",
+                                "group": "Anomaly Task Labels",
                             },
                         ],
                     },
@@ -673,21 +701,21 @@ def fxt_expected_pipeline_by_project_parser():
             },
         },
         "fxt_datumaro_dataset_anomaly_det": {
-            GetiProjectType.ANOMALY_DETECTION: {
-                "connections": [{"from": "Dataset", "to": "Anomaly Detection"}],
+            GetiProjectType.ANOMALY: {
+                "connections": [{"from": "Dataset", "to": "Anomaly"}],
                 "tasks": [
                     {"title": "Dataset", "task_type": "dataset", "labels": []},
                     {
-                        "title": "Anomaly Detection",
-                        "task_type": "anomaly_detection",
+                        "title": "Anomaly",
+                        "task_type": "anomaly",
                         "labels": [
                             {
                                 "name": "Normal",
-                                "group": "default - Anomaly detection task",
+                                "group": "Anomaly Task Labels",
                             },
                             {
                                 "name": "Anomalous",
-                                "group": "default - Anomaly detection task",
+                                "group": "Anomaly Task Labels",
                             },
                         ],
                     },
@@ -695,21 +723,21 @@ def fxt_expected_pipeline_by_project_parser():
             },
         },
         "fxt_datumaro_dataset_anomaly_seg": {
-            GetiProjectType.ANOMALY_SEGMENTATION: {
-                "connections": [{"from": "Dataset", "to": "Anomaly Segmentation"}],
+            GetiProjectType.ANOMALY: {
+                "connections": [{"from": "Dataset", "to": "Anomaly"}],
                 "tasks": [
                     {"title": "Dataset", "task_type": "dataset", "labels": []},
                     {
-                        "title": "Anomaly Segmentation",
-                        "task_type": "anomaly_segmentation",
+                        "title": "Anomaly",
+                        "task_type": "anomaly",
                         "labels": [
                             {
                                 "name": "Normal",
-                                "group": "default - Anomaly segmentation task",
+                                "group": "Anomaly Task Labels",
                             },
                             {
                                 "name": "Anomalous",
-                                "group": "default - Anomaly segmentation task",
+                                "group": "Anomaly Task Labels",
                             },
                         ],
                     },

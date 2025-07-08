@@ -709,11 +709,7 @@ class ImportUtils:
         project_type = GetiProjectType.UNKNOWN
 
         if len(task_types) == 1:
-            try:
-                project_type = GetiProjectType[task_types[0].name]
-            except KeyError:
-                if task_types[0].name == "ANOMALY":
-                    project_type = GetiProjectType.ANOMALY_CLASSIFICATION
+            project_type = GetiProjectType[task_types[0].name]
         elif len(task_types) == 2:
             if task_types == [TaskType.DETECTION, TaskType.CLASSIFICATION]:
                 project_type = GetiProjectType.CHAINED_DETECTION_CLASSIFICATION

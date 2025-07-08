@@ -219,7 +219,7 @@ class TestParseDatasetExistingProject:
         self,
         request,
         anomaly_dataset_id,
-        fxt_annotated_anomaly_cls_project,
+        fxt_annotated_anom_project,
         fxt_import_data_repo,
     ):
         """
@@ -227,8 +227,8 @@ class TestParseDatasetExistingProject:
         """
         dataset_id = request.getfixturevalue(anomaly_dataset_id)
         dataset_info = get_dataset_info(anomaly_dataset_id)
-        project_str = "fxt_annotated_anomaly_cls_project"
-        project = fxt_annotated_anomaly_cls_project
+        project_str = "fxt_annotated_anom_project"
+        project = fxt_annotated_anom_project
 
         self._test_parse_dataset_for_import_to_existing_project__datumaro_format(
             request,
