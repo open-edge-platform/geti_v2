@@ -6,24 +6,14 @@ from enum import Enum
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from starlette.background import BackgroundTask
 from starlette.responses import FileResponse, Response
 
 from communication.rest_controllers.deployment_package_controller import DeploymentPackageRESTController
-from communication.rest_utils import send_file_from_path_or_url
 
-from geti_fastapi_tools.dependencies import (
-    get_deployment_id,
-    get_organization_id,
-    get_project_id,
-    get_project_identifier,
-    get_request_json,
-    get_user_id_fastapi,
-    get_workspace_id,
-    setup_session_fastapi,
-)
-from geti_types import ID, ProjectIdentifier
+from geti_fastapi_tools.dependencies import get_project_identifier, get_request_json, setup_session_fastapi
+from geti_types import ProjectIdentifier
 
 logger = logging.getLogger(__name__)
 
