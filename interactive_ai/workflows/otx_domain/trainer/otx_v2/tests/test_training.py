@@ -8,6 +8,7 @@ import pytest
 from lightning import Trainer
 from otx.algo.classification.vit import VisionTransformerForMulticlassCls
 from otx.core.types.label import LabelInfo
+
 from scripts.train import train
 from scripts.utils import OTXConfig
 

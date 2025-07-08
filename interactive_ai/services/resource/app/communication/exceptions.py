@@ -582,38 +582,6 @@ class DuplicateEdgeInGraphException(GetiBaseException):
         )
 
 
-class CodeDeploymentCorruptException(GetiBaseException):
-    """
-    Error raised when the code deployment is in Done state, but the binary URL is not set properly.
-    """
-
-    def __init__(self, code_deployment_id: ID, deployment_state: str) -> None:
-        super().__init__(
-            message=f"The code deployment file cannot be found or is corrupted. "
-            f"Please try again. "
-            f"Deployment state: {deployment_state}, "
-            f"Code Deployment ID: `{code_deployment_id}`. ",
-            error_code="code_deployment_corrupt",
-            http_status=http.HTTPStatus.INTERNAL_SERVER_ERROR,
-        )
-
-
-class CodeDeploymentFileIsNotReadyException(GetiBaseException):
-    """
-    Error raised when the client requests to download code deployment that is not ready to be downloaded.
-    """
-
-    def __init__(self, code_deployment_id: ID, deployment_state: str) -> None:
-        super().__init__(
-            message=f"The code deployment is not ready for download. "
-            f"Please wait a few seconds for the packaging process to finish and try again. "
-            f"Deployment state: {deployment_state}. "
-            f"Code Deployment ID: `{code_deployment_id}`. ",
-            error_code="code_deployment_download_not_ready",
-            http_status=http.HTTPStatus.SERVICE_UNAVAILABLE,
-        )
-
-
 class ProjectLockedException(GetiBaseException):
     """
     Exception raised when project entity is locked for deletion/modification
