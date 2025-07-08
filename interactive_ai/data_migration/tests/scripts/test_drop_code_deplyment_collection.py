@@ -20,7 +20,7 @@ class TestDropCodeDeploymentCollectionMigration:
             "project_id": ObjectId("66a0faf070cdf6d0b2ec5f93"),
         }
         collection.insert_one(doc)
-        assert "operation" in mock_db.list_collection_names()
+        assert "code_deployment" in mock_db.list_collection_names()
         assert list(collection.find({}))
 
         # Act
