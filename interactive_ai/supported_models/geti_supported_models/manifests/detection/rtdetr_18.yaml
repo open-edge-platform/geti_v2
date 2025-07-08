@@ -16,4 +16,4 @@ supported_gpus:
 hyperparameters:
   training:
     learning_rate: 0.0001
-support_status: deprecated
+    default_input_size: "640x640"

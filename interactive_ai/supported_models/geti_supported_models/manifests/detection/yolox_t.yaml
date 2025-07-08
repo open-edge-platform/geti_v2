@@ -13,4 +13,13 @@ stats:
 hyperparameters:
   training:
     learning_rate: 0.0002
-support_status: deprecated
+    default_input_size: "416x416"
+    allowed_values_input_size:
+      - 128
+      - 256
+      - 416
+      - 512
+      - 640
+      - 800
+      - 992
+      - 1024

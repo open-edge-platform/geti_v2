@@ -13,4 +13,3 @@ stats:
 hyperparameters:
   training:
     learning_rate: 0.01
-support_status: deprecated

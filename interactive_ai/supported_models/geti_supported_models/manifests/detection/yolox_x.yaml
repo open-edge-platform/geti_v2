@@ -13,3 +13,4 @@ stats:
 hyperparameters:
   training:
     learning_rate: 0.001
+    default_input_size: "640x640"
