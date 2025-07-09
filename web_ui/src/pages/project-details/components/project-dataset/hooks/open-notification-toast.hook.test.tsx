@@ -17,6 +17,7 @@ import {
     getMockedModelVersion,
 } from '../../../../../test-utils/mocked-items-factory/mocked-model';
 import { getMockedProject } from '../../../../../test-utils/mocked-items-factory/mocked-project';
+import { getMockedSupportedAlgorithm } from '../../../../../test-utils/mocked-items-factory/mocked-supported-algorithms';
 import { RequiredProviders } from '../../../../../test-utils/required-providers-render';
 import { ProjectProvider } from '../../../providers/project-provider/project-provider.component';
 import { useOpenNotificationToast } from './open-notification-toast.hook';
@@ -39,7 +40,7 @@ const obsoleteActiveModel = getMockedModelsGroupAlgorithmDetails({
     modelVersions: [getMockedModelVersion({ isActiveModel: true })],
 });
 
-const mockedSupportedAlgorithmsForDetection = [
+const mockedLegacySupportedAlgorithmsForDetection = [
     getLegacyMockedSupportedAlgorithm({
         name: 'YOLOX',
         domain: DOMAIN.DETECTION,
@@ -63,6 +64,35 @@ const mockedSupportedAlgorithmsForDetection = [
         name: 'ATTS',
         domain: DOMAIN.DETECTION,
         modelSize: 150,
+        modelTemplateId: 'detection_atts',
+        gigaflops: 3,
+        description: 'ATTS architecture for detection',
+        isDefaultAlgorithm: false,
+        lifecycleStage: LifecycleStage.DEPRECATED,
+    }),
+];
+
+const mockedSupportedAlgorithmsForDetection = [
+    getMockedSupportedAlgorithm({
+        name: 'YOLOX',
+        domain: DOMAIN.DETECTION,
+        modelTemplateId: 'detection_yolo',
+        gigaflops: 1.3,
+        description: 'YOLO architecture for detection',
+        isDefaultAlgorithm: true,
+        lifecycleStage: LifecycleStage.OBSOLETE,
+    }),
+    getMockedSupportedAlgorithm({
+        name: 'SSD',
+        domain: DOMAIN.DETECTION,
+        modelTemplateId: 'detection_ssd',
+        gigaflops: 5.4,
+        description: 'SSD architecture for detection',
+        isDefaultAlgorithm: false,
+    }),
+    getMockedSupportedAlgorithm({
+        name: 'ATTS',
+        domain: DOMAIN.DETECTION,
         modelTemplateId: 'detection_atts',
         gigaflops: 3,
         description: 'ATTS architecture for detection',
@@ -96,8 +126,12 @@ describe('useOpenNotificationToast', () => {
     const modelsService = createInMemoryModelsService();
     projectService.getProject = jest.fn(async () => mockedSingleTaskProject);
     supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms = jest.fn(
+        async () => mockedLegacySupportedAlgorithmsForDetection
+    );
+    supportedAlgorithmsService.getProjectSupportedAlgorithms = jest.fn(
         async () => mockedSupportedAlgorithmsForDetection
     );
+
     const wrapper = ({ children }: { children: ReactNode }) => {
         return (
             <RequiredProviders
