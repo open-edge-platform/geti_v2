@@ -257,9 +257,9 @@ def is_job_completed_or_failed(namespace: str) -> tuple[bool, str]:
     Check if the job is completed or failed.
     Returns (is_finished, status_message)
     """
+    running_jobs = []
+    load_kube_config()
     try:
-        running_jobs = []
-        load_kube_config()
         batch_v1 = client.BatchV1Api()
         jobs = batch_v1.list_namespaced_job(namespace=namespace)
         for job in jobs.items:
@@ -290,6 +290,7 @@ def is_job_running(namespace: str = "default") -> bool:
     """
     Check if the Kubernetes job is still running.
     """
+    load_kube_config()
     running_jobs = []
     try:
         batch_v1 = client.BatchV1Api()
