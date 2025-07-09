@@ -220,7 +220,10 @@ def run_geti_controller_installation(config: InstallationConfig) -> None:
         deploy_geti_controller_chart(config=config)
         gpu_provider = config.gpu_provider.value if config.gpu_support.value else None
         controller_response = call_install_endpoint(
-            kube_config=config.kube_config.value, local_os=config.local_os.value, gpu_provider=gpu_provider
+            kube_config=config.kube_config.value,
+            local_os=config.local_os.value,
+            render_gid=config.render_gid.value,
+            gpu_provider=gpu_provider,
         )
         logger.info(f"Response from the GetiController installation endpoint: {controller_response}")
         status, message = monitor_installation_progress(config=config)
@@ -274,7 +277,7 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
     logger.info(InstallCmdTexts.k3s_installing)
     try:
         with click_spinner.spinner():
-            install_k3s()
+            install_k3s(config)
     except K3SInstallationError:
         logger.exception("Error during k3s installation.")
         click.secho(InstallCmdTexts.k3s_installation_failed, fg="red")

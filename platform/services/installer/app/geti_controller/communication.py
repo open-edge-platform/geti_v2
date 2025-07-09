@@ -52,7 +52,7 @@ def establish_port_forwarding(kube_config: str) -> subprocess.Popen:
     return process
 
 
-def call_install_endpoint(kube_config: str, local_os: str, gpu_provider: str | None = None) -> dict:
+def call_install_endpoint(kube_config: str, local_os: str, render_gid: int, gpu_provider: str | None = None) -> dict:
     """
     Calls the POST /api/v1/platform/install endpoint of the Geti Controller service
     with port-forwarding.
@@ -67,6 +67,7 @@ def call_install_endpoint(kube_config: str, local_os: str, gpu_provider: str | N
         payload = {"version_number": get_target_product_build(), "local_os": local_os}
         if gpu_provider:
             payload["gpu_provider"] = gpu_provider
+            payload["render_gid"] = render_gid
         response = requests.post(url, json=payload, timeout=10)
 
         if response.status_code != HTTPStatus.OK:
