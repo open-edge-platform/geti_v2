@@ -21,6 +21,7 @@ import re
 import shutil
 import stat
 import subprocess
+import textwrap
 import time
 from typing import IO
 
@@ -30,6 +31,7 @@ import yaml
 from cli_utils.platform_logs import subprocess_run
 from constants.paths import (
     CONFIG_TOML_TMPL_PATH,
+    INSTALL_LOG_FILE_PATH,
     K3S_AUDIT_LOG_PATH,
     K3S_IMAGES_DIR_PATH,
     K3S_INSTALL_LOG_FILE_PATH,
@@ -38,6 +40,7 @@ from constants.paths import (
     K3S_OFFLINE_INSTALLATION_FILES_PATH,
     K3S_REMOTE_KUBECONFIG_PATH,
     K3S_SELINUX_OFFLINE_INSTALLATION_FILES_PATH,
+    NVIDIA_CONTAINER_RUNTIME_CONFIG_PATH,
     USR_LOCAL_BIN_PATH,
 )
 from constants.platform import PLATFORM_NAMESPACE
@@ -225,6 +228,43 @@ def _install_k3s_selinux_rpm() -> None:
         )
 
 
+def _modify_nvidia_container_runtime_config() -> None:
+    regex_pattern = (
+        r"^#?(accept-nvidia-visible-devices-envvar-when-unprivileged|"
+        r"accept-nvidia-visible-devices-as-volume-mounts).*"
+    )
+    block = """
+    accept-nvidia-visible-devices-as-volume-mounts = true
+    accept-nvidia-visible-devices-envvar-when-unprivileged = false
+    """
+
+    logger.info("Modifying nvidia container runtime configuration...")
+    try:
+        # Read the original config
+        with open(NVIDIA_CONTAINER_RUNTIME_CONFIG_PATH) as file:
+            lines = file.readlines()
+
+        # Write back after filtering out the unwanted lines using regex
+        with open(NVIDIA_CONTAINER_RUNTIME_CONFIG_PATH, "w") as file:
+            # Append the new configuration
+            file.write(textwrap.dedent(block) + "\n")
+
+            for line in lines:
+                if not re.match(regex_pattern, line):
+                    file.write(line)
+
+        with open(INSTALL_LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
+            subprocess_run(
+                ["systemctl", "restart", "k3s"],
+                log_file,
+            )
+    except (OSError, subprocess.CalledProcessError) as err:
+        logger.exception(err)
+        raise K3SInstallationError from err
+
+    logger.info("Nvidia container runtime configuration modified.")
+
+
 def install_k3s(  # noqa: ANN201
     logs_file_path: str = K3S_INSTALL_LOG_FILE_PATH,
     setup_remote_kubeconfig: bool = True,
@@ -240,6 +280,8 @@ def install_k3s(  # noqa: ANN201
         _run_installer(k3s_script_path=k3s_script_path, logs_file_path=logs_file_path)
         _update_containerd_config(logs_file_path=logs_file_path)
         _mark_k3s_installation()
+        if k3s_configuration.default_runtime == "nvidia":
+            _modify_nvidia_container_runtime_config()
     except subprocess.CalledProcessError as ex:
         raise K3SInstallationError from ex
 

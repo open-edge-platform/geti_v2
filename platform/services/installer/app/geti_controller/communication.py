@@ -64,10 +64,7 @@ def call_install_endpoint(kube_config: str, local_os: str, gpu_provider: str | N
 
     try:
         url = f"http://localhost:{LOCAL_PORT}/api/v1/platform/install"
-        payload = {
-            "version_number": get_target_product_build(),
-            "local_os": local_os
-        }
+        payload = {"version_number": get_target_product_build(), "local_os": local_os}
         if gpu_provider:
             payload["gpu_provider"] = gpu_provider
         response = requests.post(url, json=payload, timeout=10)

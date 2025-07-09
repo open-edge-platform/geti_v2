@@ -13,7 +13,7 @@ from rest.schema.install import InstallRequest
 
 @pytest.fixture
 def mock_environment(mocker):
-    mocker.patch.dict(os.environ, {"GETI_REGISTRY": "test-registry", "VERSION": "2.11.0"})
+    mocker.patch.dict(os.environ, {"GETI_REGISTRY": "test-registry"})
 
 
 @pytest.mark.parametrize(
@@ -38,7 +38,7 @@ def test_install_platform(mocker, mock_environment, version_number, expected_det
     mocker.patch("rest.endpoints.install.create_job", return_value=MagicMock())
     mocker.patch("rest.endpoints.install.deploy_job")
 
-    payload = InstallRequest(version_number=version_number)
+    payload = InstallRequest(version_number=version_number, local_os="ubuntu")
 
     if expected_status == status.HTTP_200_OK:
         response = install_platform(payload)
@@ -54,7 +54,7 @@ def test_install_platform_already_installed(mocker, mock_environment):
     mocker.patch("rest.endpoints.install.load_kube_config")
     mocker.patch("rest.endpoints.install.check_config_map_exists", return_value=True)
 
-    payload = InstallRequest(version_number="2.9.0")
+    payload = InstallRequest(version_number="2.9.0", local_os="ubuntu")
 
     with pytest.raises(HTTPException) as e:
         install_platform(payload)
