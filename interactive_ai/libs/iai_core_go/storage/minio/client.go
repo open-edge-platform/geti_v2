@@ -29,6 +29,7 @@ type CommonConfig struct {
 
 type onPremConfig struct {
 	CommonConfig
+
 	Endpoint    string `env:"S3_HOST,notEmpty"`
 	AccessKeyID string `env:"S3_ACCESS_KEY,notEmpty"`
 	SecretKey   string `env:"S3_SECRET_KEY,notEmpty"`
@@ -36,6 +37,7 @@ type onPremConfig struct {
 
 type awsConfig struct {
 	CommonConfig
+
 	Region            string `env:"AWS_REGION,notEmpty"`
 	IdentityTokenFile string `env:"AWS_WEB_IDENTITY_TOKEN_FILE,notEmpty"`
 	Role              string `env:"AWS_ROLE_ARN,notEmpty"`
