@@ -77,10 +77,11 @@ class MediaUploadedUseCase:
             data_stream.seek(0)
             pil_image = PILImage.open(data_stream)
             # Create a thumbnail for the image
-            with tempfile.NamedTemporaryFile() as temp_file:
+            dst_file_name = Image.thumbnail_filename_by_image_id(image_id)
+            with tempfile.NamedTemporaryFile(suffix=dst_file_name) as temp_file:
                 pil_image.resize((DEFAULT_THUMBNAIL_SIZE, DEFAULT_THUMBNAIL_SIZE)).save(temp_file.name)
                 ThumbnailBinaryRepo(dataset_storage_identifier).save(
-                    data_source=temp_file.name, dst_file_name=Image.thumbnail_filename_by_image_id(image_id)
+                    data_source=temp_file.name, dst_file_name=dst_file_name
                 )
             logger.debug(f"Image {image_id} has been successfully preprocessed")
         except Exception as ex:

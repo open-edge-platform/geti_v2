@@ -164,7 +164,7 @@ class TestMediaUploadedUseCase:
         mock_get_by_filename.assert_called_once_with(filename="data_binary_filename", binary_interpreter=ANY)
         data_stream.seek.assert_called_once_with(0)
         mock_image_open.assert_called_once_with(data_stream)
-        mock_temp_file_context.assert_called_once_with()
+        mock_temp_file_context.assert_called_once_with(suffix="image_id_thumbnail.jpg")
         pil_image.resize.assert_called_once_with((256, 256))
         resized_image.save.assert_called_once_with("/tmp/file.jpg")
         mock_save_thumbnail.assert_called_once_with(
