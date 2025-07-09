@@ -24,7 +24,6 @@ from kubernetes.client import (
     V1PodTemplateSpec,
     V1PolicyRule,
     V1RoleRef,
-    V1Secret,
     V1SecretKeySelector,
     V1Service,
     V1ServiceAccount,
@@ -236,7 +235,7 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
 
     pod_spec = V1PodSpec(containers=[container], restart_policy="Never", service_account_name=name)
 
-    pod_template = V1PodTemplateSpec(metadata=V1ObjectMeta(labels={"job": short_name}), spec=pod_spec)
+    pod_template = V1PodTemplateSpec(metadata=V1ObjectMeta(labels={"direction": short_name}), spec=pod_spec)
 
     job_spec = V1JobSpec(template=pod_template, backoff_limit=0)
 
@@ -354,9 +353,8 @@ def deploy_service_job(
     timestamp_string = current_timestamp.strftime("%Y%m%d%H%M%S")
     version = Version(re.match(r"^\d+\.\d+\.\d+", image_tag).group())
     prepared_name = f"{direction}-job-{version}-{timestamp_string}"
-    short_name = prepared_name.split("-")[0]
     load_kube_config()
-    se = create_service(name=name, namespace=namespace, selector={"job": short_name})
+    se = create_service(name=name, namespace=namespace, selector={"direction": direction})
     sa = create_service_account(name=prepared_name, namespace=namespace)
     cr = create_cluster_role(name=prepared_name)
     crb = create_cluster_role_binding(name=prepared_name, service_account_name=prepared_name, namespace=namespace)
@@ -372,10 +370,3 @@ def deploy_service_job(
         port=port,
     )
     deploy_job(job, namespace="default")
-
-
-def _get_secret(secret_name: str, namespace: str = "impt") -> V1Secret:
-    load_kube_config()
-    v1 = client.CoreV1Api()
-    secret: V1Secret = v1.read_namespaced_secret(secret_name, namespace)
-    return secret
