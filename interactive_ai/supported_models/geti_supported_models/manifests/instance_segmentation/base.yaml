@@ -1,4 +1,4 @@
-task: segmentation
+task: instance_segmentation
 capabilities:
   tiling: true
 
