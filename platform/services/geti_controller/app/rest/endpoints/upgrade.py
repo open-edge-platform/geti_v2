@@ -9,7 +9,7 @@ from packaging.version import Version
 
 from constants.platform import GETI_REGISTRY, PLATFORM_VERSION
 from platform_operations.backup import _get_used_storage, is_backup_possible
-from platform_operations.cluster import deploy_service_job
+from platform_operations.cluster import deploy_service_job, is_job_running
 from rest.schema.upgrade import UpgradeRequest, UpgradeResponse
 from routers import platform_router
 
@@ -82,6 +82,12 @@ def upgrade_platform(payload: UpgradeRequest) -> UpgradeResponse:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Not enough space to perform backup. Required: {_get_used_storage()} MB",
+        )
+
+    if is_job_running():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Upgrade is already in progress. Please wait until the current upgrade is completed.",
         )
 
     deploy_service_job(

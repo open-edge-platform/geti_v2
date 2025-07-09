@@ -286,7 +286,7 @@ def is_job_completed_or_failed(namespace: str) -> tuple[bool, str]:
         return False, f"Error checking job status: {e}"
 
 
-def is_job_running(namespace: str) -> bool:
+def is_job_running(namespace: str = "default") -> bool:
     """
     Check if the Kubernetes job is still running.
     """
@@ -301,7 +301,6 @@ def is_job_running(namespace: str) -> bool:
                     timestamp = match.group()
                     running_jobs.append((job.metadata.name, timestamp))
         latest_job = max(running_jobs, key=lambda x: x[1], default=None)
-        logger.debug(f"Latest job in namespace '{namespace}': {latest_job}")
         return bool(latest_job[0])
     except client.exceptions.ApiException as e:
         logger.error(f"Failed to get job status: {e}")
