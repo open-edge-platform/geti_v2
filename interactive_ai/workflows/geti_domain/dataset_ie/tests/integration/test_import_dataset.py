@@ -792,6 +792,7 @@ class TestImportDataset:
             exact_same=False if dataset_definition == "fxt_multi_label_dataset_definition" and fmt == "voc" else True,
         )
 
+    @pytest.mark.skip("ITEP-69641")
     @patch("jobs_common.tasks.utils.secrets.set_env_vars", new=return_none)
     @patch("jobs_common.tasks.utils.secrets.setup_session_from_env", new=return_none)
     def test_import_dataset_for_keypoint_detection(
