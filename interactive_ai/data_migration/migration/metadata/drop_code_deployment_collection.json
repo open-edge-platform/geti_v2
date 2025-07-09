@@ -4,6 +4,6 @@
   "skip_on_project_import": true,
   "new_collections": [],
   "updated_collections": [],
-  "deprecated_collections": [],
+  "deprecated_collections": ["code_deployment"],
   "affects_binary_data": false
 }
