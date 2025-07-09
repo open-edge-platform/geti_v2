@@ -82,7 +82,7 @@
     "build:geti": "rsbuild build --environment geti",
     "build:rest-openapi-spec": "npx @redocly/cli bundle --dereferenced ../docs/rest_api/openapi.yaml -o public/openapi-spec.json",
     "build:server": "npm run build:server-schema && npm run build:server-combine && npm run build:server-types",
-    "build:server-combine": "ts-node ./src/core/server/combine.js",
+    "build:server-combine": "node ./src/core/server/combine.js",
     "build:server-schema": "swagger-cli bundle -o src/core/server/generated/api-spec.json ../docs/rest_api/openapi_internal.yaml -r",
     "build:server-types": "openapi-typescript src/core/server/generated/api-spec.json --output src/core/server/generated/schemas.ts",
     "cyclic-deps-check": "npx madge --circular src/**/*.ts* tests/**/*.ts* packages/**/*.ts*",
@@ -163,7 +163,6 @@
     "openapi-typescript": "^7.6.1",
     "openapi-typescript-fetch": "^2.1.0",
     "prettier": "^3.5.3",
-    "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   },
   "overrides": {
