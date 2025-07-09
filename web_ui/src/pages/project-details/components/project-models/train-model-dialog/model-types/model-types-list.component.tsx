@@ -4,7 +4,6 @@
 import { FC } from 'react';
 
 import { Grid, minmax, repeat } from '@geti/ui';
-import { capitalize } from 'lodash-es';
 
 import { PerformanceCategory } from '../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { SupportedAlgorithm } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
@@ -57,11 +56,8 @@ export const ModelTypesList: FC<ModelTypesListProps> = ({
         <Grid columns={repeat('auto-fit', minmax('size-3000', '1fr'))} gap={'size-250'}>
             {baseAlgorithms.map((algorithm) => {
                 const isRecommendedAlgorithm = algorithm.performanceCategory !== PerformanceCategory.OTHER;
-                const name = isRecommendedAlgorithm ? capitalize(algorithm.performanceCategory) : algorithm.name;
-
                 return (
                     <ModelType
-                        name={name}
                         key={algorithm.modelTemplateId}
                         algorithm={algorithm}
                         selectedModelTemplateId={selectedModelTemplateId}
