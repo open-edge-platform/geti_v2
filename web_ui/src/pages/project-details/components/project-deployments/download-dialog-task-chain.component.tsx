@@ -3,7 +3,6 @@
 
 import { useMemo, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Button, ButtonGroup, Content, Dialog, Divider, Flex, Heading } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 

@@ -3,7 +3,6 @@
 
 import { ComponentProps } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Divider, Flex, Item, Picker, Text } from '@geti/ui';
 
 import { InferenceModel } from '../../../../core/annotations/services/visual-prompt-service';
