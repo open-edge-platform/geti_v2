@@ -45,6 +45,14 @@ const TemplateRating: FC<TemplateRatingProps> = ({ ratings }) => {
     );
 };
 
+type PerformanceRating = SupportedAlgorithm['performanceRatings'][keyof SupportedAlgorithm['performanceRatings']];
+
+const RATING_MAP: Record<PerformanceRating, Ratings> = {
+    1: 'LOW',
+    2: 'MEDIUM',
+    3: 'HIGH',
+};
+
 export const ModelType: FC<ModelTypeProps> = ({
     algorithm,
     selectedModelTemplateId,
@@ -53,7 +61,7 @@ export const ModelType: FC<ModelTypeProps> = ({
     renderTag,
     name,
 }) => {
-    const { modelTemplateId, lifecycleStage, description } = algorithm;
+    const { modelTemplateId, lifecycleStage, description, performanceRatings } = algorithm;
     const isSelected = selectedModelTemplateId === modelTemplateId;
 
     const shouldShowActiveTag = modelTemplateId === activeModelTemplateId;
@@ -112,7 +120,13 @@ export const ModelType: FC<ModelTypeProps> = ({
                 </>
             }
             descriptionContent={
-                <TemplateRating ratings={{ accuracy: 'HIGH', trainingTime: 'MEDIUM', inferenceSpeed: 'LOW' }} />
+                <TemplateRating
+                    ratings={{
+                        accuracy: RATING_MAP[performanceRatings.accuracy],
+                        trainingTime: RATING_MAP[performanceRatings.trainingTime],
+                        inferenceSpeed: RATING_MAP[performanceRatings.inferenceSpeed],
+                    }}
+                />
             }
         />
     );
