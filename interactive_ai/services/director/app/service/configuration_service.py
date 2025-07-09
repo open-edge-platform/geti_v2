@@ -57,7 +57,9 @@ class ConfigurationService:
         # TODO after ITEP-32190: Load model manifest hyperparameters when model manifests are added
         base_hyperparameters = Hyperparameters(
             dataset_preparation=DatasetPreparationParameters(augmentation=AugmentationParameters()),
-            training=TrainingHyperParameters(input_size="32x32", allowed_values_input_size=["32x32", "64x64"]),
+            training=TrainingHyperParameters(
+                input_size_width=32, input_size_height=32, allowed_values_input_size=[32, 64, 128]
+            ),
             evaluation=EvaluationParameters(),
         )
         base_global_params = GlobalParameters(
