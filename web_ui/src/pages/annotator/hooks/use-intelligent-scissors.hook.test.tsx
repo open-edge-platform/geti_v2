@@ -51,6 +51,7 @@ const mockProps = ({ canPathBeClosed = false }: { canPathBeClosed?: boolean }): 
         cleanPoints: jest.fn(),
         buildMap: jest.fn(),
         calcPoints: jest.fn(),
+        loadImage: jest.fn(),
         optimizeSegments: jest.fn(),
         optimizePolygon: jest.fn(),
     },

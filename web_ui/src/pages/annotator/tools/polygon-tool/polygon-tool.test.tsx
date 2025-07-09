@@ -71,7 +71,7 @@ jest.mock('./../../zoom/zoom-provider.component', () => ({
 
 const mockOptimizePolygon = jest.fn((polygon) => polygon);
 const mockOptimizeSegments = jest.fn((segments: Point[][]) => ({
-    shapeType: ShapeType.Polygon,
+    shapeType: 'polygon',
     points: segments.flat(),
 }));
 
