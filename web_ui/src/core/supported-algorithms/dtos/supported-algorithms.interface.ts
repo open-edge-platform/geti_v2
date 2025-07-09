@@ -28,7 +28,7 @@ export interface LegacySupportedAlgorithmDTO {
     performance_category: PerformanceCategory;
 }
 
-export type SupportedAlgorithmStatsValues = '1' | '2' | '3';
+export type SupportedAlgorithmStatsValues = 1 | 2 | 3;
 
 export interface SupportedAlgorithmDTO {
     capabilities: {

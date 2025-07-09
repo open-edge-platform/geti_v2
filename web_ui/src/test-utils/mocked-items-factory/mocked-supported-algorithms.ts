@@ -29,9 +29,9 @@ export const getMockedSupportedAlgorithm = (supportedAlgorithm?: Partial<Support
             xai: true,
         },
         performanceRatings: {
-            accuracy: '1',
-            inferenceSpeed: '2',
-            trainingTime: '3',
+            accuracy: 1,
+            inferenceSpeed: 2,
+            trainingTime: 3,
         },
         trainableParameters: 100,
         ...supportedAlgorithm,
