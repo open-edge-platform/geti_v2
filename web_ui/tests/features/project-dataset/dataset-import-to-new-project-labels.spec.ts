@@ -762,9 +762,9 @@ test.describe('DatasetImportToNewProjectLabels', (): void => {
 
             await expect(page.getByTestId('keypoint readonly template')).toBeInViewport();
 
-            labels.forEach(async ({ name }) => {
-                await page.getByLabel(`keypoint ${name} anchor`).click();
-            });
+            for await (const { name } of labels) {
+                await expect(page.getByLabel(`keypoint ${name} anchor`)).toBeInViewport();
+            }
 
             await expect(page.getByTestId('testid-create')).toBeEnabled();
         });
