@@ -1,7 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import os
 from copy import deepcopy
 from unittest.mock import patch
 from uuid import UUID
@@ -267,15 +266,6 @@ def fxt_anomaly_segmentation_model_storage(fxt_model_storage) -> dict:
     return anomaly_segmentation_model_storage
 
 
-@pytest.fixture
-def fxt_mongo_client() -> MongoClient:
-    database_address = os.environ.get("DATABASE_ADDRESS", "mongodb://localhost:27017/")
-    database_username = os.environ.get("DATABASE_USERNAME", None)
-    database_password = os.environ.get("DATABASE_PASSWORD", None)
-
-    return MongoClient(database_address, username=database_username, password=database_password)
-
-
 def side_effect_mongo_mock_from_uuid(uuid: UUID, uuid_representation=UuidRepresentation.STANDARD):
     """Override (Mock) the bson.binary.Binary.from_uuid function to work for mongomock
     Code is copy pasted from the original function,
@@ -354,14 +344,14 @@ class TestAnomalyReductionProcessMigration:
         task_node = request.getfixturevalue(lazyfxt_task_node)
 
         mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
-        project_collection = mock_db.project
-        label_collection = mock_db.label
-        label_schema_collection = mock_db.label_schema
-        model_collection = mock_db.model
-        model_storage_collection = mock_db.model_storage
-        task_node_collection = mock_db.task_node
-        annotation_scene_collection = mock_db.annotation_scene
-        annotation_scene_state_collection = mock_db.annotation_scene_state
+        project_collection = mock_db.create_collection("project")
+        label_collection = mock_db.create_collection("label")
+        label_schema_collection = mock_db.create_collection("label_schema")
+        model_collection = mock_db.create_collection("model")
+        model_storage_collection = mock_db.create_collection("model_storage")
+        task_node_collection = mock_db.create_collection("task_node")
+        annotation_scene_collection = mock_db.create_collection("annotation_scene")
+        annotation_scene_state_collection = mock_db.create_collection("annotation_scene_state")
 
         project_collection.insert_one(project)
         label_collection.insert_one(label)
