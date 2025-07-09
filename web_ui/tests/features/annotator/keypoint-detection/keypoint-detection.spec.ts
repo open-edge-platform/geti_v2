@@ -61,6 +61,7 @@ test.describe(`keypoint detection`, () => {
         await page.goto(annotatorUrl);
 
         await checkKeypointTools(page);
+        await page.getByRole('button', { name: 'Selection' }).click();
 
         await page.getByTestId('transform-zoom-canvas').locator('rect').click();
 
@@ -118,6 +119,7 @@ test.describe(`keypoint detection`, () => {
     test('rotate annotations', async ({ page, templateManagerPage }) => {
         await page.goto(annotatorUrl);
         await checkKeypointTools(page);
+        await page.getByRole('button', { name: 'Selection' }).click();
         await page.getByTestId('transform-zoom-canvas').locator('rect').click();
 
         const headPosition = await templateManagerPage.getPosition(page.getByLabel('Resize keypoint head anchor'));
