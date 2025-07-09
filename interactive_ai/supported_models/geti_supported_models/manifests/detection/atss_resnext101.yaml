@@ -16,4 +16,3 @@ supported_gpus:
 hyperparameters:
   training:
     learning_rate: 0.004
-    default_input_size: "800x992"

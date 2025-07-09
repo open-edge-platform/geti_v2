@@ -13,7 +13,6 @@ stats:
 hyperparameters:
   training:
     learning_rate: 0.0002
-    default_input_size: "416x416"
     allowed_values_input_size:
       - 128
       - 256
@@ -23,3 +22,5 @@ hyperparameters:
       - 800
       - 992
       - 1024
+    input_size_width: 416
+    input_size_height: 416

@@ -25,3 +25,5 @@ hyperparameters:
       - 800
       - 992
       - 1024
+    input_size_width: 800
+    input_size_height: 992

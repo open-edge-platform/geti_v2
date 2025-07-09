@@ -22,4 +22,5 @@ hyperparameters:
       - 864
       - 992
       - 1024
-    default_input_size: "864x864"
+    input_size_width: 864
+    input_size_height: 864

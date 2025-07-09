@@ -31,3 +31,5 @@ hyperparameters:
       - 384
       - 480
       - 560
+    input_size_width: 224
+    input_size_height: 224

@@ -1,4 +1,4 @@
-task: instance_segmentation
+task: segmentation
 capabilities:
   tiling: true
 
@@ -19,3 +19,5 @@ hyperparameters:
       - 1280
       - 1344
       - 1536
+    input_size_width: 1024
+    input_size_height: 1024
