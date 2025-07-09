@@ -444,7 +444,7 @@ export const mockedBatchPredictionShape = {
     y: 0,
 } as RectDTO;
 
-export const mockedBatchPrediction = (label: Label, probability = 1) => ({
+const mockedBatchPrediction = (label: Label, probability = 1) => ({
     labels: [{ id: label.id, name: label.name, probability }],
     shape: mockedBatchPredictionShape,
 });

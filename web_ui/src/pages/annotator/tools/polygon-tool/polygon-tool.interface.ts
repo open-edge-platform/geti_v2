@@ -13,7 +13,7 @@ export interface IntelligentScissorsInstance {
     new (imageData: ImageData): IntelligentScissorsMethods;
 }
 
-export interface IntelligentScissorsWorker extends WebWorker<Polygon> {
+export interface IntelligentScissorsWorker extends WebWorker {
     IntelligentScissors: IntelligentScissorsInstance;
     type: AlgorithmType.INTELLIGENT_SCISSORS;
     optimizeSegments: (segments: Point[][]) => Promise<Polygon>;

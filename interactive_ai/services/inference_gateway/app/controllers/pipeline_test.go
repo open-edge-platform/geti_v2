@@ -22,7 +22,6 @@ import (
 
 	"inference_gateway/app/entities"
 	"inference_gateway/app/service"
-	"inference_gateway/app/usecase"
 )
 
 type PipelineControllerSuite struct {
@@ -271,7 +270,7 @@ func (suite *PipelineControllerSuite) TestPipelineController_Infer() {
 				fullTestID.ProjectID,
 			),
 			setupMocks: func() {
-				var batchResp usecase.BatchPredictionJSON
+				var batchResp entities.BatchPredictionJSON
 				batchResp.BatchPredictions = append(batchResp.BatchPredictions, []byte(`{"score": 0.5}`))
 				inferenceMock.EXPECT().
 					BatchPredict(mock.AnythingOfType("*gin.Context"), inferenceRequest, sdkentities.ID{ID: "active"}).
@@ -285,7 +284,7 @@ func (suite *PipelineControllerSuite) TestPipelineController_Infer() {
 			giveRequest: fmt.Sprintf("/api/v1/organizations/%s/workspaces/%s/projects/%s/pipelines/%s:batch_predict",
 				fullTestID.OrganizationID, fullTestID.WorkspaceID, fullTestID.ProjectID, fullTestID.TestID),
 			setupMocks: func() {
-				var batchResp usecase.BatchPredictionJSON
+				var batchResp entities.BatchPredictionJSON
 				batchResp.BatchPredictions = append(batchResp.BatchPredictions, []byte(`{"score": 0.5}`))
 				inferenceMock.EXPECT().
 					BatchPredict(mock.AnythingOfType("*gin.Context"), inferenceRequest, sdkentities.ID{ID: fullTestID.TestID.String()}).
@@ -318,7 +317,7 @@ func (suite *PipelineControllerSuite) TestPipelineController_Infer() {
 				fullTestID.ProjectID,
 			),
 			setupMocks: func() {
-				var batchResp usecase.BatchExplainJSON
+				var batchResp entities.BatchExplainJSON
 				batchResp.BatchExplain = append(batchResp.BatchExplain, []byte(`{"score": 0.5}`))
 				inferenceMock.EXPECT().
 					BatchExplain(mock.AnythingOfType("*gin.Context"), inferenceRequest, sdkentities.ID{ID: "active"}).
@@ -332,7 +331,7 @@ func (suite *PipelineControllerSuite) TestPipelineController_Infer() {
 			giveRequest: fmt.Sprintf("/api/v1/organizations/%s/workspaces/%s/projects/%s/pipelines/%s:batch_explain",
 				fullTestID.OrganizationID, fullTestID.WorkspaceID, fullTestID.ProjectID, fullTestID.TestID),
 			setupMocks: func() {
-				var batchResp usecase.BatchExplainJSON
+				var batchResp entities.BatchExplainJSON
 				batchResp.BatchExplain = append(batchResp.BatchExplain, []byte(`{"score": 0.5}`))
 				inferenceMock.EXPECT().
 					BatchExplain(mock.AnythingOfType("*gin.Context"), inferenceRequest, sdkentities.ID{ID: fullTestID.TestID.String()}).
@@ -350,7 +349,7 @@ func (suite *PipelineControllerSuite) TestPipelineController_Infer() {
 				fullTestID.ProjectID,
 			),
 			setupMocks: func() {
-				var batchResp usecase.BatchExplainJSON
+				var batchResp entities.BatchExplainJSON
 				batchResp.BatchExplain = append(batchResp.BatchExplain, []byte(`{"score": 0.5}`))
 				inferenceMock.EXPECT().
 					BatchExplain(mock.AnythingOfType("*gin.Context"), inferenceRequest, sdkentities.ID{ID: "active"}).

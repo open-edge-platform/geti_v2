@@ -31,7 +31,6 @@ def fxt_mock_project():
     return MagicMock()
 
 
-@pytest.mark.JobsComponent
 class TestCreateTrainDataset:
     @patch.dict(os.environ, TEST_ENV_VARS)
     @patch.object(TrainWorkflowData, "get_common_entities")

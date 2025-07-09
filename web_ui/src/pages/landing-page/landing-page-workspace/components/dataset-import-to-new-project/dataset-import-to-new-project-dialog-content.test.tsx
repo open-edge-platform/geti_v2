@@ -139,7 +139,7 @@ describe(DatasetImportToNewProjectDialogContent, () => {
                 activeStep: DATASET_IMPORT_TO_NEW_PROJECT_STEP.LABELS,
             });
 
-            expect(screen.getByLabelText('keypoint readonly template')).toBeVisible();
+            expect(screen.getByTestId('keypoint readonly template')).toBeVisible();
         });
     });
 });

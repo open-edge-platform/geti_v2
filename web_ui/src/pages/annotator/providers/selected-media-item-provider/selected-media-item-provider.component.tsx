@@ -73,9 +73,8 @@ const isNotAnnotatedForTask = (annotations: Annotation[], selectedTask: Task | n
 const usePredictionMode = () => {
     const [selectedModel] = useSelectedInferenceModel();
     const { isActiveLearningMode } = useAnnotatorMode();
-    const { FEATURE_FLAG_VISUAL_PROMPT_SERVICE } = useFeatureFlags();
 
-    if (FEATURE_FLAG_VISUAL_PROMPT_SERVICE && selectedModel === InferenceModel.VISUAL_PROMPT) {
+    if (selectedModel === InferenceModel.VISUAL_PROMPT) {
         return PredictionMode.VISUAL_PROMPT;
     }
 

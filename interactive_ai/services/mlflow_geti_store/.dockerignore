@@ -1,5 +1,0 @@
-*
-!entrypoints
-!mlflow_geti_store
-!pyproject.toml
-!uv.lock

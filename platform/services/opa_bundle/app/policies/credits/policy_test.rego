@@ -1,5 +1,14 @@
-# Copyright (C) 2022-2025 Intel Corporation
-# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+# INTEL CONFIDENTIAL
+#
+# Copyright (C) 2024 Intel Corporation
+#
+# This software and the related documents are Intel copyrighted materials, and your use of them is governed by
+# the express license under which they were provided to you ("License"). Unless the License provides otherwise,
+# you may not use, modify, copy, publish, distribute, disclose or transmit this software or the related documents
+# without Intel's prior written permission.
+#
+# This software and the related documents are provided as is, with no express or implied warranties,
+# other than those that are expressly stated in the License.
 
 package istio.authz
 
@@ -8,6 +17,39 @@ import future.keywords.every
 import input.attributes.request.http as http_request
 import input.parsed_path
 import input.parsed_query
+
+test_result_license_valid {
+    result == {"allowed": true, "body": ""}
+    with allow as true
+    with is_license_valid as true
+}
+
+test_result_license_invalid_not_allow {
+    result == {"allowed": false, "body": "License is invalid."}
+    with input as {
+        "attributes": {"request": {"http": {
+            "method": "GET",
+            "path": "/api/v1/organizations/",
+        }}},
+        "parsed_path": ["api", "v1", "workspaces"]
+        }
+    with is_license_valid as false
+}
+
+test_result_health_route_and_license_invalid {
+    result == {"allowed": true, "body": ""}
+    with input as {
+        "attributes": {"request": {"http": {
+            "method": "GET",
+            "path": "/health/",
+        }}},
+        "parsed_path": [
+            "health",
+            "",
+        ],
+    }
+    with is_license_valid as false
+}
 
 test_health_allowed {
     allow with input as {
@@ -22,6 +64,26 @@ test_health_allowed {
     }
 }
 
+test_license_allowed {
+    allow with input as {
+        "attributes": {"request": {"http": {
+            "method": "GET",
+            "path": "/api/v1/license/valid",
+        }}},
+        "parsed_path": ["api","v1","license","valid"],
+    }
+}
+
+test_license_not_allowed {
+    not allow with input as {
+        "attributes": {"request": {"http": {
+            "method": "POST",
+            "path": "/api/v1/license/valid",
+        }}},
+        "parsed_path": ["api","v1","license","valid"],
+    }
+}
+
 test_get_balance_auth_user_allowed {
     allow with input as {
         "attributes": {"request": {"http": {
@@ -30,7 +92,7 @@ test_get_balance_auth_user_allowed {
             "path": "/api/v1/organizations/1/balance",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "balance"],
-    }
+    } with is_license_valid as true
 with check_authorization_spicedb as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -44,7 +106,7 @@ test_get_balance_not_auth_user_not_allowed {
             "path": "/api/v1/organizations/1/balance",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "balance"],
-    }
+    } with is_license_valid as true
 with check_authorization_spicedb as false
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -58,7 +120,7 @@ test_get_balance_intel_admin_allowed {
             "path": "/api/v1/organizations/1/balance",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "balance"],
-    }
+    } with is_license_valid as true
 }
 
 test_put_balance_intel_admin_allowed {
@@ -69,7 +131,7 @@ test_put_balance_intel_admin_allowed {
             "path": "/api/v1/organizations/1/credit_accounts/1/balance",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts", 1, "balance"],
-    }
+    } with is_license_valid as true
 }
 
 test_put_balance_org_admin_not_allowed {
@@ -80,7 +142,7 @@ test_put_balance_org_admin_not_allowed {
             "path": "/api/v1/organizations/1/credit_accounts/1/balance",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts", 1, "balance"],
-    }
+    } with is_license_valid as true
 with check_authorization_spicedb as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -94,7 +156,7 @@ test_post_credit_account_intel_admin_allowed {
             "path": "/api/v1/organizations/1/credit_accounts",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts"],
-    }
+    } with is_license_valid as true
 }
 
 test_post_credit_account_org_admin_not_allowed {
@@ -105,7 +167,7 @@ test_post_credit_account_org_admin_not_allowed {
             "path": "/api/v1/organizations/1/credit_accounts",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts"],
-    }
+    } with is_license_valid as true
 with check_authorization_spicedb as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -119,7 +181,7 @@ test_put_credit_account_intel_admin_allowed {
             "path": "/api/v1/organizations/1/credit_accounts/1",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts", 1],
-    }
+    } with is_license_valid as true
 }
 
 test_put_credit_account_org_admin_not_allowed {
@@ -130,7 +192,7 @@ test_put_credit_account_org_admin_not_allowed {
             "path": "/api/v1/organizations/1/credit_accounts/1",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts", 1],
-    }
+    } with is_license_valid as true
 with check_authorization_spicedb as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -144,7 +206,7 @@ test_get_credit_account_org_admin_allowed {
             "path": "/api/v1/organizations/1/credit_accounts",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "credit_accounts"],
-    }
+    } with is_license_valid as true
 with is_workspace_admin as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -158,7 +220,7 @@ test_get_transactions_org_admin_allowed {
             "path": "/api/v1/organizations/1/transactions",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "transactions"],
-    }
+    } with is_license_valid as true
 with is_workspace_admin as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -172,7 +234,7 @@ test_get_transaction_aggregates_org_admin_allowed {
             "path": "/api/v1/organizations/1/transactions/aggregates",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "transactions", "aggregates"],
-    }
+    } with is_license_valid as true
 with is_workspace_admin as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -186,7 +248,7 @@ test_get_transactions_intel_admin_not_allowed {
             "path": "/api/v1/organizations/1/transactions",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "transactions"],
-    }
+    } with is_license_valid as true
 }
 
 test_get_products_org_user_allowed {
@@ -197,7 +259,7 @@ test_get_products_org_user_allowed {
             "path": "/api/v1/products",
         }}},
         "parsed_path": ["api", "v1", "products"],
-    }
+    } with is_license_valid as true
 with check_authorization_spicedb as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -211,7 +273,7 @@ test_post_subscription_org_admin_allowed {
             "path": "/api/v1/organizations/1/workspaces/1/subscriptions",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "workspaces", 1, "subscriptions"],
-    }
+    } with is_license_valid as true
 with check_authorization as true
 with check_relation as true
 with spicedb_key as "token"
@@ -226,7 +288,7 @@ test_post_subscription_intel_admin_not_allowed {
             "path": "/api/v1/organizations/1/workspaces/1/subscriptions",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "workspaces", 1, "subscriptions"],
-    }
+    } with is_license_valid as true
 }
 
 test_get_subscriptions_org_admin_allowed {
@@ -237,7 +299,7 @@ test_get_subscriptions_org_admin_allowed {
             "path": "/api/v1/organizations/1/subscriptions",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions"],
-    }
+    } with is_license_valid as true
 with is_workspace_admin as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -251,7 +313,7 @@ test_get_subscriptions_org_user_not_allowed {
             "path": "/api/v1/organizations/1/subscriptions",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions"],
-    }
+    } with is_license_valid as true
 with is_workspace_admin as false
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -265,7 +327,7 @@ test_get_subscriptions_quotas_intel_admin_allowed {
             "path": "/api/v1/organizations/1/subscriptions/active/quotas",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
-    }
+    } with is_license_valid as true
 }
 
 test_get_subscriptions_quotas_org_user_not_allowed {
@@ -276,7 +338,7 @@ test_get_subscriptions_quotas_org_user_not_allowed {
             "path": "/api/v1/organizations/1/subscriptions/active/quotas",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
-    }
+    } with is_license_valid as true
 with is_workspace_admin as false
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -290,7 +352,7 @@ test_get_subscriptions_quotas_org_admin_allowed {
             "path": "/api/v1/organizations/1/subscriptions/active/quotas",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
-    }
+    } with is_license_valid as true
 with is_workspace_admin as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -304,7 +366,7 @@ test_put_subscriptions_quotas_intel_admin_allowed {
             "path": "/api/v1/organizations/1/subscriptions/active/quotas",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
-    }
+    } with is_license_valid as true
 }
 
 test_get_subscriptions_quotas_org_user_not_allowed {
@@ -315,7 +377,7 @@ test_get_subscriptions_quotas_org_user_not_allowed {
             "path": "/api/v1/organizations/1/subscriptions/active/quotas",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active", "quotas"],
-    }
+    } with is_license_valid as true
 with is_workspace_admin as false
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -329,7 +391,7 @@ test_get_active_subscription_org_user_allowed {
             "path": "/api/v1/organizations/1/subscriptions/active",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active"],
-    }
+    } with is_license_valid as true
 with check_authorization_spicedb as true
 with spicedb_key as "token"
 with spicedb_address as "localhost"
@@ -343,7 +405,7 @@ test_get_subscriptions_intel_admin_allowed {
             "path": "/api/v1/organizations/1/subscriptions",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions"],
-    }
+    } with is_license_valid as true
 }
 
 test_get_active_subscription_intel_admin_allowed {
@@ -354,7 +416,7 @@ test_get_active_subscription_intel_admin_allowed {
             "path": "/api/v1/organizations/1/subscriptions/active",
         }}},
         "parsed_path": ["api", "v1", "organizations", 1, "subscriptions", "active"],
-    }
+    } with is_license_valid as true
 }
 
 test_rollover_is_allowed {
@@ -371,7 +433,7 @@ test_rollover_is_allowed {
                 "principal": "spiffe://cluster.local/ns/impt/sa/credit-system"
             }
         }
-    }
+    } with is_license_valid as true
 }
 
 test_snapshot_is_allowed {
@@ -388,7 +450,7 @@ test_snapshot_is_allowed {
                 "principal": "spiffe://cluster.local/ns/impt/sa/credit-system"
             }
         }
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_lease_acquire_jobs_ms_allowed {
@@ -414,7 +476,7 @@ test_grpc_lease_acquire_jobs_ms_allowed {
             }
         },
         "parsed_path": ["credit_system_service.LeaseService", "acquire"],
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_lease_acquire_default_not_allowed {
@@ -440,7 +502,7 @@ test_grpc_lease_acquire_default_not_allowed {
             }
         },
         "parsed_path": ["credit_system_service.LeaseService", "acquire"],
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_lease_cancel_jobs_scheduler_allowed {
@@ -466,7 +528,7 @@ test_grpc_lease_cancel_jobs_scheduler_allowed {
             }
         },
         "parsed_path": ["credit_system_service.LeaseService", "cancel"],
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_lease_cancel_default_not_allowed {
@@ -492,7 +554,7 @@ test_grpc_lease_cancel_default_not_allowed {
             }
         },
         "parsed_path": ["credit_system_service.LeaseService", "cancel"],
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_activate_subscription_onboarding_allowed {
@@ -518,7 +580,7 @@ test_grpc_activate_subscription_onboarding_allowed {
             }
         },
         "parsed_path": ["credit_system_service.SubscriptionService", "activate"],
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_activate_subscription_default_not_allowed {
@@ -544,7 +606,7 @@ test_grpc_activate_subscription_default_not_allowed {
             }
         },
         "parsed_path": ["credit_system_service.SubscriptionService", "activate"],
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_get_products_onboarding_allowed {
@@ -570,7 +632,7 @@ test_grpc_get_products_onboarding_allowed {
             }
         },
         "parsed_path": ["credit_system_service.ProductService", "get_all_products"],
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_get_products_default_not_allowed {
@@ -596,7 +658,7 @@ test_grpc_get_products_default_not_allowed {
             }
         },
         "parsed_path": ["credit_system_service.ProductService", "get_all_products"],
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_get_quota_account_service_allowed {
@@ -622,7 +684,7 @@ test_grpc_get_quota_account_service_allowed {
             }
         },
         "parsed_path": ["credit_system_service.QuotaService", "get"],
-    }
+    } with is_license_valid as true
 }
 
 test_grpc_get_quota_default_not_allowed {
@@ -648,5 +710,5 @@ test_grpc_get_quota_default_not_allowed {
             }
         },
         "parsed_path": ["credit_system_service.QuotaService", "get"],
-    }
+    } with is_license_valid as true
 }

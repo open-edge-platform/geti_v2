@@ -9,9 +9,8 @@ import { useGetScheduledJobs } from '../../../../core/jobs/hooks/use-jobs.hook';
 import { JobTask } from '../../../../core/jobs/jobs.interface';
 import { JobsResponse } from '../../../../core/jobs/services/jobs-service.interface';
 import { ProjectIdentifier } from '../../../../core/projects/core.interface';
-import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
+import { FUX_NOTIFICATION_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { UserGlobalSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
-import { getSettingsOfType } from '../../../../core/user-settings/utils';
 import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { useNotification } from '../../../../notification/notification.component';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
@@ -55,13 +54,10 @@ export const CreditDeductionNotification = ({ settings }: CreditDeductionNotific
     const { project, projectIdentifier } = useProject();
     const isAutoTrainingOn = useIsAutoTrainingOn({ project, projectIdentifier });
 
-    const fuxConfig = getSettingsOfType(settings.config, {
-        ...FUX_NOTIFICATION_KEYS,
-        ...FUX_SETTINGS_KEYS,
-    });
-    const isAutoTrainingFirstModalEnabled = fuxConfig[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL]?.isEnabled;
-    const isAutoTrainingNotificationEnabled = fuxConfig[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION]?.isEnabled;
-    const firstAutoTrainingJobId = fuxConfig.firstAutoTrainingJobId.value;
+    const isAutoTrainingFirstModalEnabled = settings.config[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL].isEnabled;
+    const isAutoTrainingNotificationEnabled =
+        settings.config[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION].isEnabled;
+    const firstAutoTrainingJobId = settings.config.firstAutoTrainingJobId.value;
     const isQueryEnabled = Boolean(
         !isAutoTrainingFirstModalEnabled && !isAutoTrainingNotificationEnabled && isAutoTrainingOn
     );

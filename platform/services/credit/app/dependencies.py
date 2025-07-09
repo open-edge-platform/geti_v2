@@ -14,12 +14,12 @@ logger = logging.getLogger(__name__)
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 RO_DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_RO_HOST}:{DB_PORT}/{DB_NAME}"
 
-logger.debug(f"Creating engine using following conn string: {DATABASE_URL}")
+logger.debug(f"Creating engine using following db: {DB_HOST}/{DB_NAME}")
 # DEFAULTS: pool_size=5, max_overflow=10, timeout=30s
 # refreshing connections each 15 min
 engine = create_engine(url=DATABASE_URL, pool_recycle=900)
 
-logger.debug(f"Creating read-only engine using following conn string: {RO_DATABASE_URL}")
+logger.debug(f"Creating read-only engine using following db: {DB_RO_HOST}/{DB_NAME}")
 read_only_engine = create_engine(url=RO_DATABASE_URL, pool_recycle=900)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

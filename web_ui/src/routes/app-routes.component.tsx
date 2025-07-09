@@ -22,7 +22,6 @@ import { SignUp } from '../pages/sign-up/sign-up.component';
 import { InstallationModeProvider } from '../providers/installation-mode-provider.component';
 import { TusUploadProvider } from '../providers/tus-upload-provider/tus-upload-provider.component';
 import { LicenseModal } from '../shared/components/license-modal/license-modal.component';
-import { ForgotPassword } from '../sign-up/pages/forgot-password/forgot-password.component';
 import { InvalidLink } from '../sign-up/pages/invalid-link/invalid-link.component';
 import { Registration } from '../sign-up/pages/registration/registration.component';
 import { ResetPassword } from '../sign-up/pages/reset-password/reset-password.component';
@@ -146,7 +145,8 @@ export const appRoutes = () => {
                 }
             >
                 <Route path={paths.register.signUp.pattern} element={<Registration />} />
-                <Route path={paths.register.forgotPassword.pattern} element={<ForgotPassword />} />
+                {/* Disabled temporarily: https://jira.devtools.intel.com/browse/ITEP-70558 */}
+                {/* <Route path={paths.register.forgotPassword.pattern} element={<ForgotPassword />} /> */}
                 <Route path={paths.register.resetPassword.pattern} element={<ResetPassword />} />
                 <Route path={paths.register.invalidLink.pattern} element={<InvalidLink />} />
                 <Route path={paths.register.userNotFound.pattern} element={<UserNotFound />} />

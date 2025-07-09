@@ -53,6 +53,10 @@ interactive_ai/libs/iai_core_py:
   - .github/libs-path-filters.yml
 interactive_ai/supported_models/:
   - interactive_ai/supported_models/**
-  - interactive_ai/libs/supported_algorithm/**
+  - libs/configuration_tools/**
+  - libs/Makefile**
+  - .github/libs-path-filters.yml
+interactive_ai/data_migration/:
+  - interactive_ai/data_migration/**
   - libs/Makefile**
   - .github/libs-path-filters.yml

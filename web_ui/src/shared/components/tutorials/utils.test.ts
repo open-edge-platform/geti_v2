@@ -10,9 +10,8 @@ import {
     TutorialConfig,
 } from '../../../core/user-settings/dtos/user-settings.interface';
 import {
-    initialConfig,
+    INITIAL_GLOBAL_SETTINGS,
     initialFuxNotificationsConfig,
-    initialFuxSettingsConfig,
     initialTutorialConfig,
 } from '../../../core/user-settings/utils';
 import {
@@ -27,7 +26,7 @@ import {
 describe('Tutorial utils', () => {
     describe('getTutorialAndFuxNotificationsConfig', () => {
         it('returns settings for normal tutorials + first user experience', () => {
-            expect(getTutorialAndFuxNotificationsConfig(initialConfig)).toEqual({
+            expect(getTutorialAndFuxNotificationsConfig(INITIAL_GLOBAL_SETTINGS)).toEqual({
                 ...initialTutorialConfig,
                 ...initialFuxNotificationsConfig,
             });
@@ -53,7 +52,7 @@ describe('Tutorial utils', () => {
             const mockSaveConfig = jest.fn();
 
             dismissAllTutorials({
-                config: initialConfig,
+                config: INITIAL_GLOBAL_SETTINGS,
                 isSavingConfig: false,
                 saveConfig: mockSaveConfig,
             });
@@ -63,7 +62,7 @@ describe('Tutorial utils', () => {
                 ...Object.values(FUX_NOTIFICATION_KEYS),
             ];
             const expectedConfig = {
-                ...initialConfig,
+                ...INITIAL_GLOBAL_SETTINGS,
                 [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
                     value: true,
                 },
@@ -107,7 +106,7 @@ describe('Tutorial utils', () => {
             }
 
             dismissAllTutorials({
-                config: { ...dismissedTutorialAndFuxNotificationConfig, ...initialFuxSettingsConfig },
+                config: { ...INITIAL_GLOBAL_SETTINGS, ...dismissedTutorialAndFuxNotificationConfig },
                 isSavingConfig: false,
                 saveConfig: mockSaveConfig,
             });
@@ -118,8 +117,7 @@ describe('Tutorial utils', () => {
             ];
 
             const expectedConfig = {
-                ...initialTutorialConfig,
-                ...initialFuxNotificationsConfig,
+                ...INITIAL_GLOBAL_SETTINGS,
                 [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
                     value: true,
                 },
@@ -162,14 +160,14 @@ describe('Tutorial utils', () => {
                 FUX_NOTIFICATION_KEYS.ANNOTATOR_ACTIVE_SET,
                 FUX_NOTIFICATION_KEYS.ANNOTATOR_CHECK_PREDICTIONS,
                 {
-                    config: initialFuxNotificationsConfig,
+                    config: INITIAL_GLOBAL_SETTINGS,
                     isSavingConfig: false,
                     saveConfig: mockSaveConfig,
                 }
             );
 
             const expectedConfig: FuxNotificationsConfig = {
-                ...initialFuxNotificationsConfig,
+                ...INITIAL_GLOBAL_SETTINGS,
                 [FUX_NOTIFICATION_KEYS.ANNOTATOR_ACTIVE_SET]: { isEnabled: false },
                 [FUX_NOTIFICATION_KEYS.ANNOTATOR_CHECK_PREDICTIONS]: { isEnabled: true },
             };
@@ -183,13 +181,13 @@ describe('Tutorial utils', () => {
             const mockSaveConfig = jest.fn();
 
             dismissTutorial(TUTORIAL_CARD_KEYS.LIVE_PREDICTION_NOTIFICATION, {
-                config: initialConfig,
+                config: INITIAL_GLOBAL_SETTINGS,
                 isSavingConfig: false,
                 saveConfig: mockSaveConfig,
             });
 
             const expectedConfig: TutorialConfig = {
-                ...initialConfig,
+                ...INITIAL_GLOBAL_SETTINGS,
                 [TUTORIAL_CARD_KEYS.LIVE_PREDICTION_NOTIFICATION]: { isEnabled: false },
             };
 
@@ -203,7 +201,7 @@ describe('Tutorial utils', () => {
 
             resetAllTutorials({
                 config: {
-                    ...initialConfig,
+                    ...INITIAL_GLOBAL_SETTINGS,
                     [TUTORIAL_CARD_KEYS.PROJECT_DATASET_TUTORIAL]: { isEnabled: false },
                     [FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_PROJECT_ID]: { value: 'project-id' },
                     [FUX_NOTIFICATION_KEYS.ANNOTATOR_TOOLS]: { isEnabled: false },
@@ -219,7 +217,7 @@ describe('Tutorial utils', () => {
                 saveConfig: mockSaveConfig,
             });
 
-            expect(mockSaveConfig).toHaveBeenCalledWith(initialConfig, 'Help dialogs have been reset.');
+            expect(mockSaveConfig).toHaveBeenCalledWith(INITIAL_GLOBAL_SETTINGS, 'Help dialogs have been reset.');
         });
     });
 });

@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from unittest.mock import ANY, call, patch
 
-import pytest
 from iai_core.entities.dataset_entities import TaskDataset
 from iai_core.entities.dataset_item import DatasetItem
 from iai_core.entities.datasets import Dataset, DatasetPurpose
@@ -13,7 +12,6 @@ from jobs_common.utils.dataset_helpers import DatasetHelpers
 from jobs_common.utils.subset_management.subset_manager import TaskSubsetManager
 
 
-@pytest.mark.JobsComponent
 class TestDatasetHelpers:
     def test_construct_and_save_train_dataset_for_task(
         self,

@@ -9,6 +9,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { useProducts } from '../../../core/credits/products/hooks/use-products.hook';
 import { GLOBAL_MODALS_KEYS } from '../../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../../core/user-settings/hooks/use-global-settings.hook';
+import { INITIAL_GLOBAL_SETTINGS } from '../../../core/user-settings/utils';
 import { getMockedPolicy } from '../../../test-utils/mocked-items-factory/mocked-product';
 import { getMockedUser } from '../../../test-utils/mocked-items-factory/mocked-users';
 import { providersRender as render } from '../../../test-utils/required-providers-render';
@@ -49,6 +50,7 @@ describe('WelcomeTrialModal', () => {
             saveConfig: mockedSaveConfig,
             isSavingConfig: false,
             config: {
+                ...INITIAL_GLOBAL_SETTINGS,
                 [GLOBAL_MODALS_KEYS.WELCOME_MODAL]: { isEnabled: isModalEnabled },
                 [GLOBAL_MODALS_KEYS.EXHAUSTED_ORGANIZATION_CREDITS_MODAL]: { isEnabled: false },
                 [GLOBAL_MODALS_KEYS.LOW_ORGANIZATION_CREDITS_MODAL]: { isEnabled: false },
@@ -80,6 +82,7 @@ describe('WelcomeTrialModal', () => {
         fireEvent.click(screen.getByRole('button', { name: /Start exploring now/i }));
 
         expect(mockedSaveConfig).toHaveBeenCalledWith({
+            ...INITIAL_GLOBAL_SETTINGS,
             [GLOBAL_MODALS_KEYS.WELCOME_MODAL]: { isEnabled: false },
             [GLOBAL_MODALS_KEYS.EXHAUSTED_ORGANIZATION_CREDITS_MODAL]: { isEnabled: false },
             [GLOBAL_MODALS_KEYS.LOW_ORGANIZATION_CREDITS_MODAL]: { isEnabled: false },

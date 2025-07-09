@@ -53,7 +53,6 @@ export const DownloadDialogTaskChain = ({
         previous,
     } = useSelectDeploymentOptions({ modelSelection, tasks });
 
-    const { FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE } = useFeatureFlags();
     const { useDownloadDeploymentPackageMutation } = useCodeDeployment();
     const downloadDeploymentPackageMutation = useDownloadDeploymentPackageMutation();
     const [selectedDeploymentPackageType, setSelectedDeploymentPackageType] = useState<DEPLOYMENT_PACKAGE_TYPES>(
@@ -123,13 +122,11 @@ export const DownloadDialogTaskChain = ({
             <Content>
                 <Flex direction={'column'} gap={'size-200'}>
                     <Flex direction={'column'} gap={'size-150'}>
-                        {FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE && (
-                            <SelectDeploymentPackage
-                                selectedDeploymentPackageType={selectedDeploymentPackageType}
-                                onSelectDeploymentPackageType={setSelectedDeploymentPackageType}
-                                isDisabled={taskIndex !== 0}
-                            />
-                        )}
+                        <SelectDeploymentPackage
+                            selectedDeploymentPackageType={selectedDeploymentPackageType}
+                            onSelectDeploymentPackageType={setSelectedDeploymentPackageType}
+                            isDisabled={taskIndex !== 0}
+                        />
                         <TaskChainInfo taskName={taskName} taskIndex={taskIndex} />
                     </Flex>
 

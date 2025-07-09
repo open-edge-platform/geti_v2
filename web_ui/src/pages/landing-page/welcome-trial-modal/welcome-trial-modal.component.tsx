@@ -13,7 +13,6 @@ import { useProducts } from '../../../core/credits/products/hooks/use-products.h
 import { useSubscriptions } from '../../../core/credits/subscriptions/hooks/use-subscription-api.hook';
 import { GLOBAL_MODALS_KEYS } from '../../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../../core/user-settings/hooks/use-global-settings.hook';
-import { getSettingsOfType } from '../../../core/user-settings/utils';
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { WelcomingCreditsDetails } from './welcoming-credits-details.component';
 
@@ -65,8 +64,7 @@ export const WelcomeTrialModal = () => {
     const { useGetUsersQuery } = useUsers();
     const { users, isSuccess: usersDataLoaded, isError: usersDataError } = useGetUsersQuery(organizationId);
 
-    const creditSystemConfig = getSettingsOfType(settings.config, GLOBAL_MODALS_KEYS);
-    const isModalEnabled = creditSystemConfig[GLOBAL_MODALS_KEYS.WELCOME_MODAL].isEnabled === true;
+    const isModalEnabled = settings.config[GLOBAL_MODALS_KEYS.WELCOME_MODAL].isEnabled === true;
 
     const isModalOpen =
         FEATURE_FLAG_CREDIT_SYSTEM && isModalEnabled && profileData?.hasAcceptedUserTermsAndConditions === true;

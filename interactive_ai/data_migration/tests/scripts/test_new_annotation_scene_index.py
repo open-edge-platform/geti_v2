@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import mongomock
 from pymongo import ASCENDING, DESCENDING, IndexModel, MongoClient
+from pymongo.database import Database
 
 from migration.scripts.new_annotation_scene_index import NewAnnotationSceneIndexMigration
 
@@ -11,7 +12,7 @@ from migration.scripts.new_annotation_scene_index import NewAnnotationSceneIndex
 class TestRemoveEmptyAnnotationScene:
     def test_remove_index_from_annotation_scene(self) -> None:
         # Arrange
-        mock_db = mongomock.MongoClient().db
+        mock_db: Database = mongomock.MongoClient().db
         annotation_scene_collection = mock_db.get_collection("annotation_scene")
         new_indexes = [
             IndexModel([("media_identifier", DESCENDING)]),

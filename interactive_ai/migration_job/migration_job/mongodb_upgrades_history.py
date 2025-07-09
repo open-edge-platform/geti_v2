@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 DEFAULT_DATABASE_NAME = "geti"
 
-logger = initialize_logger(__name__, use_async=False)
+logger = initialize_logger(__name__)
 
 
 class MigrationStepDocument(UserDict):

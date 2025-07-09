@@ -17,4 +17,34 @@ export type WorkflowId = string;
 
 export interface PlatformUtilsService {
     getProductInfo: () => Promise<ProductInfoEntity>;
+    checkPlatformBackup: () => Promise<CheckPlatformBackup>;
+    getPlatformVersions: () => Promise<PlatformVersion[]>;
+    getPlatformUpgradeProgress: () => Promise<PlatformUpgradeProgress>;
+    upgradePlatform: (payload: PlatformUpgradePayload) => Promise<void>;
+}
+
+export interface CheckPlatformBackup {
+    isBackupPossible: boolean;
+}
+
+export interface PlatformVersion {
+    version: string;
+    k3sVersion: string;
+    nvidiaDriversVersion: string;
+    intelDriversVersion: string;
+    isCurrent: boolean;
+    isUpgradeRequired: boolean;
+}
+
+type PlatformUpgradeProgressStatus = 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'ROLLING_BACK' | 'NOT_RUNNING';
+
+export interface PlatformUpgradeProgress {
+    progress: string;
+    status: PlatformUpgradeProgressStatus;
+    message: string;
+}
+
+export interface PlatformUpgradePayload {
+    version: string;
+    forceUpgrade?: boolean;
 }

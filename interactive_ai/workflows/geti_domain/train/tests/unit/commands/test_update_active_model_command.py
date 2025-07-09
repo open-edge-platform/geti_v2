@@ -13,7 +13,6 @@ def do_nothing(self, *args, **kwargs) -> None:
     return None
 
 
-@pytest.mark.JobsComponent
 class TestUpdateActiveModelCommand:
     @pytest.fixture
     def fxt_update_active_model_command(

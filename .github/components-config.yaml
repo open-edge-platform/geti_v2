@@ -14,6 +14,9 @@ components:
   interactive_ai/workflows/geti_domain/project_ie:
     integration_builder: false
 
+  interactive_ai/workflows/geti_domain/dataset_ie:
+    integration_builder: false
+
 # Default configuration for unlisted components
 defaults:
   cleanup_type: none

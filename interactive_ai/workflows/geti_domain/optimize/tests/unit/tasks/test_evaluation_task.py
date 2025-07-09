@@ -37,7 +37,6 @@ def fxt_secrets(mocker):
     )
 
 
-@pytest.mark.JobsComponent
 @patch.object(jobs_common.tasks.utils.secrets, "set_env_vars", return_value=None)
 @patch.object(jobs_common.tasks.utils.secrets, "setup_session_from_env", return_value=None)
 class TestEvaluationTask:
@@ -59,7 +58,7 @@ class TestEvaluationTask:
 
         mock_finalize_optimize.assert_called_once_with(
             trainer_ctx=fxt_optimization_trainer_ctx,
-            keep_mlflow_artifacts=False,
+            retain_training_artifacts=False,
         )
 
         mock_evaluate_optimized_model.assert_called_once_with(

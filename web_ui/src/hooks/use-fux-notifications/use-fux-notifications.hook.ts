@@ -5,14 +5,12 @@ import { useCallback } from 'react';
 
 import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
-import { getSettingsOfType } from '../../core/user-settings/utils';
-import { getFuxSetting } from '../../shared/components/tutorials/utils';
 
 export const useFuxNotifications = () => {
     const settings = useUserGlobalSettings();
 
     const handleFirstAnnotation = () => {
-        const hasNeverAnnotated = getFuxSetting(FUX_SETTINGS_KEYS.NEVER_ANNOTATED, settings.config);
+        const hasNeverAnnotated = settings.config[FUX_SETTINGS_KEYS.NEVER_ANNOTATED].value;
 
         if (hasNeverAnnotated) {
             settings.saveConfig({
@@ -25,7 +23,7 @@ export const useFuxNotifications = () => {
 
     const handleFirstAutoTraining = useCallback(
         async (projectId: string, jobId: string) => {
-            const hasNeverAutotrained = getFuxSetting(FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED, settings.config);
+            const hasNeverAutotrained = settings.config[FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED].value;
 
             if (hasNeverAutotrained) {
                 await settings.saveConfig({
@@ -42,13 +40,9 @@ export const useFuxNotifications = () => {
     );
 
     const handleFirstSuccessfulAutoTraining = async (trainedModelId: string) => {
-        const hasNeverSuccessfullyAutotrained = getFuxSetting(
-            FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED,
-            settings.config
-        );
+        const hasNeverSuccessfullyAutotrained = settings.config[FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED].value;
 
-        const settingsConfig = getSettingsOfType(settings.config, FUX_NOTIFICATION_KEYS);
-        const settingToDisable = settingsConfig[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL].isEnabled
+        const settingToDisable = settings.config[FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL].isEnabled
             ? FUX_NOTIFICATION_KEYS.AUTO_TRAINING_MODAL
             : FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION;
 
@@ -65,7 +59,7 @@ export const useFuxNotifications = () => {
         }
     };
     const handleFirstVisitToPredictionMode = () => {
-        const neverCheckedPredictions = getFuxSetting(FUX_SETTINGS_KEYS.NEVER_CHECKED_PREDICTIONS, settings.config);
+        const neverCheckedPredictions = settings.config[FUX_SETTINGS_KEYS.NEVER_CHECKED_PREDICTIONS].value;
 
         if (neverCheckedPredictions) {
             settings.saveConfig({

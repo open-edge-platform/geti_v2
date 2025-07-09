@@ -158,13 +158,14 @@ export const TABS_SINGLE_TEMPLATE: Record<SingleTaskTemplateType, DomainCardsMet
             relation: LabelsRelationType.SINGLE_SELECTION,
         },
     ],
-    'Keypoint Detection': [
+    'Keypoint detection': [
         {
             TaskTypeIcon: KeypointDetectionImg,
             alt: 'keypoint-detection',
             domain: DOMAIN.KEYPOINT_DETECTION,
             subDomain: SUBDOMAIN.KEYPOINT_DETECTION,
-            description: 'Single object on a single image.',
+            description:
+                'Detect important points of an object to understand its structure and position within an image.',
             id: 'keypoints-detection-card-id',
             relation: LabelsRelationType.SINGLE_SELECTION,
         },

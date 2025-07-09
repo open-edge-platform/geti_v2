@@ -5,7 +5,7 @@ import logging
 from http import HTTPStatus
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from geti_configuration_tools.project_configuration import PartialProjectConfiguration
 from geti_feature_tools import FeatureFlagProvider
 
@@ -31,14 +31,16 @@ project_configuration_router = APIRouter(
 
 def get_project_configuration_from_request(
     request_json: Annotated[dict, Depends(get_request_json)],
+    task_id: Annotated[str | None, Query()] = None,
 ) -> PartialProjectConfiguration:
     """Dependency to convert REST request body to PartialProjectConfiguration."""
-    return ProjectConfigurationRESTViews.project_configuration_from_rest(rest_input=request_json)
+    return ProjectConfigurationRESTViews.project_configuration_from_rest(rest_input=request_json, task_id=task_id)
 
 
 @project_configuration_router.get("/project_configuration")
 def get_project_configuration(
     project_identifier: Annotated[ProjectIdentifier, Depends(get_project_identifier)],
+    task_id: Annotated[str | None, Query()] = None,
 ) -> dict[str, Any]:
     """Retrieve the configuration for a specific project."""
     if not FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
@@ -47,7 +49,9 @@ def get_project_configuration(
             error_code="feature_not_available",
             http_status=HTTPStatus.FORBIDDEN,
         )
-    return ProjectConfigurationRESTController().get_configuration(project_identifier=project_identifier)
+    return ProjectConfigurationRESTController().get_configuration(
+        project_identifier=project_identifier, task_id=task_id
+    )
 
 
 @project_configuration_router.patch("/project_configuration", status_code=HTTPStatus.NO_CONTENT)

@@ -2,7 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import os
 from datetime import datetime, timedelta, timezone
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from tests.unit.mocked_method_helpers import return_none
@@ -427,7 +427,6 @@ class TestJobKafkaHandler:
                 "__init__",
                 new=return_none,
             ),
-            patch.object(ModelRepo, "get_by_id", return_value=mock_model) as mock_get_model_by_id,
             patch.object(ModelRepo, "delete_by_id") as mock_delete,
             patch.object(ProjectService, "unlock") as mock_unlock_project,
         ):
@@ -449,5 +448,4 @@ class TestJobKafkaHandler:
 
         # Assert
         mock_unlock_project(job_type=job_type, project_id=project_id)
-        mock_get_model_by_id.assert_called_once_with(mock_model.id_)
-        mock_delete.assert_has_calls([call(mock_model.previous_revision_id), call(mock_model.id_)])
+        mock_delete.assert_called_once_with(mock_model.id_)

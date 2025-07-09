@@ -11,7 +11,6 @@ patch("jobs_common.tasks.utils.progress.task_progress", mock_decorator).start()
 from job.tasks.optimization_task import shard_dataset_prepare_models_and_start_optimization  # noqa: E402
 
 
-@pytest.mark.JobsComponent
 @patch.object(jobs_common.tasks.utils.secrets, "set_env_vars", return_value=None)
 @patch.object(jobs_common.tasks.utils.secrets, "setup_session_from_env", return_value=None)
 class TestOptimizationTask:

@@ -15,7 +15,6 @@ from job.tasks.prepare_and_train.get_train_data import get_train_data
 from tests.unit.tasks.utils import TEST_ENV_VARS, return_none
 
 
-@pytest.mark.JobsComponent
 class TestGetTrainDataTask:
     workspace_id = "workspace_id"
     project_id = "project_id"

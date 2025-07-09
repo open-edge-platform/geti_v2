@@ -1,4 +1,10 @@
 # Platform services
+platform/services/auth_proxy:
+  - platform/services/auth_proxy/**
+  - libs/grpc_interfaces/account_service/**
+  - Makefile.shared-go
+  - Makefile.shared
+  - .github/workflows/component.yml
 platform/services/credit:
   - platform/services/credit/**
   - libs/grpc_interfaces/pyproject.toml
@@ -158,11 +164,6 @@ interactive_ai/services/media:
   - Makefile.shared-go
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/services/mlflow_geti_store:
-  - interactive_ai/services/mlflow_geti_store/**
-  - Makefile.shared-python
-  - Makefile.shared
-  - .github/workflows/component.yml
 interactive_ai/services/model_registration:
   - interactive_ai/services/model_registration/**
   - libs/grpc_interfaces/pyproject.toml
@@ -286,7 +287,7 @@ interactive_ai/workflows/geti_domain/train:
   - interactive_ai/workflows/geti_domain/train/**
   - interactive_ai/workflows/geti_domain/common/jobs_common
   - interactive_ai/workflows/geti_domain/common/jobs_common_extras/evaluation
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/mlflow
+  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/experiments
   - interactive_ai/workflows/geti_domain/common/jobs_common_extras/shard_dataset
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**
@@ -324,5 +325,10 @@ interactive_ai/workflows/otx_domain/trainer/otx_v2/gpu:
 # Web UI
 web_ui:
   - web_ui/**
+  - "!web_ui/dex_templates/**"
   - docs/rest_api/**
   - interactive_api/services/api/schemas/**
+web_ui/dex_templates:
+  - web_ui/dex_templates/**
+  - Makefile.shared
+  - .github/workflows/component.yml

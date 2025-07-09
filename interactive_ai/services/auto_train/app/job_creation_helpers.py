@@ -64,7 +64,7 @@ class TrainTaskJobData:
     min_annotation_size: int | None = None
     max_number_of_annotations: int | None = None
     reshuffle_subsets: bool = False
-    keep_mlflow_artifacts: bool = False
+    retain_training_artifacts: bool = False
 
     @property
     def job_type(self) -> str:
@@ -107,7 +107,7 @@ class TrainTaskJobData:
             "min_annotation_size": self.min_annotation_size,
             "max_number_of_annotations": self.max_number_of_annotations,
             "reshuffle_subsets": self.reshuffle_subsets,
-            "keep_mlflow_artifacts": self.keep_mlflow_artifacts,
+            "retain_training_artifacts": self.retain_training_artifacts,
         }
 
     def create_metadata(self) -> dict:

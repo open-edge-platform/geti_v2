@@ -357,7 +357,7 @@ resources:
     memory: 1Gi
   requests:
     cpu: 100m
-    memory: 400Mi
+    memory: 1Gi
 ## Configure extra options for liveness probe
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
 ## @param livenessProbe.enabled Enable livenessProbe
@@ -664,7 +664,7 @@ volumePermissions:
   image:
     registry: docker.io
     repository: bitnami
-    name: os-shell:12-debian-12-r42
+    name: os-shell:12-debian-12-r47
     ## @param volumePermissions.image.pullPolicy Init container volume-permissions image pull policy
     ##
     pullPolicy: IfNotPresent

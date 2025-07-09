@@ -1,6 +1,6 @@
 get:
   tags:
-    - Code Deployment
+    - Deployment
   summary: Get details of a code deployment process
   description: "Get details for the code deployment process, which includes the state, the progress,
   models, the creator id and creation time."

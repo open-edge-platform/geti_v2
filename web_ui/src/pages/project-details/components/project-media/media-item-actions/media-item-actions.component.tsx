@@ -63,7 +63,6 @@ export const MediaItemActions: FC<MediaItemActionsProps> = ({
     selectedMediaItemAction,
     onSelectedMediaItemActionChange,
 }) => {
-    const { FEATURE_FLAG_CLASSIFICATION_RANGES } = useFeatureFlags();
     const { isSingleDomainProject } = useProject();
 
     const isAnomalyProject = isSingleDomainProject(isAnomalyDomain);
@@ -73,9 +72,7 @@ export const MediaItemActions: FC<MediaItemActionsProps> = ({
     const isVideoMediaItem = isVideo(mediaItem);
     const videoMediaItemForDialog = isVideoMediaItem ? mediaItem : videoMediaItemQuery.data;
     const shouldShowQuickAnnotation =
-        isVideoMediaItem &&
-        videoMediaItemForDialog !== undefined &&
-        (isAnomalyProject || (isClassificationProject && FEATURE_FLAG_CLASSIFICATION_RANGES));
+        isVideoMediaItem && videoMediaItemForDialog !== undefined && (isAnomalyProject || isClassificationProject);
 
     const isAnomalyVideo = isAnomalyProject && videoMediaItemForDialog !== undefined;
 

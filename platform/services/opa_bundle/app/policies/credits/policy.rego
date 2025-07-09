@@ -10,6 +10,7 @@ is_workspace_admin(subject_id, organization_id) if {
 allow if {
 	["api", api_ver, "organizations", org_id, "balance"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	is_internal_user(http_request.headers)
@@ -19,6 +20,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "balance"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	user_id := resolve_user_id(http_request.headers)
@@ -29,6 +31,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "credit_accounts", acc_id, "balance"] = parsed_path
 	http_request.method == "PUT"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	is_internal_user(http_request.headers)
@@ -38,6 +41,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "credit_accounts"] = parsed_path
 	http_request.method in ["POST", "GET"]
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	is_internal_user(http_request.headers)
@@ -47,6 +51,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "credit_accounts", acc_id] = parsed_path
 	http_request.method == "PUT"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	is_internal_user(http_request.headers)
@@ -56,6 +61,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "credit_accounts"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	user_id := resolve_user_id(http_request.headers)
@@ -66,6 +72,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "transactions", "aggregates"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	user_id := resolve_user_id(http_request.headers)
@@ -76,6 +83,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "transactions"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	user_id := resolve_user_id(http_request.headers)
@@ -86,6 +94,7 @@ allow if {
 allow if {
 	["api", api_ver, "products", prod_id] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 }
 
@@ -93,6 +102,7 @@ allow if {
 allow if {
 	["api", api_ver, "products"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 }
 
@@ -100,6 +110,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "subscriptions"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	is_internal_user(http_request.headers)
@@ -109,6 +120,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "subscriptions", "active", "quotas"] = parsed_path
 	http_request.method in ["GET", "PUT"]
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	is_internal_user(http_request.headers)
@@ -118,6 +130,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "subscriptions", "active"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	is_internal_user(http_request.headers)
@@ -127,6 +140,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "workspaces", workspace_id, "subscriptions"] = parsed_path
 	http_request.method == "POST"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	user_id := resolve_user_id(http_request.headers)
@@ -139,6 +153,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "subscriptions"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	user_id := resolve_user_id(http_request.headers)
@@ -149,6 +164,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "subscriptions", "active", "quotas"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	user_id := resolve_user_id(http_request.headers)
@@ -159,6 +175,7 @@ allow if {
 allow if {
 	["api", api_ver, "organizations", org_id, "subscriptions", "active"] = parsed_path
 	http_request.method == "GET"
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	user_id := resolve_user_id(http_request.headers)
@@ -175,6 +192,7 @@ allow if {
     http_request.method == "POST"
     input.attributes.source.principal == "spiffe://cluster.local/ns/impt/sa/credit-system"
 
+    is_license_valid
 }
 
 # Allow access to lease acquire requests for impt-job-ms
@@ -185,6 +203,7 @@ allow if {
     input.attributes.destination.address.socketAddress.portValue == 5556
     input.attributes.source.principal == "spiffe://cluster.local/ns/impt/sa/impt-jobs-ms"
 
+    is_license_valid
 }
 
 # Allow access to lease cancel requests for impt-jobs-scheduler
@@ -195,6 +214,7 @@ allow if {
     input.attributes.destination.address.socketAddress.portValue == 5556
     input.attributes.source.principal == "spiffe://cluster.local/ns/impt/sa/impt-jobs-scheduler"
 
+    is_license_valid
 }
 
 # Allow access to products and subscriptions gRPC endpoints for the onboarding svc
@@ -208,6 +228,7 @@ allow if {
     input.attributes.destination.address.socketAddress.portValue == 5556
     input.attributes.source.principal == "spiffe://cluster.local/ns/impt/sa/onboarding-service"
 
+    is_license_valid
 }
 
 # Allow access to get quotas requests for impt-job-ms and impt-account-service
@@ -219,4 +240,5 @@ allow if {
     input.attributes.source.principal in ["spiffe://cluster.local/ns/impt/sa/impt-jobs-scheduling-policy",
     "spiffe://cluster.local/ns/impt/sa/impt-account-service"]
 
+    is_license_valid
 }

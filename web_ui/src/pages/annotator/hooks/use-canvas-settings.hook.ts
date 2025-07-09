@@ -10,7 +10,6 @@ import {
     CanvasSettingsConfig,
 } from '../../../core/user-settings/dtos/user-settings.interface';
 import { UserProjectSettings, UseSettings } from '../../../core/user-settings/services/user-settings.interface';
-import { getSettingsOfType } from '../../../core/user-settings/utils';
 
 export type UseCanvasSettingsState = [
     canvasSettings: CanvasSettingsConfig,
@@ -24,8 +23,7 @@ export interface UseCanvasSettings {
 
 export const useCanvasSettings = (settings: UseSettings<UserProjectSettings>): UseCanvasSettings => {
     const { config, saveConfig } = settings;
-    const canvasSettingsConfig = getSettingsOfType(config, CANVAS_ADJUSTMENTS_KEYS) as CanvasSettingsConfig;
-    const [canvasSettings, setCanvasSettings] = useState<CanvasSettingsConfig>(canvasSettingsConfig);
+    const [canvasSettings, setCanvasSettings] = useState<CanvasSettingsConfig>(settings.config);
 
     const handleCanvasSetting = (key: CANVAS_ADJUSTMENTS_KEYS, value: number | boolean): void => {
         setCanvasSettings((prevSettings) => ({

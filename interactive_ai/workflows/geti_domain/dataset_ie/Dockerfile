@@ -1,9 +1,9 @@
-FROM python:3.10-slim-bookworm@sha256:99d6b199420e2a3588649813218bef3e727fac9642d5da66c1c24ec96f7ec87d AS base
+FROM python:3.10-slim-bookworm@sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2c2dcedb1da95114372b6d7 AS base
 
 FROM base AS build
 
 # Install Git and clone the OTX at the specified tag
-ARG OTX_RELEASE_TAG=2.4.2
+ARG OTX_RELEASE_TAG=2.4.6
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

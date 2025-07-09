@@ -1,19 +1,14 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key } from 'react';
-
-import { paths } from '@geti/core';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useWorkspacesApi } from '@geti/core/src/workspaces/hooks/use-workspaces.hook';
 import { ActionButton, Flex, Item, Loading, TabList, TabPanels, Tabs, Tooltip, TooltipTrigger } from '@geti/ui';
 import { Add } from '@geti/ui/icons';
-import { useNavigate } from 'react-router-dom';
+import { isEmpty } from 'lodash-es';
 
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { usePinnedCollapsedItems } from '../../../hooks/use-pinned-collapsed-items/use-pinned-collapsed-items.hook';
 import { PinnedCollapsedItemsAction } from '../../../hooks/use-pinned-collapsed-items/use-pinned-collapsed-items.interface';
-import { useWorkspaces } from '../../../providers/workspaces-provider/workspaces-provider.component';
 import { CollapsedItemsPicker } from '../../../shared/components/collapsed-items-picker/collapsed-items-picker.component';
 import { CustomTabItemWithMenu } from '../../../shared/components/custom-tab-item/custom-tab-item-with-menu.component';
 import { CustomTabItem } from '../../../shared/components/custom-tab-item/custom-tab-item.component';
@@ -25,54 +20,11 @@ import { TabItem } from '../../../shared/components/tabs/tabs.interface';
 import { getUniqueNameFromArray, hasEqualId } from '../../../shared/utils';
 import { MAX_LENGTH_OF_WORKSPACE_NAME, MIN_LENGTH_OF_WORKSPACE_NAME } from '../../user-management/workspaces/utils';
 import { LandingPageWorkspace as Workspace } from '../landing-page-workspace/landing-page-workspace.component';
-import { useWorkspaceActions } from './use-workspace-actions.hook';
+import { usePinnedCollapsedWorkspaces } from './hooks/use-pinned-collapsed-workspace.hook';
+import { useWorkspaceActions } from './hooks/use-workspace-actions.hook';
+import { MAX_NUMBER_OF_DISPLAYED_WORKSPACES } from './utils';
 
 import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
-
-const MAX_NUMBER_OF_DISPLAYED_WORKSPACES = 6;
-
-const usePinnedCollapsedWorkspaces = () => {
-    const navigate = useNavigate();
-    const { organizationId } = useOrganizationIdentifier();
-
-    const { workspaces, workspaceId: selectedWorkspaceId } = useWorkspaces();
-    const [pinnedWorkspaces, collapsedWorkspaces, dispatch] = usePinnedCollapsedItems(
-        workspaces,
-        selectedWorkspaceId,
-        MAX_NUMBER_OF_DISPLAYED_WORKSPACES
-    );
-
-    const selectWorkspace = (workspaceId: string) => {
-        navigate(paths.workspace({ organizationId, workspaceId }));
-    };
-
-    const handleSelectWorkspace = (key: Key): void => {
-        if (key === selectedWorkspaceId) {
-            return;
-        }
-
-        selectWorkspace(String(key));
-    };
-
-    const handleSelectWorkspaceFromCollapsed = (key: Key): void => {
-        const newSelectedWorkspaceId = String(key);
-
-        dispatch({ type: PinnedCollapsedItemsAction.SWAP, payload: { id: newSelectedWorkspaceId } });
-
-        selectWorkspace(newSelectedWorkspaceId);
-    };
-
-    return {
-        workspaces,
-        selectWorkspace,
-        dispatchWorkspaces: dispatch,
-        pinnedWorkspaces,
-        collapsedWorkspaces,
-        handleSelectWorkspace,
-        handleSelectWorkspaceFromCollapsed,
-        selectedWorkspaceId,
-    };
-};
 
 export const WorkspacesTabs = (): JSX.Element => {
     const { organizationId } = useOrganizationIdentifier();
@@ -84,16 +36,15 @@ export const WorkspacesTabs = (): JSX.Element => {
         collapsedWorkspaces,
         pinnedWorkspaces,
         handleSelectWorkspace,
+        numberOfWorkspaces,
     } = usePinnedCollapsedWorkspaces();
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
-    const numberOfWorkspaces = pinnedWorkspaces.length + collapsedWorkspaces.length;
 
-    const { items, handleMenuAction, deleteDialog, editDialog } = useWorkspaceActions(numberOfWorkspaces);
+    const { items, handleMenuAction, editDialog, deleteDialog } = useWorkspaceActions(numberOfWorkspaces);
     const { useCreateWorkspaceMutation } = useWorkspacesApi(organizationId);
     const createWorkspace = useCreateWorkspaceMutation();
-
-    const workspacesNames = workspaces.map(({ name }) => name);
-
+    const selectedWorkspace = workspaces.find(hasEqualId(selectedWorkspaceId));
+    const otherWorkspacesNames = workspaces.filter(({ id }) => id !== selectedWorkspaceId).map(({ name }) => name);
     const hasSelectedPinnedItem = pinnedWorkspaces.find(hasEqualId(selectedWorkspaceId)) !== undefined;
 
     const pinnedItems: TabItem[] = pinnedWorkspaces.map(({ id, name }) => ({
@@ -204,28 +155,6 @@ export const WorkspacesTabs = (): JSX.Element => {
                                             <CustomTabItem name={item.name as string} isMoreIconVisible={false} />
                                         )}
                                     </Flex>
-                                    {FEATURE_FLAG_WORKSPACE_ACTIONS && (
-                                        <HasPermission operations={[OPERATION.WORKSPACE_MANAGEMENT]}>
-                                            <DeleteDialog
-                                                name={item.name as string}
-                                                title={'workspace'}
-                                                onAction={handleDeleteWorkspace}
-                                                triggerState={deleteDialog.deleteWorkspaceDialogState}
-                                            />
-                                            <EditNameDialog
-                                                isLoading={editDialog.editWorkspaceMutation.isPending}
-                                                triggerState={editDialog.editWorkspaceDialogState}
-                                                onAction={handleEditDialog}
-                                                defaultName={item.name as string}
-                                                names={workspacesNames.filter((name) => name !== item.name)}
-                                                title={'workspace name'}
-                                                nameLimitations={{
-                                                    maxLength: MAX_LENGTH_OF_WORKSPACE_NAME,
-                                                    minLength: MIN_LENGTH_OF_WORKSPACE_NAME,
-                                                }}
-                                            />
-                                        </HasPermission>
-                                    )}
                                 </>
                             </Item>
                         )}
@@ -272,6 +201,30 @@ export const WorkspacesTabs = (): JSX.Element => {
                     )}
                 </TabPanels>
             </Tabs>
+
+            {FEATURE_FLAG_WORKSPACE_ACTIONS && !isEmpty(selectedWorkspace) && (
+                <HasPermission operations={[OPERATION.WORKSPACE_MANAGEMENT]}>
+                    <DeleteDialog
+                        name={selectedWorkspace.name}
+                        title={'workspace'}
+                        onAction={handleDeleteWorkspace}
+                        triggerState={deleteDialog.deleteWorkspaceDialogState}
+                    />
+                    <EditNameDialog
+                        isLoading={editDialog.editWorkspaceMutation.isPending}
+                        triggerState={editDialog.editWorkspaceDialogState}
+                        onAction={handleEditDialog}
+                        key={selectedWorkspaceId}
+                        defaultName={selectedWorkspace.name}
+                        names={otherWorkspacesNames}
+                        title={'workspace name'}
+                        nameLimitations={{
+                            maxLength: MAX_LENGTH_OF_WORKSPACE_NAME,
+                            minLength: MIN_LENGTH_OF_WORKSPACE_NAME,
+                        }}
+                    />
+                </HasPermission>
+            )}
         </Flex>
     );
 };

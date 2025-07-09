@@ -64,19 +64,28 @@ export type DatasetPreparationParametersDTO = {
     augmentation: Record<string, ConfigurationParameterDTO[]>;
 };
 
-export type TrainingParametersDTO = ConfigurationParameterDTO[] | Record<string, ConfigurationParameterDTO[]>[];
+export type TrainingParametersDTO = (ConfigurationParameterDTO | Record<string, ConfigurationParameterDTO[]>)[];
 
 export interface TrainingConfigurationDTO {
     dataset_preparation: DatasetPreparationParametersDTO;
     training: TrainingParametersDTO;
     evaluation: ConfigurationParameterDTO[];
-    advanced_configuration?: StaticParameterDTO[];
     task_id: string;
 }
 
+export interface TrainedModelConfigurationDTO extends Omit<TrainingConfigurationDTO, 'dataset_preparation'> {
+    dataset_preparation: Pick<DatasetPreparationParametersDTO, 'augmentation'>;
+    advanced_configuration: StaticParameterDTO[];
+}
+
 export interface TrainingConfigurationUpdatePayloadDTO {
-    dataset_preparation?: Record<string, KeyValueParameterDTO[]>;
-    training?: KeyValueParameterDTO[];
+    dataset_preparation?: {
+        subset_split?: KeyValueParameterDTO[];
+        filtering?: Record<string, KeyValueParameterDTO[]>;
+        augmentation?: Record<string, KeyValueParameterDTO[]>;
+    };
+    training?: (KeyValueParameterDTO | Record<string, KeyValueParameterDTO[]>)[];
     evaluation?: KeyValueParameterDTO[];
     advanced_configuration?: KeyValueParameterDTO[];
+    task_id: string;
 }

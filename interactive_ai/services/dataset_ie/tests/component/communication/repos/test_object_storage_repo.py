@@ -7,8 +7,6 @@ This module tests the object storage repo
 import os
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from communication.repos.object_storage_repo import ObjectDataRepo
 
 ENV_VARS = {
@@ -19,7 +17,6 @@ ENV_VARS = {
 }
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestObjectStorageRepo:
     """
     unitest the object storage repo

@@ -1,11 +1,39 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-export { default as OpenCVLoader } from './src/utils/opencv-loader';
+export { OpenCVLoader } from './src/utils/opencv-loader';
 
-export { Watershed } from './src/watershed/watershed';
-export { type WatershedInstance, type WatershedPolygon } from './src/watershed/interfaces';
+export { buildWatershedInstance, Watershed } from './src/watershed/watershed';
+export { type WatershedPolygon } from './src/watershed/interfaces';
 
-export { InferenceImage } from './src/inference-image/inference-image';
+export { buildInferenceImageInstance, InferenceImage } from './src/inference-image/inference-image';
 
-export { formatContourToPoints, approximateShape } from './src/utils/utils';
+export { buildSSIMInstance, SSIM } from './src/ssim/ssim';
+export { type RunSSIMProps, type SSIMMatch } from './src/ssim/interfaces';
+
+export { buildGrabcutInstance, Grabcut } from './src/grabcut/grabcut';
+export { type GrabcutData } from './src/grabcut/interfaces';
+
+export {
+    formatContourToPoints,
+    approximateShape,
+    formatImageData,
+    loadSource,
+    concatFloat32Arrays,
+    stackPlanes,
+    isPolygonValid,
+    getPointsFromMat,
+    getMatFromPoints,
+} from './src/utils/tool-utils';
+
+export { sessionParams, type SessionParameters } from './src/utils/wasm-utils';
+
+export const RITMModels = {
+    main: new URL('./src/ritm/models/main.onnx', import.meta.url).toString(),
+    preprocess: new URL('./src/ritm/models/preprocess.onnx', import.meta.url).toString(),
+};
+
+export const SegmentAnythingModels = {
+    encoder: new URL('./src/segment-anything/models/mobile_sam.encoder.onnx', import.meta.url).toString(),
+    decoder: new URL('./src/segment-anything/models/sam_vit_h_4b8939.decoder.onnx', import.meta.url).toString(),
+};

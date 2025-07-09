@@ -5,7 +5,3 @@ build-image:
 
 publish-image:
 	@echo "Nothing to do - ${COMPONENT_NAME} does not have an image to push"
-
-test-component: venv
-	@echo "test-component not available"
-

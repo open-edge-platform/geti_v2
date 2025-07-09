@@ -41,6 +41,16 @@ post:
             Image upload response:
               value:
                 $ref: '../../examples/media/responses/single_image.json'
+    '202':
+      description: The image has been uploaded, preprocessing has been started. The 'size' field represents bits.
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../interactive_ai/services/api/schemas/media/responses/image.yaml'
+          examples:
+            Image upload response:
+              value:
+                $ref: '../../examples/media/responses/single_image.json'
     '400':
       description: No file provided
       content:

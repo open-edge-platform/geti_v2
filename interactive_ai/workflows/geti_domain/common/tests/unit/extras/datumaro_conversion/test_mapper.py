@@ -28,7 +28,6 @@ from jobs_common_extras.datumaro_conversion.mappers.dataset_item_mapper import (
 from jobs_common_extras.datumaro_conversion.mappers.label_mapper import LabelSchemaMapper
 
 
-@pytest.mark.CommonComponent
 class TestLabelSchemaMapper:
     @pytest.mark.parametrize("include_empty", [True, False])
     def test_label_schema_mapper(

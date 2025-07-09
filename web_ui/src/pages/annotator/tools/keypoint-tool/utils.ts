@@ -95,8 +95,8 @@ export const getPointsEdges = (keypointNodes: KeypointNode[], edges: KeypointStr
 
 export const getPercentageFromPoint = (point: Point, roi: RegionOfInterest) => {
     return {
-        x: ((point.x - roi.x) / roi.width) * 100,
-        y: ((point.y - roi.y) / roi.height) * 100,
+        x: roi.width ? ((point.x - roi.x) / roi.width) * 100 : 0,
+        y: roi.height ? ((point.y - roi.y) / roi.height) * 100 : 0,
     };
 };
 
@@ -151,8 +151,7 @@ export const getAnnotationInBoundingBox = (points: KeypointNode[], boundingBox: 
 };
 
 export const mirrorPointsAcrossAxis = <T extends Point>(points: T[], pointAxis: PointAxis): T[] => {
-    const minAxisValue = Math.min(...points.map((point) => point[pointAxis]));
-    const maxAxisValue = Math.max(...points.map((point) => point[pointAxis]));
+    const [minAxisValue, maxAxisValue] = getMaxMinPoint(points, pointAxis);
     const axisCenter = (minAxisValue + maxAxisValue) / 2;
 
     return points.map((point) => ({
@@ -173,6 +172,7 @@ export const getDirection = (startPoint: Point, endPoint: Point): CursorDirectio
     if (endPoint.x >= startPoint.x && endPoint.y <= startPoint.y) {
         return CursorDirection.NorthEast;
     }
+
     return CursorDirection.NorthWest;
 };
 
@@ -180,12 +180,15 @@ export const getTemplateWithDirection = (templatePoints: KeypointNode[], cursorD
     if (cursorDirection === CursorDirection.SouthWest) {
         return mirrorPointsAcrossAxis(templatePoints, PointAxis.X);
     }
+
     if (cursorDirection === CursorDirection.NorthEast) {
         return mirrorPointsAcrossAxis(templatePoints, PointAxis.Y);
     }
+
     if (cursorDirection === CursorDirection.NorthWest) {
         return mirrorPointsAcrossAxis(mirrorPointsAcrossAxis(templatePoints, PointAxis.Y), PointAxis.X);
     }
+
     return templatePoints;
 };
 

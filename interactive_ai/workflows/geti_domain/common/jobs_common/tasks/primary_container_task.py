@@ -11,6 +11,8 @@ from time import sleep
 import requests
 from flytekit import dynamic, task
 from flytekitplugins.pod import Pod
+from geti_kafka_tools import terminate_producer
+from geti_telemetry_tools import terminate_span_exporter
 from kubernetes.client import V1ConfigMapKeySelector, V1ConfigMapVolumeSource, V1EnvVarSource, V1ObjectFieldSelector
 from kubernetes.client.models import (
     V1Capabilities,
@@ -311,14 +313,6 @@ def get_flyte_pod_spec(
                             )
                         ),
                     ),
-                    V1EnvVar(
-                        name="MLFLOW_SIDECAR_IMAGE_NAME",
-                        value_from=V1EnvVarSource(
-                            config_map_key_ref=V1ConfigMapKeySelector(
-                                name="impt-training-config", key="mlflow_sidecar_image_name"
-                            )
-                        ),
-                    ),
                     # For the ease of development
                     V1EnvVar(
                         name="OVERWRITE_RESOURCES_CPU_LIMITS",
@@ -454,6 +448,8 @@ def flyte_multi_container_task(  # noqa: ANN201
             try:
                 return func(*args, **kwargs)
             finally:
+                terminate_producer()
+                terminate_span_exporter()
                 _terminate_istio_proxy()
 
         return wrapper
@@ -502,6 +498,8 @@ def flyte_multi_container_dynamic(  # noqa: ANN201
             try:
                 return func(*args, **kwargs)
             finally:
+                terminate_producer()
+                terminate_span_exporter()
                 _terminate_istio_proxy()
 
         return wrapper

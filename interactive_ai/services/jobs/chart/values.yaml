@@ -40,7 +40,7 @@ microservice:
   resources:
     requests:
       cpu: 400m
-      memory: 200Mi
+      memory: 300Mi
     limits:
       memory: 500Mi
 
@@ -55,7 +55,7 @@ microservice:
     minReplicas: 1
     maxReplicas: 20
     targetCPUUtilizationPercentage: 90
-    targetMemoryUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 90
 
   ingress:
     endpoints:
@@ -147,4 +147,4 @@ global:
   debian:
     registry: docker.io
     repository: bitnami
-    name: os-shell:12-debian-12-r42
+    name: os-shell:12-debian-12-r47

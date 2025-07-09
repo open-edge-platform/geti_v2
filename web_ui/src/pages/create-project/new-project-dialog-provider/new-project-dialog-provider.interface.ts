@@ -16,7 +16,7 @@ export interface NewProjectDialogContextProps {
     validationError?: { tree: string | undefined; labels: boolean };
 }
 
-export type SingleTaskTemplateType = 'Detection' | 'Segmentation' | 'Classification' | 'Anomaly' | 'Keypoint Detection';
+export type SingleTaskTemplateType = 'Detection' | 'Segmentation' | 'Classification' | 'Anomaly' | 'Keypoint detection';
 type TaskChainTemplateType = 'Chained tasks';
 
 export type CreateNewProjectSelectedTabType = SingleTaskTemplateType | TaskChainTemplateType;

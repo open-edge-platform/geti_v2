@@ -9,7 +9,7 @@ on:
       - 'interactive_ai/tests/e2e/**'
       - '.github/workflows/bdd-stylecheck.yml'
 
-permissions: {} # No permissions by default on workflow level
+permissions: {}
 
 jobs:
   style-checks:
@@ -49,4 +49,6 @@ jobs:
 
       - name: Static code analysis
         working-directory: interactive_ai/tests/e2e
-        run: make static-code-analysis
+        run: |
+          openapi-generator-cli version-manager set 7.13.0
+          make static-code-analysis

@@ -3,16 +3,12 @@
 
 import { Flex, Heading } from '@geti/ui';
 
-import {
-    AnnotatorSettingsConfig,
-    FEATURES_KEYS,
-    SettingsKeys,
-} from '../../../../../core/user-settings/dtos/user-settings.interface';
+import { AnnotatorSettingsConfig, FEATURES_KEYS } from '../../../../../core/user-settings/dtos/user-settings.interface';
 import { TabPanelItem } from './tab-panel-item/tab-panel-item.component';
 
 interface ActiveLearningSettingsProps {
     config: AnnotatorSettingsConfig;
-    handleToggleFeature: (isEnabled: boolean, feature: SettingsKeys) => void;
+    handleToggleFeature: (isEnabled: boolean, feature: keyof AnnotatorSettingsConfig) => void;
 }
 
 export const ActiveLearningSettings = ({ config, handleToggleFeature }: ActiveLearningSettingsProps) => {

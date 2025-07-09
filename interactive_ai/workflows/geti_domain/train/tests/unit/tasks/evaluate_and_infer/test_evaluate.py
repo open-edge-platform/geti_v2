@@ -23,7 +23,6 @@ from job.utils.train_workflow_data import TrainWorkflowData
 from tests.unit.tasks.utils import TEST_ENV_VARS, return_none
 
 
-@pytest.mark.JobsComponent
 class TestEvaluateTask:
     dataset_id = "dataset_id"
     base_model_id = "base_model_id"

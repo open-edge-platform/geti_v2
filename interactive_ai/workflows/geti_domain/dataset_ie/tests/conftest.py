@@ -9,6 +9,7 @@ import pathlib
 import shutil
 import tempfile
 import zipfile
+from collections.abc import Generator
 from typing import IO
 from unittest.mock import MagicMock, patch
 
@@ -19,6 +20,7 @@ import requests
 from geti_types import CTX_SESSION_VAR, make_session
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_for_logs
+from testcontainers.mongodb import MongoDbContainer
 
 CTX_SESSION_VAR.set(make_session())
 
@@ -38,6 +40,7 @@ from iai_core.entities.model_template import (
     TaskFamily,
     TaskType,
 )
+from iai_core.repos.base.mongo_connector import MongoConnector
 from jobs_common.features.feature_flag_provider import FeatureFlag
 from jobs_common_extras.datumaro_conversion.definitions import GetiProjectType
 
@@ -74,6 +77,39 @@ def detect_fixtures(module_name: str) -> list:
 
 
 pytest_plugins = detect_fixtures("tests")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def mongodb_testcontainer() -> Generator[MongoDbContainer, None, None]:
+    image_name = "mongo:7.0.7"
+    with MongoDbContainer(image_name) as mongo:
+        db_url = mongo.get_connection_url()
+        with patch.object(MongoConnector, "get_connection_string", return_value=db_url):
+            yield mongo
+
+
+@pytest.fixture(scope="session", autouse=True)
+def fxt_spicedb_server(request: FixtureRequest):
+    container = DockerContainer("ghcr.io/authzed/spicedb:v1.34.0")
+    container.with_bind_ports(50051, 50051)
+    test_dir = pathlib.Path(__file__).parent
+    container.with_volume_mapping((test_dir / "configs/spicedb.zaml").resolve(), "/schema/spicedb.zaml", "ro")
+    container.with_env("SPICEDB_GRPC_PRESHARED_KEY", "test")
+    container.with_command(
+        [
+            "serve-testing",
+            "--skip-release-check",
+            "--load-configs",
+            "/schema/spicedb.zaml",
+        ]
+    )
+    container.start()
+
+    wait_for_logs(container, "grpc server started serving", timeout=30)
+
+    yield container
+
+    container.stop()
 
 
 @pytest.fixture(scope="package")
@@ -754,27 +790,3 @@ def fxt_keypoint_detection(request: pytest.FixtureRequest) -> bool:
     """Parameterize FEATURE_FLAG_KEYPOINT_DETECTION"""
     TestFeatureFlagProvider.set_flag(FeatureFlag.FEATURE_FLAG_KEYPOINT_DETECTION, request.param)
     return request.param
-
-
-@pytest.fixture(scope="session", autouse=True)
-def fxt_spicedb_server(request: FixtureRequest):
-    container = DockerContainer("ghcr.io/authzed/spicedb:v1.34.0")
-    container.with_bind_ports(50051, 50051)
-    test_dir = pathlib.Path(__file__).parent
-    container.with_volume_mapping((test_dir / "configs/spicedb.zaml").resolve(), "/schema/spicedb.zaml", "ro")
-    container.with_env("SPICEDB_GRPC_PRESHARED_KEY", "test")
-    container.with_command(
-        [
-            "serve-testing",
-            "--skip-release-check",
-            "--load-configs",
-            "/schema/spicedb.zaml",
-        ]
-    )
-    container.start()
-
-    wait_for_logs(container, "grpc server started serving", timeout=30)
-
-    yield container
-
-    container.stop()

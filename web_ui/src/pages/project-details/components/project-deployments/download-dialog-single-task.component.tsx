@@ -37,7 +37,6 @@ export const DownloadDialogSingleTask = ({
         optimisationId: undefined,
         versionId: modelsGroups[0].modelVersions[0].id,
     };
-    const { FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE } = useFeatureFlags();
     const { useDownloadDeploymentPackageMutation } = useCodeDeployment();
     const downloadDeploymentPackageMutation = useDownloadDeploymentPackageMutation();
 
@@ -79,12 +78,10 @@ export const DownloadDialogSingleTask = ({
 
             <Content>
                 <Flex direction={'column'} gap={'size-150'}>
-                    {FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE && (
-                        <SelectDeploymentPackage
-                            onSelectDeploymentPackageType={setSelectedDeploymentPackageType}
-                            selectedDeploymentPackageType={selectedDeploymentPackageType}
-                        />
-                    )}
+                    <SelectDeploymentPackage
+                        onSelectDeploymentPackageType={setSelectedDeploymentPackageType}
+                        selectedDeploymentPackageType={selectedDeploymentPackageType}
+                    />
                     <ModelSelection
                         key={task.id}
                         models={modelsGroups}

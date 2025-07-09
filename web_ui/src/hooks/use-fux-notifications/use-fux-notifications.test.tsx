@@ -6,7 +6,10 @@ import { renderHook } from '@testing-library/react';
 import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
 import { INITIAL_GLOBAL_SETTINGS } from '../../core/user-settings/utils';
-import { getMockedUserGlobalSettingsObject } from '../../test-utils/mocked-items-factory/mocked-settings';
+import {
+    getMockedUserGlobalSettings,
+    getMockedUserGlobalSettingsObject,
+} from '../../test-utils/mocked-items-factory/mocked-settings';
 import { useFuxNotifications } from './use-fux-notifications.hook';
 
 const mockSaveConfig = jest.fn();
@@ -92,12 +95,20 @@ describe('useFuxNotifications', () => {
         it('should never update settings', () => {
             jest.mocked(useUserGlobalSettings).mockImplementationOnce(() => ({
                 ...mockSettings,
-                config: {
-                    ...mockSettings.config,
-                    [FUX_SETTINGS_KEYS.USER_DISMISSED_ALL]: {
-                        value: true,
+                config: getMockedUserGlobalSettings({
+                    [FUX_SETTINGS_KEYS.NEVER_ANNOTATED]: {
+                        value: false,
                     },
-                },
+                    [FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED]: {
+                        value: false,
+                    },
+                    [FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED]: {
+                        value: false,
+                    },
+                    [FUX_SETTINGS_KEYS.NEVER_CHECKED_PREDICTIONS]: {
+                        value: false,
+                    },
+                }),
             }));
 
             const { result } = renderHook(() => useFuxNotifications());

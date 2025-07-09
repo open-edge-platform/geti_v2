@@ -9,6 +9,7 @@ import { DatasetImportItem } from '../../../../../core/datasets/dataset.interfac
 import { getCurrentJob } from '../../../../../core/datasets/utils';
 import { useJobs } from '../../../../../core/jobs/hooks/use-jobs.hook';
 import { useDatasetImportToNewProject } from '../../../../../providers/dataset-import-to-new-project-provider/dataset-import-to-new-project-provider.component';
+import { isKeypointWithInvalidStructure } from '../../../../../providers/dataset-import-to-new-project-provider/utils';
 import { useWorkspaceIdentifier } from '../../../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { DatasetImportDeletionDialog } from '../../../../../shared/components/dataset-import-deletion-dialog/dataset-import-deletion-dialog.component';
 import { isNonEmptyString, runWhenTruthy } from '../../../../../shared/utils';
@@ -82,6 +83,7 @@ export const DatasetImportToNewProjectDialog = ({
                             patchDatasetImport={patchDatasetImport}
                             onDialogDismiss={dialogDismiss}
                             datasetImportItem={activeDatasetImport}
+                            isCreateDisabled={isKeypointWithInvalidStructure(activeDatasetImport)}
                             deletionDialogTrigger={deleteDialogTrigger}
                             abortDatasetImportAction={() => abortDatasetImportActionHandler(activeDatasetImport)}
                             deleteTemporallyDatasetImport={deleteTemporallyDatasetImport}

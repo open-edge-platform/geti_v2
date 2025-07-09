@@ -21,6 +21,7 @@ allow if {
 allow if {
     http_request.method == "GET"
     ["api", api_ver, "organizations", organization_id, "status"] = parsed_path
+    is_license_valid
 	is_valid_api_version(api_ver)
 
     user_id := resolve_user_id(http_request.headers)
@@ -32,6 +33,7 @@ allow if {
 allow if {
 	http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Create project")
@@ -47,6 +49,7 @@ allow if {
 allow if {
 	http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects_names"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get projects names")
@@ -61,6 +64,7 @@ allow if {
 allow if {
 	http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get projects")
@@ -75,6 +79,7 @@ allow if {
 allow if {
 	http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get project")
@@ -88,6 +93,7 @@ allow if {
 allow if {
 	http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "supported_algorithms"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get project's supported algorithms")
@@ -101,6 +107,7 @@ allow if {
 allow if {
 	http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "settings", "annotation_template"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get project's annotation templates")
@@ -114,6 +121,7 @@ allow if {
 allow if {
 	http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "settings", "annotation_template"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Create an annotation template for the project")
@@ -129,6 +137,7 @@ allow if {
 allow if {
 	http_request.method == "PUT"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Update project")
@@ -144,6 +153,7 @@ allow if {
 allow if {
 	http_request.method == "DELETE"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Delete project")
@@ -158,6 +168,7 @@ allow if {
 # Get video details for inference gateway from resource ms
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "datasets", dataset_id, "media", "videos", video_id] = array.slice(parsed_path, 0, 13)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get video details for inference gateway", parsed_path)
@@ -168,6 +179,7 @@ allow if {
 # Cached image prediction operation for inference gateway
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "datasets", dataset_id, "media", "images", image_id, "predictions", "latest"] = array.slice(parsed_path, 0, 15)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Cached image prediction operation", parsed_path)
@@ -178,6 +190,7 @@ allow if {
 # Cached image prediction operation for user
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "datasets", dataset_id, "media", "images", image_id, "predictions", "latest"] = array.slice(parsed_path, 0, 15)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Cached image prediction operation", parsed_path)
@@ -191,6 +204,7 @@ allow if {
 # Cached video prediction operation for inference gateway
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "datasets", dataset_id, "media", "videos", video_id, "predictions", "latest"] = array.slice(parsed_path, 0, 14)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Cached video prediction operation", parsed_path)
@@ -201,6 +215,7 @@ allow if {
 # Cached video prediction operation for user
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "datasets", dataset_id, "media", "videos", video_id, "predictions", "latest"] = array.slice(parsed_path, 0, 14)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Cached video prediction operation", parsed_path)
@@ -214,6 +229,7 @@ allow if {
 allow if {
 	http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "thumbnail"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get project thumbnail")
@@ -227,6 +243,7 @@ allow if {
 # Project dataset operations, user should be granted with "view_project" project level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "datasets"] = array.slice(parsed_path, 0, 9)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Project dataset operations", parsed_path)
@@ -241,6 +258,7 @@ allow if {
 allow if {
 	http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "predict"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get an image prediction", parsed_path)
@@ -256,6 +274,7 @@ allow if {
 allow if {
 	http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "predict", "status"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get inference server status for project")
@@ -272,6 +291,7 @@ allow if {
     ["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "model_groups", model_group_id, "models", command] = array.slice(parsed_path, 0, 12)
     regex.match(".{24}:optimize", command)
     model_id := substring(command, 0, 24)
+    is_license_valid
     is_valid_api_version(api_ver)
 
     print("Policy: Optimize model operation", parsed_path)
@@ -289,6 +309,7 @@ allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "model_groups", model_group_id, "models", command] = array.slice(parsed_path, 0, 12)
     regex.match(".{24}:purge", command)
 	model_id := substring(command, 0, 24)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Purge model operation", parsed_path)
@@ -304,6 +325,7 @@ allow if {
 # Project model groups operations, user should be granted with "view_project" project level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "model_groups"] = array.slice(parsed_path, 0, 9)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Project model groups operations", parsed_path)
@@ -316,6 +338,7 @@ allow if {
 # * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/model_groups/*
 allow if {
     ["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "model_groups"] = array.slice(parsed_path, 0, 9)
+    is_license_valid
 	is_valid_api_version(api_ver)
 
     print("Policy: Project model groups operations", parsed_path)
@@ -327,12 +350,29 @@ allow if {
 allow if {
 	http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "models"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Project model list operation", parsed_path)
 	user_id := resolve_user_id(http_request.headers)
 	check_authorization_allowing_pat(spicedb_key, "project", project_id, "view_project", user_id)
 	check_authorization_allowing_pat(spicedb_key, "organization", organization_id, "can_contribute", user_id)
+}
+
+# POST /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/train
+# Train a model, user should be granted with "view_project" project level permission
+allow if {
+	http_request.method == "POST"
+	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "train"] = parsed_path
+	is_license_valid
+	is_valid_api_version(api_ver)
+
+	print("Policy: Train a model", parsed_path)
+	user_id := resolve_user_id(http_request.headers)
+	check_authorization_allowing_pat(spicedb_key, "project", project_id, "view_project", user_id)
+	check_authorization_allowing_pat(spicedb_key, "organization", organization_id, "can_contribute", user_id)
+	check_authorization_allowing_pat(spicedb_key, "workspace", workspace_id, "can_contribute", user_id)
+	check_relation(spicedb_address, spicedb_key, "project", project_id, "parent_workspace", "workspace", workspace_id)
 }
 
 # POST /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}:train
@@ -342,6 +382,7 @@ allow if {
     ["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", command] = parsed_path
     regex.match(".{24}:train", command)
     project_id := substring(command, 0, 24)
+    is_license_valid
     is_valid_api_version(api_ver)
 
     print("Policy: Train a model", parsed_path)
@@ -359,6 +400,7 @@ allow if {
 allow if {
     http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "jobs"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Workspace jobs listing")
@@ -371,6 +413,7 @@ allow if {
 # Workspace job operations, user should be granted with "view_job" workspace level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "jobs", job_id] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Workspace job operations")
@@ -386,6 +429,7 @@ allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "jobs", command] = parsed_path
 	regex.match(".{24}:cancel", command)
 	job_id := substring(command, 0, 24)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Cancel job")
@@ -399,6 +443,7 @@ allow if {
 allow if {
 	http_request.method == "GET"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "status"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Get project status")
@@ -412,6 +457,7 @@ allow if {
 allow if {
     http_request.method == "GET"
     ["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "incremental_learning_status"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
     print("Policy: Get incremental learning status")
@@ -425,38 +471,13 @@ allow if {
 # Project configuration operations, user should be granted with "view_project" project level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "configuration"] = array.slice(parsed_path, 0, 9)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Project configuration operations", parsed_path)
 	user_id := resolve_user_id(http_request.headers)
 	check_authorization_allowing_pat(spicedb_key, "project", project_id, "view_project", user_id)
 	check_authorization_allowing_pat(spicedb_key, "organization", organization_id, "can_contribute", user_id)
-}
-
-# * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/project_configuration
-# Project configuration operations, user should be granted with "view_project" project level permission
-allow if {
-	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "project_configuration"] = array.slice(parsed_path, 0, 9)
-	is_valid_api_version(api_ver)
-
-	print("Policy: Project configuration operations", parsed_path)
-	user_id := resolve_user_id(http_request.headers)
-	check_authorization_allowing_pat(spicedb_key, "project", project_id, "view_project", user_id)
-	check_authorization_allowing_pat(spicedb_key, "organization", organization_id, "can_contribute", user_id)
-	check_relation(spicedb_address, spicedb_key, "workspace", workspace_id, "parent_organization", "organization", organization_id)
-}
-
-# * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/training_configuration
-# Project configuration operations, user should be granted with "view_project" project level permission
-allow if {
-	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "training_configuration"] = array.slice(parsed_path, 0, 9)
-	is_valid_api_version(api_ver)
-
-	print("Policy: Training configuration operations", parsed_path)
-	user_id := resolve_user_id(http_request.headers)
-	check_authorization_allowing_pat(spicedb_key, "project", project_id, "view_project", user_id)
-	check_authorization_allowing_pat(spicedb_key, "organization", organization_id, "can_contribute", user_id)
-	check_relation(spicedb_address, spicedb_key, "workspace", workspace_id, "parent_organization", "organization", organization_id)
 }
 
 # * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/datasets
@@ -464,6 +485,7 @@ allow if {
 # Workspace datasets operations, user should be granted with "view_workspace" workspace level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "datasets"] = array.slice(parsed_path, 0, 7)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Workspace datasets operations", parsed_path)
@@ -477,6 +499,7 @@ allow if {
 allow if {
 	http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "datasets:prepare-for-import"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Prepare dataset for import")
@@ -491,6 +514,7 @@ allow if {
 allow if {
 	http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects:import-from-dataset"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Import project from dataset")
@@ -505,6 +529,7 @@ allow if {
 allow if {
 	http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "datasets:prepare-for-import"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Prepare dataset for import to project")
@@ -520,6 +545,7 @@ allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", command] = parsed_path
 	regex.match(".{24}:import-from-dataset", command)
 	project_id := substring(command, 0, 24)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Import dataset to project")
@@ -537,6 +563,7 @@ allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", command] = parsed_path
 	regex.match(".{24}:export", command)
 	project_id := substring(command, 0, 24)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Export project", parsed_path)
@@ -551,6 +578,7 @@ allow if {
 # Export project operations, user should be granted with "can_manage" project level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "exports"] = array.slice(parsed_path, 0, 9)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Export project operations", parsed_path)
@@ -564,6 +592,7 @@ allow if {
 # Workspace project upload operations, user should be granted with "can_manage" workspace level permission
 allow if {
     ["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", "uploads"] = array.slice(parsed_path, 0, 8)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
     print("Policy: Import project operations", parsed_path)
@@ -578,6 +607,7 @@ allow if {
 allow if {
     http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects:import"] = array.slice(parsed_path, 0, 7)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Import project operations", parsed_path)
@@ -592,6 +622,7 @@ allow if {
 # Project test operations, user should be granted with "view_project" project level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "tests"] = array.slice(parsed_path, 0, 9)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Project test operations", parsed_path)
@@ -607,6 +638,7 @@ allow if {
 	not parsed_query.project_id
 
 	print("Policy: User settings (not project related)")
+	is_license_valid
 }
 
 # * /user_settings?project_id={project_id}
@@ -614,6 +646,7 @@ allow if {
 allow if {
 	is_user_settings_route
 	parsed_query.project_id
+	is_license_valid
 
 	print("Policy: User settings (project related)")
 	user_id := resolve_user_id(http_request.headers)
@@ -625,6 +658,7 @@ allow if {
 allow if {
 	http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "code_deployments:prepare"] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Prepare project code deployment")
@@ -640,6 +674,7 @@ allow if {
 # Project code deployments operations, user should be granted with "view_project" project level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "code_deployments"] = array.slice(parsed_path, 0, 9)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Project code deployments operations", parsed_path)
@@ -654,6 +689,7 @@ allow if {
 # Project code deployments operations, user should be granted with "view_project" project level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "deployment_package:download"] = array.slice(parsed_path, 0, 9)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Project deployment package operations", parsed_path)
@@ -668,6 +704,7 @@ allow if {
 # Inference gateway pipeline status endpoint, user should be granted with "view_project" project level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "pipelines", pipeline_id, "status"] = array.slice(parsed_path, 0, 11)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Inference gateway pipeline status endpoint", parsed_path)
@@ -680,6 +717,7 @@ allow if {
 # Inference gateway models status endpoint, user should be granted with "view_project" project level permission
 allow if {
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "models", model_id, "status"] = array.slice(parsed_path, 0, 11)
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Inference gateway models status endpoint", parsed_path)
@@ -694,6 +732,7 @@ allow if {
 allow if {
 	http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "models", model_id] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Request prediction with a model")
@@ -710,6 +749,7 @@ allow if {
 allow if {
 	http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "pipelines", pipeline_id] = parsed_path
+	is_license_valid
 	is_valid_api_version(api_ver)
 
 	print("Policy: Request prediction with a pipeline")
@@ -723,6 +763,7 @@ allow if {
 # Restrict GET /grafana interaction to admins
 allow if {
 	["api","v1","grafana"] = array.slice(parsed_path, 0, 3)
+	is_license_valid
 
 	user_id := resolve_user_id(http_request.headers)
 
@@ -743,6 +784,7 @@ allow if {
     http_request.path in [
         "/api/v1/product_info"
     ]
+    is_license_valid
 }
 
 # Allow for gRPC connections
@@ -754,4 +796,5 @@ allow if {
         8085,  # model mesh
         50051, # all the rest
     ]
+    is_license_valid
 }

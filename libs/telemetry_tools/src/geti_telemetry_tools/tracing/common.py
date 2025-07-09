@@ -9,6 +9,7 @@ from collections.abc import Callable
 from typing import TypeVar, cast
 
 # isort: off
+from opentelemetry.exporter.otlp.proto.grpc.exporter import OTLPExporterMixin
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (  # type: ignore[attr-defined]
     OTLPSpanExporter as GrpcOTLPSpanExporter,
 )
@@ -51,9 +52,9 @@ if DEBUG_TRACING:  # Enable console exporter
     )
     tracer_provider.add_span_processor(span_processor)
     logger.info("Telemetry console span exporter enabled")
+span_exporter: HttpOTLPSpanExporter | GrpcOTLPSpanExporter | None = None
 if OTLP_TRACES_RECEIVER:  # Enable OLTP exporter
     try:
-        span_exporter: HttpOTLPSpanExporter | GrpcOTLPSpanExporter
         if OTLP_TRACES_PROTOCOL == "http":
             span_exporter = HttpOTLPSpanExporter(endpoint=OTLP_TRACES_RECEIVER)
         elif OTLP_TRACES_PROTOCOL == "grpc":
@@ -133,3 +134,15 @@ def get_logging_format_with_tracing_context(extra_headers: str = "") -> str:
     all_headers = " ".join([tracing_header, extra_headers])
 
     return get_logging_format(extra_headers=all_headers)
+
+
+def terminate_span_exporter() -> None:
+    """
+    Terminates span exporter and closes connection to the server
+    """
+    if span_exporter is not None:
+        logger.info("Terminating span exporter")
+        if isinstance(span_exporter, HttpOTLPSpanExporter):
+            span_exporter.shutdown()
+        elif isinstance(span_exporter, GrpcOTLPSpanExporter):
+            OTLPExporterMixin.shutdown(span_exporter, 3000)

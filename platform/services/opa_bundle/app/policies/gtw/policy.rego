@@ -24,11 +24,14 @@ allow if {
 # Allow all users to access openapi.json file (not exposed via Ingress)
 allow if {
 	http_request.path == "/openapi.json"
+
+	is_license_valid
 }
 
 # Allow all users to interact with /api/v1/service_account endpoint
 allow if {
 	http_request.path in ["/api/v1/service_accounts/", "/api/v1/service_accounts"]
+	is_license_valid
 }
 
 # Allow all users to interact with /api/v1/feature_flags endpoint
@@ -42,10 +45,18 @@ allow if {
 	http_request.method == "GET"
 }
 
+allow if {
+        http_request.path in ["/api/v1/keys/pem", "/api/v1/keys/pem/"]
+        http_request.method == "GET"
+}
+
+
 # Allow all users to interact with /api/v1/users/workflow_id endpoint
 allow if {
 	http_request.path in ["/api/v1/users/workflow_id", "/api/v1/users/workflow_id/"]
 	http_request.method == "GET"
+
+	is_license_valid
 }
 
 # Allow all users to interact with anonymously accessible routes
@@ -59,6 +70,8 @@ allow if {
 	]
 
 	http_request.method == "POST"
+
+	is_license_valid
 }
 
 # Allow all users to confirm actions anonymously
@@ -71,9 +84,11 @@ allow if {
 	]
 
 	http_request.method == "GET"
+
+	is_license_valid
 }
 
-# Allow api/v1/keys
+# Allow api/v1/keys to run without license
 allow if {
 	parsed_path in [
 		["api", "v1", "keys"],
@@ -100,6 +115,8 @@ allow if {
 	["api", "v1", "users", accessed_uid, "photo"] = parsed_path
 	http_request.method == "POST"
 
+	is_license_valid
+
 	check_user_identity(accessed_uid, http_request.headers)
 }
 
@@ -107,12 +124,16 @@ allow if {
 allow if {
 	["api", "v1", "users", accessed_uid, "photo"] = parsed_path
 	http_request.method == "GET"
+
+	is_license_valid
 }
 
 # Restrict POST /api/v1/users/<user_id>/update_password to account data owners
 allow if {
 	["api", "v1", "users", accessed_uid, "update_password"] = parsed_path
 	http_request.method == "POST"
+
+	is_license_valid
 
 	check_user_identity(accessed_uid, http_request.headers)
 }
@@ -121,6 +142,8 @@ allow if {
 allow if {
 	["api", "v1", "users", accessed_uid, "update_password"] = parsed_path
 	http_request.method == "POST"
+
+	is_license_valid
 
 	user_id := resolve_user_id(http_request.headers)
 	org_id := resolve_organization_id_from_jwt(http_request.headers)
@@ -132,6 +155,8 @@ allow if {
 	["api", "v1", "organizations", accessed_uid, "users", "create"] = parsed_path
 	http_request.method == "POST"
 
+	is_license_valid
+
 	user_id := resolve_user_id(http_request.headers)
 	check_authorization(spicedb_key, "organization", accessed_uid, "can_manage", user_id)
 }
@@ -140,6 +165,7 @@ allow if {
 allow if {
 	["api", "v1", "organizations", org_id, "users", accessed_uid, "statuses"] = parsed_path
 	http_request.method == "PUT"
+	is_license_valid
 
 	user_id := resolve_user_id(http_request.headers)
 	check_authorization(spicedb_key, "organization", org_id, "can_manage", user_id)
@@ -150,6 +176,8 @@ allow if {
 allow if {
 	["api", "v1", "users", accessed_uid] = parsed_path
 	http_request.method in ["GET", "PUT"]
+
+	is_license_valid
 
 	check_user_identity(accessed_uid, http_request.headers)
 }
@@ -166,6 +194,8 @@ allow if {
 allow if {
 	["api", "v1", "users", accessed_uid, "roles"] = parsed_path
 	http_request.method == "PATCH"
+
+	is_license_valid
 }
 
 # Restrict GET /api/v1/users/<user_id>/roles to account data owners
@@ -189,19 +219,10 @@ allow if {
 	parsed_path in [["api", "v1", "logs"], ["api", "v1", "logs", ""]]
 	http_request.method == "GET"
 
+	is_license_valid
 	is_environment_on_prem
 	user_id := resolve_user_id(http_request.headers)
 	does_user_have_any_admin_role(user_id)
-}
-
-# Restrict GET /api/v1/keys/pem only to API Gateway
-allow if {
-	["api", "v1", "keys", "pem"] = parsed_path
-	http_request.method == "GET"
-
-	input.attributes.source.principal in ["spiffe://cluster.local/ns/istio-system/sa/istio-gateway", "spiffe://cluster.local/ns/istio-ingress/sa/istio-gateway"]
-	not has_key(http_request.headers, "x-auth-request-access-token")
-
 }
 
 check_user_identity(accessed_user_id, headers) if {
@@ -217,7 +238,49 @@ resolve_organization_id_from_jwt(headers) := uid if {
 	print("org id determined from x-auth-request-access-token: ", uid)
 }
 
+is_users_license_not_restricted if {
+    license_validation == "true"
+	request := {
+		"url": "http://license:8000/api/v1/license/info",
+		"method": "GET",
+		"cache": true,
+	}
+
+	response := http.send(request)
+	response.status_code == 200
+    users_restricted := response.body.users_restricted
+	users_restricted == false
+}
+
+is_users_license_limited if {
+    license_validation == "true"
+	request := {
+		"url": "http://license:8000/api/v1/license/info",
+		"method": "GET",
+		"cache": true,
+	}
+	request_users := {
+		"url": "http://gateway:9000/api/v1/users/count",
+		"method": "GET",
+		"cache": false,
+	}
+
+	response := http.send(request)
+	response_users := http.send(request_users)
+
+	response.status_code == 200
+	response_users.status_code == 200
+	users_restricted := response.body.users_restricted
+	num_licenses := response.body.num_licenses
+	licenses := to_number(num_licenses)
+	total_users := to_number(response_users.raw_body)
+
+	users_restricted == true
+	licenses > total_users
+}
+
 is_environment_on_prem if {
+    license_validation == "true"
 	request := {
 		"url": "http://impt-resource:5000/api/v1/product_info",
 		"method": "GET",
@@ -227,9 +290,4 @@ is_environment_on_prem if {
 	response := http.send(request)
 	response.status_code == 200
 	response.body.environment == "on-prem"
-}
-
-has_key(x, k) {
-	v = x[k]
-	v != ""
 }
