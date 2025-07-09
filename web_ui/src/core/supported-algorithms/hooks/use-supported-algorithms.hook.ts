@@ -17,12 +17,14 @@ export const useSupportedAlgorithms = (
     const { FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
 
     return useQuery<SupportedAlgorithm[] | LegacySupportedAlgorithm[], AxiosError>({
-        queryKey: QUERY_KEYS.SUPPORTED_ALGORITHMS(),
+        queryKey: QUERY_KEYS.SUPPORTED_ALGORITHMS(projectIdentifier),
         queryFn: () => {
             if (FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS) {
                 return supportedAlgorithmsService.getProjectSupportedAlgorithms(projectIdentifier);
             }
             return supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms(projectIdentifier);
         },
+        // This query is used to fetch supported algorithms for a project, they never change.
+        staleTime: Infinity,
     });
 };

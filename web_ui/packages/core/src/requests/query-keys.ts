@@ -329,7 +329,13 @@ const MODEL_CONFIG_PARAMETERS = (
     return [...CONFIGURATION(projectIdentifier), taskId, undefined];
 };
 
-const SUPPORTED_ALGORITHMS = (): [string] => ['supported_algorithms'];
+const SUPPORTED_ALGORITHMS = (projectIdentifier: ProjectIdentifier) =>
+    [
+        'supported_algorithms',
+        projectIdentifier.organizationId,
+        projectIdentifier.workspaceId,
+        projectIdentifier.projectId,
+    ] as const;
 
 const EXPORT_MODEL = (
     projectIdentifier: ProjectIdentifier,
