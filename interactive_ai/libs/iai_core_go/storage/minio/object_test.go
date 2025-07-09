@@ -24,11 +24,16 @@ import (
 )
 
 func TestGetObjectByType(t *testing.T) {
-	objHandler := ObjectStorageHandlerImpl{}
 	ctx := context.Background()
+	manager, err := NewClientManager(ctx)
+	require.NoError(t, err)
+	objHandler := ObjectStorageHandlerImpl{
+		cm: manager,
+	}
+
 	objectType := "getobject"
 	require.NoError(t, os.Setenv("BUCKET_NAME_GETOBJECT", objectType))
-	minioClient, err := getMinioClient(ctx)
+	minioClient, err := manager.GetClient(ctx)
 	require.NoError(t, err)
 	err = minioClient.MakeBucket(ctx, objectType, minio.MakeBucketOptions{})
 	require.NoError(t, err)
@@ -80,11 +85,15 @@ func TestGetObjectByType(t *testing.T) {
 
 func TestCreateObject(t *testing.T) {
 	ctx := context.Background()
-	objHandler := ObjectStorageHandlerImpl{}
+	manager, err := NewClientManager(ctx)
+	require.NoError(t, err)
+	objHandler := ObjectStorageHandlerImpl{
+		cm: manager,
+	}
 	buf := bytes.NewBuffer([]byte("mock data"))
 	objectType := "createobject"
 	require.NoError(t, os.Setenv("BUCKET_NAME_CREATEOBJECT", objectType))
-	minioClient, err := getMinioClient(ctx)
+	minioClient, err := manager.GetClient(ctx)
 	require.NoError(t, err)
 	require.NoError(t, minioClient.MakeBucket(ctx, objectType, minio.MakeBucketOptions{}))
 

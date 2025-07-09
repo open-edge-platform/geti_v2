@@ -62,7 +62,12 @@ func createRouter() *gin.Engine {
 		logger.Log().Fatalf("Cannot set trusted proxies: %s", err)
 	}
 
-	imageRepo := minio.NewImageRepositoryImpl()
+	clientManager, err := minio.NewClientManager()
+	if err != nil {
+		logger.Log().Fatalf("Cannot instantiate minio client manager: %s", err)
+	}
+	defer clientManager.Close()
+	imageRepo := minio.NewImageRepositoryImpl(clientManager)
 	cropper := service.NewResizeCropper()
 	createThumbnailUseCase, err := usecase.NewGetOrCreateImageThumbnail(imageRepo, cropper)
 	if err != nil {

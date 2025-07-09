@@ -91,8 +91,13 @@ func createRouter(maxMultipartLimit int64, modelAccessSrv service.ModelAccessSer
 	if err != nil {
 		logger.Log().Fatalf("Cannot instantiate cache service: %s", err)
 	}
-	videoRepo := minio.NewVideoRepositoryImpl()
-	imageRepo := minio.NewImageRepositoryImpl()
+	clientManager, err := minio.NewClientManager()
+	if err != nil {
+		logger.Log().Fatalf("Cannot instantiate minio client manager: %s", err)
+	}
+	defer clientManager.Close()
+	videoRepo := minio.NewVideoRepositoryImpl(clientManager)
+	imageRepo := minio.NewImageRepositoryImpl(clientManager)
 	frameReader := new(frames.FramerReaderImpl)
 	frameExtractor := frames.NewFFmpegCLIFrameExtractor()
 	mediaSrv := service.NewMediaServiceImpl(videoRepo, imageRepo, frameReader)
