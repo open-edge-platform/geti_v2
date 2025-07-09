@@ -53,7 +53,7 @@ export interface SupportedAlgorithmDTO {
         intel: boolean;
         nvidia: boolean;
     };
-    default_algorithm: boolean;
+    is_default_model: boolean;
     task: TASK_TYPE;
 }
 

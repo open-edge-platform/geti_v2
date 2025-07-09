@@ -64,7 +64,7 @@ export const getSupportedAlgorithmsEntities = (supportedAlgorithms: SupportedAlg
             support_status,
             performance_category,
             supported_gpus: { intel, nvidia },
-            default_algorithm,
+            is_default_model,
             task,
         } = supportedAlgorithm;
         const domain = getDomain(task) as DOMAIN;
@@ -78,7 +78,7 @@ export const getSupportedAlgorithmsEntities = (supportedAlgorithms: SupportedAlg
             templateName:
                 performance_category !== PerformanceCategory.OTHER ? capitalize(performance_category) : undefined,
             modelTemplateId: model_manifest_id,
-            isDefaultAlgorithm: default_algorithm,
+            isDefaultAlgorithm: is_default_model,
             trainableParameters: trainable_parameters,
             performanceRatings: {
                 accuracy,
@@ -88,7 +88,6 @@ export const getSupportedAlgorithmsEntities = (supportedAlgorithms: SupportedAlg
             lifecycleStage: support_status,
             performanceCategory: performance_category,
             supportedGPUs: { intel, nvidia },
-            defaultAlgorithm: default_algorithm,
             license: 'Apache 2.0',
         };
     });
