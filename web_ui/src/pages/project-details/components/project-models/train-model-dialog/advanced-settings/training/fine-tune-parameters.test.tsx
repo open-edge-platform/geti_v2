@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
-import { providersRender as render } from '../../../../../../../../test-utils/required-providers-render';
-import { FineTuneParameters } from '../fine-tune-parameters.component';
+import { providersRender as render } from '../../../../../../../test-utils/required-providers-render';
+import { FineTuneParameters } from './fine-tune-parameters.component';
 
 describe('FineTuneParameters', () => {
     it('Pre-trained weights is selected when trainFromScratch is true', () => {
@@ -59,5 +59,48 @@ describe('FineTuneParameters', () => {
         );
 
         expect(screen.getByRole('checkbox', { name: /reshuffle subsets/i })).toBeEnabled();
+    });
+
+    it('Reshuffle subsets checkbox is checked when isReshufflingSubsetsEnabled is true', () => {
+        render(
+            <FineTuneParameters
+                trainFromScratch
+                onTrainFromScratchChange={jest.fn()}
+                onReshufflingSubsetsEnabledChange={jest.fn()}
+                isReshufflingSubsetsEnabled={true}
+            />
+        );
+
+        expect(screen.getByRole('checkbox', { name: /reshuffle subsets/i })).toBeChecked();
+    });
+
+    it('calls onTrainFromScratchChange with false when Previous training weights gets clicked', () => {
+        const mockedOnTrainFromScratchChange = jest.fn();
+        render(
+            <FineTuneParameters
+                trainFromScratch
+                onTrainFromScratchChange={mockedOnTrainFromScratchChange}
+                onReshufflingSubsetsEnabledChange={jest.fn()}
+                isReshufflingSubsetsEnabled={true}
+            />
+        );
+
+        fireEvent.click(screen.getByRole('radio', { name: /previous training weights/i }));
+        expect(mockedOnTrainFromScratchChange).toHaveBeenCalledWith(false);
+    });
+
+    it('calls onTrainFromScratchChange with true when Pre-trained weights gets clicked', () => {
+        const mockedOnTrainFromScratchChange = jest.fn();
+        render(
+            <FineTuneParameters
+                trainFromScratch={false}
+                onTrainFromScratchChange={mockedOnTrainFromScratchChange}
+                onReshufflingSubsetsEnabledChange={jest.fn()}
+                isReshufflingSubsetsEnabled={true}
+            />
+        );
+
+        fireEvent.click(screen.getByRole('radio', { name: /pre\-trained weights/i }));
+        expect(mockedOnTrainFromScratchChange).toHaveBeenCalledWith(true);
     });
 });
