@@ -31,6 +31,7 @@ func TestLoadVideo(t *testing.T) {
 
 	manager, err := NewClientManager()
 	require.NoError(t, err)
+	defer manager.Close()
 	videoRepo := NewVideoRepositoryImpl(manager)
 	v, err := videoRepo.LoadVideoByID(ctx, fullVideoID)
 

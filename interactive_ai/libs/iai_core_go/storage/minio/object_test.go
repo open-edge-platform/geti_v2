@@ -27,6 +27,7 @@ func TestGetObjectByType(t *testing.T) {
 	ctx := context.Background()
 	manager, err := NewClientManager()
 	require.NoError(t, err)
+	defer manager.Close()
 	objHandler := ObjectStorageHandlerImpl{
 		cm: manager,
 	}
@@ -87,6 +88,7 @@ func TestCreateObject(t *testing.T) {
 	ctx := context.Background()
 	manager, err := NewClientManager()
 	require.NoError(t, err)
+	defer manager.Close()
 	objHandler := ObjectStorageHandlerImpl{
 		cm: manager,
 	}

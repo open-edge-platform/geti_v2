@@ -22,6 +22,7 @@ func TestMinio(t *testing.T) {
 	_ = os.Setenv("S3_CLIENT_CACHE_TTL", "1")
 	manager, err := NewClientManager()
 	require.NoError(t, err)
+	defer manager.Close()
 
 	tests := []struct {
 		name   string
