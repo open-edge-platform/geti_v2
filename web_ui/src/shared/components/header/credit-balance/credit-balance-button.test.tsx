@@ -97,7 +97,7 @@ describe('CreditBalanceButton', () => {
             expect(screen.getByRole('button', { name: /credit balance stat/i })).toHaveClass('fuxOpen');
             expect(await screen.findByRole('button', { name: 'Learn more' })).toBeInTheDocument();
 
-            fireEvent.click(screen.getByRole('button', { name: /close first user experience notification/i }));
+            fireEvent.click(screen.getByRole('button', { name: /dismiss help dialog/i }));
 
             await waitFor(() => {
                 const userSettings = 0;
