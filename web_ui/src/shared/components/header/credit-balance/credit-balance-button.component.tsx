@@ -117,8 +117,10 @@ const CreditBalanceButtonFuxNotification = ({ isDarkMode }: { isDarkMode: boolea
 
             {isFirstAutoTrainedProject ? (
                 <FuxNotification
+                    settingsKey={FUX_NOTIFICATION_KEYS.CREDIT_BALANCE_BUTTON}
                     state={fuxState}
-                    docUrl={activeUser?.isAdmin ? paths.account.usage({ organizationId }) : undefined}
+                    // todo: Use roles in combination with useCheckPermission instead
+                    customDocUrl={activeUser?.isAdmin ? paths.account.usage({ organizationId }) : undefined}
                     triggerRef={triggerRef}
                     placement={'bottom right'}
                     onClose={handleCloseTrainingNotification}
