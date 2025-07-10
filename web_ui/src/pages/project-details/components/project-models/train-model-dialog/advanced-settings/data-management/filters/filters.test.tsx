@@ -15,6 +15,18 @@ import { Filters } from './filters.component';
 
 type FiltersParameters = TrainingConfiguration['datasetPreparation']['filtering'];
 
+const getToggleFilter = (filterName: string) => {
+    return screen.getByRole('checkbox', { name: `Toggle ${filterName}` });
+};
+
+const getFilterParameter = (filterName: string) => {
+    return screen.getByRole('textbox', { name: `Change ${filterName}` });
+};
+
+const toggleFilter = (filterName: string) => {
+    fireEvent.click(getToggleFilter(filterName));
+};
+
 describe('Filters', () => {
     const filtersParameters = {
         min_annotation_pixels: [
@@ -129,13 +141,13 @@ describe('Filters', () => {
 
         Object.values(filtersParameters).forEach(([_enableParameter, configParameter]) => {
             expect(screen.getByText(configParameter.name)).toBeInTheDocument();
-            expect(screen.getByRole('checkbox', { name: `Toggle ${configParameter.name}` })).toBeChecked();
-            expect(screen.getByRole('textbox', { name: new RegExp(`Change ${configParameter.name}`) })).toBeDisabled();
+            expect(getToggleFilter(configParameter.name)).toBeChecked();
+            expect(getFilterParameter(configParameter.name)).toBeDisabled();
 
-            fireEvent.click(screen.getByRole('checkbox', { name: `Toggle ${configParameter.name}` }));
+            toggleFilter(configParameter.name);
 
-            expect(screen.getByRole('checkbox', { name: `Toggle ${configParameter.name}` })).not.toBeChecked();
-            expect(screen.getByRole('textbox', { name: `Change ${configParameter.name}` })).toBeEnabled();
+            expect(getToggleFilter(configParameter.name)).not.toBeChecked();
+            expect(getFilterParameter(configParameter.name)).toBeEnabled();
         });
     });
 
@@ -145,7 +157,7 @@ describe('Filters', () => {
         expect(screen.getByLabelText('Filters tag')).toHaveTextContent('Off');
 
         const filterParameter = filtersParameters.max_annotation_objects;
-        fireEvent.click(screen.getByRole('checkbox', { name: `Toggle ${filterParameter[1].name}` }));
+        toggleFilter(filterParameter[1].name);
 
         expect(screen.getByLabelText('Filters tag')).toHaveTextContent('On');
     });
@@ -154,28 +166,23 @@ describe('Filters', () => {
         render(<App filtersParameters={filtersParameters} />);
 
         Object.values(filtersParameters).forEach(([_enableParameter, configParameter]) => {
-            fireEvent.click(screen.getByRole('checkbox', { name: `Toggle ${configParameter.name}` }));
+            toggleFilter(configParameter.name);
 
-            expect(screen.getByRole('checkbox', { name: `Toggle ${configParameter.name}` })).not.toBeChecked();
+            expect(getToggleFilter(configParameter.name)).not.toBeChecked();
 
             fireEvent.click(screen.getByRole('button', { name: `Reset ${configParameter.name}` }));
 
-            expect(screen.getByRole('checkbox', { name: `Toggle ${configParameter.name}` })).toBeChecked();
+            expect(getToggleFilter(configParameter.name)).toBeChecked();
 
-            fireEvent.click(screen.getByRole('checkbox', { name: `Toggle ${configParameter.name}` }));
+            toggleFilter(configParameter.name);
             fireEvent.click(screen.getByRole('button', { name: `Increase Change ${configParameter.name}` }));
 
-            const value = screen
-                .getByRole('textbox', { name: `Change ${configParameter.name}` })
-                .getAttribute('value')
-                ?.replaceAll(',', '');
+            const value = getFilterParameter(configParameter.name).getAttribute('value')?.replaceAll(',', '');
             expect(value).toBe(String(Number(configParameter.value) + 1));
 
             fireEvent.click(screen.getByRole('button', { name: `Reset ${configParameter.name}` }));
-            const defaultValue = screen
-                .getByRole('textbox', { name: `Change ${configParameter.name}` })
-                .getAttribute('value')
-                ?.replaceAll(',', '');
+
+            const defaultValue = getFilterParameter(configParameter.name).getAttribute('value')?.replaceAll(',', '');
 
             expect(defaultValue).toBe(String(configParameter.defaultValue));
         });
