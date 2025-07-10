@@ -44,16 +44,17 @@ const mockProps = ({ canPathBeClosed = false }: { canPathBeClosed?: boolean }): 
         (callback: (point: Point) => void) => (event: PointerEvent<SVGElement>) =>
             callback({ x: event.clientX, y: event.clientY })
     ),
-    // @ts-expect-error we dont care about all properties
     worker: {
-        hasInitialPoint: false,
+        // @ts-expect-error IntelligentScissors is of Remote type
         cleanImg: jest.fn(),
+        // @ts-expect-error IntelligentScissors is of Remote type
         cleanPoints: jest.fn(),
+        // @ts-expect-error IntelligentScissors is of Remote type
         buildMap: jest.fn(),
+        // @ts-expect-error IntelligentScissors is of Remote type
         calcPoints: jest.fn(),
+        // @ts-expect-error IntelligentScissors is of Remote type
         loadImage: jest.fn(),
-        optimizeSegments: jest.fn(),
-        optimizePolygon: jest.fn(),
     },
     handleIsStartingPointHovered: jest.fn(),
 });

@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { Grabcut, GrabcutData as ToolGrabcutData } from '@geti/smart-tools';
 import { Polygon as ToolPolygon } from '@geti/smart-tools/src/shared/interfaces';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
+import { Remote } from 'comlink';
 
 import { Polygon } from '../../../core/annotations/shapes.interface';
 import { AlgorithmType } from '../../../hooks/use-load-ai-webworker/algorithm.interface';
@@ -35,7 +36,7 @@ const convertGetiDataToGrabcutData = (data: GrabcutData): ToolGrabcutData => {
 
 export const useGrabcut = ({ showNotificationError, onSuccess }: useGrabcutProps): useGrabcutResult => {
     const { worker, isLoading } = useLoadAIWebworker(AlgorithmType.GRABCUT);
-    const grabcutRef = useRef<Grabcut | null>(null);
+    const grabcutRef = useRef<Remote<Grabcut> | null>(null);
 
     useEffect(() => {
         return () => {

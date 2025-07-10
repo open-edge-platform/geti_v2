@@ -5,6 +5,7 @@ import { PointerEvent, useEffect, useRef } from 'react';
 
 import { IntelligentScissors } from '@geti/smart-tools';
 import { useMutation } from '@tanstack/react-query';
+import { Remote } from 'comlink';
 import { isEmpty, isEqual, throttle } from 'lodash-es';
 
 import { Point, Polygon } from '../../../core/annotations/shapes.interface';
@@ -22,7 +23,7 @@ export interface IntelligentScissorsProps {
     polygon: Polygon | null;
     image: ImageData;
     lassoSegment: Point[];
-    worker: IntelligentScissors | undefined;
+    worker: Remote<IntelligentScissors> | undefined;
     canPathBeClosed: (point: Point) => boolean;
     setPointerLine: SetStateWrapper<Point[]>;
     setLassoSegment: SetStateWrapper<Point[]>;
@@ -47,7 +48,7 @@ export const useIntelligentScissors = ({
     const isPointerDown = useRef<boolean>(false);
     const isFreeDrawing = useRef<boolean>(false);
     const buildMapPoint = useRef<Point | null>(null);
-    const intelligentScissors = useRef<IntelligentScissors | null>(null);
+    const intelligentScissors = useRef<Remote<IntelligentScissors> | null>(null);
 
     const { addNotification } = useNotification();
 
