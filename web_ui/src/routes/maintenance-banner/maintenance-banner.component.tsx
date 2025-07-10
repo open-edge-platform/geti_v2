@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 import { useMaintenanceQuery } from '../../core/maintenance/hooks/use-maintenance-query.hook';
 import { GENERAL_SETTINGS_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
-import { getSettingsOfType } from '../../core/user-settings/utils';
 
 import classes from './maintenance-banner.module.scss';
 
@@ -24,11 +23,10 @@ export const MaintenanceBanner = () => {
         maintenance: { enabled, window },
     } = data;
 
-    const generalSettingsConfig = getSettingsOfType(config, GENERAL_SETTINGS_KEYS);
     const wasDismissedForTheCurrentMaintenanceWindow = window
-        ? generalSettingsConfig[GENERAL_SETTINGS_KEYS.MAINTENANCE_BANNER]?.wasDismissed &&
-          generalSettingsConfig[GENERAL_SETTINGS_KEYS.MAINTENANCE_BANNER]?.window?.start === window.start &&
-          generalSettingsConfig[GENERAL_SETTINGS_KEYS.MAINTENANCE_BANNER]?.window?.end === window.end
+        ? config[GENERAL_SETTINGS_KEYS.MAINTENANCE_BANNER]?.wasDismissed &&
+          config[GENERAL_SETTINGS_KEYS.MAINTENANCE_BANNER]?.window?.start === window.start &&
+          config[GENERAL_SETTINGS_KEYS.MAINTENANCE_BANNER]?.window?.end === window.end
         : false;
 
     if (!enabled || !window || wasDismissedForTheCurrentMaintenanceWindow) {

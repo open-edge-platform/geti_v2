@@ -4,7 +4,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -28,8 +27,7 @@ func TestInferenceController_InferOne(t *testing.T) {
 
 	modelAccessMock := service.NewMockModelAccessService(t)
 	cacheMock := service.NewMockCacheService(t)
-	predictMock := usecase.NewMockInfer[usecase.BatchPredictionJSON](t)
-	explainMock := usecase.NewMockInfer[usecase.BatchExplainJSON](t)
+	inferMock := usecase.NewMockInfer(t)
 	requestHandlerMock := NewMockRequestHandler(t)
 
 	entityID := sdkentities.ID{ID: "active"}
@@ -51,8 +49,7 @@ func TestInferenceController_InferOne(t *testing.T) {
 		modelAccessMock,
 		cacheMock,
 		requestHandlerMock,
-		predictMock,
-		explainMock,
+		inferMock,
 	)
 
 	tests := []struct {
@@ -73,8 +70,8 @@ func TestInferenceController_InferOne(t *testing.T) {
 					Return(http.StatusOK, []byte("cached"), true).
 					Once()
 
-				predictMock.EXPECT().
-					One(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					One(c.Request.Context(), requestData, false).
 					Return("predictions", nil).
 					Maybe()
 			},
@@ -85,7 +82,7 @@ func TestInferenceController_InferOne(t *testing.T) {
 				assert.Nil(t, err)
 				assert.Equal(t, []byte("cached"), result)
 
-				predictMock.AssertNotCalled(t, "One", c.Request.Context(), requestData)
+				inferMock.AssertNotCalled(t, "One", c.Request.Context(), requestData, false)
 			},
 		},
 		{
@@ -101,8 +98,8 @@ func TestInferenceController_InferOne(t *testing.T) {
 					Return(http.StatusNoContent, []byte("no prediction found"), true).
 					Once()
 
-				predictMock.EXPECT().
-					One(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					One(c.Request.Context(), requestData, false).
 					Return("predictions", nil).
 					Maybe()
 			},
@@ -113,7 +110,7 @@ func TestInferenceController_InferOne(t *testing.T) {
 				assert.Nil(t, err)
 				assert.Equal(t, []byte("no prediction found"), result)
 
-				predictMock.AssertNotCalled(t, "One", c.Request.Context(), requestData)
+				inferMock.AssertNotCalled(t, "One", c.Request.Context(), requestData, false)
 			},
 		},
 		{
@@ -129,8 +126,8 @@ func TestInferenceController_InferOne(t *testing.T) {
 					Return(200, []byte("cached"), false).
 					Once()
 
-				predictMock.EXPECT().
-					One(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					One(c.Request.Context(), requestData, false).
 					Return("{\"predictions\":[1,2]}", nil).
 					Once()
 			},
@@ -171,8 +168,8 @@ func TestInferenceController_InferOne(t *testing.T) {
 					Return(200, []byte("cached"), false).
 					Once()
 
-				predictMock.EXPECT().
-					One(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					One(c.Request.Context(), requestData, false).
 					Return("", errors.New("error")).
 					Once()
 			},
@@ -197,8 +194,8 @@ func TestInferenceController_InferOne(t *testing.T) {
 					Return(200, []byte("cached"), false).
 					Once()
 
-				predictMock.EXPECT().
-					One(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					One(c.Request.Context(), requestData, false).
 					Return("", httperrors.NewNotFoundError("model not found")).
 					Once()
 			},
@@ -220,8 +217,8 @@ func TestInferenceController_InferOne(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				explainMock.EXPECT().
-					One(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					One(c.Request.Context(), requestData, true).
 					Return("{\"maps\":[1,2]}", nil).
 					Once()
 			},
@@ -242,8 +239,8 @@ func TestInferenceController_InferOne(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				explainMock.EXPECT().
-					One(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					One(c.Request.Context(), requestData, true).
 					Return("predictions", nil).
 					Maybe()
 			},
@@ -269,8 +266,8 @@ func TestInferenceController_InferOne(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				explainMock.EXPECT().
-					One(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					One(c.Request.Context(), requestData, true).
 					Return("", errors.New("error")).
 					Once()
 			},
@@ -292,8 +289,8 @@ func TestInferenceController_InferOne(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				explainMock.EXPECT().
-					One(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					One(c.Request.Context(), requestData, true).
 					Return("", httperrors.NewNotFoundError("model not found")).
 					Once()
 			},
@@ -316,8 +313,7 @@ func TestInferenceController_InferOne(t *testing.T) {
 			modelAccessMock.ExpectedCalls = nil
 			cacheMock.ExpectedCalls = nil
 			requestHandlerMock.ExpectedCalls = nil
-			predictMock.ExpectedCalls = nil
-			explainMock.ExpectedCalls = nil
+			inferMock.ExpectedCalls = nil
 		})
 	}
 }
@@ -330,8 +326,7 @@ func TestInferenceController_InferBatch(t *testing.T) {
 
 	modelAccessMock := service.NewMockModelAccessService(t)
 	cacheMock := service.NewMockCacheService(t)
-	predictMock := usecase.NewMockInfer[usecase.BatchPredictionJSON](t)
-	explainMock := usecase.NewMockInfer[usecase.BatchExplainJSON](t)
+	inferMock := usecase.NewMockInfer(t)
 	requestHandlerMock := NewMockRequestHandler(t)
 
 	entityID := sdkentities.ID{ID: "active"}
@@ -362,8 +357,7 @@ func TestInferenceController_InferBatch(t *testing.T) {
 		modelAccessMock,
 		cacheMock,
 		requestHandlerMock,
-		predictMock,
-		explainMock,
+		inferMock,
 	)
 
 	tests := []struct {
@@ -379,9 +373,9 @@ func TestInferenceController_InferBatch(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				predictMock.EXPECT().
-					Batch(c.Request.Context(), requestData).
-					Return(&usecase.BatchPredictionJSON{BatchPredictions: make([]json.RawMessage, 0)}, nil).
+				inferMock.EXPECT().
+					Batch(c.Request.Context(), requestData, false).
+					Return(make([][]byte, 0), nil).
 					Once()
 			},
 			actionAndAssert: func(t *testing.T) {
@@ -399,9 +393,9 @@ func TestInferenceController_InferBatch(t *testing.T) {
 					Return(nil, errors.New("error")).
 					Once()
 
-				predictMock.EXPECT().
-					Batch(c.Request.Context(), requestData).
-					Return(&usecase.BatchPredictionJSON{BatchPredictions: make([]json.RawMessage, 0)}, nil).
+				inferMock.EXPECT().
+					Batch(c.Request.Context(), requestData, false).
+					Return(make([][]byte, 0), nil).
 					Maybe()
 			},
 			actionAndAssert: func(t *testing.T) {
@@ -411,7 +405,7 @@ func TestInferenceController_InferBatch(t *testing.T) {
 				assert.Equal(t, http.StatusBadRequest, err.StatusCode)
 				assert.Equal(t, "error", err.Error())
 
-				predictMock.AssertNotCalled(t, "Batch", c.Request.Context(), requestData)
+				inferMock.AssertNotCalled(t, "Batch", c.Request.Context(), requestData, false)
 			},
 		},
 		{
@@ -422,8 +416,8 @@ func TestInferenceController_InferBatch(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				predictMock.EXPECT().
-					Batch(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					Batch(c.Request.Context(), requestData, false).
 					Return(nil, errors.New("error")).
 					Once()
 			},
@@ -443,8 +437,8 @@ func TestInferenceController_InferBatch(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				predictMock.EXPECT().
-					Batch(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					Batch(c.Request.Context(), requestData, false).
 					Return(nil, httperrors.NewNotFoundError("model not found")).
 					Once()
 			},
@@ -464,9 +458,9 @@ func TestInferenceController_InferBatch(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				explainMock.EXPECT().
-					Batch(c.Request.Context(), requestData).
-					Return(&usecase.BatchExplainJSON{BatchExplain: make([]json.RawMessage, 0)}, nil).
+				inferMock.EXPECT().
+					Batch(c.Request.Context(), requestData, true).
+					Return(make([][]byte, 0), nil).
 					Once()
 			},
 			actionAndAssert: func(t *testing.T) {
@@ -484,9 +478,9 @@ func TestInferenceController_InferBatch(t *testing.T) {
 					Return(nil, errors.New("error")).
 					Once()
 
-				explainMock.EXPECT().
-					Batch(c.Request.Context(), requestData).
-					Return(&usecase.BatchExplainJSON{BatchExplain: make([]json.RawMessage, 0)}, nil).
+				inferMock.EXPECT().
+					Batch(c.Request.Context(), requestData, true).
+					Return(make([][]byte, 0), nil).
 					Maybe()
 			},
 			actionAndAssert: func(t *testing.T) {
@@ -496,7 +490,7 @@ func TestInferenceController_InferBatch(t *testing.T) {
 				assert.Equal(t, http.StatusBadRequest, err.StatusCode)
 				assert.Equal(t, "error", err.Error())
 
-				explainMock.AssertNotCalled(t, "Batch", c.Request.Context(), requestData)
+				inferMock.AssertNotCalled(t, "Batch", c.Request.Context(), requestData, true)
 			},
 		},
 		{
@@ -507,8 +501,8 @@ func TestInferenceController_InferBatch(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				explainMock.EXPECT().
-					Batch(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					Batch(c.Request.Context(), requestData, true).
 					Return(nil, errors.New("error")).
 					Once()
 			},
@@ -528,8 +522,8 @@ func TestInferenceController_InferBatch(t *testing.T) {
 					Return(requestData, nil).
 					Once()
 
-				explainMock.EXPECT().
-					Batch(c.Request.Context(), requestData).
+				inferMock.EXPECT().
+					Batch(c.Request.Context(), requestData, true).
 					Return(nil, httperrors.NewNotFoundError("model not found")).
 					Once()
 			},
@@ -552,10 +546,8 @@ func TestInferenceController_InferBatch(t *testing.T) {
 			modelAccessMock.ExpectedCalls = nil
 			cacheMock.ExpectedCalls = nil
 			requestHandlerMock.ExpectedCalls = nil
-			predictMock.ExpectedCalls = nil
-			predictMock.Calls = nil
-			explainMock.ExpectedCalls = nil
-			explainMock.Calls = nil
+			inferMock.ExpectedCalls = nil
+			inferMock.Calls = nil
 		})
 	}
 }
@@ -568,16 +560,14 @@ func TestInferenceController_IsModelReady(t *testing.T) {
 
 	modelAccessMock := service.NewMockModelAccessService(t)
 	cacheMock := service.NewMockCacheService(t)
-	predictMock := usecase.NewMockInfer[usecase.BatchPredictionJSON](t)
-	explainMock := usecase.NewMockInfer[usecase.BatchExplainJSON](t)
+	inferMock := usecase.NewMockInfer(t)
 	requestHandlerMock := NewMockRequestHandler(t)
 
 	inferenceCtrl := NewInferenceControllerImpl(
 		modelAccessMock,
 		cacheMock,
 		requestHandlerMock,
-		predictMock,
-		explainMock,
+		inferMock,
 	)
 
 	modelAccessMock.EXPECT().

@@ -12,12 +12,11 @@ import {
     TutorialConfig,
 } from '../dtos/user-settings.interface';
 
-export type UserGlobalSettings =
-    | GlobalModalsConfig
-    | GeneralSettingsConfig
-    | TutorialConfig
-    | FuxNotificationsConfig
-    | FuxSettingsConfig;
+export type UserGlobalSettings = GlobalModalsConfig &
+    GeneralSettingsConfig &
+    TutorialConfig &
+    FuxNotificationsConfig &
+    FuxSettingsConfig;
 
 export type UserProjectSettings = AnnotatorSettingsConfig & CanvasSettingsConfig;
 

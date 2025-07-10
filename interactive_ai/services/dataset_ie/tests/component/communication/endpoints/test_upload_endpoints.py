@@ -28,7 +28,6 @@ def fxt_create_a_temp_file():
         yield file
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestUploadEndpoints:
     """
     Tests upload endpoints, both simple (one go) adn TUS (resumable)

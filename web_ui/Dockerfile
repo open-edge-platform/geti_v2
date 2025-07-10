@@ -23,8 +23,11 @@ RUN npm run build:rest-openapi-spec
 FROM node:22.12-bookworm-slim@sha256:35531c52ce27b6575d69755c73e65d4468dba93a25644eed56dc12879cae9213 AS web_ui_deps
 
 ARG LOCATION=/home/app/web_ui/
-
 WORKDIR ${LOCATION}
+
+# The `GETI_VERSION` variable is send by the UI when it submits telemetry data
+ARG REACT_APP_GETI_VERSION=development
+ENV REACT_APP_GETI_VERSION=$REACT_APP_GETI_VERSION
 
 COPY --link package.json ./
 COPY --link package-lock.json ./

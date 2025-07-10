@@ -4,7 +4,6 @@
 
 from unittest.mock import MagicMock, patch
 
-import pytest
 from iai_core.entities.compiled_dataset_shards import CompiledDatasetShard
 
 from jobs_common_extras.shard_dataset.commands.create_and_save_compiled_dataset_shards_command import (
@@ -12,7 +11,6 @@ from jobs_common_extras.shard_dataset.commands.create_and_save_compiled_dataset_
 )
 
 
-@pytest.mark.JobsComponent
 class TestCreateAndSaveCompiledDatasetShardCommand:
     @patch(
         "jobs_common_extras.shard_dataset.commands.create_and_save_compiled_dataset_shards_command.CompiledDatasetShardsRepo"

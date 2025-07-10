@@ -4,7 +4,7 @@
 
 import pytest
 from flytekit.core.testing import task_mock
-from jobs_common_extras.mlflow.utils.train_output_models import TrainOutputModelIds
+from jobs_common_extras.experiments.utils.train_output_models import TrainOutputModelIds
 
 from job.tasks.evaluate_and_infer.evaluate_and_infer import evaluate_and_infer
 from job.tasks.prepare_and_train.prepare_data_and_train import prepare_training_data_model_and_start_training
@@ -26,7 +26,6 @@ TRAIN_SUBSET_ID = "train_subset_id"
 COMPILED_DATASET_SHARD_ID = "compiled_dataset_shards_id"
 
 
-@pytest.mark.JobsComponent
 class TestTrainWorkflow:
     @pytest.mark.parametrize("enable_training_from_dataset_shard", [False, True])
     @pytest.mark.parametrize("from_scratch", [True, False])
@@ -120,5 +119,5 @@ class TestTrainWorkflow:
                 should_activate_model=should_activate_model,
                 infer_on_pipeline=infer_on_pipeline,
                 from_scratch=from_scratch,
-                keep_mlflow_artifacts=False,
+                retain_training_artifacts=False,
             )

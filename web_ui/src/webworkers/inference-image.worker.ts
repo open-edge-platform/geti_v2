@@ -1,26 +1,15 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { InferenceImage, OpenCVLoader } from '@geti/smart-tools';
-import { expose } from 'comlink';
-import type OpenCVTypes from 'OpenCVTypes';
+import { buildInferenceImageInstance } from '@geti/smart-tools';
+import { expose, proxy } from 'comlink';
 
-declare const self: DedicatedWorkerGlobalScope;
+const WorkerApi = {
+    build: async () => {
+        const instance = await buildInferenceImageInstance();
 
-let opencv: OpenCVTypes;
-
-const waitForOpenCV = async () => {
-    if (opencv) return true;
-
-    opencv = await OpenCVLoader();
-
-    if ('ready' in opencv) {
-        await opencv.ready;
-    }
-
-    return false;
+        return proxy(instance);
+    },
 };
-
-const WorkerApi = { InferenceImage, waitForOpenCV, terminate: self.close };
 
 expose(WorkerApi);

@@ -4,6 +4,7 @@
 import logging
 import os
 
+import numpy as np
 from iai_core.repos.storage.binary_repos import VideoBinaryRepo
 
 from media_utils.video_decoder import VideoDecoder
@@ -21,37 +22,31 @@ class VideoFileRepair:
     """
 
     @staticmethod
-    def _get_frame(video_binary_repo: VideoBinaryRepo, filename: str, frame_index: int) -> None:
-        # Read last frame
-        VideoFrameReader.get_frame_numpy(
+    def _get_frame(video_binary_repo: VideoBinaryRepo, filename: str, frame_index: int) -> np.ndarray:
+        return VideoFrameReader.get_frame_numpy(
             file_location_getter=lambda: str(video_binary_repo.get_path_or_presigned_url(filename=filename)),
             frame_index=frame_index,
         )
 
     @staticmethod
-    def check_frame(video_binary_repo: VideoBinaryRepo, filename: str, frame_index: int) -> bool:
+    def check_video(video_binary_repo: VideoBinaryRepo, filename: str) -> bool:
         """
-        Checks a video by reading the last frame.
+        Checks a video by reading the first and last frames and checking for consistency.
 
-        Return whether this was successful
         :param video_binary_repo: Video binary repo
         :param filename: Video file name
-        :param frame_index: Frame to try to read
-        :return: boolean, whether file is valid
+        :return: boolean, whether the file is valid
         """
-        is_valid_video_file = False
         try:
-            # Read last frame
-            VideoFileRepair._get_frame(
-                video_binary_repo=video_binary_repo,
-                filename=filename,
-                frame_index=frame_index,
-            )
-            is_valid_video_file = True
-        except Exception:
+            video_info = VideoDecoder.get_video_information(str(video_binary_repo.get_path_or_presigned_url(filename)))
+            last_frame = video_info.total_frames - 1
+            last_frames = [VideoFileRepair._get_frame(video_binary_repo, filename, last_frame) for _ in range(2)]
+            first_frames = [VideoFileRepair._get_frame(video_binary_repo, filename, 0) for _ in range(2)]
+            return np.array_equal(last_frames[0], last_frames[1]) and np.array_equal(first_frames[0], first_frames[1])
+        except (Exception, KeyError):
             # Ignore exception. This function will return false if the video is not valid
-            logger.info("Video file is invalid and must be repaired")
-        return is_valid_video_file
+            logger.info(f"Video file {filename} is invalid.")
+            return False
 
     @staticmethod
     def attempt_repair(video_binary_repo: VideoBinaryRepo, filename: str) -> bool:
@@ -109,16 +104,16 @@ class VideoFileRepair:
             )
             VideoDecoder.reset_reader(file_location=str(file_location))
 
-            # Retry reading last frame again:
-            video_info = VideoDecoder.get_video_information(str(video_binary_repo.get_path_or_presigned_url(filename)))
-            VideoFileRepair._get_frame(
+            # Re-check the video file to see if it was repaired successfully
+            is_valid = VideoFileRepair.check_video(
                 video_binary_repo=video_binary_repo,
                 filename=filename,
-                frame_index=video_info.total_frames - 1,
             )
-            logger.info(f"Repairing video at {filename} was successful.")
-
-            return True
+            if is_valid:
+                logger.info(f"Repairing video at {filename} was successful.")
+                return True
+            logger.error(f"Repair completed but video validation failed for {filename}")
+            return False
         except Exception as e:
             # We are not interested in the output. We know it has failed, so the function returns False
             logger.exception(f"Repairing video at {filename} was unsuccessful: {str(e)}")
@@ -130,7 +125,7 @@ class VideoFileRepair:
     @staticmethod
     def check_and_repair_video(video_binary_repo: VideoBinaryRepo, filename: str) -> bool:
         """
-        Checks a video by reading the last frame.
+        Checks a video for corruption by reading the first and last frames.
         If this fails, try to repair by reconverting the video using ffmpeg.
         The quality scale is zero, making the conversion loss-less.
         Save video to original file location in binary repo.
@@ -144,12 +139,11 @@ class VideoFileRepair:
         logger.info(f"Checking video file at {filename} by reading the last frame. Repairing if needed")
 
         # Check the file
-        video_info = VideoDecoder.get_video_information(str(video_binary_repo.get_path_or_presigned_url(filename)))
-        is_valid_video_file = VideoFileRepair.check_frame(
-            video_binary_repo=video_binary_repo,
-            filename=filename,
-            frame_index=video_info.total_frames - 1,
-        )
+        try:
+            is_valid_video_file = VideoFileRepair.check_video(video_binary_repo=video_binary_repo, filename=filename)
+        except (Exception, KeyError):
+            logger.warning(f"The video file at {filename} cannot be read. It is likely corrupt")
+            return False
         if is_valid_video_file:
             logger.info(f"The video file at {filename} was readable, and suitable for further use")
             result = True

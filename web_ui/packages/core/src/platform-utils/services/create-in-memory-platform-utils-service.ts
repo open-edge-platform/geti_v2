@@ -1,11 +1,15 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import {
+    getMockedPlatformUpgradeProgress,
+    getMockedPlatformVersion,
+} from '../../../../../src/test-utils/mocked-items-factory/mocked-platform-utils';
 import { Environment, GPUProvider } from '../dto/utils.interface';
-import { PlatformUtilsService, ProductInfoEntity } from './utils.interface';
+import { PlatformUtilsService } from './utils.interface';
 
 export const createInMemoryPlatformUtilsService = (): PlatformUtilsService => {
-    const getProductInfo = async (): Promise<ProductInfoEntity> => {
+    const getProductInfo: PlatformUtilsService['getProductInfo'] = async () => {
         return {
             productVersion: '1.6.0',
             grafanaEnabled: false,
@@ -17,7 +21,29 @@ export const createInMemoryPlatformUtilsService = (): PlatformUtilsService => {
         };
     };
 
+    const checkPlatformBackup: PlatformUtilsService['checkPlatformBackup'] = () => {
+        return Promise.resolve({
+            isBackupPossible: true,
+        });
+    };
+
+    const getPlatformVersions: PlatformUtilsService['getPlatformVersions'] = async () => {
+        return [getMockedPlatformVersion()];
+    };
+
+    const getPlatformUpgradeProgress: PlatformUtilsService['getPlatformUpgradeProgress'] = async () => {
+        return getMockedPlatformUpgradeProgress();
+    };
+
+    const upgradePlatform = async () => {
+        await Promise.resolve();
+    };
+
     return {
         getProductInfo,
+        checkPlatformBackup,
+        getPlatformVersions,
+        getPlatformUpgradeProgress,
+        upgradePlatform,
     };
 };

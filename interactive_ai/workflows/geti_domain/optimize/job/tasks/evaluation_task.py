@@ -47,7 +47,7 @@ def evaluate_optimized_model_pot(
     trainer_ctx: OptimizationTrainerContext,
     dataset_storage_id: str,
     model_id: str,
-    keep_mlflow_artifacts: bool = False,
+    retain_training_artifacts: bool = False,
     min_annotation_size: Optional[int] = None,  # noqa: UP007
     max_number_of_annotations: Optional[int] = None,  # noqa: UP007
 ) -> None:
@@ -62,12 +62,12 @@ def evaluate_optimized_model_pot(
     ignored
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
     annotation scene will be ignored
-    :param keep_mlflow_artifacts: If true, do not remove the artifacts in mlflow bucket even if training succeeds.
+    :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
     """
     finalize_optimize(
         trainer_ctx=trainer_ctx,
-        keep_mlflow_artifacts=keep_mlflow_artifacts,
+        retain_training_artifacts=retain_training_artifacts,
     )
 
     _evaluate_optimized_model(

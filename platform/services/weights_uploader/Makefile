@@ -3,4 +3,4 @@
 
 include ../../../Makefile.shared-python
 
-COMPONENT_NAME := weights_uploader
+COMPONENT_NAME := weights-uploader

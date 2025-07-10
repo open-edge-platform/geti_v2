@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { getMockedTrainingConfiguration } from '../../../test-utils/mocked-items-factory/mocked-configuration-parameters';
 import { ProjectIdentifier } from '../../projects/core.interface';
 import { ConfigurableParametersReconfigureDTO } from '../dtos/configurable-parameters.interface';
 import { CreateApiModelConfigParametersService } from './api-model-config-parameters-service';
@@ -33,16 +34,7 @@ export const createInMemoryApiModelConfigParametersService = (): CreateApiModelC
     };
 
     const getTrainingConfiguration: CreateApiModelConfigParametersService['getTrainingConfiguration'] = async () => {
-        return Promise.resolve({
-            taskId: 'task-id',
-            training: [],
-            datasetPreparation: {
-                augmentation: {},
-                filtering: {},
-                subsetSplit: [],
-            },
-            evaluation: [],
-        });
+        return Promise.resolve(getMockedTrainingConfiguration());
     };
 
     const updateProjectConfiguration: CreateApiModelConfigParametersService['updateProjectConfiguration'] =

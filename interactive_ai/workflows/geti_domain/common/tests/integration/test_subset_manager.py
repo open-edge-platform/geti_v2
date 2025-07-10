@@ -5,7 +5,6 @@ import random
 from unittest.mock import patch
 
 import numpy as np
-import pytest
 from geti_types import DatasetStorageIdentifier, ImageIdentifier
 from iai_core.configuration.elements.component_parameters import ComponentParameters, ComponentType
 from iai_core.entities.annotation import Annotation, AnnotationScene, AnnotationSceneKind
@@ -44,7 +43,6 @@ from jobs_common.utils.subset_management.subset_manager_config import SubsetMana
 from tests.test_helpers import generate_random_annotated_project, register_model_template
 
 
-@pytest.mark.JobsComponent
 class TestSubsetManager:
     @staticmethod
     def create_annotation(project: Project, project_labels: list[Label], labels: list[str]) -> Annotation:

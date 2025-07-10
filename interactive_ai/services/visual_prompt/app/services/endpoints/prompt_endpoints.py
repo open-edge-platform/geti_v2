@@ -12,10 +12,8 @@ from starlette.responses import JSONResponse, Response
 from services.controllers.predict_controller import PredictController
 from services.models.media_info_payload import MediaInfoPayload
 from services.rest_data_validator.media_rest_validator import MediaRestValidator
-from utils.feature_flag import FeatureFlag
 
 from geti_fastapi_tools.dependencies import get_project_identifier, setup_session_fastapi
-from geti_feature_tools import FeatureFlagProvider
 from geti_types import ID, ProjectIdentifier
 
 router = APIRouter(
@@ -33,12 +31,6 @@ def prompt_endpoint(
     media_info_payload: MediaInfoPayload | None = Depends(MediaRestValidator.validate_media_info_payload),  # noqa: FAST002
 ) -> Response:
     """Endpoint to get predictions from the visual prompting model."""
-    if not FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_VISUAL_PROMPT_SERVICE):
-        return JSONResponse(
-            status_code=status.HTTP_403_FORBIDDEN,
-            content={"message": "Visual Prompt Service is not enabled."},
-        )
-
     predictions_rest = PredictController.predict(
         request=request,
         project_identifier=project_identifier,

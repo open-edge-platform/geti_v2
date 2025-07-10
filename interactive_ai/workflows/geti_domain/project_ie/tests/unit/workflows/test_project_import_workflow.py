@@ -1,14 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import pytest
 from flytekit.core.testing import task_mock
 
 from job.tasks.import_project import import_project
 from job.workflows.import_project_workflow import import_project_workflow
 
 
-@pytest.mark.JobsComponent
 class TestImportWorkflow:
     def test_import_workflow(self) -> None:
         # Arrange

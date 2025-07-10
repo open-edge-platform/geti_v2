@@ -70,13 +70,6 @@ def prepare_dataset_endpoint(
         this parameter is implicitly overridden to true.
     :return: Job ID to process the request.
     """
-    logger.info(
-        f"Handling post `prepare_dataset_endpoint`: project_id={project_id}, "
-        f"dataset_id={dataset_id}, export_format={export_format}, "
-        f"include_unannotated_media={include_unannotated_media}, "
-        f"save_video_as_images={save_video_as_images}"
-    )
-
     try:
         fmt: ExportFormat = ExportFormat(export_format)
     except ValueError:
@@ -152,10 +145,6 @@ def download_dataset_endpoint(
     :param export_manager: ExportManager object used for file management
     :return: data of zipped dataset
     """
-    logger.info(
-        f"Handling get `download_dataset_endpoint`: project_id={project_id}, "
-        f"dataset_id={dataset_id}, export_dataset_id={export_dataset_id}"
-    )
     try:
         project = get_validated_project(project_id=project_id)
         _ = get_validated_dataset_storage(identifier=project.identifier, dataset_storage_id=dataset_id)
@@ -178,7 +167,8 @@ def download_dataset_endpoint(
     except HTTPException:
         raise
     except FileNotFoundError:
-        message = f"The requested export dataset could not be found. Export Dataset ID: `{export_dataset_id}`."
+        sanitized_id = str(export_dataset_id).replace("\n", "").replace("\r", "")
+        message = f"The requested export dataset could not be found. Export Dataset ID: '{sanitized_id}'"
         logger.warning(message)
         raise FileNotFoundGetiBaseException(message=message)
     except Exception as e:

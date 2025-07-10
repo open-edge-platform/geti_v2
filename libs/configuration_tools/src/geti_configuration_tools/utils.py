@@ -6,7 +6,7 @@ from functools import cache
 from typing import Any, Optional, cast, get_args
 
 from pydantic import BaseModel, ConfigDict, create_model
-from pydantic.fields import FieldInfo
+from pydantic.fields import FieldInfo, PydanticUndefined
 
 
 @cache  # avoids creating many classes with same name
@@ -29,16 +29,17 @@ def partial_model(model: type[BaseModel]) -> type[BaseModel]:
     @cache
     def make_field_optional(field: FieldInfo) -> tuple[Any, FieldInfo]:
         # use json_schema_extra to store the default value, since default has to be None
-        if field.json_schema_extra:
-            field.json_schema_extra["default_value"] = field.default  # type: ignore
+        default_value = None if field.default is PydanticUndefined else field.default
+        if isinstance(field.json_schema_extra, dict):
+            field.json_schema_extra["default_value"] = field.json_schema_extra.get("default_value", default_value)
         else:
-            field.json_schema_extra = {"default_value": field.default}
+            field.json_schema_extra = {"default_value": default_value}
         field.default = None
         field.default_factory = None
         field.annotation = Optional[field.annotation]  # type: ignore[assignment] # noqa: UP007
         return field.annotation, field
 
-    partial_fields = {}
+    partial_fields: dict[str, FieldInfo | tuple[Any, FieldInfo]] = {}
     for field_name, field_info in model.model_fields.items():
         new_field = deepcopy(field_info)
 
@@ -46,7 +47,8 @@ def partial_model(model: type[BaseModel]) -> type[BaseModel]:
         if is_already_optional and (optional_annotation := get_args(new_field.annotation)):
             # Field is already optional, but still need to handle nested fields
             field_type, _ = optional_annotation  # tuple (annotation_type, None)
-            new_field = FieldInfo(annotation=field_type)
+            new_field.annotation = field_type
+            partial_fields[field_name] = new_field
         if type(new_field.annotation) is type(BaseModel):
             partial_inner_model = partial_model(cast("type[BaseModel]", new_field.annotation))
             partial_fields[field_name] = (

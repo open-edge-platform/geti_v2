@@ -30,14 +30,26 @@ class TestHyperparameters:
             (
                 {
                     "dataset_preparation": {"augmentation": {"random_horizontal_flip": {"enable": True}}},
-                    "training": {"max_epochs": 50, "learning_rate": 0.01},
+                    "training": {
+                        "max_epochs": 50,
+                        "learning_rate": 0.01,
+                        "input_size_width": 32,
+                        "input_size_height": 32,
+                        "allowed_values_input_size": [32],
+                    },
                     "evaluation": {},
                 },
                 Hyperparameters(
                     dataset_preparation=DatasetPreparationParameters(
                         augmentation=AugmentationParameters(random_horizontal_flip=RandomHorizontalFlip(enable=True))
                     ),
-                    training=TrainingHyperParameters(max_epochs=50, learning_rate=0.01),
+                    training=TrainingHyperParameters(
+                        max_epochs=50,
+                        learning_rate=0.01,
+                        input_size_width=32,
+                        input_size_height=32,
+                        allowed_values_input_size=[32],
+                    ),
                     evaluation=EvaluationParameters(),
                 ),
             ),
@@ -65,6 +77,9 @@ class TestHyperparameters:
                         "learning_rate": 0.001,
                         "early_stopping": {"enable": True, "patience": 10},
                         "max_detection_per_image": {"enable": True, "max_detection_per_image": 100},
+                        "input_size_width": 32,
+                        "input_size_height": 64,
+                        "allowed_values_input_size": [32, 64, 128],
                     },
                     "evaluation": {},
                 },
@@ -86,6 +101,9 @@ class TestHyperparameters:
                         learning_rate=0.001,
                         early_stopping=EarlyStopping(enable=True, patience=10),
                         max_detection_per_image=MaxDetectionPerImage(enable=True, max_detection_per_image=100),
+                        input_size_width=32,
+                        input_size_height=64,
+                        allowed_values_input_size=[32, 64, 128],
                     ),
                     evaluation=EvaluationParameters(),
                 ),
@@ -103,6 +121,9 @@ class TestHyperparameters:
                         "max_epochs": 1,
                         "learning_rate": 0.0001,
                         "early_stopping": {"enable": True, "patience": 1},
+                        "input_size_width": 32,
+                        "input_size_height": 32,
+                        "allowed_values_input_size": [32, 64, 128],
                     },
                     "evaluation": {},
                 },
@@ -114,7 +135,12 @@ class TestHyperparameters:
                         )
                     ),
                     training=TrainingHyperParameters(
-                        max_epochs=1, learning_rate=0.0001, early_stopping=EarlyStopping(enable=True, patience=1)
+                        max_epochs=1,
+                        learning_rate=0.0001,
+                        early_stopping=EarlyStopping(enable=True, patience=1),
+                        input_size_width=32,
+                        input_size_height=32,
+                        allowed_values_input_size=[32, 64, 128],
                     ),
                     evaluation=EvaluationParameters(),
                 ),
@@ -138,19 +164,52 @@ class TestHyperparameters:
         assert params.training.max_epochs == expected_params.training.max_epochs
         assert params.training.learning_rate == expected_params.training.learning_rate
 
-    def test_validation(self) -> None:
+    @pytest.mark.parametrize(
+        "hyperparams_dict",
+        [
+            # Test case 1: Invalid field types
+            {
+                "dataset_preparation": {},
+                "training": {"max_epochs": "5o", "learning_rate": 0.01},
+                "evaluation": {},
+            },
+            # Test case 2: Out of range values
+            {
+                "dataset_preparation": {"augmentation": {"random_horizontal_flip": {"enable": True}}},
+                "training": {"max_epochs": -10, "learning_rate": 0.01},  # Negative max_epochs
+                "evaluation": {},
+            },
+            # Test case 3: input_size has wrong format
+            {
+                "dataset_preparation": {},
+                "training": {"input_size_width": "32x32", "input_size_height": "64x64"},
+                "evaluation": {},
+            },
+            # Test case 4: input_size not in allowed sizes
+            {
+                "dataset_preparation": {},
+                "training": {"input_size_width": 32, "input_size_height": 64, "allowed_values_input_size": [32]},
+                "evaluation": {},
+            },
+            # Test case 5: input_size_width is set but input_size_height is not
+            {
+                "dataset_preparation": {},
+                "training": {"input_size_width": 32, "allowed_values_input_size": [32]},
+                "evaluation": {},
+            },
+        ],
+        ids=[
+            "Invalid field types (max_epochs as string)",
+            "Out of range values (max_epochs < 0)",
+            "input_size has wrong format (should be int)",
+            "input_size not in allowed sizes (height not in allowed values)",
+            "input_size_width set but input_size_height not set",
+        ],
+    )
+    def test_validation_errors(self, hyperparams_dict) -> None:
         """Test that validation errors in nested models are properly caught"""
-        with pytest.raises(ValidationError):
-            Hyperparameters(
-                dataset_preparation=DatasetPreparationParameters(
-                    augmentation=AugmentationParameters(random_horizontal_flip=RandomHorizontalFlip(enable=True))
-                ),
-                training=TrainingHyperParameters(
-                    max_epochs=-10,  # Invalid value
-                    learning_rate=0.01,
-                ),
-                evaluation=EvaluationParameters(),
-            )
+        with pytest.raises((ValidationError, ValueError)):
+            Hyperparameters.model_validate(hyperparams_dict)
 
     def test_partial_hyperparameters(self) -> None:
         """Test that PartialHyperparameters works correctly with both partial and complete configurations."""
@@ -162,6 +221,7 @@ class TestHyperparameters:
                     "early_stopping": {
                         "enable": True,
                     },
+                    "input_size_width": 32,  # Partial model should allow input_size_height to be None
                 }
             }
         )
@@ -175,6 +235,9 @@ class TestHyperparameters:
         assert partial_hyperparams.evaluation is None
         assert partial_hyperparams.training.max_epochs is None
         assert partial_hyperparams.training.early_stopping.patience is None
+        assert partial_hyperparams.training.input_size_width == 32
+        assert partial_hyperparams.training.input_size_height is None
+        assert partial_hyperparams.training.allowed_values_input_size is None
 
         # Test with a nested partial configuration
         nested_partial_hyperparams = PartialHyperparameters.model_validate(
@@ -196,6 +259,9 @@ class TestHyperparameters:
                 max_epochs=100,
                 early_stopping=EarlyStopping(enable=True, patience=10),
                 learning_rate=0.001,
+                input_size_width=32,
+                input_size_height=32,
+                allowed_values_input_size=[32, 64, 128],
             ),
             evaluation=EvaluationParameters(),
         )

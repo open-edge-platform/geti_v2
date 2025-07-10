@@ -5,7 +5,6 @@ import os.path
 import shutil
 from unittest.mock import ANY, MagicMock, patch
 
-import pytest
 from geti_types import CTX_SESSION_VAR, ID, Session
 from iai_core.repos.base import SessionBasedRepo
 from iai_core.versioning import DataVersion
@@ -23,7 +22,6 @@ def identity_map(self, x):
     return x
 
 
-@pytest.mark.JobsComponent
 class TestProjectExportUseCase:
     def test_export_as_zip(self, request, fxt_ote_id) -> None:
         def mocked_upload_downloadable_archive(self, operation_id: ID, zip_local_path: str):

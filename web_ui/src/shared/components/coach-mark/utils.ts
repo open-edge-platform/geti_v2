@@ -8,7 +8,7 @@ import { JobTask } from '../../../core/jobs/jobs.interface';
 import { JobsResponse } from '../../../core/jobs/services/jobs-service.interface';
 import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../../core/user-settings/dtos/user-settings.interface';
 import { UserGlobalSettings, UseSettings } from '../../../core/user-settings/services/user-settings.interface';
-import { DocsUrl, getFuxSetting } from '../../../shared/components/tutorials/utils';
+import { DocsUrl } from '../../../shared/components/tutorials/utils';
 
 export enum TipPosition {
     BOTTOM_RIGHT = 'tipBottomRight',
@@ -166,14 +166,8 @@ export const onFirstSuccessfulAutoTrainingJob =
         const { jobsCount, jobs } = pages[0];
         const totalFinishedJobs = Number(jobsCount.numberOfFinishedJobs);
         const hasFinishedJobs = totalFinishedJobs > 0;
-        const neverSuccessfullyAutoTrained = getFuxSetting(
-            FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED,
-            settings.config
-        );
-        const firstScheduledAutoTrainingJobId = getFuxSetting(
-            FUX_SETTINGS_KEYS.FIRST_AUTOTRAINING_JOB_ID,
-            settings.config
-        );
+        const neverSuccessfullyAutoTrained = settings.config[FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED].value;
+        const firstScheduledAutoTrainingJobId = settings.config[FUX_SETTINGS_KEYS.FIRST_AUTOTRAINING_JOB_ID].value;
         const desiredJob = jobs.find((job): job is JobTask => {
             return (
                 job.state === JobState.FINISHED &&

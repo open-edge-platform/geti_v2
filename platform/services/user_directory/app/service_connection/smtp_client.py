@@ -19,7 +19,7 @@ from smtplib import (
     SMTPSenderRefused,
 )
 
-from jinja2 import Template
+from jinja2 import Environment
 from service_connection.k8s_client.secrets import get_secrets
 from service_connection.k8s_client.config_maps import get_config_map
 
@@ -128,9 +128,14 @@ class SMTPClient:
         :return: rendered topic and message of email
         """
         email_template = SMTPClient._get_email_template_from_cm(template=template)
-        message = Template(email_template["message"])
-        topic = Template(email_template["topic"])
-        return topic.render(template_vars), message.render(template_vars)
+
+        # Create a secure Jinja2 environment with autoescaping enabled
+        env = Environment(autoescape=True)
+
+        message_template = env.from_string(email_template["message"])
+        topic_template = env.from_string(email_template["topic"])
+
+        return topic_template.render(template_vars), message_template.render(template_vars)
 
     def ping(self):  # noqa: ANN201
         """

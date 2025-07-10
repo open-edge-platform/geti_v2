@@ -16,7 +16,6 @@ import { isAnomalyDomain, isClassificationDomain } from '../../../../core/projec
 import { isKeypointTask } from '../../../../core/projects/utils';
 import { FEATURES_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { UserProjectSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
-import { getSettingsOfType } from '../../../../core/user-settings/utils';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { hasEqualId, runWhen } from '../../../../shared/utils';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
@@ -271,9 +270,8 @@ export const PredictionProvider = ({
     const isPredictionMode = !isActiveLearningMode;
     const [selectedInput] = inputs.filter(({ isSelected }) => isSelected);
     const [predictionAnnotations, predictionsInputs] = getPredictionOutputs(rawPredictions);
-    const settingsConfig = getSettingsOfType(settings.config, FEATURES_KEYS);
 
-    const initialPredictionsConfig = settingsConfig[FEATURES_KEYS.INITIAL_PREDICTION];
+    const initialPredictionsConfig = settings.config[FEATURES_KEYS.INITIAL_PREDICTION];
 
     useEffect(() => {
         if (initPredictions !== undefined) {

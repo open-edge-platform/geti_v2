@@ -416,6 +416,9 @@ const PROJECT_IMPORT_STATUS_KEY = (workspaceId: string, importProjectId: string)
 const PLATFORM_UTILS_KEYS = {
     VERSION_ENTITY_KEY: ['version'],
     WORKFLOW_ID: (userSubjectIdentifier: string) => ['workflow_id', userSubjectIdentifier],
+    CHECK_BACKUP: ['check-backup'],
+    PLATFORM_VERSIONS: ['platform-versions'],
+    UPGRADE_PROGRESS: ['platform-upgrade-progress'],
 };
 
 const ORGANIZATIONS = (queryOptions: GetOrganizationsQueryOptions) => ['organizations', queryOptions];

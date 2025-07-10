@@ -321,7 +321,6 @@ def fxt_prediction_dataset(fxt_gt_pred_labels, fxt_media_factory, fxt_ground_tru
     yield Dataset(id=ID("prediction_dataset_id"), items=pred_dataset_items)
 
 
-@pytest.mark.JobsComponent
 class TestAccuracyMetric:
     def test_accuracy_metric_basic(self, fxt_ground_truth_dataset, fxt_prediction_dataset, fxt_label_schema) -> None:
         metric = AccuracyMetric(

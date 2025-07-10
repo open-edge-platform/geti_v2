@@ -183,7 +183,6 @@ test.describe(`Classification`, () => {
     test('It allows opening prediction mode after the first model was trained', async ({
         page,
         registerApiResponse,
-        featureFlags,
     }) => {
         const modelGroups = [
             {
@@ -232,10 +231,6 @@ test.describe(`Classification`, () => {
         await page.goto(annotatorUrl);
 
         await expectAnnotationToHaveLabels(await getGlobalAnnotation(page), []);
-
-        if (featureFlags.FEATURE_FLAG_VISUAL_PROMPT_SERVICE === false) {
-            await expect(page.getByRole('button', { name: 'Select prediction mode' })).toBeDisabled();
-        }
 
         // It takes about 60 seconds for us to refetch the models, we wait for a bit more
         // to make sure that the test doesn't become flaky when loading is slow

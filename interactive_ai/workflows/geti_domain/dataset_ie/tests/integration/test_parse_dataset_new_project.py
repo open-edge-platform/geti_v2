@@ -24,7 +24,6 @@ from tests.fixtures.datasets import (
 from tests.test_helpers import save_dataset
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestParseDatasetNewProject:
     """
     Unit test for parse_datset_new_project.py
@@ -233,11 +232,12 @@ class TestParseDatasetNewProject:
             dataset_id, dataset_info, fxt_import_data_repo
         )
 
+    @pytest.mark.skip("ITEP-32288")
     def test_parse_dataset_for_import_to_new_project__datumaro_format__keypoint_detection(
         self,
         fxt_dataumaro_dataset_keypoint_id,
         fxt_import_data_repo,
-        fxt_keypoint_detection,  # Do not delete this fixture
+        fxt_keypoint_detection,
     ):
         """
         Keypoint detection dataset could be imported to new project (req: CVS-107582).

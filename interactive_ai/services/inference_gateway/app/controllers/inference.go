@@ -4,6 +4,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -36,12 +37,12 @@ type InferenceController interface {
 		c *gin.Context,
 		params *entities.InferenceRequest,
 		entityID sdkentities.ID,
-	) (*usecase.BatchPredictionJSON, *httperrors.HTTPError)
+	) (*entities.BatchPredictionJSON, *httperrors.HTTPError)
 	BatchExplain(
 		c *gin.Context,
 		params *entities.InferenceRequest,
 		entityID sdkentities.ID,
-	) (*usecase.BatchExplainJSON, *httperrors.HTTPError)
+	) (*entities.BatchExplainJSON, *httperrors.HTTPError)
 	IsModelReady(c *gin.Context, entityID string) bool
 }
 
@@ -50,8 +51,7 @@ type InferenceController interface {
 type InferenceControllerImpl struct {
 	cacheSrv    service.CacheService
 	modelAccess service.ModelAccessService
-	predictUC   usecase.Infer[usecase.BatchPredictionJSON]
-	explainUC   usecase.Infer[usecase.BatchExplainJSON]
+	inferUC     usecase.Infer
 
 	RequestHandler
 }
@@ -60,14 +60,12 @@ func NewInferenceControllerImpl(
 	modelAccess service.ModelAccessService,
 	cacheSrv service.CacheService,
 	requestHandler RequestHandler,
-	predict usecase.Infer[usecase.BatchPredictionJSON],
-	explain usecase.Infer[usecase.BatchExplainJSON],
+	infer usecase.Infer,
 ) *InferenceControllerImpl {
 	return &InferenceControllerImpl{
 		modelAccess:    modelAccess,
 		cacheSrv:       cacheSrv,
-		predictUC:      predict,
-		explainUC:      explain,
+		inferUC:        infer,
 		RequestHandler: requestHandler,
 	}
 }
@@ -128,7 +126,7 @@ func (ic *InferenceControllerImpl) Predict(
 		return statusCode, cached, nil
 	}
 
-	result, err := ic.predictUC.One(ctx, req)
+	result, err := ic.inferUC.One(ctx, req, false)
 	if err != nil {
 		httpErr := wrapHTTPError(err)
 		return httpErr.StatusCode, nil, httpErr
@@ -157,7 +155,7 @@ func (ic *InferenceControllerImpl) Explain(
 			"Invalid parameter: `use_cache=always` is not supported for the `explain` endpoint.",
 		)
 	}
-	result, err := ic.explainUC.One(c.Request.Context(), req)
+	result, err := ic.inferUC.One(c.Request.Context(), req, true)
 	if err != nil {
 		return nil, wrapHTTPError(err)
 	}
@@ -194,32 +192,42 @@ func (ic *InferenceControllerImpl) BatchPredict(
 	c *gin.Context,
 	params *entities.InferenceRequest,
 	entityID sdkentities.ID,
-) (*usecase.BatchPredictionJSON, *httperrors.HTTPError) {
+) (*entities.BatchPredictionJSON, *httperrors.HTTPError) {
 	req, err := ic.batchRequest(c, params, entityID)
 	if err != nil {
 		return nil, httperrors.NewBadRequestError(err.Error())
 	}
-	result, err := ic.predictUC.Batch(c.Request.Context(), req)
+	inferResults, err := ic.inferUC.Batch(c.Request.Context(), req, false)
 	if err != nil {
 		return nil, wrapHTTPError(err)
 	}
-	return result, nil
+	var batchJSON entities.BatchPredictionJSON
+	batchJSON.BatchPredictions = make([]json.RawMessage, len(inferResults))
+	for i, result := range inferResults {
+		batchJSON.BatchPredictions[i] = result
+	}
+	return &batchJSON, nil
 }
 
 func (ic *InferenceControllerImpl) BatchExplain(
 	c *gin.Context,
 	params *entities.InferenceRequest,
 	entityID sdkentities.ID,
-) (*usecase.BatchExplainJSON, *httperrors.HTTPError) {
+) (*entities.BatchExplainJSON, *httperrors.HTTPError) {
 	req, err := ic.batchRequest(c, params, entityID)
 	if err != nil {
 		return nil, httperrors.NewBadRequestError(err.Error())
 	}
-	result, err := ic.explainUC.Batch(c.Request.Context(), req)
+	inferResults, err := ic.inferUC.Batch(c.Request.Context(), req, true)
 	if err != nil {
 		return nil, wrapHTTPError(err)
 	}
-	return result, nil
+	var batchJSON entities.BatchExplainJSON
+	batchJSON.BatchExplain = make([]json.RawMessage, len(inferResults))
+	for i, result := range inferResults {
+		batchJSON.BatchExplain[i] = result
+	}
+	return &batchJSON, nil
 }
 
 func (ic *InferenceControllerImpl) IsModelReady(c *gin.Context, entityID string) bool {

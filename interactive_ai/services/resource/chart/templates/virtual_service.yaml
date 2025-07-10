@@ -128,8 +128,6 @@ spec:
     - uri:
         regex: "/api/.*/media/videos/.*/range_annotation"
     - uri:
-        regex: "/api/.*/code_deployments.*"
-    - uri:
         regex: "/api/.*/deployment_package.*"
     - uri:
         regex: "/api/.*/training_revisions.*"

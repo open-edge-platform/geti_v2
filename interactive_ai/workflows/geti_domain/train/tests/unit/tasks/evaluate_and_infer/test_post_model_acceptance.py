@@ -14,7 +14,6 @@ from job.utils.train_workflow_data import TrainWorkflowData
 from tests.unit.tasks.utils import TEST_ENV_VARS
 
 
-@pytest.mark.JobsComponent
 class TestPostModelAcceptanceTask:
     model_id = "model_id"
 

@@ -67,7 +67,7 @@ class TestProjectConfiguration:
                             "auto_training": {
                                 "enable": False,
                                 "enable_dynamic_required_annotations": False,
-                                "min_images_per_label": 0,
+                                "min_images_per_label": 12,
                             },
                         },
                     ],
@@ -90,7 +90,7 @@ class TestProjectConfiguration:
                             auto_training=AutoTrainingParameters(
                                 enable=False,
                                 enable_dynamic_required_annotations=False,
-                                min_images_per_label=0,
+                                min_images_per_label=12,
                             ),
                         ),
                     ],
@@ -149,7 +149,7 @@ class TestProjectConfiguration:
                 TaskConfig(
                     task_id="task_2",
                     training=TrainingParameters(constraints=TrainConstraints(min_images_per_label=20)),
-                    auto_training=AutoTrainingParameters(enable=False, min_images_per_label=0),
+                    auto_training=AutoTrainingParameters(enable=False),
                 ),
             ],
         )
@@ -209,7 +209,7 @@ class TestProjectConfiguration:
         non_existent_task = TaskConfig(
             task_id="non_existent_task",
             training=TrainingParameters(constraints=TrainConstraints(min_images_per_label=5)),
-            auto_training=AutoTrainingParameters(enable=True, min_images_per_label=2),
+            auto_training=AutoTrainingParameters(enable=True, min_images_per_label=20),
         )
 
         with pytest.raises(ValueError, match="Task configuration with ID non_existent_task not found"):

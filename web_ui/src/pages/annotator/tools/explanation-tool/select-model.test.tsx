@@ -18,12 +18,6 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('SelectModel', () => {
-    it('does not render without the visual prompt feature flag', async () => {
-        await render(<SelectModel />, { featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE: false } });
-
-        expect(screen.queryByRole('button')).not.toBeInTheDocument();
-    });
-
     it('does not render for classification tasks', async () => {
         const project = getMockedProject({
             tasks: [getMockedTask({ id: '1', domain: DOMAIN.CLASSIFICATION })],
@@ -33,7 +27,6 @@ describe('SelectModel', () => {
 
         await render(<SelectModel />, {
             services: { projectService },
-            featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE: true },
         });
 
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -48,7 +41,6 @@ describe('SelectModel', () => {
 
         await render(<SelectModel />, {
             services: { projectService },
-            featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE: true },
         });
 
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -66,7 +58,6 @@ describe('SelectModel', () => {
 
         await render(<SelectModel />, {
             services: { projectService },
-            featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE: true },
         });
 
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -81,7 +72,6 @@ describe('SelectModel', () => {
 
         await render(<SelectModel />, {
             services: { projectService },
-            featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE: true },
         });
 
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -104,7 +94,6 @@ describe('SelectModel', () => {
         };
 
         await render(<SelectModel />, {
-            featureFlags: { FEATURE_FLAG_VISUAL_PROMPT_SERVICE: true },
             services: { userSettingsService },
         });
 

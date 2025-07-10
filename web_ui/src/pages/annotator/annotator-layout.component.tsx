@@ -16,10 +16,10 @@ import {
     FUX_SETTINGS_KEYS,
     TUTORIAL_CARD_KEYS,
 } from '../../core/user-settings/dtos/user-settings.interface';
+import { UpgradeBanner } from '../../routes/upgrade-banner/upgrade-banner.component';
 import { CoachMark } from '../../shared/components/coach-mark/coach-mark.component';
 import { SuccessfullyAutotrainedNotification } from '../../shared/components/coach-mark/fux-notifications/successfully-auto-trained-notification.component';
 import { TutorialCardBuilder } from '../../shared/components/tutorial-card/tutorial-card-builder.component';
-import { getFuxSetting } from '../../shared/components/tutorials/utils';
 import { useTutorialEnablement } from '../../shared/hooks/use-tutorial-enablement.hook';
 import { ErrorBoundary } from '../errors/error-boundary.component';
 import { useProject } from '../project-details/providers/project-provider/project-provider.component';
@@ -50,6 +50,7 @@ import { SelectedMediaItem } from './providers/selected-media-item-provider/sele
 
 const GRID_AREAS = [
     'backHome  navigationToolbar  navigationToolbar',
+    'upgrade-banner upgrade-banner upgrade-banner',
     'primaryToolbar secondaryToolbar  aside',
     'primaryToolbar help  aside',
     'primaryToolbar content  aside',
@@ -57,7 +58,7 @@ const GRID_AREAS = [
     'primaryToolbar  footer  aside',
 ];
 const GRID_COLUMNS = ['size-600', '1fr', 'auto'];
-const GRID_ROWS = ['size-600', 'auto', 'auto', '1fr', 'auto', 'size-400'];
+const GRID_ROWS = ['size-600', 'min-content', 'auto', 'auto', '1fr', 'auto', 'size-400'];
 
 const ErrorFallback = ({ error }: { error: { message: string } }) => {
     return (
@@ -106,11 +107,8 @@ export const AnnotatorLayout = (): JSX.Element => {
         FUX_NOTIFICATION_KEYS.ANNOTATE_INTERACTIVELY
     );
 
-    const hasPreviouslyAutoTrained = !getFuxSetting(FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED, userGlobalSettings.config);
-    const firstAutoTrainedProjectId = getFuxSetting(
-        FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_PROJECT_ID,
-        userGlobalSettings.config
-    );
+    const hasPreviouslyAutoTrained = !userGlobalSettings.config[FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED].value;
+    const firstAutoTrainedProjectId = userGlobalSettings.config[FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_PROJECT_ID].value;
 
     const filteredLabels = project.tasks.some(isKeypointTask) ? [] : labels;
 
@@ -134,6 +132,9 @@ export const AnnotatorLayout = (): JSX.Element => {
                     areas={GRID_AREAS}
                     columns={GRID_COLUMNS}
                 >
+                    <View gridArea={'upgrade-banner'}>
+                        <UpgradeBanner />
+                    </View>
                     <BackHome />
                     <Footer />
                     <NavigationToolbar settings={userProjectSettings} />

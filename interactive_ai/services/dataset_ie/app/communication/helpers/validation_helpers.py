@@ -30,7 +30,8 @@ def get_validated_project_type_from_task_type(task_type: str) -> GetiProjectType
     """
     project_type = ImportUtils.rest_task_type_to_project_type(rest_task_type=task_type)
     if project_type == GetiProjectType.UNKNOWN:
-        error_msg = f"Given task_type is not a supported task type: task_type: {task_type}"
+        sanitized_task_type = str(task_type).replace("\n", "\\n").replace("\r", "\\r")
+        error_msg = f"Given task_type is not a supported task type: task_type: {sanitized_task_type}"
         logger.warning(error_msg)
         raise BadRequestGetiBaseException(error_msg)
 
