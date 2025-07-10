@@ -54,7 +54,7 @@ test.describe('Check FUX notifications on dataset page', () => {
             await expect(page.getByRole('heading', { name: 'Building a good dataset' })).toBeVisible();
 
             // The first click closes the "The auto-training job has ..." notification that is popover
-            await page.getByLabel('close first user experience notification').click();
+            await page.getByLabel('Dismiss help dialog').click();
 
             await expect(page.getByText('The auto-training job has been started')).toBeHidden();
 

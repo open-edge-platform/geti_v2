@@ -482,12 +482,10 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
 
                 await expect(page.getByText(autoTrainingCreditSystemNotificationRegex)).toBeVisible();
 
-                await page.getByRole('button', { name: /close first user experience notification/i }).click();
+                await page.getByRole('button', { name: /Dismiss help dialog/i }).click();
                 await page.reload();
 
-                await expect(
-                    page.getByRole('button', { name: /close first user experience notification/i })
-                ).toBeHidden();
+                await expect(page.getByRole('button', { name: /Dismiss help dialog/i })).toBeHidden();
             });
 
             // eslint-disable-next-line max-len
