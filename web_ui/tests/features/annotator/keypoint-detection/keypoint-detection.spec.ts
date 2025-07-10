@@ -157,4 +157,36 @@ test.describe(`keypoint detection`, () => {
         await expect(listItemContainer.getByRole('button', { name: 'menu trigger' })).not.toBeInViewport();
         await expect(listItemContainer.getByRole('img', { name: 'occluded icon' })).toBeVisible();
     });
+
+    test('unsupported filters are hidden', async ({ page }) => {
+        await page.goto(annotatorUrl);
+        await checkKeypointTools(page);
+
+        await page.getByRole('button', { name: 'Filter media' }).click();
+        await page.getByRole('button', { name: 'media-filter-field' }).click();
+
+        await expect(page.getByRole('menuitemradio', { name: /label/i })).not.toBeInViewport();
+        await expect(page.getByRole('menuitemradio', { name: /Shape type/i })).not.toBeInViewport();
+        await expect(page.getByRole('menuitemradio', { name: /Shape area percentage/i })).not.toBeInViewport();
+        await expect(page.getByRole('menuitemradio', { name: /Shape area pixel/i })).not.toBeInViewport();
+    });
+
+    test('hotkeys', async ({ page }) => {
+        await page.goto(annotatorUrl);
+        await checkKeypointTools(page);
+        await page.getByRole('checkbox', { name: 'out of 7 points selected' }).uncheck();
+
+        // select All
+        await page.keyboard.press('Control+a');
+        await page.getByRole('checkbox', { name: 'out of 7 points selected' }).check();
+
+        // unselect All
+        await page.keyboard.press('Control+d');
+        await page.getByRole('checkbox', { name: 'out of 7 points selected' }).uncheck();
+
+        //delete annotation
+        expect(await page.getByRole('listitem').count()).toBe(7);
+        await page.keyboard.press('Delete');
+        expect(await page.getByRole('listitem').count()).toBe(0);
+    });
 });
