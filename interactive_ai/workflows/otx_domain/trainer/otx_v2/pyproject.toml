@@ -9,10 +9,9 @@ dependencies = [
     "numpy==1.26.4",
     "requests==2.32.3",
     "tqdm==4.67.1",
-    "otx[base]==2.4.5",
+    "otx[base]==2.4.6",
     "geti-kafka-tools",
     "geti-telemetry-tools[telemetry,kafka]",
-    "torchmetrics<1.7.0",
 ]
 
 [tool.uv.sources]

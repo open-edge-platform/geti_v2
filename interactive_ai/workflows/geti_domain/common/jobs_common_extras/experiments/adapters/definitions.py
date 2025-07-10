@@ -17,31 +17,6 @@ CONFIG_JSON_KEY = "config.json"
 LABEL_SCHEMA_KEY = "label_schema.json"
 
 
-class MLFlowRunStatus(str, Enum):
-    """Enum for MLFlow Run Status.
-
-    Please see the source from
-    https://mlflow.org/docs/latest/_modules/mlflow/entities/run_status.html
-    """
-
-    RUNNING = "RUNNING"
-    SCHEDULED = "SCHEDULED"
-    FINISHED = "FINISHED"
-    FAILED = "FAILED"
-    KILLED = "KILLED"
-
-
-class MLFlowLifecycleStage(str, Enum):
-    """Enum for MLFlow Run LifecycleStage.
-
-    Please see the source from
-    https://mlflow.org/docs/latest/_modules/mlflow/entities/lifecycle_stage.html
-    """
-
-    ACTIVE = "active"
-    DELETED = "deleted"
-
-
 class ClsSubTaskType(str, Enum):
     """Auxilary enum to discriminate classification tasks in Geti.
 

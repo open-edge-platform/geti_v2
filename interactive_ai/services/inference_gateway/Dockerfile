@@ -22,6 +22,15 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=app,target=app \
 	CGO_ENABLED=0 go build -trimpath -mod=readonly -gcflags="all=-spectre=all" -asmflags="all=-spectre=all" -ldflags="all=-s -w" -a -o inference_gateway . 
 
+    # Save Go third party package licenses
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+    --mount=type=bind,source=go.sum,target=go.sum \
+    --mount=type=bind,source=go.mod,target=go.mod \
+    --mount=type=bind,source=main.go,target=main.go \
+    --mount=type=bind,source=app,target=app \
+    go install github.com/google/go-licenses@v1.0.0 && \
+    go-licenses save . --save_path /THIRD_PARTY_NOTICES || true
+
 # Production image
 FROM debian:bookworm-slim@sha256:e5865e6858dacc255bead044a7f2d0ad8c362433cfaa5acefb670c1edf54dfef AS runtime
 
@@ -31,6 +40,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --link --from=build /build/interactive_ai/service/inference_gateway .
+COPY --from=build /THIRD_PARTY_NOTICES /THIRD_PARTY_NOTICES
 
 RUN useradd -l -u 10001 non-root
 USER non-root

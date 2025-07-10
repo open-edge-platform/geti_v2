@@ -42,8 +42,9 @@ def ftx_hyperparameters():
             max_epochs=100,
             early_stopping=EarlyStopping(enable=True, patience=10),
             learning_rate=0.001,
-            input_size="32x32",
-            allowed_values_input_size=["32x32", "64x64", "128x128"],
+            input_size_width=32,
+            input_size_height=32,
+            allowed_values_input_size=[32, 64, 128],
         ),
         evaluation=EvaluationParameters(),
     )

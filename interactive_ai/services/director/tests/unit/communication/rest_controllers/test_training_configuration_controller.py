@@ -270,18 +270,23 @@ class TestTrainingConfigurationController:
             "model_manifest_id": fxt_partial_training_configuration_manifest_level.model_manifest_id,
             "training": [
                 {
-                    "key": "input_size",
-                    "value": "64x64",
-                    "allowed_values": ["32x32", "64x64", "128x128"],  # this should be ignored
+                    "key": "input_size_width",
+                    "value": 64,
+                    "allowed_values": [32],  # this should be ignored during update
+                },
+                {
+                    "key": "input_size_height",
+                    "value": 64,
+                    "allowed_values": [32],  # this should be ignored during update
                 },
             ],
         }
         allowed_values_input_size = {
             "key": "allowed_values_input_size",
-            "value": ["11x11", "22x22"],
+            "value": [11, 22],
         }
         error_config_rest = deepcopy(update_config_rest)
-        error_config_rest["training"].append(allowed_values_input_size)
+        error_config_rest["training"].append(allowed_values_input_size)  # this should be ignored during update
         update_config = TrainingConfigurationRESTViews.training_configuration_from_rest(update_config_rest)
 
         # Act & Assert
@@ -295,7 +300,8 @@ class TestTrainingConfigurationController:
             model_manifest_id=fxt_partial_training_configuration_manifest_level.model_manifest_id,
         )
         # Verify the update was applied correctly
-        assert updated_config.hyperparameters.training.input_size == "64x64"
+        assert updated_config.hyperparameters.training.input_size_width == 64
+        assert updated_config.hyperparameters.training.input_size_height == 64
 
         # check that allowed values cannot be set
         with pytest.raises(NotConfigurableParameterException):

@@ -413,3 +413,10 @@ export const filterPageMedias = (
         ),
     })),
 });
+
+export const disabledKeypointFilterRules = [
+    SearchRuleField.LabelId,
+    SearchRuleField.ShapeType,
+    SearchRuleField.ShapeAreaPixel,
+    SearchRuleField.ShapeAreaPercentage,
+];

@@ -9,6 +9,8 @@ import {
     isPolygonValid,
     loadSource,
     OpenCVLoader,
+    RITMModels,
+    sessionParams,
     stackPlanes,
 } from '@geti/smart-tools';
 import { Point, Polygon, Shape, ShapeType } from '@geti/smart-tools/src/shared/interfaces';
@@ -20,7 +22,6 @@ import type OpenCVTypes from 'OpenCVTypes';
 
 import { RegionOfInterest } from '../core/annotations/annotation.interface';
 import { RITMContour, RITMPoint, TEMPLATE_SIZE } from '../pages/annotator/tools/ritm-tool/ritm-tool.interface';
-import { sessionParams } from '../pages/annotator/tools/wasm-utils';
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -48,9 +49,10 @@ class RITM {
 
     async load() {
         ort.env.wasm.wasmPaths = sessionParams.wasmRoot;
+
         this.models = {
-            main: await this.loadModel(new URL('./ritm/main.onnx', import.meta.url).toString()),
-            preprocess: await this.loadModel(new URL('./ritm/preprocess.onnx', import.meta.url).toString()),
+            main: await this.loadModel(RITMModels.main),
+            preprocess: await this.loadModel(RITMModels.preprocess),
         };
     }
 

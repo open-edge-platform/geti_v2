@@ -191,7 +191,9 @@ class AutoTrainController:
                     else dataset_manager_config.maximum_number_of_annotations
                 )
 
-            keep_mlflow_artifacts = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS)
+            retain_training_artifacts = FeatureFlagProvider.is_enabled(
+                FeatureFlag.FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS
+            )
 
             train_job_data = TrainTaskJobData(
                 model_storage=model_storage,
@@ -206,7 +208,7 @@ class AutoTrainController:
                 min_annotation_size=min_annotation_size,
                 max_number_of_annotations=max_number_of_annotations,
                 reshuffle_subsets=False,
-                keep_mlflow_artifacts=keep_mlflow_artifacts,
+                retain_training_artifacts=retain_training_artifacts,
             )
 
             train_cost = None

@@ -1884,7 +1884,7 @@ wheels = [
 
 [[package]]
 name = "otx"
-version = "2.4.5"
+version = "2.4.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "datumaro" },
@@ -1903,9 +1903,9 @@ dependencies = [
     { name = "setuptools" },
     { name = "typeguard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5d/34/42332e5b3450f9d7e19be85ccfde478292d4f63573d3086ac262be3e1842/otx-2.4.5.tar.gz", hash = "sha256:486bb24386f99a3002dd4b235034a672df4204ceb14eb0f7d54f674fa1134f07", size = 12147090, upload-time = "2025-07-03T13:47:06.881Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0f/54/43f1960e0d3bdc7b1794f8c25dc7b641c1a13528c40f81b085896a342ae0/otx-2.4.6.tar.gz", hash = "sha256:1200efe172036d39c9288f5c1d2cc93516958fbe88f76917a2355f2ff7609e65", size = 12148304, upload-time = "2025-07-09T10:03:41.899Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/22/01/436aa9c950686540bf35bde8d4f74a16fec54523639190484b4e7157cedd/otx-2.4.5-py3-none-any.whl", hash = "sha256:5164aef8bd8133bdb1035e4efff5ceb109f8c1cbc15ea6c6fd19ca9bb62e9a18", size = 959636, upload-time = "2025-07-03T13:47:04.701Z" },
+    { url = "https://files.pythonhosted.org/packages/e8/80/82df908dad6c7b665b9883159660850ef1bdbc091becad45b09bcbc09a48/otx-2.4.6-py3-none-any.whl", hash = "sha256:cc48012d4a0524f4d1fc9c5a94b985661df9e13a413a581884ee09d55582eab7", size = 959637, upload-time = "2025-07-09T10:03:39.117Z" },
 ]
 
 [package.optional-dependencies]
@@ -1934,7 +1934,6 @@ dependencies = [
     { name = "numpy" },
     { name = "otx", extra = ["base"] },
     { name = "requests" },
-    { name = "torchmetrics" },
     { name = "tqdm" },
 ]
 
@@ -1959,9 +1958,8 @@ requires-dist = [
     { name = "geti-telemetry-tools", extras = ["telemetry", "kafka"], directory = "../../../../../libs/telemetry_tools" },
     { name = "minio", specifier = "~=7.1.0" },
     { name = "numpy", specifier = "==1.26.4" },
-    { name = "otx", extras = ["base"], specifier = "==2.4.5" },
+    { name = "otx", extras = ["base"], specifier = "==2.4.6" },
     { name = "requests", specifier = "==2.32.3" },
-    { name = "torchmetrics", specifier = "<1.7.0" },
     { name = "tqdm", specifier = "==4.67.1" },
 ]
 

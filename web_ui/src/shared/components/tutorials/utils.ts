@@ -122,9 +122,3 @@ export enum DocsUrl {
 export const onPressLearnMore = (docUrl: string | undefined) => {
     return docUrl ? openNewTab(docUrl) : undefined;
 };
-
-export const getFuxSetting = (key: FUX_SETTINGS_KEYS, settings: UserGlobalSettings): boolean | string | null => {
-    const userDismissedAll = settings[FUX_SETTINGS_KEYS.USER_DISMISSED_ALL];
-
-    return !userDismissedAll.value && settings[key].value;
-};

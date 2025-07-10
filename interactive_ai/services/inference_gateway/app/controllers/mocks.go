@@ -7,7 +7,6 @@ package controllers
 import (
 	"bytes"
 	"inference_gateway/app/entities"
-	"inference_gateway/app/usecase"
 
 	entities0 "geti.com/iai_core/entities"
 	"geti.com/iai_core/errors"
@@ -43,23 +42,23 @@ func (_m *MockInferenceController) EXPECT() *MockInferenceController_Expecter {
 }
 
 // BatchExplain provides a mock function for the type MockInferenceController
-func (_mock *MockInferenceController) BatchExplain(c *gin.Context, params *entities.InferenceRequest, entityID entities0.ID) (*usecase.BatchExplainJSON, *errors.HTTPError) {
+func (_mock *MockInferenceController) BatchExplain(c *gin.Context, params *entities.InferenceRequest, entityID entities0.ID) (*entities.BatchExplainJSON, *errors.HTTPError) {
 	ret := _mock.Called(c, params, entityID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for BatchExplain")
 	}
 
-	var r0 *usecase.BatchExplainJSON
+	var r0 *entities.BatchExplainJSON
 	var r1 *errors.HTTPError
-	if returnFunc, ok := ret.Get(0).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) (*usecase.BatchExplainJSON, *errors.HTTPError)); ok {
+	if returnFunc, ok := ret.Get(0).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) (*entities.BatchExplainJSON, *errors.HTTPError)); ok {
 		return returnFunc(c, params, entityID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) *usecase.BatchExplainJSON); ok {
+	if returnFunc, ok := ret.Get(0).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) *entities.BatchExplainJSON); ok {
 		r0 = returnFunc(c, params, entityID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*usecase.BatchExplainJSON)
+			r0 = ret.Get(0).(*entities.BatchExplainJSON)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) *errors.HTTPError); ok {
@@ -92,34 +91,34 @@ func (_c *MockInferenceController_BatchExplain_Call) Run(run func(c *gin.Context
 	return _c
 }
 
-func (_c *MockInferenceController_BatchExplain_Call) Return(batchExplainJSON *usecase.BatchExplainJSON, hTTPError *errors.HTTPError) *MockInferenceController_BatchExplain_Call {
+func (_c *MockInferenceController_BatchExplain_Call) Return(batchExplainJSON *entities.BatchExplainJSON, hTTPError *errors.HTTPError) *MockInferenceController_BatchExplain_Call {
 	_c.Call.Return(batchExplainJSON, hTTPError)
 	return _c
 }
 
-func (_c *MockInferenceController_BatchExplain_Call) RunAndReturn(run func(c *gin.Context, params *entities.InferenceRequest, entityID entities0.ID) (*usecase.BatchExplainJSON, *errors.HTTPError)) *MockInferenceController_BatchExplain_Call {
+func (_c *MockInferenceController_BatchExplain_Call) RunAndReturn(run func(c *gin.Context, params *entities.InferenceRequest, entityID entities0.ID) (*entities.BatchExplainJSON, *errors.HTTPError)) *MockInferenceController_BatchExplain_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // BatchPredict provides a mock function for the type MockInferenceController
-func (_mock *MockInferenceController) BatchPredict(c *gin.Context, params *entities.InferenceRequest, entityID entities0.ID) (*usecase.BatchPredictionJSON, *errors.HTTPError) {
+func (_mock *MockInferenceController) BatchPredict(c *gin.Context, params *entities.InferenceRequest, entityID entities0.ID) (*entities.BatchPredictionJSON, *errors.HTTPError) {
 	ret := _mock.Called(c, params, entityID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for BatchPredict")
 	}
 
-	var r0 *usecase.BatchPredictionJSON
+	var r0 *entities.BatchPredictionJSON
 	var r1 *errors.HTTPError
-	if returnFunc, ok := ret.Get(0).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) (*usecase.BatchPredictionJSON, *errors.HTTPError)); ok {
+	if returnFunc, ok := ret.Get(0).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) (*entities.BatchPredictionJSON, *errors.HTTPError)); ok {
 		return returnFunc(c, params, entityID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) *usecase.BatchPredictionJSON); ok {
+	if returnFunc, ok := ret.Get(0).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) *entities.BatchPredictionJSON); ok {
 		r0 = returnFunc(c, params, entityID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*usecase.BatchPredictionJSON)
+			r0 = ret.Get(0).(*entities.BatchPredictionJSON)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(*gin.Context, *entities.InferenceRequest, entities0.ID) *errors.HTTPError); ok {
@@ -152,12 +151,12 @@ func (_c *MockInferenceController_BatchPredict_Call) Run(run func(c *gin.Context
 	return _c
 }
 
-func (_c *MockInferenceController_BatchPredict_Call) Return(batchPredictionJSON *usecase.BatchPredictionJSON, hTTPError *errors.HTTPError) *MockInferenceController_BatchPredict_Call {
+func (_c *MockInferenceController_BatchPredict_Call) Return(batchPredictionJSON *entities.BatchPredictionJSON, hTTPError *errors.HTTPError) *MockInferenceController_BatchPredict_Call {
 	_c.Call.Return(batchPredictionJSON, hTTPError)
 	return _c
 }
 
-func (_c *MockInferenceController_BatchPredict_Call) RunAndReturn(run func(c *gin.Context, params *entities.InferenceRequest, entityID entities0.ID) (*usecase.BatchPredictionJSON, *errors.HTTPError)) *MockInferenceController_BatchPredict_Call {
+func (_c *MockInferenceController_BatchPredict_Call) RunAndReturn(run func(c *gin.Context, params *entities.InferenceRequest, entityID entities0.ID) (*entities.BatchPredictionJSON, *errors.HTTPError)) *MockInferenceController_BatchPredict_Call {
 	_c.Call.Return(run)
 	return _c
 }

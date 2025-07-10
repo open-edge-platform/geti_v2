@@ -21,10 +21,10 @@ class TestUploadShardFileCommand:
 
         return str(fpath)
 
-    @patch("jobs_common_extras.mlflow.adapters.geti_otx_interface.MLFlowExperimentBinaryRepo")
+    @patch("jobs_common_extras.experiments.adapters.ml_artifacts.ExperimentsBinaryRepo")
     def test_upload_shard_file_command(
         self,
-        mock_mlflow_binary_repo,
+        mock_experiments_binary_repo,
         fxt_mongo_id,
         fxt_project_identifier,
         fxt_job_metadata,
@@ -44,7 +44,7 @@ class TestUploadShardFileCommand:
 
         # Assert
         # Calling save
-        mock_mlflow_binary_repo.return_value.save_group.assert_called_once()
+        mock_experiments_binary_repo.return_value.save_group.assert_called_once()
 
         # File removal after uploading
         assert not os.path.exists(fxt_fpath)

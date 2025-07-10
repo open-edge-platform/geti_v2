@@ -5,7 +5,7 @@ from copy import deepcopy
 from unittest.mock import MagicMock
 
 import pytest
-from jobs_common_extras.mlflow.utils.train_output_models import TrainOutputModelIds, TrainOutputModels
+from jobs_common_extras.experiments.utils.train_output_models import TrainOutputModelIds, TrainOutputModels
 
 from job.utils.train_workflow_data import TrainWorkflowData, TrainWorkflowDataForFlyteTaskTrainer
 

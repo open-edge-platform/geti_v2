@@ -58,7 +58,7 @@ class TestEvaluationTask:
 
         mock_finalize_optimize.assert_called_once_with(
             trainer_ctx=fxt_optimization_trainer_ctx,
-            keep_mlflow_artifacts=False,
+            retain_training_artifacts=False,
         )
 
         mock_evaluate_optimized_model.assert_called_once_with(
