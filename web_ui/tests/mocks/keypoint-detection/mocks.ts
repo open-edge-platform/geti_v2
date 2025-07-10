@@ -250,6 +250,88 @@ export const project = {
     ],
 };
 
+export const supportedProjectType = {
+    project_type: 'keypoint_detection',
+    pipeline: {
+        connections: [{ from: 'Dataset', to: 'Keypoint Detection' }],
+        tasks: [
+            { labels: [], task_type: 'dataset', title: 'Dataset' },
+            {
+                title: 'Keypoint Detection',
+                task_type: 'keypoint_detection',
+                labels: [
+                    { name: labels.head.name, group: 'keypoint-detection' },
+                    { name: labels.back.name, group: 'keypoint-detection' },
+                    { name: labels.back2.name, group: 'keypoint-detection' },
+                    { name: labels.rightBackLeg.name, group: 'keypoint-detection' },
+                    { name: labels.leftBackLeg.name, group: 'keypoint-detection' },
+                    { name: labels.leftFrontLeg.name, group: 'keypoint-detection' },
+                    { name: labels.rightFrontLeg.name, group: 'keypoint-detection' },
+                ],
+                keypoint_structure: {
+                    edges: [
+                        {
+                            nodes: ['head', 'back'],
+                        },
+                        {
+                            nodes: ['back', 'left_front_leg'],
+                        },
+                        {
+                            nodes: ['back', 'right_front_leg'],
+                        },
+                        {
+                            nodes: ['back', 'back_2'],
+                        },
+                        {
+                            nodes: ['back_2', 'right_back_leg'],
+                        },
+                        {
+                            nodes: ['back_2', 'left_back_leg'],
+                        },
+                    ],
+                    positions: [
+                        {
+                            label: 'head',
+                            x: 0.7191157347204161,
+                            y: 0.2866779089376054,
+                        },
+                        {
+                            label: 'back',
+                            x: 0.5825747724317295,
+                            y: 0.418212478920742,
+                        },
+                        {
+                            label: 'back_2',
+                            x: 0.27828348504551365,
+                            y: 0.45193929173693087,
+                        },
+                        {
+                            label: 'right_back_leg',
+                            x: 0.2964889466840052,
+                            y: 0.6593591905564924,
+                        },
+                        {
+                            label: 'left_back_leg',
+                            x: 0.2483745123537061,
+                            y: 0.654300168634064,
+                        },
+                        {
+                            label: 'left_front_leg',
+                            x: 0.5838751625487646,
+                            y: 0.6593591905564924,
+                        },
+                        {
+                            label: 'right_front_leg',
+                            x: 0.6189856957087126,
+                            y: 0.6492411467116358,
+                        },
+                    ],
+                },
+            },
+        ],
+    },
+};
+
 export const media = {
     id: '613a23866674c43ae7a777aa',
     uploader_id: 'user@company.com',
