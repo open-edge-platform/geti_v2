@@ -2,7 +2,6 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { createInMemoryUsersService } from '@geti/core/src/users/services/in-memory-users-service';
-import { User } from '@geti/core/src/users/users.interface';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { useParams } from 'react-router-dom';
 
@@ -16,6 +15,7 @@ import { createInMemoryUserSettingsService } from '../../../../core/user-setting
 import { getMockedUserGlobalSettings } from '../../../../test-utils/mocked-items-factory/mocked-settings';
 import { getMockedUser } from '../../../../test-utils/mocked-items-factory/mocked-users';
 import { projectRender as render } from '../../../../test-utils/project-provider-render';
+import { useCheckPermission } from '../../has-permission/has-permission.component';
 import { CreditBalanceButton } from './credit-balance-button.component';
 import { CREDIT_LOW_LIMIT } from './util';
 
@@ -29,20 +29,22 @@ jest.mock('react-router-dom', () => ({
     useParams: jest.fn(),
 }));
 
+jest.mock('../../has-permission/has-permission.component', () => ({
+    useCheckPermission: jest.fn(() => true),
+}));
+
 const renderApp = async ({
     projectId,
     settings = {},
     mockedSaveSettings = jest.fn(),
     creditsIncoming = 0,
     creditsAvailable = 0,
-    user,
 }: {
     settings?: Partial<FuxNotificationsConfig | FuxSettingsConfig>;
     mockedSaveSettings?: jest.Mock;
     projectId?: string;
     creditsIncoming?: number;
     creditsAvailable?: number;
-    user?: User;
 }) => {
     jest.mocked(useParams).mockReturnValue({ projectId, organizationId: 'organizationId' });
     const userSettingsService = createInMemoryUserSettingsService();
@@ -53,13 +55,8 @@ const renderApp = async ({
     creditsService.getOrganizationBalance = () =>
         Promise.resolve({ incoming: creditsIncoming, available: creditsAvailable, blocked: 0 });
 
-    const usersService = createInMemoryUsersService();
-    if (user) {
-        usersService.getActiveUser = jest.fn(async () => user);
-    }
-
     return render(<CreditBalanceButton isDarkMode={true} />, {
-        services: { userSettingsService, creditsService, usersService },
+        services: { userSettingsService, creditsService },
     });
 };
 
@@ -81,7 +78,6 @@ describe('CreditBalanceButton', () => {
     describe('has projectId param', () => {
         it('open/close notification', async () => {
             const mockedSaveSettings = jest.fn();
-            const admin = getMockedUser({ email: 'test@mail.com', isAdmin: true });
 
             await renderApp({
                 projectId: '321',
@@ -90,7 +86,6 @@ describe('CreditBalanceButton', () => {
                     firstAutotrainedProjectId: { value: 'project-id' },
                 },
                 mockedSaveSettings,
-                user: admin,
             });
 
             expect(screen.getByText(/the auto-training job has been started/i)).toBeVisible();
@@ -112,7 +107,6 @@ describe('CreditBalanceButton', () => {
 
         it('will not show the notification if the users has navigated to other project that the autotrained one', async () => {
             const mockedSaveSettings = jest.fn();
-            const admin = getMockedUser({ email: 'test@mail.com', isAdmin: true });
 
             await renderApp({
                 projectId: '321',
@@ -121,16 +115,13 @@ describe('CreditBalanceButton', () => {
                     firstAutotrainedProjectId: { value: 'other-project-id' },
                 },
                 mockedSaveSettings,
-                user: admin,
             });
 
             expect(screen.queryByText(/the auto-training job has been started/i)).not.toBeInTheDocument();
         });
 
         it('does not show a link to credits usage page for contributors', async () => {
-            const usersService = createInMemoryUsersService();
-            const contributor = getMockedUser({ email: 'test@mail.com', isAdmin: false });
-            usersService.getActiveUser = jest.fn(async () => contributor);
+            jest.mocked(useCheckPermission).mockReturnValue(false);
 
             await renderApp({
                 projectId: '321',
@@ -138,7 +129,6 @@ describe('CreditBalanceButton', () => {
                     autoTrainingCreditNotification: { isEnabled: true },
                     firstAutotrainedProjectId: { value: 'project-id' },
                 },
-                user: contributor,
             });
 
             expect(screen.getByText(/the auto-training job has been started/i)).toBeVisible();
