@@ -11,16 +11,18 @@ ARG REACT_APP_GETI_VERSION=development
 
 WORKDIR ${LOCATION}
 
-
 COPY --link ./package.json .
-COPY --link --from=docs_context rest_api /tmp/rest_api_source/
+COPY --link --from=docs_context rest_api /home/app/docs/rest_api/
 COPY --link --from=api_context schemas /home/app/interactive_ai/services/api/schemas/
 
-# Install gettext-base for envsubst (needed by Makefile)
-RUN apt-get update && apt-get install -y gettext-base rsync make && rm -rf /var/lib/apt/lists/*
+# Install envsubst
+RUN apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
 
-# Use the Makefile to generate the processed files
-RUN cd /tmp/rest_api_source && TAG=${REACT_APP_GETI_VERSION} RESTAPI_BUILD_DIR=/home/app/docs/rest_api make build
+# Replace ${TAG} placeholders with the current build version
+RUN TAG=${REACT_APP_GETI_VERSION} envsubst '$$TAG' < /home/app/docs/rest_api/openapi.yaml > /home/app/docs/rest_api/openapi.yaml.tmp && \
+    mv /home/app/docs/rest_api/openapi.yaml.tmp /home/app/docs/rest_api/openapi.yaml && \
+    TAG=${REACT_APP_GETI_VERSION} envsubst '$$TAG' < /home/app/docs/rest_api/openapi_internal.yaml > /home/app/docs/rest_api/openapi_internal.yaml.tmp && \
+    mv /home/app/docs/rest_api/openapi_internal.yaml.tmp /home/app/docs/rest_api/openapi_internal.yaml
 
 RUN npm run build:rest-openapi-spec
 
@@ -51,8 +53,8 @@ COPY --link ./dev-proxy.ts ./
 COPY --link src/ src/
 COPY --link public/ public/
 
-COPY --from=docs_context rest_api /home/app/docs/rest_api/
-COPY --from=api_context schemas /home/app/interactive_ai/services/api/schemas/
+COPY --from=build_rest_api_specs /home/app/docs/rest_api/ /home/app/docs/rest_api/
+COPY --from=build_rest_api_specs /home/app/interactive_ai/services/api/schemas/ /home/app/interactive_ai/services/api/schemas/
 
 RUN npm run build
 
