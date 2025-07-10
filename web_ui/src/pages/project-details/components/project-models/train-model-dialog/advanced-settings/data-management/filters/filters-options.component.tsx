@@ -56,6 +56,7 @@ const FilterOption: FC<FilterOptionProps> = ({ option, onOptionChange }) => {
             </Text>
             <Flex gap={'size-200'} gridColumn={'2/3'}>
                 <NumberField
+                    aria-label={`Change ${name}`}
                     minValue={minValue}
                     maxValue={maxValue ?? undefined}
                     step={1}
