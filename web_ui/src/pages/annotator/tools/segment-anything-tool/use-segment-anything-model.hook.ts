@@ -104,7 +104,7 @@ const useSegmentAnythingWorker = (
             if (worker) {
                 const model = worker;
 
-                model.init(algorithmType);
+                await model.init(algorithmType);
 
                 modelRef.current = model;
             }
