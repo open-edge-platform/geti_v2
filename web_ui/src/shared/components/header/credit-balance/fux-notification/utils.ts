@@ -90,6 +90,15 @@ export const getFuxNotificationData = (fuxNotificationId: string): FuxNotificati
                 previousStepId: undefined,
                 showDismissAll: true,
             };
+        case FUX_NOTIFICATION_KEYS.CREDIT_BALANCE_BUTTON:
+            return {
+                header: '',
+                description: '',
+                docUrl: undefined,
+                nextStepId: undefined,
+                previousStepId: undefined,
+                showDismissAll: false,
+            };
         default:
             return {
                 header: '',
