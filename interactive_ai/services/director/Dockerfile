@@ -49,7 +49,7 @@ RUN cp -r /model_templates/anomaly/classification/* /model_templates/anomaly/ &&
     rm -rf /model_templates/anomaly/classification && \
     rm -rf /model_templates/anomaly/detection && \
     rm -rf /model_templates/anomaly/segmentation && \
-    find /model_templates/anomaly -type f -name "template.yaml" -exec sed -i 's/task_type: ANOMALY_CLASSIFICATION/task_type: ANOMALY/g' {} + \;
+    find /model_templates/anomaly -type f -name "template.yaml" -exec sed -i 's/task_type: ANOMALY_CLASSIFICATION/task_type: ANOMALY/g' {} +
 
 ENV MODEL_TEMPLATES_DIR=/model_templates
 
