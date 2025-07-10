@@ -32,8 +32,7 @@ export const FuxNotification = ({
     onClose,
     children,
 }: CustomPopoverProps) => {
-    const { header, description, nextStepId, previousStepId, showDismissAll, docUrl } =
-        getFuxNotificationData(settingsKey);
+    const { description, showDismissAll, docUrl } = getFuxNotificationData(settingsKey);
     const message = children ? children : description;
     const url = useDocsUrl();
     const newDocUrl = customDocUrl ?? (docUrl && `${url}${docUrl}`) ?? undefined;
