@@ -9,15 +9,16 @@ Feature: label reordering
 
   Scenario Outline: label reordering for some project types
     Given a project of type '<project_type>' with labels 'foo, bar, baz'
-      When the user reorders the labels to 'bar, foo, baz' 
-      Then the project has labels 'bar, foo, baz' in this order
+      When the user reorders the labels to 'foo, baz, bar' 
+      Then the project has labels 'foo, baz, bar' in this order
 
     @smoke
     Examples:
-      | project_type              |
-      | multiclass classification |
+      | project_type               |
+      | multiclass classification  |
 
     Examples:
-      | project_type              |
-      | detection                 |
-      | instance segmentation     |
+      | project_type               |
+      | detection                  |
+      | instance segmentation      |
+      | detection > classification |

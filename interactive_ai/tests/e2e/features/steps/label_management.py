@@ -7,6 +7,8 @@ from behave import then, when
 from behave.runner import Context
 from geti_client import (
     CreateProject201Response,
+    CreateProject201ResponsePipelineTasksInner,
+    CreateProject201ResponsePipelineTasksInnerLabelsInner,
     EditProjectRequest,
     EditProjectRequestPipeline,
     EditProjectRequestPipelineConnectionsInner,
@@ -85,13 +87,20 @@ def _add_label(context: Context, new_label_name: str) -> None:
     )
 
 
+def _get_ordered_labels_for_task(
+    task: CreateProject201ResponsePipelineTasksInner, ordered_label_names: list[str]
+) -> list[CreateProject201ResponsePipelineTasksInnerLabelsInner]:
+    ordered_labels = []
+    for label_name in ordered_label_names:
+        label = next((label for label in task.labels if label.name == label_name), None)
+        if label is not None:
+            ordered_labels.append(label)
+    return ordered_labels
+
+
 def _reorder_labels(context: Context, ordered_label_names: list[str]) -> None:
     projects_api: ProjectsApi = context.projects_api
     project_info: CreateProject201Response = context.project_info
-    task_with_labels = next(task for task in project_info.pipeline.tasks if task.labels)
-    ordered_labels = []
-    for label_name in ordered_label_names:
-        ordered_labels.append(next(label for label in task_with_labels.labels if label.name == label_name))
 
     edit_pipeline = EditProjectRequestPipeline(
         connections=[
@@ -114,7 +123,7 @@ def _reorder_labels(context: Context, ordered_label_names: list[str]) -> None:
                             is_anomalous=label.is_anomalous,
                             parent_id=label.parent_id,
                         )
-                        for label in ordered_labels
+                        for label in _get_ordered_labels_for_task(task, ordered_label_names)
                         if not label.is_empty  # empty labels should not be included in the update payload
                     ]
                     if task.labels
@@ -260,13 +269,12 @@ def step_then_project_has_ordered_labels(context: Context, raw_label_names: str)
 
     # Verify that the project has the expected labels (plus the empty label, if applicable)
     expected_label_names = raw_label_names.split(", ")
-    if empty_label_name := PROJECT_TYPE_TO_EMPTY_LABEL_NAME_MAPPING.get(context.project_type):
-        expected_label_names.append(empty_label_name)
     found_label_names = [
         label.name
         for task in context.project_info.pipeline.tasks
         if task.task_type not in ("dataset", "crop")
         for label in task.labels
+        if not label.is_empty
     ]
     assert found_label_names == expected_label_names, (
         f"Expected labels: {expected_label_names}, found: {found_label_names}"
