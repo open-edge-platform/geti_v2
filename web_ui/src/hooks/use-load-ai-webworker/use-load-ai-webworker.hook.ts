@@ -15,6 +15,8 @@ const WORKERS_WITH_BUILD_METHOD = [
     AlgorithmType.GRABCUT,
     AlgorithmType.INTELLIGENT_SCISSORS,
     AlgorithmType.RITM,
+    AlgorithmType.SEGMENT_ANYTHING_DECODER,
+    AlgorithmType.SEGMENT_ANYTHING_ENCODER,
     // TODO: Add the rest of the tools here, one at a time
 ];
 

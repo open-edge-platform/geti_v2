@@ -15,6 +15,7 @@ import { useNextMediaItemWithImage } from '../../hooks/use-next-media-item-with-
 import { useSelectedMediaItem } from '../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { SelectedMediaItem } from '../../providers/selected-media-item-provider/selected-media-item.interface';
 import { useTask } from '../../providers/task-provider/task-provider.component';
+import { convertGetiShapeTypeToToolShapeType, convertToolShapeToGetiShape } from '../utils';
 import { InteractiveAnnotationPoint } from './segment-anything.interface';
 
 const useDecoderOutput = () => {
@@ -55,12 +56,12 @@ const useDecodingFn = (model: SegmentAnythingModel | undefined, encoding: Encodi
             points,
             boxes: [],
             ouputConfig: {
-                type: shapeType,
+                type: convertGetiShapeTypeToToolShapeType(shapeType),
             },
             image: undefined,
         });
 
-        return shapes;
+        return shapes.map(convertToolShapeToGetiShape);
     };
 };
 
@@ -100,7 +101,7 @@ const useSegmentAnythingWorker = (
             setModelIsLoading(true);
 
             if (worker) {
-                const model: SegmentAnythingModel = await new worker.model();
+                const model: SegmentAnythingModel = worker;
 
                 await model.init(algorithmType);
 

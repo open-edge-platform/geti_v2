@@ -6,6 +6,7 @@ import { isPointInShape } from '@geti/smart-tools/utils';
 import * as ort from 'onnxruntime-common';
 
 import { Point, ShapeType } from '../shared/interfaces';
+import { isPointInShape } from '../utils/tool-utils';
 import type { SegmentAnythingResult } from './interfaces';
 import { PostProcessor } from './post-processing';
 import { EncodingOutput } from './segment-anything-encoder';
