@@ -10,7 +10,6 @@ import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { ProjectProps } from '../../../../../core/projects/project.interface';
 import { createInMemoryProjectService } from '../../../../../core/projects/services/in-memory-project-service';
 import { createInMemorySupportedAlgorithmsService } from '../../../../../core/supported-algorithms/services/in-memory-supported-algorithms-service';
-import { getMockedSupportedAlgorithm } from '../../../../../core/supported-algorithms/services/test-utils';
 import { idMatchingFormat } from '../../../../../test-utils/id-utils';
 import {
     getMockedConfigurationParameter,
@@ -25,6 +24,7 @@ import {
     getMockedProjectStatus,
     getMockedProjectStatusTask,
 } from '../../../../../test-utils/mocked-items-factory/mocked-project';
+import { getMockedSupportedAlgorithm } from '../../../../../test-utils/mocked-items-factory/mocked-supported-algorithms';
 import { getMockedTask } from '../../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { projectRender as render } from '../../../../../test-utils/project-provider-render';
 import { CustomRenderOptions } from '../../../../../test-utils/required-providers-render';
@@ -58,56 +58,50 @@ const mockedSupportedAlgorithms = [
     getMockedSupportedAlgorithm({
         name: 'YOLO detection',
         domain: DOMAIN.DETECTION,
-        modelSize: 200,
         modelTemplateId: 'detection_yolo_detection',
         gigaflops: 1.3,
-        summary: 'YOLO architecture for detection',
+        description: 'YOLO architecture for detection',
         isDefaultAlgorithm: true,
     }),
     getMockedSupportedAlgorithm({
         name: 'SSD detection',
         domain: DOMAIN.DETECTION,
-        modelSize: 100,
         modelTemplateId: 'detection_ssd_detection',
         gigaflops: 5.4,
-        summary: 'SSD architecture for detection',
+        description: 'SSD architecture for detection',
         isDefaultAlgorithm: false,
     }),
     getMockedSupportedAlgorithm({
         name: 'ATTS detection',
         domain: DOMAIN.DETECTION,
-        modelSize: 150,
         modelTemplateId: 'detection_atts_detection',
         gigaflops: 3,
-        summary: 'ATTS architecture for detection',
+        description: 'ATTS architecture for detection',
         isDefaultAlgorithm: false,
     }),
 
     getMockedSupportedAlgorithm({
         name: 'YOLO classification',
         domain: DOMAIN.CLASSIFICATION,
-        modelSize: 200,
         modelTemplateId: 'detection_yolo_classification',
         gigaflops: 1.3,
-        summary: 'YOLO architecture for classification',
+        description: 'YOLO architecture for classification',
         isDefaultAlgorithm: false,
     }),
     getMockedSupportedAlgorithm({
         name: 'SSD classification',
         domain: DOMAIN.CLASSIFICATION,
-        modelSize: 100,
         modelTemplateId: 'detection_ssd_classification',
         gigaflops: 5.4,
-        summary: 'SSD architecture for classification',
+        description: 'SSD architecture for classification',
         isDefaultAlgorithm: true,
     }),
     getMockedSupportedAlgorithm({
         name: 'ATTS classification',
         domain: DOMAIN.CLASSIFICATION,
-        modelSize: 150,
         modelTemplateId: 'detection_atts_classification',
         gigaflops: 3,
-        summary: 'ATTS architecture for classification',
+        description: 'ATTS architecture for classification',
         isDefaultAlgorithm: false,
     }),
 ];
@@ -170,7 +164,7 @@ const renderTrainModelDialog = async ({
 
     await render(<TrainModel isOpen onClose={onClose} onSuccess={onSuccess} />, {
         ...services,
-        featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: false },
+        featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: false, FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true },
         services: {
             ...services,
             supportedAlgorithmsService: services?.supportedAlgorithmsService ?? supportedAlgorithmsService,

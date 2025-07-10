@@ -109,7 +109,7 @@ export const useTrainModelState = () => {
     const [task] = tasks;
     const { tasksWithSupportedAlgorithms } = useTasksWithSupportedAlgorithms();
     const [selectedTask, setSelectedTask] = useState<Task>(task);
-    const algorithms = tasksWithSupportedAlgorithms[selectedTask.id] ?? [];
+    const algorithms = (tasksWithSupportedAlgorithms[selectedTask.id] ?? []) as SupportedAlgorithm[];
 
     const [selectedModelTemplateId, setSelectedModelTemplateId, activeModelTemplateId] = useSelectedModelTemplateId({
         algorithms,

@@ -231,7 +231,7 @@ _internal_defaults_do_not_set:
       "FEATURE_FLAG_WORKSPACE_ACTIONS": "false"
       "FEATURE_FLAG_REQ_ACCESS": "false"
       "FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS": "false"
-      "FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING": "false"
+      "FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING": "true"
 
   jwtRules:
     issuer: "https://127.0.0.1/dex"

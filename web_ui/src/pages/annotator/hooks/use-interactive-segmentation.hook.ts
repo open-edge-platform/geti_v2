@@ -3,13 +3,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { RITM } from '@geti/smart-tools';
 import { Shape as SmartToolsShape } from '@geti/smart-tools/src/shared/interfaces';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 
 import { AlgorithmType } from '../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { useLoadAIWebworker } from '../../../hooks/use-load-ai-webworker/use-load-ai-webworker.hook';
 import { useAnnotationScene } from '../providers/annotation-scene-provider/annotation-scene-provider.component';
-import { RITMData, RITMMethods, RITMResult } from '../tools/ritm-tool/ritm-tool.interface';
+import { RITMData, RITMResult } from '../tools/ritm-tool/ritm-tool.interface';
 import { convertGetiShapeTypeToToolShapeType, convertToolShapeToGetiShape } from '../tools/utils';
 
 interface useInteractiveSegmentationProps {
@@ -20,7 +21,7 @@ interface useInteractiveSegmentationProps {
 interface useInteractiveSegmentationResult {
     cleanMask: () => void;
     reset: () => void;
-    loadImage: (imageData: ImageData) => void;
+    loadImage: RITM['loadImage'];
     isLoading: boolean;
     mutation: UseMutationResult<SmartToolsShape | undefined, unknown, RITMData>;
     cancel: () => void;
@@ -34,7 +35,7 @@ export const useInteractiveSegmentation = ({
 
     const { worker } = useLoadAIWebworker(AlgorithmType.RITM);
 
-    const ritmInstance = useRef<RITMMethods | null>(null);
+    const ritmInstance = useRef<RITM | null>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const cancelRequested = useRef<boolean>(false);
@@ -46,7 +47,7 @@ export const useInteractiveSegmentation = ({
     useEffect(() => {
         const loadWorker = async () => {
             if (worker) {
-                ritmInstance.current = await new worker.RITM();
+                ritmInstance.current = worker;
 
                 await ritmInstance.current?.load();
 
@@ -69,7 +70,7 @@ export const useInteractiveSegmentation = ({
         return () => setIsDrawing(false);
     }, [setIsDrawing]);
 
-    const mutation = useMutation({
+    const mutation = useMutation<SmartToolsShape | undefined, unknown, RITMData>({
         mutationFn: ({ area, givenPoints, outputShape }: RITMData) => {
             if (!ritmInstance.current) {
                 throw 'Interactive segmentation not ready yet';

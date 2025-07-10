@@ -7,8 +7,8 @@ import { createInMemoryModelsService } from '../../../../../core/models/services
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { createInMemoryProjectService } from '../../../../../core/projects/services/in-memory-project-service';
 import { createInMemorySupportedAlgorithmsService } from '../../../../../core/supported-algorithms/services/in-memory-supported-algorithms-service';
-import { getMockedSupportedAlgorithm } from '../../../../../core/supported-algorithms/services/test-utils';
-import { SupportedAlgorithm } from '../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { getLegacyMockedSupportedAlgorithm } from '../../../../../core/supported-algorithms/services/test-utils';
+import { LegacySupportedAlgorithm } from '../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { idMatchingFormat } from '../../../../../test-utils/id-utils';
 import {
     getMockedModelsGroup,
@@ -41,36 +41,36 @@ describe('Train model dialog', () => {
     const selectedClass = 'selectableCard selectableCardSelected';
 
     const mockedSupportedAlgorithmsForDetection = [
-        getMockedSupportedAlgorithm({
+        getLegacyMockedSupportedAlgorithm({
             name: 'YOLO',
             domain: DOMAIN.DETECTION,
             modelSize: 200,
             modelTemplateId: 'detection_yolo',
             gigaflops: 1.3,
-            summary: 'YOLO architecture for detection',
+            description: 'YOLO architecture for detection',
             isDefaultAlgorithm: true,
         }),
-        getMockedSupportedAlgorithm({
+        getLegacyMockedSupportedAlgorithm({
             name: 'SSD',
             domain: DOMAIN.DETECTION,
             modelSize: 100,
             modelTemplateId: 'detection_ssd',
             gigaflops: 5.4,
-            summary: 'SSD architecture for detection',
+            description: 'SSD architecture for detection',
             isDefaultAlgorithm: false,
         }),
-        getMockedSupportedAlgorithm({
+        getLegacyMockedSupportedAlgorithm({
             name: 'ATTS',
             domain: DOMAIN.DETECTION,
             modelSize: 150,
             modelTemplateId: 'detection_atts',
             gigaflops: 3,
-            summary: 'ATTS architecture for detection',
+            description: 'ATTS architecture for detection',
             isDefaultAlgorithm: false,
         }),
     ];
 
-    supportedAlgorithmsService.getProjectSupportedAlgorithms = jest.fn(
+    supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms = jest.fn(
         async () => mockedSupportedAlgorithmsForDetection
     );
 
@@ -123,7 +123,7 @@ describe('Train model dialog', () => {
         // speed
         const defaultModelTemplate = mockedSupportedAlgorithmsForDetection.find(
             ({ modelTemplateId }) => modelTemplateId === defaultAlgorithm?.modelTemplateId
-        ) as SupportedAlgorithm;
+        ) as LegacySupportedAlgorithm;
 
         await renderTrainModelDialog({
             options: { services: { supportedAlgorithmsService, modelsService } },
@@ -140,7 +140,7 @@ describe('Train model dialog', () => {
 
         const defaultModelTemplate = mockedSupportedAlgorithmsForDetection.find(
             ({ modelTemplateId }) => modelTemplateId === notDefaultAlgorithm?.modelTemplateId
-        ) as SupportedAlgorithm;
+        ) as LegacySupportedAlgorithm;
 
         modelsService.getModels = jest.fn(async () => [
             getMockedModelsGroup({
@@ -309,7 +309,7 @@ describe('Train model dialog', () => {
 
         const supportedAlgorithms = mockedSupportedAlgorithmsForDetection;
 
-        supportedAlgorithmsService.getProjectSupportedAlgorithms = jest.fn(async () => supportedAlgorithms);
+        supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms = jest.fn(async () => supportedAlgorithms);
 
         await renderTrainModelDialog({
             options: { services: { supportedAlgorithmsService, modelsService } },

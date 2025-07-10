@@ -142,6 +142,15 @@ export const registerJobResponses = (
         metadata:
             | { project_id?: string }
             | {
+                  project: {
+                      id: string;
+                      name: string;
+                      type: string;
+                  };
+                  labels: string[];
+                  warnings: DatasetImportWarningDTO[];
+              }
+            | {
                   labels?: string[];
                   warnings?: DatasetImportWarningDTO[];
                   supported_project_types?: DatasetImportSupportedProjectTypeDTO[];

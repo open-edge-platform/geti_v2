@@ -3,6 +3,7 @@
 
 import { PointerEvent, useEffect, useRef } from 'react';
 
+import { IntelligentScissors } from '@geti/smart-tools';
 import { useMutation } from '@tanstack/react-query';
 import { Remote } from 'comlink';
 import { isEmpty, isEqual, throttle } from 'lodash-es';
@@ -14,11 +15,7 @@ import { runWhen, runWhenTruthy } from '../../../shared/utils';
 import { leftRightMouseButtonHandler } from '../../utils';
 import { usePolygonState } from '../tools/polygon-tool/polygon-state-provider.component';
 import { PolygonMode } from '../tools/polygon-tool/polygon-tool.enum';
-import {
-    IntelligentScissorsMethods,
-    IntelligentScissorsWorker,
-    MouseEventHandlers,
-} from '../tools/polygon-tool/polygon-tool.interface';
+import { MouseEventHandlers } from '../tools/polygon-tool/polygon-tool.interface';
 import { SetStateWrapper } from '../tools/undo-redo/use-undo-redo-state';
 
 export interface IntelligentScissorsProps {
@@ -26,7 +23,7 @@ export interface IntelligentScissorsProps {
     polygon: Polygon | null;
     image: ImageData;
     lassoSegment: Point[];
-    worker: Remote<IntelligentScissorsWorker> | undefined;
+    worker: Remote<IntelligentScissors> | undefined;
     canPathBeClosed: (point: Point) => boolean;
     setPointerLine: SetStateWrapper<Point[]>;
     setLassoSegment: SetStateWrapper<Point[]>;
@@ -51,7 +48,7 @@ export const useIntelligentScissors = ({
     const isPointerDown = useRef<boolean>(false);
     const isFreeDrawing = useRef<boolean>(false);
     const buildMapPoint = useRef<Point | null>(null);
-    const intelligentScissors = useRef<Remote<IntelligentScissorsMethods> | null>(null);
+    const intelligentScissors = useRef<Remote<IntelligentScissors> | null>(null);
 
     const { addNotification } = useNotification();
 
@@ -83,7 +80,8 @@ export const useIntelligentScissors = ({
 
     const loadIntelligentScissors = async (): Promise<void> => {
         if (worker) {
-            intelligentScissors.current = await new worker.IntelligentScissors(image);
+            intelligentScissors.current = worker;
+            intelligentScissors.current?.loadImage(image);
         }
     };
 
