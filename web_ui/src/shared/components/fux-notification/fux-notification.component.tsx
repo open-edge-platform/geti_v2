@@ -7,10 +7,10 @@ import { ActionButton, Button, CustomPopover, Divider, Flex, Popover, Text, View
 import { Close } from '@geti/ui/icons';
 import { isFunction } from 'lodash-es';
 
-import { FUX_NOTIFICATION_KEYS } from '../../../../../core/user-settings/dtos/user-settings.interface';
-import { useDocsUrl } from '../../../../../hooks/use-docs-url/use-docs-url.hook';
-import { openNewTab } from '../../../../utils';
-import { onPressLearnMore } from '../../../tutorials/utils';
+import { FUX_NOTIFICATION_KEYS } from '../../../core/user-settings/dtos/user-settings.interface';
+import { useDocsUrl } from '../../../hooks/use-docs-url/use-docs-url.hook';
+import { openNewTab } from '../../utils';
+import { onPressLearnMore } from '../tutorials/utils';
 import { getFuxNotificationData } from './utils';
 
 import classes from './fux-notification.module.scss';

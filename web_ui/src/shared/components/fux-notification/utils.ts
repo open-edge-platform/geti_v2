@@ -1,8 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { FUX_NOTIFICATION_KEYS } from '../../../../../core/user-settings/dtos/user-settings.interface';
-import { DocsUrl } from '../../../tutorials/utils';
+import { FUX_NOTIFICATION_KEYS } from '../../../core/user-settings/dtos/user-settings.interface';
+import { DocsUrl } from '../tutorials/utils';
 
 interface FuxNotificationData {
     header: string | undefined;
