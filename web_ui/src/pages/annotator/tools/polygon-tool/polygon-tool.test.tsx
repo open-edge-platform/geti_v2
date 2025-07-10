@@ -22,6 +22,7 @@ import { useAnnotator } from '../../providers/annotator-provider/annotator-provi
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useSelectedMediaItem } from '../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { TaskProvider } from '../../providers/task-provider/task-provider.component';
+import { convertGetiShapeToToolShape } from '../utils';
 import { PolygonStateProvider, usePolygonState } from './polygon-state-provider.component';
 import { PolygonTool } from './polygon-tool.component';
 import { PolygonMode } from './polygon-tool.enum';
@@ -136,7 +137,6 @@ const renderApp = async (annotationToolContext: AnnotationToolContext) => {
     jest.mocked(useAnnotator).mockReturnValue({ activeTool: ToolType.PolygonTool, setActiveTool: jest.fn() });
     // @ts-expect-error We only care about selectedMediaItem tool stuff
     jest.mocked(useSelectedMediaItem).mockReturnValue({ selectedMediaItem });
-    // @ts-expect-error ignore this typescript error until we finish ITEP-66305
     jest.mocked(useLoadAIWebworker).mockImplementation(() => {
         return {
             worker: {
@@ -221,7 +221,7 @@ describe('PolygonTool', () => {
         fireEvent.pointerUp(editor, { buttons: 1, clientX: 50, clientY: 50 });
 
         await waitFor(() => expect(onComplete).toHaveBeenCalledWith([shape]));
-        expect(mockOptimizePolygon).toHaveBeenCalledWith(shape);
+        expect(mockOptimizePolygon).toHaveBeenCalledWith(convertGetiShapeToToolShape(shape));
     });
 
     it('cancels a polygon if the user did not provide additional points', async (): Promise<void> => {

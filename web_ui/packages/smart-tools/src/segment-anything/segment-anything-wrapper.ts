@@ -38,6 +38,7 @@ class SegmentAnythingModelWrapper {
     public async init(algorithm: 'SEGMENT_ANYTHING_DECODER' | 'SEGMENT_ANYTHING_ENCODER'): Promise<void> {
         await this.model.init(algorithm);
     }
+
     public async processEncoder(initialImageData: ImageData): Promise<EncodingOutput> {
         return this.model.processEncoder(initialImageData);
     }

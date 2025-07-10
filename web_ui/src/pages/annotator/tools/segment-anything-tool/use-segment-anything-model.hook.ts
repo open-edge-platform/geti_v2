@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { EncodingOutput, SegmentAnythingModel } from '@geti/smart-tools';
 import { useQuery } from '@tanstack/react-query';
+import { Remote } from 'comlink';
 
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { DOMAIN } from '../../../../core/projects/core.interface';
@@ -34,7 +35,7 @@ const useDecoderOutput = () => {
     }, [activeDomains]);
 };
 
-const useDecodingFn = (model: SegmentAnythingModel | undefined, encoding: EncodingOutput | undefined) => {
+const useDecodingFn = (model: Remote<SegmentAnythingModel> | undefined, encoding: EncodingOutput | undefined) => {
     const shapeType = useDecoderOutput();
 
     // TODO: look into returning a new "decoder model" instance that already has the encoding data
@@ -66,7 +67,7 @@ const useDecodingFn = (model: SegmentAnythingModel | undefined, encoding: Encodi
 };
 
 const useEncodingQuery = (
-    model: SegmentAnythingModel | undefined,
+    model: Remote<SegmentAnythingModel> | undefined,
     selectedMediaItem: Pick<SelectedMediaItem, 'identifier' | 'image'> | undefined
 ) => {
     return useQuery({
@@ -93,7 +94,7 @@ const useSegmentAnythingWorker = (
 ) => {
     const { worker } = useLoadAIWebworker(algorithmType);
 
-    const modelRef = useRef<SegmentAnythingModel>();
+    const modelRef = useRef<Remote<SegmentAnythingModel>>();
     const [modelIsLoading, setModelIsLoading] = useState(false);
 
     useEffect(() => {
@@ -101,9 +102,9 @@ const useSegmentAnythingWorker = (
             setModelIsLoading(true);
 
             if (worker) {
-                const model: SegmentAnythingModel = worker;
+                const model = worker;
 
-                await model.init(algorithmType);
+                model.init(algorithmType);
 
                 modelRef.current = model;
             }

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { RITM } from '@geti/smart-tools/ritm';
 import { Shape as SmartToolsShape } from '@geti/smart-tools/types';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
+import { Remote } from 'comlink';
 
 import { AlgorithmType } from '../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { useLoadAIWebworker } from '../../../hooks/use-load-ai-webworker/use-load-ai-webworker.hook';
@@ -35,7 +36,7 @@ export const useInteractiveSegmentation = ({
 
     const { worker } = useLoadAIWebworker(AlgorithmType.RITM);
 
-    const ritmInstance = useRef<RITM | null>(null);
+    const ritmInstance = useRef<Remote<RITM> | null>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const cancelRequested = useRef<boolean>(false);

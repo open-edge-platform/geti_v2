@@ -24,7 +24,6 @@ describe('useInferenceImage', () => {
     it('returns resized image when worker is present', async () => {
         const mockResize = jest.fn().mockResolvedValue('resized-image');
         const mockInstance = { resize: mockResize };
-        // @ts-expect-error We will update all these types later
         jest.mocked(useLoadAIWebworker).mockReturnValue({ worker: mockInstance });
 
         const { result } = renderHook(() => useInferenceImage(100, 200), { wrapper });
@@ -37,7 +36,6 @@ describe('useInferenceImage', () => {
     });
 
     it('rejects if there is no worker', async () => {
-        // @ts-expect-error We will update all these types later
         jest.mocked(useLoadAIWebworker).mockReturnValue({ worker: undefined });
 
         const { result } = renderHook(() => useInferenceImage(100, 200), { wrapper });

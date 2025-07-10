@@ -16,6 +16,7 @@ export { buildIntelligentScissorsInstance, IntelligentScissors } from './src/int
 
 export {
     buildSegmentAnythingInstance,
-    SegmentAnythingModelWrapper as SegmentAnythingModel,
+    SegmentAnythingModelWrapper,
 } from './src/segment-anything/segment-anything-wrapper';
+export { SegmentAnythingModel } from './src/segment-anything/segment-anything';
 export type { EncodingOutput } from './src/segment-anything/segment-anything-encoder';
