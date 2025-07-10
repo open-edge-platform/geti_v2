@@ -1,12 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { OpenCVTypes } from '@geti/smart-tools/opencv';
-import { approximateShape } from '@geti/smart-tools/utils';
-
-import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from '../../../../../core/annotations/shapes.interface';
-import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import type { SegmentAnythingResult } from './segment-anything-result';
+import { OpenCVTypes } from '../opencv/interfaces';
+import { Circle, Point, Polygon, Rect, RotatedRect, Shape, ShapeType } from '../shared/interfaces';
+import { approximateShape } from '../utils/tool-utils';
+import { type SegmentAnythingResult } from './interfaces';
 
 interface PostProcessorConfig {
     type: ShapeType;
@@ -26,8 +24,7 @@ type ScaleToSize = {
 };
 
 export class PostProcessor {
-    // @ts-expect-error Ignore cannot use namespace as type
-    constructor(private cv: CV) {}
+    constructor(private CV: OpenCVTypes.cv) {}
 
     public maskToAnnotationShape(
         pixels: Uint8ClampedArray,
@@ -37,12 +34,12 @@ export class PostProcessor {
         const scales = this.scaleToOriginalSize(sizes);
         const width = sizes.width;
         const height = sizes.height;
-        const mat = this.cv.matFromArray(height, width, this.cv.CV_8U, pixels);
+        const mat = this.CV.matFromArray(height, width, this.CV.CV_8U, pixels);
 
-        const contours = new this.cv.MatVector();
-        const hierachy: OpenCVTypes.Mat = new this.cv.Mat();
+        const contours = new this.CV.MatVector();
+        const hierachy: OpenCVTypes.Mat = new this.CV.Mat();
 
-        this.cv.findContours(mat, contours, hierachy, this.cv.RETR_EXTERNAL, this.cv.CHAIN_APPROX_NONE);
+        this.CV.findContours(mat, contours, hierachy, this.CV.RETR_EXTERNAL, this.CV.CHAIN_APPROX_NONE);
 
         let maxContourIdx = 0;
         let maxArea = -1;
@@ -52,8 +49,8 @@ export class PostProcessor {
         const imageArea = sizes.originalWidth * sizes.originalHeight;
         for (let idx = 0; idx < Number(contours.size()); idx++) {
             const contour = contours.get(idx);
-            const optimizedContour = approximateShape(this.cv, contour);
-            const area = this.cv.contourArea(optimizedContour, false);
+            const optimizedContour = approximateShape(this.CV, contour);
+            const area = this.CV.contourArea(optimizedContour, false);
 
             const shape = this.contourToShape(optimizedContour, config, scales);
 
@@ -91,15 +88,15 @@ export class PostProcessor {
         scales: ScaleToSize
     ): Shape => {
         switch (config.type) {
-            case ShapeType.Polygon:
+            case 'polygon':
                 return this.contourToPolygon(optimizedContour, scales);
-            case ShapeType.Rect:
+            case 'rect':
                 return this.contourToRectangle(optimizedContour, scales);
-            case ShapeType.RotatedRect:
+            case 'rotated-rect':
                 return this.contourToRotatedRectangle(optimizedContour, scales);
-            case ShapeType.Circle:
+            case 'circle':
                 return this.contourToCircle(optimizedContour, scales);
-            case ShapeType.Pose:
+            default:
                 throw new Error('Can not create keypoint using SAM');
         }
     };
@@ -114,14 +111,14 @@ export class PostProcessor {
             points.push({ x, y });
         }
 
-        return { shapeType: ShapeType.Polygon, points };
+        return { shapeType: 'polygon', points };
     }
 
     private contourToRectangle(optimizedContour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Rect {
-        const { x, y, width, height } = this.cv.boundingRect(optimizedContour);
+        const { x, y, width, height } = this.CV.boundingRect(optimizedContour);
 
         return {
-            shapeType: ShapeType.Rect,
+            shapeType: 'rect',
             x: scaleX(x),
             y: scaleY(y),
             width: scaleX(width),
@@ -134,10 +131,10 @@ export class PostProcessor {
             angle,
             center: { x, y },
             size: { width, height },
-        } = this.cv.minAreaRect(optimizedContour);
+        } = this.CV.minAreaRect(optimizedContour);
 
         return {
-            shapeType: ShapeType.RotatedRect,
+            shapeType: 'rotated-rect',
             x: scaleX(x),
             y: scaleY(y),
             width: scaleX(width),
@@ -150,10 +147,10 @@ export class PostProcessor {
         const {
             center: { x, y },
             size: { width, height },
-        } = this.cv.minAreaRect(optimizedContour);
+        } = this.CV.minAreaRect(optimizedContour);
 
         return {
-            shapeType: ShapeType.Circle,
+            shapeType: 'circle',
             x: scaleX(x),
             y: scaleY(y),
             r: Math.round(Math.max(scaleX(width), scaleY(height))),

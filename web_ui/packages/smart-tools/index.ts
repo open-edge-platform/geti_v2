@@ -14,10 +14,8 @@ export { type GrabcutData } from './src/grabcut/interfaces';
 
 export { buildIntelligentScissorsInstance, IntelligentScissors } from './src/intelligent-scissors/intelligent-scissors';
 
-// TODO: To be moved to SegmentAnything folder on the next PRs
-export const SegmentAnythingModels = {
-    encoder: new URL('./src/segment-anything/models/mobile_sam.encoder.onnx', import.meta.url).toString(),
-    decoder: new URL('./src/segment-anything/models/sam_vit_h_4b8939.decoder.onnx', import.meta.url).toString(),
-};
-
-export { sessionParams, type SessionParameters } from './src/utils/wasm-utils';
+export {
+    buildSegmentAnythingInstance,
+    SegmentAnythingModelWrapper as SegmentAnythingModel,
+} from './src/segment-anything/segment-anything-wrapper';
+export type { EncodingOutput } from './src/segment-anything/segment-anything-encoder';

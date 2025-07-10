@@ -3,11 +3,10 @@
 
 import { OpenCVTypes } from '@geti/smart-tools/opencv';
 
-import { AlgorithmType } from '../../../../../hooks/use-load-ai-webworker/algorithm.interface';
+import { SegmentAnythingResult } from './interfaces';
 import { OpenCVPreprocessorConfig } from './pre-processing';
 import { SegmentAnythingDecoder, SegmentAnythingPrompt } from './segment-anything-decoder';
 import { EncodingOutput, SegmentAnythingEncoder } from './segment-anything-encoder';
-import { SegmentAnythingResult } from './segment-anything-result';
 import { Session } from './session';
 
 type cv = typeof OpenCVTypes;
@@ -32,15 +31,13 @@ export class SegmentAnythingModel {
         this.preProcessorConfig = preProcessorConfig;
     }
 
-    public async init(
-        algorithm: AlgorithmType.SEGMENT_ANYTHING_DECODER | AlgorithmType.SEGMENT_ANYTHING_ENCODER
-    ): Promise<void> {
-        if (!this.sessions.has('encoder') && algorithm === AlgorithmType.SEGMENT_ANYTHING_ENCODER) {
+    public async init(algorithm: 'SEGMENT_ANYTHING_DECODER' | 'SEGMENT_ANYTHING_ENCODER'): Promise<void> {
+        if (!this.sessions.has('encoder') && algorithm === 'SEGMENT_ANYTHING_ENCODER') {
             const encoderPath = this.modelPaths.get('encoder') ?? '';
             this.sessions.set('encoder', await createSession(encoderPath));
         }
 
-        if (!this.sessions.has('decoder') && algorithm === AlgorithmType.SEGMENT_ANYTHING_DECODER) {
+        if (!this.sessions.has('decoder') && algorithm === 'SEGMENT_ANYTHING_DECODER') {
             const decoderPath = this.modelPaths.get('decoder') ?? '';
             this.sessions.set('decoder', await createSession(decoderPath));
         }

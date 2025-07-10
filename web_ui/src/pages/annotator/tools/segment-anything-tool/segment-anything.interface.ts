@@ -1,9 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { SegmentAnythingModel } from '@geti/smart-tools';
+
 import { AlgorithmType } from '../../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { WebWorker } from '../../../../webworkers/web-worker.interface';
-import { SegmentAnythingModel } from './model/segment-anything';
 
 export interface InteractiveAnnotationPoint {
     x: number;

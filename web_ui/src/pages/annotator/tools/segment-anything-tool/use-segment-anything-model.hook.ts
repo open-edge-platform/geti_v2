@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { EncodingOutput, SegmentAnythingModel } from '@geti/smart-tools';
 import { useQuery } from '@tanstack/react-query';
 
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
@@ -14,8 +15,6 @@ import { useNextMediaItemWithImage } from '../../hooks/use-next-media-item-with-
 import { useSelectedMediaItem } from '../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { SelectedMediaItem } from '../../providers/selected-media-item-provider/selected-media-item.interface';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { SegmentAnythingModel } from './model/segment-anything';
-import { EncodingOutput } from './model/segment-anything-encoder';
 import { InteractiveAnnotationPoint } from './segment-anything.interface';
 
 const useDecoderOutput = () => {

@@ -5,11 +5,10 @@ import { OpenCVTypes } from '@geti/smart-tools/opencv';
 import { isPointInShape } from '@geti/smart-tools/utils';
 import * as ort from 'onnxruntime-common';
 
-import { Point } from '../../../../../core/annotations/shapes.interface';
-import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
+import { Point, ShapeType } from '../shared/interfaces';
+import type { SegmentAnythingResult } from './interfaces';
 import { PostProcessor } from './post-processing';
 import { EncodingOutput } from './segment-anything-encoder';
-import { SegmentAnythingResult } from './segment-anything-result';
 import { type Session } from './session';
 
 type cv = typeof OpenCVTypes;
