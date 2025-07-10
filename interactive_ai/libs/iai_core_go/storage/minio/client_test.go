@@ -20,7 +20,7 @@ import (
 func TestMinio(t *testing.T) {
 	ctx := context.Background()
 	_ = os.Setenv("S3_CLIENT_CACHE_TTL", "1")
-	manager, err := NewClientManager(ctx)
+	manager, err := NewClientManager()
 	require.NoError(t, err)
 
 	tests := []struct {
