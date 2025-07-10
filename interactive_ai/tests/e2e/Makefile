@@ -1,16 +1,28 @@
 MAKEFILE_DIR := $(shell pwd)
-OPENAPI_YAML_SPEC := ../../../docs/rest_api/openapi_internal.yaml
+
+OPENAPI_DIR :=  ../../../docs/rest_api
+
+OPENAPI_YAML_SPEC := $(OPENAPI_DIR)/.build/rest_api/openapi_internal.yaml
 OPENAPI_JSON_SPEC := /tmp/openapi_internal.json
 CLIENT_NAME := geti_client
 CLIENT_PATH := rest_client
 SPEC_HASH_FILE := .openapi_spec_hash
 
-.PHONY: all check_yaml_spec generate_json_spec generate_client generate_client_if_needed test test_wip test_smoke mypy
+.PHONY: all check_yaml_spec generate_json_spec generate_client generate_client_if_needed test test_wip test_smoke mypy compile_yaml_spec
 
 venv:
 	$(MAKE) generate_client_if_needed;
 	uv sync --frozen ${PIP_INSTALL_PARAMS}
-check_yaml_spec:
+
+compile_yaml_spec:
+	@if [ ! -d $(OPENAPI_DIR) ]; then \
+		echo "Error: OpenAPI directory not found at $(OPENAPI_DIR)"; \
+		exit 1; \
+	else \
+		$(MAKE) -C $(OPENAPI_DIR) build; \
+	fi
+
+check_yaml_spec: compile_yaml_spec
 	@if [ ! -f $(OPENAPI_YAML_SPEC) ]; then \
 		echo "Error: OpenAPI YAML spec file not found at $(OPENAPI_YAML_SPEC)"; \
 		exit 1; \

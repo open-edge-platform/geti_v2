@@ -1,6 +1,6 @@
 include ../../Makefile.shared
 
-RESTAPI_BUILD_DIR                  := ${TARGET_DIR}/rest-api
+RESTAPI_BUILD_DIR                  := ${TARGET_DIR}/rest_api
 
 .PHONY: build
 
