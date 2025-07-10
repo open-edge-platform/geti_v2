@@ -2,7 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 from .annotation_endpoints import annotation_router
-from .code_deployment_endpoints import code_deployment_router, deployment_package_router
+from .code_deployment_endpoints import deployment_package_router
 from .dataset_endpoints import dataset_router
 from .media_endpoints import media_router
 from .media_score_endpoints import media_score_router
@@ -15,7 +15,6 @@ from .workspace_endpoints import workspace_router
 
 __all__ = [
     "annotation_router",
-    "code_deployment_router",
     "dataset_router",
     "deployment_package_router",
     "media_router",

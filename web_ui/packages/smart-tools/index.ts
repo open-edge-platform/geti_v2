@@ -14,6 +14,8 @@ export { type RunSSIMProps, type SSIMMatch } from './src/ssim/interfaces';
 export { buildGrabcutInstance, Grabcut } from './src/grabcut/grabcut';
 export { type GrabcutData } from './src/grabcut/interfaces';
 
+export { buildIntelligentScissorsInstance, IntelligentScissors } from './src/intelligent-scissors/intelligent-scissors';
+
 export {
     formatContourToPoints,
     approximateShape,

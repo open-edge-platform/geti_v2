@@ -7,7 +7,12 @@ import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { Explanation } from '../../../../core/annotations/prediction.interface';
 import { isGlobal } from '../../../../core/labels/utils';
 import { DOMAIN } from '../../../../core/projects/core.interface';
-import { isDetectionDomain, isRotatedDetectionDomain, isSegmentationDomain } from '../../../../core/projects/domains';
+import {
+    isDetectionDomain,
+    isKeypointDetection,
+    isRotatedDetectionDomain,
+    isSegmentationDomain,
+} from '../../../../core/projects/domains';
 import { hasEqualId } from '../../../../shared/utils';
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { GrabcutToolType } from '../../tools/grabcut-tool/grabcut-tool.enums';
@@ -97,6 +102,10 @@ export const defaultToolForProject = (domains: DOMAIN[]): ToolType => {
 
     if (domains.some(isRotatedDetectionDomain)) {
         return ToolType.RotatedBoxTool;
+    }
+
+    if (domains.some(isKeypointDetection)) {
+        return ToolType.KeypointTool;
     }
 
     return ToolType.SelectTool;

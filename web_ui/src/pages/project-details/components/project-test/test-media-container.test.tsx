@@ -13,6 +13,7 @@ import { getMockedLabel } from '../../../../test-utils/mocked-items-factory/mock
 import { getMockedProject } from '../../../../test-utils/mocked-items-factory/mocked-project';
 import { getMockedTask } from '../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
+import { checkTooltip } from '../../../../test-utils/utils';
 import { ProjectProvider } from '../../providers/project-provider/project-provider.component';
 import { MediaItemsBucketTitle } from './media-items-bucket.interface';
 import { TestMediaContainer } from './test-media-container.component';
@@ -270,5 +271,36 @@ describe('TestMediaContainer', () => {
         expect(getScoreThresholdSlider()).toBeInTheDocument();
         expect(screen.getByText(MediaItemsBucketTitle.INCORRECT)).toBeInTheDocument();
         expect(screen.getByText(MediaItemsBucketTitle.CORRECT)).toBeInTheDocument();
+    });
+
+    it('Label picker is disabled for keypoint detection', async () => {
+        const mockedLabel = getMockedLabel({
+            id: 'classification-label-1',
+            name: 'classification-label-1',
+            group: 'a',
+        });
+
+        inMemoryProjectService.getProject = async () => ({
+            ...getMockedProject({
+                tasks: [
+                    getMockedTask({
+                        domain: DOMAIN.KEYPOINT_DETECTION,
+                        labels: [
+                            mockedLabel,
+                            { ...mockedLabel, id: 'classification-label-2', name: 'classification-label-2' },
+                            { ...mockedLabel, id: 'classification-label-3', name: 'classification-label-3' },
+                        ],
+                    }),
+                ],
+            }),
+        });
+
+        await renderTestMediaContainer();
+
+        const selectLabel = screen.getByRole('button', { name: /Select label/i });
+
+        expect(selectLabel).toBeDisabled();
+        expect(selectLabel).toHaveTextContent('All labels');
+        await checkTooltip(selectLabel, 'Keypoint detection only allows "All labels"');
     });
 });
