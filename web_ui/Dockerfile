@@ -7,12 +7,20 @@
 FROM node:22.12-bookworm-slim@sha256:35531c52ce27b6575d69755c73e65d4468dba93a25644eed56dc12879cae9213 AS build_rest_api_specs
 
 ARG LOCATION=/home/app/rest-api-specs/
+ARG REACT_APP_GETI_VERSION=development
 
 WORKDIR ${LOCATION}
 
+
 COPY --link ./package.json .
-COPY --link --from=docs_context rest_api /home/app/docs/rest_api/
+COPY --link --from=docs_context rest_api /tmp/rest_api_source/
 COPY --link --from=api_context schemas /home/app/interactive_ai/services/api/schemas/
+
+# Install gettext-base for envsubst (needed by Makefile)
+RUN apt-get update && apt-get install -y gettext-base rsync make && rm -rf /var/lib/apt/lists/*
+
+# Use the Makefile to generate the processed files
+RUN cd /tmp/rest_api_source && TAG=${REACT_APP_GETI_VERSION} RESTAPI_BUILD_DIR=/home/app/docs/rest_api make build
 
 RUN npm run build:rest-openapi-spec
 
