@@ -485,37 +485,5 @@ export function convertGetiShapeToToolShape(shape: RotatedRect): ToolRotatedRect
 export function convertGetiShapeToToolShape(shape: Circle): ToolCircle;
 export function convertGetiShapeToToolShape(shape: Shape): SmartToolsShape;
 export function convertGetiShapeToToolShape(shape: Shape): SmartToolsShape {
-    switch (shape.shapeType) {
-        case ShapeType.Rect:
-            return {
-                shapeType: 'rect',
-                x: shape.x,
-                y: shape.y,
-                width: shape.width,
-                height: shape.height,
-            };
-        case ShapeType.RotatedRect:
-            return {
-                shapeType: 'rotated-rect',
-                x: shape.x,
-                y: shape.y,
-                width: shape.width,
-                height: shape.height,
-                angle: shape.angle,
-            };
-        case ShapeType.Polygon:
-            return {
-                shapeType: 'polygon',
-                points: shape.points,
-            };
-        case ShapeType.Circle:
-            return {
-                shapeType: 'circle',
-                x: shape.x,
-                y: shape.y,
-                r: shape.r,
-            };
-        default:
-            throw new Error('Unknown shape type');
-    }
+    return shape;
 }
