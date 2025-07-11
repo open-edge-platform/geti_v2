@@ -297,11 +297,14 @@ def display_final_confirmation(config: InstallationConfig) -> None:
     Display the gathered data and asks for the confirmation.
     """
     click.echo()
+    click.echo(InstallCmdConfirmationTexts.confirm_k3s_message)
+
+    click.echo()
     click.echo(InstallCmdConfirmationTexts.confirm_username_message.format(username=config.username.value))
     click.secho(InstallCmdTexts.selected_password, nl=False)
     click.secho(config.password.value, fg="yellow")
-    click.echo()
 
+    click.echo()
     if config.custom_certificate:
         click.echo(InstallCmdConfirmationTexts.cert_file_message.format(path=config.tls_cert_file.value))
         click.echo(InstallCmdConfirmationTexts.key_file_message.format(path=config.tls_key_file.value))
@@ -309,8 +312,16 @@ def display_final_confirmation(config: InstallationConfig) -> None:
         click.echo(InstallCmdConfirmationTexts.no_custom_certificate_message)
 
     click.echo()
-    click.echo(InstallCmdConfirmationTexts.confirm_data_message.format(path=config.data_folder.value))
+    if os.path.exists(config.data_folder.value):
+        click.echo(InstallCmdConfirmationTexts.confirm_data_message.format(path=config.data_folder.value))
+    else:
+        click.echo(InstallCmdConfirmationTexts.confirm_data_creation_message.format(path=config.data_folder.value))
 
+    click.echo()
+    click.echo(InstallCmdConfirmationTexts.change_config_message)
+
+    click.echo()
+    click.confirm(InstallCmdConfirmationTexts.accept_config_prompt, default=True, abort=True)
 
 @click.command()
 @click.option(

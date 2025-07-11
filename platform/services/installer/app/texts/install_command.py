@@ -32,7 +32,7 @@ class InstallCmdTexts:
     data_folder_creation_succeeded = "Data folder created successfully"
     data_folder_creation_failed = "Data folder creation failed. Look for errors in the log."
     selected_username = "Initial user: "
-    selected_password = "Password for initial user: "  # noqa: S105
+    selected_password = "Admin's password: "  # noqa: S105
     custom_certificate_prompt = "Do you want to configure your custom SSL certificate?"
     tls_cert_file_help = "Absolute path to the certificate file"
     tls_key_file_help = "Absolute path to the key file"
@@ -85,8 +85,10 @@ class InstallCmdConfirmationTexts:
 
     confirm_k3s_message = "k3s single node cluster will be installed on the local machine."
     confirm_cluster_message = "Platform will be installed on Kubernetes cluster indicated in: {kubeconfig}"
-    confirm_username_message = "Admin user login name: {username}"
+    confirm_username_message = "Admin's username: {username}"
     confirm_data_message = "Path to the data storage: {path}"
+    confirm_data_creation_message = "The following folder for data storage will be created: {path}"
+    change_config_message = "If you would like to change the values above, look for details be executing: sudo ./platform_installer install --help"
     accept_config_prompt = "Is the provided data correct and you want to proceed with the installation?"
     cert_file_message = "Path to the certificate file: {path}"
     key_file_message = "Path to the key file: {path}"
