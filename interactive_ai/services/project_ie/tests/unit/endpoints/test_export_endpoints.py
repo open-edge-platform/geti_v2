@@ -12,7 +12,9 @@ from geti_types import ID
 
 
 class TestProjectExportEndpoints:
-    def test_start_project_export_default(self, fxt_test_app, fxt_session_ctx, fxt_project_identifier, fxt_ote_id) -> None:
+    def test_start_project_export_default(
+        self, fxt_test_app, fxt_session_ctx, fxt_project_identifier, fxt_ote_id
+    ) -> None:
         # Arrange
         endpoint = (
             f"/api/v1/organizations/{fxt_session_ctx.organization_id}/workspaces/{fxt_session_ctx.workspace_id}"
@@ -33,7 +35,9 @@ class TestProjectExportEndpoints:
         )
         assert result.json() == {"job_id": str(submitted_job_id)}
 
-    def test_start_project_export_last_active(self, fxt_test_app, fxt_session_ctx, fxt_project_identifier, fxt_ote_id) -> None:
+    def test_start_project_export_last_active(
+        self, fxt_test_app, fxt_session_ctx, fxt_project_identifier, fxt_ote_id
+    ) -> None:
         # Arrange
         endpoint = (
             f"/api/v1/organizations/{fxt_session_ctx.organization_id}/workspaces/{fxt_session_ctx.workspace_id}"
@@ -43,7 +47,7 @@ class TestProjectExportEndpoints:
 
         # Act
         with patch.object(
-                ExportController, "submit_project_export_job", return_value=submitted_job_id
+            ExportController, "submit_project_export_job", return_value=submitted_job_id
         ) as mock_submit_export_job:
             result = fxt_test_app.post(endpoint)
 

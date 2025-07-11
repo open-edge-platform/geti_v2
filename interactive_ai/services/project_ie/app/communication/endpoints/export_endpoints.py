@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 """Endpoints related to project export"""
+
 from enum import Enum
 from typing import Annotated
 
@@ -21,12 +22,14 @@ router = APIRouter(
     dependencies=[Depends(setup_session_fastapi)],
 )
 
+
 class IncludeModelsType(str, Enum):
-   """Enum for specifying which models to include in the export"""
+    """Enum for specifying which models to include in the export"""
 
     all = "all"
     none = "none"
     last_active = "last_active"
+
 
 @router.post(":export", status_code=status.HTTP_200_OK)
 def initialize_project_export(
@@ -35,7 +38,9 @@ def initialize_project_export(
     include_models: IncludeModelsType = IncludeModelsType.all,
 ) -> JSONResponse:
     """Start exporting the selected project"""
-    job_id = ExportController.submit_project_export_job(project_identifier=project_identifier, author_id=user_id, include_models=include_models)
+    job_id = ExportController.submit_project_export_job(
+        project_identifier=project_identifier, author_id=user_id, include_models=include_models
+    )
     return JSONResponse({"job_id": job_id})
 
 

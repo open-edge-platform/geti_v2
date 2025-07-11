@@ -33,7 +33,9 @@ class ExportController:
     """
 
     @classmethod
-    def submit_project_export_job(cls, project_identifier: ProjectIdentifier, author_id: ID, include_models: IncludeModelsType) -> ID:
+    def submit_project_export_job(
+        cls, project_identifier: ProjectIdentifier, author_id: ID, include_models: IncludeModelsType
+    ) -> ID:
         """
         Submit project export job to the job scheduler
 
@@ -44,7 +46,9 @@ class ExportController:
         :raises FailedJobSubmissionException: if the export job cannot be submitted to the scheduler
         """
         if include_models not in [IncludeModelsType.all]:
-            raise NotImplementedError(f"Exporting projects including models of type '{include_models}' is not supported yet.")
+            raise NotImplementedError(
+                f"Exporting projects including models of type '{include_models}' is not supported yet."
+            )
 
         project_to_export = ProjectRepo().get_by_id(project_identifier.project_id)
         if isinstance(project_to_export, NullProject):
