@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useEffect } from 'react';
-
 import { intersectionWith } from 'lodash-es';
 
 import { MediaUploadPerDataset } from '../../../../providers/media-upload-provider/media-upload.interface';
@@ -21,21 +19,14 @@ export const DatasetLoaderManager = ({ mediaUploadState }: DatasetLoaderManagerP
 
     const { savedFilesQuery, deleteMany } = useCameraStorage();
     const indexedDbFiles = savedFilesQuery.data ?? [];
-    const acceptedFiles = indexedDbFiles.filter(({ isAccepted }) => isAccepted);
 
-    useEffect(() => {
-        const failedItems = isUploadInProgress ? [] : intersectionWith(acceptedFiles, errorList, isEqualFileName);
-        const loadedItems = isUploadInProgress ? [] : intersectionWith(acceptedFiles, successList, isEqualFileName);
+    const failedItems = isUploadInProgress ? [] : intersectionWith(indexedDbFiles, errorList, isEqualFileName);
+    const loadedItems = isUploadInProgress ? [] : intersectionWith(indexedDbFiles, successList, isEqualFileName);
+    const elementsToRemove = [...loadedItems, ...failedItems];
 
-        if (isNonEmptyArray(loadedItems)) {
-            deleteMany(getIds(loadedItems));
-        }
-
-        if (isNonEmptyArray(failedItems)) {
-            deleteMany(getIds(failedItems));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isUploadInProgress]);
+    if (isNonEmptyArray(elementsToRemove)) {
+        deleteMany(getIds(elementsToRemove));
+    }
 
     return <></>;
 };
