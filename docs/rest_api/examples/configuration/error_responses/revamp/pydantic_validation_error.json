@@ -1,0 +1,11 @@
+{
+  "http_status": 400,
+  "error_code": "invalid_payload",
+  "errors": [
+    {
+      "message": "Input should be greater than 0",
+      "type": "greater_than",
+      "location": "hyperparameters.training.learning_rate"
+    }
+  ]
+}

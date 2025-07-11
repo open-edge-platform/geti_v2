@@ -1,0 +1,5 @@
+in: query
+name: model_manifest_id
+description: The ID of the model manifest (AKA model architecture)
+schema:
+  type: string

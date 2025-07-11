@@ -1,0 +1,54 @@
+{
+  "task_configs": [
+    {
+      "task_id": "61012cdb1d38a5e71ef3bafd",
+      "training": {
+        "constraints": [
+          {
+            "key": "min_images_per_label",
+            "value": 10
+          }
+        ]
+      },
+      "auto_training": [
+        {
+          "key": "enable",
+          "value": true
+        },
+        {
+          "key": "enable_dynamic_required_annotations",
+          "value": false
+        },
+        {
+          "key": "min_images_per_label",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "task_id": "61012cdb1d38a5e71ef3bafe",
+      "training": {
+        "constraints": [
+          {
+            "key": "min_images_per_label",
+            "value": 15
+          }
+        ]
+      },
+      "auto_training": [
+        {
+          "key": "enable",
+          "value": false
+        },
+        {
+          "key": "enable_dynamic_required_annotations",
+          "value": true
+        },
+        {
+          "key": "min_images_per_label",
+          "value": 8
+        }
+      ]
+    }
+  ]
+}

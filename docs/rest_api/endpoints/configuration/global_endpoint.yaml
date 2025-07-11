@@ -1,4 +1,5 @@
 get:
+  deprecated: true
   tags:
     - Configuration
   summary: Get the current configuration for all components in the project.
