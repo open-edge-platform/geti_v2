@@ -31,13 +31,9 @@ export interface Polygon {
     readonly shapeType: 'polygon';
 }
 
-interface KeypointNode {
-    readonly x: number;
-    readonly y: number;
-    readonly isVisible: boolean;
-}
 export interface Pose {
-    readonly points: KeypointNode[];
+    // NOTE: this is not fully compatible with Geti's type
+    readonly points: Point[];
     readonly shapeType: 'pose';
 }
 
