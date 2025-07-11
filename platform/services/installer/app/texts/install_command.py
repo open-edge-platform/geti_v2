@@ -99,7 +99,10 @@ class InstallCmdConfirmationTexts:
     confirm_username_message = "Admin's username: {username}"
     confirm_data_message = "Path to the data storage: {path}"
     confirm_data_creation_message = "The following folder for data storage will be created: {path}"
-    change_config_message = "If you would like to change the values above, look for details be executing: sudo ./platform_installer install --help"
+    change_config_message = (
+        "If you would like to change the values above, look for details be executing: "
+        "sudo ./platform_installer install --help"
+    )
     accept_config_prompt = "Is the provided data correct and you want to proceed with the installation?"
     cert_file_message = "Path to the certificate file: {path}"
     key_file_message = "Path to the key file: {path}"

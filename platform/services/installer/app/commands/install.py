@@ -292,7 +292,7 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
     click.secho("\n" + InstallCmdTexts.installation_succeeded.format(platform_address=platform_address), fg="green")
 
 
-def display_final_confirmation(config: InstallationConfig) -> None:
+def display_final_confirmation(config: InstallationConfig, skip_confirmation_message: bool = False) -> None:
     """
     Display the gathered data and asks for the confirmation.
     """
@@ -317,11 +317,13 @@ def display_final_confirmation(config: InstallationConfig) -> None:
     else:
         click.echo(InstallCmdConfirmationTexts.confirm_data_creation_message.format(path=config.data_folder.value))
 
-    click.echo()
-    click.echo(InstallCmdConfirmationTexts.change_config_message)
+    if not skip_confirmation_message:
+        click.echo()
+        click.echo(InstallCmdConfirmationTexts.change_config_message)
 
-    click.echo()
-    click.confirm(InstallCmdConfirmationTexts.accept_config_prompt, default=True, abort=True)
+        click.echo()
+        click.confirm(InstallCmdConfirmationTexts.accept_config_prompt, default=True, abort=True)
+
 
 @click.command()
 @click.option(
@@ -369,6 +371,5 @@ def install(
     if not accept_third_party_licenses:
         click.confirm(InstallCmdTexts.third_party_licenses_prompt, default=True, abort=True)
     run_installation_checks(config=config)
-    if not skip_confirmation_message:
-        display_final_confirmation(config=config)
+    display_final_confirmation(config=config, skip_confirmation_message=skip_confirmation_message)
     execute_installation(config=config)
