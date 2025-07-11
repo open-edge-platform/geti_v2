@@ -21,6 +21,17 @@ class InstallCmdTexts:
     """
 
     start_message = "Running platform installer..."
+    skip_confirmation_help = "Skip the confirmation step and proceed with the installation."
+    third_party_licenses_help = (
+        "Accept the third-party licenses required for the installation. "
+        "Geti installs MongoDB database licensed under SSPL license (https://www.mongodb.com/legal/licensing/server-side-public-license) "  # noqa: E501
+        "and CUDA components licensed under the CUDA Toolkit End User License (https://docs.nvidia.com/cuda/eula/index.html). "  # noqa: E501
+    )
+    third_party_licenses_prompt = (
+        "Geti installs MongoDB database licensed under SSPL license (https://www.mongodb.com/legal/licensing/server-side-public-license) "  # noqa: E501
+        "and CUDA components licensed under the CUDA Toolkit End User License (https://docs.nvidia.com/cuda/eula/index.html). "  # noqa: E501
+        "Do you agree to continue the installation?"
+    )
     k8s_prompt = "Do you want to install the platform on an existing Kubernetes?"
     kube_config_prompt = "Path to kubeconfig file (example: /home/my-user/admin.conf)"
     username_help = "Login name (e.g. admin@my-company.com) of the user to be created during the installation"
