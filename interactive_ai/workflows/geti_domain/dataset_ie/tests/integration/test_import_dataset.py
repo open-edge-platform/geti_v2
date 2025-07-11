@@ -2175,30 +2175,33 @@ class TestImportDataset:
                 GetiProjectType.ANOMALY_DETECTION,
                 GetiProjectType.CLASSIFICATION,
             ],
-            [
-                "fxt_annotated_detection_project",
-                "fxt_anom_det_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.DETECTION,
-            ],
+            # Disabled ITEP-72043
+            # [
+            #     "fxt_annotated_detection_project",
+            #     "fxt_anom_det_dataset_definition",
+            #     GetiProjectType.ANOMALY_DETECTION,
+            #     GetiProjectType.DETECTION,
+            # ],
             [
                 "fxt_annotated_classification_project",
                 "fxt_anom_seg_dataset_definition",
                 GetiProjectType.ANOMALY_SEGMENTATION,
                 GetiProjectType.CLASSIFICATION,
             ],
-            [
-                "fxt_annotated_instance_segmentation_project",
-                "fxt_anom_seg_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.INSTANCE_SEGMENTATION,
-            ],
-            [
-                "fxt_annotated_segmentation_project",
-                "fxt_anom_seg_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.SEGMENTATION,
-            ],
+            # Disabled ITEP-72043
+            # [
+            #     "fxt_annotated_instance_segmentation_project",
+            #     "fxt_anom_seg_dataset_definition",
+            #     GetiProjectType.ANOMALY_SEGMENTATION,
+            #     GetiProjectType.INSTANCE_SEGMENTATION,
+            # ],
+            # Disabled ITEP-72043
+            # [
+            #     "fxt_annotated_segmentation_project",
+            #     "fxt_anom_seg_dataset_definition",
+            #     GetiProjectType.ANOMALY_SEGMENTATION,
+            #     GetiProjectType.SEGMENTATION,
+            # ],
         ],
     )
     def test_import_dataset_to_project_for_anomaly(

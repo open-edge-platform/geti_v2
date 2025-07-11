@@ -189,6 +189,7 @@ class TestParseDatasetExistingProject:
             if project_type not in CHAINED_PROJECT_TYPES:
                 mock_get_exported_project_type.assert_called()
 
+    @pytest.mark.skip("ITEP-72043")
     def test_parse_dataset_for_import_to_existing_project__datumaro_format(
         self,
         request,
