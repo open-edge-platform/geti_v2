@@ -9,7 +9,6 @@ import { Circle, Point, Rect, Shape } from '../../../core/annotations/shapes.int
 import { ShapeType } from '../../../core/annotations/shapetype.enum';
 import { getMockedAnnotation } from '../../../test-utils/mocked-items-factory/mocked-annotations';
 import {
-    convertGetiShapeToToolShape,
     convertGetiShapeTypeToToolShapeType,
     convertToolShapeToGetiShape,
     isInsideBoundingBox,
@@ -329,81 +328,6 @@ describe('annotator utils', () => {
         it('should throw error for unknown shape type', () => {
             // @ts-expect-error error is expected
             expect(() => convertGetiShapeTypeToToolShapeType('unknown')).toThrow('Unknown shape type');
-        });
-    });
-
-    describe('convertGetiShapeToToolShape', () => {
-        it('should convert Rect shape', () => {
-            const shape: Shape = {
-                shapeType: ShapeType.Rect,
-                x: 10,
-                y: 20,
-                width: 30,
-                height: 40,
-            };
-            expect(convertGetiShapeToToolShape(shape)).toEqual({
-                shapeType: 'rect',
-                x: 10,
-                y: 20,
-                width: 30,
-                height: 40,
-            });
-        });
-
-        it('should convert RotatedRect shape', () => {
-            const shape: Shape = {
-                shapeType: ShapeType.RotatedRect,
-                x: 5,
-                y: 6,
-                width: 7,
-                height: 8,
-                angle: 15,
-            };
-            expect(convertGetiShapeToToolShape(shape)).toEqual({
-                shapeType: 'rotated-rect',
-                x: 5,
-                y: 6,
-                width: 7,
-                height: 8,
-                angle: 15,
-            });
-        });
-
-        it('should convert Polygon shape', () => {
-            const shape: Shape = {
-                shapeType: ShapeType.Polygon,
-                points: [
-                    { x: 1, y: 2 },
-                    { x: 3, y: 4 },
-                ],
-            };
-            expect(convertGetiShapeToToolShape(shape)).toEqual({
-                shapeType: 'polygon',
-                points: [
-                    { x: 1, y: 2 },
-                    { x: 3, y: 4 },
-                ],
-            });
-        });
-
-        it('should convert Circle shape', () => {
-            const shape: Shape = {
-                shapeType: ShapeType.Circle,
-                x: 11,
-                y: 22,
-                r: 33,
-            };
-            expect(convertGetiShapeToToolShape(shape)).toEqual({
-                shapeType: 'circle',
-                x: 11,
-                y: 22,
-                r: 33,
-            });
-        });
-
-        it('should throw error for unknown shape type', () => {
-            // @ts-expect-error error is expected
-            expect(() => convertGetiShapeToToolShape({ shapeType: 'unknown' })).toThrow('Unknown shape type');
         });
     });
 });

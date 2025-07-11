@@ -478,12 +478,3 @@ export function convertToolShapeToGetiShape(shape: SmartToolsShape): Shape {
             throw new Error('Unknown shape type');
     }
 }
-
-export function convertGetiShapeToToolShape(shape: Polygon): ToolPolygon;
-export function convertGetiShapeToToolShape(shape: Rect): ToolRect;
-export function convertGetiShapeToToolShape(shape: RotatedRect): ToolRotatedRect;
-export function convertGetiShapeToToolShape(shape: Circle): ToolCircle;
-export function convertGetiShapeToToolShape(shape: Shape): SmartToolsShape;
-export function convertGetiShapeToToolShape(shape: Shape): SmartToolsShape {
-    return shape;
-}
