@@ -6,12 +6,16 @@ import { partition } from 'lodash-es';
 import { SupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
 
 export enum SortingOptions {
-    RELEVANCE_DESC = 'relevance-desc',
     RELEVANCE_ASC = 'relevance-asc',
-    NUMBER_OF_PARAMETERS_DESC = 'number-of-parameters-desc',
-    NUMBER_OF_PARAMETERS_ASC = 'number-of-parameters-asc',
-    COMPLEXITY_DESC = 'complexity-desc',
-    COMPLEXITY_ASC = 'complexity-asc',
+    RELEVANCE_DESC = 'relevance-desc',
+    NAME_ASC = 'name-asc',
+    NAME_DESC = 'name-desc',
+    INFERENCE_SPEED_ASC = 'inference-speed-asc',
+    INFERENCE_SPEED_DESC = 'inference-speed-desc',
+    TRAINING_TIME_ASC = 'training-time-asc',
+    TRAINING_TIME_DESC = 'training-time-desc',
+    ACCURACY_ASC = 'accuracy-asc',
+    ACCURACY_DESC = 'accuracy-desc',
 }
 
 export const moveActiveArchitectureToBeRightAfterRecommended = (

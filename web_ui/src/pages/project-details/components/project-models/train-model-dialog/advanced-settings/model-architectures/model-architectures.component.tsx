@@ -19,18 +19,79 @@ const sortingHandlers: Record<SortingOptions, SortingHandler> = {
         orderBy(templates, (algorithm) => algorithm.isDefaultAlgorithm, 'desc'),
     [SortingOptions.RELEVANCE_ASC]: (templates) =>
         orderBy(templates, (algorithm) => algorithm.isDefaultAlgorithm, 'asc'),
-    [SortingOptions.NUMBER_OF_PARAMETERS_ASC]: (templates) =>
-        orderBy(templates, (algorithm) => algorithm.trainableParameters, 'asc'),
-    [SortingOptions.NUMBER_OF_PARAMETERS_DESC]: (templates) =>
-        orderBy(templates, (algorithm) => algorithm.trainableParameters, 'desc'),
-    [SortingOptions.COMPLEXITY_ASC]: (templates) => orderBy(templates, (algorithm) => algorithm.gigaflops, 'asc'),
-    [SortingOptions.COMPLEXITY_DESC]: (templates) => orderBy(templates, (algorithm) => algorithm.gigaflops, 'desc'),
+    [SortingOptions.ACCURACY_ASC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.performanceRatings.accuracy, 'asc'),
+    [SortingOptions.ACCURACY_DESC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.performanceRatings.accuracy, 'desc'),
+    [SortingOptions.INFERENCE_SPEED_ASC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.performanceRatings.inferenceSpeed, 'asc'),
+    [SortingOptions.INFERENCE_SPEED_DESC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.performanceRatings.inferenceSpeed, 'desc'),
+    [SortingOptions.TRAINING_TIME_ASC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.performanceRatings.trainingTime, 'asc'),
+    [SortingOptions.TRAINING_TIME_DESC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.performanceRatings.trainingTime, 'desc'),
+    [SortingOptions.NAME_ASC]: (templates) => orderBy(templates, (algorithm) => algorithm.name, 'asc'),
+    [SortingOptions.NAME_DESC]: (templates) => orderBy(templates, (algorithm) => algorithm.name, 'desc'),
 };
 
 interface SortArchitecturesPickerProps {
     sortBy: SortingOptions;
     onSort: (option: SortingOptions) => void;
 }
+
+const SORT_OPTIONS = [
+    [
+        {
+            key: SortingOptions.RELEVANCE_ASC,
+            name: 'Relevance',
+        },
+        {
+            key: SortingOptions.RELEVANCE_DESC,
+            name: 'Relevance',
+        },
+    ],
+    [
+        {
+            key: SortingOptions.NAME_ASC,
+            name: 'Name',
+        },
+        {
+            key: SortingOptions.NAME_DESC,
+            name: 'Name',
+        },
+    ],
+    [
+        {
+            key: SortingOptions.ACCURACY_ASC,
+            name: 'Accuracy',
+        },
+        {
+            key: SortingOptions.ACCURACY_DESC,
+            name: 'Accuracy',
+        },
+    ],
+    [
+        {
+            key: SortingOptions.INFERENCE_SPEED_ASC,
+            name: 'Inference speed',
+        },
+        {
+            key: SortingOptions.INFERENCE_SPEED_DESC,
+            name: 'Inference speed',
+        },
+    ],
+    [
+        {
+            key: SortingOptions.TRAINING_TIME_ASC,
+            name: 'Training time',
+        },
+        {
+            key: SortingOptions.TRAINING_TIME_DESC,
+            name: 'Training time',
+        },
+    ],
+];
 
 const SortArchitecturesPicker: FC<SortArchitecturesPickerProps> = ({ sortBy, onSort }) => {
     return (
@@ -43,54 +104,16 @@ const SortArchitecturesPicker: FC<SortArchitecturesPickerProps> = ({ sortBy, onS
                 onAction={(key: Key) => onSort(key as SortingOptions)}
                 defaultSelectedKeys={[sortBy]}
             >
-                <Section>
-                    <Item key={SortingOptions.RELEVANCE_ASC} textValue={SortingOptions.RELEVANCE_ASC}>
-                        <Text>Relevance</Text>
-                        <Icon>
-                            <SortUp />
-                        </Icon>
-                    </Item>
-                    <Item key={SortingOptions.RELEVANCE_DESC} textValue={SortingOptions.RELEVANCE_DESC}>
-                        <Text>Relevance</Text>
-                        <Icon>
-                            <SortDown />
-                        </Icon>
-                    </Item>
-                </Section>
-                <Section>
-                    <Item
-                        key={SortingOptions.NUMBER_OF_PARAMETERS_ASC}
-                        textValue={SortingOptions.NUMBER_OF_PARAMETERS_ASC}
-                    >
-                        <Text>Number of parameters</Text>
-                        <Icon>
-                            <SortUp />
-                        </Icon>
-                    </Item>
-                    <Item
-                        key={SortingOptions.NUMBER_OF_PARAMETERS_DESC}
-                        textValue={SortingOptions.NUMBER_OF_PARAMETERS_DESC}
-                    >
-                        <Text>Number of parameters</Text>
-                        <Icon>
-                            <SortDown />
-                        </Icon>
-                    </Item>
-                </Section>
-                <Section>
-                    <Item key={SortingOptions.COMPLEXITY_ASC} textValue={SortingOptions.COMPLEXITY_ASC}>
-                        <Text>Complexity</Text>
-                        <Icon>
-                            <SortUp />
-                        </Icon>
-                    </Item>
-                    <Item key={SortingOptions.COMPLEXITY_DESC} textValue={SortingOptions.COMPLEXITY_DESC}>
-                        <Text>Complexity</Text>
-                        <Icon>
-                            <SortDown />
-                        </Icon>
-                    </Item>
-                </Section>
+                {SORT_OPTIONS.map((section, index) => (
+                    <Section key={index}>
+                        {section.map((option) => (
+                            <Item key={option.key} textValue={option.name}>
+                                <Text>{option.name}</Text>
+                                <Icon>{option.key.endsWith('asc') ? <SortUp /> : <SortDown />}</Icon>
+                            </Item>
+                        ))}
+                    </Section>
+                ))}
             </Menu>
         </MenuTrigger>
     );
