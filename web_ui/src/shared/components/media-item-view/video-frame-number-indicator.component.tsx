@@ -22,7 +22,6 @@ export const VideoFrameNumberIndicator = ({ frameNumber }: VideoFrameIndicatorPr
             borderRadius={'small'}
             height={'size-200'}
             UNSAFE_className={classes.videoFrameText}
-            UNSAFE_style={{ backgroundColor: 'var(--spectrum-global-color-gray-50)' }}
         >
             {frameNumber}F
         </View>

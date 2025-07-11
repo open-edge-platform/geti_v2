@@ -32,7 +32,6 @@ export const VideoIndicator = ({ duration, frames }: VideoIndicatorProps): JSX.E
                     borderRadius={'small'}
                     height={'size-200'}
                     UNSAFE_className={classes.videoFrameText}
-                    UNSAFE_style={{ backgroundColor: 'var(--spectrum-global-color-gray-50)' }}
                 >
                     {frameText}
                 </View>
@@ -48,7 +47,6 @@ export const VideoIndicator = ({ duration, frames }: VideoIndicatorProps): JSX.E
                 borderRadius={'small'}
                 height={'size-200'}
                 UNSAFE_className={classes.videoFrameText}
-                UNSAFE_style={{ backgroundColor: 'var(--spectrum-global-color-gray-50)' }}
             >
                 {durationText}
             </View>
