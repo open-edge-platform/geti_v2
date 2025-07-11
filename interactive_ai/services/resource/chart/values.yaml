@@ -4,7 +4,7 @@ imagePullPolicy: IfNotPresent
 
 resources:
   requests:
-    cpu: 300m
+    cpu: 1
     memory: 1Gi
   limits:
     memory: 3Gi # To be reduced after media upload revamp (CVS-152302)
