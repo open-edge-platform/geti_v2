@@ -160,7 +160,7 @@ describe('DataAugmentation', () => {
         });
     });
 
-    it('updates parameters and resets them properly', () => {
+    it('updates parameters and resets them to default properly', () => {
         render(<App dataAugmentationParameters={dataAugmentationParameters} />);
 
         const parameters = Object.values(dataAugmentationParameters).flat();
