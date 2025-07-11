@@ -41,7 +41,8 @@ class TestPrepareTrainingDataTask:
     @patch.object(ProjectRepo, "mark_locked")
     @patch("job.tasks.prepare_and_train.prepare_data_and_train.prepare_train")
     @patch("job.tasks.prepare_and_train.prepare_data_and_train.create_flyte_container_task")
-    @patch("job.tasks.prepare_and_train.prepare_data_and_train.ComputeResources.from_node_resources")
+    @patch("job.tasks.prepare_and_train.prepare_data_and_train.ComputeResources.create")
+    @patch("job.tasks.prepare_and_train.prepare_data_and_train.calculate_training_resources")
     @patch(
         "job.tasks.prepare_and_train.prepare_data_and_train.EphemeralStorageResources.create_from_compiled_dataset_shards"
     )
@@ -53,7 +54,8 @@ class TestPrepareTrainingDataTask:
         mocked_publish_consumed_resources,
         mocked_trainer_image_info_create,
         mocked_create_from_compiled_dataset_shards,
-        mocked_compute_resources_from_node_resources,
+        mock_calculate_training_resources,
+        mocked_compute_resources_create,
         mocked_create_flyte_container_task,
         mocked_prepare_train,
         mocked_lock_project,
@@ -83,6 +85,7 @@ class TestPrepareTrainingDataTask:
         mocked_prepare_train.return_value = fxt_train_output_models
         mocked_train_task = MagicMock()
         mocked_create_flyte_container_task.return_value = mocked_train_task
+        mock_calculate_training_resources.return_value = ({}, "cpu")
 
         # Act
         prepare_training_data_model_and_start_training(
@@ -148,7 +151,7 @@ class TestPrepareTrainingDataTask:
             report_progress_calls.append(call(progress=100.0, message="Training from sharded dataset is disabled"))
 
         mocked_prepare_train.assert_called_once_with(train_data=train_data, dataset=dataset)
-        mocked_compute_resources_from_node_resources.assert_called_once()
+        mocked_compute_resources_create.assert_called_once()
         mocked_trainer_image_info_create.assert_called_once()
         mocked_create_from_compiled_dataset_shards.assert_called_once()
         mocked_create_flyte_container_task.assert_called_once_with(

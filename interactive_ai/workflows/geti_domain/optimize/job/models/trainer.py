@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 """Define dataclass for data passing between optimization tasks."""
 
+import asyncio
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
@@ -9,7 +10,11 @@ from geti_types import ID, ProjectIdentifier
 from iai_core.entities.model import Model
 from iai_core.entities.model_storage import ModelStorageIdentifier
 from iai_core.repos import ModelRepo
-from jobs_common.k8s_helpers.k8s_resources_calculation import ComputeResources, EphemeralStorageResources
+from jobs_common.k8s_helpers.k8s_resources_calculation import (
+    ComputeResources,
+    EphemeralStorageResources,
+    calculate_optimization_resources,
+)
 from jobs_common.k8s_helpers.trainer_image_info import TrainerImageInfo
 from jobs_common.tasks.utils.secrets import JobMetadata
 
@@ -36,6 +41,7 @@ class OptimizationTrainerContext:
 
     @classmethod
     def create_from_config(cls, optimization_cfg: OptimizationConfig) -> "OptimizationTrainerContext":
+        resources = asyncio.run(calculate_optimization_resources())
         ephemeral_storage_resources = EphemeralStorageResources.create_from_compiled_dataset_shards(
             compiled_dataset_shards=optimization_cfg.compiled_dataset_shards,
             ephemeral_storage_safety_margin=5 * (1024**3),  # 5Gi
@@ -50,7 +56,7 @@ class OptimizationTrainerContext:
             model_to_optimize_id=str(optimization_cfg.model_to_optimize.id_),
             model_storage_id=str(optimization_cfg.model_storage_identifier.model_storage_id),
             ephemeral_storage_resources=ephemeral_storage_resources,
-            compute_resources=ComputeResources.from_node_resources(),
+            compute_resources=ComputeResources.create(resources=resources, accelerator_name="cpu"),
             trainer_image_info=TrainerImageInfo.create(
                 training_framework=optimization_cfg.input_model.training_framework
             ),
