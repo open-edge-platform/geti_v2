@@ -64,16 +64,6 @@ const SORT_OPTIONS = [
     ],
     [
         {
-            key: SortingOptions.ACCURACY_ASC,
-            name: 'Accuracy',
-        },
-        {
-            key: SortingOptions.ACCURACY_DESC,
-            name: 'Accuracy',
-        },
-    ],
-    [
-        {
             key: SortingOptions.INFERENCE_SPEED_ASC,
             name: 'Inference speed',
         },
@@ -90,6 +80,16 @@ const SORT_OPTIONS = [
         {
             key: SortingOptions.TRAINING_TIME_DESC,
             name: 'Training time',
+        },
+    ],
+    [
+        {
+            key: SortingOptions.ACCURACY_ASC,
+            name: 'Accuracy',
+        },
+        {
+            key: SortingOptions.ACCURACY_DESC,
+            name: 'Accuracy',
         },
     ],
 ];
