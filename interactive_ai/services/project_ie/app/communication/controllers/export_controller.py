@@ -9,6 +9,7 @@ import os
 from grpc import RpcError
 from starlette.responses import RedirectResponse
 
+from communication.endpoints.export_endpoints import IncludeModelsType
 from communication.http_exceptions import FailedArchiveDownloadException, FailedJobSubmissionException
 from communication.job_creation_helpers import JobDuplicatePolicy, serialize_job_key
 from repos import ZipStorageRepo
@@ -32,21 +33,26 @@ class ExportController:
     """
 
     @classmethod
-    def submit_project_export_job(cls, project_identifier: ProjectIdentifier, author_id: ID) -> ID:
+    def submit_project_export_job(cls, project_identifier: ProjectIdentifier, author_id: ID, include_models: IncludeModelsType) -> ID:
         """
         Submit project export job to the job scheduler
 
         :param project_identifier: Identifier of the project to export
         :param author_id: ID of the user triggering the export job
+        :param include_models: Specifies which models to include in the export
         :return: submitted job id
         :raises FailedJobSubmissionException: if the export job cannot be submitted to the scheduler
         """
+        if include_models not in [IncludeModelsType.all]:
+            raise NotImplementedError(f"Exporting projects including models of type '{include_models}' is not supported yet.")
+
         project_to_export = ProjectRepo().get_by_id(project_identifier.project_id)
         if isinstance(project_to_export, NullProject):
             raise ProjectNotFoundException(project_identifier.project_id)
 
         job_payload = {
             "project_id": str(project_to_export.id_),
+            "include_models": include_models.value,
         }
         job_metadata = {
             "project": {
