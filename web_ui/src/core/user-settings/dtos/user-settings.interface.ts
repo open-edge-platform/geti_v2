@@ -48,6 +48,7 @@ export enum FUX_NOTIFICATION_KEYS {
     ANNOTATOR_CONTINUE_ANNOTATING = 'annotatorContinueAnnotating',
     AUTO_TRAINING_MODAL = 'autoTrainingCreditModal',
     AUTO_TRAINING_NOTIFICATION = 'autoTrainingCreditNotification',
+    CREDIT_BALANCE_BUTTON = 'creditBalanceButton',
 }
 
 export enum FUX_SETTINGS_KEYS {

@@ -3,6 +3,8 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
+import { RITM } from '@geti/smart-tools';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { usePrevious } from '../../../../hooks/use-previous/use-previous.hook';
@@ -16,7 +18,7 @@ import useUndoRedoState from '../undo-redo/use-undo-redo-state';
 import { RITMPoint, RITMResult } from './ritm-tool.interface';
 
 export interface RITMStateContextProps {
-    loadImage: (imageData: ImageData) => void;
+    loadImage: RITM['loadImage'];
     isLoading: boolean;
     isProcessing: boolean;
     reset: () => void;

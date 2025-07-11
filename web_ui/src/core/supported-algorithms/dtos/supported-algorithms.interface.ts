@@ -16,7 +16,7 @@ export enum LifecycleStage {
     DEPRECATED = 'deprecated',
 }
 
-export interface SupportedAlgorithmDTO {
+export interface LegacySupportedAlgorithmDTO {
     name: string;
     model_size: number;
     gigaflops: number;
@@ -28,6 +28,35 @@ export interface SupportedAlgorithmDTO {
     performance_category: PerformanceCategory;
 }
 
+export type SupportedAlgorithmStatsValues = 1 | 2 | 3;
+
+export interface SupportedAlgorithmDTO {
+    capabilities: {
+        tiling: boolean;
+        xai: boolean;
+    };
+    description: string;
+    name: string;
+    model_manifest_id: string;
+    stats: {
+        gigaflops: number;
+        trainable_parameters: number; // in millions
+        performance_ratings: {
+            accuracy: SupportedAlgorithmStatsValues;
+            inference_speed: SupportedAlgorithmStatsValues;
+            training_time: SupportedAlgorithmStatsValues;
+        };
+    };
+    support_status: LifecycleStage;
+    performance_category: PerformanceCategory;
+    supported_gpus: {
+        intel: boolean;
+        nvidia: boolean;
+    };
+    is_default_model: boolean;
+    task: TASK_TYPE;
+}
+
 export interface SupportedAlgorithmsResponseDTO {
-    supported_algorithms: SupportedAlgorithmDTO[];
+    supported_algorithms: LegacySupportedAlgorithmDTO[];
 }

@@ -85,9 +85,6 @@ spec:
             value: /api/.*/media/images/.*/annotations.*
         - path:
             type: RegularExpression
-            value: /api/.*/code_deployments.*
-        - path:
-            type: RegularExpression
             value: /api/.*/deployment_package.*
         - path:
             type: RegularExpression

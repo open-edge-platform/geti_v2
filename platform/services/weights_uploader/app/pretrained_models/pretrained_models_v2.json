@@ -314,14 +314,14 @@
     "template_ids": ["Custom_Image_Classification_MobileNet-V3-small"]
   },
   {
-    "url": "http://repository.toolbox.iotg.sclab.intel.com/extra-deps/models/models--timm--resnet18.a1_in1k.zip",
+    "url": "models--timm--resnet18.a1_in1k.zip",
     "target": "/home/non-root/.cache/torch/hub/checkpoints/models--timm--resnet18.a1_in1k.zip",
     "unzip": false,
     "sha_sum": "c0ddac84c0ad89a29428527669359316f76bc746dc9f0d51b72f148e2f7b9252",
     "template_ids": ["ote_anomaly_classification_padim", "ote_anomaly_classification_stfpm", "ote_anomaly_uflow"]
   },
   {
-    "url": "http://repository.toolbox.iotg.sclab.intel.com/extra-deps/models/models--timm--tf_efficientnetv2_s.in21k.zip",
+    "url": "models--timm--tf_efficientnetv2_s.in21k.zip",
     "target": "/home/non-root/.cache/torch/hub/checkpoints/models--timm--tf_efficientnetv2_s.in21k.zip",
     "unzip": false,
     "sha_sum": "7ef98ff5be511c04239b066c054fb3e624c4920cbab2c77d92a638f4d6810263",

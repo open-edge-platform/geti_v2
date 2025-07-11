@@ -26,6 +26,10 @@ describe('default annotator tool', () => {
     it('selects the selection tool when annotating a segmentation project', () => {
         expect(defaultToolForProject([DOMAIN.CLASSIFICATION])).toBe(ToolType.SelectTool);
     });
+
+    it('selects the keypoint tool when annotating a keypoint detection project', () => {
+        expect(defaultToolForProject([DOMAIN.KEYPOINT_DETECTION])).toBe(ToolType.KeypointTool);
+    });
 });
 
 describe('getInitialAnnotations', () => {

@@ -184,6 +184,9 @@ export const initialFuxNotificationsConfig: FuxNotificationsConfig = {
     [FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION]: {
         isEnabled: false,
     },
+    [FUX_NOTIFICATION_KEYS.CREDIT_BALANCE_BUTTON]: {
+        isEnabled: false,
+    },
 };
 
 export const initialFuxSettingsConfig: FuxSettingsConfig = {

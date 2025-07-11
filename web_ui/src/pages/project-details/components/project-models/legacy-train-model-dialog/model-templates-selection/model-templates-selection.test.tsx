@@ -8,7 +8,7 @@ import { mockedArchitectureModels } from '../../../../../../core/models/services
 import { DOMAIN } from '../../../../../../core/projects/core.interface';
 import { createInMemoryProjectService } from '../../../../../../core/projects/services/in-memory-project-service';
 import { LifecycleStage } from '../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { getMockedSupportedAlgorithm } from '../../../../../../core/supported-algorithms/services/test-utils';
+import { getLegacyMockedSupportedAlgorithm } from '../../../../../../core/supported-algorithms/services/test-utils';
 import { TaskWithSupportedAlgorithms } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { getMockedProjectIdentifier } from '../../../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedProject } from '../../../../../../test-utils/mocked-items-factory/mocked-project';
@@ -20,57 +20,57 @@ import { ModelConfigurationOption } from './utils';
 
 describe('ModelTemplatesSelection', () => {
     const mockedSupportedAlgorithmsForDetection = [
-        getMockedSupportedAlgorithm({
+        getLegacyMockedSupportedAlgorithm({
             name: 'YOLO',
             domain: DOMAIN.DETECTION,
             modelSize: 200,
             modelTemplateId: 'detection_yolo',
             gigaflops: 1.3,
-            summary: 'YOLO architecture for detection',
+            description: 'YOLO architecture for detection',
         }),
-        getMockedSupportedAlgorithm({
+        getLegacyMockedSupportedAlgorithm({
             name: 'SSD',
             domain: DOMAIN.DETECTION,
             modelSize: 100,
             modelTemplateId: 'detection_ssd',
             gigaflops: 5.4,
-            summary: 'SSD architecture for detection',
+            description: 'SSD architecture for detection',
         }),
-        getMockedSupportedAlgorithm({
+        getLegacyMockedSupportedAlgorithm({
             name: 'ATTS',
             domain: DOMAIN.DETECTION,
             modelSize: 150,
             modelTemplateId: 'detection_atts',
             gigaflops: 3,
             isDefaultAlgorithm: true,
-            summary: 'ATTS architecture for detection',
+            description: 'ATTS architecture for detection',
         }),
     ];
 
     const mockedSupportedAlgorithmsForClassification = [
-        getMockedSupportedAlgorithm({
+        getLegacyMockedSupportedAlgorithm({
             name: 'YOLO Classification',
             domain: DOMAIN.CLASSIFICATION,
             modelSize: 100,
             modelTemplateId: 'classification_yolo',
             gigaflops: 1.3,
-            summary: 'YOLO architecture for classification',
+            description: 'YOLO architecture for classification',
         }),
-        getMockedSupportedAlgorithm({
+        getLegacyMockedSupportedAlgorithm({
             name: 'SSD Classification',
             domain: DOMAIN.CLASSIFICATION,
             modelSize: 100,
             modelTemplateId: 'classification_ssd',
             gigaflops: 6.4,
-            summary: 'SSD architecture for classification',
+            description: 'SSD architecture for classification',
         }),
-        getMockedSupportedAlgorithm({
+        getLegacyMockedSupportedAlgorithm({
             name: 'ATTS Classification',
             domain: DOMAIN.CLASSIFICATION,
             modelSize: 150,
             modelTemplateId: 'classification_atts',
             gigaflops: 3.2,
-            summary: 'ATTS architecture for classification',
+            description: 'ATTS architecture for classification',
             isDefaultAlgorithm: true,
         }),
     ];
@@ -215,32 +215,32 @@ describe('ModelTemplatesSelection', () => {
 
         const mockTasksWithSupportedAlgorithms: TaskWithSupportedAlgorithms = {
             [selectedDetectionTask.id]: [
-                getMockedSupportedAlgorithm({
+                getLegacyMockedSupportedAlgorithm({
                     name: 'YOLO',
                     domain: DOMAIN.DETECTION,
                     modelSize: 200,
                     modelTemplateId: 'detection_yolo',
                     gigaflops: 1.3,
                     lifecycleStage: LifecycleStage.OBSOLETE,
-                    summary: 'YOLO architecture for detection',
+                    description: 'YOLO architecture for detection',
                 }),
-                getMockedSupportedAlgorithm({
+                getLegacyMockedSupportedAlgorithm({
                     name: 'SSD',
                     domain: DOMAIN.DETECTION,
                     modelSize: 100,
                     modelTemplateId: 'detection_ssd',
                     gigaflops: 5.4,
                     lifecycleStage: LifecycleStage.DEPRECATED,
-                    summary: 'SSD architecture for detection',
+                    description: 'SSD architecture for detection',
                 }),
-                getMockedSupportedAlgorithm({
+                getLegacyMockedSupportedAlgorithm({
                     name: 'ATTS',
                     domain: DOMAIN.DETECTION,
                     modelSize: 150,
                     modelTemplateId: 'detection_atts',
                     gigaflops: 3,
                     isDefaultAlgorithm: true,
-                    summary: 'ATTS architecture for detection',
+                    description: 'ATTS architecture for detection',
                 }),
             ],
             [selectedClassificationTask.id]: mockedSupportedAlgorithmsForClassification,

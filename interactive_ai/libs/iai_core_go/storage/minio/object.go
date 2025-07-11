@@ -15,7 +15,9 @@ import (
 	"geti.com/iai_core/storage"
 )
 
-type ObjectStorageHandlerImpl struct{}
+type ObjectStorageHandlerImpl struct {
+	cm *ClientManager
+}
 
 // GetObjectByType is a function that retrieves an object from a bucket based on the provided object name and type.
 // It returns an io.Reader, the size of the object, and an error if any.
@@ -30,7 +32,7 @@ func (h *ObjectStorageHandlerImpl) GetObjectByType(
 		return nil, nil, err
 	}
 
-	minioClient, minioErr := getMinioClient(ctx)
+	minioClient, minioErr := h.cm.GetClient(ctx)
 	if minioErr != nil {
 		return nil, nil, minioErr
 	}
@@ -71,7 +73,7 @@ func (h *ObjectStorageHandlerImpl) CreateObject(
 	if err != nil {
 		return err
 	}
-	minioClient, minioErr := getMinioClient(ctx)
+	minioClient, minioErr := h.cm.GetClient(ctx)
 	if minioErr != nil {
 		return minioErr
 	}

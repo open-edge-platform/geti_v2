@@ -151,4 +151,5 @@ jest.mock('@geti/smart-tools', () => ({
         executionProviders: ['cpu'],
         wasmRoot: {},
     },
+    RITM_TEMPLATE_SIZE: 10,
 }));

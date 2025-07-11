@@ -145,7 +145,7 @@ export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContex
                         </TooltipTrigger>
                     )}
                     {hasSubmit && isActiveLearningMode && (
-                        <TooltipTrigger placement={'bottom'}>
+                        <TooltipTrigger placement={'right'}>
                             <SubmitButton
                                 key={'submit'}
                                 canSubmit={shouldSave}

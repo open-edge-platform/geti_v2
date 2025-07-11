@@ -8,6 +8,7 @@ import { JobInfoStatus } from '../../../../core/tests/dtos/tests.interface';
 import { getMockedTest } from '../../../../core/tests/services/tests-utils';
 import { Test } from '../../../../core/tests/tests.interface';
 import { projectRender as render } from '../../../../test-utils/project-provider-render';
+import { checkTooltip } from '../../../../test-utils/utils';
 import { TestDetails } from './test-details.component';
 
 const inMemoryProjectService = createInMemoryProjectService();
@@ -35,6 +36,15 @@ const renderTestDetails = async (test?: Partial<Test> | undefined) => {
 
 describe('TestDetails', () => {
     const testName = 'mocked-test-name';
+
+    it('renders a tooltip when hovering on Model score info button', async () => {
+        await renderTestDetails();
+        const infoButton = await screen.findByRole('button', { name: /label-relation/i });
+
+        expect(infoButton).toBeVisible();
+
+        await checkTooltip(infoButton, /model score for every image/i);
+    });
 
     it('renders initial score (labelId null)', async () => {
         const initialScore = mockedScores[0].value * 100;

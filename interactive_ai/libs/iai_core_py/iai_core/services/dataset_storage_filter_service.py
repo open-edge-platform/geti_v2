@@ -4,7 +4,6 @@ import logging
 
 from iai_core.entities.dataset_storage_filter_data import DatasetStorageFilterData
 from iai_core.entities.image import Image
-from iai_core.entities.media import MediaPreprocessingStatus
 from iai_core.entities.video import Video
 from iai_core.repos import AnnotationSceneRepo, AnnotationSceneStateRepo, ImageRepo, VideoRepo
 from iai_core.repos.dataset_storage_filter_repo import DatasetStorageFilterRepo
@@ -100,20 +99,29 @@ class DatasetStorageFilterService:
             annotation_scene_id,
         )
 
-        video: Video | None = None
-        if annotation_scene.media_identifier.media_type is MediaType.VIDEO_FRAME:
-            # Video frames are not uploaded separately, so we have to add media filter data
-            # together with the annotation scene filter data
-            video_repo = VideoRepo(dataset_storage_identifier=dataset_storage_identifier)
-            video = video_repo.get_by_id(annotation_scene.media_identifier.media_id)
+        media_id = annotation_scene.media_identifier.media_id
+        media_type = annotation_scene.media_identifier.media_type
+
+        media: Image | Video
+        match media_type:
+            case MediaType.IMAGE:
+                media = ImageRepo(dataset_storage_identifier).get_by_id(media_id)
+            case MediaType.VIDEO | MediaType.VIDEO_FRAME:
+                media = VideoRepo(dataset_storage_identifier).get_by_id(media_id)
+            case _:
+                raise ValueError(
+                    f"Cannot handle new annotation scene with media type {media_type.name}. "
+                    f"The media type should be an image or a video."
+                )
 
         dataset_storage_filter_data = DatasetStorageFilterData.create_dataset_storage_filter_data(
             media_identifier=annotation_scene.media_identifier,
-            media=video,
+            # Video frames are not uploaded separately, so we have to add media filter data
+            # together with the annotation scene filter data
+            media=media if media_type is MediaType.VIDEO_FRAME else None,
             annotation_scene=annotation_scene,
             media_annotation_state=annotation_state.get_state_media_level(),
-            # When new annotation scene event is triggered for video, it should already be preprocessed
-            preprocessing=video.preprocessing.status if video is not None else MediaPreprocessingStatus.FINISHED,
+            preprocessing=media.preprocessing.status,
         )
 
         dataset_storage_filter_repo = DatasetStorageFilterRepo(dataset_storage_identifier=dataset_storage_identifier)

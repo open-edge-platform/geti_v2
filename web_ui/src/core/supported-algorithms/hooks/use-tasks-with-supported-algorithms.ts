@@ -20,12 +20,12 @@ export const useTasksWithSupportedAlgorithms = (): UseTasksWithSupportedAlgorith
 
     const { data: supportedAlgorithms } = useSupportedAlgorithms(projectIdentifier);
 
-    const tasksWithSupportedAlgorithms: TaskWithSupportedAlgorithms = useMemo(() => {
+    const tasksWithSupportedAlgorithms = useMemo(() => {
         if (supportedAlgorithms === undefined || project?.tasks === undefined) {
             return {};
         }
 
-        return project.tasks.reduce<TaskWithSupportedAlgorithms>((prev, curr) => {
+        return project.tasks.reduce((prev, curr) => {
             if (!isNotCropDomain(curr.domain)) {
                 return prev;
             }
@@ -37,7 +37,9 @@ export const useTasksWithSupportedAlgorithms = (): UseTasksWithSupportedAlgorith
                 ...prev,
             };
         }, {});
-    }, [project?.tasks, supportedAlgorithms]);
+    }, [supportedAlgorithms, project?.tasks]);
 
-    return { tasksWithSupportedAlgorithms };
+    return {
+        tasksWithSupportedAlgorithms,
+    };
 };
