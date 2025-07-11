@@ -167,7 +167,7 @@ def deploy_cluster_role_binding(cluster_role_binding: V1ClusterRoleBinding) -> N
 
 
 def create_job(
-    name: str, image: str, registry: str, manifest_version: str, port: int, gpu_provider: str | None = None
+    name: str, image: str, registry: str, manifest_version: str, port: int, gpu_label: str | None = None, render_gid: int | None = None
 ) -> V1Job:
     """Create a Job object."""
     http_proxy = os.getenv("HTTP_PROXY")
@@ -184,7 +184,8 @@ def create_job(
         env=[
             V1EnvVar(name="GETI_REGISTRY", value=registry),
             V1EnvVar(name="GETI_MANIFEST_VERSION", value=manifest_version),
-            V1EnvVar(name="GPU_PROVIDER", value=gpu_provider or ""),
+            V1EnvVar(name="GPU_LABEL", value=gpu_label or ""),
+            V1EnvVar(name="RENDER_GID", value=str(render_gid) if render_gid else ""),
             V1EnvVar(
                 name="DATA_FOLDER",
                 value_from=V1EnvVarSource(

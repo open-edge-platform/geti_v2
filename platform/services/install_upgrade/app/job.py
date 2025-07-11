@@ -35,6 +35,8 @@ HTTPS_PROXY = os.getenv("HTTPS_PROXY", "")
 HTTP_PROXY = os.getenv("HTTP_PROXY", "")
 NO_PROXY = os.getenv("NO_PROXY", "")
 IMAGE_REGISTRY = os.getenv("IMAGE_REGISTRY") or None
+GPU_PROVIDER = os.getenv("GPU_PROVIDER", "")
+RENDER_GID = os.getenv("RENDER_GID", "")
 
 platform_router = APIRouter(prefix="/platform", tags=["Platform"])
 
