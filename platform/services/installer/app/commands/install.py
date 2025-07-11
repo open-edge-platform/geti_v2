@@ -264,6 +264,8 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
     if os.path.exists(K3S_INSTALLATION_MARK_FILEPATH):
         config.master_ip_autodetected.value = get_first_public_ip()
 
+    click.echo(InstallCmdTexts.components_installing)
+
     try:
         deploy_geti_controller_chart(config=config)
         controller_response = call_install_endpoint(kube_config=config.kube_config.value)

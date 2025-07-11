@@ -50,6 +50,7 @@ class InstallCmdTexts:
     k3s_installing = "Installing k3s. Detailed logs can be found in: platform_logs/k3s_install.log."
     k3s_installation_succeeded = "k3s installed successfully. Path to admin kubeconfig: /etc/rancher/k3s/k3s.yaml"
     k3s_installation_failed = "k3s installation failed. Look for errors in the log."
+    components_installing = "Installing initial components. Detailed logs can be found in: platform_logs/install.log."
     sys_pkgs_installing = "Installing system packages. Detailed logs can be found in: platform_logs/install.log."
     sys_pkgs_installation_succeeded = "system packages installed successfully."
     sys_pkgs_installation_failed = "system packages installation failed. Look for errors in the log."
