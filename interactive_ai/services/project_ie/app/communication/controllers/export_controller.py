@@ -5,11 +5,11 @@
 
 import logging
 import os
+from enum import Enum
 
 from grpc import RpcError
 from starlette.responses import RedirectResponse
 
-from communication.endpoints.export_endpoints import IncludeModelsType
 from communication.http_exceptions import FailedArchiveDownloadException, FailedJobSubmissionException
 from communication.job_creation_helpers import JobDuplicatePolicy, serialize_job_key
 from repos import ZipStorageRepo
@@ -25,6 +25,14 @@ logger = logging.getLogger(__name__)
 
 JOB_SERVICE_GRPC_ADDRESS = os.environ.get("JOB_SERVICE_ADDRESS", "localhost:50051")
 PROJECT_EXPORT_TYPE = "export_project"
+
+
+class IncludeModelsType(str, Enum):
+    """Enum for specifying which models to include in the export"""
+
+    all = "all"
+    none = "none"
+    last_active = "last_active"
 
 
 class ExportController:

@@ -3,7 +3,6 @@
 
 """Endpoints related to project export"""
 
-from enum import Enum
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -11,7 +10,7 @@ from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse
 
-from communication.controllers import ExportController
+from communication.controllers import ExportController, IncludeModelsType
 from communication.dependencies import get_export_operation_id, get_request_domain
 
 from geti_fastapi_tools.dependencies import get_project_identifier, get_user_id_fastapi, setup_session_fastapi
@@ -21,14 +20,6 @@ router = APIRouter(
     prefix="/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}",
     dependencies=[Depends(setup_session_fastapi)],
 )
-
-
-class IncludeModelsType(str, Enum):
-    """Enum for specifying which models to include in the export"""
-
-    all = "all"
-    none = "none"
-    last_active = "last_active"
 
 
 @router.post(":export", status_code=status.HTTP_200_OK)
