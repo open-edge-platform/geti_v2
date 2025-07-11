@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Remote, wrap } from 'comlink';
 
 import { AlgorithmType } from './algorithm.interface';
-import { BaseWorker, MapAlgorithmToInstance } from './load-webworker.interface';
+import { MapAlgorithmToInstance, WorkerFactory } from './load-webworker.interface';
 import { getWorker } from './utils';
 
 export const useLoadAIWebworker = <T extends AlgorithmType>(algorithmType: T) => {
@@ -13,7 +13,7 @@ export const useLoadAIWebworker = <T extends AlgorithmType>(algorithmType: T) =>
         queryKey: ['workers', algorithmType],
         queryFn: async () => {
             const baseWorker = getWorker(algorithmType);
-            const worker = wrap<BaseWorker<T>>(baseWorker);
+            const worker = wrap<WorkerFactory<T>>(baseWorker);
 
             return (await worker.build()) as Remote<MapAlgorithmToInstance[T]>;
         },

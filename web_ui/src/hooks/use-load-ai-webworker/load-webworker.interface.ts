@@ -7,9 +7,8 @@ import { Remote } from 'comlink';
 
 import { AlgorithmType } from './algorithm.interface';
 
-export interface BaseWorker<T> {
+export interface WorkerFactory<T> {
     build: () => Promise<Remote<T>>;
-    type: AlgorithmType;
 }
 
 export type MapAlgorithmToInstance = {
