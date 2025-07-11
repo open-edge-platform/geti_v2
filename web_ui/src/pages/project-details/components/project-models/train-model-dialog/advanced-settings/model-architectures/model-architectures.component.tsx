@@ -35,7 +35,7 @@ interface SortArchitecturesPickerProps {
 const SortArchitecturesPicker: FC<SortArchitecturesPickerProps> = ({ sortBy, onSort }) => {
     return (
         <MenuTrigger>
-            <ActionButton isQuiet>
+            <ActionButton isQuiet aria-label={'Sort architectures'}>
                 <SortUpDown />
             </ActionButton>
             <Menu
