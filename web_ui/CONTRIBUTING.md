@@ -2,22 +2,26 @@
 
 **Prerequisites**: We recommend developing Geti's UI locally using node v22.12.0 and npm v10.9.0. You will also need to have a Geti server available. Please see our [documentation]() for instructions to install Geti on your hardware.
 
-## Local Setup with npm 
+## Local Setup with npm
+
+test
 
 To get started with contributing to the UI first install all node dependencies locally
 
 ```sh
 web_ui/ $ npm ci
 ```
+
 ## Setting up environment variables
 
 Duplicate .env.example file and rename it to .env
 Next make a `.env` file that includes a `REACT_APP_API_PROXY` variable, you copy over the `.env.example` file,
+
 ```sh
 web_ui/ $ cp .env.example .env
 ```
 
-Our proxy will redirect all `/api` requests  to `localhost:80/api` assuming your `REACT_APP_API_PROXY` is set to `localhost:80`. Update this variable with your server address.
+Our proxy will redirect all `/api` requests to `localhost:80/api` assuming your `REACT_APP_API_PROXY` is set to `localhost:80`. Update this variable with your server address.
 Assuming you have your Geti server running on `localhost:80` you are now all set to start changing the Geti UI.
 Start up the [Rsbuild](https://rsbuild.dev/) dev server with,
 
@@ -100,20 +104,19 @@ npm run start
 
 2. **Build server**:
 
-  Build both the Geti app and the Admin app,
+Build both the Geti app and the Admin app,
 
 ```sh
 npm run build:all-routes
 ```
 
-  Next use the preview command to start a server,
-  
+Next use the preview command to start a server,
+
 ```sh
 npm run preview -- --environment=dev
 ```
 
-  This will start up a server without Hot Module Reloading, which typically makes the component tests run faster.
-  
+This will start up a server without Hot Module Reloading, which typically makes the component tests run faster.
 
 Next you can run the component tests with,
 
@@ -122,7 +125,7 @@ npm run test:component
 ```
 
 Or if you prefer using Playwright's [UI mode](https://playwright.dev/docs/test-ui-mode) you can use
-  
+
 ```sh
 npm run test:component:ui
 ```
