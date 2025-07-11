@@ -7,7 +7,6 @@ import Clipper from '@doodle3d/clipper-js';
 import type ClipperShape from '@doodle3d/clipper-js';
 import {
     Shape as SmartToolsShape,
-    ShapeType as SmartToolsShapeType,
     Circle as ToolCircle,
     Polygon as ToolPolygon,
     Rect as ToolRect,

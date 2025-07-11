@@ -148,7 +148,7 @@ describe('API inference service', () => {
                             },
                         },
                     ],
-                    shape: { ...shapeResponse, shapeType: 1 },
+                    shape: { ...shapeResponse, shapeType: 'rect' },
                     zIndex: 0,
                 },
             ]);
@@ -192,7 +192,7 @@ describe('API inference service', () => {
                             ...annotationLabel,
                         },
                     ],
-                    shape: { shapeType: 1, ...roiShape },
+                    shape: { shapeType: 'rect', ...roiShape },
                     zIndex: 0,
                 },
             ]);
@@ -256,7 +256,7 @@ describe('API inference service', () => {
                                 y: polygonResponseOne.shape.points[0].y,
                             },
                         ],
-                        shapeType: 3,
+                        shapeType: 'polygon',
                     },
                     zIndex: 1,
                 },
@@ -279,7 +279,7 @@ describe('API inference service', () => {
                                 y: polygonResponseTwo.shape.points[0].y,
                             },
                         ],
-                        shapeType: 3,
+                        shapeType: 'polygon',
                     },
                     zIndex: 2,
                 },
@@ -298,7 +298,7 @@ describe('API inference service', () => {
                 ],
                 shape: {
                     points: null,
-                    type: 'POLYGON',
+                    type: 'polygon',
                 },
             };
 
@@ -445,7 +445,7 @@ describe('API inference service', () => {
                         shape: {
                             x: 0,
                             y: 0,
-                            type: '1',
+                            type: 'rect',
                             width: mockedImageMedia.metadata.width,
                             height: mockedImageMedia.metadata.height,
                         },
@@ -475,7 +475,7 @@ describe('API inference service', () => {
                     labelsId: firstMap.label_id,
                     roi: {
                         id: expect.any(String),
-                        shape: { type: '1', ...roiShape },
+                        shape: { type: 'rect', ...roiShape },
                     },
                 },
             ]);
@@ -551,7 +551,7 @@ describe('API inference service', () => {
                         shape: {
                             x: 0,
                             y: 0,
-                            type: '1',
+                            type: 'rect',
                             height: mockedImage.height,
                             width: mockedImage.width,
                         },
