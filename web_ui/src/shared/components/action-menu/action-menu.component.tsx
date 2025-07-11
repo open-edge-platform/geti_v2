@@ -36,6 +36,8 @@ export const ActionMenu = <T extends string>({
     tooltipMessage = 'More',
     grayedOutKeys,
 }: ActionMenuProps<T>): JSX.Element => {
+    const isGrayedOut = (name: string) => grayedOutKeys?.includes(name);
+
     return (
         <SpectrumMenuTrigger>
             <TooltipTrigger placement={'bottom'}>
@@ -50,7 +52,7 @@ export const ActionMenu = <T extends string>({
                         <Item textValue={item.name}>
                             <Text
                                 UNSAFE_style={
-                                    grayedOutKeys?.includes(item.name)
+                                    isGrayedOut(item.name)
                                         ? { color: 'var(--spectrum-global-color-gray-400)' }
                                         : undefined
                                 }
