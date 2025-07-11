@@ -133,7 +133,7 @@ export const ModelArchitectures: FC<ModelArchitecturesProps> = ({
     onChangeSelectedTemplateId,
     activeModelTemplateId,
 }) => {
-    const [sortBy, setSortBy] = useState<SortingOptions>(SortingOptions.RELEVANCE_DESC);
+    const [sortBy, setSortBy] = useState<SortingOptions>(SortingOptions.RELEVANCE_ASC);
     const sortedAlgorithms = sortingHandlers[sortBy](algorithms);
 
     return (
