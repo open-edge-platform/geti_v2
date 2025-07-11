@@ -157,6 +157,11 @@ describe('DataAugmentation', () => {
             });
 
             toggleParameter(enableParameter.name);
+            expect(getToggleEnableParameter(enableParameter.name)).not.toBeChecked();
+
+            restOfParameters.forEach((parameter) => {
+                expect(getParameter(parameter.name)).toBeDisabled();
+            });
         });
     });
 
