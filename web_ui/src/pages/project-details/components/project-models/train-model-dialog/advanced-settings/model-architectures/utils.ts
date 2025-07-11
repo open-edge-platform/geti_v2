@@ -6,9 +6,10 @@ import { partition } from 'lodash-es';
 import { SupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
 
 export enum SortingOptions {
-    RELEVANCE = 'relevance',
-    SIZE_DESC = 'size-desc',
-    SIZE_ASC = 'size-asc',
+    RELEVANCE_DESC = 'relevance-desc',
+    RELEVANCE_ASC = 'relevance-asc',
+    NUMBER_OF_PARAMETERS_DESC = 'number-of-parameters-desc',
+    NUMBER_OF_PARAMETERS_ASC = 'number-of-parameters-asc',
     COMPLEXITY_DESC = 'complexity-desc',
     COMPLEXITY_ASC = 'complexity-asc',
 }

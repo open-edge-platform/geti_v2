@@ -3,8 +3,10 @@
 
 import { FC, Key, useState } from 'react';
 
-import { Item, Picker, View } from '@geti/ui';
+import { ActionButton, Flex, Icon, Item, Menu, MenuTrigger, Text, View } from '@geti/ui';
+import { SortDown, SortUp, SortUpDown } from '@geti/ui/icons';
 import { orderBy } from 'lodash-es';
+import { Section } from 'react-stately';
 
 import { SupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { ModelArchitecturesMainContent } from './model-architectures-main-content.component';
@@ -13,11 +15,16 @@ import { SortingOptions } from './utils';
 type SortingHandler = (templates: SupportedAlgorithm[]) => SupportedAlgorithm[];
 
 const sortingHandlers: Record<SortingOptions, SortingHandler> = {
-    [SortingOptions.RELEVANCE]: (templates) => orderBy(templates, 'isDefaultAlgorithm', 'desc'),
-    [SortingOptions.SIZE_ASC]: (templates) => orderBy(templates, 'modelSize', 'asc'),
-    [SortingOptions.SIZE_DESC]: (templates) => orderBy(templates, 'modelSize', 'desc'),
-    [SortingOptions.COMPLEXITY_ASC]: (templates) => orderBy(templates, 'gigaflops', 'asc'),
-    [SortingOptions.COMPLEXITY_DESC]: (templates) => orderBy(templates, 'gigaflops', 'desc'),
+    [SortingOptions.RELEVANCE_DESC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.isDefaultAlgorithm, 'desc'),
+    [SortingOptions.RELEVANCE_ASC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.isDefaultAlgorithm, 'asc'),
+    [SortingOptions.NUMBER_OF_PARAMETERS_ASC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.trainableParameters, 'asc'),
+    [SortingOptions.NUMBER_OF_PARAMETERS_DESC]: (templates) =>
+        orderBy(templates, (algorithm) => algorithm.trainableParameters, 'desc'),
+    [SortingOptions.COMPLEXITY_ASC]: (templates) => orderBy(templates, (algorithm) => algorithm.gigaflops, 'asc'),
+    [SortingOptions.COMPLEXITY_DESC]: (templates) => orderBy(templates, (algorithm) => algorithm.gigaflops, 'desc'),
 };
 
 interface SortArchitecturesPickerProps {
@@ -27,22 +34,65 @@ interface SortArchitecturesPickerProps {
 
 const SortArchitecturesPicker: FC<SortArchitecturesPickerProps> = ({ sortBy, onSort }) => {
     return (
-        <Picker
-            isQuiet
-            label={'Sort by:'}
-            labelAlign={'end'}
-            labelPosition={'side'}
-            selectedKey={sortBy}
-            onSelectionChange={(key: Key) => {
-                onSort(key as SortingOptions);
-            }}
-        >
-            <Item key={SortingOptions.RELEVANCE}>Relevance</Item>
-            <Item key={SortingOptions.SIZE_ASC}>Size: Small to big</Item>
-            <Item key={SortingOptions.SIZE_DESC}>Size: Big to small</Item>
-            <Item key={SortingOptions.COMPLEXITY_ASC}>Complexity: Low to high</Item>
-            <Item key={SortingOptions.COMPLEXITY_DESC}>Complexity: High to low</Item>
-        </Picker>
+        <MenuTrigger>
+            <ActionButton isQuiet>
+                <SortUpDown />
+            </ActionButton>
+            <Menu
+                selectionMode={'single'}
+                onAction={(key: Key) => onSort(key as SortingOptions)}
+                defaultSelectedKeys={[sortBy]}
+            >
+                <Section>
+                    <Item key={SortingOptions.RELEVANCE_ASC} textValue={SortingOptions.RELEVANCE_ASC}>
+                        <Text>Relevance</Text>
+                        <Icon>
+                            <SortUp />
+                        </Icon>
+                    </Item>
+                    <Item key={SortingOptions.RELEVANCE_DESC} textValue={SortingOptions.RELEVANCE_DESC}>
+                        <Text>Relevance</Text>
+                        <Icon>
+                            <SortDown />
+                        </Icon>
+                    </Item>
+                </Section>
+                <Section>
+                    <Item
+                        key={SortingOptions.NUMBER_OF_PARAMETERS_ASC}
+                        textValue={SortingOptions.NUMBER_OF_PARAMETERS_ASC}
+                    >
+                        <Text>Number of parameters</Text>
+                        <Icon>
+                            <SortUp />
+                        </Icon>
+                    </Item>
+                    <Item
+                        key={SortingOptions.NUMBER_OF_PARAMETERS_DESC}
+                        textValue={SortingOptions.NUMBER_OF_PARAMETERS_DESC}
+                    >
+                        <Text>Number of parameters</Text>
+                        <Icon>
+                            <SortDown />
+                        </Icon>
+                    </Item>
+                </Section>
+                <Section>
+                    <Item key={SortingOptions.COMPLEXITY_ASC} textValue={SortingOptions.COMPLEXITY_ASC}>
+                        <Text>Complexity</Text>
+                        <Icon>
+                            <SortUp />
+                        </Icon>
+                    </Item>
+                    <Item key={SortingOptions.COMPLEXITY_DESC} textValue={SortingOptions.COMPLEXITY_DESC}>
+                        <Text>Complexity</Text>
+                        <Icon>
+                            <SortDown />
+                        </Icon>
+                    </Item>
+                </Section>
+            </Menu>
+        </MenuTrigger>
     );
 };
 
@@ -59,12 +109,14 @@ export const ModelArchitectures: FC<ModelArchitecturesProps> = ({
     onChangeSelectedTemplateId,
     activeModelTemplateId,
 }) => {
-    const [sortBy, setSortBy] = useState<SortingOptions>(SortingOptions.RELEVANCE);
+    const [sortBy, setSortBy] = useState<SortingOptions>(SortingOptions.RELEVANCE_DESC);
     const sortedAlgorithms = sortingHandlers[sortBy](algorithms);
 
     return (
         <View>
-            <SortArchitecturesPicker onSort={setSortBy} sortBy={sortBy} />
+            <Flex direction={'row-reverse'}>
+                <SortArchitecturesPicker onSort={setSortBy} sortBy={sortBy} />
+            </Flex>
             <ModelArchitecturesMainContent
                 algorithms={sortedAlgorithms}
                 selectedModelTemplateId={selectedModelTemplateId}
