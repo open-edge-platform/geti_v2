@@ -426,21 +426,6 @@ export const SENSITIVITY_SLIDER_TOOLTIP =
     'while lower numbers decrease it. Keep in mind that increased precision requires more computing power and time. ' +
     'Adding high-resolution images may further extend the annotation waiting time significantly.';
 
-export const convertGetiShapeTypeToToolShapeType = (shapeType: ShapeType): SmartToolsShapeType => {
-    switch (shapeType) {
-        case ShapeType.Rect:
-            return 'rect';
-        case ShapeType.RotatedRect:
-            return 'rotated-rect';
-        case ShapeType.Polygon:
-            return 'polygon';
-        case ShapeType.Circle:
-            return 'circle';
-        default:
-            throw new Error('Unknown shape type');
-    }
-};
-
 export function convertToolShapeToGetiShape(shape: ToolPolygon): Polygon;
 export function convertToolShapeToGetiShape(shape: ToolRect): Rect;
 export function convertToolShapeToGetiShape(shape: ToolRotatedRect): RotatedRect;

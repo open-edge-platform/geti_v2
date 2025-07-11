@@ -5,11 +5,10 @@ import { Shape as ToolShape } from '@geti/smart-tools/src/shared/interfaces';
 
 import { RegionOfInterest } from '../../../core/annotations/annotation.interface';
 import { BoundingBox } from '../../../core/annotations/math';
-import { Circle, Point, Rect, Shape } from '../../../core/annotations/shapes.interface';
+import { Circle, Point, Rect } from '../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../core/annotations/shapetype.enum';
 import { getMockedAnnotation } from '../../../test-utils/mocked-items-factory/mocked-annotations';
 import {
-    convertGetiShapeTypeToToolShapeType,
     convertToolShapeToGetiShape,
     isInsideBoundingBox,
     isPointWithinRoi,
@@ -305,29 +304,6 @@ describe('annotator utils', () => {
         it('should throw error for unknown shape type', () => {
             // @ts-expect-error error is expected
             expect(() => convertToolShapeToGetiShape({ shapeType: 'unknown' })).toThrow('Unknown shape type');
-        });
-    });
-
-    describe('convertGetiShapeTypeToToolShapeType', () => {
-        it('should convert Rect', () => {
-            expect(convertGetiShapeTypeToToolShapeType(ShapeType.Rect)).toBe('rect');
-        });
-
-        it('should convert RotatedRect', () => {
-            expect(convertGetiShapeTypeToToolShapeType(ShapeType.RotatedRect)).toBe('rotated-rect');
-        });
-
-        it('should convert Polygon', () => {
-            expect(convertGetiShapeTypeToToolShapeType(ShapeType.Polygon)).toBe('polygon');
-        });
-
-        it('should convert Circle', () => {
-            expect(convertGetiShapeTypeToToolShapeType(ShapeType.Circle)).toBe('circle');
-        });
-
-        it('should throw error for unknown shape type', () => {
-            // @ts-expect-error error is expected
-            expect(() => convertGetiShapeTypeToToolShapeType('unknown')).toThrow('Unknown shape type');
         });
     });
 });
