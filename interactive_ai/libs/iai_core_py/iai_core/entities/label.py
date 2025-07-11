@@ -99,6 +99,8 @@ class Label(PersistentEntity):
         will be assigned upon saving. If the argument is None, it will be set to ID()
     :param is_anomalous: boolean that indicates whether the label is the
         Anomalous label. Always set to False for non-anomaly projects.
+    :param is_background: boolean that indicates whether the label is the background label.
+        This label is exclusive to semantic segmentation projects. False for other projects.
     """
 
     def __init__(  # noqa: PLR0913
@@ -111,6 +113,7 @@ class Label(PersistentEntity):
         creation_date: datetime.datetime | None = None,
         is_empty: bool = False,
         is_anomalous: bool = False,
+        is_background: bool = False,
         ephemeral: bool = True,
     ):
         color = Color.random() if color is None else color
@@ -123,6 +126,7 @@ class Label(PersistentEntity):
         self._is_empty = is_empty
         self._creation_date = creation_date
         self.is_anomalous = is_anomalous
+        self.is_background = is_background
         PersistentEntity.__init__(self, id_=id_, ephemeral=ephemeral)
 
     @property
@@ -138,8 +142,8 @@ class Label(PersistentEntity):
     def __repr__(self):
         """String representation of the label."""
         return (
-            f"Label({self.id_}, name={self.name}, hotkey={self.hotkey}, "
-            f"domain={self.domain}, color={self.color.hex_str}, is_anomalous={self.is_anomalous})"
+            f"Label({self.id_}, name={self.name}, hotkey={self.hotkey}, domain={self.domain}, "
+            f"color={self.color.hex_str}, is_anomalous={self.is_anomalous}, is_background={self.is_background})"
         )
 
     def __eq__(self, other: object) -> bool:

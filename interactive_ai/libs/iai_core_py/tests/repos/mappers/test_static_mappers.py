@@ -327,6 +327,7 @@ class TestStaticMongoDBMappers:
             is_empty=True,
             id_=LabelRepo.generate_id(),
             is_anomalous=True,
+            is_background=True,
             ephemeral=False,
         )
         verify_mongo_mapper(entity_to_map=label, mapper_class=LabelToMongo)
