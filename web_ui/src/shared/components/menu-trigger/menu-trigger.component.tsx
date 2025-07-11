@@ -20,7 +20,9 @@ export const MenuTrigger = ({
     renderContent,
     children,
     ariaLabel,
+    grayedOutKeys,
 }: MenuTriggerProps): JSX.Element => {
+    const isGrayedOut = (item: string) => grayedOutKeys?.includes(item);
     return (
         <MenuTriggerSpectrum onOpenChange={onOpenChange}>
             {children}
@@ -41,6 +43,7 @@ export const MenuTrigger = ({
                             <Text
                                 id={`${idMatchingFormat(item.toLowerCase())}-id`}
                                 UNSAFE_style={{ pointerEvents: 'all' }}
+                                UNSAFE_className={isGrayedOut(item) ? classes.grayedOutItem : undefined}
                             >
                                 {isFunction(renderContent) ? renderContent(item) : item}
                             </Text>

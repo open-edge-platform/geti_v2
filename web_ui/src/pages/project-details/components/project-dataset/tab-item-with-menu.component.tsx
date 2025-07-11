@@ -3,10 +3,13 @@
 
 import { ComponentProps } from 'react';
 
-import { MenuTriggerButton } from '../menu-trigger/menu-trigger-button/menu-trigger-button.component';
-import { CustomTabItem, CustomTabItemProps } from './custom-tab-item.component';
+import {
+    CustomTabItem,
+    CustomTabItemProps,
+} from '../../../../shared/components/custom-tab-item/custom-tab-item.component';
+import { MenuTriggerButton } from '../../../../shared/components/menu-trigger/menu-trigger-button/menu-trigger-button.component';
 
-import classes from './custom-tab-item.module.scss';
+import classes from '../../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
 
 type CustomTabItemWithMenuProps = CustomTabItemProps &
     Pick<
@@ -14,7 +17,7 @@ type CustomTabItemWithMenuProps = CustomTabItemProps &
         'items' | 'ariaLabel' | 'id' | 'onAction' | 'onOpenChange' | 'disabledKeys'
     >;
 
-export const CustomTabItemWithMenu = ({
+export const TabItemWithMenu = ({
     items,
     ariaLabel,
     id,
