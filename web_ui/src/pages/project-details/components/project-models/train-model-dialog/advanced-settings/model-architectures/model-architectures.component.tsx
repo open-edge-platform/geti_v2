@@ -8,6 +8,7 @@ import { SortDown, SortUp, SortUpDown } from '@geti/ui/icons';
 import { orderBy } from 'lodash-es';
 import { Section } from 'react-stately';
 
+import { PerformanceCategory } from '../../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { SupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { ModelArchitecturesMainContent } from './model-architectures-main-content.component';
 import { SortingOptions } from './utils';
@@ -16,9 +17,9 @@ type SortingHandler = (templates: SupportedAlgorithm[]) => SupportedAlgorithm[];
 
 const sortingHandlers: Record<SortingOptions, SortingHandler> = {
     [SortingOptions.RELEVANCE_DESC]: (templates) =>
-        orderBy(templates, (algorithm) => algorithm.isDefaultAlgorithm, 'desc'),
+        orderBy(templates, (algorithm) => algorithm.performanceCategory === PerformanceCategory.OTHER, 'desc'),
     [SortingOptions.RELEVANCE_ASC]: (templates) =>
-        orderBy(templates, (algorithm) => algorithm.isDefaultAlgorithm, 'asc'),
+        orderBy(templates, (algorithm) => algorithm.performanceCategory === PerformanceCategory.OTHER, 'asc'),
     [SortingOptions.ACCURACY_ASC]: (templates) =>
         orderBy(templates, (algorithm) => algorithm.performanceRatings.accuracy, 'asc'),
     [SortingOptions.ACCURACY_DESC]: (templates) =>
