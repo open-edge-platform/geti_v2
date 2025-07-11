@@ -91,7 +91,6 @@ class WeightedProgressChecker(ProgressChecker):
         return 100 / self.steps_ratio[step_index]
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestProgressReporting:
     @staticmethod
     def _get_expected_iteration(n_items: int, interval_in_percent: float):

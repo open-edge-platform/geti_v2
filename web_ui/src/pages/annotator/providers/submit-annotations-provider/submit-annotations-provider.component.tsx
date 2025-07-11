@@ -1,14 +1,13 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
 import { isFunction } from 'lodash-es';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { FEATURES_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { UserProjectSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
-import { getSettingsOfType } from '../../../../core/user-settings/utils';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { SubmitDialogs } from '../../components/submit-annotations/submit-dialogs.component';
 import { useAnalyticsAnnotationTools } from '../analytics-annotation-scene-provider/analytics-annotation-scene-provider.component';
@@ -50,8 +49,7 @@ export const SubmitAnnotationsProvider = ({
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
     const { resetToolPerAnnotation } = useAnalyticsAnnotationTools();
 
-    const settingsConfig = useMemo(() => getSettingsOfType(settings.config, FEATURES_KEYS), [settings.config]);
-    const isInitialPredictionsEnabled = Boolean(settingsConfig[FEATURES_KEYS.INITIAL_PREDICTION].isEnabled);
+    const isInitialPredictionsEnabled = settings.config[FEATURES_KEYS.INITIAL_PREDICTION].isEnabled;
 
     const { submitAnnotationsMutation, afterSaving, unfinishedShapesCallback, callCallbackAndClear } =
         useSubmitAnnotationsMutation(mediaItem, setShowFailDialog, setShowConfirmationDialog, saveAnnotations);

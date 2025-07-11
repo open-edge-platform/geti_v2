@@ -6,6 +6,7 @@ from uuid import UUID
 import pytest
 from bson import UUID_SUBTYPE, Binary, ObjectId, UuidRepresentation
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.add_media_filter_data import AddDataForFilteringMigration
 from migration.utils import MongoDBConnection
@@ -167,7 +168,7 @@ class TestAddProjectTypeMigration:
         fxt_mongo_uuid,
     ) -> None:
         # Arrange
-        mock_db = fxt_mongo_client.get_database("geti_test")
+        mock_db: Database = fxt_mongo_client.get_database("geti_test")
         request.addfinalizer(lambda: fxt_mongo_client.drop_database("geti_test"))
         filter_collection = mock_db.dataset_storage_filter_data
         image_collection = mock_db.image

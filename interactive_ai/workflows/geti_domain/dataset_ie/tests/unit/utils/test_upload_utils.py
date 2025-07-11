@@ -23,7 +23,6 @@ from job.utils.exceptions import FileNotFoundException, InvalidMediaException
 from job.utils.upload_utils import AnnotationUploadManager, ImageUploadManager, VideoUploadManager
 
 
-@pytest.mark.JobsComponent
 class TestUploadUtils:
     @staticmethod
     def _arrange_image_uploader() -> tuple[ImageUploadManager, dm.DatasetItem]:

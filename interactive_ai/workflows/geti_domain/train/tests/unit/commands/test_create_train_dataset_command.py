@@ -16,7 +16,6 @@ def raise_exception(*args, **kwargs):
     raise Exception("Test Exception")
 
 
-@pytest.mark.JobsComponent
 class TestCreateDatasetCommand:
     def test_create_train_dataset_command(
         self, fxt_project, fxt_dataset_storage, fxt_detection_node, fxt_dataset

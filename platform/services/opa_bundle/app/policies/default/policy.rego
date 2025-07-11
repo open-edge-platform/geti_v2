@@ -653,38 +653,6 @@ allow if {
 	check_authorization_allowing_pat(spicedb_key, "project", parsed_query.project_id[0], "view_project", user_id)
 }
 
-# POST /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments:prepare
-# Prepare project code deployment, user should be granted with "view_project" project level permission
-allow if {
-	http_request.method == "POST"
-	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "code_deployments:prepare"] = parsed_path
-	is_license_valid
-	is_valid_api_version(api_ver)
-
-	print("Policy: Prepare project code deployment")
-	user_id := resolve_user_id(http_request.headers)
-	check_authorization_allowing_pat(spicedb_key, "project", project_id, "view_project", user_id)
-	check_authorization_allowing_pat(spicedb_key, "organization", organization_id, "can_contribute", user_id)
-	check_authorization_allowing_pat(spicedb_key, "workspace", workspace_id, "can_contribute", user_id)
-	check_relation(spicedb_address, spicedb_key, "project", project_id, "parent_workspace", "workspace", workspace_id)
-}
-
-# * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments
-# * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments/*
-# Project code deployments operations, user should be granted with "view_project" project level permission
-allow if {
-	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", project_id, "code_deployments"] = array.slice(parsed_path, 0, 9)
-	is_license_valid
-	is_valid_api_version(api_ver)
-
-	print("Policy: Project code deployments operations", parsed_path)
-	user_id := resolve_user_id(http_request.headers)
-	check_authorization_allowing_pat(spicedb_key, "project", project_id, "view_project", user_id)
-	check_authorization_allowing_pat(spicedb_key, "organization", organization_id, "can_contribute", user_id)
-	check_authorization_allowing_pat(spicedb_key, "workspace", workspace_id, "can_contribute", user_id)
-	check_relation(spicedb_address, spicedb_key, "project", project_id, "parent_workspace", "workspace", workspace_id)
-}
-
 # * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/deployment_package:download
 # Project code deployments operations, user should be granted with "view_project" project level permission
 allow if {

@@ -13,6 +13,7 @@ import { JobState } from '../../../src/core/jobs/jobs.const';
 import { OpenApiRequest } from '../../../src/core/server/types';
 import { idMatchingFormat } from '../../../src/test-utils/id-utils';
 import { test } from '../../fixtures/base-test';
+import { project as keypointProject, supportedProjectType } from '../../mocks/keypoint-detection/mocks';
 import { setTusProgress } from '../../utils/api';
 import { loadFile } from '../../utils/dom';
 import { projects } from './mocks';
@@ -722,5 +723,87 @@ test.describe('DatasetImportToNewProjectLabels', (): void => {
                 }
             }
         );
+    });
+
+    test.describe('keypoint detection', () => {
+        const preparingJobMetadata = {
+            job_id: preparingJobId,
+            warnings: [],
+            supported_project_types: [supportedProjectType],
+        };
+        const [datasetTask, keypointTask] = supportedProjectType.pipeline.tasks;
+        const labels = keypointTask?.labels ?? [];
+
+        test.beforeEach(async ({ registerApiResponse, registerFeatureFlags }) => {
+            registerFeatureFlags({ FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE: true });
+            registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(keypointProject)));
+
+            registerApiResponse('GetAllProjectsInAWorkspace', (_, res, ctx) =>
+                res(ctx.json({ next_page: '', project_counts: 1, project_page_count: 1, projects: [keypointProject] }))
+            );
+        });
+
+        test('renders keypoint template preview', async ({ page, registerApiResponse }) => {
+            registerApiResponse('GetJob', (_, res, ctx) =>
+                res(
+                    ctx.json({
+                        ...getMockedPreparingJob({ id: preparingJobId, state: JobState.FINISHED }),
+                        metadata: preparingJobMetadata,
+                    })
+                )
+            );
+
+            const datasetImportToNewProject = new DatasetImportToNewProject(page);
+
+            await datasetImportToNewProject.openHomePage();
+            await datasetImportToNewProject.openImportModal();
+            await datasetImportToNewProject.uploadDataset(fileName, fileSize);
+            await datasetImportToNewProject.next();
+
+            await expect(page.getByTestId('keypoint readonly template')).toBeInViewport();
+
+            for await (const { name } of labels) {
+                await expect(page.getByLabel(`keypoint ${name} anchor`)).toBeInViewport();
+            }
+
+            await expect(page.getByTestId('testid-create')).toBeEnabled();
+        });
+
+        test('displays error message when template is invalid', async ({ page, registerApiResponse }) => {
+            const metadata = {
+                ...preparingJobMetadata,
+                supported_project_types: [
+                    {
+                        ...supportedProjectType,
+                        pipeline: {
+                            ...supportedProjectType.pipeline,
+                            tasks: [
+                                datasetTask,
+                                {
+                                    ...keypointTask,
+                                    keypoint_structure: { edges: [], positions: [] },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            };
+
+            registerApiResponse('GetJob', (_, res, ctx) =>
+                res(ctx.json({ ...getMockedPreparingJob({ id: preparingJobId, state: JobState.FINISHED }), metadata }))
+            );
+
+            const datasetImportToNewProject = new DatasetImportToNewProject(page);
+
+            await datasetImportToNewProject.openHomePage();
+            await datasetImportToNewProject.openImportModal();
+            await datasetImportToNewProject.uploadDataset(fileName, fileSize);
+            await datasetImportToNewProject.next();
+
+            await expect(page.getByTestId('keypoint readonly template')).toBeInViewport();
+
+            await expect(page.getByTestId('testid-create')).toBeDisabled();
+            await expect(page.getByText('Invalid template structure.')).toBeInViewport();
+        });
     });
 });

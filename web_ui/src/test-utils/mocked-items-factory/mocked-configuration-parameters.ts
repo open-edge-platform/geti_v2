@@ -76,7 +76,6 @@ export const getMockedTrainingConfiguration = (config: Partial<TrainingConfigura
         filtering: {},
     },
     taskId: '',
-    advancedConfiguration: undefined,
     evaluation: [],
     ...config,
 });

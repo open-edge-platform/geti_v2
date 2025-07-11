@@ -4,7 +4,6 @@ feature_flags_data:
   FEATURE_FLAG_ANALYTICS_WORKFLOW_ID: "true"
   FEATURE_FLAG_ANOMALY_REDUCTION: "true"
   FEATURE_FLAG_CAMERA_VIDEO_UPLOAD: "false"
-  FEATURE_FLAG_CLASSIFICATION_RANGES: "true"
   FEATURE_FLAG_CREDIT_SYSTEM: "false"
   FEATURE_FLAG_DECORD_VIDEO_DECODER: "false"
   FEATURE_FLAG_KEYPOINT_DETECTION: "true"
@@ -15,7 +14,6 @@ feature_flags_data:
   FEATURE_FLAG_OIDC_CIDAAS: "false"
   FEATURE_FLAG_ORG_QUOTAS: "false"
   FEATURE_FLAG_OTX_VERSION_SELECTION: "true"
-  FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE: "true"
   FEATURE_FLAG_SAAS_REQUIRE_INVITATION_LINK: "true"
   FEATURE_FLAG_MANAGE_USERS: "false"
   FEATURE_FLAG_MANAGE_USERS_ROLES: "true"
@@ -24,11 +22,10 @@ feature_flags_data:
   FEATURE_FLAG_SUPPORT_CORS: "false"
   FEATURE_FLAG_UPLOAD_OTE_WEIGHTS: "true"
   FEATURE_FLAG_USER_ONBOARDING: "false"
-  FEATURE_FLAG_VISUAL_PROMPT_SERVICE: "true"
   FEATURE_FLAG_WORKSPACE_ACTIONS: "false"
   FEATURE_FLAG_REQ_ACCESS: "false"
   FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS: "false"
-  FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING: "false"
+  FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING: "true"
 
 main_namespace: impt
 flyte_workflows:
@@ -81,7 +78,6 @@ spicedb:
 training:
   default_trainer_image_name: "impp/otx2-training"
   default_trainer_version: "2.2.0"
-  mlflow_sidecar_image_name: "impp/mlflow-geti-store"
 
 bucket_name_compileddatasetshards: compileddatasetshards
 bucket_name_images: images

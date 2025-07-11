@@ -23,11 +23,7 @@ const render = ({
     close = jest.fn(),
     modelsGroups,
     tasks,
-    options = {
-        featureFlags: {
-            FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE: true,
-        },
-    },
+    options,
 }: {
     close?: () => void;
     tasks?: Task[];
@@ -93,138 +89,93 @@ describe('DownloadDialogTaskChain', () => {
         });
     };
 
-    describe('with FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE enabled', () => {
-        it('allows user to select deployment package only in the first task', async () => {
-            render();
+    it('allows user to select deployment package only in the first task', async () => {
+        render();
 
-            await waitFor(() => {
-                expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
-            });
-
-            await userEvent.click(
-                screen.getByRole('button', { name: `${DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT} Deployment package` })
-            );
-
-            expect(screen.getByRole('option', { name: DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT })).toBeVisible();
-            expect(screen.getByRole('option', { name: DEPLOYMENT_PACKAGE_TYPES.OVMS_DEPLOYMENT })).toBeVisible();
-
-            await userEvent.click(screen.getByRole('option', { name: DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT }));
-            await userEvent.click(screen.getByRole('button', { name: 'Next' }));
-
-            expect(
-                screen.getByRole('button', { name: `${DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT} Deployment package` })
-            ).toBeDisabled();
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
         });
 
-        it('sends request to download OVMS deployment package', async () => {
-            const close = jest.fn();
+        await userEvent.click(
+            screen.getByRole('button', { name: `${DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT} Deployment package` })
+        );
 
-            const codeDeploymentService = createInMemoryCodeDeploymentService();
-            codeDeploymentService.downloadDeploymentPackage = jest.fn();
+        expect(screen.getByRole('option', { name: DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT })).toBeVisible();
+        expect(screen.getByRole('option', { name: DEPLOYMENT_PACKAGE_TYPES.OVMS_DEPLOYMENT })).toBeVisible();
 
-            render({
-                tasks,
-                close,
-                modelsGroups,
-                options: {
-                    featureFlags: { FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE: true },
-                    services: { modelsService, codeDeploymentService },
-                },
-            });
+        await userEvent.click(screen.getByRole('option', { name: DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT }));
+        await userEvent.click(screen.getByRole('button', { name: 'Next' }));
 
-            await waitFor(() => {
-                expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
-            });
-
-            await userEvent.click(
-                screen.getByRole('button', { name: `${DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT} Deployment package` })
-            );
-
-            await userEvent.click(screen.getByRole('option', { name: DEPLOYMENT_PACKAGE_TYPES.OVMS_DEPLOYMENT }));
-
-            await waitFor(() => {
-                expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
-            });
-
-            await userEvent.click(screen.getByRole('button', { name: 'Next' }));
-            await userEvent.click(screen.getByRole('button', { name: 'Download' }));
-
-            await waitFor(() => {
-                expect(codeDeploymentService.downloadDeploymentPackage).toHaveBeenCalled();
-            });
-
-            expect(close).toHaveBeenCalled();
-        });
-
-        it('sends request to download code deployment package', async () => {
-            const close = jest.fn();
-
-            const codeDeploymentService = createInMemoryCodeDeploymentService();
-            codeDeploymentService.downloadDeploymentPackage = jest.fn();
-
-            render({
-                tasks,
-                close,
-                modelsGroups,
-                options: {
-                    featureFlags: { FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE: true },
-                    services: { modelsService, codeDeploymentService },
-                },
-            });
-
-            await waitFor(() => {
-                expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
-            });
-
-            await userEvent.click(screen.getByRole('button', { name: 'Next' }));
-            await userEvent.click(screen.getByRole('button', { name: 'Download' }));
-
-            await waitFor(() => {
-                expect(codeDeploymentService.downloadDeploymentPackage).toHaveBeenCalled();
-            });
-
-            expect(close).toHaveBeenCalled();
-        });
+        expect(
+            screen.getByRole('button', { name: `${DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT} Deployment package` })
+        ).toBeDisabled();
     });
 
-    describe('with FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE disabled', () => {
-        it(`doesn't allow user to select deployment package`, async () => {
-            render({ options: { featureFlags: { FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE: false } } });
+    it('sends request to download OVMS deployment package', async () => {
+        const close = jest.fn();
 
-            expect(
-                screen.queryByRole('button', {
-                    name: `${DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT} Deployment package`,
-                })
-            ).not.toBeInTheDocument();
+        const codeDeploymentService = createInMemoryCodeDeploymentService();
+        codeDeploymentService.downloadDeploymentPackage = jest.fn();
+
+        render({
+            tasks,
+            close,
+            modelsGroups,
+            options: {
+                services: { modelsService, codeDeploymentService },
+            },
         });
 
-        it('sends request to download code deployment package', async () => {
-            const close = jest.fn();
-
-            const codeDeploymentService = createInMemoryCodeDeploymentService();
-            codeDeploymentService.downloadDeploymentPackage = jest.fn();
-
-            render({
-                tasks,
-                close,
-                modelsGroups,
-                options: {
-                    featureFlags: { FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE: false },
-                    services: { modelsService, codeDeploymentService },
-                },
-            });
-
-            await waitFor(() => {
-                expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
-            });
-
-            await userEvent.click(screen.getByRole('button', { name: 'Next' }));
-            await userEvent.click(screen.getByRole('button', { name: 'Download' }));
-
-            await waitFor(() => {
-                expect(codeDeploymentService.downloadDeploymentPackage).toHaveBeenCalled();
-            });
-            expect(close).toHaveBeenCalled();
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
         });
+
+        await userEvent.click(
+            screen.getByRole('button', { name: `${DEPLOYMENT_PACKAGE_TYPES.CODE_DEPLOYMENT} Deployment package` })
+        );
+
+        await userEvent.click(screen.getByRole('option', { name: DEPLOYMENT_PACKAGE_TYPES.OVMS_DEPLOYMENT }));
+
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
+        });
+
+        await userEvent.click(screen.getByRole('button', { name: 'Next' }));
+        await userEvent.click(screen.getByRole('button', { name: 'Download' }));
+
+        await waitFor(() => {
+            expect(codeDeploymentService.downloadDeploymentPackage).toHaveBeenCalled();
+        });
+
+        expect(close).toHaveBeenCalled();
+    });
+
+    it('sends request to download code deployment package', async () => {
+        const close = jest.fn();
+
+        const codeDeploymentService = createInMemoryCodeDeploymentService();
+        codeDeploymentService.downloadDeploymentPackage = jest.fn();
+
+        render({
+            tasks,
+            close,
+            modelsGroups,
+            options: {
+                services: { modelsService, codeDeploymentService },
+            },
+        });
+
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
+        });
+
+        await userEvent.click(screen.getByRole('button', { name: 'Next' }));
+        await userEvent.click(screen.getByRole('button', { name: 'Download' }));
+
+        await waitFor(() => {
+            expect(codeDeploymentService.downloadDeploymentPackage).toHaveBeenCalled();
+        });
+
+        expect(close).toHaveBeenCalled();
     });
 });

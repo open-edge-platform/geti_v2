@@ -31,8 +31,16 @@ training_configuration_router = APIRouter(
 
 def get_training_configuration_from_request(
     request_json: Annotated[dict, Depends(get_request_json)],
+    task_id: Annotated[str | None, Query()] = None,
+    model_manifest_id: Annotated[str | None, Query()] = None,
 ) -> PartialTrainingConfiguration:
     """Dependency to convert REST request body to PartialTrainingConfiguration."""
+    # task_id and model_manifest_id can be present in both payload and query parameters
+    # if they are provided in both places, the payload content takes precedence
+    if "task_id" not in request_json:
+        request_json["task_id"] = task_id
+    if "model_manifest_id" not in request_json:
+        request_json["model_manifest_id"] = model_manifest_id
     return TrainingConfigurationRESTViews.training_configuration_from_rest(rest_input=request_json)
 
 

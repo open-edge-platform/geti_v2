@@ -22,7 +22,7 @@ from iai_core.repos import LabelSchemaRepo, ModelRepo, ModelStorageRepo, Project
 from iai_core.repos.compiled_dataset_shards_repo import CompiledDatasetShardsRepo
 from iai_core.repos.configurable_parameters_repo import ConfigurableParametersRepo
 from iai_core.repos.dataset_repo import DatasetRepo
-from jobs_common_extras.mlflow.utils.train_output_models import TrainOutputModelIds
+from jobs_common_extras.experiments.utils.train_output_models import TrainOutputModelIds
 
 
 @dataclass_json

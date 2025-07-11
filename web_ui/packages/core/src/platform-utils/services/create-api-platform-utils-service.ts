@@ -4,16 +4,23 @@
 import { apiClient } from '../../client/axios-instance';
 import { CreateApiService } from '../../services/create-api-service.interface';
 import { API_URLS } from '../../services/urls';
-import { Environment, ProductInfoEntityDTO } from '../dto/utils.interface';
-import { PlatformUtilsService, ProductInfoEntity } from './utils.interface';
+import {
+    CheckBackupDTO,
+    Environment,
+    PlatformUpgradePayloadDTO,
+    PlatformUpgradeProgressDTO,
+    PlatformVersionsDTO,
+    ProductInfoEntityDTO,
+} from '../dto/utils.interface';
+import { PlatformUtilsService } from './utils.interface';
 
 const isSmtpDefined = (val: string) => val === 'True';
 
 export const createApiPlatformUtilsService: CreateApiService<PlatformUtilsService> = (
-    { instance: platformInstance, router } = { instance: apiClient, router: API_URLS }
+    { instance, router } = { instance: apiClient, router: API_URLS }
 ) => {
-    const getProductInfo = async (): Promise<ProductInfoEntity> => {
-        const { data } = await platformInstance.get<ProductInfoEntityDTO>(router.PRODUCT_INFO);
+    const getProductInfo: PlatformUtilsService['getProductInfo'] = async () => {
+        const { data } = await instance.get<ProductInfoEntityDTO>(router.PLATFORM.PRODUCT_INFO);
 
         return {
             intelEmail: data['intel-email'],
@@ -26,7 +33,60 @@ export const createApiPlatformUtilsService: CreateApiService<PlatformUtilsServic
         };
     };
 
+    const checkPlatformBackup: PlatformUtilsService['checkPlatformBackup'] = async () => {
+        const { data } = await instance.get<CheckBackupDTO>(router.PLATFORM.CHECK_BACKUP);
+
+        return {
+            isBackupPossible: data.is_backup_possible,
+        };
+    };
+
+    const getPlatformVersions: PlatformUtilsService['getPlatformVersions'] = async () => {
+        const { data } = await instance.get<PlatformVersionsDTO>(router.PLATFORM.VERSIONS);
+
+        return data.versions.map(
+            ({
+                version,
+                k3s_version,
+                nvidia_drivers_version,
+                intel_drivers_version,
+                is_upgrade_required,
+                is_current,
+            }) => ({
+                version,
+                k3sVersion: k3s_version,
+                nvidiaDriversVersion: nvidia_drivers_version,
+                intelDriversVersion: intel_drivers_version,
+                isCurrent: is_current,
+                isUpgradeRequired: is_upgrade_required,
+            })
+        );
+    };
+
+    const getPlatformUpgradeProgress: PlatformUtilsService['getPlatformUpgradeProgress'] = async () => {
+        const { data } = await instance.get<PlatformUpgradeProgressDTO>(router.PLATFORM.UPGRADE_PROGRESS);
+
+        return {
+            progress: data.progress,
+            status: data.status,
+            message: data.message,
+        };
+    };
+
+    const upgradePlatform: PlatformUtilsService['upgradePlatform'] = async ({ version, forceUpgrade }) => {
+        const payloadDTO: PlatformUpgradePayloadDTO = {
+            version_number: version,
+            force_upgrade: forceUpgrade,
+        };
+
+        await instance.post(router.PLATFORM.UPGRADE, payloadDTO);
+    };
+
     return {
         getProductInfo,
+        checkPlatformBackup,
+        getPlatformVersions,
+        getPlatformUpgradeProgress,
+        upgradePlatform,
     };
 };

@@ -3,7 +3,6 @@
 
 
 import datumaro as dm
-import pytest
 from geti_types import DatasetStorageIdentifier
 from iai_core.entities.datasets import Dataset
 from iai_core.entities.label_schema import LabelSchema
@@ -11,7 +10,6 @@ from iai_core.entities.label_schema import LabelSchema
 from jobs_common_extras.datumaro_conversion.sc_extractor import ScExtractor
 
 
-@pytest.mark.CommonComponent
 class TestScExtractor:
     def test_sc_extractor(
         self,

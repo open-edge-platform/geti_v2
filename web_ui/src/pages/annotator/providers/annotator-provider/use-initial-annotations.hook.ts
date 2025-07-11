@@ -9,7 +9,6 @@ import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { Task } from '../../../../core/projects/task.interface';
 import { FEATURES_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { UserProjectSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
-import { getSettingsOfType } from '../../../../core/user-settings/utils';
 import { usePrevious } from '../../../../hooks/use-previous/use-previous.hook';
 import { SelectedMediaItem } from '../selected-media-item-provider/selected-media-item.interface';
 import { getInitialAnnotations } from './utils';
@@ -21,8 +20,7 @@ export const useInitialAnnotation = (
     isTaskChainSelectedClassification: boolean
 ) => {
     const [initialAnnotations, setInitialAnnotations] = useState<ReadonlyArray<Annotation>>(() => {
-        const featuresConfig = getSettingsOfType(settings.config, FEATURES_KEYS);
-        const isInitialPredictionsEnabled = Boolean(featuresConfig[FEATURES_KEYS.INITIAL_PREDICTION].isEnabled);
+        const isInitialPredictionsEnabled = settings.config[FEATURES_KEYS.INITIAL_PREDICTION].isEnabled;
         const initialPredictions = selectedMediaItem?.predictions?.annotations;
         return getInitialAnnotations(
             selectedMediaItem?.annotations,
@@ -45,8 +43,7 @@ export const useInitialAnnotation = (
             return;
         }
 
-        const featuresConfig = getSettingsOfType(settings.config, FEATURES_KEYS);
-        const isInitialPredictionsEnabled = Boolean(featuresConfig[FEATURES_KEYS.INITIAL_PREDICTION].isEnabled);
+        const isInitialPredictionsEnabled = settings.config[FEATURES_KEYS.INITIAL_PREDICTION].isEnabled;
 
         setInitialAnnotations(
             getInitialAnnotations(

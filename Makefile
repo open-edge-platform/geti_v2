@@ -23,7 +23,7 @@ build-chart:
 
 build-umbrella-chart: build-chart
 	echo "Building umbrella charts for..."
-	$(MAKE) -C $(DISTRIB_CHARTS) build-chart
+	$(MAKE) -C $(DISTRIB_CHARTS) clean build-chart
 
 clean:
 	echo "Cleaning all projects..."	

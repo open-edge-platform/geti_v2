@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { getMockedSupportedAlgorithm } from '../../../../../../../core/supported-algorithms/services/test-utils';
+import { getMockedSupportedAlgorithm } from '../../../../../../../test-utils/mocked-items-factory/mocked-supported-algorithms';
 import { moveActiveArchitectureToBeRightAfterRecommended } from './utils';
 
 describe('moveActiveArchitectureToBeRightAfterRecommended', () => {

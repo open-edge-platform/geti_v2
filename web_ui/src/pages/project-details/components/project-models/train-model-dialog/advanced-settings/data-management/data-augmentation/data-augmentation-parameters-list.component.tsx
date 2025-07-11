@@ -18,11 +18,13 @@ interface DataAugmentationParametersListProps {
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
+    isReadOnly?: boolean;
 }
 
 export const DataAugmentationParametersList: FC<DataAugmentationParametersListProps> = ({
     parameters,
     onUpdateTrainingConfiguration,
+    isReadOnly = false,
 }) => {
     const handleChange = (key: string) => (inputParameter: ConfigurationParameter) => {
         onUpdateTrainingConfiguration((config) => {
@@ -40,7 +42,14 @@ export const DataAugmentationParametersList: FC<DataAugmentationParametersListPr
     return (
         <Flex direction={'column'} height={'size-100%'} gap={'size-300'}>
             {Object.entries(parameters).map(([key, parametersLocal]) => {
-                return <Parameters key={key} parameters={parametersLocal} onChange={handleChange(key)} />;
+                return (
+                    <Parameters
+                        key={key}
+                        parameters={parametersLocal}
+                        onChange={handleChange(key)}
+                        isReadOnly={isReadOnly}
+                    />
+                );
             })}
         </Flex>
     );

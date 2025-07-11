@@ -6,11 +6,12 @@ package request_processor
 import (
 	"crypto/rsa"
 	"fmt"
+	"strings"
+	"time"
+
 	asc "geti.com/account_service_grpc"
 	v32 "github.com/envoyproxy/go-control-plane/envoy/type/v3"
 	"github.com/golang-jwt/jwt/v5"
-	"strings"
-	"time"
 )
 
 const issuerGeti = "Intel Geti"
@@ -184,7 +185,6 @@ func (h *RequestHandler) CreateGetiUserJWT(user *asc.User) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to create Geti JWT for user %v: %+v", user.UserId, err)
 	}
-	h.Logger.Debugf("New JWT signed string: %s", getiJwtSignedString)
 	return getiJwtSignedString, nil
 }
 
@@ -198,7 +198,6 @@ func (h *RequestHandler) CreateGetiJWTforPAT(token *asc.AccessTokenData) (string
 	if err != nil {
 		return "", fmt.Errorf("failed to create anonymous Geti JWT: %+v", err)
 	}
-	h.Logger.Debugf("New JWT signed string: %s", getiJwtSignedString)
 	return getiJwtSignedString, nil
 }
 
@@ -225,7 +224,6 @@ func (h *RequestHandler) CreateGetiAnonymJWT() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to create anonymous Geti JWT: %+v", err)
 	}
-	h.Logger.Debugf("New JWT signed string: %s", getiJwtSignedString)
 	return getiJwtSignedString, nil
 }
 
@@ -249,7 +247,6 @@ func (h *RequestHandler) CreateIntelAdminJWT(jwtExternal *jwt.Token, claimsExter
 		h.setErrorResponse(v32.StatusCode_InternalServerError, "Internal server error")
 		return "", fmt.Errorf("failed to create Geti JWT for Intel admin: %+v", err)
 	}
-	h.Logger.Debugf("New JWT signed string for Intel admin: %s", getiJwtSignedString)
 
 	rolesInterface, ok := claimsExternal["roles"]
 	if !ok {

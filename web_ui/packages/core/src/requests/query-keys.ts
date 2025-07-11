@@ -6,7 +6,10 @@ import {
     PredictionMode,
 } from '../../../../src/core/annotations/services/prediction-service.interface';
 import { VideoPaginationOptions } from '../../../../src/core/annotations/services/video-pagination-options.interface';
-import { TrainingConfigurationQueryParameters } from '../../../../src/core/configurable-parameters/services/api-model-config-parameters-service';
+import {
+    TrainedModelConfigurationQueryParameters,
+    TrainingConfigurationQueryParameters,
+} from '../../../../src/core/configurable-parameters/services/api-model-config-parameters-service';
 import { CreditAccountIdentifier } from '../../../../src/core/credits/credits.interface';
 import {
     GetTransactionsAggregatesQueryOptions,
@@ -18,7 +21,7 @@ import { VideoIdentifier } from '../../../../src/core/media/video.interface';
 import { ModelGroupIdentifier, ModelIdentifier } from '../../../../src/core/models/models.interface';
 import { OrganizationIdentifier } from '../../../../src/core/organizations/organizations.interface';
 import { GetOrganizationsQueryOptions } from '../../../../src/core/organizations/services/organizations-service.interface';
-import { DOMAIN, ProjectIdentifier } from '../../../../src/core/projects/core.interface';
+import { ProjectIdentifier } from '../../../../src/core/projects/core.interface';
 import { DatasetIdentifier } from '../../../../src/core/projects/dataset.interface';
 import { ProjectsQueryOptions } from '../../../../src/core/projects/services/project-service.interface';
 import { Task } from '../../../../src/core/projects/task.interface';
@@ -326,10 +329,13 @@ const MODEL_CONFIG_PARAMETERS = (
     return [...CONFIGURATION(projectIdentifier), taskId, undefined];
 };
 
-const SUPPORTED_ALGORITHMS = (domain: DOMAIN | undefined): [string, DOMAIN | undefined] => [
-    'supported_algorithms',
-    domain,
-];
+const SUPPORTED_ALGORITHMS = (projectIdentifier: ProjectIdentifier) =>
+    [
+        'supported_algorithms',
+        projectIdentifier.organizationId,
+        projectIdentifier.workspaceId,
+        projectIdentifier.projectId,
+    ] as const;
 
 const EXPORT_MODEL = (
     projectIdentifier: ProjectIdentifier,
@@ -413,6 +419,9 @@ const PROJECT_IMPORT_STATUS_KEY = (workspaceId: string, importProjectId: string)
 const PLATFORM_UTILS_KEYS = {
     VERSION_ENTITY_KEY: ['version'],
     WORKFLOW_ID: (userSubjectIdentifier: string) => ['workflow_id', userSubjectIdentifier],
+    CHECK_BACKUP: ['check-backup'],
+    PLATFORM_VERSIONS: ['platform-versions'],
+    UPGRADE_PROGRESS: ['platform-upgrade-progress'],
 };
 
 const ORGANIZATIONS = (queryOptions: GetOrganizationsQueryOptions) => ['organizations', queryOptions];
@@ -505,8 +514,16 @@ const CONFIGURATION_PARAMETERS = {
             projectIdentifier.workspaceId,
             projectIdentifier.projectId,
             queryParameters?.taskId,
-            queryParameters?.modelId,
             queryParameters?.modelManifestId,
+        ] as const,
+    TRAINED_MODEL: (projectIdentifier: ProjectIdentifier, queryParameters: TrainedModelConfigurationQueryParameters) =>
+        [
+            'model-configuration',
+            projectIdentifier.organizationId,
+            projectIdentifier.workspaceId,
+            projectIdentifier.projectId,
+            queryParameters.taskId,
+            queryParameters.modelId,
         ] as const,
 };
 

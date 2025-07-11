@@ -21,10 +21,20 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=app,target=app \
 	CGO_ENABLED=0 go build -trimpath -mod=readonly -gcflags="all=-spectre=all" -asmflags="all=-spectre=all" -ldflags="all=-s -w" -a -o account_service .
 
+# Save Go third party package licenses
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+    --mount=type=bind,source=go.sum,target=go.sum \
+    --mount=type=bind,source=go.mod,target=go.mod \
+    --mount=type=bind,source=main.go,target=main.go \
+    --mount=type=bind,source=app,target=app \
+    go install github.com/google/go-licenses@v1.0.0 && \
+    go-licenses save . --save_path /THIRD_PARTY_NOTICES || true
+
 # Production image
 FROM gcr.io/distroless/static-debian12:nonroot@sha256:627d6c5a23ad24e6bdff827f16c7b60e0289029b0c79e9f7ccd54ae3279fb45f AS runtime
 
 COPY --link --from=build /build/control_plane/account_service/account_service .
+COPY --from=build /THIRD_PARTY_NOTICES /THIRD_PARTY_NOTICES
 
 USER nonroot
 

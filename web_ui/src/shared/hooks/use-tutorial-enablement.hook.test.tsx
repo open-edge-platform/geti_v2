@@ -5,7 +5,7 @@ import { act, waitFor } from '@testing-library/react';
 
 import { FUX_NOTIFICATION_KEYS } from '../../core/user-settings/dtos/user-settings.interface';
 import { useUserGlobalSettings } from '../../core/user-settings/hooks/use-global-settings.hook';
-import { initialFuxNotificationsConfig } from '../../core/user-settings/utils';
+import { INITIAL_GLOBAL_SETTINGS } from '../../core/user-settings/utils';
 import { renderHookWithProviders } from '../../test-utils/render-hook-with-providers';
 import { useTutorialEnablement } from './use-tutorial-enablement.hook';
 
@@ -22,7 +22,7 @@ describe('useTutorialEnablement', () => {
             isSavingConfig: false,
             saveConfig: mockSaveConfig,
             config: {
-                ...initialFuxNotificationsConfig,
+                ...INITIAL_GLOBAL_SETTINGS,
                 [FUX_NOTIFICATION_KEYS.ANNOTATE_INTERACTIVELY]: { isEnabled: false },
             },
         });
@@ -40,7 +40,7 @@ describe('useTutorialEnablement', () => {
         jest.mocked(useUserGlobalSettings).mockReturnValue({
             isSavingConfig: false,
             saveConfig: mockSaveConfig,
-            config: initialFuxNotificationsConfig,
+            config: INITIAL_GLOBAL_SETTINGS,
         });
 
         const { result } = renderHookWithProviders(() =>
@@ -56,7 +56,7 @@ describe('useTutorialEnablement', () => {
         jest.mocked(useUserGlobalSettings).mockReturnValue({
             isSavingConfig: false,
             saveConfig: mockSaveConfig,
-            config: initialFuxNotificationsConfig,
+            config: INITIAL_GLOBAL_SETTINGS,
         });
         const { result } = renderHookWithProviders(() =>
             useTutorialEnablement(FUX_NOTIFICATION_KEYS.ANNOTATE_INTERACTIVELY)
@@ -72,7 +72,7 @@ describe('useTutorialEnablement', () => {
 
         await waitFor(() => {
             expect(mockSaveConfig).toHaveBeenCalledWith({
-                ...initialFuxNotificationsConfig,
+                ...INITIAL_GLOBAL_SETTINGS,
                 [FUX_NOTIFICATION_KEYS.ANNOTATE_INTERACTIVELY]: {
                     isEnabled: false,
                 },

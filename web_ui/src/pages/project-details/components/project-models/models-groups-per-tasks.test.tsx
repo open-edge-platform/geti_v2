@@ -8,7 +8,7 @@ import { JobState, JobType } from '../../../../core/jobs/jobs.const';
 import { ModelGroupsAlgorithmDetails } from '../../../../core/models/models.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { PerformanceType } from '../../../../core/projects/task.interface';
-import { getMockedSupportedAlgorithm } from '../../../../core/supported-algorithms/services/test-utils';
+import { getLegacyMockedSupportedAlgorithm } from '../../../../core/supported-algorithms/services/test-utils';
 import { TaskWithSupportedAlgorithms } from '../../../../core/supported-algorithms/supported-algorithms.interface';
 import { idMatchingFormat } from '../../../../test-utils/id-utils';
 import { getMockedProjectIdentifier } from '../../../../test-utils/mocked-items-factory/mocked-identifiers';
@@ -33,58 +33,58 @@ const mockedModelsGroups = [
 ];
 
 const mockedSupportedAlgorithmsForDetection = [
-    getMockedSupportedAlgorithm({
+    getLegacyMockedSupportedAlgorithm({
         name: 'YOLO',
         domain: DOMAIN.DETECTION,
         modelSize: 200,
         modelTemplateId: 'detection_yolo',
         gigaflops: 1.3,
-        summary: 'YOLO architecture for detection',
+        description: 'YOLO architecture for detection',
     }),
-    getMockedSupportedAlgorithm({
+    getLegacyMockedSupportedAlgorithm({
         name: 'SSD',
         domain: DOMAIN.DETECTION,
         modelSize: 100,
         modelTemplateId: 'detection_ssd',
         gigaflops: 5.4,
-        summary: 'SSD architecture for detection',
+        description: 'SSD architecture for detection',
     }),
-    getMockedSupportedAlgorithm({
+    getLegacyMockedSupportedAlgorithm({
         name: 'ATTS',
         domain: DOMAIN.DETECTION,
         modelSize: 150,
         modelTemplateId: 'detection_atts',
         gigaflops: 3,
         isDefaultAlgorithm: true,
-        summary: 'ATTS architecture for detection',
+        description: 'ATTS architecture for detection',
     }),
 ];
 
 const mockedSupportedAlgorithmsForSegmentation = [
-    getMockedSupportedAlgorithm({
+    getLegacyMockedSupportedAlgorithm({
         name: 'Lite-HRNet-18-mod2',
         domain: DOMAIN.SEGMENTATION,
         modelSize: 200,
         modelTemplateId: 'segmentation_Lite-HRNet-18-mod2',
         gigaflops: 1.3,
-        summary: 'Lite-HRNet-18-mod2 architecture for segmentation',
+        description: 'Lite-HRNet-18-mod2 architecture for segmentation',
     }),
-    getMockedSupportedAlgorithm({
+    getLegacyMockedSupportedAlgorithm({
         name: 'Lite-HRNet-x-mod3',
         domain: DOMAIN.SEGMENTATION,
         modelSize: 100,
         modelTemplateId: 'segmentation_Lite-HRNet-x-mod3',
         gigaflops: 5.4,
-        summary: 'Lite-HRNet-x-mod3 architecture for segmentation',
+        description: 'Lite-HRNet-x-mod3 architecture for segmentation',
     }),
-    getMockedSupportedAlgorithm({
+    getLegacyMockedSupportedAlgorithm({
         name: 'Lite-HRNet-s-mod2',
         domain: DOMAIN.SEGMENTATION,
         modelSize: 150,
         modelTemplateId: 'segmentation_Lite-HRNet-s-mod2',
         gigaflops: 3,
         isDefaultAlgorithm: true,
-        summary: 'Lite-HRNet-s-mod2 architecture for segmentation',
+        description: 'Lite-HRNet-s-mod2 architecture for segmentation',
     }),
 ];
 

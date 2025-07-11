@@ -15,7 +15,6 @@ from iai_core.repos import LabelSchemaRepo, ModelRepo, ModelStorageRepo, Project
 from tests.unit.tasks.utils import return_none
 
 
-@pytest.mark.JobsComponent
 class TestTrainWorkflowDataTask:
     @patch.object(ProjectRepo, "get_by_id")
     @patch.object(TaskNodeRepo, "get_by_id")

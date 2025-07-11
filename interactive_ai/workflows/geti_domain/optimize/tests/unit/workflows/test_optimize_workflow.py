@@ -1,7 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import pytest
 from flytekit.core.testing import task_mock
 from iai_core.entities.model import ModelOptimizationType
 
@@ -10,7 +9,6 @@ from job.tasks.optimization_task import shard_dataset_prepare_models_and_start_o
 from job.workflows.optimize_workflow import optimize_workflow_pot
 
 
-@pytest.mark.JobsComponent
 class TestOptimize:
     def test_optimize_workflow_pot(self, fxt_optimization_trainer_ctx) -> None:
         with (
@@ -42,7 +40,7 @@ class TestOptimize:
                 trainer_ctx=fxt_optimization_trainer_ctx,
                 model_id="model_id",
                 dataset_storage_id="dataset_storage_id",
-                keep_mlflow_artifacts=False,
+                retain_training_artifacts=False,
                 min_annotation_size=None,
                 max_number_of_annotations=None,
             )

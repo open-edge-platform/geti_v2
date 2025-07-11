@@ -5,7 +5,7 @@ import { Button, Flex, Item, Key, Menu, MenuTrigger, Section } from '@geti/ui';
 import { JointConnection } from '@geti/ui/icons';
 
 import { RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
-import { isNonEmptyArray } from '../../../../../shared/utils';
+import { hasEqualId, isNonEmptyArray } from '../../../../../shared/utils';
 import { TemplateState } from '../../../../utils';
 import { useGetProjectsTemplates } from '../hooks/use-get-projects-templates.hook';
 import { animalPose } from './animal-pose.template';
@@ -15,8 +15,6 @@ import {
     formatTemplate,
     getGetiTemplateKey,
     getGetiTemplateName,
-    getProjectTemplateKey,
-    getProjectTemplateName,
     isGetiTemplate,
     isProjectTemplate,
     RawStructure,
@@ -43,7 +41,7 @@ export const Templates = ({ roi, onAction }: TemplatesProps) => {
         }
 
         if (isProjectTemplate(templateKey)) {
-            const selectedTemplate = projectTemplates.find(({ name }) => name === getProjectTemplateName(templateKey));
+            const selectedTemplate = projectTemplates.find(hasEqualId(templateKey));
 
             selectedTemplate && onAction(formatTemplate(selectedTemplate?.template, roi));
         }
@@ -68,8 +66,8 @@ export const Templates = ({ roi, onAction }: TemplatesProps) => {
 
                 {isNonEmptyArray(projectTemplates) ? (
                     <Section title='Project templates'>
-                        {projectTemplates.map(({ name }) => (
-                            <Item key={getProjectTemplateKey(name)} textValue={name}>
+                        {projectTemplates.map(({ id, name }) => (
+                            <Item key={id} textValue={name}>
                                 {name}
                             </Item>
                         ))}

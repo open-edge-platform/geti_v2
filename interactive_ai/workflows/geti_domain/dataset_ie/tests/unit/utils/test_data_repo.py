@@ -13,7 +13,6 @@ from job.repos.data_repo import ImportDataRepo
 from job.utils.exceptions import FileNotFoundException
 
 
-@pytest.mark.JobsComponent
 class TestDataRepo:
     """
     Unit tests for the ImportDataRepo

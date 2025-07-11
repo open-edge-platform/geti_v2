@@ -11,6 +11,7 @@ import { Navigate } from 'react-router-dom';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { Task } from '../core/projects/task.interface';
+import { useLastWorkspace } from '../hooks/use-last-workspace/use-last-workspace.hook';
 import { useModelIdentifier } from '../hooks/use-model-identifier/use-model-identifier.hook';
 import { useOrganizationIdentifier } from '../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { useDatasetIdentifier } from '../pages/annotator/hooks/use-dataset-identifier.hook';
@@ -35,13 +36,12 @@ export const RedirectToOpenVino = () => {
 export const RedirectToWorkspace = () => {
     const { organizationId } = useOrganizationIdentifier();
 
-    // Redirect to the first available workspace
     const { useWorkspacesQuery } = useWorkspacesApi(organizationId);
     const { data: workspaces } = useWorkspacesQuery();
-    const workspaceId = workspaces.at(0)?.id;
+    const { lastWorkspaceId } = useLastWorkspace(organizationId, workspaces.at(0)?.id);
 
     // Show an error if we are unable to load workspaces
-    if (workspaceId === undefined) {
+    if (lastWorkspaceId === undefined) {
         return (
             <ErrorLayout>
                 <ResourceNotFound />
@@ -49,7 +49,7 @@ export const RedirectToWorkspace = () => {
         );
     }
 
-    return <Navigate to={paths.workspace({ organizationId, workspaceId })} replace />;
+    return <Navigate to={paths.workspace({ organizationId, workspaceId: lastWorkspaceId })} replace />;
 };
 
 export const RedirectToDatasetMedia = () => {

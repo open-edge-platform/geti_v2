@@ -6,8 +6,6 @@ This module tests the file metadata repo
 
 from typing import TYPE_CHECKING
 
-import pytest
-
 from communication.mappers.file_metadata_mapper import TTL_FIELD_NAME
 from communication.repos.file_metadata_repo import TTL_TIME_IN_SECONDS, FileMetadataRepo
 from domain.entities.dataset_ie_file_metadata import ImportMetadata, NullFileMetadata
@@ -16,7 +14,6 @@ if TYPE_CHECKING:
     from pymongo.collection import Collection
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestFileMetadataRepo:
     """
     unitest the file metadata repo

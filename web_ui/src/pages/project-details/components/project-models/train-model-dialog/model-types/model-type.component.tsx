@@ -5,8 +5,9 @@ import { FC, ReactNode } from 'react';
 
 import { Flex, Grid, Heading, Radio, RadioGroup, repeat, Tooltip, TooltipTrigger } from '@geti/ui';
 import clsx from 'clsx';
-import { isFunction } from 'lodash-es';
+import { capitalize, isFunction } from 'lodash-es';
 
+import { PerformanceCategory } from '../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { SupportedAlgorithm } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { InfoTooltip } from '../../../../../../shared/components/info-tooltip/info-tooltip.component';
 import { isDeprecatedAlgorithm } from '../../legacy-train-model-dialog/model-templates-selection/utils';
@@ -19,7 +20,6 @@ import { AttributeRating, Ratings } from './attribute-rating/attribute-rating.co
 import classes from './model-type.module.scss';
 
 interface ModelTypeProps {
-    name: string;
     algorithm: SupportedAlgorithm;
     selectedModelTemplateId: string | null;
     onChangeSelectedTemplateId: (modelTemplateId: string | null) => void;
@@ -45,16 +45,25 @@ const TemplateRating: FC<TemplateRatingProps> = ({ ratings }) => {
     );
 };
 
+type PerformanceRating = SupportedAlgorithm['performanceRatings'][keyof SupportedAlgorithm['performanceRatings']];
+
+const RATING_MAP: Record<PerformanceRating, Ratings> = {
+    1: 'LOW',
+    2: 'MEDIUM',
+    3: 'HIGH',
+};
+
 export const ModelType: FC<ModelTypeProps> = ({
     algorithm,
     selectedModelTemplateId,
     onChangeSelectedTemplateId,
     activeModelTemplateId,
     renderTag,
-    name,
 }) => {
-    const { modelTemplateId, lifecycleStage, summary } = algorithm;
+    const { modelTemplateId, lifecycleStage, description, performanceRatings } = algorithm;
     const isSelected = selectedModelTemplateId === modelTemplateId;
+    const isRecommendedAlgorithm = algorithm.performanceCategory !== PerformanceCategory.OTHER;
+    const name = isRecommendedAlgorithm ? capitalize(algorithm.performanceCategory) : algorithm.name;
 
     const shouldShowActiveTag = modelTemplateId === activeModelTemplateId;
 
@@ -98,7 +107,7 @@ export const ModelType: FC<ModelTypeProps> = ({
                         <InfoTooltip
                             id={`${name.toLocaleLowerCase()}-summary-id`}
                             tooltipText={
-                                <ModelArchitectureTooltipText description={summary} isDeprecated={isDeprecated} />
+                                <ModelArchitectureTooltipText description={description} isDeprecated={isDeprecated} />
                             }
                             iconColor={isSelected ? 'var(--energy-blue)' : undefined}
                             className={classes.infoTooltip}
@@ -112,7 +121,13 @@ export const ModelType: FC<ModelTypeProps> = ({
                 </>
             }
             descriptionContent={
-                <TemplateRating ratings={{ accuracy: 'HIGH', trainingTime: 'MEDIUM', inferenceSpeed: 'LOW' }} />
+                <TemplateRating
+                    ratings={{
+                        accuracy: RATING_MAP[performanceRatings.accuracy],
+                        trainingTime: RATING_MAP[performanceRatings.trainingTime],
+                        inferenceSpeed: RATING_MAP[performanceRatings.inferenceSpeed],
+                    }}
+                />
             }
         />
     );

@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import utc from 'dayjs/plugin/utc.js';
 import { filesize, FileSizeOptionsBase } from 'filesize';
-import { isEmpty, isEqual, isNil, isString, negate } from 'lodash-es';
+import { isEmpty, isEqual, isFunction, isNil, isString, negate } from 'lodash-es';
 import * as yup from 'yup';
 
 import { RegionOfInterest } from '../core/annotations/annotation.interface';
@@ -81,10 +81,12 @@ export const formatLocalToUtc = (date: string, localFormat?: string): string =>
 export const runWhen =
     <T>(predicate: (...args: T[]) => boolean) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (whenTrueFn: (...args: any[]) => void) =>
+    (whenTrueFn: (...args: any[]) => void, whenFalseFn?: (...args: any[]) => void) =>
     (...args: T[]): void => {
         if (predicate(...args)) {
             whenTrueFn(...args);
+        } else {
+            isFunction(whenFalseFn) && whenFalseFn(...args);
         }
     };
 

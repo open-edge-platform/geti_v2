@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 from collections.abc import Callable
 from functools import partial
 from unittest.mock import patch
@@ -10,6 +9,7 @@ import mongomock
 import pytest
 from bson import ObjectId
 from pymongo import MongoClient
+from pymongo.database import Database
 
 from migration.scripts.remove_ndr import RemoveNDRMigration
 from migration.utils import MongoDBConnection
@@ -57,7 +57,7 @@ class TestRemoveNDRMigration:
         )
 
         assert configurable_parameters.count_documents(filter_query) == 1
-        assert "use_ndr" not in configurable_parameters.find_one(filter_query)["data"]
+        assert "use_ndr" not in configurable_parameters.find_one(filter_query)["data"]  # type: ignore[index]
 
     @pytest.mark.parametrize("collection_exists", [True, False], ids=["existing", "non-existing"])
     def test_upgrade_non_project_data(self, collection_exists) -> None:
@@ -66,7 +66,7 @@ class TestRemoveNDRMigration:
             original_fn(collection_name)
             return {"ok": 1.0}
 
-        mock_db = mongomock.MongoClient(uuidRepresentation="standard").db
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         if collection_exists:
             mock_db.create_collection("ndr_config")
             mock_db.create_collection("ndr_hash")
@@ -91,7 +91,7 @@ class TestRemoveNDRMigration:
 
     @pytest.mark.parametrize("collection_exists", [True, False], ids=["existing", "non-existing"])
     def test_downgrade_non_project_data(self, collection_exists) -> None:
-        mock_db = mongomock.MongoClient(uuidRepresentation="standard").db
+        mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         if collection_exists:
             mock_db.create_collection("ndr_config")
             mock_db.create_collection("ndr_hash")

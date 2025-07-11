@@ -34,7 +34,7 @@ export const getSubscriptionEntity = (subscription: SubscriptionDTO): Subscripti
 
 const MAX_TRAINING_JOBS_LIMIT = 20;
 
-export const getQuotaEntity = (quotaDTO: QuotaDTO): Quota => {
+const getQuotaEntity = (quotaDTO: QuotaDTO): Quota => {
     const { id, organization_id, service_name, quota_name, quota_type, limit, created, updated } = quotaDTO;
 
     const maxLimit: number | undefined =

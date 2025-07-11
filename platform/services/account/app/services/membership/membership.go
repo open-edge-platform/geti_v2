@@ -52,6 +52,7 @@ func (s *membershipService) GetMemberships(ctx context.Context, req *proto.Membe
 	dataQuery := repository.MembershipQuery{FirstName: req.FirstName, SecondName: req.SecondName, Email: req.Email, Status: req.Status, CreatedAt: req.CreatedAt, Name: req.Name, OrganizationId: req.OrganizationId, SortBy: req.SortBy, SortDirection: req.SortDirection, Skip: req.Skip, Limit: req.Limit}
 	memberships, totalMatchedCount, err := s.repo.FindMemberships(ctx, &dataQuery)
 	if err != nil {
+		logger.Errorf("GET membership Error %v", err)
 		return nil, 0, err
 	}
 
