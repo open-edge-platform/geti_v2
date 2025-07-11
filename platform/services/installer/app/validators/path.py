@@ -15,26 +15,29 @@ A module with validating functions for data folder path.
 """
 
 import os.path
-import re
 
 from click import BadParameter, Context, Parameter
 
 from constants.paths import DATA_FOLDER
-from platform_utils.path import create_default_data_folder
 from texts.validators import PathValidatorsTexts
 from validators.errors import ValidationError
 
 
-def is_path_valid(path: str):  # noqa: ANN201
+def is_path_is_absolute(path: str) -> None:
     """
-    Checks whether the path is absolute, is not empty, is a not a directory and does not exist.
+    Checks whether the given path is absolute.
+    Raises ValidationError if given path is not absolute.
+    """
+    if not os.path.isabs(path):
+        raise ValidationError(PathValidatorsTexts.invalid_path.format(path=path, folder=DATA_FOLDER))
+
+
+def is_path_valid(path: str) -> None:
+    """
+    Checks whether the existing path is absolute, is not empty, is a not a directory and does not exist.
     Raises ValidationError if given path is invalid.
     """
-    regex = re.compile(r"(^[\/].*$)")
-    if not re.fullmatch(regex, str(path)):
-        raise ValidationError(PathValidatorsTexts.invalid_path.format(path=path, folder=DATA_FOLDER))
-    if not os.path.exists(path):
-        raise ValidationError(PathValidatorsTexts.path_not_exists.format(path=path, folder=DATA_FOLDER))
+    is_path_is_absolute(path)
     if os.path.isfile(path):
         raise ValidationError(PathValidatorsTexts.path_not_folder.format(path=path))
     if os.listdir(path):
@@ -52,17 +55,17 @@ def is_data_folder_valid(context: Context, param: Parameter, value: str) -> str:
     value: Value of the parameter
     """
     try:
-        if not value:
-            create_default_data_folder()
-        else:
+        if os.path.exists(value):
             is_path_valid(value)
             if get_path_permissions(value)[-1] != "0":
                 raise ValidationError(
                     PathValidatorsTexts.invalid_permissions.format(path=value, permissions=get_path_permissions(value))
                 )
+        else:
+            is_path_is_absolute(value)
     except ValidationError as e:
         raise BadParameter(str(e))
-    return value if value else DATA_FOLDER
+    return value
 
 
 def get_path_permissions(path: str) -> str:

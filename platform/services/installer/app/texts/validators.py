@@ -39,9 +39,6 @@ class PathValidatorsTexts:
     """
 
     invalid_path = "Provided path {path} format is not correct. It must be an absolute path (e.g. {folder})."
-    path_not_exists = (
-        "Provided path {path} does not point to an existing folder. It must be an absolute path (e.g. {folder})."
-    )
     path_not_folder = "Provided path {path} does not point to a folder."
     path_already_exists = (
         "Cannot create {path}. Please delete the folder or use '--data-folder'"

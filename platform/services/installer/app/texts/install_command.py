@@ -28,6 +28,9 @@ class InstallCmdTexts:
     checks_error_message = "Pre-installation checks failed, aborting installation."
     execution_start_message = "Executing installation..."
     data_folder_location = "Path to the data storage: "
+    data_folder_creation_start = "Creating data folder: {path}"
+    data_folder_creation_succeeded = "Data folder created successfully"
+    data_folder_creation_failed = "Data folder creation failed. Look for errors in the log."
     selected_username = "Initial user: "
     selected_password = "Password for initial user: "  # noqa: S105
     custom_certificate_prompt = "Do you want to configure your custom SSL certificate?"

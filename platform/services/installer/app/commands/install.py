@@ -38,6 +38,7 @@ from cli_utils.platform_logs import configure_logging, create_logs_dir
 from cli_utils.spinner import click_spinner
 from configuration_models.install_config import InstallationConfig
 from constants.paths import (
+    DATA_FOLDER,
     K3S_INSTALLATION_MARK_FILEPATH,
     K3S_KUBECONFIG_PATH,
     OFFLINE_TOOLS_DIR,
@@ -56,9 +57,10 @@ from geti_controller.uninstall import uninstall_geti_controller_chart
 from k3s.detect_ip import get_first_public_ip, get_master_node_ip_address
 from k3s.install import K3SInstallationError, install_k3s
 from k3s.uninstall import uninstall_k3s
-from platform_utils.errors import DownloadSystemPackagesError, StepsError
+from platform_utils.errors import DownloadSystemPackagesError, PathCreationError, StepsError
 from platform_utils.install_system_packages import install_system_packages
 from platform_utils.management.state import InstallationHandlerState, cluster_info_dump
+from platform_utils.path import create_data_folder
 from texts.checks import (
     DNSChecksTexts,
     InternetConnectionChecksTexts,
@@ -210,7 +212,7 @@ def monitor_installation_progress(config: InstallationConfig) -> tuple[str, str]
     return status, message
 
 
-def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF100
+def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF100, PLR0915
     """
     Execute platform installation with passed configuration.
     """
@@ -218,6 +220,17 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
 
     handler_state = InstallationHandlerState()
     set_custom_signal_handler(handler_state, config.data_folder.value)
+
+    data_folder_path = config.data_folder.value
+    if not os.path.exists(data_folder_path):
+        try:
+            click.echo(InstallCmdTexts.data_folder_creation_start.format(path=data_folder_path))
+            create_data_folder(data_folder_path)
+            click.secho(InstallCmdTexts.data_folder_creation_succeeded, fg="green")
+        except PathCreationError:
+            logger.exception("Error during data folder creation.")
+            click.secho(InstallCmdTexts.data_folder_creation_failed, fg="red")
+            sys.exit(1)
 
     try:
         click.echo(InstallCmdTexts.sys_pkgs_installing)
@@ -304,6 +317,7 @@ def display_final_confirmation(config: InstallationConfig) -> None:
     "--data-folder",
     type=click.Path(),
     callback=is_data_folder_valid,
+    default=DATA_FOLDER,
     help="Absolute path to directory where Geti data will be stored.",
 )
 @click.option(
