@@ -20,8 +20,8 @@ export interface RotatedRect extends Point {
 }
 
 export interface Circle {
-    readonly cx: number;
-    readonly cy: number;
+    readonly x: number;
+    readonly y: number;
     readonly r: number;
     readonly shapeType: 'circle';
 }
@@ -31,7 +31,17 @@ export interface Polygon {
     readonly shapeType: 'polygon';
 }
 
-export type Shape = Rect | RotatedRect | Circle | Polygon;
+interface KeypointNode {
+    readonly x: number;
+    readonly y: number;
+    readonly isVisible: boolean;
+}
+export interface Pose {
+    readonly points: KeypointNode[];
+    readonly shapeType: 'pose';
+}
+
+export type Shape = Rect | RotatedRect | Circle | Polygon | Pose;
 export type ShapeType = Shape['shapeType'];
 
 export interface RegionOfInterest {

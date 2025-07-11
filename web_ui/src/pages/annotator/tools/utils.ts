@@ -470,8 +470,8 @@ export function convertToolShapeToGetiShape(shape: SmartToolsShape): Shape {
         case 'circle':
             return {
                 shapeType: ShapeType.Circle,
-                x: shape.cx,
-                y: shape.cy,
+                x: shape.x,
+                y: shape.y,
                 r: shape.r,
             };
         default:
@@ -511,8 +511,8 @@ export function convertGetiShapeToToolShape(shape: Shape): SmartToolsShape {
         case ShapeType.Circle:
             return {
                 shapeType: 'circle',
-                cx: shape.x,
-                cy: shape.y,
+                x: shape.x,
+                y: shape.y,
                 r: shape.r,
             };
         default:

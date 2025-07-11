@@ -294,7 +294,7 @@ describe('annotator utils', () => {
         });
 
         it('should convert circle shape', () => {
-            const shape: ToolShape = { shapeType: 'circle', cx: 10, cy: 20, r: 5 };
+            const shape: ToolShape = { shapeType: 'circle', x: 10, y: 20, r: 5 };
             expect(convertToolShapeToGetiShape(shape)).toEqual({
                 shapeType: ShapeType.Circle,
                 x: 10,
@@ -395,8 +395,8 @@ describe('annotator utils', () => {
             };
             expect(convertGetiShapeToToolShape(shape)).toEqual({
                 shapeType: 'circle',
-                cx: 11,
-                cy: 22,
+                x: 11,
+                y: 22,
                 r: 33,
             });
         });
