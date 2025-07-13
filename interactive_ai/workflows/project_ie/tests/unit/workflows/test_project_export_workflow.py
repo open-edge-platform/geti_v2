@@ -18,4 +18,5 @@ class TestExportWorkflow:
             )
         mock_export_project_task.assert_called_with(
             project_id=project_id,
+            include_models=include_models,
         )

@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 )
 def export_project(
     project_id: str,
+    include_models: str = "all",
 ) -> None:
     """
     Export project from Geti to zipped project task
@@ -38,4 +39,9 @@ def export_project(
     :param project_id: ID of the project to export
     :return: id of the exported project
     """
+    if include_models not in ["all"]:
+        raise NotImplementedError(
+            f"Exporting projects including models of type '{include_models}' is not supported yet."
+        )
+
     ProjectExportUseCase.export_as_zip(project_id=ID(project_id), progress_callback=report_progress)

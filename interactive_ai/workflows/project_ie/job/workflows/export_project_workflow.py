@@ -19,11 +19,4 @@ def export_project_workflow(
     :param project_id: ID of the project to export
     :param include_models: specifies which models to include in the export, default is "all"
     """
-    if include_models not in ["all"]:
-        raise NotImplementedError(
-            f"Exporting projects including models of type '{include_models}' is not supported yet."
-        )
-
-    export_project(
-        project_id=project_id,
-    )
+    export_project(project_id=project_id, include_models=include_models)
