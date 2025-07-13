@@ -42,7 +42,7 @@ class TestExportController:
             priority=1,
             job_name="Project Export",
             job_type="export_project",
-            key=json.dumps(dict(payload, type="export_project")),
+            key=json.dumps({"project_id": str(fxt_project.id_), "type": "export_project"}),
             payload=payload,
             metadata=metadata,
             duplicate_policy=JobDuplicatePolicy.REPLACE.name.lower(),
