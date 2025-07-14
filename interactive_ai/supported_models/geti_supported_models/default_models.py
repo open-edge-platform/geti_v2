@@ -24,7 +24,7 @@ class TaskType(str, Enum):
     DETECTION = auto()
     ROTATED_DETECTION = auto()
     INSTANCE_SEGMENTATION = auto()
-    SEMANTIC_SEGMENTATION = auto()
+    SEGMENTATION = auto()
     ANOMALY = auto()
     KEYPOINT_DETECTION = auto()
 
@@ -62,7 +62,7 @@ class DefaultModels:
             DefaultCategory.SPEED: "Custom_Counting_Instance_Segmentation_MaskRCNN_EfficientNetB2B",
             DefaultCategory.BALANCE: "Custom_Instance_Segmentation_MaskRCNN_ResNet50_v2",
         },
-        TaskType.SEMANTIC_SEGMENTATION: {
+        TaskType.SEGMENTATION: {
             DefaultCategory.DEFAULT: "Custom_Semantic_Segmentation_DINOV2_S",
             DefaultCategory.ACCURACY: "Custom_Semantic_Segmentation_DINOV2_S",
             DefaultCategory.SPEED: "Custom_Semantic_Segmentation_Lite-HRNet-s-mod2_OCR",
@@ -94,10 +94,7 @@ class DefaultModels:
         """
         try:
             task_type_str = task_type.upper()
-            if task_type_str == "SEGMENTATION":
-                # legacy support for SEGMENTATION task type
-                task_type_str = "SEMANTIC_SEGMENTATION"
-            elif task_type_str == "VISUAL_PROMPTING":
+            if task_type_str == "VISUAL_PROMPTING":
                 return None
             _task_type = TaskType[task_type_str]
         except KeyError:
