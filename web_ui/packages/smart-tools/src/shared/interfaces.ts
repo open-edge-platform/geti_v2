@@ -20,8 +20,8 @@ export interface RotatedRect extends Point {
 }
 
 export interface Circle {
-    readonly cx: number;
-    readonly cy: number;
+    readonly x: number;
+    readonly y: number;
     readonly r: number;
     readonly shapeType: 'circle';
 }
@@ -31,7 +31,13 @@ export interface Polygon {
     readonly shapeType: 'polygon';
 }
 
-export type Shape = Rect | RotatedRect | Circle | Polygon;
+export interface Pose {
+    // NOTE: this is not fully compatible with Geti's type
+    readonly points: Point[];
+    readonly shapeType: 'pose';
+}
+
+export type Shape = Rect | RotatedRect | Circle | Polygon | Pose;
 export type ShapeType = Shape['shapeType'];
 
 export interface RegionOfInterest {

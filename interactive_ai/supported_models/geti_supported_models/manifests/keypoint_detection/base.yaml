@@ -10,3 +10,7 @@ hyperparameters:
     early_stopping:
       enable: true
       patience: 10
+    allowed_values_input_size:
+      - 512
+    input_size_width: 512
+    input_size_height: 512

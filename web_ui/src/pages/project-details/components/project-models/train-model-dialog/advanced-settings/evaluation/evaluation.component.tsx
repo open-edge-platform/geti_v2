@@ -67,6 +67,7 @@ const ConfidenceThreshold: FC<ConfidenceThresholdProps> = ({
                 <>
                     <View gridColumn={'2/3'}>
                         <NumberParameterField
+                            name={manualParameter.name}
                             value={manualParameter.value}
                             minValue={manualParameter.minValue}
                             maxValue={manualParameter.maxValue}

@@ -13,3 +13,5 @@ stats:
 hyperparameters:
   training:
     learning_rate: 0.001
+    input_size_width: 640
+    input_size_height: 640

@@ -11,7 +11,7 @@ import { AlgorithmType } from '../../../hooks/use-load-ai-webworker/algorithm.in
 import { useLoadAIWebworker } from '../../../hooks/use-load-ai-webworker/use-load-ai-webworker.hook';
 import { useAnnotationScene } from '../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { RITMData, RITMResult } from '../tools/ritm-tool/ritm-tool.interface';
-import { convertGetiShapeTypeToToolShapeType, convertToolShapeToGetiShape } from '../tools/utils';
+import { convertToolShapeToGetiShape } from '../tools/utils';
 
 interface useInteractiveSegmentationProps {
     onSuccess: (result: RITMResult) => void;
@@ -79,7 +79,7 @@ export const useInteractiveSegmentation = ({
             cancelRequested.current = false;
             setIsDrawing(true);
 
-            return ritmInstance.current.execute(area, givenPoints, convertGetiShapeTypeToToolShapeType(outputShape));
+            return ritmInstance.current.execute(area, givenPoints, outputShape);
         },
 
         onError: showNotificationError,
