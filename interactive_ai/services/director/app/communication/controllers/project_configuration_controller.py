@@ -22,13 +22,11 @@ class ProjectConfigurationRESTController:
     @unified_tracing
     def get_configuration(
         project_identifier: ProjectIdentifier,
-        task_id: str | None = None,
     ) -> dict[str, Any]:
         """
         Retrieves configuration related to a specific project.
 
         :param project_identifier: Identifier for the project (containing organization_id, workspace_id, and project_id)
-        :param task_id: Optional ID of the task to retrieve configuration for a specific task.
         :return: Dictionary representation of the project configuration
         """
         project_config = ProjectConfigurationRepo(project_identifier).get_project_configuration()

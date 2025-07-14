@@ -5,7 +5,7 @@ import logging
 from http import HTTPStatus
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from geti_configuration_tools.project_configuration import PartialProjectConfiguration
 from geti_feature_tools import FeatureFlagProvider
 
