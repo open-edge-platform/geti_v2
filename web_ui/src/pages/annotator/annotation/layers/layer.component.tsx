@@ -2,15 +2,16 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { Annotation as AnnotationInterface } from '../../../../core/annotations/annotation.interface';
-import { hasEqualId } from '../../../../shared/utils';
+import { isBackgroundLabel } from '../../../../core/labels/utils';
+import { hasEqualId, isNonEmptyArray } from '../../../../shared/utils';
 import { DEFAULT_ANNOTATION_STYLES } from '../../tools/utils';
 import { Annotation } from '../annotation.component';
-import { ShapeFactory } from '../shapes/factory.component';
+import { BackgroundMasks } from './background-masks';
 import { LayerProps } from './utils';
 
 import classes from '../../annotator-canvas.module.scss';
 
-const isHoleMask = (annotation: AnnotationInterface) => annotation.labels.some(({ name }) => name === 'background');
+const isBackgroundMask = (annotation: AnnotationInterface) => annotation.labels.some(isBackgroundLabel);
 
 export const Layer = ({
     width,
@@ -41,11 +42,10 @@ export const Layer = ({
                 const showLabel = hideLabels === false || hideAnnotationShape;
                 const maskId = `${annotation.id}-mask`;
 
-                savedMasks = isHoleMask(annotation) ? [...savedMasks, annotation] : savedMasks;
+                savedMasks = isBackgroundMask(annotation) ? [...savedMasks, annotation] : savedMasks;
 
                 return (
                     <div key={annotation.id} className={classes.disabledLayer}>
-                        {/* {!hideAnnotationShape && ( */}
                         {!hideAnnotationShape && (
                             <svg
                                 width={width}
@@ -54,7 +54,9 @@ export const Layer = ({
                                 id={`annotations-canvas-${annotation.id}-shape`}
                                 aria-label={`annotations-canvas-${annotation.id}-shape`}
                             >
-                                {<HoleMasks id={maskId} masks={savedMasks} />}
+                                {isNonEmptyArray(savedMasks) && (
+                                    <BackgroundMasks id={maskId} annotations={savedMasks} />
+                                )}
 
                                 <Annotation
                                     key={annotation.id}
@@ -72,20 +74,5 @@ export const Layer = ({
                 );
             })}
         </div>
-    );
-};
-
-const HoleMasks = ({ id, masks }: { id: string; masks: AnnotationInterface[] }) => {
-    return (
-        <defs xmlns='http://www.w3.org/2000/svg'>
-            <mask id={id}>
-                <rect width='100%' height='100%' fill='white' />
-                <g fill='black' fillOpacity='1'>
-                    {masks.map((mask) => (
-                        <ShapeFactory key={mask.id} annotation={mask} />
-                    ))}
-                </g>
-            </mask>
-        </defs>
     );
 };
