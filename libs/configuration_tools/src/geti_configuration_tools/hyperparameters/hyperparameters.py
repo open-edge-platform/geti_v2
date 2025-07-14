@@ -136,7 +136,11 @@ class Hyperparameters(BaseModel):
         title="Training hyperparameters",
         description="Hyperparameters for the model training process",
     )
-    evaluation: EvaluationParameters
+    evaluation: EvaluationParameters = Field(
+        default_factory=EvaluationParameters,
+        title="Evaluation parameters",
+        description="Parameters for evaluating the trained model",
+    )
 
 
 @partial_model

@@ -18,6 +18,7 @@ from geti_configuration_tools.hyperparameters import (
     Tiling,
     TrainingHyperParameters,
 )
+from geti_configuration_tools.hyperparameters.augmentation import ColorJitter, RandomIOUCrop, RandomVerticalFlip
 
 
 class TestHyperparameters:
@@ -66,6 +67,9 @@ class TestHyperparameters:
                                 "scale": 0.9,
                             },
                             "random_horizontal_flip": {"enable": True},
+                            "random_vertical_flip": {"enable": True},
+                            "random_iou_crop": {"enable": True},
+                            "color_jitter": {"enable": True},
                             "gaussian_blur": {"enable": True, "kernel_size": 3},
                             "tiling": {"enable": True, "adaptive_tiling": True, "tile_size": 224, "tile_overlap": 32},
                         }
@@ -89,6 +93,9 @@ class TestHyperparameters:
                                 enable=True, degrees=30, translate_x=0.1, translate_y=0.1, scale=0.9
                             ),
                             random_horizontal_flip=RandomHorizontalFlip(enable=True),
+                            random_vertical_flip=RandomVerticalFlip(enable=True),
+                            random_iou_crop=RandomIOUCrop(enable=True),
+                            color_jitter=ColorJitter(enable=True),
                             gaussian_blur=GaussianBlur(enable=True, kernel_size=3),
                             tiling=Tiling(enable=True, adaptive_tiling=True, tile_size=224, tile_overlap=32),
                         )
