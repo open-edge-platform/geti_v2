@@ -54,7 +54,7 @@ class _Steps(IntEnum):
     IDX_COLLECT_WARNINGS = auto()
 
 
-def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list]:
+def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list]:  # noqa: C901
     import_id_ = ImportUtils.get_validated_mongo_id(id=import_id, id_name="Import Dataset ID")
     import_data_repo = ImportDataRepo()
     progress_reporter = ProgressReporter(
