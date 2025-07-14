@@ -3,10 +3,11 @@
 
 import { useEffect, useState } from 'react';
 
+import { sub, Vec2 } from '@geti/smart-tools/src/utils/vec2';
+
 import { Annotation, RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
 import { Point } from '../../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import { sub, Vec2 } from '../../../../../core/annotations/vec2';
 import { Labels } from '../../../annotation/labels/labels.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';

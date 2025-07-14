@@ -3,6 +3,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { Vec2 } from '@geti/smart-tools';
+
 import { Annotation } from '../../../../../core/annotations/annotation.interface';
 import { clampBetween, rotatedRectCorners } from '../../../../../core/annotations/math';
 import {
@@ -11,7 +13,6 @@ import {
     cursorForDirection,
 } from '../../../../../core/annotations/rotated-rect-math';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import * as Vec2 from '../../../../../core/annotations/vec2';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useZoom } from '../../../zoom/zoom-provider.component';

@@ -5,6 +5,7 @@ import { PointerEvent, SVGProps } from 'react';
 
 import Clipper from '@doodle3d/clipper-js';
 import type ClipperShape from '@doodle3d/clipper-js';
+import { Vec2 } from '@geti/smart-tools';
 import {
     Shape as SmartToolsShape,
     Circle as ToolCircle,
@@ -19,7 +20,6 @@ import { BoundingBox, getBoundingBox, getCenterOfShape, rotatedRectCorners } fro
 import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from '../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../core/annotations/shapetype.enum';
 import { isCircle, isPolygon, isPoseShape, isRect, isRotatedRect } from '../../../core/annotations/utils';
-import * as Vec2 from '../../../core/annotations/vec2';
 import { Label } from '../../../core/labels/label.interface';
 import { isLeftButton, isWheelButton } from '../../buttons-utils';
 import { ToolLabel, ToolType } from '../core/annotation-tool-context.interface';

@@ -3,10 +3,11 @@
 
 import { PointerEvent, SVGProps, useRef, useState } from 'react';
 
+import { Vec2 } from '@geti/smart-tools';
+
 import { clampPointBetweenImage, radiansToDegrees } from '../../../../core/annotations/math';
 import { Point, RotatedRect as RectInterface, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
-import * as Vec2 from '../../../../core/annotations/vec2';
 import { useEventListener } from '../../../../hooks/event-listener/event-listener.hook';
 import { KeyboardEvents } from '../../../../shared/keyboard-events/keyboard.interface';
 import { onEscape } from '../../../../shared/utils';

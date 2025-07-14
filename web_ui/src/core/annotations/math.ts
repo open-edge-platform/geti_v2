@@ -1,12 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Vec2 } from '@geti/smart-tools';
 import polylabel from 'polylabel';
 
 import { RegionOfInterest } from './annotation.interface';
 import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from './shapes.interface';
 import { ShapeType } from './shapetype.enum';
-import * as Vec2 from './vec2';
 
 export function degreesToRadians(degrees: number): number {
     return degrees * (Math.PI / 180);

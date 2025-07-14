@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Vec2 } from '@geti/smart-tools';
+
 import { highestCorner } from './math';
 import {
     calculateSizeAndPositionBasedOfCornerAnchor,
@@ -11,7 +13,6 @@ import {
 } from './rotated-rect-math';
 import { Rect, RotatedRect } from './shapes.interface';
 import { ShapeType } from './shapetype.enum';
-import * as Vec2 from './vec2';
 
 describe('transformPointInRotatedRectToScreenSpace', () => {
     const shape: RotatedRect = {

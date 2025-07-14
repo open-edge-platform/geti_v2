@@ -1,9 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Vec2 } from '@geti/smart-tools';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { clampBox, pointsToRect } from '../../../../core/annotations/math';
-import * as Vec2 from '../../../../core/annotations/vec2';
 import { RITMPoint } from './ritm-tool.interface';
 
 export const createBoxOfMaxSize = (

@@ -30,6 +30,7 @@ export {
     getPointsFromMat,
     getMatFromPoints,
 } from './src/utils/tool-utils';
+export * as Vec2 from './src/utils/vec2';
 export { sessionParams, type SessionParameters } from './src/utils/wasm-utils';
 
 // TODO: To be moved to SegmentAnything folder on the next PRs
