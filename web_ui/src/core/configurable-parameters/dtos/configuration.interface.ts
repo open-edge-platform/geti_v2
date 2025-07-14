@@ -11,7 +11,7 @@ interface NumberParameterDTO extends ParameterBaseDTO {
     type: 'int' | 'float';
     value: number;
     min_value: number;
-    max_value: number;
+    max_value: number | null;
     default_value: number;
 }
 
