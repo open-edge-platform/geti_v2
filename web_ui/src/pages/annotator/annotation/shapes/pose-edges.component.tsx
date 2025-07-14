@@ -4,7 +4,7 @@
 import { Fragment } from 'react';
 
 import clsx from 'clsx';
-import { isNil } from 'lodash-es';
+import { isEmpty, isNil } from 'lodash-es';
 
 import { BoundingBox, getBoundingBox } from '../../../../core/annotations/math';
 import { isKeypointTask } from '../../../../core/projects/utils';
@@ -13,6 +13,7 @@ import { useProject } from '../../../project-details/providers/project-provider/
 import { getOuterPaddedBoundingBox, getPointsEdges } from '../../tools/keypoint-tool/utils';
 import { useZoom } from '../../zoom/zoom-provider.component';
 import { KeypointProps } from './shape.interface';
+import { svgShadow } from './util';
 
 import classes from './pose-edges.module.scss';
 
@@ -47,10 +48,12 @@ export const PoseEdges = ({ shape, boundingBox, showBoundingBox = true }: PoseEd
                 const selectedEdge = selectedPoints.find(
                     ({ label }) => label.id === from.labelId || label.id === to.labelId
                 );
-                const { opacity, stroke } =
-                    selectedEdge !== undefined
-                        ? { opacity: 0.5, stroke: selectedEdge.label.color }
-                        : { opacity: 1, stroke: 'var(--spectrum-gray-900)' };
+
+                const isSelectedEdge = !isEmpty(selectedEdge);
+
+                const { opacity, stroke } = isSelectedEdge
+                    ? { opacity: 0.5, stroke: selectedEdge.label.color }
+                    : { opacity: 1, stroke: 'var(--spectrum-gray-900)' };
 
                 return (
                     <Fragment key={`edge-${from.labelId}-${to.labelId}`}>
@@ -59,7 +62,11 @@ export const PoseEdges = ({ shape, boundingBox, showBoundingBox = true }: PoseEd
                             x2={to.x}
                             y1={from.y}
                             y2={to.y}
-                            style={{ opacity, stroke }}
+                            style={{
+                                opacity,
+                                stroke,
+                                filter: isSelectedEdge ? '' : svgShadow,
+                            }}
                             className={clsx(classes.edge)}
                         />
                     </Fragment>

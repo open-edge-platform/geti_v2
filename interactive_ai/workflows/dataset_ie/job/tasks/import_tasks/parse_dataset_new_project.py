@@ -99,6 +99,7 @@ def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list
     supported_project_types = []
     need_warning_local_annotations_will_be_lost = False
     is_classification_task_supported = False
+    is_non_geti_keypoint_dataset = False
     for project_meta in project_metas_with_labels:
         project_type = project_meta["project_type"]
         # Handle an anomaly dataset as if it was exported from an anomaly classification task.
@@ -110,6 +111,17 @@ def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list
             continue
         if project_type == GetiProjectType.CLASSIFICATION:
             is_classification_task_supported = True
+        if (
+            project_type == GetiProjectType.KEYPOINT_DETECTION
+            and not project_meta["pipeline"]["tasks"][1]["keypoint_structure"]["positions"]
+        ):
+            # This dataset is most likely exported outside of Geti, so it does not contain any position data.
+            # We generate this position data based on the first annotation in the dataset.
+            # project_meta["pipeline"]["tasks"][1]["keypoint_structure"]["positions"] = (
+            #     ImportUtils.get_keypoint_structure_positions(dm_dataset=dm_dataset)
+            # )
+            # See ITEP-69641
+            is_non_geti_keypoint_dataset = True
         supported_project_types.append(
             {
                 "project_type": ImportUtils.project_type_to_rest_api_string(
@@ -163,6 +175,17 @@ def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list
                 "name": "The local annotations will be lost",
                 "description": "Please be aware that local annotations, including bounding boxes and polygons, "
                 "are not supported in Anomaly projects and will not be imported.",
+            }
+        )
+
+    if is_non_geti_keypoint_dataset:
+        warnings.append(
+            {
+                "type": "warning",
+                "name": "Keypoint structure positions are not defined in the dataset",
+                "description": "The keypoint structure positions were not defined in the dataset. "
+                "They were generated based on the first annotation in the dataset. However, it will not be possible to "
+                "to create a keypoint detection project from this dataset in Geti. Please select another project type.",
             }
         )
 

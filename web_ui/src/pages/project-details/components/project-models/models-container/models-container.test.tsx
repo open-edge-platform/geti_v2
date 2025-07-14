@@ -78,7 +78,7 @@ describe('Model container', () => {
         }));
     });
 
-    const { templateName, summary } = mockedDetectionSupportedAlgorithms[0];
+    const { templateName, description } = mockedDetectionSupportedAlgorithms[0];
 
     const defaultModelsHistory: ModelVersion[] = [
         getMockedModelVersion({
@@ -126,7 +126,7 @@ describe('Model container', () => {
     ];
 
     const defaultModelOverall: ModelContainerProps = {
-        modelSummary: summary,
+        modelSummary: description,
         modelVersions: defaultModelsHistory,
         groupName: 'YoloV4',
         groupId: 'yolov4-id',

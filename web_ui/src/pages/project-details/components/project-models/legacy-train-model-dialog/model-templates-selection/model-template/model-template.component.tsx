@@ -4,7 +4,7 @@
 import { Flex, Heading, Radio, RadioGroup, Text, Tooltip, TooltipTrigger } from '@geti/ui';
 
 import { PerformanceCategory } from '../../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { SupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { LegacySupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { InfoTooltip } from '../../../../../../../shared/components/info-tooltip/info-tooltip.component';
 import { ModelArchitectureTooltipText } from '../../../model-architecture-tooltip.component';
 import { ActiveModelTag } from '../../../models-container/model-card/active-model-tag.component';
@@ -16,7 +16,7 @@ import { isDeprecatedAlgorithm } from '../utils';
 import classes from './model-template.module.scss';
 
 interface ModelTemplateProps {
-    template: SupportedAlgorithm;
+    template: LegacySupportedAlgorithm;
     selectedModelTemplateId: string;
     handleSelectedTemplateId: (modelTemplateId: string | null) => void;
     activeModelTemplateIdPerTask: string | undefined;
@@ -28,7 +28,7 @@ export const ModelTemplate = ({
     activeModelTemplateIdPerTask,
     handleSelectedTemplateId,
 }: ModelTemplateProps): JSX.Element => {
-    const { name, modelSize, modelTemplateId, performanceCategory, gigaflops, summary, license } = template;
+    const { name, modelSize, modelTemplateId, performanceCategory, gigaflops, description, license } = template;
     const isSelected = selectedModelTemplateId === modelTemplateId;
     const shouldShowActiveTag = modelTemplateId === activeModelTemplateIdPerTask;
     const isDeprecated = isDeprecatedAlgorithm(template.lifecycleStage);
@@ -71,7 +71,7 @@ export const ModelTemplate = ({
                         <InfoTooltip
                             id={`${name.toLocaleLowerCase()}-summary-id`}
                             tooltipText={
-                                <ModelArchitectureTooltipText description={summary} isDeprecated={isDeprecated} />
+                                <ModelArchitectureTooltipText description={description} isDeprecated={isDeprecated} />
                             }
                             iconColor={isSelected ? 'var(--energy-blue)' : undefined}
                         />

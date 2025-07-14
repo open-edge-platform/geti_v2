@@ -44,7 +44,8 @@ export const FineTuneParameters: FC<FineTuneParametersProps> = ({
     return (
         <Accordion>
             <Accordion.Title>
-                Fine-tune parameters <Accordion.Tag>{trainingWeight}</Accordion.Tag>
+                Fine-tune parameters{' '}
+                <Accordion.Tag ariaLabel={'Fine-tune parameters tag'}>{trainingWeight}</Accordion.Tag>
             </Accordion.Title>
             <Accordion.Content>
                 <Accordion.Description>

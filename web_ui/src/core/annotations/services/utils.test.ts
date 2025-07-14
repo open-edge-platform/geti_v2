@@ -132,7 +132,7 @@ describe('annotation service utils', () => {
                 label_id: config.label_id,
                 roi: {
                     id: roiId,
-                    shape: { type: '1', ...roiConfig },
+                    shape: { type: 'rect', ...roiConfig },
                 },
             },
         ]);

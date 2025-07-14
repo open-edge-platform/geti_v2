@@ -1,0 +1,23 @@
+task: rotated_detection
+capabilities:
+  tiling: true
+
+hyperparameters:
+  evaluation:
+    metric: f_measure
+  training:
+    max_epochs: 200
+    early_stopping:
+      enable: true
+      patience: 10
+    allowed_values_input_size:
+      - 512
+      - 640
+      - 800
+      - 992
+      - 1024
+      - 1280
+      - 1344
+      - 1536
+    input_size_width: 1024
+    input_size_height: 1024

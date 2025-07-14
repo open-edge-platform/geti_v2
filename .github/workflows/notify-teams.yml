@@ -1,0 +1,41 @@
+permissions:
+  contents: read
+name: Notify Teams on UI PR Creation
+
+on:
+  pull_request:
+    types: [opened, edited]
+    paths:
+      - 'web_ui/**'
+
+jobs:
+  notify-teams:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Teams via Webhook
+        uses: actions/github-script@v7
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const card = {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "themeColor": "0076D7",
+              "title": `🔔 New UI Pull Request Created!`,
+              "text": pr.body ? pr.body.substring(0, 300) : '_No description provided._',
+              "sections": [{
+                "activityTitle": `**Title:** [${pr.title}](${pr.html_url})`,
+                "facts": [
+                  { "name": "Author", "value": pr.user.login },
+                  { "name": "Branch", "value": `\`${pr.head.ref}\` → \`${pr.base.ref}\`` },
+                  { "name": "PR Link", "value": `[View PR](${pr.html_url})` }
+                ]
+              }]
+            };
+            await fetch(process.env.TEAMS_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(card)
+            });
