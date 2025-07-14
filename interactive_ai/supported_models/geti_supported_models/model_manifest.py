@@ -125,13 +125,13 @@ class ModelManifest(BaseModel):
         title="Hyperparameters", description="Configuration parameters for model training"
     )
 
-    @computed_field # type: ignore[misc]
+    @computed_field  # type: ignore[misc]
     @cached_property
     def is_default_model(self) -> bool:
         """Returns whether this model is the default one for its task type"""
         return DefaultModels.get_default_model(self.task) == self.id
 
-    @computed_field # type: ignore[misc]
+    @computed_field  # type: ignore[misc]
     @cached_property
     def model_category(self) -> str | None:
         """Returns the category for which this model is recommended (accuracy, speed, or balance)"""
