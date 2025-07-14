@@ -1,9 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Vec2 } from '@geti/smart-tools';
+import { transformPointInRotatedRectToScreenSpace, Vec2 } from '@geti/smart-tools';
 
-import { transformPointInRotatedRectToScreenSpace } from '../../../../../core/annotations/rotated-rect-math';
 import { Point, RotatedRect } from '../../../../../core/annotations/shapes.interface';
 
 const getLocations = (shape: RotatedRect, gap: number) => {

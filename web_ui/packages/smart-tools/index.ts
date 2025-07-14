@@ -61,6 +61,13 @@ export {
     clampBox,
     type BoundingBox,
 } from './src/utils/math';
+export {
+    transformPointInRotatedRectToScreenSpace,
+    calculateSizeAndPositionBasedOfCornerAnchor,
+    calculateSizeAndPositionOfSideAnchor,
+    cursorForDirection,
+    rectToRotatedRect,
+} from './src/utils/rotated-rect-math';
 export { sessionParams, type SessionParameters } from './src/utils/wasm-utils';
 
 // TODO: To be moved to SegmentAnything folder on the next PRs

@@ -3,9 +3,8 @@
 
 import { Vec2 } from '@geti/smart-tools';
 
+import { Rect, RotatedRect } from '../shared/interfaces';
 import { rotateDeg } from './math';
-import { Rect, RotatedRect } from './shapes.interface';
-import { ShapeType } from './shapetype.enum';
 
 export const transformPointInRotatedRectToScreenSpace = (position: Vec2.Vec2, shape: RotatedRect): Vec2.Vec2 => {
     const shapePosition = { x: shape.x, y: shape.y };
@@ -69,7 +68,7 @@ export const rectToRotatedRect = (shape: Rect): RotatedRect => {
         ...shape,
         x: shape.x + shape.width / 2,
         y: shape.y + shape.height / 2,
-        shapeType: ShapeType.RotatedRect,
+        shapeType: 'rotated-rect',
         angle: 0,
     };
 };

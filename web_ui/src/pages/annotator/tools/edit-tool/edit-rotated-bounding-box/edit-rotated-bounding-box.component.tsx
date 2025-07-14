@@ -3,14 +3,16 @@
 
 import { useEffect, useState } from 'react';
 
-import { clampBetween, rotatedRectCorners, Vec2 } from '@geti/smart-tools';
-
-import { Annotation } from '../../../../../core/annotations/annotation.interface';
 import {
     calculateSizeAndPositionBasedOfCornerAnchor,
     calculateSizeAndPositionOfSideAnchor,
+    clampBetween,
     cursorForDirection,
-} from '../../../../../core/annotations/rotated-rect-math';
+    rotatedRectCorners,
+    Vec2,
+} from '@geti/smart-tools';
+
+import { Annotation } from '../../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
