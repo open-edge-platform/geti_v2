@@ -9,10 +9,17 @@ import {
     ConfigurationParameter,
     TrainingConfiguration,
 } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
-import { isBoolParameter } from '../../../../../../../../core/configurable-parameters/utils';
 import { Accordion } from '../../ui/accordion/accordion.component';
 import { Parameters } from '../../ui/parameters.component';
 import { TILING_MODES, TilingModes } from './tiling-modes.component';
+import {
+    getAdaptiveTilingParameter,
+    getCustomTilingParameters,
+    getEnableTilingParameter,
+    getTilingMode,
+    TILING_AUTOMATIC_DESCRIPTION,
+    TILING_OFF_DESCRIPTION,
+} from './utils';
 
 import styles from './tiling.module.scss';
 
@@ -22,50 +29,6 @@ interface TilingProps {
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
 }
-
-const ADAPTIVE_TILING_PARAMETER = 'adaptive_tiling';
-const ENABLE_TILING_PARAMETER = 'enable';
-
-const getAdaptiveTilingParameter = (tilingParameters: ConfigurationParameter[]) => {
-    const parameter = tilingParameters.find(({ key }) => key === ADAPTIVE_TILING_PARAMETER);
-
-    if (parameter === undefined || !isBoolParameter(parameter)) {
-        return undefined;
-    }
-
-    return parameter;
-};
-
-const getEnableTilingParameter = (tilingParameters: ConfigurationParameter[]) => {
-    const parameter = tilingParameters.find(({ key }) => key === ENABLE_TILING_PARAMETER);
-
-    if (parameter === undefined || !isBoolParameter(parameter)) {
-        return undefined;
-    }
-
-    return parameter;
-};
-
-export const getTilingMode = (tilingParameters: ConfigurationParameter[]): TILING_MODES => {
-    const adaptive = getAdaptiveTilingParameter(tilingParameters);
-    const enablingTiling = getEnableTilingParameter(tilingParameters);
-
-    if (enablingTiling?.value === false) {
-        return TILING_MODES.OFF;
-    }
-
-    if (adaptive?.value === true) {
-        return TILING_MODES.AUTOMATIC;
-    }
-
-    return TILING_MODES.CUSTOM;
-};
-
-export const getCustomTilingParameters = (parameters: ConfigurationParameter[]) => {
-    return parameters.filter(
-        (parameter) => ![ADAPTIVE_TILING_PARAMETER, ENABLE_TILING_PARAMETER].includes(parameter.key)
-    );
-};
 
 export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConfiguration }) => {
     const selectedTilingMode = getTilingMode(tilingParameters);
@@ -128,16 +91,13 @@ export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConf
     const TILING_MODE_COMPONENTS: Record<TILING_MODES, ReactNode> = {
         [TILING_MODES.OFF]: (
             <Text UNSAFE_className={styles.tilingModeDescription} gridColumn={'2/3'}>
-                Model processes the entire image as a single unit without dividing it into smaller tiles. This approach
-                is straightforward but may struggle with detecting small objects in high-resolution images, as the model
-                might miss finer details
+                {TILING_OFF_DESCRIPTION}
             </Text>
         ),
 
         [TILING_MODES.AUTOMATIC]: (
             <View UNSAFE_className={styles.tilingModeDescription} gridColumn={'2/3'}>
-                It means that the system will automatically set the parameters based on the images resolution and
-                annotations size.
+                {TILING_AUTOMATIC_DESCRIPTION}
             </View>
         ),
         [TILING_MODES.CUSTOM]: (
@@ -150,7 +110,7 @@ export const Tiling: FC<TilingProps> = ({ tilingParameters, onUpdateTrainingConf
     return (
         <Accordion>
             <Accordion.Title>
-                Tiling<Accordion.Tag>{selectedTilingMode}</Accordion.Tag>
+                Tiling<Accordion.Tag ariaLabel={'Tiling tag'}>{selectedTilingMode}</Accordion.Tag>
             </Accordion.Title>
             <Accordion.Content>
                 <Accordion.Description>

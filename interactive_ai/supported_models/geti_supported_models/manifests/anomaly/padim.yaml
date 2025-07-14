@@ -1,0 +1,11 @@
+id: ote_anomaly_padim
+name: PADIM
+
+description: "PaDiM (Patch Distribution Modeling) is an anomaly detection model that models the distribution of deep feature embeddings for each image patch using multivariate Gaussian distributions. During training, it extracts features from a pre-trained backbone and stores mean and covariance statistics per patch location. PaDiM is efficient, interpretable, and performs strongly on unsupervised visual anomaly detection tasks, such as defect detection in industrial images."
+stats:
+  gigaflops: 3.9
+  trainable_parameters: 2.8
+  performance_ratings:  # scores range from 1 (below average) to 3 (excellent)
+    accuracy: 1
+    training_time: 3
+    inference_speed: 3

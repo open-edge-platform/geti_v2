@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { SupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { LegacySupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
 
 export interface TrainModelTemplatesProps {
-    templates: SupportedAlgorithm[];
+    templates: LegacySupportedAlgorithm[];
     animationDirection: number;
     selectedDomain: string;
 

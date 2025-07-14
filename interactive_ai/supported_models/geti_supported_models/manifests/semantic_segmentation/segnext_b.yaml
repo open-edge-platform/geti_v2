@@ -1,0 +1,15 @@
+id: Custom_Semantic_Segmentation_SegNext_B
+name: SegNext-B
+
+description: "SegNeXt-B is a larger and more powerful model in the SegNeXt family, aimed at achieving high segmentation accuracy on complex datasets. It retains efficient computation while scaling up depth and width, making it suitable for scenarios where accuracy is prioritized over latency. This model works well with 30+ training images and outperforms other models on large datasets."
+stats:
+  gigaflops: 64.65
+  trainable_parameters: 27.56
+  performance_ratings:  # scores range from 1 (below average) to 3 (excellent)
+    accuracy: 3
+    training_time: 1
+    inference_speed: 1
+
+hyperparameters:
+  training:
+    learning_rate: 0.00006

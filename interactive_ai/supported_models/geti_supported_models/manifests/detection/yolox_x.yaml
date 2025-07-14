@@ -1,0 +1,17 @@
+id: Object_Detection_YOLOX_X
+name: YOLOX-X
+
+description: "YOLOX is a high-performance, anchor-free object detection algorithm that builds on the YOLO series with modern improvements. It features a decoupled head for separate classification and regression tasks, strong data augmentation techniques, and advanced label assignment strategies. YOLOX achieves a great balance between speed and accuracy, making it suitable for real-time applications across various domains."
+stats:
+  gigaflops: 281.9
+  trainable_parameters: 99.1
+  performance_ratings:  # scores range from 1 (below average) to 3 (excellent)
+    accuracy: 3
+    training_time: 2
+    inference_speed: 1
+
+hyperparameters:
+  training:
+    learning_rate: 0.001
+    input_size_width: 640
+    input_size_height: 640

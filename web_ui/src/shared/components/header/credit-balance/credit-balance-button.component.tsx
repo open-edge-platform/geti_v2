@@ -4,7 +4,6 @@
 import { forwardRef, useEffect, useRef } from 'react';
 
 import { paths } from '@geti/core';
-import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { ActionButton, Tooltip, TooltipTrigger, type FocusableRef } from '@geti/ui';
 import { CreditCard } from '@geti/ui/icons';
 import { isNil } from 'lodash-es';
@@ -18,8 +17,10 @@ import { useOrganizationIdentifier } from '../../../../hooks/use-organization-id
 import { usePrevious } from '../../../../hooks/use-previous/use-previous.hook';
 import { useProject } from '../../../../pages/project-details/providers/project-provider/project-provider.component';
 import { ONE_MINUTE } from '../../../utils';
+import { FuxNotification } from '../../fux-notification/fux-notification.component';
+import { useCheckPermission } from '../../has-permission/has-permission.component';
+import { OPERATION } from '../../has-permission/has-permission.interface';
 import { CreditsToConsume } from './credits-to-consume.component';
-import { FuxNotification } from './fux-notification/fux-notification.component';
 import { isBalanceLow } from './util';
 
 import classes from './credit-balance.module.scss';
@@ -83,11 +84,10 @@ const CreditBalanceButtonFuxNotification = ({ isDarkMode }: { isDarkMode: boolea
     const firstAutoTrainedProject = settings.config[FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_PROJECT_ID].value;
     const prevFuxEnabled = usePrevious(isFuxNotificationEnabled);
 
-    const { useActiveUser } = useUsers();
     const { organizationId } = useOrganizationIdentifier();
-    const { data: activeUser } = useActiveUser(organizationId);
     const { project } = useProject();
     const isFirstAutoTrainedProject = firstAutoTrainedProject === project.id;
+    const canCheckUsageTab = useCheckPermission([OPERATION.USAGE_TAB]);
 
     useEffect(() => {
         if (isFuxNotificationEnabled && prevFuxEnabled !== isFuxNotificationEnabled) {
@@ -117,14 +117,15 @@ const CreditBalanceButtonFuxNotification = ({ isDarkMode }: { isDarkMode: boolea
 
             {isFirstAutoTrainedProject ? (
                 <FuxNotification
+                    settingsKey={FUX_NOTIFICATION_KEYS.CREDIT_BALANCE_BUTTON}
                     state={fuxState}
-                    docUrl={activeUser?.isAdmin ? paths.account.usage({ organizationId }) : undefined}
+                    customDocUrl={canCheckUsageTab ? paths.account.usage({ organizationId }) : undefined}
                     triggerRef={triggerRef}
                     placement={'bottom right'}
                     onClose={handleCloseTrainingNotification}
                 >
                     The auto-training job has been started, <CreditsToConsume /> credits deducted.
-                    {activeUser?.isAdmin ? ' Check your credit balance here.' : null}
+                    {canCheckUsageTab ? ' Check your credit balance here.' : null}
                 </FuxNotification>
             ) : (
                 <></>

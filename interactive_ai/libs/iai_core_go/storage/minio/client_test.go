@@ -7,7 +7,10 @@ package minio
 
 import (
 	"context"
+	"os"
+	"runtime"
 	"testing"
+	"time"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/stretchr/testify/assert"
@@ -16,6 +19,10 @@ import (
 
 func TestMinio(t *testing.T) {
 	ctx := context.Background()
+	_ = os.Setenv("S3_CLIENT_CACHE_TTL", "1")
+	manager, err := NewClientManager()
+	require.NoError(t, err)
+	defer manager.Close()
 
 	tests := []struct {
 		name   string
@@ -26,17 +33,26 @@ func TestMinio(t *testing.T) {
 			name:   "GetClient",
 			bucket: "get-bucket",
 			action: func(_ *testing.T) (*minio.Client, error) {
-				return getMinioClient(ctx)
+				return manager.GetClient(ctx)
 			},
 		},
 		{
 			name:   "ResetClient",
 			bucket: "reset-bucket",
 			action: func(t *testing.T) (*minio.Client, error) {
-				_, err := getMinioClient(ctx)
+				numGoroutines := runtime.NumGoroutine()
+				_, err := manager.GetClient(ctx)
+				assert.Equal(t, numGoroutines, runtime.NumGoroutine())
 				require.NoError(t, err)
-				reset()
-				return getMinioClient(ctx)
+
+				// Expire TTL
+				time.Sleep(1500 * time.Millisecond)
+
+				// Trigger refresh
+				client, err := manager.GetClient(ctx)
+				// Old goroutines might be not cleaned up immediately, using Delta assertion
+				assert.InDelta(t, numGoroutines, runtime.NumGoroutine(), 2)
+				return client, err
 			},
 		},
 	}

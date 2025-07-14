@@ -1,0 +1,23 @@
+task: segmentation
+capabilities:
+  tiling: true
+
+hyperparameters:
+  evaluation:
+    metric: dice
+  training:
+    max_epochs: 200
+    early_stopping:
+      enable: true
+      patience: 10
+    allowed_values_input_size:
+      - 128
+      - 256
+      - 384
+      - 512
+      - 640
+      - 800
+      - 992
+      - 1024
+    input_size_width: 512
+    input_size_height: 512
