@@ -4,7 +4,7 @@ name: Notify Teams on UI PR Creation
 
 on:
   pull_request:
-    types: [opened, edited]
+    types: [opened]
     paths:
       - 'web_ui/**'
 
@@ -23,7 +23,7 @@ jobs:
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
               "themeColor": "0076D7",
-              "title": `🔔 New UI Pull Request Created!`,
+              "title": `🔔 New Pull Request Created!`,
               "text": pr.body ? pr.body.substring(0, 300) : '_No description provided._',
               "sections": [{
                 "activityTitle": `**Title:** [${pr.title}](${pr.html_url})`,
