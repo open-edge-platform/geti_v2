@@ -96,7 +96,7 @@ class DatasetStorageAlreadyExistsException(DatasetIEException):
 
 
 # internal server errors
-# class name will be desplayed as Code (see src/jobs/common/jobs_common/tasks/utils/progress.py)
+# class name will be displayed as Code (see src/jobs/common/jobs_common/tasks/utils/progress.py)
 class InternalServerError(Exception):
     pass
 
