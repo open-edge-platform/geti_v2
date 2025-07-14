@@ -3,10 +3,9 @@
 
 import { useEffect, useState } from 'react';
 
-import { Vec2 } from '@geti/smart-tools';
+import { clampBetween, rotatedRectCorners, Vec2 } from '@geti/smart-tools';
 
 import { Annotation } from '../../../../../core/annotations/annotation.interface';
-import { clampBetween, rotatedRectCorners } from '../../../../../core/annotations/math';
 import {
     calculateSizeAndPositionBasedOfCornerAnchor,
     calculateSizeAndPositionOfSideAnchor,

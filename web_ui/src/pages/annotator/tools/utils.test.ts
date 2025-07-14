@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { BoundingBox } from '@geti/smart-tools';
 import { Shape as ToolShape } from '@geti/smart-tools/src/shared/interfaces';
 
 import { RegionOfInterest } from '../../../core/annotations/annotation.interface';
-import { BoundingBox } from '../../../core/annotations/math';
 import { Circle, Point, Rect } from '../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../core/annotations/shapetype.enum';
 import { getMockedAnnotation } from '../../../test-utils/mocked-items-factory/mocked-annotations';

@@ -3,10 +3,9 @@
 
 import { useEffect, useState } from 'react';
 
-import { Vec2 } from '@geti/smart-tools';
+import { radiansToDegrees, Vec2 } from '@geti/smart-tools';
 
 import { RegionOfInterest } from '../../../../../../core/annotations/annotation.interface';
-import { radiansToDegrees } from '../../../../../../core/annotations/math';
 import { RotatedRect } from '../../../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../../../core/annotations/shapetype.enum';
 import { Line } from '../../../../annotation/shapes/line.component';
