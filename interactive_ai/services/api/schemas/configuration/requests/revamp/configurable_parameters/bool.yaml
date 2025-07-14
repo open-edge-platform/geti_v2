@@ -2,7 +2,7 @@ type: object
 properties:
   key:
     type: string
-    description: Identifier for the boolean parameter used in code references
+    description: Identifier for the boolean parameter
   value:
     type: boolean
     description: Current configured value of the boolean parameter
