@@ -8,7 +8,6 @@ import pytest
 from otx.algo.classification.vit import VisionTransformerForMulticlassCls
 from otx.core.types.export import OTXExportFormatType
 from otx.core.types.label import LabelInfo
-
 from scripts.optimize import optimize
 from scripts.utils import OTXConfig
 
