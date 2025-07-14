@@ -1,8 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { getImageData } from '../../shared/canvas-utils';
-import { getMockedLabel } from '../../test-utils/mocked-items-factory/mocked-labels';
+import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from '../shared/interfaces';
 import {
     BoundingBox,
     calculateDistance,
@@ -28,9 +27,6 @@ import {
     roiFromImage,
     sgn,
 } from './math';
-import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from './shapes.interface';
-import { ShapeType } from './shapetype.enum';
-import { labelFromUser } from './utils';
 
 describe('degreesToRadians', () => {
     const testInputs = [
@@ -107,7 +103,7 @@ describe('calculateDistance', () => {
 
 describe('roiFromImage', () => {
     it('takes dimensions and offsets of an image to create a region of interest', () => {
-        const subject = roiFromImage(getImageData(new Image(200, 100)));
+        const subject = roiFromImage(new ImageData(200, 100));
 
         // offsets are not tested
         expect(subject.width).toEqual(200);
@@ -117,7 +113,7 @@ describe('roiFromImage', () => {
 
 describe('clampPointBetweenImage', () => {
     describe('creates a curried function to clamp points within the image', () => {
-        const fakeImage = getImageData(new Image(200, 100));
+        const fakeImage = new ImageData(200, 100);
         const subject = clampPointBetweenImage(fakeImage);
         const testData = [
             [
@@ -213,7 +209,7 @@ describe('getIntersectionPoint', () => {
 });
 
 describe('pointInRectangle', () => {
-    const rectangle: Rect = { x: 100, y: 100, width: 500, height: 250, shapeType: ShapeType.Rect };
+    const rectangle: Rect = { x: 100, y: 100, width: 500, height: 250, shapeType: 'rect' };
     const testData: [Point, boolean][] = [
         [{ x: 50, y: 50 }, false],
         [{ x: 200, y: 250 }, true],
@@ -231,7 +227,7 @@ describe('pointInRotatedRectangle', () => {
         width: 100,
         height: 50,
         angle: 90,
-        shapeType: ShapeType.RotatedRect,
+        shapeType: 'rotated-rect',
     };
 
     const testData: [Point, boolean][] = [
@@ -247,7 +243,7 @@ describe('pointInRotatedRectangle', () => {
 });
 
 describe('pointInCircle', () => {
-    const circle: Circle = { x: 50, y: 50, r: 20, shapeType: ShapeType.Circle };
+    const circle: Circle = { x: 50, y: 50, r: 20, shapeType: 'circle' };
     const testData: [Point, boolean][] = [
         [{ x: 0, y: 0 }, false],
         [{ x: 50, y: 50 }, true],
@@ -264,7 +260,7 @@ describe('pointInCircle', () => {
 describe('pointInPolygon', () => {
     describe('simple rectangle polygon', () => {
         const polygon: Polygon = {
-            shapeType: ShapeType.Polygon,
+            shapeType: 'polygon',
             points: [
                 { x: 0, y: 0 },
                 { x: 50, y: 0 },
@@ -283,7 +279,7 @@ describe('pointInPolygon', () => {
     });
     describe('concave polygon', () => {
         const polygon: Polygon = {
-            shapeType: ShapeType.Polygon,
+            shapeType: 'polygon',
             points: [
                 { x: 0, y: 0 },
                 { x: 50, y: 0 },
@@ -312,7 +308,7 @@ describe('isPointInShape', () => {
     const testData: [Shape, Point, boolean][] = [
         [
             {
-                shapeType: ShapeType.Polygon,
+                shapeType: 'polygon',
                 points: [
                     { x: 0, y: 0 },
                     { x: 50, y: 0 },
@@ -323,8 +319,8 @@ describe('isPointInShape', () => {
             { x: 25, y: 25 },
             true,
         ],
-        [{ x: 100, y: 100, width: 500, height: 250, shapeType: ShapeType.Rect }, { x: 50, y: 50 }, false],
-        [{ x: 50, y: 50, r: 20, shapeType: ShapeType.Circle }, { x: 50, y: 50 }, true],
+        [{ x: 100, y: 100, width: 500, height: 250, shapeType: 'rect' }, { x: 50, y: 50 }, false],
+        [{ x: 50, y: 50, r: 20, shapeType: 'circle' }, { x: 50, y: 50 }, true],
         [
             {
                 x: 50,
@@ -332,7 +328,7 @@ describe('isPointInShape', () => {
                 width: 100,
                 height: 50,
                 angle: 90,
-                shapeType: ShapeType.RotatedRect,
+                shapeType: 'rotated-rect',
             },
             { x: 50, y: 50 },
             true,
@@ -346,11 +342,11 @@ describe('isPointInShape', () => {
 describe('getBoundingBox functions', () => {
     const boundingBoxTestInputs: [Shape, Omit<Rect, 'shapeType'>][] = [
         [
-            { x: 0, y: 0, width: 100, height: 100, shapeType: ShapeType.Rect },
+            { x: 0, y: 0, width: 100, height: 100, shapeType: 'rect' },
             { x: 0, y: 0, width: 100, height: 100 },
         ],
         [
-            { x: 150, y: 150, r: 50, shapeType: ShapeType.Circle },
+            { x: 150, y: 150, r: 50, shapeType: 'circle' },
             { x: 100, y: 100, width: 100, height: 100 },
         ],
         [
@@ -360,7 +356,7 @@ describe('getBoundingBox functions', () => {
                     { x: 100, y: 200 },
                     { x: 100, y: 300 },
                 ],
-                shapeType: ShapeType.Polygon,
+                shapeType: 'polygon',
             },
             { x: 0, y: 200, width: 100, height: 100 },
         ],
@@ -370,23 +366,17 @@ describe('getBoundingBox functions', () => {
                     {
                         x: 0,
                         y: 0,
-                        isVisible: true,
-                        label: labelFromUser(getMockedLabel({ name: 'head' })),
                     },
                     {
                         x: 100,
                         y: 200,
-                        isVisible: true,
-                        label: labelFromUser(getMockedLabel({ name: 'nose' })),
                     },
                     {
                         x: 100,
                         y: 300,
-                        isVisible: true,
-                        label: labelFromUser(getMockedLabel({ name: 'nose' })),
                     },
                 ],
-                shapeType: ShapeType.Pose,
+                shapeType: 'pose',
             },
             { x: 0, y: 0, width: 100, height: 300 },
         ],
@@ -407,7 +397,7 @@ describe('getBoundingBox functions', () => {
                 width: 200,
                 height: 100,
                 angle: 90,
-                shapeType: ShapeType.RotatedRect,
+                shapeType: 'rotated-rect',
             };
             const expectedBoundingBox = { x: 50, y: 0, width: 100, height: 200 };
             const subject = getBoundingBox(rotatedRect);
@@ -520,7 +510,7 @@ describe('getCenterOfShape', () => {
     const testData: [Shape, Point][] = [
         [
             {
-                shapeType: ShapeType.Polygon,
+                shapeType: 'polygon',
                 points: [
                     { x: 0, y: 0 },
                     { x: 50, y: 0 },
@@ -532,7 +522,7 @@ describe('getCenterOfShape', () => {
         ],
         [
             {
-                shapeType: ShapeType.Circle,
+                shapeType: 'circle',
                 x: 25,
                 y: 25,
                 r: 100,
@@ -541,7 +531,7 @@ describe('getCenterOfShape', () => {
         ],
         [
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: 100,
                 y: 0,
                 width: 100,
@@ -551,7 +541,7 @@ describe('getCenterOfShape', () => {
         ],
         [
             {
-                shapeType: ShapeType.RotatedRect,
+                shapeType: 'rotated-rect',
                 x: 100,
                 y: 100,
                 width: 200,

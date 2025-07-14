@@ -1,12 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Vec2 } from '@geti/smart-tools';
 import polylabel from 'polylabel';
 
-import { RegionOfInterest } from './annotation.interface';
-import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from './shapes.interface';
-import { ShapeType } from './shapetype.enum';
+import { Circle, Point, Polygon, Rect, RegionOfInterest, RotatedRect, Shape } from '../shared/interfaces';
+import * as Vec2 from './vec2';
 
 export function degreesToRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
@@ -185,15 +183,15 @@ export const pointInPolygon = (polygon: Polygon, point: Point): boolean => {
 
 export const isPointInShape = (shape: Shape, point: Point): boolean => {
     switch (shape.shapeType) {
-        case ShapeType.Polygon:
+        case 'polygon':
             return pointInPolygon(shape, point);
-        case ShapeType.Rect:
+        case 'rect':
             return pointInRectangle(shape, point);
-        case ShapeType.RotatedRect:
+        case 'rotated-rect':
             return pointInRotatedRectangle(shape, point);
-        case ShapeType.Circle:
+        case 'circle':
             return pointInCircle(shape, point);
-        case ShapeType.Pose:
+        case 'pose':
             return pointInRectangle(getBoundingBox(shape), point);
     }
 };
@@ -222,11 +220,11 @@ const getPolygonBoundingBox = (points: Point[]) => {
 
 export const getBoundingBox = (shape: Shape): BoundingBox => {
     switch (shape.shapeType) {
-        case ShapeType.Rect: {
+        case 'rect': {
             const { x, y, width, height } = shape;
             return { x, y, width, height };
         }
-        case ShapeType.RotatedRect: {
+        case 'rotated-rect': {
             const corners = rotatedRectCorners(shape);
             const xs = corners.map(({ x }) => x);
             const ys = corners.map(({ y }) => y);
@@ -236,7 +234,7 @@ export const getBoundingBox = (shape: Shape): BoundingBox => {
             );
             return { x, y, width, height };
         }
-        case ShapeType.Circle: {
+        case 'circle': {
             const { r, x, y } = shape;
             return {
                 x: x - r,
@@ -245,11 +243,11 @@ export const getBoundingBox = (shape: Shape): BoundingBox => {
                 height: r * 2,
             };
         }
-        case ShapeType.Polygon: {
+        case 'polygon': {
             return getPolygonBoundingBox(shape.points);
         }
 
-        case ShapeType.Pose: {
+        case 'pose': {
             return getPolygonBoundingBox(shape.points);
         }
     }
@@ -306,23 +304,23 @@ export const isInsideOfBoundingBox = (parentBoundingBox: BoundingBox, shape: Bou
 
 export const getCenterOfShape = (shape: Shape): Point => {
     switch (shape.shapeType) {
-        case ShapeType.Pose: {
+        case 'pose': {
             const [x, y] = polylabel([shape.points.map((point) => [point.x, point.y])]);
 
             return { x, y };
         }
-        case ShapeType.Polygon: {
+        case 'polygon': {
             const [x, y] = polylabel([shape.points.map((point) => [point.x, point.y])]);
 
             return { x, y };
         }
-        case ShapeType.Rect: {
+        case 'rect': {
             return { x: shape.x + shape.width / 2, y: shape.y + shape.height / 2 };
         }
-        case ShapeType.RotatedRect: {
+        case 'rotated-rect': {
             return { x: shape.x, y: shape.y };
         }
-        case ShapeType.Circle: {
+        case 'circle': {
             return { x: shape.x, y: shape.y };
         }
     }
