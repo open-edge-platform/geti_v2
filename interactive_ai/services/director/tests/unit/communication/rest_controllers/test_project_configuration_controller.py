@@ -24,17 +24,12 @@ class TestProjectConfigurationRESTController:
         repo = ProjectConfigurationRepo(fxt_project_identifier)
         request.addfinalizer(lambda: repo.delete_all())
         repo.save(fxt_project_configuration)
-        single_task_config = fxt_project_configuration.task_configs[0]
 
         # Act
         result = ProjectConfigurationRESTController.get_configuration(project_identifier=fxt_project_identifier)
-        result_single_task = ProjectConfigurationRESTController.get_configuration(
-            project_identifier=fxt_project_identifier, task_id=single_task_config.task_id
-        )
 
         # Convert to dict to compare with expected output
         compare(result, fxt_project_configuration_rest_view, ignore_eq=True)
-        compare(result_single_task, fxt_project_configuration_rest_view["task_configs"][0], ignore_eq=True)
 
     def test_get_configuration_not_found(self) -> None:
         project_id = ID("dummy_project_id")

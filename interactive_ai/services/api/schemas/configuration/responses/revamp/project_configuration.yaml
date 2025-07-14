@@ -4,7 +4,7 @@ properties:
     type: array
     description: Array containing configuration for each task in the project
     items:
-      $ref: "project_configuration_single_task.yaml"
+      $ref: "project_configuration_task_config.yaml"
 
 required:
   - task_configs

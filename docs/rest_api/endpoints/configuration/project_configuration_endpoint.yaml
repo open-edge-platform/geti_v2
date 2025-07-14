@@ -19,16 +19,11 @@ get:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: "../../../../interactive_ai/services/api/schemas/configuration/responses/revamp/project_configuration_single_task.yaml"
-              - $ref: "../../../../interactive_ai/services/api/schemas/configuration/responses/revamp/project_configuration_task_chain.yaml"
+            $ref: "../../../../interactive_ai/services/api/schemas/configuration/responses/revamp/project_configuration.yaml"
           examples:
-            Single task configuration response:
+            Project configuration response:
               value:
-                - $ref: "../../examples/configuration/responses/revamp/project_configuration_single_task.json"
-            Task chain configuration response:
-              value:
-                - $ref: "../../examples/configuration/responses/revamp/project_configuration_task_chain.json"
+                - $ref: "../../examples/configuration/responses/revamp/project_configuration.json"
     '404':
       description: Object not found. See the examples for details.
       content:
@@ -68,16 +63,11 @@ patch:
     content:
       application/json:
         schema:
-          oneOf:
-            - $ref: "../../../../interactive_ai/services/api/schemas/configuration/requests/revamp/project_configuration_single_task.yaml"
-            - $ref: "../../../../interactive_ai/services/api/schemas/configuration/requests/revamp/project_configuration_task_chain.yaml"
+          $ref: "../../../../interactive_ai/services/api/schemas/configuration/requests/revamp/project_configuration.yaml"
         examples:
-          Single task configuration response:
+          Project configuration payload:
             value:
-              - $ref: "../../examples/configuration/requests/revamp/project_configuration_single_task.json"
-          Task chain configuration response:
-            value:
-              - $ref: "../../examples/configuration/requests/revamp/project_configuration_task_chain.json"
+              - $ref: "../../examples/configuration/requests/revamp/project_configuration.json"
     required: true
   responses:
     '204':
