@@ -18,17 +18,8 @@ __all__ = ["ComputeResources", "EphemeralStorageResources"]
 
 RESOURCES_MULTIPLIER = 0.9
 
-# Training resources configuration per environment type
-TRAINING_RESOURCES_CONFIGURATION: dict = {
-    "VM": {"requests": {"cpu": "1", "memory": "8GB"}, "limits": {"cpu": "100"}},
-    "BM": {
-        "requests": {"cpu": "2", "memory": "3GB"},
-        "limits": {"cpu": "100", "memory": "50GB"},
-    },
-}
-
-# Optimization resources configuration per environment type
-OPTIMIZATION_RESOURCES_CONFIGURATION: dict = {
+# Resources configuration per environment type
+RESOURCES_CONFIGURATION: dict = {
     "VM": {"requests": {"cpu": "1", "memory": "8GB"}, "limits": {"cpu": "100"}},
     "BM": {
         "requests": {"cpu": "2", "memory": "3GB"},
@@ -121,29 +112,29 @@ async def calculate_training_resources() -> tuple[dict, str]:
         # CPU training task calculation
 
         limits_cpu = round_millicpus_and_shrink(max(available_cpu))
-        requests_cpu = k8s_cpu_to_millicpus(TRAINING_RESOURCES_CONFIGURATION["VM"]["requests"]["cpu"])
+        requests_cpu = k8s_cpu_to_millicpus(RESOURCES_CONFIGURATION["VM"]["requests"]["cpu"])
         limits_cpu = max(limits_cpu, requests_cpu)
 
         limits_memory_int = shrink_value(int(max(available_memory)))
-        requests_memory = k8s_memory_to_kibibytes(TRAINING_RESOURCES_CONFIGURATION["VM"]["requests"]["memory"])
+        requests_memory = k8s_memory_to_kibibytes(RESOURCES_CONFIGURATION["VM"]["requests"]["memory"])
         limits_memory_int = max(limits_memory_int, requests_memory)
 
         return (
             fill_resources_with_values(
-                requests_cpu=TRAINING_RESOURCES_CONFIGURATION["VM"]["requests"]["cpu"],
-                requests_memory=TRAINING_RESOURCES_CONFIGURATION["VM"]["requests"]["memory"],
+                requests_cpu=RESOURCES_CONFIGURATION["VM"]["requests"]["cpu"],
+                requests_memory=RESOURCES_CONFIGURATION["VM"]["requests"]["memory"],
                 limits_memory=f"{limits_memory_int}Ki",
                 limits_cpu=f"{limits_cpu}m",
             ),
             accelerator_name,
         )
     if accelerator_type == "gpu":
-        gpu_request = TRAINING_RESOURCES_CONFIGURATION["BM"]["requests"][accelerator_name] = "1"
-        gpu_limit = TRAINING_RESOURCES_CONFIGURATION["BM"]["limits"][accelerator_name] = "1"
+        gpu_request = RESOURCES_CONFIGURATION["BM"]["requests"][accelerator_name] = "1"
+        gpu_limit = RESOURCES_CONFIGURATION["BM"]["limits"][accelerator_name] = "1"
 
-        requests_cpu = TRAINING_RESOURCES_CONFIGURATION["BM"]["requests"]["cpu"]
-        requests_memory = TRAINING_RESOURCES_CONFIGURATION["BM"]["requests"]["memory"]
-        limits_memory = TRAINING_RESOURCES_CONFIGURATION["BM"]["limits"]["memory"]
+        requests_cpu = RESOURCES_CONFIGURATION["BM"]["requests"]["cpu"]
+        requests_memory = RESOURCES_CONFIGURATION["BM"]["requests"]["memory"]
+        limits_memory = RESOURCES_CONFIGURATION["BM"]["limits"]["memory"]
         # GPU training task calculation
         return (
             fill_resources_with_values(
@@ -167,9 +158,9 @@ async def calculate_optimization_resources() -> dict:
     :return: optimization resources as dict
     """
 
-    requests_cpu = OPTIMIZATION_RESOURCES_CONFIGURATION["BM"]["requests"]["cpu"]
-    requests_memory = OPTIMIZATION_RESOURCES_CONFIGURATION["BM"]["requests"]["memory"]
-    limits_memory = OPTIMIZATION_RESOURCES_CONFIGURATION["BM"]["limits"]["memory"]
+    requests_cpu = RESOURCES_CONFIGURATION["BM"]["requests"]["cpu"]
+    requests_memory = RESOURCES_CONFIGURATION["BM"]["requests"]["memory"]
+    limits_memory = RESOURCES_CONFIGURATION["BM"]["limits"]["memory"]
     # GPU training task calculation
     return fill_resources_with_values(
         requests_cpu=requests_cpu,
