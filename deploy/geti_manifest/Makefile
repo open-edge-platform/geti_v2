@@ -6,6 +6,7 @@ include ../../Makefile.shared
 ORAS := /usr/local/bin/oras
 ORAS_VERSION := 1.2.3
 ORAS_DIR := oras-install
+INTEL_DEVICE_PLUGIN_VERSION := 0.32.0
 
 ifneq (,$(wildcard $(ORAS)))
     ORAS_BINARY := $(ORAS)
@@ -27,12 +28,16 @@ publish-chart: build-chart
 	$(ORAS_BINARY) push $(REGISTRY)/geti/charts/geti-manifest:$(TAG) \
 		--artifact-type=application/text \
 		geti-manifest.yaml.j2
+	$(ORAS_BINARY) push $(REGISTRY)/geti/charts/intel-device-plugin:$(TAG) \
+		--artifact-type=application/text \
+		intel-device-plugin.yaml
 
 build-chart: get-oras
 	VERSION=$(VERSION) \
 	REGISTRY=$(MANIFEST_REGISTRY) \
 	TAG=$(TAG) \
-	envsubst < geti-manifest.yaml.j2 > geti-manifest.yaml.j2
+	INTEL_DEVICE_PLUGIN_VERSION=$(INTEL_DEVICE_PLUGIN_VERSION) \
+	envsubst < geti-manifest.yaml.j2 > geti-manifest.yaml.j2.tmp && mv geti-manifest.yaml.j2.tmp geti-manifest.yaml.j2
 
 static-code-analysis:
 	@echo "Not applicable"
