@@ -29,9 +29,9 @@ const datasetPagePath = (datasetIdentifier: DatasetIdentifier) => paths.project.
 
 export const AcceptButton = ({ isDisabled, navigate }: AcceptButtonProps): JSX.Element => {
     const { addNotification } = useNotification();
-    const { savedFilesQuery, updateMany } = useCameraStorage();
     const { ...datasetIdentifier } = useCameraParams();
     const { mediaUploadState, onUploadMedia } = useDatasetMediaUpload();
+    const { savedFilesQuery, updateMany, deleteMany } = useCameraStorage();
     const [isPendingButton, setIsPendingButton] = useState(false);
 
     const handleScreenLoading = async () => {
@@ -40,25 +40,33 @@ export const AcceptButton = ({ isDisabled, navigate }: AcceptButtonProps): JSX.E
         const screenshotDict = groupBy(updatedSavedFiles.data, ({ labelIds }) => String(labelIds));
 
         return Promise.all(
-            Object.entries(screenshotDict).map(([labelsIds, screenshots]) =>
-                onUploadMedia({
+            Object.entries(screenshotDict).map(async ([labelsIds, screenshots]) => {
+                await deleteMany(getIds(screenshots));
+                await onUploadMedia({
                     labelIds: isEmpty(labelsIds) ? undefined : labelsIds.split(','),
                     files: screenshots.map(({ file }) => file),
                     datasetIdentifier,
-                })
-            )
+                });
+            })
         );
     };
 
     const handleMediaUpload = async () => {
         setIsPendingButton(true);
 
-        addNotification({ message: 'Preparing media upload...', type: NOTIFICATION_TYPE.INFO });
-        await updateMany(getIds(savedFilesQuery.data ?? []), {});
-        await handleScreenLoading();
-        navigate(datasetPagePath(datasetIdentifier));
-
-        setIsPendingButton(false);
+        try {
+            addNotification({ message: 'Preparing media upload...', type: NOTIFICATION_TYPE.INFO });
+            await updateMany(getIds(savedFilesQuery.data ?? []), {});
+            await handleScreenLoading();
+            navigate(datasetPagePath(datasetIdentifier));
+        } catch (_error) {
+            addNotification({
+                type: NOTIFICATION_TYPE.ERROR,
+                message: 'There was an issue while uploading the media files. Please try again.',
+            });
+        } finally {
+            setIsPendingButton(false);
+        }
     };
 
     return (

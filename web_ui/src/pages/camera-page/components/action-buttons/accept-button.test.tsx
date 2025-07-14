@@ -48,6 +48,7 @@ const mockedDatasetMediaUpload = (mediaUploadPerDataset: Partial<MediaUploadPerD
 describe('AcceptButton', () => {
     const renderApp = async ({
         filesData,
+        deleteMany = jest.fn(),
         updateMany = jest.fn().mockResolvedValue(''),
         deleteAllItems = jest.fn().mockResolvedValue(''),
         navigate = jest.fn(),
@@ -57,6 +58,7 @@ describe('AcceptButton', () => {
         filesData?: Screenshot[];
         isLivePrediction?: boolean;
         updateMany?: jest.Mock;
+        deleteMany?: jest.Mock;
         deleteAllItems?: jest.Mock;
         mockedGetBrowserPermissions?: jest.Mock;
         insufficientStorage?: boolean;
@@ -64,7 +66,7 @@ describe('AcceptButton', () => {
         jest.mocked(useCameraParams).mockReturnValue(getUseCameraParams({ ...mockedDatasetIdentifier }));
         jest.mocked(useDatasetMediaUpload).mockReturnValue(mockedDatasetMediaUpload({ insufficientStorage }));
 
-        configUseCameraStorage({ deleteAllItems, updateMany, filesData });
+        configUseCameraStorage({ deleteAllItems, updateMany, deleteMany, filesData });
 
         render(
             <ProjectProvider
@@ -85,17 +87,24 @@ describe('AcceptButton', () => {
 
     const filesData = [mockedScreenshot];
 
-    it('custom onPress function is passed', async () => {
+    it('load the files and delete the screenshots', async () => {
         const mockedNavigate = jest.fn();
+        const mockedDeleteMany = jest.fn();
         const mockedUpdateMany = jest.fn().mockResolvedValue('');
 
-        await renderApp({ updateMany: mockedUpdateMany, filesData, navigate: mockedNavigate });
+        await renderApp({
+            filesData,
+            navigate: mockedNavigate,
+            updateMany: mockedUpdateMany,
+            deleteMany: mockedDeleteMany,
+        });
 
         await waitFor(() => {
             fireEvent.click(screen.getByRole('button', { name: /accept/i }));
         });
 
         expect(screen.getByText('Preparing media upload...')).toBeVisible();
+        expect(mockedDeleteMany).toHaveBeenCalledWith([mockedScreenshot.id]);
         expect(mockedNavigate).toHaveBeenCalledWith(
             `/organizations/${mockedDatasetIdentifier.organizationId}/workspaces/${mockedDatasetIdentifier.workspaceId}/projects/${mockedDatasetIdentifier.projectId}/datasets/${mockedDatasetIdentifier.datasetId}`
         );
