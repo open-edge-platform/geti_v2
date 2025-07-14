@@ -9,7 +9,7 @@ import { DefaultBodyType, ResponseComposition, RestContext } from 'msw';
 import { OpenAPIBackend, type Context, type Document, type Options } from 'openapi-backend';
 
 import definition from './../../../src/core/server/generated/api-spec.json' assert { type: 'json' };
-import { settings, supportedAlgorithms } from './mocks';
+import { settings, legacySupportedAlgorithms } from './mocks';
 import { getDirname } from '../../utils/get-dirname';
 
 const SHOW_UNIMPLEMENTED_OPERATIONS = false;
@@ -216,7 +216,7 @@ const registerDefaultHandlers = (api: OpenAPIBackend) => {
     };
 
     const GetSupportedAlgorithms: OperationHandler = async (_: Context<Document>, res, ctx) => {
-        return res(ctx.json(supportedAlgorithms));
+        return res(ctx.json(legacySupportedAlgorithms));
     };
 
     api.register({

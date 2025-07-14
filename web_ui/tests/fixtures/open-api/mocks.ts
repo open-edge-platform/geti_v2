@@ -117,7 +117,7 @@ export const disabledFUXSettings = {
 
 export const settings = JSON.stringify(disabledFUXSettings);
 
-export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> = {
+export const legacySupportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> = {
     supported_algorithms: [
         {
             name: 'U-Net',

@@ -9,10 +9,10 @@ import {
     getMockedProjectStatusDTO,
     getMockedProjectStatusTask,
 } from '../../../src/test-utils/mocked-items-factory/mocked-project';
-import { supportedAlgorithms } from '../../fixtures/open-api/mocks';
+import { legacySupportedAlgorithms } from '../../fixtures/open-api/mocks';
 import { ProjectModelsPage } from '../../fixtures/page-objects/models-page';
 import { project as chainProject } from '../../mocks/detection-segmentation/mocks';
-import { testWithModels } from './fixtures';
+import { legacyTestWithModels } from './fixtures';
 import { segmentationConfigurationMock } from './mocks';
 import { getModelGroups } from './models.mocks';
 
@@ -27,7 +27,7 @@ interface ModelTrainFixtures {
     modelsPage: ProjectModelsPage;
 }
 
-const test = testWithModels.extend<ModelTrainFixtures>({
+const test = legacyTestWithModels.extend<ModelTrainFixtures>({
     modelsPage: async ({ modelsPage, registerApiResponse }, use) => {
         let trainHasBeenCalled = false;
         registerApiResponse('TrainModel', (_, res, ctx) => {
@@ -47,6 +47,12 @@ const expectTaskSelectorVisible = async (page: Page) => {
 };
 
 test.describe('Test model train dialog pipeline', () => {
+    test.use({
+        featureFlags: {
+            FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
+        },
+    });
+
     test('Train model for classification', async ({ modelsPage, page, registerApiResponse }) => {
         registerApiResponse('GetProjectStatus', (_, res, ctx) => {
             return res(
@@ -91,12 +97,12 @@ test.describe('Test model train dialog pipeline', () => {
             );
 
             const algorithmsForFirstTask =
-                supportedAlgorithms.supported_algorithms?.filter(
+                legacySupportedAlgorithms.supported_algorithms?.filter(
                     ({ task_type }) => task_type === tasks[0]?.task_type
                 ) ?? [];
 
             const algorithmsForSecondTask =
-                supportedAlgorithms.supported_algorithms?.filter(
+                legacySupportedAlgorithms.supported_algorithms?.filter(
                     ({ task_type }) => task_type === tasks[1]?.task_type
                 ) ?? [];
 
@@ -163,8 +169,6 @@ test.describe('Test model train dialog pipeline', () => {
     });
 
     test.describe('Configure parameters', () => {
-        test.use({ featureFlags: { FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false } });
-
         test('Check if tiling switch hides connected configurable parameters - reconfigure active model', async ({
             configurationParametersPage,
             page,

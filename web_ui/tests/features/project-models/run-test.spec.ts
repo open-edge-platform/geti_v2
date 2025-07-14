@@ -6,7 +6,7 @@ import { expect } from '@playwright/test';
 import { ProjectModelsPage } from '../../fixtures/page-objects/models-page';
 import { TestConfiguration } from '../../fixtures/page-objects/run-test-dialog-page';
 import { expectTestConfiguration } from './../project-tests/expect';
-import { testWithModels } from './fixtures';
+import { legacyTestWithModels } from './fixtures';
 import { getModelDetail } from './models.mocks';
 
 const MODELS_URL =
@@ -17,7 +17,7 @@ interface RunTestFixtures {
     modelsPage: ProjectModelsPage;
 }
 
-const test = testWithModels.extend<RunTestFixtures>({
+const legacyTest = legacyTestWithModels.extend<RunTestFixtures>({
     modelsPage: async ({ registerApiResponse, modelsPage }, use) => {
         let hasBeenCalled = false;
         registerApiResponse('TriggerModelTestJob', (_, res, ctx) => {
@@ -32,38 +32,40 @@ const test = testWithModels.extend<RunTestFixtures>({
     },
 });
 
-test('Run tests from models index page', async ({ page, modelsPage }) => {
-    await page.goto(MODELS_URL);
-    const runTestDialogPage = await modelsPage.openTestDialog('EfficientNet-B0', '2');
+legacyTest.describe('Run tests FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false', () => {
+    legacyTest('Run tests from models index page', async ({ page, modelsPage }) => {
+        await page.goto(MODELS_URL);
+        const runTestDialogPage = await modelsPage.openTestDialog('EfficientNet-B0', '2');
 
-    const configuration: TestConfiguration = {
-        optimization: 'OpenVINO',
-        dataset: 'dataset',
-    };
-    await runTestDialogPage.configureTest(configuration);
+        const configuration: TestConfiguration = {
+            optimization: 'OpenVINO',
+            dataset: 'dataset',
+        };
+        await runTestDialogPage.configureTest(configuration);
 
-    await expectTestConfiguration(page, { ...configuration, version: 'Version 2', model: 'EfficientNet-B0' });
+        await expectTestConfiguration(page, { ...configuration, version: 'Version 2', model: 'EfficientNet-B0' });
 
-    await runTestDialogPage.runTest();
-    await modelsPage.seeTestProgress();
-});
-
-test('Run tests from model page', async ({ page, modelsPage }) => {
-    await page.goto(MODELS_URL);
-
-    const modelPage = await modelsPage.goToModel('EfficientNet-B0', '2');
-
-    const runTestDialogPage = await modelPage.openTestDialog('EfficientNet-B0 OpenVINO');
-
-    const configuration: TestConfiguration = { dataset: 'dataset' };
-    await runTestDialogPage.configureTest(configuration);
-    await expectTestConfiguration(page, {
-        ...configuration,
-        optimization: 'OpenVINO',
-        version: 'Version 2',
-        model: getModelDetail.name,
+        await runTestDialogPage.runTest();
+        await modelsPage.seeTestProgress();
     });
 
-    await runTestDialogPage.runTest();
-    await modelsPage.seeTestProgress();
+    legacyTest('Run tests from model page', async ({ page, modelsPage }) => {
+        await page.goto(MODELS_URL);
+
+        const modelPage = await modelsPage.goToModel('EfficientNet-B0', '2');
+
+        const runTestDialogPage = await modelPage.openTestDialog('EfficientNet-B0 OpenVINO');
+
+        const configuration: TestConfiguration = { dataset: 'dataset' };
+        await runTestDialogPage.configureTest(configuration);
+        await expectTestConfiguration(page, {
+            ...configuration,
+            optimization: 'OpenVINO',
+            version: 'Version 2',
+            model: getModelDetail.name,
+        });
+
+        await runTestDialogPage.runTest();
+        await modelsPage.seeTestProgress();
+    });
 });
