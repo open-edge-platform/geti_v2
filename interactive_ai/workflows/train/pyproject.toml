@@ -67,6 +67,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.per-file-ignores]
 "*test*.py" = ["S", "ANN", "ARG", "SIM", "RUF", "TC", "PL", "C90", "D103", "RET504"]
+"trainer/**" = ["ALL"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
@@ -78,6 +79,7 @@ max-args=7
 python_version = "3.10"
 ignore_missing_imports = true
 show_error_codes = true
+exclude = ["trainer/"]
 
 [tool.uv]
 override-dependencies = [
