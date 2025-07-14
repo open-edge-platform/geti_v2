@@ -4,7 +4,7 @@ name: Notify Teams on UI PR Creation
 
 on:
   pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
+    types: [opened, synchronize]
     paths:
       - 'web_ui/**'
 
