@@ -11,7 +11,7 @@ import { TilingModeTooltip } from '../../../project-models/train-model-dialog/ad
 import {
     getCustomTilingParameters,
     getTilingMode,
-} from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling.component';
+} from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/utils';
 import { Accordion } from '../../../project-models/train-model-dialog/advanced-settings/ui/accordion/accordion.component';
 import { Parameters } from '../../../project-models/train-model-dialog/advanced-settings/ui/parameters.component';
 

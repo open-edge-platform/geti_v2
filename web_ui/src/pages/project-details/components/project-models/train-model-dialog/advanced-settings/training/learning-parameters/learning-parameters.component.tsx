@@ -24,7 +24,7 @@ export const LearningParameters = ({ parameters, onUpdateTrainingConfiguration }
         <Accordion>
             <Accordion.Title>
                 Learning parameters
-                <Accordion.Tag>{tag}</Accordion.Tag>
+                <Accordion.Tag ariaLabel={'Learning parameters tag'}>{tag}</Accordion.Tag>
             </Accordion.Title>
             <Accordion.Content>
                 <Accordion.Description>Specify the details of the learning process</Accordion.Description>

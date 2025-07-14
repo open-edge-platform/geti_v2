@@ -28,6 +28,7 @@ export const ModelArchitecturesList: FC<ModelArchitecturesListProps> = ({
             {algorithms.map((algorithm) => (
                 <ModelType
                     key={algorithm.modelTemplateId}
+                    name={algorithm.name}
                     algorithm={algorithm}
                     selectedModelTemplateId={selectedModelTemplateId}
                     onChangeSelectedTemplateId={onChangeSelectedTemplateId}

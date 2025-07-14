@@ -882,6 +882,7 @@ class ConvertUtils:
         dm_categories: dm.CategoriesInfo,
         selected_labels: Sequence[str],
         include_all_labels: bool = False,
+        keypoint_structure_positions: list | None = None,
     ) -> dict[str, list]:
         """
         Get the keypoint structure(a.k.a. skeleton or keypoint graph, and positions) from datumaro dataset.
@@ -889,6 +890,7 @@ class ConvertUtils:
         :param dm_categories: categories of datumaro dataset
         :param selected_labels: labels selected by a user for being imported
         :param include_all_labels: if True, ignore selected_labels then include all possible labels for each task_type
+        :param keypoint_structure_positions: positions of keypoints to be used if the dataset does not contain them
         :return: the keypoint structure
         """
         structure: dict[str, list] = {
@@ -911,5 +913,9 @@ class ConvertUtils:
                     structure["positions"].append(
                         {"label": cat.labels[i // 2], "x": cat.positions[i], "y": cat.positions[i + 1]}
                     )
+            if not structure["positions"] and keypoint_structure_positions is not None:
+                # The dataset was exported outside of Geti and does not contain keypoint positions.
+                # The positions are set manually using an annotation from the dataset.
+                structure["positions"] = keypoint_structure_positions
 
         return structure

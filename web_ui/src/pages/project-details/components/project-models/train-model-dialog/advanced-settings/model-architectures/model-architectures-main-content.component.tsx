@@ -31,7 +31,7 @@ export const ModelArchitecturesMainContent: FC<ModelArchitecturesMainContentProp
         (algorithm) => algorithm.performanceCategory === PerformanceCategory.OTHER
     );
 
-    if (sortBy !== SortingOptions.RELEVANCE) {
+    if (sortBy !== SortingOptions.RELEVANCE_ASC) {
         return (
             <ModelArchitecturesList
                 algorithms={algorithms}
