@@ -1,5 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
-# LIMITED EDGE SOFTWARE DISTRIBUTION LICENS
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import pytest
 
 from geti_supported_models.model_manifest import NullModelManifest
