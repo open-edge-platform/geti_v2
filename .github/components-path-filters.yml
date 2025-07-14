@@ -269,7 +269,8 @@ interactive_ai/workflows/optimize:
   - Makefile.shared
   - .github/workflows/component.yml
 interactive_ai/workflows/train:
-  - interactive_ai/workflows/train/**
+  - interactive_ai/workflows/train/job/**
+  - interactive_ai/workflows/train/tests/**
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/evaluation
   - interactive_ai/workflows/common/jobs_common_extras/experiments
