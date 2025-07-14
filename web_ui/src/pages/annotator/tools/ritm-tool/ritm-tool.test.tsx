@@ -3,7 +3,7 @@
 
 import '@wessberg/pointer-events';
 
-import { getBoundingBox } from '@geti/smart-tools';
+import { getBoundingBox } from '@geti/smart-tools/utils';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { TaskChainInput } from '../../../../core/annotations/annotation.interface';

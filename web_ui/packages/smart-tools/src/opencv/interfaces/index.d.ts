@@ -31,3 +31,5 @@ declare module 'OpenCVTypes' {
 }
 
 declare const cv: Promise<OpenCVTypes.cv>;
+
+export { type OpenCVTypes, cv };

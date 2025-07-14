@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { radiansToDegrees, Vec2 } from '@geti/smart-tools';
+import { radiansToDegrees, Vec2 } from '@geti/smart-tools/utils';
 import { Rotation } from '@geti/ui/icons';
 import clsx from 'clsx';
 

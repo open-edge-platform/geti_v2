@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { getBoundingBox } from '@geti/smart-tools';
+import { getBoundingBox } from '@geti/smart-tools/utils';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { Shape } from '../../../../core/annotations/shapes.interface';

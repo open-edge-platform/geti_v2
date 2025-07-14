@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { rectToRotatedRect } from '@geti/smart-tools';
+import { rectToRotatedRect } from '@geti/smart-tools/utils';
 import { partial } from 'lodash-es';
 
 import { Rect } from '../../../../core/annotations/shapes.interface';

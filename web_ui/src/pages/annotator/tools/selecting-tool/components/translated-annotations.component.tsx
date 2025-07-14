@@ -3,7 +3,7 @@
 
 import { Dispatch, Fragment, PointerEvent, RefObject, SetStateAction, useState } from 'react';
 
-import { clampPointBetweenImage } from '@geti/smart-tools';
+import { clampPointBetweenImage } from '@geti/smart-tools/utils';
 
 import { Annotation as AnnotationInterface } from '../../../../../core/annotations/annotation.interface';
 import { Point } from '../../../../../core/annotations/shapes.interface';

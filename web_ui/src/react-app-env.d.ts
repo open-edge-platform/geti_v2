@@ -46,7 +46,7 @@ declare module 'OpenCVTypes' {
 declare const cv: Promise<OpenCVTypes.cv>;
 
 declare module 'opencv' {
-    import OpenCVTypes from '@geti/smart-tools/opencv';
+    import * as OpenCVTypes from '@geti/smart-tools/opencv';
 
     const OpenCV: Promise<OpenCVTypes>;
     export default OpenCV;

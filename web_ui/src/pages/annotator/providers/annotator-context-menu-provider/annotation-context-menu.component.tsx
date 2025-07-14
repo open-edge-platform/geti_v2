@@ -3,7 +3,7 @@
 
 import { MutableRefObject, RefObject, useRef } from 'react';
 
-import { pointInRectangle } from '@geti/smart-tools';
+import { pointInRectangle } from '@geti/smart-tools/utils';
 import { Overlay, View } from '@geti/ui';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';

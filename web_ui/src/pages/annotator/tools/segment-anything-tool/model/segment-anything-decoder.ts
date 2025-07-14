@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { isPointInShape } from '@geti/smart-tools';
+import { isPointInShape } from '@geti/smart-tools/utils';
 import * as ort from 'onnxruntime-common';
 import type OpenCVTypes from 'OpenCVTypes';
 

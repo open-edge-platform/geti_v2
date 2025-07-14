@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 
-import { highestCorner } from '@geti/smart-tools';
+import { highestCorner } from '@geti/smart-tools/utils';
 import { AnimatePresence } from 'framer-motion';
 import { isEmpty } from 'lodash-es';
 import { useHover } from 'react-aria';

@@ -3,7 +3,7 @@
 
 import { PointerEvent } from 'react';
 
-import { clampBetween } from '@geti/smart-tools';
+import { clampBetween } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
 

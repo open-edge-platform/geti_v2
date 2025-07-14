@@ -1,10 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Vec2 } from '@geti/smart-tools';
-
 import { Rect, RotatedRect } from '../shared/interfaces';
 import { rotateDeg } from './math';
+import * as Vec2 from './vec2';
 
 export const transformPointInRotatedRectToScreenSpace = (position: Vec2.Vec2, shape: RotatedRect): Vec2.Vec2 => {
     const shapePosition = { x: shape.x, y: shape.y };

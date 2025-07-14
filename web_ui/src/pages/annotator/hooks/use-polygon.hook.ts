@@ -3,7 +3,7 @@
 
 import { PointerEvent, useCallback, useEffect, useRef } from 'react';
 
-import { getIntersectionPoint } from '@geti/smart-tools';
+import { getIntersectionPoint } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 
 import { Point, Polygon } from '../../../core/annotations/shapes.interface';

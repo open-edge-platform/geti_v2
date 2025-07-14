@@ -10,7 +10,7 @@ import {
     cursorForDirection,
     rotatedRectCorners,
     Vec2,
-} from '@geti/smart-tools';
+} from '@geti/smart-tools/utils';
 
 import { Annotation } from '../../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';

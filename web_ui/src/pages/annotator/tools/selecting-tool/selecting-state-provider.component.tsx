@@ -13,7 +13,7 @@ import {
     useState,
 } from 'react';
 
-import { getCenterOfTheAnnotations } from '@geti/smart-tools';
+import { getCenterOfTheAnnotations } from '@geti/smart-tools/utils';
 import { isNil } from 'lodash-es';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';

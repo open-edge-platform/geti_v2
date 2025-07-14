@@ -3,7 +3,7 @@
 
 import { PointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { clampPointBetweenImage, isPointOverPoint } from '@geti/smart-tools';
+import { clampPointBetweenImage, isPointOverPoint } from '@geti/smart-tools/utils';
 import { differenceWith, isEmpty, isEqual } from 'lodash-es';
 
 import { Point, Polygon } from '../../../../core/annotations/shapes.interface';

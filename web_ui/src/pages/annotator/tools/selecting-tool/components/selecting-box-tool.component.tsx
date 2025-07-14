@@ -3,7 +3,7 @@
 
 import { PointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 
-import { clampBox, clampPointBetweenImage, isPointInShape, pointsToRect } from '@geti/smart-tools';
+import { clampBox, clampPointBetweenImage, isPointInShape, pointsToRect } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 import { useHotkeys } from 'react-hotkeys-hook';
 

@@ -3,7 +3,7 @@
 
 import { PointerEvent, SVGProps, useRef, useState } from 'react';
 
-import { clampPointBetweenImage, radiansToDegrees, Vec2 } from '@geti/smart-tools';
+import { clampPointBetweenImage, radiansToDegrees, Vec2 } from '@geti/smart-tools/utils';
 
 import { Point, RotatedRect as RectInterface, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';

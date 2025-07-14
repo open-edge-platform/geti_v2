@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { getShapesBoundingBox } from '@geti/smart-tools';
+import { getShapesBoundingBox } from '@geti/smart-tools/utils';
 import { isEqual, isNil } from 'lodash-es';
 
 import { useAnnotationScene } from '../providers/annotation-scene-provider/annotation-scene-provider.component';

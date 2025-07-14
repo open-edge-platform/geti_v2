@@ -3,7 +3,7 @@
 
 import { RefObject, useCallback, useMemo, useRef, useState } from 'react';
 
-import { clampPointBetweenImage } from '@geti/smart-tools';
+import { clampPointBetweenImage } from '@geti/smart-tools/utils';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { isNotKeypointTask } from '../../../../core/projects/utils';

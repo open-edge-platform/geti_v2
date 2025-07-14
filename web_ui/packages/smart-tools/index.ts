@@ -18,58 +18,6 @@ export { buildRITMInstance, RITM, RITM_TEMPLATE_SIZE } from './src/ritm/ritm';
 export { RITMModels } from './src/ritm/models/models';
 export { type RITMContour, type RITMPoint, type RITMData } from './src/ritm/interfaces';
 
-export { OpenCVLoader } from './src/utils/opencv-loader';
-export {
-    formatContourToPoints,
-    approximateShape,
-    formatImageData,
-    loadSource,
-    concatFloat32Arrays,
-    stackPlanes,
-    isPolygonValid,
-    getPointsFromMat,
-    getMatFromPoints,
-} from './src/utils/tool-utils';
-export * as Vec2 from './src/utils/vec2';
-export {
-    degreesToRadians,
-    radiansToDegrees,
-    rotateDeg,
-    clampBetween,
-    pointsToRect,
-    calculateDistance,
-    rotatedRectCorners,
-    highestCorner,
-    lowestCorner,
-    roiFromImage,
-    clampPointBetweenImage,
-    isPointOverPoint,
-    isValueBetween,
-    sgn,
-    getIntersectionPoint,
-    pointInRectangle,
-    pointInRotatedRectangle,
-    pointInCircle,
-    pointInPolygon,
-    isPointInShape,
-    getBoundingBox,
-    getShapesBoundingBox,
-    getCenterOfTheAnnotations,
-    isInsideOfBoundingBox,
-    getCenterOfShape,
-    hasEqualBoundingBox,
-    clampBox,
-    type BoundingBox,
-} from './src/utils/math';
-export {
-    transformPointInRotatedRectToScreenSpace,
-    calculateSizeAndPositionBasedOfCornerAnchor,
-    calculateSizeAndPositionOfSideAnchor,
-    cursorForDirection,
-    rectToRotatedRect,
-} from './src/utils/rotated-rect-math';
-export { sessionParams, type SessionParameters } from './src/utils/wasm-utils';
-
 // TODO: To be moved to SegmentAnything folder on the next PRs
 export const SegmentAnythingModels = {
     encoder: new URL('./src/segment-anything/models/mobile_sam.encoder.onnx', import.meta.url).toString(),

@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 
-import { highestCorner, lowestCorner } from '@geti/smart-tools';
+import { highestCorner, lowestCorner } from '@geti/smart-tools/utils';
 import polylabel from 'polylabel';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';

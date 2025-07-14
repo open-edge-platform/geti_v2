@@ -5,7 +5,6 @@ import { PointerEvent, SVGProps } from 'react';
 
 import Clipper from '@doodle3d/clipper-js';
 import type ClipperShape from '@doodle3d/clipper-js';
-import { BoundingBox, getBoundingBox, getCenterOfShape, rotatedRectCorners, Vec2 } from '@geti/smart-tools';
 import {
     Shape as SmartToolsShape,
     Circle as ToolCircle,
@@ -13,6 +12,7 @@ import {
     Rect as ToolRect,
     RotatedRect as ToolRotatedRect,
 } from '@geti/smart-tools/src/shared/interfaces';
+import { BoundingBox, getBoundingBox, getCenterOfShape, rotatedRectCorners, Vec2 } from '@geti/smart-tools/utils';
 import { defer, isEmpty } from 'lodash-es';
 
 import { Annotation, RegionOfInterest } from '../../../core/annotations/annotation.interface';

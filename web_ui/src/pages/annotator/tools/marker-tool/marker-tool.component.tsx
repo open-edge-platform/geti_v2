@@ -3,7 +3,7 @@
 
 import { PointerEvent, ReactElement, SVGProps, useCallback, useRef, useState } from 'react';
 
-import { calculateDistance } from '@geti/smart-tools';
+import { calculateDistance } from '@geti/smart-tools/utils';
 import { isEmpty, isFunction, partial } from 'lodash-es';
 
 import { Point } from '../../../../core/annotations/shapes.interface';

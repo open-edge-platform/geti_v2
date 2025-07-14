@@ -3,7 +3,7 @@
 
 import { HTMLProps, PointerEvent, ReactNode, useRef, useState } from 'react';
 
-import { calculateDistance } from '@geti/smart-tools';
+import { calculateDistance } from '@geti/smart-tools/utils';
 import { isFunction } from 'lodash-es';
 
 import { KeypointNode } from '../../../../../core/annotations/shapes.interface';

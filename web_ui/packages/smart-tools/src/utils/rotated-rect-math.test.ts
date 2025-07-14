@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Vec2 } from '@geti/smart-tools';
-
 import { Rect, RotatedRect } from '../shared/interfaces';
 import { highestCorner } from './math';
 import {
@@ -12,6 +10,7 @@ import {
     rectToRotatedRect,
     transformPointInRotatedRectToScreenSpace,
 } from './rotated-rect-math';
+import * as Vec2 from './vec2';
 
 describe('transformPointInRotatedRectToScreenSpace', () => {
     const shape: RotatedRect = {

@@ -1,8 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { BoundingBox } from '@geti/smart-tools';
 import { Shape as ToolShape } from '@geti/smart-tools/src/shared/interfaces';
+import { BoundingBox } from '@geti/smart-tools/utils';
 
 import { RegionOfInterest } from '../../../core/annotations/annotation.interface';
 import { Circle, Point, Rect } from '../../../core/annotations/shapes.interface';

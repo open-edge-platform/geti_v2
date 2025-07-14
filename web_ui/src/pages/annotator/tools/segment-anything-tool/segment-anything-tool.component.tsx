@@ -3,7 +3,7 @@
 
 import { PointerEvent, useEffect, useRef, useState } from 'react';
 
-import { clampPointBetweenImage, isPointInShape, pointInRectangle } from '@geti/smart-tools';
+import { clampPointBetweenImage, isPointInShape, pointInRectangle } from '@geti/smart-tools/utils';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { Point, Shape } from '../../../../core/annotations/shapes.interface';

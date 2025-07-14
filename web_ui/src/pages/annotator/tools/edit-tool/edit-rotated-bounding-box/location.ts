@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { transformPointInRotatedRectToScreenSpace, Vec2 } from '@geti/smart-tools';
+import { transformPointInRotatedRectToScreenSpace, Vec2 } from '@geti/smart-tools/utils';
 
 import { Point, RotatedRect } from '../../../../../core/annotations/shapes.interface';
 

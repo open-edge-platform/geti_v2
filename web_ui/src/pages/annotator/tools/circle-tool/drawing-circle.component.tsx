@@ -3,7 +3,7 @@
 
 import { PointerEvent, SVGProps, useCallback, useRef, useState } from 'react';
 
-import { calculateDistance } from '@geti/smart-tools';
+import { calculateDistance } from '@geti/smart-tools/utils';
 
 import { Circle as CircleInterface, Point } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';

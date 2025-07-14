@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { approximateShape } from '@geti/smart-tools';
+import { approximateShape } from '@geti/smart-tools/utils';
 import type cv from 'OpenCVTypes';
 
 import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from '../../../../../core/annotations/shapes.interface';

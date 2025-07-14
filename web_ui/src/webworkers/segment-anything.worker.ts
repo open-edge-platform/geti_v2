@@ -3,7 +3,8 @@
 
 //  Dependencies get bundled into the worker
 
-import { OpenCVLoader, SegmentAnythingModels } from '@geti/smart-tools';
+import { SegmentAnythingModels } from '@geti/smart-tools';
+import { OpenCVLoader } from '@geti/smart-tools/utils';
 import { expose } from 'comlink';
 import type OpenCVTypes from 'OpenCVTypes';
 

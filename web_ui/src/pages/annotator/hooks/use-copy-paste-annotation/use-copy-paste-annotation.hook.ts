@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react';
 
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
-import { getCenterOfShape } from '@geti/smart-tools';
+import { getCenterOfShape } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useLocalStorage } from 'usehooks-ts';

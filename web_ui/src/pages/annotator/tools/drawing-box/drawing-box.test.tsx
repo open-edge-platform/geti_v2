@@ -3,7 +3,7 @@
 
 import '@wessberg/pointer-events';
 
-import { getBoundingBox } from '@geti/smart-tools';
+import { getBoundingBox } from '@geti/smart-tools/utils';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';

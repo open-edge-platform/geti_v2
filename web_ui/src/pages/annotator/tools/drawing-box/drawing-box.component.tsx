@@ -3,7 +3,7 @@
 
 import { PointerEvent, SVGProps, useRef, useState } from 'react';
 
-import { clampBox, clampPointBetweenImage, pointsToRect } from '@geti/smart-tools';
+import { clampBox, clampPointBetweenImage, pointsToRect } from '@geti/smart-tools/utils';
 import { isFunction } from 'lodash-es';
 
 import { Point, Rect as RectInterface } from '../../../../core/annotations/shapes.interface';

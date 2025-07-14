@@ -1,7 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { getBoundingBox, SSIMMatch as ToolSSIMMatch, type RunSSIMProps as ToolRunSSIMProps } from '@geti/smart-tools';
+import { SSIMMatch as ToolSSIMMatch, type RunSSIMProps as ToolRunSSIMProps } from '@geti/smart-tools';
+import { getBoundingBox } from '@geti/smart-tools/utils';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { intersectionOverUnion } from '../../../../core/annotations/intersection-over-union';

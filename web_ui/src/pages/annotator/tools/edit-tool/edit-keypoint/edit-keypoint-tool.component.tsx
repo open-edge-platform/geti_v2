@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { getBoundingBox } from '@geti/smart-tools';
+import { getBoundingBox } from '@geti/smart-tools/utils';
 
 import { KeypointAnnotation } from '../../../../../core/annotations/annotation.interface';
 import { Point } from '../../../../../core/annotations/shapes.interface';

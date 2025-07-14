@@ -3,7 +3,7 @@
 
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 
-import { getBoundingBox, roiFromImage } from '@geti/smart-tools';
+import { getBoundingBox, roiFromImage } from '@geti/smart-tools/utils';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { getImageData } from '../../../../shared/canvas-utils';

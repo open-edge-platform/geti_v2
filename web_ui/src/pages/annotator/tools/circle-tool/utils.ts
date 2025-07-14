@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { calculateDistance } from '@geti/smart-tools';
+import { calculateDistance } from '@geti/smart-tools/utils';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { Circle, Point } from '../../../../core/annotations/shapes.interface';

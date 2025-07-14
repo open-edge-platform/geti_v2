@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { degreesToRadians, getBoundingBox } from '@geti/smart-tools';
+import { degreesToRadians, getBoundingBox } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 
 import {
