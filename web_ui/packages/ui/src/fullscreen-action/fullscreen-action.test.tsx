@@ -1,17 +1,25 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { fireEvent, screen } from '@testing-library/react';
+import { ReactNode } from 'react';
 
-import { providersRender as render } from '../../../../src/test-utils/required-providers-render';
+import { darkTheme, Provider } from '@adobe/react-spectrum';
+import { fireEvent, render, screen } from '@testing-library/react';
+
 import { FullscreenAction } from './fullscreen-action.component';
+
+const ThemeProvider = ({ children }: { children: ReactNode }) => {
+    return <Provider theme={darkTheme}>{children}</Provider>;
+};
 
 describe('Fullscreen action', () => {
     it('Check if action opens and closes fullscreen', async () => {
         render(
-            <FullscreenAction title={'Test fullscreen'}>
-                <div data-testid={'test-fullscreen'} />
-            </FullscreenAction>
+            <ThemeProvider>
+                <FullscreenAction title={'Test fullscreen'}>
+                    <div data-testid={'test-fullscreen'} />
+                </FullscreenAction>
+            </ThemeProvider>
         );
 
         expect(screen.queryByTestId('test-fullscreen')).not.toBeInTheDocument();
@@ -30,9 +38,11 @@ describe('Fullscreen action', () => {
 
     it('renders custom actionButton in the dialog', () => {
         render(
-            <FullscreenAction title='With Action' actionButton={<button aria-label='custom-action'>Custom</button>}>
-                <div />
-            </FullscreenAction>
+            <ThemeProvider>
+                <FullscreenAction title='With Action' actionButton={<button aria-label='custom-action'>Custom</button>}>
+                    <div />
+                </FullscreenAction>
+            </ThemeProvider>
         );
 
         fireEvent.click(screen.getByRole('button', { name: /Open in fullscreen With Action/ }));
