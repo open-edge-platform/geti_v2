@@ -6,7 +6,7 @@ import re
 
 from fastapi import HTTPException, status
 
-from constants.platform import GETI_REGISTRY, INSTALL_VERSION
+from constants.platform import GETI_REGISTRY
 from platform_operations.cluster import check_config_map_exists, deploy_service_job, load_kube_config
 from rest.schema.install import InstallRequest, InstallResponse
 from routers import platform_router
@@ -65,7 +65,13 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
     if check_config_map_exists(name="impt-configuration", namespace="impt"):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Platform is already installed.")
 
-    deploy_service_job(registry=GETI_REGISTRY, image_tag=INSTALL_VERSION, manifest_version=INSTALL_VERSION)
+    deploy_service_job(
+        registry=GETI_REGISTRY,
+        image_tag=payload.version_number,
+        manifest_version=payload.version_number,
+        gpu_label=payload.gpu_label,
+        render_gid=payload.render_gid,
+    )
 
     logger.info(f"Installation of version {payload.version_number} has started.")
     return InstallResponse(detail=f"Installation of version {payload.version_number} has started.")
