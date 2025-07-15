@@ -26,7 +26,7 @@ describe('Fullscreen action', () => {
         const expandButton = screen.getByRole('button', { name: /Open in fullscreen/ });
         fireEvent.click(expandButton);
 
-        const dialog = screen.queryByRole('dialog');
+        const dialog = screen.getByRole('dialog');
         expect(dialog).toBeInTheDocument();
 
         expect(screen.getByText('Test fullscreen')).toBeInTheDocument();
