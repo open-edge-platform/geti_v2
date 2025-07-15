@@ -16,6 +16,8 @@ class TestSupportedModels:
     @pytest.mark.parametrize(
         "model_manifest_id, expected_task",
         [
+            ("ote_anomaly_padim", "anomaly"),
+            ("ote_anomaly_stfpm", "anomaly"),
             ("Custom_Image_Classification_EfficientNet-V2-S", "classification"),
             ("Custom_Object_Detection_Gen3_ATSS", "detection"),
             ("Custom_Counting_Instance_Segmentation_MaskRCNN_EfficientNetB2B", "instance_segmentation"),

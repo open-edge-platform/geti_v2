@@ -71,7 +71,7 @@ class DefaultModels:
         TaskType.ANOMALY: {
             DefaultCategory.DEFAULT: "ote_anomaly_uflow",
             DefaultCategory.ACCURACY: "ote_anomaly_uflow",
-            DefaultCategory.SPEED: "ote_anomaly_classification_padim",
+            DefaultCategory.SPEED: "ote_anomaly_padim",
             DefaultCategory.BALANCE: None,
         },
         TaskType.KEYPOINT_DETECTION: {
