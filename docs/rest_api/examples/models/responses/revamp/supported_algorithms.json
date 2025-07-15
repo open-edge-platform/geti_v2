@@ -1,0 +1,212 @@
+{
+    "supported_algorithms": [
+        {
+            "model_manifest_id": "Custom_Semantic_Segmentation_SegNext_t",
+            "task": "segmentation",
+            "name": "SegNext-T",
+            "description": "SegNeXt-T is a lightweight semantic segmentation model that combines CNN efficiency with transformer-inspired enhancements. Designed for high speed and low latency, it achieves competitive accuracy on real-time tasks while maintaining a compact architecture suitable for edge devices. This model works well with 30+ training images and is ideal for applications requiring fast inference without sacrificing too much accuracy.",
+            "stats": {
+                "gigaflops": 12.44,
+                "trainable_parameters": 4.23,
+                "performance_ratings": {
+                    "accuracy": 2,
+                    "training_time": 3,
+                    "inference_speed": 3
+                }
+            },
+            "support_status": "active",
+            "supported_gpus": {
+                "intel": true,
+                "nvidia": true
+            },
+            "capabilities": {
+                "xai": true,
+                "tiling": true
+            },
+            "is_default_model": false,
+            "performance_category": "other"
+        },
+        {
+            "model_manifest_id": "Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR",
+            "task": "segmentation",
+            "name": "LiteHRNet-18",
+            "description": "LiteHRNet-18 is a lightweight high-resolution semantic segmentation model that maintains strong spatial detail through parallel multi-resolution branches. It provides a good balance of accuracy and speed, making it well-suited for real-time applications on mid-tier hardware.",
+            "stats": {
+                "gigaflops": 2.63,
+                "trainable_parameters": 1.1,
+                "performance_ratings": {
+                    "accuracy": 2,
+                    "training_time": 3,
+                    "inference_speed": 3
+                }
+            },
+            "support_status": "active",
+            "supported_gpus": {
+                "intel": true,
+                "nvidia": true
+            },
+            "capabilities": {
+                "xai": true,
+                "tiling": true
+            },
+            "is_default_model": false,
+            "performance_category": "balance"
+        },
+        {
+            "model_manifest_id": "Custom_Semantic_Segmentation_SegNext_B",
+            "task": "segmentation",
+            "name": "SegNext-B",
+            "description": "SegNeXt-B is a larger and more powerful model in the SegNeXt family, aimed at achieving high segmentation accuracy on complex datasets. It retains efficient computation while scaling up depth and width, making it suitable for scenarios where accuracy is prioritized over latency. This model works well with 30+ training images and outperforms other models on large datasets.",
+            "stats": {
+                "gigaflops": 64.65,
+                "trainable_parameters": 27.56,
+                "performance_ratings": {
+                    "accuracy": 3,
+                    "training_time": 1,
+                    "inference_speed": 1
+                }
+            },
+            "support_status": "active",
+            "supported_gpus": {
+                "intel": true,
+                "nvidia": true
+            },
+            "capabilities": {
+                "xai": true,
+                "tiling": true
+            },
+            "is_default_model": false,
+            "performance_category": "other"
+        },
+        {
+            "model_manifest_id": "Custom_Semantic_Segmentation_SegNext_s",
+            "task": "segmentation",
+            "name": "SegNext-S",
+            "description": "SegNeXt-S builds upon the Tiny version with increased capacity, offering a better accuracy-speed trade-off. It utilizes efficient convolutional blocks and long-range feature integration to provide strong performance for segmentation tasks in real-time and embedded applications. This model works well with 30+ training images.",
+            "stats": {
+                "gigaflops": 30.93,
+                "trainable_parameters": 13.9,
+                "performance_ratings": {
+                    "accuracy": 3,
+                    "training_time": 2,
+                    "inference_speed": 2
+                }
+            },
+            "support_status": "active",
+            "supported_gpus": {
+                "intel": true,
+                "nvidia": true
+            },
+            "capabilities": {
+                "xai": true,
+                "tiling": true
+            },
+            "is_default_model": false,
+            "performance_category": "other"
+        },
+        {
+            "model_manifest_id": "Custom_Semantic_Segmentation_DINOV2_S",
+            "task": "segmentation",
+            "name": "Dino-V2-Small",
+            "description": "DINOv2-Small is a compact foundational vision transformer model trained using self-supervised learning with the DINOv2 framework. Despite its small size, it captures rich visual representations by aligning image features across views. This model works best with tiny-medium datasets.",
+            "stats": {
+                "gigaflops": 124.01,
+                "trainable_parameters": 24.4,
+                "performance_ratings": {
+                    "accuracy": 3,
+                    "training_time": 3,
+                    "inference_speed": 1
+                }
+            },
+            "support_status": "active",
+            "supported_gpus": {
+                "intel": true,
+                "nvidia": true
+            },
+            "capabilities": {
+                "xai": true,
+                "tiling": true
+            },
+            "is_default_model": true,
+            "performance_category": "accuracy"
+        },
+        {
+            "model_manifest_id": "Custom_Semantic_Segmentation_Lite-HRNet-s-mod2_OCR",
+            "task": "segmentation",
+            "name": "LiteHRNet-S",
+            "description": "LiteHRNet-Small is an ultra-efficient version of LiteHRNet optimized for low-power devices. It preserves key architectural strengths like high-resolution features while minimizing parameters and computational cost, ideal for mobile and embedded systems.",
+            "stats": {
+                "gigaflops": 1.44,
+                "trainable_parameters": 0.82,
+                "performance_ratings": {
+                    "accuracy": 1,
+                    "training_time": 3,
+                    "inference_speed": 3
+                }
+            },
+            "support_status": "active",
+            "supported_gpus": {
+                "intel": true,
+                "nvidia": true
+            },
+            "capabilities": {
+                "xai": true,
+                "tiling": true
+            },
+            "is_default_model": false,
+            "performance_category": "speed"
+        },
+        {
+            "model_manifest_id": "Custom_Semantic_Segmentation_Lite-HRNet-x-mod3_OCR",
+            "task": "segmentation",
+            "name": "LiteHRNet-X",
+            "description": "LiteHRNet-X is an extended variant of LiteHRNet with enhanced capacity or custom scaling. It targets use cases requiring higher accuracy than the standard or small variants, while still benefiting from LiteHRNet's efficient high-resolution processing.",
+            "stats": {
+                "gigaflops": 9.2,
+                "trainable_parameters": 1.5,
+                "performance_ratings": {
+                    "accuracy": 2,
+                    "training_time": 1,
+                    "inference_speed": 1
+                }
+            },
+            "support_status": "active",
+            "supported_gpus": {
+                "intel": true,
+                "nvidia": true
+            },
+            "capabilities": {
+                "xai": true,
+                "tiling": true
+            },
+            "is_default_model": false,
+            "performance_category": "other"
+        },
+        {
+            "model_manifest_id": "Custom_Semantic_Segmentation_Lite-HRNet-18_OCR",
+            "task": "segmentation",
+            "name": "LiteHRNet-18-mod1",
+            "description": "LiteHRNet-18 is a lightweight high-resolution semantic segmentation model that maintains strong spatial detail through parallel multi-resolution branches. It provides a good balance of accuracy and speed, making it well-suited for real-time applications on mid-tier hardware.",
+            "stats": {
+                "gigaflops": 2.63,
+                "trainable_parameters": 1.1,
+                "performance_ratings": {
+                    "accuracy": 2,
+                    "training_time": 3,
+                    "inference_speed": 3
+                }
+            },
+            "support_status": "obsolete",
+            "supported_gpus": {
+                "intel": true,
+                "nvidia": true
+            },
+            "capabilities": {
+                "xai": true,
+                "tiling": true
+            },
+            "is_default_model": false,
+            "performance_category": "other"
+        }
+    ]
+}
