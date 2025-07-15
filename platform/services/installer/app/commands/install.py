@@ -57,7 +57,7 @@ from geti_controller.uninstall import uninstall_geti_controller_chart
 from k3s.detect_ip import get_first_public_ip, get_master_node_ip_address
 from k3s.install import K3SInstallationError, install_k3s
 from k3s.uninstall import uninstall_k3s
-from platform_utils.errors import DownloadSystemPackagesError, PathCreationError, StepsError
+from platform_utils.errors import DownloadSystemPackagesError, PathCreationError
 from platform_utils.install_system_packages import install_system_packages
 from platform_utils.management.state import InstallationHandlerState, cluster_info_dump
 from platform_utils.path import create_data_folder
