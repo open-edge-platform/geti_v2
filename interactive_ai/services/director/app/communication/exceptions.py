@@ -585,12 +585,8 @@ class ProjectConfigurationNotFoundException(GetiBaseException):
     """Exception raised when the project configuration could not be found in the database"""
 
     def __init__(self, project_id: ID, task_id: ID | None = None) -> None:
-        message = (
-            f"The requested project configuration could not be found. Project ID: `{project_id}`"
-            + f", task ID: `{task_id}`"
-            if task_id
-            else ""
-        )
+        base_message = f"The requested project configuration could not be found. Project ID: `{project_id}`"
+        message = base_message if task_id is None else f"{base_message}, task ID: `{task_id}`"
         super().__init__(
             http_status=http.HTTPStatus.NOT_FOUND,
             error_code="project_configuration_not_found",
