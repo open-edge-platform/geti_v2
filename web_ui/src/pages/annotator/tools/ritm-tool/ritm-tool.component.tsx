@@ -3,7 +3,7 @@
 
 import { PointerEvent, useEffect, useRef, useState } from 'react';
 
-import { RITM_TEMPLATE_SIZE } from '@geti/smart-tools/src/ritm/ritm';
+import { RITM_TEMPLATE_SIZE } from '@geti/smart-tools/ritm';
 import { clampBox, clampPointBetweenImage, isPointInShape, pointInRectangle } from '@geti/smart-tools/utils';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';

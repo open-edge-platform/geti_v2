@@ -1,8 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { OpenCVTypes } from '@geti/smart-tools/opencv';
 import { approximateShape } from '@geti/smart-tools/utils';
-import type cv from 'OpenCVTypes';
 
 import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from '../../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
@@ -40,7 +40,7 @@ export class PostProcessor {
         const mat = this.cv.matFromArray(height, width, this.cv.CV_8U, pixels);
 
         const contours = new this.cv.MatVector();
-        const hierachy: cv.Mat = new this.cv.Mat();
+        const hierachy: OpenCVTypes.Mat = new this.cv.Mat();
 
         this.cv.findContours(mat, contours, hierachy, this.cv.RETR_EXTERNAL, this.cv.CHAIN_APPROX_NONE);
 
@@ -85,7 +85,11 @@ export class PostProcessor {
         return { areas, maxContourIdx, shapes };
     }
 
-    private contourToShape = (optimizedContour: cv.Mat, config: PostProcessorConfig, scales: ScaleToSize): Shape => {
+    private contourToShape = (
+        optimizedContour: OpenCVTypes.Mat,
+        config: PostProcessorConfig,
+        scales: ScaleToSize
+    ): Shape => {
         switch (config.type) {
             case ShapeType.Polygon:
                 return this.contourToPolygon(optimizedContour, scales);
@@ -100,7 +104,7 @@ export class PostProcessor {
         }
     };
 
-    private contourToPolygon(optimizedContour: cv.Mat, { scaleX, scaleY }: ScaleToSize): Polygon {
+    private contourToPolygon(optimizedContour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Polygon {
         const points: Point[] = [];
 
         for (let row = 0; row < optimizedContour.rows; row++) {
@@ -113,7 +117,7 @@ export class PostProcessor {
         return { shapeType: ShapeType.Polygon, points };
     }
 
-    private contourToRectangle(optimizedContour: cv.Mat, { scaleX, scaleY }: ScaleToSize): Rect {
+    private contourToRectangle(optimizedContour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Rect {
         const { x, y, width, height } = this.cv.boundingRect(optimizedContour);
 
         return {
@@ -125,7 +129,7 @@ export class PostProcessor {
         };
     }
 
-    private contourToRotatedRectangle(optimizedContour: cv.Mat, { scaleX, scaleY }: ScaleToSize): RotatedRect {
+    private contourToRotatedRectangle(optimizedContour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): RotatedRect {
         const {
             angle,
             center: { x, y },
@@ -142,7 +146,7 @@ export class PostProcessor {
         };
     }
 
-    private contourToCircle(optimizedContour: cv.Mat, { scaleX, scaleY }: ScaleToSize): Circle {
+    private contourToCircle(optimizedContour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Circle {
         const {
             center: { x, y },
             size: { width, height },

@@ -14,10 +14,6 @@ export { type GrabcutData } from './src/grabcut/interfaces';
 
 export { buildIntelligentScissorsInstance, IntelligentScissors } from './src/intelligent-scissors/intelligent-scissors';
 
-export { buildRITMInstance, RITM, RITM_TEMPLATE_SIZE } from './src/ritm/ritm';
-export { RITMModels } from './src/ritm/models/models';
-export { type RITMContour, type RITMPoint, type RITMData } from './src/ritm/interfaces';
-
 // TODO: To be moved to SegmentAnything folder on the next PRs
 export const SegmentAnythingModels = {
     encoder: new URL('./src/segment-anything/models/mobile_sam.encoder.onnx', import.meta.url).toString(),

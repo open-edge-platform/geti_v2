@@ -11,7 +11,7 @@ import {
     Polygon as ToolPolygon,
     Rect as ToolRect,
     RotatedRect as ToolRotatedRect,
-} from '@geti/smart-tools/src/shared/interfaces';
+} from '@geti/smart-tools/types';
 import { BoundingBox, getBoundingBox, getCenterOfShape, rotatedRectCorners, Vec2 } from '@geti/smart-tools/utils';
 import { defer, isEmpty } from 'lodash-es';
 

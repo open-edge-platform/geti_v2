@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { sub, Vec2 } from '@geti/smart-tools/src/utils/vec2';
+import { Vec2 } from '@geti/smart-tools/utils';
 
 import { Annotation, RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
 import { Point } from '../../../../../core/annotations/shapes.interface';
@@ -30,7 +30,7 @@ interface EditCircleProps {
     disablePoints?: boolean;
 }
 
-export const calculateAnchorPoint = ({ x, y }: Vec2, angle: number, radius: number): Vec2 => {
+export const calculateAnchorPoint = ({ x, y }: Vec2.Vec2, angle: number, radius: number): Vec2.Vec2 => {
     return {
         x: x - Math.cos(angle) * radius,
         y: y - Math.sin(angle) * radius,
@@ -38,7 +38,7 @@ export const calculateAnchorPoint = ({ x, y }: Vec2, angle: number, radius: numb
 };
 
 const getPreferredAnchorPosition = (circle: Circle, roi: RegionOfInterest, oldAngle?: number): number => {
-    const { x, y } = sub(circle, roi);
+    const { x, y } = Vec2.sub(circle, roi);
 
     // Get position of current angle, or default (right)
     const anchorPosition = calculateAnchorPoint({ x, y }, oldAngle ?? Math.PI, circle.r);
@@ -50,7 +50,7 @@ const getPreferredAnchorPosition = (circle: Circle, roi: RegionOfInterest, oldAn
 
     // Calculate angle from circle to center of image
     const centerOfROI = { x: roi.width / 2, y: roi.height / 2 };
-    const distance = sub({ x, y }, centerOfROI);
+    const distance = Vec2.sub({ x, y }, centerOfROI);
     const newAngle = Math.atan(distance.y / distance.x);
     if (distance.x < 0) {
         return newAngle - Math.PI;

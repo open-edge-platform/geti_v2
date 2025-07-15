@@ -1,7 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Grabcut, InferenceImage, IntelligentScissors, RITM, SSIM, Watershed } from '@geti/smart-tools';
+import { Grabcut, InferenceImage, IntelligentScissors, SSIM, Watershed } from '@geti/smart-tools';
+import { RITM } from '@geti/smart-tools/ritm';
 
 import { InferenceImageWorker } from '../../pages/annotator/components/explanation/inference-image.interface';
 import { GrabcutWorker } from '../../pages/annotator/tools/grabcut-tool/grabcut-tool.interface';

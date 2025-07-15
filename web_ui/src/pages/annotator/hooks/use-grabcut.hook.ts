@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react';
 
 import { Grabcut, GrabcutData as ToolGrabcutData } from '@geti/smart-tools';
-import { Polygon as ToolPolygon } from '@geti/smart-tools/src/shared/interfaces';
+import { Polygon as ToolPolygon } from '@geti/smart-tools/types';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { Remote } from 'comlink';
 

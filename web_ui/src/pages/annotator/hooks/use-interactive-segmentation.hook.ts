@@ -3,8 +3,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { RITM } from '@geti/smart-tools';
-import { Shape as SmartToolsShape } from '@geti/smart-tools/src/shared/interfaces';
+import { RITM } from '@geti/smart-tools/ritm';
+import { Shape as SmartToolsShape } from '@geti/smart-tools/types';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 
 import { AlgorithmType } from '../../../hooks/use-load-ai-webworker/algorithm.interface';

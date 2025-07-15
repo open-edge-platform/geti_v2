@@ -1,8 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { OpenCVTypes } from '@geti/smart-tools/opencv';
 import * as ort from 'onnxruntime-web';
-import type cv from 'OpenCVTypes';
 
 interface PreprocessorResult {
     tensor: ort.Tensor;
@@ -29,7 +29,7 @@ export class OpenCVPreprocessor {
     config: OpenCVPreprocessorConfig;
 
     constructor(
-        private cv: cv,
+        private cv: OpenCVTypes.cv,
         config: OpenCVPreprocessorConfig
     ) {
         this.config = config;
@@ -38,8 +38,8 @@ export class OpenCVPreprocessor {
     public process(initialImageData: ImageData): PreprocessorResult {
         const imageCv = this.loadImage(initialImageData);
 
-        const preProcessedImage: cv.Mat = imageCv.clone();
-        let input: cv.Mat | null = null;
+        const preProcessedImage: OpenCVTypes.Mat = imageCv.clone();
+        let input: OpenCVTypes.Mat | null = null;
         try {
             const { width, height, newWidth, newHeight } = this.resizeImage(preProcessedImage);
 
@@ -61,7 +61,7 @@ export class OpenCVPreprocessor {
         }
     }
 
-    private loadImage(imageData: ImageData): cv.Mat {
+    private loadImage(imageData: ImageData): OpenCVTypes.Mat {
         // TODO: check if it is faster / more appropriate if we traser this value
         // https://github.com/GoogleChromeLabs/comlink#comlinktransfervalue-transferables-and-comlinkproxyvalue
         const src = this.cv.matFromImageData(imageData);
@@ -72,7 +72,7 @@ export class OpenCVPreprocessor {
         return src;
     }
 
-    private resizeImage(preProcessedImage: cv.Mat) {
+    private resizeImage(preProcessedImage: OpenCVTypes.Mat) {
         const width = this.config.pad ? this.config.padSize : preProcessedImage.cols;
         const height = this.config.pad ? this.config.padSize : preProcessedImage.rows;
 
@@ -140,10 +140,10 @@ export class OpenCVPreprocessor {
         };
     }
 
-    private processImage(dst: cv.Mat): void {
+    private processImage(dst: OpenCVTypes.Mat): void {
         // RITM requires the image to normalized. RITM code uses theses hardcoded values for some reason.
-        let norm: cv.Mat | null = null;
-        let stdDev: cv.Mat | null = null;
+        let norm: OpenCVTypes.Mat | null = null;
+        let stdDev: OpenCVTypes.Mat | null = null;
         try {
             if (this.config.normalize.mean) {
                 const normValue = new this.cv.Scalar(
