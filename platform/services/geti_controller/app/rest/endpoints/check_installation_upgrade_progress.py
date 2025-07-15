@@ -1,19 +1,15 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
+import json
 import logging
 import time
+from json import JSONDecodeError
 
 import requests
 from fastapi import BackgroundTasks, status
 
-from constants.platform import MAX_RETRIES, NAMESPACE, RETRY_INTERVAL, SERVICE_NAME
-from platform_operations.cluster import (
-    is_job_completed_or_failed,
-    is_job_running,
-    load_kube_config,
-    wait_for_job_creation,
-)
+from constants.platform import MAX_RETRIES, NAMESPACE, RETRY_INTERVAL, SERVICE_NAME, UPGRADE_FILE_PATH
+from platform_operations.cluster import is_job_completed_or_failed, is_job_running, load_kube_config
 from rest.schema.check_installation_upgrade_progress import InstallationUpgradeProgressResponse, OperationStatus
 from routers import platform_router
 
@@ -23,14 +19,42 @@ logger = logging.getLogger(__name__)
 
 
 class ProgressManager:
+    @staticmethod
+    def fill_data(current: dict) -> dict:
+        """Fill missing fields  in current data with stored or default values."""
+        defaults = {
+            "source_version": "",
+            "target_version": "",
+            "progress_percentage": 0,
+            "status": OperationStatus.NOT_RUNNING,
+            "message": "Progress not started.",
+        }
+
+        stored = {}
+        try:
+            with open(UPGRADE_FILE_PATH) as f:
+                stored = json.load(f)
+        except FileNotFoundError:
+            logger.info(f"Stored upgrade data file {UPGRADE_FILE_PATH} not found. Using default values.")
+        except (IsADirectoryError, PermissionError):
+            logger.exception(f"Unable to open {UPGRADE_FILE_PATH}. Using default values.")
+        except JSONDecodeError:
+            logger.exception(f"Failed to decode JSON from {UPGRADE_FILE_PATH}. Using default values.")
+
+        # Ensure all keys are present in the final data
+        return defaults | stored | current
+
     def __init__(self):
-        self.progress_data = InstallationUpgradeProgressResponse(
-            progress_percentage=0, status=OperationStatus.NOT_RUNNING, message="Progress not started."
-        )
+        self.progress_data = InstallationUpgradeProgressResponse(**self.fill_data(current={}))
         self.task_started = False
 
     def update_progress(self, data: dict) -> None:
-        self.progress_data = InstallationUpgradeProgressResponse(**data)
+        self.progress_data = InstallationUpgradeProgressResponse(**self.fill_data(current=data))
+        try:
+            with open(UPGRADE_FILE_PATH, "w") as f:
+                json.dump(self.progress_data.model_dump(), f, indent=2)
+        except (FileNotFoundError, IsADirectoryError, PermissionError) as e:
+            logger.exception(f"Failed to write progress data to file: {e}")
 
     def get_progress(self) -> InstallationUpgradeProgressResponse:
         return self.progress_data
@@ -160,7 +184,11 @@ def periodic_progress_check(progress_manager: ProgressManager, interval: int = 1
             "content": {
                 "application/json": {
                     "example": InstallationUpgradeProgressResponse(
-                        progress_percentage=42, status=OperationStatus.RUNNING, message="Installation is in progress."
+                        source_version="1.0.0",
+                        target_version="1.1.0",
+                        progress_percentage=42,
+                        status=OperationStatus.RUNNING,
+                        message="Installation is in progress.",
                     )
                 }
             },
@@ -179,8 +207,8 @@ def check_installation_upgrade_progress(background_tasks: BackgroundTasks) -> In
     load_kube_config()
 
     if not is_job_running(NAMESPACE):
-        logger.info("Job not found, waiting for its creation.")
-        wait_for_job_creation(NAMESPACE)
+        logger.info("Job not found, returning stored data.")
+        return progress_manager.get_progress()
 
     if not progress_manager.task_started:
         background_tasks.add_task(periodic_progress_check, progress_manager)

@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 from enum import Enum
 
 from pydantic import BaseModel
@@ -16,6 +15,8 @@ class OperationStatus(str, Enum):
 
 
 class InstallationUpgradeProgressResponse(BaseModel):
+    source_version: str
+    target_version: str
     progress_percentage: int
     status: OperationStatus
     message: str
