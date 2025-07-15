@@ -27,4 +27,15 @@ describe('Fullscreen action', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Close fullscreen' }));
         expect(dialog).not.toBeInTheDocument();
     });
+
+    it('renders custom actionButton in the dialog', () => {
+        render(
+            <FullscreenAction title='With Action' actionButton={<button aria-label='custom-action'>Custom</button>}>
+                <div />
+            </FullscreenAction>
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /Open in fullscreen With Action/ }));
+        expect(screen.getByLabelText('custom-action')).toBeInTheDocument();
+    });
 });
