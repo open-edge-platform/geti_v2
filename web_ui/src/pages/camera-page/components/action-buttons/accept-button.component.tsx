@@ -23,7 +23,8 @@ interface AcceptButtonProps {
 }
 
 export const insufficientStorageMessage =
-    'Your server is running low on disk space. Please contact customer support to find out possible solutions.';
+    // eslint-disable-next-line max-len
+    'Your server is running low on disk space. Please free up space by removing old or unused projects, or consider upgrading your hardware to increase capacity.';
 
 const datasetPagePath = (datasetIdentifier: DatasetIdentifier) => paths.project.dataset.index(datasetIdentifier);
 
