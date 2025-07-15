@@ -42,6 +42,7 @@ from constants.paths import (
     K3S_INSTALLATION_MARK_FILEPATH,
     K3S_KUBECONFIG_PATH,
     OFFLINE_TOOLS_DIR,
+    PLATFORM_INSTALL_PATH,
 )
 
 # from platform_configuration.versions import get_target_product_build
@@ -233,13 +234,14 @@ def run_geti_controller_installation(config: InstallationConfig) -> None:
         logger.exception("Error during installation.")
         click.secho("\n" + InstallCmdTexts.installation_failed, fg="red")
         cluster_info_dump(kubeconfig=config.kube_config.value)
-    finally:
-        uninstall_geti_controller_chart(config=config)
-        # shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)  # TODO uncomment
-        if config.lightweight_installer.value:
-            # remove 'tools' dir on failure,
-            # to be able to re-run without any side effects
-            shutil.rmtree(OFFLINE_TOOLS_DIR)
+        sys.exit(1)
+
+    uninstall_geti_controller_chart(config=config)
+    shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)
+    if config.lightweight_installer.value:
+        # remove 'tools' dir on failure,
+        # to be able to re-run without any side effects
+        shutil.rmtree(OFFLINE_TOOLS_DIR)
 
 
 def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF100, PLR0915
