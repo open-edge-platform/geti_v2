@@ -24,8 +24,8 @@ const TASK_TYPE_FROM_DOMAIN: Record<DOMAIN, TASK_TYPE> = {
     [DOMAIN.KEYPOINT_DETECTION]: TASK_TYPE.KEYPOINT_DETECTION,
 };
 
-export const getTaskTypeFromDomain = (domain: DOMAIN, anomalyRevampFlagEnabled = false): TASK_TYPE => {
-    if (anomalyRevampFlagEnabled && isAnomalyDomain(domain)) {
+export const getTaskTypeFromDomain = (domain: DOMAIN): TASK_TYPE => {
+    if (isAnomalyDomain(domain)) {
         return TASK_TYPE.ANOMALY;
     }
 

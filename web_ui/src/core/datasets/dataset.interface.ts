@@ -73,7 +73,6 @@ export interface DatasetImportToNewProjectIdentifier {
     workspaceId: string;
     projectData: DatasetImportProjectData;
     setAbortController: (uploadId: string, abortController: AbortController) => void;
-    anomalyRevamp: boolean;
 }
 
 export interface DatasetImportTask {

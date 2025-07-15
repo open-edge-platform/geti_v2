@@ -163,9 +163,7 @@ def test_create_subconfig(model_converter, sample_project, sample_models, num_st
         ("ROTATED_DETECTION", "MaskRCNNModel"),
         ("SEGMENTATION", "SegmentationModel"),
         ("INSTANCE_SEGMENTATION", "MaskRCNNModel"),
-        ("ANOMALY_CLASSIFICATION", "AnomalyDetection"),
-        ("ANOMALY_DETECTION", "AnomalyDetection"),
-        ("ANOMALY_SEGMENTATION", "AnomalyDetection"),
+        ("ANOMALY", "AnomalyDetection"),
     ],
 )
 @patch("service.model_converter.ElementTree.parse")

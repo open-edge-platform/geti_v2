@@ -2,7 +2,7 @@ module media
 
 go 1.23.3
 
-toolchain go1.23.8
+toolchain go1.23.11
 
 replace geti.com/iai_core => ./../../libs/iai_core_go
 

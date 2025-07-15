@@ -131,8 +131,7 @@ describe('ProjectTemplate', () => {
                         },
                     }),
                 ],
-            }),
-            true
+            })
         );
     });
 
@@ -167,8 +166,7 @@ describe('ProjectTemplate', () => {
                         ]),
                     }),
                 ],
-            }),
-            true
+            })
         );
     });
 });

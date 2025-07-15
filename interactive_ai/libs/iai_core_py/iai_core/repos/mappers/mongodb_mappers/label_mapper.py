@@ -52,6 +52,7 @@ class LabelToMongo(IMapperSimple[Label, dict]):
             "creation_date": DatetimeToMongo.forward(instance.creation_date),
             "is_empty": instance.is_empty,
             "is_anomalous": instance.is_anomalous,
+            "is_background": instance.is_background,
         }
 
     @staticmethod
@@ -70,6 +71,7 @@ class LabelToMongo(IMapperSimple[Label, dict]):
             is_empty=instance.get("is_empty", False),
             id_=label_id,
             is_anomalous=instance.get("is_anomalous", False),
+            is_background=instance.get("is_background", False),
             ephemeral=False,
         )
 

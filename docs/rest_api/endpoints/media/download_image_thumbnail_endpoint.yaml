@@ -40,6 +40,16 @@ get:
             Image not found response:
               value:
                 $ref: "../../examples/media/error_responses/image_not_found.json"
+    '412':
+      description: Precondition failed
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+          examples:
+            Media is not preprocessed:
+              value:
+                $ref: '../../examples/media/error_responses/media_is_not_preprocessed.json'
     '500':
       description: Internal server error
       content:

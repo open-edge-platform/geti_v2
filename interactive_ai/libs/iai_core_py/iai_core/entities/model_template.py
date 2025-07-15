@@ -162,18 +162,8 @@ class TaskType(Enum):
             is_local=True,
         ),
     )
-    ANOMALY_DETECTION = (
-        6,
-        TaskInfo(
-            domain=Domain.ANOMALY_DETECTION,
-            is_trainable=True,
-            is_anomaly=True,
-            is_global=False,
-            is_local=True,
-        ),
-    )
     CROP = (
-        7,
+        6,
         TaskInfo(
             domain=Domain.NULL,
             is_trainable=False,
@@ -183,7 +173,7 @@ class TaskType(Enum):
         ),
     )
     TILE = (
-        8,
+        7,
         TaskInfo(
             domain=Domain.NULL,
             is_trainable=False,
@@ -193,7 +183,7 @@ class TaskType(Enum):
         ),
     )
     INSTANCE_SEGMENTATION = (
-        9,
+        8,
         TaskInfo(
             domain=Domain.INSTANCE_SEGMENTATION,
             is_trainable=True,
@@ -203,7 +193,7 @@ class TaskType(Enum):
         ),
     )
     ACTIVELEARNING = (
-        10,
+        9,
         TaskInfo(
             domain=Domain.NULL,
             is_trainable=False,
@@ -212,28 +202,8 @@ class TaskType(Enum):
             is_local=False,
         ),
     )
-    ANOMALY_SEGMENTATION = (
-        11,
-        TaskInfo(
-            domain=Domain.ANOMALY_SEGMENTATION,
-            is_trainable=True,
-            is_anomaly=True,
-            is_global=False,
-            is_local=True,
-        ),
-    )
-    ANOMALY_CLASSIFICATION = (
-        12,
-        TaskInfo(
-            domain=Domain.ANOMALY_CLASSIFICATION,
-            is_trainable=True,
-            is_anomaly=True,
-            is_global=True,
-            is_local=False,
-        ),
-    )
     ROTATED_DETECTION = (
-        13,
+        10,
         TaskInfo(
             domain=Domain.ROTATED_DETECTION,
             is_trainable=True,
@@ -243,7 +213,7 @@ class TaskType(Enum):
         ),
     )
     ACTION_CLASSIFICATION = (
-        14,
+        11,
         TaskInfo(
             domain=Domain.ACTION_CLASSIFICATION,
             is_trainable=True,
@@ -253,16 +223,20 @@ class TaskType(Enum):
         ),
     )
     ACTION_DETECTION = (
-        15,
+        12,
         TaskInfo(domain=Domain.ACTION_DETECTION, is_trainable=True, is_anomaly=False, is_global=False, is_local=True),
     )
     VISUAL_PROMPTING = (
-        16,
+        13,
         TaskInfo(domain=Domain.SEGMENTATION, is_trainable=True, is_anomaly=False, is_global=False, is_local=True),
     )
     KEYPOINT_DETECTION = (
-        17,
+        14,
         TaskInfo(domain=Domain.KEYPOINT_DETECTION, is_trainable=True, is_anomaly=False, is_global=False, is_local=True),
+    )
+    ANOMALY = (
+        15,
+        TaskInfo(domain=Domain.ANOMALY, is_trainable=True, is_anomaly=True, is_global=True, is_local=False),
     )
 
     def __str__(self) -> str:
@@ -291,9 +265,7 @@ def task_type_to_label_domain(task_type: TaskType) -> Domain:
         TaskType.DETECTION: Domain.DETECTION,
         TaskType.SEGMENTATION: Domain.SEGMENTATION,
         TaskType.INSTANCE_SEGMENTATION: Domain.INSTANCE_SEGMENTATION,
-        TaskType.ANOMALY_CLASSIFICATION: Domain.ANOMALY_CLASSIFICATION,
-        TaskType.ANOMALY_DETECTION: Domain.ANOMALY_DETECTION,
-        TaskType.ANOMALY_SEGMENTATION: Domain.ANOMALY_SEGMENTATION,
+        TaskType.ANOMALY: Domain.ANOMALY,
         TaskType.ROTATED_DETECTION: Domain.ROTATED_DETECTION,
         TaskType.ACTION_CLASSIFICATION: Domain.ACTION_CLASSIFICATION,
         TaskType.ACTION_DETECTION: Domain.ACTION_DETECTION,
@@ -633,11 +605,7 @@ class NullModelTemplate(ModelTemplate):
         )
 
 
-ANOMALY_TASK_TYPES: Sequence[TaskType] = (
-    TaskType.ANOMALY_DETECTION,
-    TaskType.ANOMALY_CLASSIFICATION,
-    TaskType.ANOMALY_SEGMENTATION,
-)
+ANOMALY_TASK_TYPES: Sequence[TaskType] = (TaskType.ANOMALY,)
 
 
 TRAINABLE_TASK_TYPES: Sequence[TaskType] = (
@@ -645,9 +613,7 @@ TRAINABLE_TASK_TYPES: Sequence[TaskType] = (
     TaskType.DETECTION,
     TaskType.SEGMENTATION,
     TaskType.INSTANCE_SEGMENTATION,
-    TaskType.ANOMALY_DETECTION,
-    TaskType.ANOMALY_CLASSIFICATION,
-    TaskType.ANOMALY_SEGMENTATION,
+    TaskType.ANOMALY,
     TaskType.ROTATED_DETECTION,
     TaskType.ACTION_CLASSIFICATION,
     TaskType.ACTION_DETECTION,
