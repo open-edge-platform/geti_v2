@@ -21,6 +21,7 @@ from job.repos.data_repo import ImportDataRepo
 from job.tasks import IMPORT_EXPORT_TASK_POD_SPEC
 from job.utils.cross_project_mapping import CrossProjectMapper
 from job.utils.datumaro_parser import DatumaroProjectParser
+from job.utils.exceptions import UnsupportedMappingException
 from job.utils.import_utils import ImportUtils
 from job.utils.progress_utils import WeightedProgressReporter
 
@@ -104,6 +105,17 @@ def create_project_from_dataset(
         dm_dataset=dm_dataset,
         progress_callback=progress_reporter.report,
     )
+    keypoint_structure_positions: list | None = None
+    if project_type == GetiProjectType.KEYPOINT_DETECTION:
+        try:
+            keypoint_structure_positions = ImportUtils.get_keypoint_structure_positions(dm_dataset=dm_dataset)
+        except ValueError:
+            raise UnsupportedMappingException(
+                "It is not possible to create a keypoint detection project from a dataset that was not exported from "
+                "Geti. Please first create a keypoint detection project in Geti, then import your dataset into it by "
+                "mapping the labels from the dataset to the keypoint detection project."
+            )
+
     # Create project
     parser_kwargs = {
         "project_name": name,
@@ -113,6 +125,7 @@ def create_project_from_dataset(
         "label_to_ann_types": label_to_ann_types,
         "selected_labels": label_names,
         "color_by_label": color_by_label if color_by_label else None,
+        "keypoint_structure_positions": keypoint_structure_positions,
     }
     project, label_schema, _ = PersistedProjectBuilder.build_full_project(
         creator_id=user_id,

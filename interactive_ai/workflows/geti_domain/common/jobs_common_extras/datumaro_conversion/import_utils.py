@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import datumaro as dm
-from datumaro import ImportErrorPolicy, errors
+from datumaro import ImportErrorPolicy, PointsCategories, errors
 from datumaro.components.errors import AnnotationImportError, ItemImportError, MultipleFormatsMatchError
 from iai_core.entities.label import Domain
 from iai_core.entities.model_template import TaskType, task_type_to_label_domain
@@ -463,6 +463,36 @@ class ImportUtils:
                 #         label_idx_to_ann_types[label_id].add(dm.AnnotationType.label)
 
         return {label_cat[label_id].name: types for label_id, types in label_idx_to_ann_types.items()}
+
+    @classmethod
+    def get_keypoint_structure_positions(cls, dm_dataset: dm.Dataset) -> list[dict[str, Any]]:
+        """
+        Get keypoint structure positions from the dataset.
+        This is used for datasets which are exported outside of Geti since they do not contain any position information.
+        The position is generated based on the first keypoint annotation in the dataset.
+
+        :param dm_dataset: datumaro dataset
+        :return: list of keypoint structure positions
+        """
+        # See ITEP-69641 for more details
+        if not dm_dataset.categories().get(dm.AnnotationType.points).items[0].positions:
+            raise ValueError(
+                "The dataset does not contain keypoint structure positions. "
+                "Please export the dataset from Geti to include keypoint structure positions."
+            )
+
+        keypoint_structure_positions = []
+        labels: PointsCategories = dm_dataset.categories().get(dm.AnnotationType.points).items[0].labels
+        for dm_item in dm_dataset:
+            h, w = dm_item.media.size
+            for dm_ann in dm_item.annotations:
+                if dm_ann.type == dm.AnnotationType.points:
+                    for i in range(0, len(dm_ann.points), 2):
+                        keypoint_structure_positions.append(
+                            {"label": labels[i // 2], "x": dm_ann.points[i] / w, "y": dm_ann.points[i + 1] / h}
+                        )
+                    return keypoint_structure_positions
+        raise ValueError("Cannot find keypoint annotations in the dataset to generate positions.")
 
     @classmethod
     def get_valid_project_labels(  # noqa: C901

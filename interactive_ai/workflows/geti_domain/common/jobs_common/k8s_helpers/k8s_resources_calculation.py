@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 """Module containing methods used to work with training resources."""
 
-import asyncio
 import logging
 import os
 import typing
@@ -97,7 +96,7 @@ async def calculate_training_resources() -> tuple[dict, str]:
     """
     Calculate CPU or GPU training resources
 
-    :return: training resources as dict and acceleartor_name
+    :return: training resources as dict and accelerator_name
     """
 
     (
@@ -150,6 +149,24 @@ async def calculate_training_resources() -> tuple[dict, str]:
         )
 
     raise ValueError(f"Unknown accelerator type={accelerator_type}.")
+
+
+async def calculate_optimization_resources() -> dict:
+    """
+    Calculate optimization resources
+
+    :return: optimization resources as dict
+    """
+
+    requests_cpu = RESOURCES_CONFIGURATION["BM"]["requests"]["cpu"]
+    requests_memory = RESOURCES_CONFIGURATION["BM"]["requests"]["memory"]
+    limits_memory = RESOURCES_CONFIGURATION["BM"]["limits"]["memory"]
+    # GPU training task calculation
+    return fill_resources_with_values(
+        requests_cpu=requests_cpu,
+        requests_memory=requests_memory,
+        limits_memory=limits_memory,
+    )
 
 
 @dataclass_json
@@ -225,9 +242,7 @@ class ComputeResources:
     accelerator_name: str
 
     @classmethod
-    def from_node_resources(cls) -> "ComputeResources":
-        resources, accelerator_name = asyncio.run(calculate_training_resources())
-
+    def create(cls, resources: dict, accelerator_name: str) -> "ComputeResources":
         return cls(
             cpu_requests=resources["requests"].get("cpu"),
             cpu_limits=resources["limits"].get("cpu"),

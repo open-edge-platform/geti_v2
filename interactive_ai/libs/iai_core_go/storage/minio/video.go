@@ -21,10 +21,13 @@ const (
 )
 
 type VideoRepositoryImpl struct {
+	cm *ClientManager
 }
 
-func NewVideoRepositoryImpl() *VideoRepositoryImpl {
-	return &VideoRepositoryImpl{}
+func NewVideoRepositoryImpl(cm *ClientManager) *VideoRepositoryImpl {
+	return &VideoRepositoryImpl{
+		cm: cm,
+	}
 }
 
 // LoadVideoByID is used to load a video by its ID.
@@ -41,7 +44,7 @@ func (repo *VideoRepositoryImpl) LoadVideoByID(
 		return nil, bucketErr
 	}
 
-	minioClient, minioErr := getMinioClient(c)
+	minioClient, minioErr := repo.cm.GetClient(c)
 	if minioErr != nil {
 		telemetry.RecordError(span, minioErr)
 		return nil, minioErr

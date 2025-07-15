@@ -29,7 +29,10 @@ func TestLoadVideo(t *testing.T) {
 		"../../test_data/test_mp4.mp4")
 	require.NoError(t, err)
 
-	videoRepo := NewVideoRepositoryImpl()
+	manager, err := NewClientManager()
+	require.NoError(t, err)
+	defer manager.Close()
+	videoRepo := NewVideoRepositoryImpl(manager)
 	v, err := videoRepo.LoadVideoByID(ctx, fullVideoID)
 
 	require.NoError(t, err)

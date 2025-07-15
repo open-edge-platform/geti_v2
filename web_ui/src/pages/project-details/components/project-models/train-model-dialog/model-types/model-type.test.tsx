@@ -20,6 +20,7 @@ describe('ModelType', () => {
 
         render(
             <ModelType
+                name={algorithm.name}
                 algorithm={algorithm}
                 selectedModelTemplateId={'test'}
                 onChangeSelectedTemplateId={jest.fn()}
@@ -39,6 +40,7 @@ describe('ModelType', () => {
 
         render(
             <ModelType
+                name={algorithm.name}
                 algorithm={algorithm}
                 selectedModelTemplateId={'test'}
                 onChangeSelectedTemplateId={jest.fn()}
@@ -58,6 +60,7 @@ describe('ModelType', () => {
 
         render(
             <ModelType
+                name={algorithm.name}
                 algorithm={algorithm}
                 selectedModelTemplateId={'test'}
                 onChangeSelectedTemplateId={jest.fn()}
@@ -76,6 +79,7 @@ describe('ModelType', () => {
 
         render(
             <ModelType
+                name={algorithm.name}
                 algorithm={algorithm}
                 selectedModelTemplateId={'test'}
                 onChangeSelectedTemplateId={jest.fn()}
@@ -94,6 +98,7 @@ describe('ModelType', () => {
 
         render(
             <ModelType
+                name={algorithm.name}
                 algorithm={algorithm}
                 selectedModelTemplateId={'test'}
                 onChangeSelectedTemplateId={jest.fn()}
@@ -116,6 +121,7 @@ describe('ModelType', () => {
 
         render(
             <ModelType
+                name={algorithm.name}
                 algorithm={algorithm}
                 selectedModelTemplateId={'test'}
                 onChangeSelectedTemplateId={jest.fn()}
@@ -140,6 +146,7 @@ describe('ModelType', () => {
 
         render(
             <ModelType
+                name={algorithm.name}
                 algorithm={algorithm}
                 selectedModelTemplateId={'test'}
                 onChangeSelectedTemplateId={mockedOnChangeSelectedTemplateId}
@@ -148,7 +155,7 @@ describe('ModelType', () => {
             />
         );
 
-        fireEvent.click(screen.getByRole('radio', { name: new RegExp(algorithm.performanceCategory, 'i') }));
+        fireEvent.click(screen.getByRole('radio', { name: algorithm.name }));
         expect(mockedOnChangeSelectedTemplateId).toHaveBeenCalledWith(algorithm.modelTemplateId);
     });
 
@@ -161,6 +168,7 @@ describe('ModelType', () => {
 
         render(
             <ModelType
+                name={algorithm.name}
                 algorithm={algorithm}
                 selectedModelTemplateId={algorithm.modelTemplateId}
                 onChangeSelectedTemplateId={jest.fn()}
@@ -181,6 +189,7 @@ describe('ModelType', () => {
 
         render(
             <ModelType
+                name={algorithm.name}
                 algorithm={algorithm}
                 selectedModelTemplateId={'another-template-id'}
                 onChangeSelectedTemplateId={jest.fn()}

@@ -5,6 +5,7 @@
 Prepare training data task
 """
 
+import asyncio
 import logging
 import os
 import typing
@@ -13,7 +14,11 @@ from geti_telemetry_tools.tracing.common import tracer
 from geti_types import CTX_SESSION_VAR, ID
 from iai_core.utils.type_helpers import str2bool
 from jobs_common.jobs.helpers.project_helpers import lock_project
-from jobs_common.k8s_helpers.k8s_resources_calculation import ComputeResources, EphemeralStorageResources
+from jobs_common.k8s_helpers.k8s_resources_calculation import (
+    ComputeResources,
+    EphemeralStorageResources,
+    calculate_training_resources,
+)
 from jobs_common.k8s_helpers.trainer_image_info import TrainerImageInfo
 from jobs_common.k8s_helpers.trainer_pod_definition import create_flyte_container_task
 from jobs_common.tasks import flyte_multi_container_dynamic as dynamic
@@ -188,11 +193,13 @@ def prepare_training_data_model_and_start_training(  # noqa: PLR0913
     job_metadata = JobMetadata.from_env_vars()
     session = CTX_SESSION_VAR.get()
 
+    resources, accelerator_name = asyncio.run(calculate_training_resources())
+
     otx2_task = create_flyte_container_task(
         session=session,
         project_id=train_data.project_id,
         job_id=str(job_metadata.id),
-        compute_resources=ComputeResources.from_node_resources(),
+        compute_resources=ComputeResources.create(resources=resources, accelerator_name=accelerator_name),
         ephemeral_storage_resources=(
             EphemeralStorageResources.create_from_compiled_dataset_shards(
                 compiled_dataset_shards=train_data.get_compiled_dataset_shards(),
