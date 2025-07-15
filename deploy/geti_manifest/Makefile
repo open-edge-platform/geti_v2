@@ -28,7 +28,7 @@ publish-chart: build-chart
 	$(ORAS_BINARY) push $(REGISTRY)/geti/charts/geti-manifest:$(TAG) \
 		--artifact-type=application/text \
 		geti-manifest.yaml.j2
-	$(ORAS_BINARY) push $(REGISTRY)/geti/charts/intel-device-plugin:$(TAG) \
+	$(ORAS_BINARY) push $(REGISTRY)/geti/charts/intel-device-plugin:$(INTEL_DEVICE_PLUGIN_VERSION) \
 		--artifact-type=application/text \
 		intel-device-plugin.yaml
 
