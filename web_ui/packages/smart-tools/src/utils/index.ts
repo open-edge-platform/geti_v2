@@ -51,4 +51,3 @@ export {
     cursorForDirection,
     rectToRotatedRect,
 } from './rotated-rect-math';
-export { sessionParams, type SessionParameters } from './wasm-utils';

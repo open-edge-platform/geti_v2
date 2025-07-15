@@ -19,3 +19,5 @@ export const SegmentAnythingModels = {
     encoder: new URL('./src/segment-anything/models/mobile_sam.encoder.onnx', import.meta.url).toString(),
     decoder: new URL('./src/segment-anything/models/sam_vit_h_4b8939.decoder.onnx', import.meta.url).toString(),
 };
+
+export { sessionParams, type SessionParameters } from './src/utils/wasm-utils';
