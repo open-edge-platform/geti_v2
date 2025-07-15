@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ReactNode, useRef } from 'react';
+import { ReactNode } from 'react';
 
 import {
     ActionButton,
@@ -15,40 +15,21 @@ import {
     TooltipTrigger,
 } from '@geti/ui';
 import { Collapse, Expand } from '@geti/ui/icons';
-import { isString } from 'lodash-es';
-
-import { idMatchingFormat } from '../../../test-utils/id-utils';
-import { DownloadGraphMenu } from '../download-graph-menu/download-graph-menu.component';
-import { DownloadableData } from '../download-graph-menu/export-csv-utils';
 
 import classes from './fullscreen-dialog.module.scss';
 
 interface FullscreenActionProps {
     children: ReactNode;
-    isDownloadable?: boolean;
-    title: string | ReactNode;
+    title?: string | ReactNode;
     actionButton?: ReactNode;
-    downloadableData?: DownloadableData;
+    id?: string;
 }
 
-export const FullscreenAction = ({
-    children,
-    title,
-    downloadableData,
-    actionButton,
-    isDownloadable = false,
-}: FullscreenActionProps): JSX.Element => {
-    const container = useRef(null);
-    const svgTitle = isString(title) ? title : 'Graph';
-
+export const FullscreenAction = ({ children, title, actionButton, id }: FullscreenActionProps): JSX.Element => {
     return (
         <DialogTrigger type='fullscreenTakeover'>
             <TooltipTrigger placement={'bottom'}>
-                <ActionButton
-                    isQuiet
-                    aria-label={`Open in fullscreen ${title}`}
-                    id={`${idMatchingFormat(svgTitle)}-open-fullscreen`}
-                >
+                <ActionButton isQuiet id={`${id}-open-fullscreen`} aria-label={`Open in fullscreen ${title}`}>
                     <Expand />
                 </ActionButton>
                 <Tooltip>Fullscreen</Tooltip>
@@ -56,23 +37,11 @@ export const FullscreenAction = ({
 
             {(close) => (
                 <Dialog UNSAFE_className={classes.fullscreenDialog} aria-label={`${title} fullscreen`}>
-                    <Heading UNSAFE_style={{ fontSize: 'var(--spectrum-global-dimension-font-size-200)' }}>
-                        {title}
-                    </Heading>
+                    <Heading UNSAFE_className={classes.fullscreenHeading}>{title}</Heading>
 
                     <Divider />
 
                     <ButtonGroup>
-                        {isDownloadable && (
-                            <DownloadGraphMenu
-                                ref={container}
-                                fileName={svgTitle}
-                                data={downloadableData}
-                                tooltip={'Download graph'}
-                                graphBackgroundColor={'gray-100'}
-                            />
-                        )}
-
                         {actionButton}
 
                         <TooltipTrigger placement={'bottom'}>
@@ -83,9 +52,7 @@ export const FullscreenAction = ({
                         </TooltipTrigger>
                     </ButtonGroup>
 
-                    <Content UNSAFE_style={{ overflow: 'hidden' }} ref={container}>
-                        {children}
-                    </Content>
+                    <Content UNSAFE_className={classes.fullscreenContent}>{children}</Content>
                 </Dialog>
             )}
         </DialogTrigger>
