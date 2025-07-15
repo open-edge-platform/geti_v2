@@ -7,6 +7,7 @@ import { ResponsiveContainer } from 'recharts';
 import { ObjectsPerLabelInterface } from '../../../../../core/statistics/dtos/dataset-statistics.interface';
 import { CardContent } from '../../../../../shared/components/card-content/card-content.component';
 import { Colors } from '../../../../../shared/components/charts/chart.interface';
+import { DownloadGraphMenu } from '../../../../../shared/components/download-graph-menu/download-graph-menu.component';
 import { FullscreenAction } from '../../../../../shared/components/fullscreen-action/fullscreen-action.component';
 import { InfoTooltip } from '../../../../../shared/components/info-tooltip/info-tooltip.component';
 import { ProjectGridArea } from '../project-grid-area.interface';
@@ -47,9 +48,15 @@ export const ProjectAnnotationsObjects = ({
                 titleActions={<ActionTooltip />}
                 actions={
                     <FullscreenAction
-                        isDownloadable
+                        actionButton={
+                            <DownloadGraphMenu
+                                fileName={title}
+                                data={{ type: 'barChart', data }}
+                                tooltip={'Download graph'}
+                                graphBackgroundColor={'gray-100'}
+                            />
+                        }
                         title='Number of objects per label'
-                        downloadableData={{ type: 'barChart', data }}
                     >
                         <AnnotationObjectsBarHorizontalChart data={data} colors={colors} barSize={50} title={title} />
                     </FullscreenAction>

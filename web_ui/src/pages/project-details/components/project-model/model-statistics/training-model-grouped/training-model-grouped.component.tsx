@@ -10,6 +10,7 @@ import {
     TrainingModelStatisticsGroup,
 } from '../../../../../../core/statistics/model-statistics.interface';
 import { CardContent } from '../../../../../../shared/components/card-content/card-content.component';
+import { DownloadGraphMenu } from '../../../../../../shared/components/download-graph-menu/download-graph-menu.component';
 import { FullscreenAction } from '../../../../../../shared/components/fullscreen-action/fullscreen-action.component';
 import TrainingModelBarChart from '../training-model-bar-chart/training-model-bar-chart.component';
 
@@ -55,9 +56,15 @@ export const TrainingModelGrouped = ({ header, values }: TrainingModelStatistics
                         )}
                     </Picker>
                     <FullscreenAction
-                        isDownloadable
+                        actionButton={
+                            <DownloadGraphMenu
+                                fileName={'header'}
+                                data={{ type: 'barChart', data: downloadableData }}
+                                tooltip={'Download graph'}
+                                graphBackgroundColor={'gray-100'}
+                            />
+                        }
                         title={header}
-                        downloadableData={{ type: 'barChart', data: downloadableData }}
                     >
                         <TrainingModelBarChart
                             key={selectedChart.key}
