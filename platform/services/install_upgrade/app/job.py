@@ -153,10 +153,10 @@ async def deploy_helm_charts(manifest: dict) -> None:
                         body=manifest,
                     )
                 except client.exceptions.ApiException as e:
-                    logger.error(f"Failed to update helm chart CR: {e}")
+                    logger.exception(f"Failed to update helm chart CR: {e}")
                     raise HelmChartDeployError(f"Failed to update helm chart CR: {e}")
             else:
-                logger.error(f"Failed to create helm chart CR: {e}")
+                logger.exception(f"Failed to create helm chart CR: {e}")
                 raise HelmChartDeployError(f"Failed to create helm chart CR: {e}")
     logger.info("Deployed helm charts successfully.")
 
@@ -188,7 +188,7 @@ async def apply_yaml_to_cluster(yaml_path: str) -> None:
                     else:
                         raise
         except Exception as e:
-            logger.error(f"Failed to apply {kind} {name} in {namespace}: {e}")
+            logger.exception(f"Failed to apply {kind} {name} in {namespace}: {e}")
             raise
 
 
@@ -318,7 +318,7 @@ def deploy_secret() -> None:
         if e.status == 409:
             logger.warning(f"Secret already exists: {e.body}")
         else:
-            logger.error(f"An error occurred: {e}")
+            logger.exception(f"An error occurred: {e}")
             sys.exit(1)
     logger.info("Configuration for external registry deployed.")
 
@@ -359,7 +359,7 @@ async def main(job_manager: JobManager) -> None:
         if IMAGE_REGISTRY:
             deploy_secret()
         for index, helm in enumerate(helm_charts):
-            rendered_helm = await yaml.safe_load(helm)
+            rendered_helm = yaml.safe_load(helm)
             try:
                 job_manager.set_status(
                     "RUNNING",
@@ -368,7 +368,7 @@ async def main(job_manager: JobManager) -> None:
                 )
                 await deploy_helm_charts(rendered_helm)
             except HelmChartDeployError as e:
-                logger.error(f"Failed to deploy helm chart: {e}")
+                logger.exception(f"Failed to deploy helm chart: {e}")
                 job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 99))
                 break
 
@@ -383,7 +383,7 @@ async def main(job_manager: JobManager) -> None:
                     job_name=job_name, namespace=namespace, timeout=parsed_timeout if parsed_timeout else 300
                 )
             except (FailedJobError, TimeoutJobError) as e:
-                logger.error(f"Job '{job_name}' in namespace '{namespace}' failed: {e}")
+                logger.exception(f"Job '{job_name}' in namespace '{namespace}' failed: {e}")
                 job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 99))
                 break
             except UnknownJobError as e:
@@ -406,7 +406,7 @@ async def main(job_manager: JobManager) -> None:
             logger.info("Installation process completed successfully.")
     except Exception as e:
         job_manager.set_status("FAILED", str(e))
-        logger.error(f"Installation process failed: {e}")
+        logger.exception(f"Installation process failed: {e}")
 
 
 async def run() -> None:

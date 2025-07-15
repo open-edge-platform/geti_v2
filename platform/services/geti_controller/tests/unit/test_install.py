@@ -27,16 +27,7 @@ def mock_environment(mocker):
 def test_install_platform(mocker, mock_environment, version_number, expected_detail, expected_status):
     mocker.patch("rest.endpoints.install.load_kube_config")
     mocker.patch("rest.endpoints.install.check_config_map_exists", return_value=False)
-    mocker.patch("rest.endpoints.install.create_service", return_value=MagicMock())
-    mocker.patch("rest.endpoints.install.create_service_account", return_value=MagicMock())
-    mocker.patch("rest.endpoints.install.create_cluster_role", return_value=MagicMock())
-    mocker.patch("rest.endpoints.install.create_cluster_role_binding", return_value=MagicMock())
-    mocker.patch("rest.endpoints.install.deploy_service")
-    mocker.patch("rest.endpoints.install.deploy_service_account")
-    mocker.patch("rest.endpoints.install.deploy_cluster_role")
-    mocker.patch("rest.endpoints.install.deploy_cluster_role_binding")
-    mocker.patch("rest.endpoints.install.create_job", return_value=MagicMock())
-    mocker.patch("rest.endpoints.install.deploy_job")
+    mocker.patch("rest.endpoints.install.deploy_service_job", return_value=MagicMock())
 
     payload = InstallRequest(version_number=version_number, local_os="ubuntu")
 
@@ -61,3 +52,13 @@ def test_install_platform_already_installed(mocker, mock_environment):
 
     assert e.value.status_code == status.HTTP_409_CONFLICT
     assert e.value.detail == "Platform is already installed."
+
+
+def test_install_invalid_version(mocker, mock_environment):
+    payload = InstallRequest(version_number="12345", local_os="ubuntu")
+
+    with pytest.raises(HTTPException) as e:
+        install_platform(payload)
+
+    assert e.value.status_code == status.HTTP_400_BAD_REQUEST
+    assert e.value.detail == "Invalid version number provided."
