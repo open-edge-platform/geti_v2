@@ -277,12 +277,10 @@
     {
       "key": "input_size_width",
       "name": "Input size width",
-      "type": "int",
+      "type": "enum",
       "description": "Width dimension in pixels for model input images. Determines the horizontal resolution at which images are processed.",
       "value": 32,
       "default_value": 32,
-      "min_value": 0,
-      "max_value": null,
       "allowed_values": [
         32,
         64,
@@ -292,12 +290,10 @@
     {
       "key": "input_size_height",
       "name": "Input size height",
-      "type": "int",
+      "type": "enum",
       "description": "Height dimension in pixels for model input images. Determines the vertical resolution at which images are processed.",
       "value": 32,
       "default_value": 32,
-      "min_value": 0,
-      "max_value": null,
       "allowed_values": [
         32,
         64,

@@ -11,6 +11,7 @@ additionalProperties:
           - $ref: float.yaml
           - $ref: int.yaml
           - $ref: string.yaml
+          - $ref: enum.yaml
           - type: object # nested parameters object
     - type: object # nested parameters object
 
