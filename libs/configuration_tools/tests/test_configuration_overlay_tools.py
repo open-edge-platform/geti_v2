@@ -211,5 +211,6 @@ class TestConfigurationService:
         assert full_config_dataset_preparation.filtering.max_annotation_pixels.enable
         assert not full_config_dataset_preparation.filtering.min_annotation_pixels.enable
         assert full_config_dataset_preparation.filtering.min_annotation_pixels.min_annotation_pixels == 1
+        assert full_config_overlay.hyperparameters.training
         assert full_config_overlay.hyperparameters.training.max_epochs == 32
         assert full_config_overlay.hyperparameters.training.learning_rate == 0.05

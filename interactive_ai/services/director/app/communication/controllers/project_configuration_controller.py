@@ -22,24 +22,16 @@ class ProjectConfigurationRESTController:
     @unified_tracing
     def get_configuration(
         project_identifier: ProjectIdentifier,
-        task_id: str | None = None,
     ) -> dict[str, Any]:
         """
         Retrieves configuration related to a specific project.
 
         :param project_identifier: Identifier for the project (containing organization_id, workspace_id, and project_id)
-        :param task_id: Optional ID of the task to retrieve configuration for a specific task.
         :return: Dictionary representation of the project configuration
         """
         project_config = ProjectConfigurationRepo(project_identifier).get_project_configuration()
         if isinstance(project_config, NullProjectConfiguration):
             raise ProjectConfigurationNotFoundException(project_identifier.project_id)
-        # return single task configuration
-        if len(project_config.task_configs) == 1 or task_id:
-            _task_id = project_config.task_configs[0].task_id or task_id
-            task_config = project_config.get_task_config(_task_id)
-            return ProjectConfigurationRESTViews.task_config_to_rest(task_config)
-        # return entire task-chain configuration
         return ProjectConfigurationRESTViews.project_configuration_to_rest(project_config)
 
     @staticmethod

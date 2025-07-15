@@ -1,15 +1,18 @@
-permissions:
-  contents: read
+permissions: {}
+
 name: Notify Teams on UI PR Creation
 
 on:
   pull_request:
-    types: [opened, edited]
+    types: [opened, synchronize]
     paths:
       - 'web_ui/**'
 
 jobs:
   notify-teams:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
       - name: Notify Teams via Webhook

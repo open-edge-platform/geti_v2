@@ -638,3 +638,18 @@ class NotConfigurableParameterException(GetiBaseException):
             error_code="not_configurable_parameter",
             http_status=http.HTTPStatus.BAD_REQUEST,
         )
+
+
+class ModelManifestNotFoundException(GetiBaseException):
+    """
+    Exception raised when a model manifest could not be found in the database.
+
+    :param model_manifest_id: ID of the model manifest
+    """
+
+    def __init__(self, model_manifest_id: str) -> None:
+        super().__init__(
+            message=f"The requested model manifest could not be found. Model Manifest ID: `{model_manifest_id}`.",
+            error_code="model_manifest_not_found",
+            http_status=http.HTTPStatus.NOT_FOUND,
+        )

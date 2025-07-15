@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 from enum import Enum
+from functools import cached_property
 
 from geti_configuration_tools.hyperparameters import (
     AugmentationParameters,
@@ -11,7 +12,9 @@ from geti_configuration_tools.hyperparameters import (
     Hyperparameters,
     TrainingHyperParameters,
 )
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
+
+from geti_supported_models.default_models import DefaultCategory, DefaultModels
 
 
 class GPUMaker(str, Enum):
@@ -73,10 +76,13 @@ class ModelStats(BaseModel):
     """Information about a machine learning model."""
 
     gigaflops: float = Field(
-        gt=0, title="Gigaflops", description="Billions of floating-point operations per second required by the model"
+        ge=0, title="Gigaflops", description="Billions of floating-point operations per second required by the model"
     )
-    trainable_parameters: int = Field(
-        gt=0, title="Trainable parameters", description="Number of trainable parameters in the model"
+    trainable_parameters: float = Field(
+        ge=0.0,
+        default=0.0,
+        title="Trainable parameters (millions)",
+        description="Number of trainable parameters in the model, expressed in millions",
     )
     performance_ratings: PerformanceRatings = Field(
         title="Performance ratings", description="Standardized ratings for model performance metrics"
@@ -119,6 +125,24 @@ class ModelManifest(BaseModel):
         title="Hyperparameters", description="Configuration parameters for model training"
     )
 
+    @computed_field  # type: ignore[misc]
+    @cached_property
+    def is_default_model(self) -> bool:
+        """Returns whether this model is the default one for its task type"""
+        return DefaultModels.get_default_model(self.task) == self.id
+
+    @computed_field  # type: ignore[misc]
+    @cached_property
+    def model_category(self) -> str | None:
+        """Returns the category for which this model is recommended (accuracy, speed, or balance)"""
+        if DefaultModels.get_accuracy_model(self.task) == self.id:
+            return DefaultCategory.ACCURACY.name.lower()
+        if DefaultModels.get_speed_model(self.task) == self.id:
+            return DefaultCategory.SPEED.name.lower()
+        if DefaultModels.get_balanced_model(self.task) == self.id:
+            return DefaultCategory.BALANCE.name.lower()
+        return None
+
 
 class NullModelManifest(ModelManifest):
     """
@@ -152,3 +176,13 @@ class NullModelManifest(ModelManifest):
         )
     )
     capabilities: Capabilities = Field(default=Capabilities(xai=False, tiling=False))
+
+    @computed_field  # type: ignore[misc]
+    @cached_property
+    def is_default_model(self) -> bool:
+        return False
+
+    @computed_field  # type: ignore[misc]
+    @cached_property
+    def model_category(self) -> str | None:
+        return None

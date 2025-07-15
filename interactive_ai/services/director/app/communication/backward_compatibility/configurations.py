@@ -8,7 +8,6 @@ from geti_configuration_tools.hyperparameters import (
     EarlyStopping,
     EvaluationParameters,
     Hyperparameters,
-    MaxDetectionPerImage,
     Tiling,
     TrainingHyperParameters,
 )
@@ -474,7 +473,6 @@ class ConfigurationsBackwardCompatibility:
             max_epochs=max_epochs,
             learning_rate=learning_rate,
             early_stopping=(EarlyStopping(enable=True, patience=early_stopping) if early_stopping else EarlyStopping()),
-            max_detection_per_image=MaxDetectionPerImage(),
         )
 
         return Hyperparameters(
