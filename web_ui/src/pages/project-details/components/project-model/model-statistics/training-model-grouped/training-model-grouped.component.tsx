@@ -57,7 +57,7 @@ export const TrainingModelGrouped = ({ header, values }: TrainingModelStatistics
                     <FullscreenAction
                         actionButton={
                             <DownloadGraphMenu
-                                fileName={'header'}
+                                fileName={header}
                                 data={{ type: 'barChart', data: downloadableData }}
                                 tooltip={'Download graph'}
                                 graphBackgroundColor={'gray-100'}
