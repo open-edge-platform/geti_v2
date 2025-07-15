@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { FullscreenAction } from '@geti/ui';
+
 import {
     TrainingModelChartConfig,
     TrainingModelLineChartType,
@@ -9,7 +11,6 @@ import { CardContent } from '../../../../../../shared/components/card-content/ca
 import { LineChart } from '../../../../../../shared/components/charts/line-chart/line-chart.component';
 import { LineChartData } from '../../../../../../shared/components/charts/line-chart/line-chart.interface';
 import { DownloadGraphMenu } from '../../../../../../shared/components/download-graph-menu/download-graph-menu.component';
-import { FullscreenAction } from '../../../../../../shared/components/fullscreen-action/fullscreen-action.component';
 import { getDistinctColorBasedOnHash } from '../../../../../create-project/components/distinct-colors';
 
 export const TrainingModelLineChart = ({

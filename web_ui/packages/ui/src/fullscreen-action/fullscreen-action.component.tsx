@@ -13,8 +13,9 @@ import {
     Heading,
     Tooltip,
     TooltipTrigger,
-} from '@geti/ui';
-import { Collapse, Expand } from '@geti/ui/icons';
+} from '@adobe/react-spectrum';
+
+import { Collapse, Expand } from '../../icons';
 
 import classes from './fullscreen-dialog.module.scss';
 

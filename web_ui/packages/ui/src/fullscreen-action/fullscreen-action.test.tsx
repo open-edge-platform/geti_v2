@@ -3,7 +3,7 @@
 
 import { fireEvent, screen } from '@testing-library/react';
 
-import { providersRender as render } from '../../../test-utils/required-providers-render';
+import { providersRender as render } from '../../../../src/test-utils/required-providers-render';
 import { FullscreenAction } from './fullscreen-action.component';
 
 describe('Fullscreen action', () => {

@@ -3,10 +3,9 @@
 
 import { useState } from 'react';
 
-import { Flex } from '@geti/ui';
+import { Flex, FullscreenAction } from '@geti/ui';
 
 import { CardContent } from '../../../../shared/components/card-content/card-content.component';
-import { FullscreenAction } from '../../../../shared/components/fullscreen-action/fullscreen-action.component';
 import { ProjectStorageContent } from './project-storage-content.component';
 import { ProjectStorageToggleButton } from './project-storage-toggle-button.component';
 

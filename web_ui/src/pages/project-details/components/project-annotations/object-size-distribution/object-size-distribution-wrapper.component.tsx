@@ -3,14 +3,13 @@
 
 import { useMemo, useState } from 'react';
 
-import { Flex, Text } from '@geti/ui';
+import { Flex, FullscreenAction, Text } from '@geti/ui';
 
 import { isClassificationDomain } from '../../../../../core/projects/domains';
 import { ObjectSizeDistribution } from '../../../../../core/statistics/services/dataset-statistics.interface';
 import { CardContent } from '../../../../../shared/components/card-content/card-content.component';
 import { PieChart } from '../../../../../shared/components/charts/pie-chart/pie-chart.component';
 import { DownloadGraphMenu } from '../../../../../shared/components/download-graph-menu/download-graph-menu.component';
-import { FullscreenAction } from '../../../../../shared/components/fullscreen-action/fullscreen-action.component';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { ProjectGridArea } from '../project-grid-area.interface';
 import { DistributionChart } from './distribution-chart/distribution-chart.component';

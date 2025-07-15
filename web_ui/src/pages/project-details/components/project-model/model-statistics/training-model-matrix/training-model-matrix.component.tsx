@@ -3,13 +3,12 @@
 
 import { Key, useRef, useState } from 'react';
 
-import { Flex, Item, Picker, type StyleProps } from '@geti/ui';
+import { Flex, FullscreenAction, Item, Picker, type StyleProps } from '@geti/ui';
 
 import { ModelStatisticsBase } from '../../../../../../core/statistics/dtos/model-statistics.interface';
 import { TrainModelStatisticsConfusionMatrix } from '../../../../../../core/statistics/model-statistics.interface';
 import { CardContent } from '../../../../../../shared/components/card-content/card-content.component';
 import { DownloadGraphMenu } from '../../../../../../shared/components/download-graph-menu/download-graph-menu.component';
-import { FullscreenAction } from '../../../../../../shared/components/fullscreen-action/fullscreen-action.component';
 import { ConfusionMatrixZoom } from './confusion-matrix-zoom/confusion-matrix-zoom.component';
 
 type TrainingModelMatrixProps = TrainModelStatisticsConfusionMatrix & ModelStatisticsBase & StyleProps;

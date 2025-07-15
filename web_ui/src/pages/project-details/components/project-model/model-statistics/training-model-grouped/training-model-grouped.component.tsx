@@ -3,7 +3,7 @@
 
 import { Key, useState } from 'react';
 
-import { Flex, Item, Picker } from '@geti/ui';
+import { Flex, FullscreenAction, Item, Picker } from '@geti/ui';
 
 import {
     TrainingModelBarRadialChart,
@@ -11,7 +11,6 @@ import {
 } from '../../../../../../core/statistics/model-statistics.interface';
 import { CardContent } from '../../../../../../shared/components/card-content/card-content.component';
 import { DownloadGraphMenu } from '../../../../../../shared/components/download-graph-menu/download-graph-menu.component';
-import { FullscreenAction } from '../../../../../../shared/components/fullscreen-action/fullscreen-action.component';
 import TrainingModelBarChart from '../training-model-bar-chart/training-model-bar-chart.component';
 
 export const TrainingModelGrouped = ({ header, values }: TrainingModelStatisticsGroup): JSX.Element => {
