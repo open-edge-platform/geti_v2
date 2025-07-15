@@ -640,7 +640,7 @@ def fxt_training_configuration_full_rest_view(
             {
                 "key": "input_size_width",
                 "name": "Input size width",
-                "type": "int",
+                "type": "enum",
                 "description": "Width dimension in pixels for model input images. "
                 "Determines the horizontal resolution at which images are processed.",
                 "value": 32,
@@ -652,7 +652,7 @@ def fxt_training_configuration_full_rest_view(
             {
                 "key": "input_size_height",
                 "name": "Input size height",
-                "type": "int",
+                "type": "enum",
                 "description": "Height dimension in pixels for model input images. "
                 "Determines the vertical resolution at which images are processed.",
                 "value": 32,
