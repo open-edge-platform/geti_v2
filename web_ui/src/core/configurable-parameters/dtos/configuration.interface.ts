@@ -21,18 +21,18 @@ interface BoolParameterDTO extends ParameterBaseDTO {
     default_value: boolean;
 }
 
-interface EnumParameterDTO extends ParameterBaseDTO {
+interface EnumParameterDTO<T extends string | boolean | number> extends ParameterBaseDTO {
     type: 'enum';
-    value: string;
-    default_value: string;
-    allowed_values: string[];
+    value: T;
+    default_value: T;
+    allowed_values: T[];
 }
 
 export interface StaticParameterDTO extends ParameterBaseDTO {
-    value: number | string | boolean;
+    value: number | boolean;
 }
 
-export type ConfigurationParameterDTO = BoolParameterDTO | NumberParameterDTO | EnumParameterDTO;
+export type ConfigurationParameterDTO = BoolParameterDTO | NumberParameterDTO | EnumParameterDTO<number>;
 
 interface ProjectConfigurationTaskConfigsTrainingDTO {
     constraints: ConfigurationParameterDTO[];

@@ -3,7 +3,7 @@
 
 import { FC, ReactNode } from 'react';
 
-import { Grid, minmax, Text, ToggleButtons, View } from '@geti/ui';
+import { Grid, Item, minmax, Picker, Text, ToggleButtons, View } from '@geti/ui';
 import { isBoolean, isFunction } from 'lodash-es';
 
 import { ConfigurationParameter } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
@@ -98,19 +98,41 @@ const ParameterReadOnly = ({ parameter, marginStart }: ParameterReadOnlyProps) =
 
 const ParameterField: FC<ParameterFieldProps> = ({ parameter, onChange, isDisabled }) => {
     if (parameter.type === 'enum') {
-        const handleChange = (value: string) => {
+        type ValueType = typeof parameter.value;
+
+        const handleChange = (value: ValueType) => {
             onChange({
                 ...parameter,
                 value,
             });
         };
+
+        if (parameter.allowedValues.length < 4) {
+            return (
+                <ToggleButtons
+                    options={parameter.allowedValues}
+                    selectedOption={parameter.value}
+                    onOptionChange={handleChange}
+                    isDisabled={isDisabled}
+                />
+            );
+        }
+
+        const items = parameter.allowedValues.map((value) => ({ value }));
+
         return (
-            <ToggleButtons
-                options={parameter.allowedValues}
-                selectedOption={parameter.value}
-                onOptionChange={handleChange}
-                isDisabled={isDisabled}
-            />
+            <Picker
+                items={items}
+                selectedKey={parameter.value.toString()}
+                onSelectionChange={(key) => handleChange(key as ValueType)}
+                aria-label={`Select ${parameter.name}`}
+            >
+                {(item) => (
+                    <Item key={item.value}>
+                        <Text>{item.value}</Text>
+                    </Item>
+                )}
+            </Picker>
         );
     }
 

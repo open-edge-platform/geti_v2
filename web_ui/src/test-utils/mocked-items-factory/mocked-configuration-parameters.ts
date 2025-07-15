@@ -111,11 +111,11 @@ export const getMockedConfigurationParameter = (
 
     if (parameter.type === 'enum') {
         return {
-            allowedValues: ['option1', 'option2'],
-            defaultValue: 'option1',
+            allowedValues: [100, 200],
+            defaultValue: 100,
             name: 'Mocked Enum Parameter',
             description: 'This is a mocked enum configuration parameter',
-            value: 'option1',
+            value: 100,
             key: 'mocked_enum_parameter',
             ...parameter,
         };
