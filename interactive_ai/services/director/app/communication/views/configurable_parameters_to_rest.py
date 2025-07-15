@@ -62,6 +62,9 @@ class ConfigurableParametersRESTViews:
             # If the parameter has allowed values, the parameter is an enum
             rest_view["type"] = "enum"
             rest_view["allowed_values"] = json_schema["allowed_values"]
+            # Remove numeric constraints for enum parameters
+            rest_view.pop("min_value", None)
+            rest_view.pop("max_value", None)
         return rest_view
 
     @classmethod
