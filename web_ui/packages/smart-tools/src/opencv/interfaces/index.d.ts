@@ -12,7 +12,7 @@
 /// <reference path="functions.d.ts" />
 /// <reference path="helpers.d.ts" />
 
-declare module 'opencv-types' {
+declare module 'OpenCVTypes' {
     export * from 'mat';
     export * from 'cv_constants';
     export * from 'valueObjects';
@@ -22,12 +22,6 @@ declare module 'opencv-types' {
     export * from 'vectors';
     export * from 'emscripten';
     export * from 'helpers';
-}
-
-declare module 'OpenCVTypes' {
-    import * as OpenCVTypes from '.';
-
-    export = OpenCVTypes;
 }
 
 declare const cv: Promise<OpenCVTypes.cv>;
