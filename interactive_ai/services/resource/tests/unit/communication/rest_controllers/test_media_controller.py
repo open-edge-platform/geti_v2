@@ -324,7 +324,8 @@ class TestMediaRESTController:
             dataset_storage_identifier=dataset_storage.identifier,
             basename="dummy_filename",
             extension=ImageExtensions.JPG,
-            data_stream=BytesStream(data=file_data, length=len(bytes_data)),
+            image_bytes=file_data,
+            length=len(bytes_data),
             user_id=ID("dummy_user"),
             update_metrics=False,
         )

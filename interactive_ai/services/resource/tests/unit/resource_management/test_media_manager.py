@@ -30,7 +30,7 @@ from iai_core.entities.image import Image, NullImage
 from iai_core.entities.media import ImageExtensions, MediaPreprocessing, MediaPreprocessingStatus, VideoExtensions
 from iai_core.entities.video import NullVideo, Video, VideoFrame
 from iai_core.repos import ImageRepo, ProjectRepo, VideoRepo
-from iai_core.repos.storage.binary_repos import ThumbnailBinaryRepo, VideoBinaryRepo
+from iai_core.repos.storage.binary_repos import ImageBinaryRepo, ThumbnailBinaryRepo, VideoBinaryRepo
 from iai_core.repos.storage.storage_client import BytesStream
 from iai_core.utils.annotation_scene_state_helper import AnnotationSceneStateHelper
 from iai_core.utils.deletion_helpers import DeletionHelpers
@@ -89,28 +89,50 @@ class TestMediaManager:
         mock_get_one_video.assert_called_once_with(earliest=True, extra_filter=extra_filter)
         assert found_media is None
 
+    @patch("tempfile.NamedTemporaryFile")
+    @patch("PIL.Image.open")
     def test_upload_image(
         self,
-        fxt_solid_color_image_bytes,
+        mock_image_open,
+        mock_temp_file_context,
         fxt_dataset_storage_identifier,
-        fxt_mongo_id,
     ) -> None:
-        image_bytes = fxt_solid_color_image_bytes(height=50, width=50)
+        # Arrange
+        mock_temp_file = MagicMock()
+        mock_temp_file.name = "/tmp/file.jpg"
+        mock_temp_file_context.return_value.__enter__.return_value = mock_temp_file
+        data_stream = MagicMock()
+
+        resized_image = MagicMock()
+        pil_image = MagicMock()
+        pil_image.width = 50
+        pil_image.height = 50
+        pil_image.resize.return_value = resized_image
+        mock_image_open.return_value = pil_image
+
+        # Act
         with (
+            patch.object(MediaManager, "_update_image_metrics") as mock_update_image_metrics,
             patch.object(MediaManager, "validate_image_dimensions") as mock_validate_dims,
             patch.object(ImageRepo, "save") as mock_save_image,
-            patch.object(Media2DFactory, "create_and_save_media_thumbnail") as mock_create_and_save_thumbnail,
+            patch.object(ImageBinaryRepo, "save") as mock_save_binary_image,
+            patch.object(ThumbnailBinaryRepo, "save") as mock_save_thumbnail,
         ):
             image = MediaManager.upload_image(
                 dataset_storage_identifier=fxt_dataset_storage_identifier,
                 basename="test_image",
                 extension=ImageExtensions.JPG,
-                data_stream=BytesStream(data=io.BytesIO(image_bytes), length=len(image_bytes)),
+                image_bytes=data_stream,
+                length=100,
                 user_id=ID("dummy_user"),
                 update_metrics=True,
             )
 
+        # Assert
         mock_validate_dims.assert_called_once()
+        mock_save_binary_image.assert_called_once_with(
+            dst_file_name=f"{image.id_}.jpg", data_source=BytesStream(data=data_stream, length=100)
+        )
         assert mock_save_image.call_count == 2
         mock_save_image.assert_has_calls(
             [
@@ -122,7 +144,7 @@ class TestMediaManager:
                         extension=ImageExtensions.JPG,
                         width=50,
                         height=50,
-                        size=ANY,
+                        size=100,
                         preprocessing=MediaPreprocessing(
                             status=MediaPreprocessingStatus.IN_PROGRESS,
                             start_timestamp=ANY,
@@ -137,7 +159,7 @@ class TestMediaManager:
                         extension=ImageExtensions.JPG,
                         width=50,
                         height=50,
-                        size=ANY,
+                        size=100,
                         preprocessing=MediaPreprocessing(
                             status=MediaPreprocessingStatus.FINISHED,
                             start_timestamp=ANY,
@@ -147,28 +169,46 @@ class TestMediaManager:
                 ),
             ]
         )
-        mock_create_and_save_thumbnail.assert_called_once()
+        mock_temp_file_context.assert_called_once_with(suffix=f"{image.id_}_thumbnail.jpg")
+        mock_save_thumbnail.assert_called_once_with(
+            data_source="/tmp/file.jpg", dst_file_name=f"{image.id_}_thumbnail.jpg"
+        )
+        mock_update_image_metrics.assert_called_once()
 
         assert isinstance(image, Image)
         assert image.width == 50 and image.height == 50
 
+    @patch("PIL.Image.open")
     @patch.dict(os.environ, {"FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING": "true"})
     def test_upload_image_async_preprocessing(
         self,
-        fxt_solid_color_image_bytes,
+        mock_image_open,
         fxt_dataset_storage_identifier,
     ) -> None:
-        image_bytes = fxt_solid_color_image_bytes(height=50, width=50)
+        # Arrange
+        data_stream = MagicMock()
+
+        resized_image = MagicMock()
+        pil_image = MagicMock()
+        pil_image.width = 50
+        pil_image.height = 50
+        pil_image.resize.return_value = resized_image
+        mock_image_open.return_value = pil_image
+
+        # Act
         with (
+            patch.object(MediaManager, "_update_image_metrics") as mock_update_image_metrics,
             patch.object(MediaManager, "validate_image_dimensions") as mock_validate_dims,
             patch.object(ImageRepo, "save") as mock_save_image,
+            patch.object(ImageBinaryRepo, "save") as mock_save_binary_image,
             patch("resource_management.media_manager.publish_event") as mock_publish_event,
         ):
             image = MediaManager.upload_image(
                 dataset_storage_identifier=fxt_dataset_storage_identifier,
                 basename="test_image",
                 extension=ImageExtensions.JPG,
-                data_stream=BytesStream(data=io.BytesIO(image_bytes), length=len(image_bytes)),
+                image_bytes=data_stream,
+                length=100,
                 user_id=ID("dummy_user"),
                 update_metrics=True,
             )
@@ -182,9 +222,12 @@ class TestMediaManager:
                 extension=ImageExtensions.JPG,
                 width=50,
                 height=50,
-                size=ANY,
+                size=100,
                 preprocessing=MediaPreprocessing(status=MediaPreprocessingStatus.SCHEDULED, start_timestamp=ANY),
             )
+        )
+        mock_save_binary_image.assert_called_once_with(
+            dst_file_name=f"{image.id_}.jpg", data_source=BytesStream(data=data_stream, length=100)
         )
         mock_publish_event.assert_called_once_with(
             topic="media_preprocessing",
@@ -199,6 +242,7 @@ class TestMediaManager:
             key=str(image.id_).encode(),
             headers_getter=ANY,
         )
+        mock_update_image_metrics.assert_called_once()
 
         assert isinstance(image, Image)
         assert image.width == 50 and image.height == 50
@@ -227,7 +271,8 @@ class TestMediaManager:
                 dataset_storage_identifier=fxt_dataset_storage_identifier,
                 basename="test_image",
                 extension=ImageExtensions.JPG,
-                data_stream=BytesStream(data=io.BytesIO(test_image), length=len(test_image)),
+                image_bytes=io.BytesIO(test_image),
+                length=test_image,
                 user_id=ID("dummy_user"),
             )
 

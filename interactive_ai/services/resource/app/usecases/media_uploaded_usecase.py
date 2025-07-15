@@ -2,12 +2,15 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import logging
 import os
+import tempfile
 from tempfile import TemporaryDirectory
 from typing import Any
 
+from PIL import Image as PILImage
+
 from geti_kafka_tools import publish_event
 from geti_types import CTX_SESSION_VAR, ID
-from iai_core.adapters.binary_interpreters import NumpyBinaryInterpreter
+from iai_core.adapters.binary_interpreters import StreamBinaryInterpreter
 from iai_core.entities.dataset_storage import DatasetStorageIdentifier
 from iai_core.entities.image import Image
 from iai_core.entities.video import Video
@@ -67,16 +70,19 @@ class MediaUploadedUseCase:
         :param image_id: image ID
         :param data_binary_filename: uploaded binary filename
         """
-        image_numpy = ImageBinaryRepo(dataset_storage_identifier).get_by_filename(
-            filename=data_binary_filename, binary_interpreter=NumpyBinaryInterpreter()
+        data_stream = ImageBinaryRepo(dataset_storage_identifier).get_by_filename(
+            filename=data_binary_filename, binary_interpreter=StreamBinaryInterpreter()
         )
         try:
+            data_stream.seek(0)
+            pil_image = PILImage.open(data_stream)
             # Create a thumbnail for the image
-            Media2DFactory.create_and_save_media_thumbnail(
-                dataset_storage_identifier=dataset_storage_identifier,
-                media_numpy=image_numpy,
-                thumbnail_binary_filename=Image.thumbnail_filename_by_image_id(image_id),
-            )
+            dst_file_name = Image.thumbnail_filename_by_image_id(image_id)
+            with tempfile.NamedTemporaryFile(suffix=dst_file_name) as temp_file:
+                pil_image.resize((DEFAULT_THUMBNAIL_SIZE, DEFAULT_THUMBNAIL_SIZE)).save(temp_file.name)
+                ThumbnailBinaryRepo(dataset_storage_identifier).save(
+                    data_source=temp_file.name, dst_file_name=dst_file_name
+                )
             logger.debug(f"Image {image_id} has been successfully preprocessed")
         except Exception as ex:
             logger.error(f"Error occurred while preprocessing image {image_id}", exc_info=ex)

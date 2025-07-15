@@ -125,7 +125,8 @@ def fxt_create_upload_annotate_project(
             dataset_storage_identifier=dataset_storage.identifier,
             basename=img_basename,
             extension=ImageExtensions.JPG,
-            data_stream=BytesStream(data=io.BytesIO(buffer), length=len(buffer)),
+            image_bytes=io.BytesIO(buffer),
+            length=len(buffer),
             user_id=ID("dummy_user"),
         )
         identifier = ImageIdentifier(image.id_)

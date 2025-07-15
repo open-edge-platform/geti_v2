@@ -2,7 +2,10 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 """This module tests train task"""
 
+import asyncio
 import os
+from asyncio import AbstractEventLoop
+from collections.abc import Generator
 from unittest.mock import ANY, MagicMock, call, patch
 
 import pytest
@@ -26,6 +29,13 @@ HYPER_PARAMETERS_ID = "hyper_parameters_id"
 
 
 class TestPrepareTrainingDataTask:
+    @pytest.fixture()
+    def fxt_event_loop(self) -> Generator[AbstractEventLoop, None, None]:
+        policy = asyncio.get_event_loop_policy()
+        loop = policy.new_event_loop()
+        yield loop
+        loop.close()
+
     @pytest.mark.parametrize("from_scratch", [True, False])
     @pytest.mark.parametrize("reshuffle_subsets", [True, False])
     @pytest.mark.parametrize("should_activate_model", [True, False])
@@ -34,6 +44,7 @@ class TestPrepareTrainingDataTask:
     @pytest.mark.parametrize("num_image_pulling_threads", [2])
     @pytest.mark.parametrize("num_upload_threads", [5])
     @patch.dict(os.environ, TEST_ENV_VARS)
+    @patch("asyncio.run")
     @patch("jobs_common.tasks.utils.progress.report_progress")
     @patch("job.tasks.prepare_and_train.prepare_data_and_train.shard_dataset_for_train")
     @patch("job.tasks.prepare_and_train.prepare_data_and_train.create_task_train_dataset")
@@ -41,7 +52,6 @@ class TestPrepareTrainingDataTask:
     @patch.object(ProjectRepo, "mark_locked")
     @patch("job.tasks.prepare_and_train.prepare_data_and_train.prepare_train")
     @patch("job.tasks.prepare_and_train.prepare_data_and_train.create_flyte_container_task")
-    @patch("job.tasks.prepare_and_train.prepare_data_and_train.ComputeResources.from_node_resources")
     @patch(
         "job.tasks.prepare_and_train.prepare_data_and_train.EphemeralStorageResources.create_from_compiled_dataset_shards"
     )
@@ -53,7 +63,6 @@ class TestPrepareTrainingDataTask:
         mocked_publish_consumed_resources,
         mocked_trainer_image_info_create,
         mocked_create_from_compiled_dataset_shards,
-        mocked_compute_resources_from_node_resources,
         mocked_create_flyte_container_task,
         mocked_prepare_train,
         mocked_lock_project,
@@ -61,6 +70,7 @@ class TestPrepareTrainingDataTask:
         mocked_create_task_train_dataset,
         mocked_shard_dataset_for_train,
         mocked_report_progress,
+        mocked_asyncio_run,
         from_scratch,
         reshuffle_subsets,
         should_activate_model,
@@ -70,6 +80,7 @@ class TestPrepareTrainingDataTask:
         num_upload_threads,
         fxt_train_data,
         fxt_train_output_models,
+        fxt_event_loop,
     ) -> None:
         # Arrange
         train_data = fxt_train_data(workspace_id=WORKSPACE_ID, project_id=PROJECT_ID, task_id=TASK_ID)
@@ -83,6 +94,7 @@ class TestPrepareTrainingDataTask:
         mocked_prepare_train.return_value = fxt_train_output_models
         mocked_train_task = MagicMock()
         mocked_create_flyte_container_task.return_value = mocked_train_task
+        mocked_asyncio_run.return_value = ({"requests": {}, "limits": {}}, "cpu")
 
         # Act
         prepare_training_data_model_and_start_training(
@@ -148,7 +160,6 @@ class TestPrepareTrainingDataTask:
             report_progress_calls.append(call(progress=100.0, message="Training from sharded dataset is disabled"))
 
         mocked_prepare_train.assert_called_once_with(train_data=train_data, dataset=dataset)
-        mocked_compute_resources_from_node_resources.assert_called_once()
         mocked_trainer_image_info_create.assert_called_once()
         mocked_create_from_compiled_dataset_shards.assert_called_once()
         mocked_create_flyte_container_task.assert_called_once_with(
