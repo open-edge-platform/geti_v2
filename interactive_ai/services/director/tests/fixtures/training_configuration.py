@@ -646,8 +646,6 @@ def fxt_training_configuration_full_rest_view(
                 "value": 32,
                 "default_value": 32,
                 "allowed_values": [32, 64, 128],
-                "max_value": None,
-                "min_value": 0,
             },
             {
                 "key": "input_size_height",
@@ -658,8 +656,6 @@ def fxt_training_configuration_full_rest_view(
                 "value": 32,
                 "default_value": 32,
                 "allowed_values": [32, 64, 128],
-                "max_value": None,
-                "min_value": 0,
             },
             {
                 "early_stopping": [
