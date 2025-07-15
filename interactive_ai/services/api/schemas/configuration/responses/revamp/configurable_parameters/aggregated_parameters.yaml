@@ -1,4 +1,6 @@
-type: object
+oneOf:
+  - type: object
+  - type: array
 description: A parameter that contains nested parameters
 additionalProperties:
   anyOf:

@@ -3,6 +3,9 @@ properties:
   task_id:
     type: string
     description: Unique identifier for the task
+  model_manifest_id:
+    type: string
+    description: Unique identifier for the model manifest
   dataset_preparation:
     $ref: './configurable_parameters/aggregated_parameters.yaml'
   training:
