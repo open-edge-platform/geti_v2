@@ -23,7 +23,7 @@ class RITM {
     constructor(private CV: OpenCVTypes.cv) {}
 
     async load() {
-        ort.env.wasm.wasmPaths = sessionParams.wasmRoot;
+        ort.env.wasm.wasmPaths = await sessionParams.wasmRoot;
 
         this.models = {
             main: await this.loadModel(RITMModels.main),

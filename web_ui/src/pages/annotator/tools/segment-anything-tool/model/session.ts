@@ -19,7 +19,7 @@ export class Session {
 
     public async init(modelPath: string) {
         ort.env.wasm.numThreads = this.params.numThreads;
-        ort.env.wasm.wasmPaths = this.params.wasmRoot;
+        ort.env.wasm.wasmPaths = await this.params.wasmRoot;
         ort.env.wasm.simd = true;
 
         const modelData = await loadModel(modelPath);
