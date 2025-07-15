@@ -45,44 +45,35 @@ describe('Select project template step', () => {
         expect(setValidationError).toBeCalled();
     });
 
-    describe('FEATURE_FLAG_ANOMALY_REDUCTION enabled', () => {
-        it('should display only "Anomaly detection" card', async () => {
-            const anomalyMetadata: ProjectMetadata = {
-                name: 'test',
-                selectedDomains: [DOMAIN.ANOMALY_DETECTION],
-                projectTypeMetadata: [
-                    { domain: DOMAIN.ANOMALY_DETECTION, labels: [], relation: LabelsRelationType.SINGLE_SELECTION },
-                ],
-                selectedTab: 'Anomaly',
-                currentStep: STEPS.SELECT_TEMPLATE,
-                projectType: ProjectType.SINGLE,
-            };
+    it('should display only "Anomaly detection" card', async () => {
+        const anomalyMetadata: ProjectMetadata = {
+            name: 'test',
+            selectedDomains: [DOMAIN.ANOMALY_DETECTION],
+            projectTypeMetadata: [
+                { domain: DOMAIN.ANOMALY_DETECTION, labels: [], relation: LabelsRelationType.SINGLE_SELECTION },
+            ],
+            selectedTab: 'Anomaly',
+            currentStep: STEPS.SELECT_TEMPLATE,
+            projectType: ProjectType.SINGLE,
+        };
 
-            await render(
-                <SelectProjectTemplate
-                    animationDirection={animationDirection}
-                    metadata={anomalyMetadata}
-                    updateProjectState={jest.fn()}
-                    setValidationError={jest.fn()}
-                />,
-                {
-                    featureFlags: { FEATURE_FLAG_ANOMALY_REDUCTION: true },
-                }
-            );
+        await render(
+            <SelectProjectTemplate
+                animationDirection={animationDirection}
+                metadata={anomalyMetadata}
+                updateProjectState={jest.fn()}
+                setValidationError={jest.fn()}
+            />
+        );
 
-            expect(screen.getByText('Anomaly detection')).toBeInTheDocument();
-            expect(screen.getByText('Categorize images as normal or anomalous.')).toBeInTheDocument();
+        expect(screen.getByText('Anomaly detection')).toBeInTheDocument();
+        expect(screen.getByText('Categorize images as normal or anomalous.')).toBeInTheDocument();
 
-            expect(screen.queryByText('Anomaly classification')).not.toBeInTheDocument();
-            expect(
-                screen.queryByText('Detect and categorize an object as normal or anomalous.')
-            ).not.toBeInTheDocument();
+        expect(screen.queryByText('Anomaly classification')).not.toBeInTheDocument();
+        expect(screen.queryByText('Detect and categorize an object as normal or anomalous.')).not.toBeInTheDocument();
 
-            expect(screen.queryByText('Anomaly segmentation')).not.toBeInTheDocument();
-            expect(
-                screen.queryByText('Segment and categorize an object as normal or anomalous.')
-            ).not.toBeInTheDocument();
-        });
+        expect(screen.queryByText('Anomaly segmentation')).not.toBeInTheDocument();
+        expect(screen.queryByText('Segment and categorize an object as normal or anomalous.')).not.toBeInTheDocument();
     });
 
     describe('FEATURE_FLAG_KEYPOINT_DETECTION', () => {

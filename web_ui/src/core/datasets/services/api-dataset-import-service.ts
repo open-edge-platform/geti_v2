@@ -112,7 +112,6 @@ export const createApiDatasetImportService: CreateApiService<DatasetImportServic
     const importDatasetToNewProject = async ({
         projectData,
         setAbortController,
-        anomalyRevamp,
         ...workspaceIdentifier
     }: DatasetImportToNewProjectIdentifier): Promise<DatasetImportToNewProjectResponse> => {
         const { uploadId, projectName, taskType, labels } = projectData;
@@ -120,7 +119,7 @@ export const createApiDatasetImportService: CreateApiService<DatasetImportServic
         const projectDataDto: DatasetImportToNewProjectPayloadDTO = {
             file_id: uploadId,
             project_name: projectName,
-            task_type: getTaskTypeDTOFromTaskType(taskType, anomalyRevamp),
+            task_type: getTaskTypeDTOFromTaskType(taskType),
             labels,
         };
 
@@ -139,7 +138,6 @@ export const createApiDatasetImportService: CreateApiService<DatasetImportServic
     const importDatasetToNewProjectJob = async ({
         projectData,
         setAbortController,
-        anomalyRevamp,
         ...workspaceIdentifier
     }: DatasetImportToNewProjectIdentifier): Promise<{ jobId: string }> => {
         const abortController = new AbortController();
@@ -150,7 +148,7 @@ export const createApiDatasetImportService: CreateApiService<DatasetImportServic
             {
                 file_id: projectData.uploadId,
                 project_name: projectData.projectName,
-                task_type: getTaskTypeDTOFromTaskType(projectData.taskType, anomalyRevamp),
+                task_type: getTaskTypeDTOFromTaskType(projectData.taskType),
                 labels: projectData.labels,
             },
             { signal: abortController.signal }

@@ -61,7 +61,6 @@ const renderMockedComponent = async (datasetImportItem?: DatasetImportToNewProje
                 prepareDataset={jest.fn()}
                 patchDatasetImport={jest.fn()}
                 setActiveDatasetImportId={jest.fn()}
-                anomalyRevamp={false}
             />
         </ProjectProvider>
     );

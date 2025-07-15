@@ -190,7 +190,6 @@ describe('Api dataset import service', () => {
                     labels: [{ name: 'label name', color: '#fff' }],
                 },
                 setAbortController,
-                anomalyRevamp: false,
             });
 
             expect(response).toEqual({ projectId: '' });
@@ -208,7 +207,6 @@ describe('Api dataset import service', () => {
                     labels: [{ name: 'label name', color: '#fff' }],
                 },
                 setAbortController,
-                anomalyRevamp: false,
             });
 
             expect(response).toEqual({ jobId: '321' });

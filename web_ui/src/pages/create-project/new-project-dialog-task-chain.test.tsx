@@ -235,8 +235,7 @@ describe('New project dialog - Task chain', () => {
                             domain: 'Classification',
                             relation: 'Mixed',
                         }),
-                    ],
-                    true
+                    ]
                 );
             });
         });

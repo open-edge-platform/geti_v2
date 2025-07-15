@@ -37,3 +37,13 @@ get:
             Thumbnail video file not available:
               value:
                 $ref: "../../examples/media/error_responses/thumbnail_video_file_not_available.json"
+    '412':
+      description: Precondition failed
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+          examples:
+            Media is not preprocessed:
+              value:
+                $ref: '../../examples/media/error_responses/media_is_not_preprocessed.json'
