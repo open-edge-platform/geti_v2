@@ -1,0 +1,5 @@
+task: visual_prompting
+
+hyperparameters:
+  evaluation:
+    metric: dice

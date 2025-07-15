@@ -26,6 +26,11 @@ from geti_configuration_tools.training_configuration import (
 
 
 @pytest.fixture
+def fxt_active_model_manifest_id():
+    return "Object_Detection_DFine_X"
+
+
+@pytest.fixture
 def ftx_hyperparameters():
     yield Hyperparameters(
         dataset_preparation=DatasetPreparationParameters(
@@ -284,27 +289,6 @@ def fxt_training_configuration_task_level_rest_view(fxt_training_configuration_t
                         "value": 10,
                     },
                 ],
-                "max_detection_per_image": [
-                    {
-                        "default_value": False,
-                        "description": "Whether to limit the number of detections per image",
-                        "key": "enable",
-                        "name": "Enable maximum detection per image",
-                        "type": "bool",
-                        "value": False,
-                    },
-                    {
-                        "default_value": 10000,
-                        "description": "Maximum number of objects that can be detected in a single image, "
-                        "only applicable for instance segmentation models",
-                        "key": "max_detection_per_image",
-                        "max_value": None,
-                        "min_value": 0,
-                        "name": "Maximum number of detections per image",
-                        "type": "int",
-                        "value": 10000,
-                    },
-                ],
             },
         ],
         "evaluation": [],
@@ -312,13 +296,13 @@ def fxt_training_configuration_task_level_rest_view(fxt_training_configuration_t
 
 
 @pytest.fixture
-def fxt_partial_training_configuration_manifest_level(fxt_mongo_id):
+def fxt_partial_training_configuration_manifest_level(fxt_mongo_id, fxt_active_model_manifest_id):
     # Manifest level configuration contains parameters related to a model architecture
     # if there is a conflict with task level configuration, manifest level configuration takes precedence
     partial_config_dict = {
         "id_": fxt_mongo_id(12),
         "task_id": fxt_mongo_id(22),
-        "model_manifest_id": "test_model_manifest_id",
+        "model_manifest_id": fxt_active_model_manifest_id,
         "global_parameters": {
             "dataset_preparation": {
                 "subset_split": {
@@ -680,27 +664,6 @@ def fxt_training_configuration_full_rest_view(
                         "name": "Patience",
                         "type": "int",
                         "value": 10,
-                    },
-                ],
-                "max_detection_per_image": [
-                    {
-                        "default_value": False,
-                        "description": "Whether to limit the number of detections per image",
-                        "key": "enable",
-                        "name": "Enable maximum detection per image",
-                        "type": "bool",
-                        "value": False,
-                    },
-                    {
-                        "default_value": 10000,
-                        "description": "Maximum number of objects that can be detected in a single image, "
-                        "only applicable for instance segmentation models",
-                        "key": "max_detection_per_image",
-                        "max_value": None,
-                        "min_value": 0,
-                        "name": "Maximum number of detections per image",
-                        "type": "int",
-                        "value": 10000,
                     },
                 ],
             },

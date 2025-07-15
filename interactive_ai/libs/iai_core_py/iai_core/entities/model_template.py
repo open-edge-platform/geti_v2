@@ -565,6 +565,11 @@ class ModelTemplate:
     model_status: ModelTemplateDeprecationStatus = ModelTemplateDeprecationStatus.ACTIVE
     is_default_for_task: bool = False
 
+    @property
+    def model_manifest_id(self) -> str:
+        """Get model manifest ID (Alias for model_template_id)"""
+        return self.model_template_id
+
     def __post_init__(self):
         """Do sanitation checks before loading the hyper-parameters."""
         if self.instantiation == InstantiationType.GRPC and self.grpc_address == "":

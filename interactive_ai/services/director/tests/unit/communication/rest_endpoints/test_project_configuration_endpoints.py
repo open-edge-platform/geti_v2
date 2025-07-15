@@ -44,7 +44,7 @@ class TestProjectConfigurationEndpoints:
             result = fxt_director_app.get(f"{API_PROJECT_PATTERN}/project_configuration")
 
         # Assert
-        mock_get_project_config.assert_called_once_with(project_identifier=project_identifier, task_id=None)
+        mock_get_project_config.assert_called_once_with(project_identifier=project_identifier)
 
         assert result.status_code == HTTPStatus.OK
         compare(json.loads(result.content), project_config_dict, ignore_eq=True)
@@ -96,21 +96,30 @@ class TestProjectConfigurationEndpoints:
             ),
             (
                 {
-                    "task_id": "detection_1",
-                    "training": {
-                        "constraints": [
-                            {
-                                "key": "min_images_per_label",
-                                "value": 15,
-                                "type": "int",
-                                "name": "Minimum images per label",
-                            }
-                        ]
-                    },
-                    "auto_training": [
-                        {"key": "enable", "value": False, "type": "bool", "name": "Enable auto training"},
-                        {"key": "min_images_per_label", "value": 8, "type": "int", "name": "Minimum images per label"},
-                    ],
+                    "task_configs": [
+                        {
+                            "task_id": "detection_1",
+                            "training": {
+                                "constraints": [
+                                    {
+                                        "key": "min_images_per_label",
+                                        "value": 15,
+                                        "type": "int",
+                                        "name": "Minimum images per label",
+                                    }
+                                ]
+                            },
+                            "auto_training": [
+                                {"key": "enable", "value": False, "type": "bool", "name": "Enable auto training"},
+                                {
+                                    "key": "min_images_per_label",
+                                    "value": 8,
+                                    "type": "int",
+                                    "name": "Minimum images per label",
+                                },
+                            ],
+                        }
+                    ]
                 },
                 f"{API_PROJECT_PATTERN}/project_configuration?task_id=detection_1",
             ),
