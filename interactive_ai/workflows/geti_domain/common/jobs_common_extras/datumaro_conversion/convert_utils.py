@@ -654,11 +654,7 @@ class ConvertUtils:
         """
         dm_label_mapper = ConvertUtils.get_dm_label_mapper(dm_categories, domain)
         sc_label_mapper: dict[str, Label] = {}
-        if domain in [
-            Domain.ANOMALY_CLASSIFICATION,
-            Domain.ANOMALY_DETECTION,
-            Domain.ANOMALY_SEGMENTATION,
-        ]:
+        if domain == Domain.ANOMALY:
             # create sc_label_map by label attribute, is_anomalous
             sc_anomaly_label: Label = NullLabel()
             sc_normal_label: Label = NullLabel()

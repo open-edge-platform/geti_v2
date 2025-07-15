@@ -26,13 +26,28 @@ def fxt_rectangle_annotation(fxt_scored_label):
 
 
 @pytest.fixture
+def fxt_full_rectangle_annotation(fxt_scored_label):
+    yield Annotation(
+        shape=Rectangle(
+            x1=0,
+            x2=1,
+            y1=0,
+            y2=1,
+            modification_date=DummyValues.MODIFICATION_DATE,
+        ),
+        labels=[fxt_scored_label],
+        id_=DummyValues.UUID,
+    )
+
+
+@pytest.fixture
 def fxt_anomalous_rectangle_annotation(fxt_anomalous_scored_label):
     yield Annotation(
         shape=Rectangle(
-            x1=DummyValues.X,
-            x2=DummyValues.X + DummyValues.WIDTH,
-            y1=DummyValues.Y,
-            y2=DummyValues.Y + DummyValues.HEIGHT,
+            x1=0,
+            x2=1,
+            y1=0,
+            y2=1,
             modification_date=DummyValues.MODIFICATION_DATE,
         ),
         labels=[fxt_anomalous_scored_label],
@@ -84,7 +99,7 @@ def fxt_annotation_scene_factory(
 
 
 @pytest.fixture
-def fxt_annotation_scene_anomalous(
+def fxt_anomaly_annotation_scene_anomalous(
     fxt_ote_id,
     fxt_image_identifier,
     fxt_anomalous_rectangle_annotation,
@@ -99,6 +114,26 @@ def fxt_annotation_scene_anomalous(
         creation_date=DummyValues.MODIFICATION_DATE,
         annotations=[
             fxt_anomalous_rectangle_annotation,
+        ],
+    )
+
+
+@pytest.fixture
+def fxt_anomaly_annotation_scene_normal(
+    fxt_ote_id,
+    fxt_image_identifier,
+    fxt_full_rectangle_annotation,
+):
+    yield AnnotationScene(
+        kind=DummyValues.ANNOTATION_SCENE_KIND,
+        media_identifier=fxt_image_identifier,
+        media_height=DummyValues.MEDIA_HEIGHT,
+        media_width=DummyValues.MEDIA_WIDTH,
+        id_=fxt_ote_id(),
+        last_annotator_id=DummyValues.ANNOTATION_EDITOR_NAME,
+        creation_date=DummyValues.MODIFICATION_DATE,
+        annotations=[
+            fxt_full_rectangle_annotation,
         ],
     )
 

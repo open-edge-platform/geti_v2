@@ -429,27 +429,27 @@ class TestSubsetHelper:
 class TestAnomalySubsetHelper:
     def test_assign_item_to_subset_empty_subset(
         self,
-        fxt_anomaly_detection_task,
+        fxt_anomaly_task,
         fxt_label,
         fxt_configuration,
         fxt_anomalous_label,
-        fxt_dataset_item,
+        fxt_anomaly_dataset_item_normal_annotation,
     ) -> None:
         """
-        Checks that the 'assign_item_to_subset' method properly assigns anomalous items to the first empty subset,
+        Checks that the 'assign_item_to_subset' method properly assigns the normal items to the first empty subset,
         which is the training subset.
         """
-        dataset_item = fxt_dataset_item()
+        dataset_item = fxt_anomaly_dataset_item_normal_annotation()
         with (
             patch.object(_AnomalySubsetHelper, "__init__", new=do_nothing),
             patch.object(_AnomalySubsetHelper, "count_item", return_value=None) as mock_count_item,
         ):
             subset_helper = _AnomalySubsetHelper(
-                task_node=fxt_anomaly_detection_task,
+                task_node=fxt_anomaly_task,
                 task_labels=[fxt_label, fxt_anomalous_label],
                 config=fxt_configuration,
             )
-            subset_helper.task = fxt_anomaly_detection_task
+            subset_helper.task = fxt_anomaly_task
             subset_helper.subset_label_counter = np.array([[0, 0, 0], [0, 0, 0]])
             subset_helper.latest_task_labels = [fxt_label, fxt_anomalous_label]
             subset_helper.latest_task_label_map = {label.id_: label for label in subset_helper.latest_task_labels}
@@ -469,27 +469,27 @@ class TestAnomalySubsetHelper:
 
     def test_assign_item_to_subset_empty_subset_anomaly_label(
         self,
-        fxt_anomaly_detection_task,
+        fxt_anomaly_task,
         fxt_label,
         fxt_configuration,
         fxt_anomalous_label,
-        fxt_dataset_item_anomalous,
+        fxt_anomaly_dataset_item_anomalous_annotation,
     ) -> None:
         """
         Checks that the 'assign_item_to_subset' method properly assigns anomalous items to the first empty
         non-training subset, which is the validation subset.
         """
-        dataset_item = fxt_dataset_item_anomalous()
+        dataset_item = fxt_anomaly_dataset_item_anomalous_annotation()
         with (
             patch.object(_AnomalySubsetHelper, "__init__", new=do_nothing),
             patch.object(_AnomalySubsetHelper, "count_item", return_value=None) as mock_count_item,
         ):
             subset_helper = _AnomalySubsetHelper(
-                task_node=fxt_anomaly_detection_task,
+                task_node=fxt_anomaly_task,
                 task_labels=[fxt_label, fxt_anomalous_label],
                 config=fxt_configuration,
             )
-            subset_helper.task = fxt_anomaly_detection_task
+            subset_helper.task = fxt_anomaly_task
             subset_helper.subset_label_counter = np.array([[0, 0, 0], [0, 0, 0]])
             subset_helper.latest_task_labels = [fxt_label, fxt_anomalous_label]
             subset_helper.latest_task_label_map = {label.id_: label for label in subset_helper.latest_task_labels}

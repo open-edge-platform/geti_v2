@@ -39,14 +39,14 @@ class TestConfigurationInitializer:
         fxt_pipeline_project,
         fxt_project_with_detection_task,
         fxt_project_with_segmentation_task,
-        fxt_project_with_anomaly_classification_task,
+        fxt_project_with_anomaly_task,
     ):
         # Arrange
         projects_to_test = [
             fxt_project_with_segmentation_task,
             fxt_project_with_detection_task,
             fxt_pipeline_project,
-            fxt_project_with_anomaly_classification_task,
+            fxt_project_with_anomaly_task,
         ]
 
         for project in projects_to_test:
@@ -86,11 +86,11 @@ class TestConfigurationInitializer:
                     # Assert
                     compare(config.data, expected_config, ignore_eq=True)
 
-    def test_initialize_project_configuration_anomaly_case(self, request, fxt_project_with_anomaly_classification_task):
+    def test_initialize_project_configuration_anomaly_case(self, request, fxt_project_with_anomaly_task):
         # Arrange
-        repo = ConfigurableParametersRepo(fxt_project_with_anomaly_classification_task.identifier)
+        repo = ConfigurableParametersRepo(fxt_project_with_anomaly_task.identifier)
         request.addfinalizer(lambda: repo.delete_all())
-        task = fxt_project_with_anomaly_classification_task.get_trainable_task_nodes()[0]
+        task = fxt_project_with_anomaly_task.get_trainable_task_nodes()[0]
         components_to_check = [ComponentType.DATASET_COUNTER, ComponentType.TASK_NODE]
         expected_config_types = [AnomalyDatasetCounterConfig, AnomalyTaskNodeConfig]
 
@@ -99,10 +99,10 @@ class TestConfigurationInitializer:
             patch.object(
                 ProjectRepo,
                 "get_by_id",
-                return_value=fxt_project_with_anomaly_classification_task,
+                return_value=fxt_project_with_anomaly_task,
             ),
         ):
-            ProjectService.init_configuration(project_id=fxt_project_with_anomaly_classification_task.id_)
+            ProjectService.init_configuration(project_id=fxt_project_with_anomaly_task.id_)
             for component, expected_config_type in zip(components_to_check, expected_config_types):
                 config = repo.get_latest_component_parameters(
                     component_type=component,

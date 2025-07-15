@@ -91,7 +91,7 @@ class ExportUtils:
         primary_labels = set()
         action_labels = set()
         for label in labels:
-            if label.domain in [Domain.DETECTION, Domain.ANOMALY_DETECTION]:
+            if label.domain == Domain.DETECTION:
                 primary_labels.add(label)
             else:
                 action_labels.add(label)
@@ -122,6 +122,7 @@ class ExportUtils:
         return project_type in [
             GetiProjectType.CLASSIFICATION,
             GetiProjectType.ROTATED_DETECTION,
+            GetiProjectType.ANOMALY,
             GetiProjectType.ANOMALY_CLASSIFICATION,
             GetiProjectType.ANOMALY_DETECTION,
             GetiProjectType.ANOMALY_SEGMENTATION,

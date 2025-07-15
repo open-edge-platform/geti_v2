@@ -445,9 +445,9 @@ class _AnomalySubsetHelper(_SubsetHelper):
             subsets = [Subset.TRAINING, Subset.VALIDATION, Subset.TESTING]
 
         # Find which subset does not have items yet.
-        subset_occurences = self.subset_label_counter[:, self.labels_to_index[next(iter(item_label_ids))]]
+        subset_occurrences = self.subset_label_counter[:, self.labels_to_index[next(iter(item_label_ids))]]
         empty_subsets = [
-            subset for subset, occurence in zip(SUBSETS, subset_occurences) if occurence == 0 and subset in subsets
+            subset for subset, occurrence in zip(SUBSETS, subset_occurrences) if occurrence == 0 and subset in subsets
         ]
 
         if len(empty_subsets) > 0:

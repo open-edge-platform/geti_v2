@@ -60,12 +60,12 @@ def fxt_anomaly_classification_task_graph(fxt_dataset_task, fxt_anomaly_classifi
 @pytest.fixture
 def fxt_anomaly_classification_task(
     fxt_mongo_id,
-    fxt_model_storage_anomaly_classification,
+    fxt_model_storage_anomaly,
 ):
     yield TaskNode(
         title="Sample anomaly classification task",
         project_id=fxt_mongo_id(1),
-        task_properties=TaskProperties.from_model_template(fxt_model_storage_anomaly_classification.model_template),
+        task_properties=TaskProperties.from_model_template(fxt_model_storage_anomaly.model_template),
         id_=fxt_mongo_id(13),
     )
 
@@ -77,7 +77,7 @@ def fxt_task_node():
         project_id=ID("project_id"),
         id_=ID("task_id"),
         task_properties=TaskProperties(
-            task_type=TaskType.ANOMALY_DETECTION,
+            task_type=TaskType.ANOMALY,
             task_family=TaskFamily.VISION,
             is_trainable=True,
             is_global=False,

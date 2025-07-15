@@ -45,13 +45,13 @@ def fxt_labels():
     yield [
         Label(
             name="label_a",
-            domain=Domain.ANOMALY_DETECTION,
+            domain=Domain.ANOMALY,
             id_=ID("label_a_id"),
             is_anomalous=True,
         ),
         Label(
             name="label_b",
-            domain=Domain.ANOMALY_DETECTION,
+            domain=Domain.ANOMALY,
             id_=ID("label_b_id"),
             is_anomalous=False,
         ),

@@ -53,9 +53,7 @@ DEFAULT_MODEL_TEMPLATES = {
     str(TaskType.CLASSIFICATION).lower(): "Custom_Image_Classification_EfficinetNet-B0",
     str(TaskType.DETECTION).lower(): "Custom_Object_Detection_Gen3_ATSS",
     str(TaskType.SEGMENTATION).lower(): "Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR",
-    str(TaskType.ANOMALY_CLASSIFICATION).lower(): "ote_anomaly_classification_padim",
-    str(TaskType.ANOMALY_DETECTION).lower(): "ote_anomaly_detection_padim",
-    str(TaskType.ANOMALY_SEGMENTATION).lower(): "ote_anomaly_segmentation_padim",
+    str(TaskType.ANOMALY).lower(): "ote_anomaly_padim",  # This is equivilant to anomaly classification
     str(TaskType.ROTATED_DETECTION).lower(): "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_ResNet50",
     str(TaskType.INSTANCE_SEGMENTATION).lower(): "Custom_Counting_Instance_Segmentation_MaskRCNN_ResNet50",
 }
@@ -410,6 +408,12 @@ def fxt_datumaro_dataset_multi_label(fxt_test_dataset_generator) -> dm.Dataset:
 
 
 @pytest.fixture
+def fxt_datumaro_dataset_anomaly(fxt_test_dataset_generator) -> dm.Dataset:
+    # anomaly classification dataset = anomaly dataset
+    return fxt_test_dataset_generator("datumaro_mini_anomaly_cls.zip", "datumaro")
+
+
+@pytest.fixture
 def fxt_datumaro_dataset_anomaly_cls(fxt_test_dataset_generator) -> dm.Dataset:
     return fxt_test_dataset_generator("datumaro_mini_anomaly_cls.zip", "datumaro")
 
@@ -469,9 +473,7 @@ def fxt_register_dataset_ie_model_templates(request: FixtureRequest):
         Domain.DETECTION: TaskType.DETECTION,
         Domain.SEGMENTATION: TaskType.SEGMENTATION,
         Domain.ROTATED_DETECTION: TaskType.ROTATED_DETECTION,
-        Domain.ANOMALY_CLASSIFICATION: TaskType.ANOMALY_CLASSIFICATION,
-        Domain.ANOMALY_DETECTION: TaskType.ANOMALY_DETECTION,
-        Domain.ANOMALY_SEGMENTATION: TaskType.ANOMALY_SEGMENTATION,
+        Domain.ANOMALY: TaskType.ANOMALY,
     }
 
     model_template_list = ModelTemplateList()
@@ -482,9 +484,7 @@ def fxt_register_dataset_ie_model_templates(request: FixtureRequest):
         Domain.DETECTION,
         Domain.SEGMENTATION,
         Domain.ROTATED_DETECTION,
-        Domain.ANOMALY_CLASSIFICATION,
-        Domain.ANOMALY_DETECTION,
-        Domain.ANOMALY_SEGMENTATION,
+        Domain.ANOMALY,
     ]:
         model_template_id = DEFAULT_MODEL_TEMPLATES[domain.name.lower()]
         task_type = domain_to_task_type[domain]
@@ -656,22 +656,44 @@ def fxt_expected_pipeline_by_project_parser():
                 ],
             },
         },
-        "fxt_datumaro_dataset_anomaly_cls": {
-            GetiProjectType.ANOMALY_CLASSIFICATION: {
-                "connections": [{"from": "Dataset", "to": "Anomaly Classification"}],
+        "fxt_datumaro_dataset_anomaly": {
+            GetiProjectType.ANOMALY: {
+                "connections": [{"from": "Dataset", "to": "Anomaly"}],
                 "tasks": [
                     {"title": "Dataset", "task_type": "dataset", "labels": []},
                     {
-                        "title": "Anomaly Classification",
-                        "task_type": "anomaly_classification",
+                        "title": "Anomaly",
+                        "task_type": "anomaly",
                         "labels": [
                             {
                                 "name": "Normal",
-                                "group": "default - Anomaly classification task",
+                                "group": "Anomaly Task Labels",
                             },
                             {
                                 "name": "Anomalous",
-                                "group": "default - Anomaly classification task",
+                                "group": "Anomaly Task Labels",
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+        "fxt_datumaro_dataset_anomaly_cls": {
+            GetiProjectType.ANOMALY: {
+                "connections": [{"from": "Dataset", "to": "Anomaly"}],
+                "tasks": [
+                    {"title": "Dataset", "task_type": "dataset", "labels": []},
+                    {
+                        "title": "Anomaly",
+                        "task_type": "anomaly",
+                        "labels": [
+                            {
+                                "name": "Normal",
+                                "group": "Anomaly Task Labels",
+                            },
+                            {
+                                "name": "Anomalous",
+                                "group": "Anomaly Task Labels",
                             },
                         ],
                     },
@@ -679,21 +701,21 @@ def fxt_expected_pipeline_by_project_parser():
             },
         },
         "fxt_datumaro_dataset_anomaly_det": {
-            GetiProjectType.ANOMALY_DETECTION: {
-                "connections": [{"from": "Dataset", "to": "Anomaly Detection"}],
+            GetiProjectType.ANOMALY: {
+                "connections": [{"from": "Dataset", "to": "Anomaly"}],
                 "tasks": [
                     {"title": "Dataset", "task_type": "dataset", "labels": []},
                     {
-                        "title": "Anomaly Detection",
-                        "task_type": "anomaly_detection",
+                        "title": "Anomaly",
+                        "task_type": "anomaly",
                         "labels": [
                             {
                                 "name": "Normal",
-                                "group": "default - Anomaly detection task",
+                                "group": "Anomaly Task Labels",
                             },
                             {
                                 "name": "Anomalous",
-                                "group": "default - Anomaly detection task",
+                                "group": "Anomaly Task Labels",
                             },
                         ],
                     },
@@ -701,21 +723,21 @@ def fxt_expected_pipeline_by_project_parser():
             },
         },
         "fxt_datumaro_dataset_anomaly_seg": {
-            GetiProjectType.ANOMALY_SEGMENTATION: {
-                "connections": [{"from": "Dataset", "to": "Anomaly Segmentation"}],
+            GetiProjectType.ANOMALY: {
+                "connections": [{"from": "Dataset", "to": "Anomaly"}],
                 "tasks": [
                     {"title": "Dataset", "task_type": "dataset", "labels": []},
                     {
-                        "title": "Anomaly Segmentation",
-                        "task_type": "anomaly_segmentation",
+                        "title": "Anomaly",
+                        "task_type": "anomaly",
                         "labels": [
                             {
                                 "name": "Normal",
-                                "group": "default - Anomaly segmentation task",
+                                "group": "Anomaly Task Labels",
                             },
                             {
                                 "name": "Anomalous",
-                                "group": "default - Anomaly segmentation task",
+                                "group": "Anomaly Task Labels",
                             },
                         ],
                     },
@@ -776,13 +798,6 @@ def fxt_expected_pipeline_by_project_parser():
             },
         },
     }
-
-
-@pytest.fixture(scope="function", params=[True, False])
-def fxt_anomaly_reduction(request: pytest.FixtureRequest) -> bool:
-    """Parameterize FEATURE_FLAG_ANOMALY_REDUCTION"""
-    TestFeatureFlagProvider.set_flag(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION, request.param)
-    return request.param
 
 
 @pytest.fixture(scope="function", params=[True, False])

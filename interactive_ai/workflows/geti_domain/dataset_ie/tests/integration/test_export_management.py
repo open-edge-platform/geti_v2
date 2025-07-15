@@ -35,16 +35,12 @@ class TestExportManager:
             ("multi-class", "datumaro"): self._assert_datumaro_export_valid,
             ("segmentation", "coco"): self._assert_segmentation_coco_export_valid,
             ("segmentation", "datumaro"): self._assert_datumaro_export_valid,
-            ("anom_class", "voc"): self._assert_classification_voc_export_valid,
-            ("anom_seg", "voc"): self._assert_anom_seg_voc_export_valid,
-            ("anom_det", "voc"): self._assert_anom_det_voc_export_valid,
+            ("anom", "voc"): self._assert_classification_voc_export_valid,
             ("det_class", "voc"): self._assert_det_class_voc_export_valid,
             ("multi_label", "voc"): self._assert_classification_voc_export_valid,
             ("detection", "yolo"): self._assert_detection_yolo_export_valid,
             ("detection", "datumaro"): self._assert_datumaro_export_valid,
-            ("anom_class", "datumaro"): self._assert_datumaro_export_valid,
-            ("anom_seg", "datumaro"): self._assert_datumaro_export_valid,
-            ("anom_det", "datumaro"): self._assert_datumaro_export_valid,
+            ("anom", "datumaro"): self._assert_datumaro_export_valid,
             # ("keypoint", "datumaro"): self._assert_datumaro_export_valid, TODO: ITEP-32288
         }
 
@@ -60,15 +56,11 @@ class TestExportManager:
             ("fxt_annotated_detection_project", "detection", "datumaro"),
             ("fxt_annotated_segmentation_project", "segmentation", "coco"),
             ("fxt_annotated_segmentation_project", "segmentation", "datumaro"),
-            ("fxt_annotated_anomaly_cls_project", "anom_class", "voc"),
-            ("fxt_annotated_anomaly_seg_project", "anom_seg", "voc"),
-            ("fxt_annotated_anomaly_det_project", "anom_det", "voc"),
+            ("fxt_annotated_anomaly_project", "anom", "voc"),
             ("fxt_annotated_chained_det_cls_project", "det_class", "voc"),
             ("fxt_annotated_multi_label_project", "multi_label", "voc"),
-            ("fxt_annotated_anomaly_cls_project", "anom_class", "datumaro"),
-            ("fxt_annotated_anomaly_cls_project_with_video", "anom_class", "datumaro"),
-            ("fxt_annotated_anomaly_det_project", "anom_det", "datumaro"),
-            ("fxt_annotated_anomaly_seg_project", "anom_seg", "datumaro"),
+            ("fxt_annotated_anomaly_project", "anom", "datumaro"),
+            ("fxt_annotated_anomaly_project_with_video", "anom", "datumaro"),
             # ("fxt_annotated_keypoint_det_project", "keypoint", "datumaro"), TODO: ITEP-32288
         ],
     )
@@ -129,7 +121,7 @@ class TestExportManager:
         [
             ("fxt_annotated_detection_project", "detection", "yolo"),
             ("fxt_annotated_detection_project", "detection", "datumaro"),
-            ("fxt_annotated_anomaly_cls_project_with_video", "anom_class", "datumaro"),
+            ("fxt_annotated_anomaly_project_with_video", "anom", "datumaro"),
         ],
     )
     def test_export_projects_with_video(

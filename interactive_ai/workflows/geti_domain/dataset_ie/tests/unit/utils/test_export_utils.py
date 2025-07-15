@@ -70,6 +70,7 @@ class TestExportUtils:
         supported_project_types = [
             GetiProjectType.CLASSIFICATION,
             GetiProjectType.ROTATED_DETECTION,
+            GetiProjectType.ANOMALY,
             GetiProjectType.ANOMALY_CLASSIFICATION,
             GetiProjectType.ANOMALY_DETECTION,
             GetiProjectType.ANOMALY_SEGMENTATION,

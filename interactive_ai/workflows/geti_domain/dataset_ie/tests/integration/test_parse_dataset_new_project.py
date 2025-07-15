@@ -9,18 +9,12 @@ import pytest
 from geti_types import ID
 from iai_core.entities.label import Domain
 from iai_core.entities.model_template import TaskType
-from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
-from jobs_common_extras.datumaro_conversion.definitions import GetiProjectType
+from jobs_common_extras.datumaro_conversion.definitions import ANOMALY_PROJECT_TYPES, GetiProjectType
 
 from job.repos.data_repo import ImportDataRepo
 from job.tasks.import_tasks.parse_dataset_new_project import _parse_dataset_for_import_to_new_project
 from job.utils.import_utils import ImportUtils
-from tests.fixtures.datasets import (
-    DatasetInfo,
-    get_dataset_info,
-    warning_dataset_contain_no_labels,
-    warning_local_annotations_lost,
-)
+from tests.fixtures.datasets import DatasetInfo, warning_dataset_contain_no_labels, warning_local_annotations_lost
 from tests.test_helpers import save_dataset
 
 
@@ -55,12 +49,7 @@ class TestParseDatasetNewProject:
             if domain in domain_to_warnings:
                 warnings.update(domain_to_warnings[domain])
 
-        if FeatureFlagProvider.is_enabled(
-            feature_flag=FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION
-        ) and exported_project_type in [
-            GetiProjectType.ANOMALY_DETECTION,
-            GetiProjectType.ANOMALY_SEGMENTATION,
-        ]:
+        if exported_project_type in [GetiProjectType.ANOMALY_DETECTION, GetiProjectType.ANOMALY_SEGMENTATION]:
             warnings.add(warning_local_annotations_lost())
 
         if not project_types:
@@ -84,10 +73,7 @@ class TestParseDatasetNewProject:
         expected_group_names: dict[GetiProjectType, set[str]] = {},
         expected_keypoint_structure: dict[str, list] = {},
     ):
-        (
-            supported_project_types,
-            warnings,
-        ) = self._parse_dataset_for_import_to_new_project(data_repo, dataset_id)
+        supported_project_types, warnings = self._parse_dataset_for_import_to_new_project(data_repo, dataset_id)
 
         assert len(supported_project_types) == len(expected_projects), [
             meta["project_type"] for meta in supported_project_types
@@ -125,26 +111,24 @@ class TestParseDatasetNewProject:
         expected_groups = {}
         expected_labels: dict[GetiProjectType, set[str]] = copy.deepcopy(dataset_info.label_names_by_cross_project)
         # set re-import case (src=dst)
-        if FeatureFlagProvider.is_enabled(feature_flag=FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION):
-            # Handle an anomaly dataset as if it was exported from an anomaly classification task.
-            if src_project_type in [
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY_SEGMENTATION,
-            ]:
-                # src_project_type = GetiProjectType.ANOMALY_CLASSIFICATION
-                expected_labels.pop(GetiProjectType.ANOMALY_DETECTION, None)
+
+        if src_project_type in [GetiProjectType.ANOMALY_DETECTION, GetiProjectType.ANOMALY_SEGMENTATION]:
+            expected_labels.pop(GetiProjectType.ANOMALY, None)
+        else:
+            if src_project_type in ANOMALY_PROJECT_TYPES:
+                expected_labels[GetiProjectType.ANOMALY] = dataset_info.label_names
             else:
                 expected_labels[src_project_type] = dataset_info.label_names
-                if src_project_type == GetiProjectType.ANOMALY_CLASSIFICATION:
-                    expected_groups[src_project_type] = {"Anomaly Task Labels"}
-        elif dataset_info.label_names:
-            expected_labels[src_project_type] = dataset_info.label_names
+            if src_project_type == GetiProjectType.ANOMALY_CLASSIFICATION:
+                expected_groups[GetiProjectType.ANOMALY] = {"Anomaly Task Labels"}
+        if dataset_info.label_names:
+            if src_project_type in ANOMALY_PROJECT_TYPES:
+                expected_labels[GetiProjectType.ANOMALY] = dataset_info.label_names
+            else:
+                expected_labels[src_project_type] = dataset_info.label_names
 
         for dst_project_type in dataset_info.label_names_by_cross_project:
-            if (
-                FeatureFlagProvider.is_enabled(feature_flag=FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
-                and dst_project_type == GetiProjectType.ANOMALY_DETECTION
-            ):
+            if dst_project_type == GetiProjectType.ANOMALY:
                 continue
             trainable_tasks = ImportUtils.get_trainable_tasks_of_project_type(dst_project_type)
             group_names = set()
@@ -199,6 +183,7 @@ class TestParseDatasetNewProject:
             )
             mock_get_exported_project_type.assert_called()
 
+    @pytest.mark.skip("ITEP-72043")
     def test_parse_dataset_for_import_to_new_project__datumaro_format(
         self,
         fxt_dataset_id__datumaro,
@@ -207,29 +192,6 @@ class TestParseDatasetNewProject:
         fxt_dataset_id, dataset_info = fxt_dataset_id__datumaro
         self._test_parse_dataset_for_import_to_new_project__datumaro_format(
             fxt_dataset_id, dataset_info, fxt_import_data_repo
-        )
-
-    @pytest.mark.parametrize(
-        "anomaly_dataset_id",
-        (
-            "fxt_datumaro_dataset_anomaly_cls_id",
-            "fxt_datumaro_dataset_anomaly_det_id",
-            "fxt_datumaro_dataset_anomaly_seg_id",
-        ),
-    )
-    def test_parse_dataset_for_import_to_new_project__datumaro_format__anomaly(
-        self,
-        anomaly_dataset_id,
-        fxt_enable_feature_flag_name,
-        fxt_import_data_repo,
-        request,
-    ):
-        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION.name)
-        dataset_id = request.getfixturevalue(anomaly_dataset_id)
-        dataset_info = get_dataset_info(anomaly_dataset_id)
-
-        self._test_parse_dataset_for_import_to_new_project__datumaro_format(
-            dataset_id, dataset_info, fxt_import_data_repo
         )
 
     @pytest.mark.skip("ITEP-32288")

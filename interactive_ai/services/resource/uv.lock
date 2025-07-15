@@ -1774,6 +1774,7 @@ dependencies = [
     { name = "iai-core" },
     { name = "jsonschema" },
     { name = "media-utils" },
+    { name = "pillow" },
     { name = "python-multipart" },
     { name = "uvicorn" },
 ]
@@ -1785,7 +1786,6 @@ dev = [
     { name = "httpx" },
     { name = "mypy" },
     { name = "mypy-protobuf" },
-    { name = "pillow" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-freezegun" },
@@ -1809,6 +1809,7 @@ requires-dist = [
     { name = "iai-core", editable = "../../libs/iai_core_py" },
     { name = "jsonschema", specifier = ">=4.18.0a10" },
     { name = "media-utils", editable = "../../libs/media_utils" },
+    { name = "pillow", specifier = "==11.1.0" },
     { name = "python-multipart", specifier = "~=0.0.18" },
     { name = "uvicorn", specifier = "~=0.27" },
 ]
@@ -1820,7 +1821,6 @@ dev = [
     { name = "httpx", specifier = "~=0.26" },
     { name = "mypy", specifier = "~=1.15" },
     { name = "mypy-protobuf", specifier = "==3.5" },
-    { name = "pillow", specifier = "==11.1.0" },
     { name = "pre-commit", specifier = "~=4.1" },
     { name = "pytest", specifier = "~=8.3" },
     { name = "pytest-freezegun", specifier = "==0.4.2" },

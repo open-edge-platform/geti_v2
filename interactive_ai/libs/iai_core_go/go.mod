@@ -2,7 +2,7 @@ module geti.com/iai_core
 
 go 1.23.3
 
-toolchain go1.23.8
+toolchain go1.23.11
 
 require (
 	github.com/caarlos0/env/v11 v11.2.2

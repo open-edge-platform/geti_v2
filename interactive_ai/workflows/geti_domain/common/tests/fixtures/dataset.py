@@ -170,7 +170,7 @@ def fxt_compiled_dataset_shards(request):
 
 
 @pytest.fixture
-def fxt_dataset_item_anomalous(fxt_image_entity_factory, fxt_annotation_scene_anomalous):
+def fxt_anomaly_dataset_item_anomalous_annotation(fxt_image_entity_factory, fxt_anomaly_annotation_scene_anomalous):
     """
     DatasetItem with a media and anomalous annotation.
     The subset can be specified by parameter.
@@ -179,7 +179,25 @@ def fxt_dataset_item_anomalous(fxt_image_entity_factory, fxt_annotation_scene_an
     def _build_item(index: int = 1, subset: Subset = Subset.NONE):
         return DatasetItem(
             media=fxt_image_entity_factory(index=index),
-            annotation_scene=fxt_annotation_scene_anomalous,
+            annotation_scene=fxt_anomaly_annotation_scene_anomalous,
+            subset=subset,
+            id_=DatasetRepo.generate_id(),
+        )
+
+    yield _build_item
+
+
+@pytest.fixture
+def fxt_anomaly_dataset_item_normal_annotation(fxt_image_entity_factory, fxt_anomaly_annotation_scene_normal):
+    """
+    DatasetItem with a media and anomalous annotation.
+    The subset can be specified by parameter.
+    """
+
+    def _build_item(index: int = 1, subset: Subset = Subset.NONE):
+        return DatasetItem(
+            media=fxt_image_entity_factory(index=index),
+            annotation_scene=fxt_anomaly_annotation_scene_normal,
             subset=subset,
             id_=DatasetRepo.generate_id(),
         )
@@ -192,10 +210,8 @@ def fxt_dataset_item_anomalous(fxt_image_entity_factory, fxt_annotation_scene_an
         "classification",
         "segmentation",
         "detection",
-        "anomaly_detection",
         "instance_segmentation",
-        "anomaly_segmentation",
-        "anomaly_classification",
+        "anomaly",
         "rotated_detection",
         "keypoint_detection",
     ]

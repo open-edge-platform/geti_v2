@@ -25,7 +25,7 @@ from iai_core.repos import AnnotationSceneRepo, ImageRepo, LabelSchemaRepo, Proj
 from iai_core.repos.base import SessionBasedRepo
 from iai_core.utils.deletion_helpers import DeletionHelpers
 from iai_core.utils.project_builder import ModelTemplateError
-from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
+from jobs_common.features.feature_flag_provider import FeatureFlag
 from jobs_common.tasks.utils.secrets import JobMetadata
 from jobs_common_extras.datumaro_conversion.definitions import (
     ANOMALY_PROJECT_TYPES,
@@ -172,10 +172,8 @@ class TestImportDataset:
 
         def _get_metadata(metadata: dict):
             nonlocal supported_project_types, warnings
-            supported_project_types, warnings = (
-                metadata["supported_project_types"],
-                metadata["warnings"],
-            )
+            supported_project_types = metadata["supported_project_types"]
+            warnings = metadata["warnings"]
 
         with (
             patch(
@@ -930,39 +928,23 @@ class TestImportDataset:
         # prepare dataset
         dm_dataset_definition = request.getfixturevalue(dataset_definition)
         label_names, dm_dataset = self._create_geti_exported_dataset_from_definition(
-            request, project_type_from, dm_dataset_definition
+            request=request, project_type=project_type_from, dataset_definition=dm_dataset_definition
         )
         dataset_id = save_dataset(import_data_repo, dm_dataset, "datumaro")
 
         supported_project_types, warnings = self._prepare_import_new_project_workflow(
-            data_repo=import_data_repo, dataset_id=dataset_id
+            data_repo=import_data_repo,
+            dataset_id=dataset_id,
         )
 
         candidate_projects = self._get_candidate_project_types(supported_project_types)
-        assert project_type_to in candidate_projects, candidate_projects
+        assert project_type_to in candidate_projects
         assert len(warnings) == n_warnings, warnings
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(feature_flag=FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
-        if is_anomaly_reduced:
-            # check names in pipeline (need "anomaly" instead of "anomaly_classification")
-            for project_meta in supported_project_types:
-                ptype = ImportUtils.rest_task_type_to_project_type(project_meta["project_type"])
-                assert ptype not in [
-                    GetiProjectType.ANOMALY_DETECTION,
-                    GetiProjectType.ANOMALY_SEGMENTATION,
-                ]
-                if ptype == GetiProjectType.ANOMALY_CLASSIFICATION:
-                    assert project_meta["project_type"] == "anomaly"
-                    pipeline = project_meta["pipeline"]
-                    assert pipeline["connections"][0]["to"] == "Anomaly"
-                    anomaly_task = pipeline["tasks"][1]
-                    assert anomaly_task["title"] == "Anomaly"
-                    assert anomaly_task["task_type"] == "anomaly"
-                    assert anomaly_task["labels"][0]["group"] == "Anomaly Task Labels"
-                    assert anomaly_task["labels"][1]["group"] == "Anomaly Task Labels"
 
         # import dataset
         labels_to_keep = self._get_all_label_names_from_supported_project_types(
-            supported_project_types, project_type_to
+            supported_project_types=supported_project_types,
+            project_type=project_type_to,
         )
         assert len(labels_to_keep) > 0
 
@@ -978,8 +960,8 @@ class TestImportDataset:
         label_schema = get_latest_label_schema_for_project(ID(project_id))
         if project_type_from != project_type_to:
             # check if group name is reset(need "<task type> Task Labels")
-            trainalbe_task_types = ImportUtils.get_trainable_tasks_of_project_type(project_type=project_type_to)
-            task_name = ImportUtils.task_type_to_rest_api_string(trainalbe_task_types[0]).replace("_", " ").title()
+            trainable_task_types = ImportUtils.get_trainable_tasks_of_project_type(project_type=project_type_to)
+            task_name = ImportUtils.task_type_to_rest_api_string(trainable_task_types[0]).replace("_", " ").title()
             label_groups = label_schema.get_groups()
             if project_type_from == GetiProjectType.DETECTION and project_type_to == GetiProjectType.CLASSIFICATION:
                 # multi-label classification
@@ -991,7 +973,7 @@ class TestImportDataset:
                 assert len(label_groups) == 1
                 if project_type_to in ANOMALY_PROJECT_TYPES:
                     # default name is decided by project_builder, not dataset-ie
-                    domain_name = "anomaly" if is_anomaly_reduced else trainalbe_task_types[0].name.lower()
+                    domain_name = trainable_task_types[0].name.lower()
                     assert label_groups[0].name == f"default - {domain_name}"
                 else:
                     assert label_groups[0].name == f"{task_name} Task Labels"
@@ -1020,41 +1002,13 @@ class TestImportDataset:
     @pytest.mark.parametrize(
         "dataset_definition,project_type_from,project_type_to",
         [
-            [
-                "fxt_bbox_dataset_definition",
-                GetiProjectType.DETECTION,
-                GetiProjectType.ROTATED_DETECTION,
-            ],
-            [
-                "fxt_bbox_dataset_definition",
-                GetiProjectType.DETECTION,
-                GetiProjectType.CLASSIFICATION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.ROTATED_DETECTION,
-                GetiProjectType.DETECTION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.SEGMENTATION,
-                GetiProjectType.INSTANCE_SEGMENTATION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.INSTANCE_SEGMENTATION,
-                GetiProjectType.SEGMENTATION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.SEGMENTATION,
-                GetiProjectType.DETECTION,
-            ],
-            [
-                "fxt_polygon_dataset_definition",
-                GetiProjectType.INSTANCE_SEGMENTATION,
-                GetiProjectType.DETECTION,
-            ],
+            ["fxt_bbox_dataset_definition", GetiProjectType.DETECTION, GetiProjectType.ROTATED_DETECTION],
+            ["fxt_bbox_dataset_definition", GetiProjectType.DETECTION, GetiProjectType.CLASSIFICATION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.ROTATED_DETECTION, GetiProjectType.DETECTION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.SEGMENTATION, GetiProjectType.INSTANCE_SEGMENTATION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.INSTANCE_SEGMENTATION, GetiProjectType.SEGMENTATION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.SEGMENTATION, GetiProjectType.DETECTION],
+            ["fxt_polygon_dataset_definition", GetiProjectType.INSTANCE_SEGMENTATION, GetiProjectType.DETECTION],
         ],
     )
     def test_import_dataset_for_cross_project(
@@ -1082,51 +1036,10 @@ class TestImportDataset:
     @pytest.mark.parametrize(
         "dataset_definition,project_type_from,project_type_to",
         [
-            [
-                "fxt_anomaly_classification_dataset_definition",
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-            ],
-            [
-                "fxt_anomaly_detection_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY_DETECTION,
-            ],
-            [
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY_SEGMENTATION,
-            ],
-            [
-                "fxt_anomaly_classification_dataset_definition",
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-                GetiProjectType.CLASSIFICATION,
-            ],
-            [
-                "fxt_anomaly_detection_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.CLASSIFICATION,
-            ],
-            [
-                "fxt_anomaly_detection_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-            ],
-            [
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.CLASSIFICATION,
-            ],
-            [
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-            ],
-            [
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY_DETECTION,
-            ],
+            ["fxt_anom_dataset_definition", GetiProjectType.ANOMALY, GetiProjectType.ANOMALY],
+            ["fxt_anom_cls_dataset_definition", GetiProjectType.ANOMALY_CLASSIFICATION, GetiProjectType.ANOMALY],
+            ["fxt_anom_det_dataset_definition", GetiProjectType.ANOMALY_DETECTION, GetiProjectType.ANOMALY],
+            ["fxt_anom_seg_dataset_definition", GetiProjectType.ANOMALY_SEGMENTATION, GetiProjectType.ANOMALY],
         ],
     )
     def test_import_dataset_for_anomaly(
@@ -1135,28 +1048,19 @@ class TestImportDataset:
         project_type_from,
         project_type_to,
         fxt_import_data_repo,
-        fxt_anomaly_reduction,
         request,
     ):
         """
         Test importing geti-exported anomaly datasets into impt projects of different domains.
         """
-        anomaly_det_seg = [
-            GetiProjectType.ANOMALY_DETECTION,
-            GetiProjectType.ANOMALY_SEGMENTATION,
-        ]
-        if fxt_anomaly_reduction and project_type_to in anomaly_det_seg:
-            pytest.skip(
-                f"Mapping from '{project_type_from.name}' to '{project_type_to.name}' deosn't exist "
-                "when FEATURE_FLAG_ANOMALY_REDUCTION is enabled."
-            )
+        anomaly_det_seg = [GetiProjectType.ANOMALY_DETECTION, GetiProjectType.ANOMALY_SEGMENTATION]
         self._test_import_dataset_for_cross_project(
             dataset_definition=dataset_definition,
             project_type_from=project_type_from,
             project_type_to=project_type_to,
             import_data_repo=fxt_import_data_repo,
             request=request,
-            n_warnings=(1 if fxt_anomaly_reduction and project_type_from in anomaly_det_seg else 0),
+            n_warnings=(1 if project_type_from in anomaly_det_seg else 0),
         )
 
     @patch.object(
@@ -2238,59 +2142,68 @@ class TestImportDataset:
         "fxt_project_str,dataset_definition,project_type_from,project_type_to",
         [
             [
-                "fxt_annotated_anomaly_cls_project",
-                "fxt_anomaly_classification_dataset_definition",
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-                GetiProjectType.ANOMALY_CLASSIFICATION,
+                "fxt_annotated_anom_project",
+                "fxt_anom_dataset_definition",
+                GetiProjectType.ANOMALY,
+                GetiProjectType.ANOMALY,
             ],
             [
-                "fxt_annotated_anomaly_det_project",
-                "fxt_anomaly_detection_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY_DETECTION,
+                "fxt_annotated_anom_project",
+                "fxt_anom_cls_dataset_definition",
+                GetiProjectType.ANOMALY_CLASSIFICATION,
+                GetiProjectType.ANOMALY,
             ],
             [
-                "fxt_annotated_anomaly_seg_project",
-                "fxt_anomaly_segmentation_dataset_definition",
+                "fxt_annotated_anom_project",
+                "fxt_anom_det_dataset_definition",
+                GetiProjectType.ANOMALY_DETECTION,
+                GetiProjectType.ANOMALY,
+            ],
+            [
+                "fxt_annotated_anom_project",
+                "fxt_anom_seg_dataset_definition",
                 GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY_SEGMENTATION,
+                GetiProjectType.ANOMALY,
             ],
             [
                 "fxt_annotated_classification_project",
-                "fxt_anomaly_classification_dataset_definition",
+                "fxt_anom_cls_dataset_definition",
                 GetiProjectType.ANOMALY_CLASSIFICATION,
                 GetiProjectType.CLASSIFICATION,
             ],
             [
                 "fxt_annotated_classification_project",
-                "fxt_anomaly_detection_dataset_definition",
+                "fxt_anom_det_dataset_definition",
                 GetiProjectType.ANOMALY_DETECTION,
                 GetiProjectType.CLASSIFICATION,
             ],
-            [
-                "fxt_annotated_anomaly_cls_project",
-                "fxt_anomaly_detection_dataset_definition",
-                GetiProjectType.ANOMALY_DETECTION,
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-            ],
+            # Disabled ITEP-72043
+            # [
+            #     "fxt_annotated_detection_project",
+            #     "fxt_anom_det_dataset_definition",
+            #     GetiProjectType.ANOMALY_DETECTION,
+            #     GetiProjectType.DETECTION,
+            # ],
             [
                 "fxt_annotated_classification_project",
-                "fxt_anomaly_segmentation_dataset_definition",
+                "fxt_anom_seg_dataset_definition",
                 GetiProjectType.ANOMALY_SEGMENTATION,
                 GetiProjectType.CLASSIFICATION,
             ],
-            [
-                "fxt_annotated_anomaly_cls_project",
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-            ],
-            [
-                "fxt_annotated_anomaly_det_project",
-                "fxt_anomaly_segmentation_dataset_definition",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-                GetiProjectType.ANOMALY_DETECTION,
-            ],
+            # Disabled ITEP-72043
+            # [
+            #     "fxt_annotated_instance_segmentation_project",
+            #     "fxt_anom_seg_dataset_definition",
+            #     GetiProjectType.ANOMALY_SEGMENTATION,
+            #     GetiProjectType.INSTANCE_SEGMENTATION,
+            # ],
+            # Disabled ITEP-72043
+            # [
+            #     "fxt_annotated_segmentation_project",
+            #     "fxt_anom_seg_dataset_definition",
+            #     GetiProjectType.ANOMALY_SEGMENTATION,
+            #     GetiProjectType.SEGMENTATION,
+            # ],
         ],
     )
     def test_import_dataset_to_project_for_anomaly(
@@ -2300,7 +2213,6 @@ class TestImportDataset:
         project_type_from,
         project_type_to,
         fxt_import_data_repo,
-        fxt_anomaly_reduction,
         request,
     ):
         """
@@ -2308,9 +2220,8 @@ class TestImportDataset:
         This function tests cross-project mapping among anomaly projects.
         """
         if (
-            fxt_anomaly_reduction
-            and project_type_from in [GetiProjectType.ANOMALY_DETECTION, GetiProjectType.ANOMALY_SEGMENTATION]
-            and project_type_to == GetiProjectType.ANOMALY_CLASSIFICATION
+            project_type_from in [GetiProjectType.ANOMALY_DETECTION, GetiProjectType.ANOMALY_SEGMENTATION]
+            and project_type_to == GetiProjectType.ANOMALY
         ):
             n_warnings = 1
         else:

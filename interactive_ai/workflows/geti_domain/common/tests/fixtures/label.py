@@ -198,7 +198,7 @@ def fxt_label(fxt_mongo_id):
 def fxt_anomalous_label(fxt_mongo_id):
     yield Label(
         name=DummyValues.LABEL_NAME,
-        domain=Domain.ANOMALY_DETECTION,
+        domain=Domain.ANOMALY,
         color=Color.from_hex_str("#ff0000"),
         hotkey=DummyValues.LABEL_HOTKEY,
         id_=ID(fxt_mongo_id(13)),
@@ -209,11 +209,7 @@ def fxt_anomalous_label(fxt_mongo_id):
 @pytest.fixture
 def fxt_anomaly_labels_factory(fxt_mongo_id):
     def _build_anom_labels(domain: Domain) -> list[Label]:
-        if domain not in (
-            Domain.ANOMALY_CLASSIFICATION,
-            Domain.ANOMALY_SEGMENTATION,
-            Domain.ANOMALY_DETECTION,
-        ):
+        if domain != Domain.ANOMALY:
             raise ValueError("This fixtures only generates anomaly labels.")
         normal_label = Label(
             name="dummy_normal_label",

@@ -50,9 +50,9 @@ def return_none(*args, **kwargs) -> None:
 
 @pytest.fixture
 def fxt_anomaly_label_schema(fxt_anomaly_labels_factory):
-    anomaly_labels = fxt_anomaly_labels_factory(Domain.ANOMALY_CLASSIFICATION)
+    anomaly_labels = fxt_anomaly_labels_factory(Domain.ANOMALY)
     label_schema = LabelSchema(id_=ID("anomaly_label_schema_id"))
-    label_group = LabelGroup(labels=anomaly_labels, name="dummy anomaly classification label group")
+    label_group = LabelGroup(labels=anomaly_labels, name="dummy anomaly label group")
     label_schema.add_group(label_group)
     yield label_schema
 

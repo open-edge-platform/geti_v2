@@ -349,12 +349,12 @@ class MediaRESTController(metaclass=Singleton):
 
         if not file_from_request.size:
             raise RuntimeError("Uploaded file should have size defined")
-        data_stream = BytesStream(data=file_from_request.file, length=file_from_request.size)
 
         media_entity: Video | Image
         update_metrics = ENABLE_METRICS
         if media_type is MediaType.VIDEO:
             video_extension = MediaRESTController._resolve_video_extension(raw_extension)
+            data_stream = BytesStream(data=file_from_request.file, length=file_from_request.size)
             media_entity = MediaManager.upload_video(
                 dataset_storage_identifier=dataset_storage_identifier,
                 basename=basename,
@@ -369,7 +369,8 @@ class MediaRESTController(metaclass=Singleton):
                 dataset_storage_identifier=dataset_storage_identifier,
                 basename=basename,
                 extension=img_extension,
-                data_stream=data_stream,
+                image_bytes=file_from_request.file,
+                length=file_from_request.size,
                 user_id=user_id,
                 update_metrics=update_metrics,
             )

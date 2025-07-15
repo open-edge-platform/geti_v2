@@ -6,7 +6,7 @@
 import logging
 from enum import IntEnum, auto
 
-from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
+import datumaro as dm
 from jobs_common.tasks import flyte_multi_container_task as task
 from jobs_common.tasks.utils.logging import init_logger
 from jobs_common.tasks.utils.progress import publish_metadata_update, task_progress
@@ -54,7 +54,7 @@ class _Steps(IntEnum):
     IDX_COLLECT_WARNINGS = auto()
 
 
-def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list]:
+def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list]:  # noqa: C901
     import_id_ = ImportUtils.get_validated_mongo_id(id=import_id, id_name="Import Dataset ID")
     import_data_repo = ImportDataRepo()
     progress_reporter = ProgressReporter(
@@ -103,12 +103,11 @@ def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list
     for project_meta in project_metas_with_labels:
         project_type = project_meta["project_type"]
         # Handle an anomaly dataset as if it was exported from an anomaly classification task.
-        if FeatureFlagProvider.is_enabled(feature_flag=FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION) and project_type in [
-            GetiProjectType.ANOMALY_DETECTION,
-            GetiProjectType.ANOMALY_SEGMENTATION,
-        ]:
-            need_warning_local_annotations_will_be_lost = True
-            continue
+        if project_type == GetiProjectType.ANOMALY:
+            for ann_type in list(label_to_ann_types.values()):
+                if ann_type != {dm.AnnotationType.label}:
+                    need_warning_local_annotations_will_be_lost = True
+                    break
         if project_type == GetiProjectType.CLASSIFICATION:
             is_classification_task_supported = True
         if (

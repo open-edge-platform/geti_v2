@@ -39,10 +39,6 @@ class ModelTemplateRESTViews:
         :param model_template: Model template to convert
         :return: Dict representation of the model template
         """
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
-        is_anomaly_task = model_template.task_type.is_anomaly
-        task_type = "anomaly" if is_anomaly_reduced and is_anomaly_task else model_template.task_type.name.lower()
-
         if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
             model_manifest = SupportedModels.get_model_manifest_by_id(model_template.model_manifest_id)
             model_manifest_dict = model_manifest.model_dump()
@@ -60,7 +56,7 @@ class ModelTemplateRESTViews:
             }
         return {
             "name": model_template.name,
-            "task_type": task_type,
+            "task_type": model_template.task_type.name.lower(),
             "model_size": model_template.size,
             "model_template_id": model_template.model_template_id,
             "gigaflops": model_template.gigaflops,

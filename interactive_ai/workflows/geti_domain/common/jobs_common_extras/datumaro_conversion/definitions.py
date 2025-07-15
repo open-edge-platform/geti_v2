@@ -22,32 +22,25 @@ FORMAT_NAME_MAP: dict[str, str] = {
 ANNOTATION_TYPE_TO_SUPPORTED_DOMAINS: dict[dm.AnnotationType, list[Domain]] = {
     dm.AnnotationType.label: [
         Domain.CLASSIFICATION,
-        Domain.ANOMALY_CLASSIFICATION,
-        Domain.ANOMALY_DETECTION,
-        Domain.ANOMALY_SEGMENTATION,
+        Domain.ANOMALY,
     ],
     dm.AnnotationType.bbox: [
         Domain.DETECTION,
         Domain.SEGMENTATION,  # Geti tool supports rectangle(which is same to bbox) tool for seg., ins-seg.
         Domain.INSTANCE_SEGMENTATION,
-        Domain.ANOMALY_DETECTION,
-        Domain.ANOMALY_SEGMENTATION,
     ],
     dm.AnnotationType.polygon: [
         Domain.SEGMENTATION,
         Domain.INSTANCE_SEGMENTATION,
-        Domain.ANOMALY_SEGMENTATION,
         Domain.ROTATED_DETECTION,
     ],
     dm.AnnotationType.ellipse: [
         Domain.SEGMENTATION,
         Domain.INSTANCE_SEGMENTATION,
-        Domain.ANOMALY_SEGMENTATION,
     ],
     dm.AnnotationType.mask: [
         Domain.SEGMENTATION,
         Domain.INSTANCE_SEGMENTATION,
-        Domain.ANOMALY_SEGMENTATION,
     ],
     dm.AnnotationType.points: [
         Domain.KEYPOINT_DETECTION,
@@ -73,6 +66,7 @@ class GetiProjectType(Enum):
     ANOMALY_CLASSIFICATION = auto()
     ANOMALY_DETECTION = auto()
     ANOMALY_SEGMENTATION = auto()
+    ANOMALY = auto()
     ROTATED_DETECTION = auto()  # ui project name is Detection Oriented
     CHAINED_DETECTION_CLASSIFICATION = auto()
     CHAINED_DETECTION_SEGMENTATION = auto()
@@ -88,6 +82,7 @@ SUPPORTED_IMPORT_PROJECT_TYPE = [
 ]
 
 ANOMALY_PROJECT_TYPES = [
+    GetiProjectType.ANOMALY,
     GetiProjectType.ANOMALY_CLASSIFICATION,
     GetiProjectType.ANOMALY_DETECTION,
     GetiProjectType.ANOMALY_SEGMENTATION,

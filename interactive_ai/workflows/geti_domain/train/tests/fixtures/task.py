@@ -47,7 +47,7 @@ def fxt_task_node():
         project_id=ID(PROJECT_ID),
         id_=ID(TASK_ID),
         task_properties=TaskProperties(
-            task_type=TaskType.ANOMALY_DETECTION,
+            task_type=TaskType.ANOMALY,
             task_family=TaskFamily.VISION,
             is_trainable=True,
             is_global=False,

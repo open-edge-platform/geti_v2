@@ -153,17 +153,9 @@ def fxt_label_schema_factory(
             "empty_label": fxt_empty_rotated_detection_label,
             "id": IDOffsets.ROTATED_DETACTION_LABEL_SCHEMA,
         },
-        Domain.ANOMALY_CLASSIFICATION: {
-            "labels": fxt_anomaly_labels_factory(Domain.ANOMALY_CLASSIFICATION),
-            "id": IDOffsets.ANOMALY_CLASSIFICATION_LABEL_SCHEMA,
-        },
-        Domain.ANOMALY_SEGMENTATION: {
-            "labels": fxt_anomaly_labels_factory(Domain.ANOMALY_SEGMENTATION),
-            "id": IDOffsets.ANOMALY_SEGMENTATION_LABEL_SCHEMA,
-        },
-        Domain.ANOMALY_DETECTION: {
-            "labels": fxt_anomaly_labels_factory(Domain.ANOMALY_DETECTION),
-            "id": IDOffsets.ANOMALY_DETECTION_LABEL_SCHEMA,
+        Domain.ANOMALY: {
+            "labels": fxt_anomaly_labels_factory(Domain.ANOMALY),
+            "id": IDOffsets.ANOMALY_LABEL_SCHEMA,
         },
         Domain.KEYPOINT_DETECTION: {
             "labels": fxt_keypoint_label,
