@@ -1,8 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from geti_feature_tools import FeatureFlagProvider
-
-from features.feature_flag import FeatureFlag
 
 from iai_core.entities.model_template import ModelTemplate
 
@@ -38,12 +35,9 @@ class ModelTemplateRESTViews:
         :param model_template: Model template to convert
         :return: Dict representation of the model template
         """
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
-        is_anomaly_task = model_template.task_type.is_anomaly
-        task_type = "anomaly" if is_anomaly_reduced and is_anomaly_task else model_template.task_type.name.lower()
         return {
             "name": model_template.name,
-            "task_type": task_type,
+            "task_type": model_template.task_type.name.lower(),
             "model_size": model_template.size,
             "model_template_id": model_template.model_template_id,
             "gigaflops": model_template.gigaflops,

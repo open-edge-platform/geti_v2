@@ -199,17 +199,9 @@ class TestPredictionToAnnotationConverter:
             assert p1.x == pytest.approx(p2.x, 0.01)
             assert p1.y == pytest.approx(p2.y, 0.01)
 
-    @pytest.mark.parametrize(
-        "domain",
-        [
-            Domain.ANOMALY_CLASSIFICATION,
-            Domain.ANOMALY_SEGMENTATION,
-            Domain.ANOMALY_DETECTION,
-        ],
-    )
-    def test_anomaly_to_annotation_converter(self, domain, fxt_label_schema_factory):
+    def test_anomaly_to_annotation_converter(self, fxt_label_schema_factory):
         # Arrange
-        label_schema = fxt_label_schema_factory(domain)
+        label_schema = fxt_label_schema_factory(Domain.ANOMALY)
         labels = label_schema.get_labels(include_empty=False)
         anomaly_map = np.ones((2, 2))
         pred_boxes = np.array([[2, 2, 4, 4]])
@@ -228,28 +220,10 @@ class TestPredictionToAnnotationConverter:
 
         # Assert
         assert converter.labels == labels
-        assert len(annotations) == 1 if domain == Domain.ANOMALY_CLASSIFICATION else 2
+        assert len(annotations) == 1
         anomalous_label_id = next(label.id_ for label in labels if label.is_anomalous)
         assert anomalous_label_id in annotations[0].get_label_ids()
         assert Rectangle.is_full_box(annotations[0].shape)
-        if domain == Domain.ANOMALY_SEGMENTATION:
-            expected_polygon = Polygon(
-                points=[
-                    Point(0.0, 0.0),
-                    Point(0.0, 1.0),
-                    Point(1.0, 1.0),
-                    Point(1.0, 0.0),
-                ]
-            )
-            for p1, p2 in zip(annotations[1].shape.points, expected_polygon.points):
-                assert p1.x == pytest.approx(p2.x, 0.01)
-                assert p1.y == pytest.approx(p2.y, 0.01)
-        elif domain == Domain.ANOMALY_DETECTION:
-            expected_bbox = Rectangle(1, 1, 2, 2)
-            assert annotations[1].shape.x1 == pytest.approx(expected_bbox.x1, 0.01)
-            assert annotations[1].shape.y1 == pytest.approx(expected_bbox.y1, 0.01)
-            assert annotations[1].shape.x2 == pytest.approx(expected_bbox.x2, 0.01)
-            assert annotations[1].shape.y2 == pytest.approx(expected_bbox.y2, 0.01)
 
     def test_keypoint_to_annotation_converter(self, fxt_label_schema_factory):
         # Arrange

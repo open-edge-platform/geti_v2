@@ -38,9 +38,7 @@ supported_task_types = [
     TaskType.SEGMENTATION,
     TaskType.CLASSIFICATION,
     TaskType.INSTANCE_SEGMENTATION,
-    TaskType.ANOMALY_CLASSIFICATION,
-    TaskType.ANOMALY_DETECTION,
-    TaskType.ANOMALY_SEGMENTATION,
+    TaskType.ANOMALY,
     TaskType.KEYPOINT_DETECTION,
 ]
 for task_type in supported_task_types:
@@ -344,14 +342,14 @@ def fxt_annotated_instance_segmentation_project(request):
 
 
 @pytest.fixture
-def fxt_annotated_anomaly_cls_project(request):
-    model_template_id = "anomaly_classification"
+def fxt_annotated_anomaly_project(request):
+    model_template_id = "anomaly"
     register_model_template(
         request,
         type(None),
         model_template_id,
         trainable=True,
-        task_type="ANOMALY_CLASSIFICATION",
+        task_type="ANOMALY",
     )
     name = "_test_anom_cls_project"
     project = ProjectFactory.create_project_single_task(
@@ -378,8 +376,8 @@ def fxt_annotated_anomaly_cls_project(request):
 
 
 @pytest.fixture
-def fxt_annotated_anomaly_cls_project_with_video(fxt_annotated_anomaly_cls_project):
-    project = fxt_annotated_anomaly_cls_project
+def fxt_annotated_anomaly_project_with_video(fxt_annotated_anomaly_project):
+    project = fxt_annotated_anomaly_project
 
     generate_random_video(project=project)
 
@@ -387,14 +385,91 @@ def fxt_annotated_anomaly_cls_project_with_video(fxt_annotated_anomaly_cls_proje
 
 
 @pytest.fixture
-def fxt_annotated_anomaly_seg_project(request):
-    model_template_id = "anomaly_segmentation"
+def fxt_annotated_anom_project(request):
+    model_template_id = "anomaly"
     register_model_template(
         request,
         type(None),
         model_template_id,
         trainable=True,
-        task_type="ANOMALY_SEGMENTATION",
+        task_type="ANOMALY",
+    )
+    name = "_test_anom_cls_project"
+    project = ProjectFactory.create_project_single_task(
+        name=name,
+        description=name,
+        creator_id="",
+        labels=[
+            {"name": "normal", "color": "#00ff00ff"},
+            {"name": "anomalous", "color": "#0000ffff"},
+        ],
+        model_template_id=model_template_id,
+    )
+    labels = get_project_labels(project)
+
+    generate_images_and_annotation_scenes(
+        project=project,
+        num_annotated_images=10,
+        num_unannotated_images=2,
+        labels=labels,
+        shape_generator=Rectangle.generate_full_box,
+    )
+
+    return project
+
+
+@pytest.fixture
+def fxt_annotated_anom_cls_project(request):
+    model_template_id = "anomaly"
+    register_model_template(
+        request,
+        type(None),
+        model_template_id,
+        trainable=True,
+        task_type="ANOMALY",
+    )
+    name = "_test_anom_cls_project"
+    project = ProjectFactory.create_project_single_task(
+        name=name,
+        description=name,
+        creator_id="",
+        labels=[
+            {"name": "normal", "color": "#00ff00ff"},
+            {"name": "anomalous", "color": "#0000ffff"},
+        ],
+        model_template_id=model_template_id,
+    )
+    labels = get_project_labels(project)
+
+    generate_images_and_annotation_scenes(
+        project=project,
+        num_annotated_images=10,
+        num_unannotated_images=2,
+        labels=labels,
+        shape_generator=Rectangle.generate_full_box,
+    )
+
+    return project
+
+
+@pytest.fixture
+def fxt_annotated_anom_project_with_video(fxt_annotated_anom_project):
+    project = fxt_annotated_anom_project
+
+    generate_random_video(project=project)
+
+    return project
+
+
+@pytest.fixture
+def fxt_annotated_anom_seg_project(request):
+    model_template_id = "anomaly"
+    register_model_template(
+        request,
+        type(None),
+        model_template_id,
+        trainable=True,
+        task_type="ANOMALY",
     )
     name = "_test_anom_seg_project"
     project = ProjectFactory.create_project_single_task(
@@ -424,14 +499,14 @@ def fxt_annotated_anomaly_seg_project(request):
 
 
 @pytest.fixture
-def fxt_annotated_anomaly_det_project(request):
-    model_template_id = "anomaly_detection"
+def fxt_annotated_anom_det_project(request):
+    model_template_id = "anomaly"
     register_model_template(
         request,
         type(None),
         model_template_id,
         trainable=True,
-        task_type="ANOMALY_DETECTION",
+        task_type="ANOMALY",
     )
     name = "_test_anom_det_project"
     project = ProjectFactory.create_project_single_task(

@@ -30,7 +30,6 @@ from model_api.models.utils import (
 )
 
 from jobs_common_extras.evaluation.utils.detection_utils import detection2array
-from jobs_common_extras.evaluation.utils.segmentation_utils import create_annotation_from_segmentation_map
 
 logger = logging.getLogger(__name__)
 
@@ -420,10 +419,7 @@ class AnomalyToAnnotationConverter(IPredictionToAnnotationConverter):
         Converts ModelAPI AnomalyResult predictions to iai_core annotations.
 
         :param predictions: anomaly result represented in ModelAPI format (same for all anomaly tasks)
-        :return: list of annotation objects based on the specific anomaly task:
-            - Classification: single label (normal or anomalous).
-            - Segmentation: contour polygon representing the segmentation.
-            - Detection: predicted bounding boxes.
+        :return: list of single label annotations (normal or anomalous) objects based
         """
         pred_label = predictions.pred_label
         label = self.normal_label if pred_label.lower() == "normal" else self.anomalous_label
@@ -434,42 +430,6 @@ class AnomalyToAnnotationConverter(IPredictionToAnnotationConverter):
             probability=float(predictions.pred_score),
         )
         annotations: list[Annotation] = [Annotation(Rectangle.generate_full_box(), labels=[scored_label])]
-        match self.domain:
-            case Domain.ANOMALY_CLASSIFICATION:
-                pass
-            case Domain.ANOMALY_SEGMENTATION:
-                annotations.extend(
-                    create_annotation_from_segmentation_map(
-                        hard_prediction=predictions.pred_mask,
-                        soft_prediction=predictions.anomaly_map.squeeze()
-                        / 255.0,  # anomaly_map has uint8 values [0, 255]
-                        label_map={0: self.normal_label, 1: self.anomalous_label},
-                    )
-                )
-            case Domain.ANOMALY_DETECTION:
-                image_h, image_w = predictions.pred_mask.shape
-                for box in predictions.pred_boxes:
-                    annotations.append(
-                        Annotation(
-                            Rectangle(
-                                box[0] / image_w,
-                                box[1] / image_h,
-                                box[2] / image_w,
-                                box[3] / image_h,
-                            ),
-                            labels=[
-                                ScoredLabel(
-                                    label_id=self.anomalous_label.id_,
-                                    is_empty=self.anomalous_label.is_empty,
-                                    probability=predictions.pred_score,
-                                )
-                            ],
-                        )
-                    )
-            case _:
-                raise ValueError(
-                    f"Cannot convert predictions for task '{self.domain.name}'. Only Anomaly tasks are supported."
-                )
         return annotations
 
 

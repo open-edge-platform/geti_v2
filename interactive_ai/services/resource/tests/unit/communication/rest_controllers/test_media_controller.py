@@ -471,10 +471,10 @@ class TestMediaRESTController:
     @pytest.mark.skip(reason="CVS-91533: SDK incompatible behavior; re-enable after CVS-91571")
     def test_get_label_from_upload_request_fail(
         self,
-        fxt_project_with_anomaly_detection_task,
+        fxt_project_with_anomaly_task,
     ) -> None:
         dummy_rest_values_data = {"label_ids": []}  # type: ignore
-        project_identifier = fxt_project_with_anomaly_detection_task.identifier
+        project_identifier = fxt_project_with_anomaly_task.identifier
         with pytest.raises(MediaUploadedWithNoLabelToAnomalyTaskException):
             MediaRESTController.get_label_from_upload_request(
                 project_identifier=project_identifier,

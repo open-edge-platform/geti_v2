@@ -54,12 +54,22 @@ def fxt_global_labels_dataset_definition():
 
 
 @pytest.fixture
+def fxt_anom_dataset_definition():
+    return {"item1": [("label", 1)], "item2": [("label", 0)], "item3": [("label", 0)]}
+
+
+@pytest.fixture
+def fxt_anom_cls_dataset_definition():
+    return {"item1": [("label", 1)], "item2": [("label", 0)], "item3": [("label", 0)]}
+
+
+@pytest.fixture
 def fxt_anomaly_classification_dataset_definition():
     return {"item1": [("label", 1)], "item2": [("label", 0)], "item3": [("label", 0)]}
 
 
 @pytest.fixture
-def fxt_anomaly_detection_dataset_definition():
+def fxt_anom_det_dataset_definition():
     return {
         "item1": [("label", 1), ("bbox", 1)],
         "item2": [("label", 1), ("bbox", 1), ("bbox", 1)],
@@ -68,7 +78,7 @@ def fxt_anomaly_detection_dataset_definition():
 
 
 @pytest.fixture
-def fxt_anomaly_segmentation_dataset_definition():
+def fxt_anom_seg_dataset_definition():
     return {
         "item1": [("label", 1), ("polygon", 1)],
         "item2": [("label", 1), ("polygon", 1), ("ellipse", 1)],
@@ -527,7 +537,7 @@ _test_dataset_id__datumaro = {
     ),
     "fxt_datumaro_dataset_anomaly_cls_id": DatasetInfo(
         exported_project_type=GetiProjectType.ANOMALY_CLASSIFICATION,
-        fxt_corresponding_project="fxt_annotated_anomaly_cls_project",
+        fxt_corresponding_project="fxt_annotated_anom_project",
         label_names={"Anomalous", "Normal"},
         label_names_by_ann_based_project={  # label
             GetiProjectType.CLASSIFICATION: {"Anomalous", "Normal"},
@@ -539,7 +549,7 @@ _test_dataset_id__datumaro = {
     ),
     "fxt_datumaro_dataset_anomaly_det_id": DatasetInfo(
         exported_project_type=GetiProjectType.ANOMALY_DETECTION,
-        fxt_corresponding_project="fxt_annotated_anomaly_det_project",
+        fxt_corresponding_project="fxt_annotated_anom_project",
         label_names={"Anomalous", "Normal"},
         label_names_by_ann_based_project={  # label, bbox
             GetiProjectType.CLASSIFICATION: {"Anomalous", "Normal"},
@@ -547,7 +557,7 @@ _test_dataset_id__datumaro = {
         },
         label_names_by_cross_project={
             GetiProjectType.CLASSIFICATION: {"Anomalous", "Normal"},
-            GetiProjectType.ANOMALY_CLASSIFICATION: {"Anomalous", "Normal"},
+            GetiProjectType.DETECTION: {"Anomalous", "Normal"},
         },
         warnings={
             Domain.DETECTION: {_warning_missing_ann_det(4)},
@@ -556,7 +566,7 @@ _test_dataset_id__datumaro = {
     ),
     "fxt_datumaro_dataset_anomaly_seg_id": DatasetInfo(
         exported_project_type=GetiProjectType.ANOMALY_SEGMENTATION,
-        fxt_corresponding_project="fxt_annotated_anomaly_seg_project",
+        fxt_corresponding_project="fxt_annotated_anom_project",
         label_names={"Anomalous", "Normal"},
         label_names_by_ann_based_project={  # label, polygon
             GetiProjectType.CLASSIFICATION: {"Anomalous", "Normal"},
@@ -565,10 +575,12 @@ _test_dataset_id__datumaro = {
         },
         label_names_by_cross_project={
             GetiProjectType.CLASSIFICATION: {"Anomalous", "Normal"},
-            GetiProjectType.ANOMALY_CLASSIFICATION: {"Anomalous", "Normal"},
-            GetiProjectType.ANOMALY_DETECTION: {"Anomalous", "Normal"},
+            GetiProjectType.DETECTION: {"Anomalous", "Normal"},
+            GetiProjectType.INSTANCE_SEGMENTATION: {"Anomalous", "Normal"},
+            GetiProjectType.SEGMENTATION: {"Anomalous", "Normal"},
         },
         warnings={
+            Domain.DETECTION: {_warning_missing_ann_det(4)},
             Domain.SEGMENTATION: {_warning_missing_ann_seg(4)},
             Domain.INSTANCE_SEGMENTATION: {_warning_missing_ann_seg(4)},
         },

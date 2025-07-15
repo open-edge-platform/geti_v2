@@ -9,8 +9,10 @@ class TestDefinitions:
     @pytest.mark.parametrize(
         "domain,ann_types",
         [
+            (Domain.ANOMALY, {dm.AnnotationType.label}),
             (Domain.CLASSIFICATION, {dm.AnnotationType.label}),
             (Domain.DETECTION, {dm.AnnotationType.bbox}),
+            (Domain.ROTATED_DETECTION, {dm.AnnotationType.polygon}),
             (
                 Domain.SEGMENTATION,
                 {
@@ -23,25 +25,6 @@ class TestDefinitions:
             (
                 Domain.INSTANCE_SEGMENTATION,
                 {
-                    dm.AnnotationType.bbox,
-                    dm.AnnotationType.polygon,
-                    dm.AnnotationType.ellipse,
-                    dm.AnnotationType.mask,
-                },
-            ),
-            (Domain.ROTATED_DETECTION, {dm.AnnotationType.polygon}),
-            (
-                Domain.ANOMALY_CLASSIFICATION,
-                {dm.AnnotationType.label},
-            ),
-            (
-                Domain.ANOMALY_DETECTION,
-                {dm.AnnotationType.label, dm.AnnotationType.bbox},
-            ),
-            (
-                Domain.ANOMALY_SEGMENTATION,
-                {
-                    dm.AnnotationType.label,
                     dm.AnnotationType.bbox,
                     dm.AnnotationType.polygon,
                     dm.AnnotationType.ellipse,

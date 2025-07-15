@@ -19,23 +19,11 @@ from tests.tools.custom_project_parser import CustomTestProjectParser
 
 
 class TestProjectBuilder:
-    @pytest.mark.parametrize(
-        "domain, default_name",
-        [
-            (Domain.ANOMALY_DETECTION, "default - anomaly_detection"),
-            (Domain.ANOMALY_SEGMENTATION, "default - anomaly_segmentation"),
-            (Domain.ANOMALY_CLASSIFICATION, "default - anomaly_classification"),
-        ],
-    )
-    def test_build_anomaly_labels(
-        self,
-        domain,
-        default_name,
-    ):
-        label_groups, labels = ProjectBuilder._build_anomaly_labels(domain=domain, task_label_by_group_name={})
+    def test_build_anomaly_labels(self):
+        label_groups, labels = ProjectBuilder._build_anomaly_labels(domain=Domain.ANOMALY, task_label_by_group_name={})
         assert len(labels) == 2
         assert len(label_groups) == 1
-        assert label_groups[0].name == default_name
+        assert label_groups[0].name == "default - anomaly"
 
     @pytest.mark.parametrize(
         "domain, empty_label_name, label_names_by_group_name, child_name_to_parent_name",
@@ -126,25 +114,22 @@ class TestProjectBuilder:
         assert set(label_schema.get_children(detection_label)) == set(classification_labels)
         assert len(empty_detection_label_group.labels) == 1
 
-    def test_anomaly_label_schema_from_pipeline(
-        self,
-        fxt_anomaly_classification_project_data,
-    ):
+    def test_anomaly_label_schema_from_pipeline(self, fxt_anomaly_project_data):
         with patch.object(
             ProjectBuilder,
             "get_default_model_template_by_task_type",
             side_effect=[
                 ModelTemplateList().get_by_id("dataset"),
-                ModelTemplateList().get_by_id("anomaly_classification"),
+                ModelTemplateList().get_by_id("anomaly"),
             ],
         ):
             project, label_schema, task_schema = ProjectBuilder.build_full_project(
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
-                parser_kwargs=fxt_anomaly_classification_project_data,
+                parser_kwargs=fxt_anomaly_project_data,
             )
 
-        anomaly_label_group = label_schema.get_label_group_by_name("default - anomaly_classification")
+        anomaly_label_group = label_schema.get_label_group_by_name("default - anomaly")
 
         assert anomaly_label_group is not None
         label_names = {label.name for label in anomaly_label_group.labels}

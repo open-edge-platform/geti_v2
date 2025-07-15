@@ -25,13 +25,13 @@ from iai_core.entities.model_template import (
 
 
 @pytest.fixture
-def fxt_model_template_anomaly_detection():
+def fxt_model_template_anomaly():
     yield ModelTemplate(
-        model_template_id="test_template_anomaly_detection",
+        model_template_id="test_template_anomaly",
         model_template_path="",
-        name="Sample Anomaly Detection Template",
+        name="Sample Anomaly Template",
         task_family=TaskFamily.VISION,
-        task_type=TaskType.ANOMALY_DETECTION,
+        task_type=TaskType.ANOMALY,
         is_trainable=True,
         hyper_parameters=HyperParameterData(base_path=""),
         instantiation=InstantiationType.NONE,
@@ -169,10 +169,10 @@ def fxt_model_storage_classification(fxt_empty_project, fxt_model_template_class
 
 
 @pytest.fixture
-def fxt_model_storage_anomaly_detection(fxt_model_template_anomaly_detection, fxt_mongo_id):
+def fxt_anomaly_task_detection(fxt_model_template_anomaly, fxt_mongo_id):
     yield ModelStorage(
         project_id=fxt_mongo_id(1),
         task_node_id=fxt_mongo_id(14),
-        model_template=fxt_model_template_anomaly_detection,
+        model_template=fxt_model_template_anomaly,
         id_=fxt_mongo_id(5),
     )

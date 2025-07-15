@@ -702,7 +702,7 @@ class InferencerFactory:
                 inferencer = InstanceSegmentationInferencer(model, device=device, max_async_requests=max_async_requests)
             case Domain.ROTATED_DETECTION:
                 inferencer = RotatedDetectionInferencer(model, device=device, max_async_requests=max_async_requests)
-            case Domain.ANOMALY_CLASSIFICATION | Domain.ANOMALY_SEGMENTATION | Domain.ANOMALY_DETECTION:
+            case Domain.ANOMALY:
                 inferencer = AnomalyInferencer(model, device=device, max_async_requests=max_async_requests)
             case Domain.KEYPOINT_DETECTION:
                 inferencer = KeypointDetectionInferencer(model, device=device, max_async_requests=max_async_requests)

@@ -258,10 +258,10 @@ class ScExtractor(dm_DatasetBase):
                 # classification labels. In multi-label classification
                 # scenario, we have only classification labels
                 for scored_label in non_empty_scored_labels:
-                    if primary_label_id is None and self._label_id_to_label[scored_label.label_id].domain in [
-                        Domain.DETECTION,
-                        Domain.ANOMALY_DETECTION,
-                    ]:
+                    if (
+                        primary_label_id is None
+                        and self._label_id_to_label[scored_label.label_id].domain == Domain.DETECTION
+                    ):
                         primary_label_id = self._label_id_to_idx[scored_label.id_]
                     else:
                         secondary_labels[self._label_id_to_label[scored_label.id_].name] = True

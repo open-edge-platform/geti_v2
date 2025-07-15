@@ -97,9 +97,10 @@ class TestDatumaroProjectParser:
             GetiProjectType.SEGMENTATION: TaskType.SEGMENTATION,
             GetiProjectType.INSTANCE_SEGMENTATION: TaskType.INSTANCE_SEGMENTATION,
             GetiProjectType.ROTATED_DETECTION: TaskType.ROTATED_DETECTION,
-            GetiProjectType.ANOMALY_CLASSIFICATION: TaskType.ANOMALY_CLASSIFICATION,
-            GetiProjectType.ANOMALY_DETECTION: TaskType.ANOMALY_DETECTION,
-            GetiProjectType.ANOMALY_SEGMENTATION: TaskType.ANOMALY_SEGMENTATION,
+            GetiProjectType.ANOMALY: TaskType.ANOMALY,
+            GetiProjectType.ANOMALY_CLASSIFICATION: TaskType.ANOMALY,  # Legacy Geti project type
+            GetiProjectType.ANOMALY_DETECTION: TaskType.ANOMALY,  # Legacy Geti project type
+            GetiProjectType.ANOMALY_SEGMENTATION: TaskType.ANOMALY,  # Legacy Geti project type
         }
         last_task_type = project_type_to_last_task_type[project_type]
         last_task_name = dm_parser.get_tasks_names()[-1]
@@ -434,33 +435,16 @@ class TestDatumaroProjectParser:
             ["fxt_datumaro_dataset", GetiProjectType.CLASSIFICATION],
             ["fxt_datumaro_dataset", GetiProjectType.DETECTION],
             ["fxt_datumaro_dataset_segmentation", GetiProjectType.SEGMENTATION],
-            [
-                "fxt_datumaro_dataset_instances_segmentation",
-                GetiProjectType.INSTANCE_SEGMENTATION,
-            ],
+            ["fxt_datumaro_dataset_instances_segmentation", GetiProjectType.INSTANCE_SEGMENTATION],
             ["fxt_datumaro_dataset_multi_label", GetiProjectType.CLASSIFICATION],
             ["fxt_datumaro_dataset_hierarchical", GetiProjectType.CLASSIFICATION],
-            [
-                "fxt_datumaro_dataset_rotated_detection",
-                GetiProjectType.ROTATED_DETECTION,
-            ],
-            [
-                "fxt_datumaro_dataset_anomaly_cls",
-                GetiProjectType.ANOMALY_CLASSIFICATION,
-            ],
-            ["fxt_datumaro_dataset_anomaly_det", GetiProjectType.ANOMALY_DETECTION],
-            [
-                "fxt_datumaro_dataset_anomaly_seg",
-                GetiProjectType.ANOMALY_SEGMENTATION,
-            ],
-            [
-                "fxt_datumaro_dataset_chained_det_cls",
-                GetiProjectType.CHAINED_DETECTION_CLASSIFICATION,
-            ],
-            [
-                "fxt_datumaro_dataset_chained_det_seg",
-                GetiProjectType.CHAINED_DETECTION_SEGMENTATION,
-            ],
+            ["fxt_datumaro_dataset_rotated_detection", GetiProjectType.ROTATED_DETECTION],
+            ["fxt_datumaro_dataset_anomaly", GetiProjectType.ANOMALY],
+            ["fxt_datumaro_dataset_anomaly_cls", GetiProjectType.ANOMALY],
+            ["fxt_datumaro_dataset_anomaly_det", GetiProjectType.ANOMALY],
+            ["fxt_datumaro_dataset_anomaly_seg", GetiProjectType.ANOMALY],
+            ["fxt_datumaro_dataset_chained_det_cls", GetiProjectType.CHAINED_DETECTION_CLASSIFICATION],
+            ["fxt_datumaro_dataset_chained_det_seg", GetiProjectType.CHAINED_DETECTION_SEGMENTATION],
         ],
     )
     def test_generate_pipeline_data(

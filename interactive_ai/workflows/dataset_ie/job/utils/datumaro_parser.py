@@ -13,7 +13,11 @@ from iai_core.entities.model_template import TaskType
 from iai_core.factories import ProjectParser
 from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
 from jobs_common_extras.datumaro_conversion.convert_utils import ConvertUtils
-from jobs_common_extras.datumaro_conversion.definitions import CHAINED_PROJECT_TYPES, GetiProjectType
+from jobs_common_extras.datumaro_conversion.definitions import (
+    ANOMALY_PROJECT_TYPES,
+    CHAINED_PROJECT_TYPES,
+    GetiProjectType,
+)
 
 from job.utils.exceptions import DatasetParsingException
 from job.utils.import_utils import ImportUtils
@@ -61,10 +65,7 @@ class DatumaroProjectParser(ProjectParser):
             self._task_name_to_task_type,
         ) = self._process_task_types(project_type=project_type)
 
-        if (
-            FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
-            and project_type == GetiProjectType.ANOMALY_CLASSIFICATION
-        ):
+        if project_type in [GetiProjectType.ANOMALY, GetiProjectType.ANOMALY_CLASSIFICATION]:
             label_cat: dm.LabelCategories = dm_categories[dm.AnnotationType.label]
             if label_cat.label_groups:
                 label_cat.label_groups = []  # ignore label_groups to generate correct group name for new task
@@ -258,11 +259,7 @@ class DatumaroProjectParser(ProjectParser):
         last_task_type = self.get_task_type_by_name(task_name=last_task_name)
 
         # ProjectBuilder will generate Labels with pre-defined metadata for anomaly project
-        if include_all_labels or last_task_type not in [
-            TaskType.ANOMALY_CLASSIFICATION,
-            TaskType.ANOMALY_DETECTION,
-            TaskType.ANOMALY_SEGMENTATION,
-        ]:
+        if include_all_labels or last_task_type != TaskType.ANOMALY:
             task_name_to_label_meta[last_task_name] = label_name_to_label_meta
 
         return task_name_to_label_meta
@@ -544,14 +541,7 @@ class DatumaroProjectParser(ProjectParser):
 
                 labels.append(label_item)
 
-            if (
-                FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
-                and task_type == TaskType.ANOMALY_CLASSIFICATION
-            ):
-                task_type_name = "anomaly"
-            else:
-                task_type_name = task_type.name.lower()  # OTX TaskType name
-                # != ImportUtils.task_type_to_rest_api_string(...)
+            task_type_name = task_type.name.lower()  # OTX TaskType name != ImportUtils.task_type_to_rest_api_string()
             task: dict[str, Any] = {
                 "title": task_name,  # generated from ImportUtils.task_type_to_rest_api_string(...)
                 "task_type": task_type_name,  # OTX TaskType name
@@ -603,32 +593,34 @@ def get_filtered_supported_project_types(
     :return: A list of supported Geti project types
     """
     exported_project_type = ImportUtils.get_exported_project_type(dm_infos)
+    supported_project_types = []
+
     if exported_project_type != GetiProjectType.UNKNOWN:
-        filtered_supported_project_types = [exported_project_type]
+        if exported_project_type in ANOMALY_PROJECT_TYPES:
+            supported_project_types = [GetiProjectType.ANOMALY]
+        else:
+            supported_project_types = [exported_project_type]
     else:
-        filtered_supported_project_types = []
         ann_types = set()
         for types in label_to_ann_types.values():
             ann_types.update(types)
         if dm.AnnotationType.label in ann_types:
-            filtered_supported_project_types.append(GetiProjectType.CLASSIFICATION)
+            supported_project_types.append(GetiProjectType.CLASSIFICATION)
         if dm.AnnotationType.bbox in ann_types:
-            filtered_supported_project_types.append(GetiProjectType.DETECTION)
+            supported_project_types.append(GetiProjectType.DETECTION)
         if (
             dm.AnnotationType.polygon in ann_types
             or dm.AnnotationType.ellipse in ann_types
             or dm.AnnotationType.mask in ann_types
         ):
-            filtered_supported_project_types.extend(
-                [GetiProjectType.SEGMENTATION, GetiProjectType.INSTANCE_SEGMENTATION]
-            )
+            supported_project_types.extend([GetiProjectType.SEGMENTATION, GetiProjectType.INSTANCE_SEGMENTATION])
         if (
             FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_KEYPOINT_DETECTION)
             and dm.AnnotationType.points in ann_types
         ):
-            filtered_supported_project_types.append(GetiProjectType.KEYPOINT_DETECTION)
+            supported_project_types.append(GetiProjectType.KEYPOINT_DETECTION)
 
-    return filtered_supported_project_types
+    return supported_project_types
 
 
 @unified_tracing
