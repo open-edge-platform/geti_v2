@@ -71,7 +71,7 @@ class TestHyperparameters:
                             "random_iou_crop": {"enable": True},
                             "color_jitter": {"enable": True},
                             "gaussian_blur": {"enable": True, "kernel_size": 3},
-                            "tiling": {"enable": True, "adaptive_tiling": True, "tile_size": 224, "tile_overlap": 32},
+                            "tiling": {"enable": True, "adaptive_tiling": True, "tile_size": 224, "tile_overlap": 0.15},
                         }
                     },
                     "training": {
@@ -97,7 +97,7 @@ class TestHyperparameters:
                             random_iou_crop=RandomIOUCrop(enable=True),
                             color_jitter=ColorJitter(enable=True),
                             gaussian_blur=GaussianBlur(enable=True, kernel_size=3),
-                            tiling=Tiling(enable=True, adaptive_tiling=True, tile_size=224, tile_overlap=32),
+                            tiling=Tiling(enable=True, adaptive_tiling=True, tile_size=224, tile_overlap=0.15),
                         )
                     ),
                     training=TrainingHyperParameters(

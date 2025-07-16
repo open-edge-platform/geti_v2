@@ -118,7 +118,7 @@
         },
         {
           "key": "tile_overlap",
-          "value": 64
+          "value": 0.2
         }
       ]
     }

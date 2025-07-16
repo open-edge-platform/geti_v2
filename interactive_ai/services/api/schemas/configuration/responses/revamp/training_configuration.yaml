@@ -94,9 +94,10 @@ example:
           name: "Tile overlap"
           type: "int"
           description: "Overlap between adjacent tiles in pixels"
-          value: 64
-          default_value: 64
-          min_value: 0
+          value: 0.4
+          default_value: 0.5
+          min_value: 0.0
+          max_value: 1.0
     filtering:
       max_annotation_objects:
         - key: "enable"
