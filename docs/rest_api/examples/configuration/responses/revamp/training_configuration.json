@@ -244,7 +244,7 @@
           "key": "tile_overlap",
           "name": "Tile overlap",
           "type": "float",
-          "description": "Overlap between adjacent tiles in pixels",
+          "description": "Overlap between adjacent tiles as a fraction of tile size",
           "value": 0.4,
           "default_value": 0.5,
           "min_value": 0.0,
