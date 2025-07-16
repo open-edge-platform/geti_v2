@@ -13,5 +13,3 @@ RETRY_INTERVAL = 5
 INSTALL_VERSION = os.getenv("INSTALL_VERSION")
 
 CRITICAL_SECRETS = ["impt-mongodb", "impt-postgresql", "impt-spice-db", "impt-ldap-service-user", "impt-seaweed-fs"]
-KUBELET_CSR_APPROVER_NAME = "kubelet-csr-approver"
-KUBE_SYSTEM_NAMESPACE = "kube-system"

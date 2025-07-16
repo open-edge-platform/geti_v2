@@ -35,6 +35,8 @@ from constants.platform import (
     GETI_LABEL_VALUE,
     ISTIO_NAMESPACE,
     JOBS_PRODUCTION_NAMESPACE,
+    KUBE_SYSTEM_NAMESPACE,
+    KUBELET_CSR_APPROVER_NAME,
     LDAP_SECRET_NAME,
     MONGODB_SECRET_NAME,
     OPA_NAMESPACE,
@@ -42,8 +44,6 @@ from constants.platform import (
     POSTGRESQL_SECRET_NAME,
     SEAWEEDFS_SECRET_NAME,
     SPICEDB_SECRET_NAME,
-    KUBE_SYSTEM_NAMESPACE,
-    KUBELET_CSR_APPROVER_NAME,
 )
 from geti_controller.communication import (
     OperationStatus,
@@ -380,8 +380,6 @@ def cleanup_kubelet_csr_approver() -> None:
     logger.info("Kubelet csr approver deleted successfully.")
 
 
-
-
 def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
     """
     Cleanup the main namespace by removing all resources except for selected secrets.
@@ -469,9 +467,20 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
         rbac_api = kube_client.RbacAuthorizationV1Api(client)
         cluster_roles = rbac_api.list_cluster_role(label_selector=exclude_label_selector)
         for item in cluster_roles.items:
-            if any(name in item.metadata.name for name in [
-                "dex", "cert-manager", "istio", "kserve", "impt", "flyte", "modelmesh", "reloader", "platform-cleaner"
-            ]):
+            if any(
+                name in item.metadata.name
+                for name in [
+                    "dex",
+                    "cert-manager",
+                    "istio",
+                    "kserve",
+                    "impt",
+                    "flyte",
+                    "modelmesh",
+                    "reloader",
+                    "platform-cleaner",
+                ]
+            ):
                 try:
                     rbac_api.delete_cluster_role(name=item.metadata.name)
                     logger.debug(f"Deleted ClusterRole: {item.metadata.name}")
@@ -479,9 +488,20 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
                     logger.error(f"Failed to delete ClusterRole {item.metadata.name}: {e}")
         cluster_role_bindings = rbac_api.list_cluster_role_binding(label_selector=exclude_label_selector)
         for item in cluster_role_bindings.items:
-            if any(name in item.metadata.name for name in [
-                "dex", "cert-manager", "istio", "kserve", "impt", "flyte", "modelmesh", "reloader", "platform-cleaner"
-            ]):
+            if any(
+                name in item.metadata.name
+                for name in [
+                    "dex",
+                    "cert-manager",
+                    "istio",
+                    "kserve",
+                    "impt",
+                    "flyte",
+                    "modelmesh",
+                    "reloader",
+                    "platform-cleaner",
+                ]
+            ):
                 try:
                     rbac_api.delete_cluster_role_binding(name=item.metadata.name)
                     logger.debug(f"Deleted ClusterRoleBinding: {item.metadata.name}")
@@ -550,7 +570,8 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
         main_ns.metadata.labels.update({"app.kubernetes.io/managed-by": "Helm"})
         if not main_ns.metadata.annotations:
             main_ns.metadata.annotations = {}
-        main_ns.metadata.annotations.update({"meta.helm.sh/release-name": "geti-namespaces"})
+        main_ns.metadata.annotations.update({"meta.helm.sh/release-name": "geti-namespaces",
+                                             "meta.helm.sh/release-namespace": "impt"})
         core_api.patch_namespace(name=PLATFORM_NAMESPACE, body=main_ns)
         logger.info("Main namespace annotations updated.")
 

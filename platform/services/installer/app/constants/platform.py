@@ -36,6 +36,7 @@ OPA_NAMESPACE = "opa-istio"
 CERT_MANAGER_NAMESPACE = "cert-manager"
 FLYTE_NAMESPACE = "flyte"
 JOBS_PRODUCTION_NAMESPACE = "impt-jobs-production"
+KUBE_SYSTEM_NAMESPACE = "kube-system"
 
 # Secret names
 CUSTOM_TLS_SECRET_NAME = "custom-tls"  # noqa: S105
@@ -47,3 +48,4 @@ SEAWEEDFS_SECRET_NAME = "impt-seaweed-fs"  # noqa: S105
 
 GETI_LABEL_KEY = "needed_by_geti"
 GETI_LABEL_VALUE = "true"
+KUBELET_CSR_APPROVER_NAME = "kubelet-csr-approver"
