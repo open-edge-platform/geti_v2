@@ -1,16 +1,15 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Flex, Grid, Item, minmax, Picker, Text } from '@geti/ui';
+import { Flex } from '@geti/ui';
 import { noop, partition } from 'lodash-es';
 
 import {
     ConfigurationParameter,
-    EnumConfigurationParameter,
     TrainingConfiguration,
 } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { isConfigurationParameter, isEnumParameter } from '../../../../../../../../core/configurable-parameters/utils';
-import { ParameterLayout, Parameters } from '../../ui/parameters.component';
+import { Parameters } from '../../ui/parameters.component';
 import {
     INPUT_SIZE_HEIGHT_KEY,
     INPUT_SIZE_WIDTH_KEY,
