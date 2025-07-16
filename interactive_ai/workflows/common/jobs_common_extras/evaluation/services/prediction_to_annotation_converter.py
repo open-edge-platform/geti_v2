@@ -33,8 +33,6 @@ from jobs_common_extras.evaluation.utils.detection_utils import detection2array
 
 logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
-
 
 class IPredictionToAnnotationConverter(metaclass=abc.ABCMeta):
     """

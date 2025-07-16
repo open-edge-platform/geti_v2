@@ -87,9 +87,6 @@ class ModelStats(BaseModel):
     performance_ratings: PerformanceRatings = Field(
         title="Performance ratings", description="Standardized ratings for model performance metrics"
     )
-    performance_ratings: PerformanceRatings = Field(
-        title="Performance ratings", description="Standardized ratings for model performance metrics"
-    )
 
 
 class Capabilities(BaseModel):
