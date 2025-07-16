@@ -2,7 +2,7 @@ name: include_models
 in: query
 description: |
   Specify which models to include in the export.
-  Allowed values: `all` (include all models), `none` (exclude models), `last_active` (include only the last active model).
+  Allowed values: `all` (include all models), `none` (exclude models), `latest_active` (include only the last active model).
 required: false
 schema:
   type: string
@@ -10,4 +10,4 @@ schema:
   enum:
     - all
     - none
-    - last_active
+    - latest_active

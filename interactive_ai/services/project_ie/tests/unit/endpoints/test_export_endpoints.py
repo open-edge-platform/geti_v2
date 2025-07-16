@@ -35,13 +35,13 @@ class TestProjectExportEndpoints:
         )
         assert result.json() == {"job_id": str(submitted_job_id)}
 
-    def test_start_project_export_last_active(
+    def test_start_project_export_latest_active(
         self, fxt_test_app, fxt_session_ctx, fxt_project_identifier, fxt_ote_id
     ) -> None:
         # Arrange
         endpoint = (
             f"/api/v1/organizations/{fxt_session_ctx.organization_id}/workspaces/{fxt_session_ctx.workspace_id}"
-            f"/projects/{fxt_project_identifier.project_id}:export?include_models=last_active"
+            f"/projects/{fxt_project_identifier.project_id}:export?include_models=latest_active"
         )
         submitted_job_id = fxt_ote_id(100)
 
@@ -54,7 +54,7 @@ class TestProjectExportEndpoints:
         # Assert
         assert result.status_code == HTTPStatus.OK
         mock_submit_export_job.assert_called_once_with(
-            project_identifier=fxt_project_identifier, author_id=ID("dummy_user"), include_models="last_active"
+            project_identifier=fxt_project_identifier, author_id=ID("dummy_user"), include_models="latest_active"
         )
         assert result.json() == {"job_id": str(submitted_job_id)}
 

@@ -32,7 +32,7 @@ class IncludeModelsType(str, Enum):
 
     all = "all"
     none = "none"
-    last_active = "last_active"
+    latest_active = "latest_active"
 
 
 class ExportController:
