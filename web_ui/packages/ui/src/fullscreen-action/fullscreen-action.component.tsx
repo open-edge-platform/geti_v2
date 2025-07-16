@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ReactNode } from 'react';
+import { cloneElement, isValidElement, ReactNode, useRef } from 'react';
 
 import {
     ActionButton,
@@ -27,6 +27,8 @@ interface FullscreenActionProps {
 }
 
 export const FullscreenAction = ({ children, title, actionButton, id }: FullscreenActionProps): JSX.Element => {
+    const container = useRef(null);
+
     return (
         <DialogTrigger type='fullscreenTakeover'>
             <TooltipTrigger placement={'bottom'}>
@@ -43,7 +45,9 @@ export const FullscreenAction = ({ children, title, actionButton, id }: Fullscre
                     <Divider />
 
                     <ButtonGroup>
-                        {actionButton}
+                        {actionButton && isValidElement(actionButton)
+                            ? cloneElement(actionButton as React.ReactElement, { ref: container })
+                            : actionButton}
 
                         <TooltipTrigger placement={'bottom'}>
                             <ActionButton isQuiet onPress={close} aria-label='Close fullscreen'>
