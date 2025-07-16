@@ -1,12 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { OpenCVTypes } from '@geti/smart-tools/opencv';
-import { isPointInShape } from '@geti/smart-tools/utils';
 import * as ort from 'onnxruntime-common';
 
+import { OpenCVTypes } from '../opencv/interfaces';
 import { Point, ShapeType } from '../shared/interfaces';
-import { isPointInShape } from '../utils/tool-utils';
+import { isPointInShape } from '../utils/math';
 import type { SegmentAnythingResult } from './interfaces';
 import { PostProcessor } from './post-processing';
 import { EncodingOutput } from './segment-anything-encoder';

@@ -4,7 +4,7 @@
 import Clipper from '@doodle3d/clipper-js';
 
 import { OpenCVTypes } from '../opencv/interfaces';
-import { Circle, Point, Polygon, Rect, RotatedRect, Shape, Vector } from '../shared/interfaces';
+import { Point, Polygon } from '../shared/interfaces';
 
 export const formatContourToPoints = (
     mask: OpenCVTypes.Mat,
@@ -150,101 +150,4 @@ export const getMatFromPoints = (CV: OpenCVTypes.cv, points: Point[], offset = {
     });
 
     return pointsMat;
-};
-
-const calculateDistance = (startPoint: Point, endPoint: Point): number => {
-    return Math.sqrt(Math.pow(endPoint.x - startPoint.x, 2) + Math.pow(endPoint.y - startPoint.y, 2));
-};
-
-// Point in polygon (ray-casting algorithm)
-export const pointInPolygon = (polygon: Polygon, point: Point): boolean => {
-    const polygonPoints = polygon.points;
-    const pointsLength: number = polygonPoints.length;
-    const x = point.x;
-    const y = point.y;
-    let inside = false;
-    for (let i = 0, j = pointsLength - 1; i < pointsLength; j = i++) {
-        const xi = polygonPoints[i].x;
-        const yi = polygonPoints[i].y;
-        const xj = polygonPoints[j].x;
-        const yj = polygonPoints[j].y;
-
-        const yDiffEquality = yi > y !== yj > y;
-        const xDiff = xj - xi;
-        const yiDiff = y - yi;
-        const yijDiff = yj - yi;
-        const intersect = yDiffEquality && x < (xDiff * yiDiff) / yijDiff + xi;
-
-        if (intersect) inside = !inside;
-    }
-    return inside;
-};
-
-export const pointInRectangle = ({ width, height, x, y }: Omit<Rect, 'shapeType'>, point: Point): boolean => {
-    const startPoint: Point = { x, y };
-    const endPoint: Point = { x: x + width, y: y + height };
-
-    return point.x >= startPoint.x && point.x <= endPoint.x && point.y >= startPoint.y && point.y <= endPoint.y;
-};
-
-const divScalar = (value: Vector, scalar: number): Vector => {
-    return {
-        x: value.x / scalar,
-        y: value.y / scalar,
-    };
-};
-
-const sub = (a: Vector, b: Vector): Vector => {
-    return { x: a.x - b.x, y: a.y - b.y };
-};
-
-const abs = (value: Vector): Vector => {
-    return {
-        x: Math.abs(value.x),
-        y: Math.abs(value.y),
-    };
-};
-
-const rotate = (vector: Vector, radians: number): Vector => {
-    return {
-        x: vector.x * Math.cos(radians) - vector.y * Math.sin(radians),
-        y: vector.x * Math.sin(radians) + vector.y * Math.cos(radians),
-    };
-};
-
-const degreesToRadians = (degrees: number): number => {
-    return degrees * (Math.PI / 180);
-};
-
-const rotateDeg = (vector: Vector, degrees: number): Vector => {
-    return rotate(vector, degreesToRadians(degrees));
-};
-
-export const pointInRotatedRectangle = (rect: RotatedRect, point: Point): boolean => {
-    const { x, y, width, height, angle } = rect;
-    const rotationCorrected = abs(rotateDeg(sub(point, { x, y }), -angle));
-    const distanceCenterToBoxEdge = divScalar({ x: width, y: height }, 2);
-
-    return rotationCorrected.x < distanceCenterToBoxEdge.x && rotationCorrected.y < distanceCenterToBoxEdge.y;
-};
-
-export const pointInCircle = (circle: Circle, point: Point): boolean => {
-    const { x, y, r } = circle;
-    const centerPoint: Point = { x, y };
-    const distance = calculateDistance(centerPoint, point);
-
-    return distance < r;
-};
-
-export const isPointInShape = (shape: Shape, point: Point) => {
-    switch (shape.shapeType) {
-        case 'polygon':
-            return pointInPolygon(shape, point);
-        case 'rect':
-            return pointInRectangle(shape, point);
-        case 'rotated-rect':
-            return pointInRotatedRectangle(shape, point);
-        case 'circle':
-            return pointInCircle(shape, point);
-    }
 };
