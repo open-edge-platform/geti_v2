@@ -36,6 +36,7 @@
                         "id": "610123e5efba22ca453f11b9",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "object"
                     },

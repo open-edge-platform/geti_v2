@@ -55,6 +55,7 @@ from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier
 logger = logging.getLogger(__name__)
 
 FEATURE_FLAG_KEYPOINT_DETECTION = "FEATURE_FLAG_KEYPOINT_DETECTION"
+FEATURE_FLAG_ANNOTATION_HOLE = "FEATURE_FLAG_ANNOTATION_HOLE"
 
 
 class ProjectBuilder:
@@ -385,6 +386,23 @@ class ProjectBuilder:
             )
             custom_labels.extend([empty_label])
             custom_label_groups.extend([label_group])
+
+        if FeatureFlagProvider.is_enabled(FEATURE_FLAG_KEYPOINT_DETECTION) and domain == Domain.INSTANCE_SEGMENTATION:
+            background_label = Label(
+                name="Background",
+                domain=Domain.INSTANCE_SEGMENTATION,
+                color=Color(red=0, green=0, blue=0),
+                is_empty=True,
+                is_background=True,
+                id_=LabelRepo.generate_id(),
+            )
+            label_group = LabelGroup(
+                name=background_label.name,
+                labels=[background_label],
+                group_type=LabelGroupType.EMPTY_LABEL,
+            )
+            custom_labels.append(background_label)
+            custom_label_groups.append(label_group)
 
         return custom_label_groups, custom_labels
 
