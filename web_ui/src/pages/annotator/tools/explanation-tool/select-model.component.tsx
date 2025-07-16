@@ -3,7 +3,6 @@
 
 import { ComponentProps } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Divider, Flex, Item, Picker, Text } from '@geti/ui';
 
 import { InferenceModel } from '../../../../core/annotations/services/visual-prompt-service';
@@ -14,16 +13,10 @@ import { useProject } from '../../../project-details/providers/project-provider/
 import { useSelectedInferenceModel } from '../../providers/selected-media-item-provider/use-selected-inference-model';
 
 export const useCanSelectDifferentInferenceModel = () => {
-    const { FEATURE_FLAG_VISUAL_PROMPT_SERVICE } = useFeatureFlags();
     const { isTaskChainProject, isSingleDomainProject } = useProject();
     const isClassification = isSingleDomainProject(isClassificationDomain) || isSingleDomainProject(isAnomalyDomain);
 
-    if (
-        isClassification ||
-        isTaskChainProject ||
-        isSingleDomainProject(isKeypointDetection) ||
-        FEATURE_FLAG_VISUAL_PROMPT_SERVICE === false
-    ) {
+    if (isClassification || isTaskChainProject || isSingleDomainProject(isKeypointDetection)) {
         return false;
     }
 

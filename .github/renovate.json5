@@ -122,13 +122,6 @@
       matchUpdateTypes: ["major", "minor", "patch"],
     },
 
-    // Disable upgrades for non production images
-    {
-      enabled: false,
-      matchDatasources: ["docker"],
-      matchFileNames: ["**/Dockerfile.protoc"],
-    },
-
     // Group minor/patch/digest GitHub Actions updates
     {
       enabled: true,
@@ -163,6 +156,22 @@
       matchDatasources: ["github-releases"],
       matchDepNames: ["node"],
       matchDepTypes: ["uses-with"],
+    },
+
+    // Group Go version upgrades
+    {
+      enabled: true,
+      matchPackageNames: ["golang", "go"],
+      allowedVersions: "<1.24",
+      groupName: "Go version",
+      groupSlug: "go-version",
+    },
+
+    // Disable upgrades for non production images
+    {
+      enabled: false,
+      matchDatasources: ["docker"],
+      matchFileNames: ["**/Dockerfile.protoc"],
     },
   ],
 

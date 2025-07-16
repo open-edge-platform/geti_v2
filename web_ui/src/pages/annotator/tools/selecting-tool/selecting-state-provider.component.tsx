@@ -13,10 +13,10 @@ import {
     useState,
 } from 'react';
 
+import { getCenterOfTheAnnotations } from '@geti/smart-tools/utils';
 import { isNil } from 'lodash-es';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
-import { getCenterOfTheAnnotations } from '../../../../core/annotations/math';
 import { Point } from '../../../../core/annotations/shapes.interface';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { ToolType } from '../../core/annotation-tool-context.interface';

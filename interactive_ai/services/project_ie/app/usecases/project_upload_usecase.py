@@ -102,10 +102,12 @@ class ProjectUploadUseCase:
         new_size = len(data) + upload_operation.offset
         upload_operation.offset = new_size
         upload_operation_repo.save(instance=upload_operation)
+
+        safe_operation_id = str(operation_id).replace("\n", "").replace("\r", "")
         logger.info(
             "Appended data of size %s bytes to file with operation id %s",
             str(len(data)),
-            str(operation_id),
+            str(safe_operation_id),
         )
         if upload_operation.size == upload_operation.offset:
             zip_storage_repo.complete_multipart_upload(

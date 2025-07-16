@@ -3,9 +3,9 @@
 
 import { HTMLProps, PointerEvent, ReactNode, useRef, useState } from 'react';
 
+import { calculateDistance } from '@geti/smart-tools/utils';
 import { isFunction } from 'lodash-es';
 
-import { calculateDistance } from '../../../../../core/annotations/math';
 import { KeypointNode } from '../../../../../core/annotations/shapes.interface';
 import { getRelativePoint } from '../../../../utils';
 import { useZoom } from '../../../zoom/zoom-provider.component';

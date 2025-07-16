@@ -45,15 +45,23 @@ const TemplateRating: FC<TemplateRatingProps> = ({ ratings }) => {
     );
 };
 
+type PerformanceRating = SupportedAlgorithm['performanceRatings'][keyof SupportedAlgorithm['performanceRatings']];
+
+const RATING_MAP: Record<PerformanceRating, Ratings> = {
+    1: 'LOW',
+    2: 'MEDIUM',
+    3: 'HIGH',
+};
+
 export const ModelType: FC<ModelTypeProps> = ({
+    name,
     algorithm,
     selectedModelTemplateId,
     onChangeSelectedTemplateId,
     activeModelTemplateId,
     renderTag,
-    name,
 }) => {
-    const { modelTemplateId, lifecycleStage, summary } = algorithm;
+    const { modelTemplateId, lifecycleStage, description, performanceRatings } = algorithm;
     const isSelected = selectedModelTemplateId === modelTemplateId;
 
     const shouldShowActiveTag = modelTemplateId === activeModelTemplateId;
@@ -98,7 +106,7 @@ export const ModelType: FC<ModelTypeProps> = ({
                         <InfoTooltip
                             id={`${name.toLocaleLowerCase()}-summary-id`}
                             tooltipText={
-                                <ModelArchitectureTooltipText description={summary} isDeprecated={isDeprecated} />
+                                <ModelArchitectureTooltipText description={description} isDeprecated={isDeprecated} />
                             }
                             iconColor={isSelected ? 'var(--energy-blue)' : undefined}
                             className={classes.infoTooltip}
@@ -112,7 +120,13 @@ export const ModelType: FC<ModelTypeProps> = ({
                 </>
             }
             descriptionContent={
-                <TemplateRating ratings={{ accuracy: 'HIGH', trainingTime: 'MEDIUM', inferenceSpeed: 'LOW' }} />
+                <TemplateRating
+                    ratings={{
+                        accuracy: RATING_MAP[performanceRatings.accuracy],
+                        trainingTime: RATING_MAP[performanceRatings.trainingTime],
+                        inferenceSpeed: RATING_MAP[performanceRatings.inferenceSpeed],
+                    }}
+                />
             }
         />
     );

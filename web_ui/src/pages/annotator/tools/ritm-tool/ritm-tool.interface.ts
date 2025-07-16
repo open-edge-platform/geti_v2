@@ -1,8 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { RITM } from '@geti/smart-tools/ritm';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
-import { Point, Polygon, Shape } from '../../../../core/annotations/shapes.interface';
+import { Point, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { AlgorithmType } from '../../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { WebWorker } from '../../../../webworkers/web-worker.interface';
@@ -24,13 +26,9 @@ export interface RITMResult {
     shape: Shape | undefined;
 }
 
-interface RITMInstance {
-    new (): Promise<RITMMethods>;
-}
-
-export interface RITMWorker extends WebWorker<Polygon> {
-    RITM: RITMInstance;
+export interface RITMWorker extends WebWorker {
     type: AlgorithmType.RITM;
+    build: () => Promise<RITM>;
 }
 
 export interface RITMData {
@@ -50,14 +48,3 @@ export const defaultRITMConfig = {
     dynamicBoxMode: true,
     rightClickMode: false,
 };
-
-export const TEMPLATE_SIZE = 384;
-
-export interface RITMMethods {
-    loadImage(imageData: ImageData): void;
-    load(): void;
-    reset(): void;
-    cleanMemory(): void;
-    execute(imageArea: RegionOfInterest, points: RITMPoint[], outputShape: ShapeType): Promise<Shape | undefined>;
-    resetPointMask(): void;
-}

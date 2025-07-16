@@ -71,14 +71,14 @@ def fxt_anomaly_classification_task(
 
 
 @pytest.fixture
-def fxt_anomaly_detection_task(
+def fxt_anomaly_task(
     fxt_mongo_id,
-    fxt_model_storage_anomaly_detection,
+    fxt_model_storage_anomaly,
 ):
     yield TaskNode(
-        title="Sample anomaly detection task",
+        title="Sample anomaly task",
         project_id=fxt_mongo_id(1),
-        task_properties=TaskProperties.from_model_template(fxt_model_storage_anomaly_detection.model_template),
+        task_properties=TaskProperties.from_model_template(fxt_model_storage_anomaly.model_template),
         id_=fxt_mongo_id(13),
     )
 
@@ -226,11 +226,11 @@ def fxt_anomaly_classification_task_graph(fxt_dataset_task, fxt_anomaly_classifi
 
 
 @pytest.fixture
-def fxt_anomaly_detection_task_graph(fxt_dataset_task, fxt_anomaly_detection_task):
+def fxt_anomaly_task_graph(fxt_dataset_task, fxt_anomaly_task):
     task_graph = TaskGraph()
     task_graph.add_node(fxt_dataset_task)
-    task_graph.add_node(fxt_anomaly_detection_task)
-    task_graph.add_task_edge(TaskEdge(from_task=fxt_dataset_task, to_task=fxt_anomaly_detection_task))
+    task_graph.add_node(fxt_anomaly_task)
+    task_graph.add_task_edge(TaskEdge(from_task=fxt_dataset_task, to_task=fxt_anomaly_task))
     yield task_graph
 
 

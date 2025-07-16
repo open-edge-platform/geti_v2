@@ -3,15 +3,16 @@
 
 import { PointerEvent } from 'react';
 
+import { clampBetween } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Annotation, RegionOfInterest } from '../core/annotations/annotation.interface';
-import { clampBetween } from '../core/annotations/math';
 import { KeypointNode, Point } from '../core/annotations/shapes.interface';
 import { isEmptyLabel } from '../core/labels/utils';
 import { KeypointStructure } from '../core/projects/task.interface';
 import { VALID_IMAGE_TYPES_SINGLE_UPLOAD } from '../shared/media-utils';
+import { formatToFileArray, isNonEmptyArray, runWhen } from '../shared/utils';
 import { PointerType } from './annotator/tools/tools.interface';
 import { isEraserOrRightButton, isLeftButton, MouseButton } from './buttons-utils';
 
@@ -45,6 +46,11 @@ export const isSupportedImageFormat = (file: File): boolean => {
 
     return fileType ? VALID_IMAGE_TYPES_SINGLE_UPLOAD.includes(fileType) : false;
 };
+
+export const onValidImageFormat = runWhen((rawFiles: FileList | File[] | null) => {
+    const files = formatToFileArray(rawFiles);
+    return isNonEmptyArray(files) && files.every(isSupportedImageFormat);
+});
 
 export const isEmptyLabelAnnotation = (annotation: Annotation): boolean => annotation.labels.some(isEmptyLabel);
 
@@ -175,5 +181,6 @@ export const getMaxMinPoint = <T extends Point>(points: T[], pointAxis: PointAxi
         ([min, max], point) => [Math.min(min, point[pointAxis]), Math.max(max, point[pointAxis])],
         [Infinity, -Infinity]
     );
+
     return [minAxisValue, maxAxisValue];
 };

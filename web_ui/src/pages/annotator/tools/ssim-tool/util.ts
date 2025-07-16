@@ -1,14 +1,16 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { SSIMMatch as ToolSSIMMatch, type RunSSIMProps as ToolRunSSIMProps } from '@geti/smart-tools';
+import { getBoundingBox } from '@geti/smart-tools/utils';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { intersectionOverUnion } from '../../../../core/annotations/intersection-over-union';
-import { getBoundingBox } from '../../../../core/annotations/math';
 import { Rect, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { DOMAIN } from '../../../../core/projects/core.interface';
-import { isShapeWithinRoi } from '../utils';
-import { SSIMMatch } from './ssim-tool.interface';
+import { convertToolShapeToGetiShape, isShapeWithinRoi } from '../utils';
+import { RunSSIMProps, SSIMMatch } from './ssim-tool.interface';
 
 export const MAX_NUMBER_ITEMS = 500;
 export const SSIM_SUPPORTED_DOMAINS = [
@@ -88,4 +90,23 @@ export const convertRectToShape = (rectangle: Rect, shapeType: ShapeType): Shape
         default:
             throw 'Unexpected shape type given to SSIM';
     }
+};
+
+export const convertRunSSIMPropsToToolRunSSIMProps = (runSSIMProps: RunSSIMProps): ToolRunSSIMProps => {
+    return {
+        ...runSSIMProps,
+        template: {
+            ...runSSIMProps.template,
+            shapeType: 'rect',
+        },
+        shapeType: runSSIMProps.shapeType,
+        existingAnnotations: runSSIMProps.existingAnnotations,
+    };
+};
+
+export const convertToolMatchesToGetiMatches = (matches: ToolSSIMMatch[]): SSIMMatch[] => {
+    return matches.map((match) => ({
+        ...match,
+        shape: convertToRect(convertToolShapeToGetiShape(match.shape)),
+    }));
 };

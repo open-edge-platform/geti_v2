@@ -56,6 +56,7 @@ const FilterOption: FC<FilterOptionProps> = ({ option, onOptionChange }) => {
             </Text>
             <Flex gap={'size-200'} gridColumn={'2/3'}>
                 <NumberField
+                    aria-label={`Change ${name}`}
                     minValue={minValue}
                     maxValue={maxValue ?? undefined}
                     step={1}
@@ -64,7 +65,12 @@ const FilterOption: FC<FilterOptionProps> = ({ option, onOptionChange }) => {
                     onChange={handleFilterValueChange}
                 />
 
-                <Checkbox isEmphasized isSelected={isUnlimited} onChange={handleUnlimitedChange}>
+                <Checkbox
+                    isEmphasized
+                    isSelected={isUnlimited}
+                    onChange={handleUnlimitedChange}
+                    aria-label={`Toggle ${configParameter.name}`}
+                >
                     Unlimited
                 </Checkbox>
             </Flex>

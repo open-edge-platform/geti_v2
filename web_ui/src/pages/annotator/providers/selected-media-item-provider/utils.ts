@@ -4,13 +4,13 @@
 import { useMemo, useState } from 'react';
 
 import { API_URLS } from '@geti/core';
+import { roiFromImage } from '@geti/smart-tools/utils';
 import { QueryClient, QueryKey } from '@tanstack/react-query';
 import { isArray, isEqual, isNumber } from 'lodash-es';
 import { useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
-import { roiFromImage } from '../../../../core/annotations/math';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { MEDIA_TYPE } from '../../../../core/media/base-media.interface';
 import { MediaIdentifier, MediaItem } from '../../../../core/media/media.interface';

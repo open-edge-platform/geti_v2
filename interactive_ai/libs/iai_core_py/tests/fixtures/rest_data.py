@@ -65,15 +65,15 @@ def fxt_detection_crop_classification_data(
 
 
 @pytest.fixture
-def fxt_anomaly_classification_rest_data():
+def fxt_anomaly_rest_data():
     yield {
         "rest_data": {
-            "name": "Test segmentation project",
+            "name": "Test anomaly project",
             "pipeline": {
                 "connections": [{"from": "Dataset", "to": "Anomaly task"}],
                 "tasks": [
                     {"task_type": "dataset", "title": "Dataset"},
-                    {"title": "Anomaly task", "task_type": "anomaly_classification"},
+                    {"title": "Anomaly task", "task_type": "anomaly"},
                 ],
             },
         }

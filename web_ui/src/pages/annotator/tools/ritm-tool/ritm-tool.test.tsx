@@ -3,10 +3,10 @@
 
 import '@wessberg/pointer-events';
 
+import { getBoundingBox } from '@geti/smart-tools/utils';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { TaskChainInput } from '../../../../core/annotations/annotation.interface';
-import { getBoundingBox } from '../../../../core/annotations/math';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { fakeAnnotationToolContext } from '../../../../test-utils/fake-annotator-context';
@@ -27,7 +27,6 @@ import { defaultRITMConfig } from './ritm-tool.interface';
 const mockRITM = () => {
     const mockedRITMState: RITMStateContextProps = {
         result: null,
-
         isLoading: false,
         loadImage: jest.fn(),
         cancel: jest.fn(),
@@ -129,11 +128,7 @@ const renderTool = (toolSettings: Partial<ToolSettings[ToolType.RITMTool]> = {})
 };
 
 describe('RITMTool', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
-    afterAll(() => {
+    afterEach(() => {
         jest.clearAllMocks();
     });
 
@@ -183,7 +178,7 @@ describe('RITMTool', () => {
             fireEvent.mouseUp(editor, { buttons: 0, ...pointTwo });
 
             await waitFor(() => {
-                expect(mockedRITMState.execute).not.toBeCalled();
+                expect(mockedRITMState.execute).not.toHaveBeenCalled();
             });
         });
 
@@ -271,7 +266,7 @@ describe('RITMTool', () => {
                 fireEvent.mouseUp(editor, { buttons: 0, ...point });
 
                 await waitFor(() => {
-                    expect(mockedRITMState.execute).not.toBeCalled();
+                    expect(mockedRITMState.execute).not.toHaveBeenCalled();
                 });
             });
         });

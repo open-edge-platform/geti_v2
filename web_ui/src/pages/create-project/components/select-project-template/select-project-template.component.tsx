@@ -47,7 +47,7 @@ export const SelectProjectTemplate = ({
     setValidationError,
 }: SelectProjectTemplateProps): JSX.Element => {
     const { selectedDomains, selectedTab, projectTypeMetadata } = metadata;
-    const { FEATURE_FLAG_ANOMALY_REDUCTION, FEATURE_FLAG_KEYPOINT_DETECTION } = useFeatureFlags();
+    const { FEATURE_FLAG_KEYPOINT_DETECTION } = useFeatureFlags();
 
     useEffect(() => {
         // Note: Need to reset validation error when coming back from labels step
@@ -79,14 +79,10 @@ export const SelectProjectTemplate = ({
         });
     };
 
-    const tabs = FEATURE_FLAG_ANOMALY_REDUCTION
-        ? {
-              ...filterOutKeypointDetection(TABS_SINGLE_TEMPLATE, FEATURE_FLAG_KEYPOINT_DETECTION),
-              Anomaly: TABS_SINGLE_TEMPLATE.Anomaly.filter(
-                  (template) => template.domain === DOMAIN.ANOMALY_CLASSIFICATION
-              ),
-          }
-        : filterOutKeypointDetection(TABS_SINGLE_TEMPLATE, FEATURE_FLAG_KEYPOINT_DETECTION);
+    const tabs = {
+        ...filterOutKeypointDetection(TABS_SINGLE_TEMPLATE, FEATURE_FLAG_KEYPOINT_DETECTION),
+        Anomaly: TABS_SINGLE_TEMPLATE.Anomaly.filter((template) => template.domain === DOMAIN.ANOMALY_CLASSIFICATION),
+    };
 
     const ITEMS: TabItem[] = [
         ...Object.entries(tabs).map(([tab, cards]) => ({

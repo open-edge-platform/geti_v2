@@ -6,6 +6,7 @@ import { expect, Page } from '@playwright/test';
 import { JobState, JobStepState } from '../../../src/core/jobs/jobs.const';
 import { DatasetTabActions } from '../../../src/pages/project-details/components/project-dataset/utils';
 import { test } from '../../fixtures/base-test';
+import { project as keypointProject } from '../../mocks/keypoint-detection/mocks';
 import { registerJobList, setTusProgress } from '../../utils/api';
 import { loadFile } from '../../utils/dom';
 import { cancelJobFromJobScheduler } from '../job-scheduler/utils';
@@ -511,5 +512,48 @@ test.describe('Import dataset to existing project', () => {
                 ).toBeVisible();
             }
         );
+    });
+
+    test.describe('keypoint detection', () => {
+        // eslint-disable-next-line max-len
+        const KEYPOINT_PROJECT_URL = `/organizations/${ORGANIZATION_ID}/workspaces/${WORKSPACE_ID}/projects/${keypointProject.id}`;
+        const keypointTask = keypointProject.pipeline.tasks.at(-1);
+        const keypointLabels = keypointTask?.labels?.map(({ name }) => name) ?? [];
+
+        test('display warning when label mapping is not complete', async ({
+            page,
+            datasetPage,
+            registerApiResponse,
+            registerFeatureFlags,
+        }) => {
+            registerFeatureFlags({ FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE: true });
+
+            registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(keypointProject)));
+            registerApiResponse('GetAllProjectsInAWorkspace', (_, res, ctx) =>
+                res(ctx.json({ next_page: '', project_counts: 1, project_page_count: 1, projects: [keypointProject] }))
+            );
+            registerJobResponses(registerApiResponse, preparingJobId, getMockedExistingProjectPreparingJob, {
+                steps: [mockedStep],
+                metadata: {
+                    project: { id: '686521e4c41894582c6a135d', name: 'sky', type: 'keypoint_detection' },
+                    warnings: [],
+                    labels: keypointLabels,
+                },
+            });
+
+            await page.goto(KEYPOINT_PROJECT_URL);
+
+            await datasetPage.selectDatasetTabMenuItem(currentDataset.name, DatasetTabActions.ImportDataset);
+
+            await loadFile(page, clickUpload(page), { name: fileName, size: fileSize });
+
+            await page.getByRole('button', { name: 'clear-mapping-button' }).nth(0).click();
+
+            await expect(page.getByText('- The following labels require mapping: back')).toBeInViewport();
+
+            await expect(
+                page.getByText('Due to incomplete label mapping, annotations will be removed')
+            ).toBeInViewport();
+        });
     });
 });

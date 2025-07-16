@@ -1,22 +1,23 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import type OpenCVTypes from 'OpenCVTypes';
-
+import { OpenCVTypes } from '../opencv/interfaces';
 import { Point } from '../shared/interfaces';
-import { approximateShape, formatContourToPoints } from '../utils/utils';
+import { OpenCVLoader } from '../utils/opencv-loader';
+import { approximateShape, formatContourToPoints } from '../utils/tool-utils';
 import { Marker, WatershedPolygon } from './interfaces';
 
-export class Watershed {
-    private CV: OpenCVTypes.cv;
+class Watershed {
     imageData: OpenCVTypes.Mat;
     mask: OpenCVTypes.Mat;
-    originalHeight: number;
-    originalWidth: number;
+    originalHeight: number = 0;
+    originalWidth: number = 0;
     originalImage: OpenCVTypes.Mat;
 
-    constructor(cvInstance: OpenCVTypes.cv, imageData: ImageData) {
-        this.CV = cvInstance;
+    constructor(private CV: OpenCVTypes.cv) {}
+
+    loadImage(imageData: ImageData) {
+        this.mask = new this.CV.Mat();
         this.originalImage = this.CV.matFromImageData(imageData);
 
         // Convert image colors
@@ -26,9 +27,6 @@ export class Watershed {
 
         this.originalHeight = this.originalImage.rows;
         this.originalWidth = this.originalImage.cols;
-
-        // Create a mask
-        this.mask = new this.CV.Mat();
     }
 
     drawMarkers(markers: Marker[]): void {
@@ -156,4 +154,16 @@ export class Watershed {
 
         return polygons;
     }
+
+    terminate() {
+        self.close();
+    }
 }
+
+const buildWatershedInstance = async (): Promise<Watershed> => {
+    const opencv = await OpenCVLoader();
+
+    return new Watershed(opencv);
+};
+
+export { buildWatershedInstance, Watershed };

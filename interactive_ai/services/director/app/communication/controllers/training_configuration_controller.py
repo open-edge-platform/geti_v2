@@ -2,8 +2,10 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from typing import Any
 
+from geti_configuration_tools import ConfigurationOverlayTools
 from geti_configuration_tools.training_configuration import NullTrainingConfiguration, PartialTrainingConfiguration
 
+from communication.backward_compatibility.configurations import ConfigurationsBackwardCompatibility
 from communication.exceptions import MissingTaskIDException, TaskNodeNotFoundException
 from communication.views.training_configuration_rest_views import TrainingConfigurationRESTViews
 from service.configuration_service import ConfigurationService
@@ -12,7 +14,7 @@ from storage.repos.partial_training_configuration_repo import PartialTrainingCon
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, ProjectIdentifier
 from iai_core.entities.annotation_scene_state import AnnotationState
-from iai_core.repos import AnnotationSceneStateRepo, DatasetStorageRepo, TaskNodeRepo
+from iai_core.repos import AnnotationSceneStateRepo, DatasetStorageRepo, ModelRepo, TaskNodeRepo
 
 
 class TrainingConfigurationRESTController:
@@ -53,9 +55,12 @@ class TrainingConfigurationRESTController:
                 task_id=task_id,
                 model_id=model_id,
             )
-            if model_hyperparams_dict is None:
-                # TODO ITEP-32067: add backward compatibility to display the old models configurable parameters
-                return {}
+            if not model_hyperparams_dict:
+                model = ModelRepo(model_storage.identifier).get_by_id(model_id)
+                model_hyperparams = ConfigurationsBackwardCompatibility.forward_hyperparameters(
+                    legacy_hyperparams=model.configuration.configurable_parameters
+                )
+                model_hyperparams_dict = model_hyperparams.model_dump()
             model_config = PartialTrainingConfiguration.model_validate(
                 {
                     "task_id": task_id,
@@ -117,7 +122,7 @@ class TrainingConfigurationRESTController:
         # configuration is saved as "task level"
         if not update_configuration.model_manifest_id:
             task_config = training_configuration_repo.get_task_only_configuration(task_id)
-            new_config = ConfigurationService.overlay_training_configurations(
+            new_config = ConfigurationOverlayTools.overlay_training_configurations(
                 task_config, update_configuration, validate_full_config=False
             )
             training_configuration_repo.save(new_config)
@@ -133,7 +138,7 @@ class TrainingConfigurationRESTController:
             training_configuration_repo.save(update_configuration)
             return
 
-        new_config = ConfigurationService.overlay_training_configurations(
+        new_config = ConfigurationOverlayTools.overlay_training_configurations(
             current_config,
             update_configuration,
             validate_full_config=False,
@@ -146,7 +151,7 @@ class TrainingConfigurationRESTController:
             AnnotationState.ANNOTATED,
             AnnotationState.PARTIALLY_ANNOTATED,
         ]
-        dataset_storage = DatasetStorageRepo(project_identifier).get_one(extra_filter={"used_for_training": True})
+        dataset_storage = DatasetStorageRepo(project_identifier).get_one(extra_filter={"use_for_training": True})
         repo = AnnotationSceneStateRepo(dataset_storage.identifier)
         n_annotated_images = repo.count_images_state_for_task(annotation_states=annotation_states, task_id=task_id)
         n_annotated_frames = repo.count_video_frames_state_for_task(

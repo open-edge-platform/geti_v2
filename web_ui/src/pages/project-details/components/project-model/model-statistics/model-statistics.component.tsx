@@ -5,9 +5,14 @@ import { Fragment, useMemo, useRef } from 'react';
 
 import { Content, Flex, Grid, Loading, useUnwrapDOMRef } from '@geti/ui';
 import { HttpStatusCode } from 'axios';
+import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
 
 import { useModelStatistics } from '../../../../../core/statistics/hooks/use-model-statistics.hook';
+import {
+    TrainingModelStatistic,
+    TrainingModelStatisticsGroup,
+} from '../../../../../core/statistics/model-statistics.interface';
 import { useModelIdentifier } from '../../../../../hooks/use-model-identifier/use-model-identifier.hook';
 import { DownloadSvgButton } from './download-svg-button.component';
 import { ModelStatisticsError } from './model-statistics-error/model-statistics-error.component';
@@ -16,6 +21,10 @@ import { TrainingModelInfo } from './training-model-info/training-model-info.com
 import { getModelStatisticPresentation, getModelStatistics } from './utils';
 
 import classes from './model-statistics.module.scss';
+
+const isRadialBarWithManyValues = (modelStatistics: TrainingModelStatisticsGroup | TrainingModelStatistic) => {
+    return modelStatistics.type === 'radial_bar' && modelStatistics.value.length > 6;
+};
 
 export const ModelStatistics = (): JSX.Element => {
     const container = useRef(null);
@@ -57,7 +66,11 @@ export const ModelStatistics = (): JSX.Element => {
             </Flex>
             <Grid marginTop={'size-250'} autoRows={'45rem'} gap={'size-200'} UNSAFE_className={classes.gridStatistics}>
                 {trainingMetrics.map((modelStatistics) => (
-                    <div key={modelStatistics.key} aria-label={`${modelStatistics.header} chart`}>
+                    <div
+                        key={modelStatistics.key}
+                        aria-label={`${modelStatistics.header} chart`}
+                        className={clsx({ [classes.span2]: isRadialBarWithManyValues(modelStatistics) })}
+                    >
                         {getModelStatisticPresentation(modelStatistics)}
                     </div>
                 ))}

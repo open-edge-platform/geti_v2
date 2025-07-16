@@ -66,11 +66,7 @@ describe('DatasetImportToNewProjectDomain', () => {
 
     it('renders one error message at the time', () => {
         render(
-            <DatasetImportToNewProjectDomain
-                datasetImportItem={mockUploadItem}
-                patchDatasetImport={mockPatchUpload}
-                anomalyRevamp={false}
-            />
+            <DatasetImportToNewProjectDomain datasetImportItem={mockUploadItem} patchDatasetImport={mockPatchUpload} />
         );
         const [projectOne] = mockProjects;
         const input = screen.getByLabelText('Project name');
@@ -86,7 +82,6 @@ describe('DatasetImportToNewProjectDomain', () => {
             <DatasetImportToNewProjectDomain
                 datasetImportItem={{ ...mockUploadItem, taskType }}
                 patchDatasetImport={mockPatchUpload}
-                anomalyRevamp={false}
             />
         );
 
@@ -95,11 +90,7 @@ describe('DatasetImportToNewProjectDomain', () => {
 
     it('if upload item has no taskType and we have only one to assign, it should be assigned automatically', () => {
         render(
-            <DatasetImportToNewProjectDomain
-                datasetImportItem={mockUploadItem}
-                patchDatasetImport={mockPatchUpload}
-                anomalyRevamp={false}
-            />
+            <DatasetImportToNewProjectDomain datasetImportItem={mockUploadItem} patchDatasetImport={mockPatchUpload} />
         );
         expect(mockPatchUpload).toHaveBeenNthCalledWith(
             1,
@@ -197,7 +188,6 @@ describe('DatasetImportToNewProjectDomain', () => {
             <DatasetImportToNewProjectDomain
                 datasetImportItem={mockUploadItemWithTwoTasks}
                 patchDatasetImport={mockPatchUpload}
-                anomalyRevamp={false}
             />
         );
 
@@ -300,7 +290,6 @@ describe('DatasetImportToNewProjectDomain', () => {
             <DatasetImportToNewProjectDomain
                 datasetImportItem={mockUploadItemTaskChain}
                 patchDatasetImport={mockPatchUpload}
-                anomalyRevamp={false}
             />
         );
 

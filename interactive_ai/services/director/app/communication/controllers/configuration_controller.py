@@ -3,12 +3,18 @@
 
 from typing import TYPE_CHECKING, Any
 
+from geti_feature_tools import FeatureFlagProvider
+
+from communication.backward_compatibility.configurations import ConfigurationsBackwardCompatibility
+from communication.controllers.project_configuration_controller import ProjectConfigurationRESTController
+from communication.controllers.training_configuration_controller import TrainingConfigurationRESTController
 from communication.data_validator import ConfigurationRestValidator
 from communication.exceptions import ConfigurationMismatchException, TaskNotFoundException
 from communication.views.configuration_rest_views import ConfigurationRESTViews
-from configuration import ConfigurationValidator
 from configuration.configuration_manager import ConfigurationManager
+from configuration.configuration_validator import ConfigurationValidator
 from coordination.dataset_manager.subset_manager_config import SubsetManagerConfig
+from features.feature_flag import FeatureFlag
 
 from geti_fastapi_tools.exceptions import BadRequestException, ProjectNotFoundException
 from geti_fastapi_tools.responses import success_response_rest
@@ -203,16 +209,24 @@ class ConfigurationRESTController:
         # and that all tasks exist in the project, and check that the values in the
         # request are valid for all configurations
         updated_configs: list[IConfigurableParameterContainer[ConfigurableParameters]] = []
+        _updated_task_chain_configs: list[dict[str, Any]] = []
         for task, task_config_list in zip(trainable_task_nodes_list, task_chain_config_list):
+            _configs = []
             for config_dict, entity_identifier in task_config_list:
-                updated_configs.append(
-                    ConfigurationValidator.validate_and_update_config(
-                        input_config=config_dict,
-                        entity_identifier=entity_identifier,
-                        project=project,
-                        task_id=task.id_,
-                    )
+                validated_config = ConfigurationValidator.validate_and_update_config(
+                    input_config=config_dict,
+                    entity_identifier=entity_identifier,
+                    project=project,
+                    task_id=task.id_,
                 )
+                updated_configs.append(validated_config)
+                _configs.append(validated_config)
+            _updated_task_chain_configs.append(
+                {
+                    "task": task,
+                    "configurations": _configs,
+                }
+            )
 
         # Find the subset manager configuration and rescale it if necessary.
         subset_manager_config = next(
@@ -227,12 +241,31 @@ class ConfigurationRESTController:
         if subset_manager_config is not None:
             ConfigurationRESTController._rescale_subset_manager_config(subset_manager_config)  # type: ignore
 
-        # Save once all configs and entity_identifiers are validated
-        ConfigurationManager.save_configuration_list(
-            workspace_id=workspace_id,
-            project_id=project_id,
-            configurable_parameter_list=updated_configs,
-        )
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
+            global_config, _ = ConfigurationManager.get_full_configuration(
+                workspace_id=workspace_id, project_id=project_id
+            )
+            project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+                project_identifier=project.identifier,
+                legacy_global_configuration=global_config,
+                legacy_task_chain_configs=_updated_task_chain_configs,
+            )
+            ProjectConfigurationRESTController.update_configuration(
+                project_identifier=project.identifier,
+                update_configuration=project_configuration,
+            )
+            for training_configuration in training_configurations:
+                TrainingConfigurationRESTController.update_configuration(
+                    project_identifier=project.identifier,
+                    update_configuration=training_configuration,
+                )
+        else:
+            # Save once all configs and entity_identifiers are validated
+            ConfigurationManager.save_configuration_list(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                configurable_parameter_list=updated_configs,
+            )
         return success_response_rest()
 
     @staticmethod
@@ -289,12 +322,32 @@ class ConfigurationRESTController:
                     project=project,
                 )
             )
-        # Save once all configs and entity_identifiers are validated
-        ConfigurationManager.save_configuration_list(
-            workspace_id=workspace_id,
-            project_id=project_id,
-            configurable_parameter_list=updated_configs,
-        )
+
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
+            _, task_chain_config = ConfigurationManager.get_full_configuration(
+                workspace_id=workspace_id, project_id=project_id
+            )
+            update_project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+                project_identifier=project.identifier,
+                legacy_global_configuration=updated_configs,
+                legacy_task_chain_configs=task_chain_config,
+            )
+            ProjectConfigurationRESTController.update_configuration(
+                project_identifier=project.identifier,
+                update_configuration=update_project_configuration,
+            )
+            for training_configuration in training_configurations:
+                TrainingConfigurationRESTController.update_configuration(
+                    project_identifier=project.identifier,
+                    update_configuration=training_configuration,
+                )
+        else:
+            # Save once all configs and entity_identifiers are validated
+            ConfigurationManager.save_configuration_list(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                configurable_parameter_list=updated_configs,
+            )
 
         return success_response_rest()
 
@@ -357,12 +410,31 @@ class ConfigurationRESTController:
         )
         if subset_manager_config is not None:
             ConfigurationRESTController._rescale_subset_manager_config(subset_manager_config)  # type: ignore
-        # Save once all configs and entity_identifiers are validated
-        ConfigurationManager.save_configuration_list(
-            workspace_id=workspace_id,
-            project_id=project_id,
-            configurable_parameter_list=updated_configs,
-        )
+
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
+            global_config, _ = ConfigurationManager.get_full_configuration(
+                workspace_id=workspace_id, project_id=project_id
+            )
+            project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+                project_identifier=project.identifier,
+                legacy_global_configuration=global_config,
+                legacy_task_chain_configs=[{"task": task_node, "configurations": updated_configs}],
+            )
+            ProjectConfigurationRESTController.update_configuration(
+                project_identifier=project.identifier,
+                update_configuration=project_configuration,
+            )
+            TrainingConfigurationRESTController.update_configuration(
+                project_identifier=project.identifier,
+                update_configuration=training_configurations[0],
+            )
+        else:
+            # Save once all configs and entity_identifiers are validated
+            ConfigurationManager.save_configuration_list(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                configurable_parameter_list=updated_configs,
+            )
 
         return success_response_rest()
 

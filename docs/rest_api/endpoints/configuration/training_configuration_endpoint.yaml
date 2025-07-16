@@ -1,0 +1,121 @@
+get:
+  tags:
+    - Configuration
+  summary: "Retrieve task-specific training configuration"
+  description: |
+    Retrieves the training configuration for a specific project and task.
+    
+    - Task ID is required for task chain projects
+    - If model_manifest_id is provided, returns configuration for that specific model architecture
+    - If model_id is provided, returns configuration for a specific trained model
+    - Without model_manifest_id or model_id, returns only general task-related configuration
+  operationId: GetTrainingConfiguration
+  parameters:
+    - $ref: "../../parameters/path/organization_id.yaml"
+    - $ref: "../../parameters/path/workspace_id.yaml"
+    - $ref: "../../parameters/path/project_id.yaml"
+    - $ref: "../../parameters/query/task_id.yaml"
+    - $ref: "../../parameters/query/model_manifest_id.yaml"
+    - $ref: "../../parameters/query/model_id.yaml"
+  responses:
+    '200':
+      description: Training configuration retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/configuration/responses/revamp/training_configuration.yaml"
+          examples:
+            Training configuration response:
+              value:
+                $ref: "../../examples/configuration/responses/revamp/training_configuration.json"
+    '404':
+      description: Object not found. See the examples for details.
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+          examples:
+            Organization not found response:
+              value:
+                $ref: "../../examples/organizations/error_responses/organization_not_found.json"
+            Workspace not found response:
+              value:
+                $ref: "../../examples/workspaces/error_responses/workspace_not_found.json"
+            Project not found response:
+              value:
+                $ref: "../../examples/projects/error_responses/project_not_found.json"
+            Task not found response:
+              value:
+                $ref: "../../examples/configuration/error_responses/revamp/task_not_found.json"
+    '400':
+      description: Query parameter error. See the examples for details.
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+          examples:
+            Payload validation error response:
+              value:
+                $ref: "../../examples/configuration/error_responses/revamp/missing_task_id.json"
+
+patch:
+  tags:
+    - Configuration
+  summary: "Update training configuration parameters"
+  description: |
+    Updates the training configuration parameters for a task or specific model architecture.
+    
+    - Task ID is required for task chain projects
+    - If only task_id is provided, updates general task-related configuration
+    - If model_manifest_id is provided, updates configuration for that specific model architecture
+    
+    The updated configuration will affect future training sessions but will not modify already trained models.
+  operationId: UpdateTrainingConfiguration
+  parameters:
+    - $ref: "../../parameters/path/organization_id.yaml"
+    - $ref: "../../parameters/path/workspace_id.yaml"
+    - $ref: "../../parameters/path/project_id.yaml"
+    - $ref: "../../parameters/query/task_id.yaml"
+    - $ref: "../../parameters/query/model_manifest_id.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../interactive_ai/services/api/schemas/configuration/requests/revamp/training_configuration.yaml"
+        examples:
+          Training configuration request:
+            value:
+              $ref: "../../examples/configuration/requests/revamp/training_configuration.json"
+    required: true
+  responses:
+    '204':
+      description: Training configuration updated successfully
+    '404':
+      description: Object not found. See the examples for details.
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+          examples:
+            Organization not found response:
+              value:
+                $ref: "../../examples/organizations/error_responses/organization_not_found.json"
+            Workspace not found response:
+              value:
+                $ref: "../../examples/workspaces/error_responses/workspace_not_found.json"
+            Project not found response:
+              value:
+                $ref: "../../examples/projects/error_responses/project_not_found.json"
+            Task not found response:
+              value:
+                $ref: "../../examples/configuration/error_responses/revamp/task_not_found.json"
+    '400':
+      description: Payload configuration contains validation error. See the examples for details.
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+          examples:
+            Payload validation error response:
+              value:
+                $ref: "../../examples/configuration/error_responses/revamp/pydantic_validation_error.json"

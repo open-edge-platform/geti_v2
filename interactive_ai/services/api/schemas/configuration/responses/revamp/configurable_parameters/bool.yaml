@@ -1,0 +1,37 @@
+type: object
+properties:
+  default_value:
+    type: boolean
+    description: Default value for the boolean parameter when not explicitly set
+  description:
+    type: string
+    description: Detailed explanation of the boolean parameter's purpose and usage
+  key:
+    type: string
+    description: Identifier for the boolean parameter used in code references
+  name:
+    type: string
+    description: Display name of the boolean parameter
+  type:
+    type: string
+    enum: [bool]
+    description: Type of the parameter, which is 'bool' in this case
+  value:
+    type: boolean
+    description: Current configured value of the boolean parameter
+
+required:
+  - default_value
+  - description
+  - key
+  - name
+  - type
+  - value
+
+example:
+  default_value: False
+  description: Whether to automatically select data for each subset
+  key: auto_selection
+  name: Auto selection
+  type: bool
+  value: True

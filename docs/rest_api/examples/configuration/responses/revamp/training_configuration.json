@@ -1,0 +1,347 @@
+{
+  "task_id": "60d31793d5f1fb7e6e3c1a65",
+  "model_manifest_id": "Custom_Semantic_Segmentation_DINOV2_S",
+  "dataset_preparation": {
+    "subset_split": [
+      {
+        "key": "training",
+        "name": "Training percentage",
+        "type": "int",
+        "description": "Percentage of data to use for training",
+        "value": 80,
+        "default_value": 70,
+        "min_value": 1,
+        "max_value": 100
+      },
+      {
+        "key": "validation",
+        "name": "Validation percentage",
+        "type": "int",
+        "description": "Percentage of data to use for validation",
+        "value": 10,
+        "default_value": 20,
+        "min_value": 1,
+        "max_value": 100
+      },
+      {
+        "key": "test",
+        "name": "Test percentage",
+        "type": "int",
+        "description": "Percentage of data to use for testing",
+        "value": 10,
+        "default_value": 10,
+        "min_value": 1,
+        "max_value": 100
+      },
+      {
+        "key": "auto_selection",
+        "name": "Auto selection",
+        "type": "bool",
+        "description": "Whether to automatically select data for each subset",
+        "value": true,
+        "default_value": true
+      },
+      {
+        "key": "remixing",
+        "name": "Remixing",
+        "type": "bool",
+        "description": "Whether to remix data between subsets",
+        "value": false,
+        "default_value": false
+      },
+      {
+        "key": "dataset_size",
+        "name": "Dataset size",
+        "type": "int",
+        "description": "Total size of the dataset (read-only parameter, not configurable by users)",
+        "value": 256,
+        "default_value": null,
+        "min_value": 0,
+        "max_value": null
+      }
+    ],
+    "filtering": {
+      "min_annotation_pixels": [
+        {
+          "key": "enable",
+          "name": "Enable minimum annotation pixels filtering",
+          "type": "bool",
+          "description": "Whether to apply minimum annotation pixels filtering",
+          "value": true,
+          "default_value": false
+        },
+        {
+          "key": "min_annotation_pixels",
+          "name": "Minimum annotation pixels",
+          "type": "int",
+          "description": "Minimum number of pixels in an annotation",
+          "value": 10,
+          "default_value": 1,
+          "min_value": 0,
+          "max_value": 200000000
+        }
+      ],
+      "max_annotation_pixels": [
+        {
+          "key": "enable",
+          "name": "Enable maximum annotation pixels filtering",
+          "type": "bool",
+          "description": "Whether to apply maximum annotation pixels filtering",
+          "value": true,
+          "default_value": false
+        },
+        {
+          "key": "max_annotation_pixels",
+          "name": "Maximum annotation pixels",
+          "type": "int",
+          "description": "Maximum number of pixels in an annotation",
+          "value": 1000,
+          "default_value": 10000,
+          "min_value": 0,
+          "max_value": null
+        }
+      ],
+      "min_annotation_objects": [
+        {
+          "key": "enable",
+          "name": "Enable minimum annotation objects filtering",
+          "type": "bool",
+          "description": "Whether to apply minimum annotation objects filtering",
+          "value": true,
+          "default_value": false
+        },
+        {
+          "key": "min_annotation_objects",
+          "name": "Minimum annotation objects",
+          "type": "int",
+          "description": "Minimum number of objects in an annotation",
+          "value": 5,
+          "default_value": 1,
+          "min_value": 0,
+          "max_value": null
+        }
+      ],
+      "max_annotation_objects": [
+        {
+          "key": "enable",
+          "name": "Enable maximum annotation objects filtering",
+          "type": "bool",
+          "description": "Whether to apply maximum annotation objects filtering",
+          "value": true,
+          "default_value": false
+        },
+        {
+          "key": "max_annotation_objects",
+          "name": "Maximum annotation objects",
+          "type": "int",
+          "description": "Maximum number of objects in an annotation",
+          "value": 100,
+          "default_value": 10000,
+          "min_value": 0,
+          "max_value": null
+        }
+      ]
+    },
+    "augmentation": {
+      "center_crop": [
+        {
+          "key": "enable",
+          "name": "Enable center crop",
+          "type": "bool",
+          "description": "Whether to apply center cropping to the image",
+          "value": true,
+          "default_value": false
+        },
+        {
+          "key": "ratio",
+          "name": "Crop ratio",
+          "type": "float",
+          "description": "Ratio of original dimensions to keep when cropping",
+          "value": 0.6,
+          "default_value": 1.0,
+          "min_value": 0.0,
+          "max_value": null
+        }
+      ],
+      "random_affine": [
+        {
+          "key": "enable",
+          "name": "Enable random affine",
+          "type": "bool",
+          "description": "Whether to apply random affine transformations to the image",
+          "value": true,
+          "default_value": false
+        },
+        {
+          "key": "degrees",
+          "name": "Rotation degrees",
+          "type": "float",
+          "description": "Maximum rotation angle in degrees",
+          "value": 15.0,
+          "default_value": 0.0,
+          "min_value": 0.0,
+          "max_value": null
+        },
+        {
+          "key": "translate_x",
+          "name": "Horizontal translation",
+          "type": "float",
+          "description": "Maximum horizontal translation as a fraction of image width",
+          "value": 0.0,
+          "default_value": 0.0,
+          "min_value": null,
+          "max_value": null
+        },
+        {
+          "key": "translate_y",
+          "name": "Vertical translation",
+          "type": "float",
+          "description": "Maximum vertical translation as a fraction of image height",
+          "value": 0.0,
+          "default_value": 0.0,
+          "min_value": null,
+          "max_value": null
+        },
+        {
+          "key": "scale",
+          "name": "Scale factor",
+          "type": "float",
+          "description": "Scaling factor for the image during affine transformation",
+          "value": 1.0,
+          "default_value": 1.0,
+          "min_value": null,
+          "max_value": null
+        }
+      ],
+      "tiling": [
+        {
+          "key": "enable",
+          "name": "Enable tiling",
+          "type": "bool",
+          "description": "Whether to apply tiling to the image",
+          "value": true,
+          "default_value": false
+        },
+        {
+          "key": "adaptive_tiling",
+          "name": "Adaptive tiling",
+          "type": "bool",
+          "description": "Whether to use adaptive tiling based on image content",
+          "value": false,
+          "default_value": false
+        },
+        {
+          "key": "tile_size",
+          "name": "Tile size",
+          "type": "int",
+          "description": "Size of each tile in pixels",
+          "value": 256,
+          "default_value": 128,
+          "min_value": 0,
+          "max_value": null
+        },
+        {
+          "key": "tile_overlap",
+          "name": "Tile overlap",
+          "type": "int",
+          "description": "Overlap between adjacent tiles in pixels",
+          "value": 64,
+          "default_value": 64,
+          "min_value": 0,
+          "max_value": null
+        }
+      ]
+    }
+  },
+  "training": [
+    {
+      "key": "max_epochs",
+      "name": "Maximum epochs",
+      "type": "int",
+      "description": "Maximum number of training epochs to run",
+      "value": 50,
+      "default_value": 1000,
+      "min_value": 0,
+      "max_value": null
+    },
+    {
+      "key": "learning_rate",
+      "name": "Learning rate",
+      "type": "float",
+      "description": "Base learning rate for the optimizer",
+      "value": 0.05,
+      "default_value": 0.001,
+      "min_value": 0.0,
+      "max_value": 1.0
+    },
+    {
+      "key": "input_size_width",
+      "name": "Input size width",
+      "type": "enum",
+      "description": "Width dimension in pixels for model input images. Determines the horizontal resolution at which images are processed.",
+      "value": 32,
+      "default_value": 32,
+      "allowed_values": [
+        32,
+        64,
+        128
+      ]
+    },
+    {
+      "key": "input_size_height",
+      "name": "Input size height",
+      "type": "enum",
+      "description": "Height dimension in pixels for model input images. Determines the vertical resolution at which images are processed.",
+      "value": 32,
+      "default_value": 32,
+      "allowed_values": [
+        32,
+        64,
+        128
+      ]
+    },
+    {
+      "early_stopping": [
+        {
+          "key": "enable",
+          "name": "Enable early stopping",
+          "type": "bool",
+          "description": "Whether to stop training early when performance stops improving",
+          "value": true,
+          "default_value": false
+        },
+        {
+          "key": "patience",
+          "name": "Patience",
+          "type": "int",
+          "description": "Number of epochs with no improvement after which training will be stopped",
+          "value": 10,
+          "default_value": 1,
+          "min_value": 0,
+          "max_value": null
+        }
+      ],
+      "max_detection_per_image": [
+        {
+          "key": "enable",
+          "name": "Enable maximum detection per image",
+          "type": "bool",
+          "description": "Whether to limit the number of detections per image",
+          "value": false,
+          "default_value": false
+        },
+        {
+          "key": "max_detection_per_image",
+          "name": "Maximum number of detections per image",
+          "type": "int",
+          "description": "Maximum number of objects that can be detected in a single image, only applicable for instance segmentation models",
+          "value": 10000,
+          "default_value": 10000,
+          "min_value": 0,
+          "max_value": null
+        }
+      ]
+    }
+  ],
+  "evaluation": []
+}

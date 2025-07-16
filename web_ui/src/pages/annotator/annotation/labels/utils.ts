@@ -16,10 +16,10 @@
 // otherwise. Any license under such intellectual property rights must be express
 // and approved by Intel in writing.
 
+import { roiFromImage } from '@geti/smart-tools/utils';
 import { intersectionBy } from 'lodash-es';
 
 import { Annotation, AnnotationLabel } from '../../../../core/annotations/annotation.interface';
-import { roiFromImage } from '../../../../core/annotations/math';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { isCircle, isPolygon } from '../../../../core/annotations/utils';
 import { Label } from '../../../../core/labels/label.interface';

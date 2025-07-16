@@ -3,7 +3,7 @@ FROM python:3.10-slim-bookworm@sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2
 FROM base AS build
 
 # Install Git and clone the OTX at the specified tag
-ARG OTX_RELEASE_TAG=2.4.2
+ARG OTX_RELEASE_TAG=2.4.6
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -43,6 +43,16 @@ RUN useradd -l -u 10001 non-root && \
 COPY --link --from=build --chown=10001 /interactive_ai/services/director /interactive_ai/services/director
 COPY --link --from=build --chown=10001 /training_extensions/src/otx/tools/templates /model_templates
 COPY --link --from=schemas . /interactive_ai/services/api
+
+# Update anomaly classification templates to anomaly, needed for anomaly reduction process
+RUN cp -r /model_templates/anomaly/classification/* /model_templates/anomaly/ && \
+    rm -rf /model_templates/anomaly/classification && \
+    rm -rf /model_templates/anomaly/detection && \
+    rm -rf /model_templates/anomaly/segmentation && \
+    find /model_templates/anomaly -type f -name "template.yaml" -exec sed -i 's/model_template_id: ote_anomaly_classification_\([^/]*\)/model_template_id: ote_anomaly_\1/g' {} + && \
+    find /model_templates/anomaly -type f -name "template.yaml" -exec sed -i 's/task_type: ANOMALY_CLASSIFICATION/task_type: ANOMALY/g' {} +
+
+ENV MODEL_TEMPLATES_DIR=/model_templates
 
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/services/director/.venv/bin:$PATH"

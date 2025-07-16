@@ -8,7 +8,9 @@ dependencies = [
     "geti-telemetry-tools[telemetry,logger,grpc]",
     "geti-types",
     "iai_core",
-    "grpc_interfaces[job_submission]"
+    "grpc_interfaces[job_submission]",
+    "geti-configuration-tools",
+    "geti-feature-tools",
 ]
 
 [tool.uv.sources]
@@ -16,6 +18,8 @@ geti-types = { path = "../../../libs/types", editable = true }
 geti-telemetry-tools = { path = "../../../libs/telemetry_tools", editable = true }
 iai_core = { path = "../../libs/iai_core_py", editable = true }
 grpc_interfaces = { path = "../../../libs/grpc_interfaces", editable = true }
+geti-configuration-tools = { path = "../../../libs/configuration_tools" , editable = true}
+geti-feature-tools = { path = "../../../libs/feature_tools", editable = true}
 
 [dependency-groups]
 dev = ["pytest~=8.3", "ruff~=0.11", "pre-commit~=4.1", "mypy~=1.15", "testcontainers[mongodb]~=4.9", "pytest-freezegun"]

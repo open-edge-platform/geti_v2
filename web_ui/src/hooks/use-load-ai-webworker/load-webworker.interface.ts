@@ -1,6 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Grabcut, InferenceImage, IntelligentScissors, SegmentAnythingModel, SSIM, Watershed } from '@geti/smart-tools';
+import { RITM } from '@geti/smart-tools/ritm';
+
 import { InferenceImageWorker } from '../../pages/annotator/components/explanation/inference-image.interface';
 import { GrabcutWorker } from '../../pages/annotator/tools/grabcut-tool/grabcut-tool.interface';
 import { IntelligentScissorsWorker } from '../../pages/annotator/tools/polygon-tool/polygon-tool.interface';
@@ -26,4 +29,16 @@ export type GetiWorker =
 export type MapAlgorithmToWorker = {
     // E.g. [AlgorithmType.GRABCUT]: GrabcutWorker
     [K in AlgorithmType]: Extract<GetiWorker, { type: K }>;
+};
+
+// TODO: We will use this once all tools are moved
+export type MapAlgorithmToInstance = {
+    [AlgorithmType.WATERSHED]: Watershed;
+    [AlgorithmType.GRABCUT]: Grabcut;
+    [AlgorithmType.INTELLIGENT_SCISSORS]: IntelligentScissors;
+    [AlgorithmType.RITM]: RITM;
+    [AlgorithmType.SSIM]: SSIM;
+    [AlgorithmType.INFERENCE_IMAGE]: InferenceImage;
+    [AlgorithmType.SEGMENT_ANYTHING_ENCODER]: SegmentAnythingModel;
+    [AlgorithmType.SEGMENT_ANYTHING_DECODER]: SegmentAnythingModel;
 };

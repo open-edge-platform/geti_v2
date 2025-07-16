@@ -7,6 +7,7 @@ import { Checkbox, dimensionValue, Flex, Tooltip, TooltipTrigger, View } from '@
 import { Delete } from '@geti/ui/icons';
 import { isEmpty } from 'lodash-es';
 
+import { SearchRuleField } from '../../../../core/media/media-filter.interface';
 import { isVideo } from '../../../../core/media/video.interface';
 import { useSortingParams } from '../../../../hooks/use-sorting-params/use-sorting-params.hook';
 import { MediaViewModes } from '../../../../shared/components/media-view-modes/media-view-modes.component';
@@ -26,8 +27,9 @@ interface ProjectMediaControlPanelProps {
     viewMode: ViewModes;
     countElements: string;
     isAnomalyProject: boolean;
-    hasExportImportButtons: boolean;
     isInUploadingState: boolean;
+    hasExportImportButtons: boolean;
+    disabledFilterRules?: SearchRuleField[];
     setViewMode: Dispatch<SetStateAction<ViewModes>>;
     uploadMediaCallback: (files: File[]) => void;
     onCameraSelected: () => void;
@@ -38,6 +40,7 @@ export const ProjectMediaControlPanel = ({
     countElements,
     isAnomalyProject,
     isInUploadingState,
+    disabledFilterRules = [],
     hasExportImportButtons,
     setViewMode,
     onCameraSelected,
@@ -124,6 +127,7 @@ export const ProjectMediaControlPanel = ({
                             isMediaFetching={isMediaFetching}
                             isMediaFilterEmpty={isMediaFilterEmpty}
                             isDisabled={isInUploadingState}
+                            disabledFilterRules={disabledFilterRules}
                         />
 
                         <MediaViewModes viewMode={viewMode} isDisabled={isInUploadingState} setViewMode={setViewMode} />

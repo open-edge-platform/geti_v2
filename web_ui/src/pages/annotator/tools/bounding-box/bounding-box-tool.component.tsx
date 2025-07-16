@@ -1,9 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { rectToRotatedRect } from '@geti/smart-tools/utils';
 import { partial } from 'lodash-es';
 
-import { rectToRotatedRect } from '../../../../core/annotations/rotated-rect-math';
 import { Rect } from '../../../../core/annotations/shapes.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { runWhen } from '../../../../shared/utils';
@@ -12,7 +12,7 @@ import { useTask } from '../../providers/task-provider/task-provider.component';
 import { useZoom } from '../../zoom/zoom-provider.component';
 import { DrawingBox } from '../drawing-box/drawing-box.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
-import { drawingStyles, isShapeWithinRoi } from '../utils';
+import { convertToolShapeToGetiShape, drawingStyles, isShapeWithinRoi } from '../utils';
 
 export const BoundingBoxTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
     const { scene } = annotationToolContext;
@@ -23,7 +23,7 @@ export const BoundingBoxTool = ({ annotationToolContext }: ToolAnnotationContext
     const onComplete = runWhen<Rect>(isValidRect)((shape: Rect) => {
         const isRotatedBoundingBox = activeDomains.includes(DOMAIN.DETECTION_ROTATED_BOUNDING_BOX);
         const rect = isRotatedBoundingBox ? rectToRotatedRect(shape) : shape;
-        scene.addShapes([rect]);
+        scene.addShapes([convertToolShapeToGetiShape(rect)]);
     });
 
     const {

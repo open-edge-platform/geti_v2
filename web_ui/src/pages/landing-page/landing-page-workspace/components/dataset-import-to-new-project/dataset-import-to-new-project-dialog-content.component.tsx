@@ -34,7 +34,6 @@ interface DatasetImportLabelConfigurationPanelProps {
 }
 
 interface DatasetImportToNewProjectDialogContentProps {
-    anomalyRevamp: boolean;
     datasetImportItem: DatasetImportToNewProjectItem | undefined;
     prepareDataset: (file: File) => string | undefined;
     patchDatasetImport: (item: Partial<DatasetImportToNewProjectItem>) => void;
@@ -88,7 +87,6 @@ export const DatasetImportToNewProjectDialogContent = ({
     prepareDataset,
     patchDatasetImport,
     setActiveDatasetImportId,
-    anomalyRevamp,
 }: DatasetImportToNewProjectDialogContentProps): JSX.Element => {
     if (isNil(datasetImportItem)) {
         return (
@@ -113,7 +111,6 @@ export const DatasetImportToNewProjectDialogContent = ({
                 <DatasetImportToNewProjectDomain
                     datasetImportItem={datasetImportItem}
                     patchDatasetImport={patchDatasetImport}
-                    anomalyRevamp={anomalyRevamp}
                 />
             )}
             {datasetImportItem.activeStep === DATASET_IMPORT_TO_NEW_PROJECT_STEP.LABELS && (

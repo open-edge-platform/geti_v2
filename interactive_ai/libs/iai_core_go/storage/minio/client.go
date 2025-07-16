@@ -1,7 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-//nolint:gochecknoglobals // consider refactoring global variables
 package minio
 
 import (
@@ -9,7 +8,6 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/caarlos0/env/v11"
@@ -17,6 +15,12 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"geti.com/iai_core/logger"
+)
+
+const (
+	healthcheckIntervalSeconds = 1
+	local                      = "local"
+	aws                        = "aws"
 )
 
 type CommonConfig struct {
@@ -39,114 +43,162 @@ type awsConfig struct {
 	Role              string `env:"AWS_ROLE_ARN,notEmpty"`
 }
 
-const (
-	healthcheckIntervalSeconds = 1
-	local                      = "local"
-	aws                        = "aws"
-)
+type clientCacheEntry struct {
+	client    *minio.Client
+	expiresAt time.Time
+	hcCancel  context.CancelFunc
+	timer     *time.Timer
+}
 
-var (
-	initialized atomic.Bool
-	mu          sync.Mutex
-	client      *minio.Client
-	hcCancelFn  context.CancelFunc
-)
+func (e *clientCacheEntry) isExpired() bool {
+	return time.Now().After(e.expiresAt)
+}
 
-// Reset the minio client and stop its health check routine.
-func reset() {
-	mu.Lock()
-	defer mu.Unlock()
-	if hcCancelFn != nil {
-		hcCancelFn()
-		hcCancelFn = nil
+func (e *clientCacheEntry) cleanup() {
+	if e.hcCancel != nil {
+		e.hcCancel()
 	}
-	initialized.Store(false)
-	client = nil
+	if e.timer != nil {
+		e.timer.Stop()
+	}
 }
 
-func backgroundCheck(ctx context.Context, s3ClientCacheTTL int) {
-	timer := time.NewTimer(time.Duration(s3ClientCacheTTL) * time.Second)
-	defer timer.Stop()
-	<-timer.C
+type ClientManager struct {
+	mu         sync.RWMutex
+	cacheEntry *clientCacheEntry
+	closeOnce  sync.Once
 
-	logger.TracingLog(ctx).Infof("S3 Client Cache TTL has expired. Resetting the minio client...")
-	reset()
+	// Static config
+	onPremCfg *onPremConfig
+	awsCfg    *awsConfig
+	provider  string
 }
 
-// getMinioClient returns a minio client based on the value of the S3_CREDENTIALS_PROVIDER environment variable.
-// If the value is "local", it calls newOnPremMinioClient function, otherwise it calls newAWSMinioClient function.
-// If the value of S3_CREDENTIALS_PROVIDER is neither "aws" nor "local", it returns an error.
-func getMinioClient(ctx context.Context) (*minio.Client, error) {
+func NewClientManager() (*ClientManager, error) {
 	provider := os.Getenv("S3_CREDENTIALS_PROVIDER")
-	if provider != local && provider != aws {
-		const msg = "unsupported environment variable S3_CREDENTIALS_PROVIDER: found %s but the value should either be 'aws' or 'local'"
-		return nil, fmt.Errorf(msg, os.Getenv("S3_CREDENTIALS_PROVIDER"))
-	}
-	if initialized.Load() {
-		return client, nil
-	}
-	mu.Lock()
-	defer mu.Unlock()
-	if !initialized.Load() {
-		var (
-			minioClient *minio.Client
-			cacheTTL    int
-			err         error
-		)
-		if provider == local {
-			minioClient, cacheTTL, err = newOnPremMinioClient(ctx)
-		} else {
-			minioClient, cacheTTL, err = newAWSMinioClient(ctx)
-		}
-		if err != nil {
-			return nil, err
-		}
 
-		// Check health of minio client every second
-		hcCancel, healthErr := minioClient.HealthCheck(healthcheckIntervalSeconds * time.Second)
-		if healthErr != nil {
-			return nil, healthErr
-		}
-
-		client = minioClient
-		hcCancelFn = hcCancel
-		initialized.Store(true)
-		go backgroundCheck(ctx, cacheTTL)
+	cm := &ClientManager{
+		provider: provider,
 	}
+
+	switch provider {
+	case local:
+		cfg := &onPremConfig{}
+		if err := env.Parse(cfg); err != nil {
+			return nil, fmt.Errorf("failed to parse on-prem config: %w", err)
+		}
+		cm.onPremCfg = cfg
+	case aws:
+		cfg := &awsConfig{}
+		if err := env.Parse(cfg); err != nil {
+			return nil, fmt.Errorf("failed to parse AWS config: %w", err)
+		}
+		cm.awsCfg = cfg
+	default:
+		return nil, fmt.Errorf("invalid S3_CREDENTIALS_PROVIDER: %s", provider)
+	}
+	return cm, nil
+}
+
+func (cm *ClientManager) Close() {
+	cm.closeOnce.Do(func() {
+		cm.reset()
+	})
+}
+
+func (cm *ClientManager) reset() {
+	cm.mu.Lock()
+	defer cm.mu.Unlock()
+	if cm.cacheEntry != nil {
+		cm.cacheEntry.cleanup()
+		cm.cacheEntry = nil
+	}
+}
+
+func (cm *ClientManager) GetClient(ctx context.Context) (*minio.Client, error) {
+	cm.mu.RLock()
+	entry := cm.cacheEntry
+	cm.mu.RUnlock()
+
+	if entry != nil && !entry.isExpired() {
+		return entry.client, nil
+	}
+	return cm.createNewClient(ctx)
+}
+
+func (cm *ClientManager) createNewClient(ctx context.Context) (*minio.Client, error) {
+	cm.mu.Lock()
+	defer cm.mu.Unlock()
+
+	if cm.cacheEntry != nil && !cm.cacheEntry.isExpired() {
+		return cm.cacheEntry.client, nil
+	}
+
+	var (
+		client   *minio.Client
+		ttl      int
+		err      error
+		hcCancel context.CancelFunc
+	)
+
+	switch cm.provider {
+	case local:
+		logger.TracingLog(ctx).Infof("Initializing on-prem minio client.")
+		client, ttl, err = newOnPremMinioClient(cm.onPremCfg)
+	case aws:
+		logger.TracingLog(ctx).Infof("Initializing saas minio client.")
+		client, ttl, err = newAWSMinioClient(cm.awsCfg)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	hcCancel, healthErr := client.HealthCheck(healthcheckIntervalSeconds * time.Second)
+	if healthErr != nil {
+		return nil, fmt.Errorf("failed to start health check: %w", healthErr)
+	}
+
+	expiresAt := time.Now().Add(time.Duration(ttl) * time.Second)
+	timer := time.AfterFunc(time.Duration(ttl)*time.Second, func() {
+		logger.TracingLog(ctx).Infof("S3 client expired. Resetting...")
+		cm.reset()
+	})
+
+	cm.cacheEntry = &clientCacheEntry{
+		client:    client,
+		expiresAt: expiresAt,
+		hcCancel:  hcCancel,
+		timer:     timer,
+	}
+
+	logger.TracingLog(ctx).Infof("S3 client created. Expires at: %v", expiresAt)
 	return client, nil
 }
 
-func newOnPremMinioClient(ctx context.Context) (*minio.Client, int, error) {
-	logger.TracingLog(ctx).Infof("Initializing on-prem minio client.")
-	cfg := onPremConfig{}
-	if err := env.Parse(&cfg); err != nil {
-		return nil, 0, err
-	}
-
-	// Initialize minio client object.
-	minioClient, err := minio.New(cfg.Endpoint, &minio.Options{
+func newOnPremMinioClient(cfg *onPremConfig) (*minio.Client, int, error) {
+	client, err := minio.New(cfg.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(cfg.AccessKeyID, cfg.SecretKey, ""),
 		Secure: false,
 	})
-	return minioClient, cfg.CacheTTL, err
+	if err != nil {
+		return nil, 0, fmt.Errorf("on-prem client creation failed: %w", err)
+	}
+	return client, cfg.CacheTTL, nil
 }
 
-func newAWSMinioClient(ctx context.Context) (*minio.Client, int, error) {
-	logger.TracingLog(ctx).Infof("Initializing saas minio client.")
-	cfg := awsConfig{}
-	if err := env.Parse(&cfg); err != nil {
-		return nil, 0, err
-	}
+func newAWSMinioClient(cfg *awsConfig) (*minio.Client, int, error) {
 	creds, err := credentials.NewIAM("").Get()
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("failed to retrieve AWS creds: %w", err)
 	}
 
-	// Initialize minio client object.
-	minioClient, err := minio.New("s3.amazonaws.com", &minio.Options{
+	client, err := minio.New("s3.amazonaws.com", &minio.Options{
 		Creds:  credentials.NewStaticV4(creds.AccessKeyID, creds.SecretAccessKey, creds.SessionToken),
 		Secure: true,
 		Region: cfg.Region,
 	})
-	return minioClient, cfg.CacheTTL, err
+	if err != nil {
+		return nil, 0, fmt.Errorf("AWS client creation failed: %w", err)
+	}
+	return client, cfg.CacheTTL, nil
 }

@@ -366,18 +366,18 @@ const getLabelDTO = (label: EditedLabel): EditedLabelDTO => {
     }
 };
 
-const updateToTaskDTO = (task: Task, anomalyRevampFlagEnabled: boolean) => {
+const updateToTaskDTO = (task: Task) => {
     return {
         id: task.id,
-        task_type: getTaskTypeFromDomain(task.domain, anomalyRevampFlagEnabled),
+        task_type: getTaskTypeFromDomain(task.domain),
         title: task.title,
         labels: task.labels.map(getLabelDTO),
     };
 };
 
-const updateToKeypointTaskDTO = (task: KeypointTask, anomalyRevampFlagEnabled: boolean) => {
+const updateToKeypointTaskDTO = (task: KeypointTask) => {
     return {
-        ...updateToTaskDTO(task, anomalyRevampFlagEnabled),
+        ...updateToTaskDTO(task),
         keypoint_structure: {
             ...task.keypointStructure,
             positions: task.keypointStructure.positions.map((position) => ({ ...position, label: position.label.id })),
@@ -385,19 +385,15 @@ const updateToKeypointTaskDTO = (task: KeypointTask, anomalyRevampFlagEnabled: b
     };
 };
 
-export const getEditProjectDTO = (
-    project: ProjectProps,
-    prevTasks: TaskDTO[] = [],
-    anomalyRevampFlagEnabled = false
-) => {
+export const getEditProjectDTO = (project: ProjectProps, prevTasks: TaskDTO[] = []) => {
     const { id, name, creationDate, thumbnail, datasets, tasks, performance } = project;
 
     const tasksDTO = tasks.map((task): TaskDTO | KeypointTaskDTO => {
         if (isKeypointTask(task)) {
-            return updateToKeypointTaskDTO(task, anomalyRevampFlagEnabled);
+            return updateToKeypointTaskDTO(task);
         }
 
-        return updateToTaskDTO(task, anomalyRevampFlagEnabled);
+        return updateToTaskDTO(task);
     });
 
     // TODO UI: Remove 'keypoint_structure' from non-keypoint tasks.
@@ -498,11 +494,7 @@ const datasetTask: DatasetTask = {
     task_type: TASK_TYPE.DATASET,
 };
 
-export const getPreparedTasks = (
-    tasks: TaskMetadata[],
-    domains: DOMAIN[],
-    anomalyRevampFlagEnabled = false
-): TaskCreation[] => {
+export const getPreparedTasks = (tasks: TaskMetadata[], domains: DOMAIN[]): TaskCreation[] => {
     // TODO: in the future when we support task chains with more than 2 tasks,
     // we will need to generate a crop task in between each domain
     const cropTasks: CropTask[] = domains.length > 1 ? [{ title: 'Crop', task_type: TASK_TYPE.CROP }] : [];
@@ -513,7 +505,7 @@ export const getPreparedTasks = (
 
         return {
             title: task.domain,
-            task_type: getTaskTypeFromDomain(task.domain, anomalyRevampFlagEnabled),
+            task_type: getTaskTypeFromDomain(task.domain),
             labels,
         };
     });
@@ -525,7 +517,7 @@ export const getPreparedTasks = (
         .map((domain) => {
             return {
                 title: domain,
-                task_type: getTaskTypeFromDomain(domain, anomalyRevampFlagEnabled),
+                task_type: getTaskTypeFromDomain(domain),
             } as TaskCreation;
         });
 

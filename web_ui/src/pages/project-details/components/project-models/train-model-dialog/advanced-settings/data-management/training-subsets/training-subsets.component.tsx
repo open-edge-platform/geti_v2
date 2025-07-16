@@ -3,8 +3,7 @@
 
 import { FC, useState } from 'react';
 
-import { ActionButton, Flex, Grid, minmax, Text, View } from '@geti/ui';
-import { Refresh } from '@geti/ui/icons';
+import { Flex, Grid, minmax, Text, View } from '@geti/ui';
 
 import {
     ConfigurationParameter,
@@ -12,6 +11,7 @@ import {
     TrainingConfiguration,
 } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { Accordion } from '../../ui/accordion/accordion.component';
+import { ResetButton } from '../../ui/reset-button.component';
 import { SubsetsDistributionSlider } from './subsets-distribution-slider/subsets-distribution-slider.component';
 import { getSubsetsSizes } from './utils';
 
@@ -33,9 +33,9 @@ const SubsetDistributionStat: FC<{ size: number; color: string; title: string }>
     return (
         <Flex alignItems={'center'} gap={'size-50'}>
             <Tile color={color} />
-            <Text>
+            <span aria-label={`${title} subset size`}>
                 {title}: {size}
-            </Text>
+            </span>
         </Flex>
     );
 };
@@ -111,9 +111,11 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
                     onChangeEnd={handleSubsetDistributionChangeEnd}
                     label={'Distribution'}
                 />
-                <ActionButton isQuiet gridArea={'reset'} onPress={onSubsetsDistributionReset}>
-                    <Refresh />
-                </ActionButton>
+                <ResetButton
+                    gridArea={'reset'}
+                    onPress={onSubsetsDistributionReset}
+                    aria-label={'Reset training subsets'}
+                />
                 <SubsetDistributionStats
                     testSize={testSubsetSize}
                     trainingSize={trainingSubsetSize}
@@ -230,7 +232,7 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
         <Accordion>
             <Accordion.Title>
                 Training subsets
-                <Accordion.Tag>
+                <Accordion.Tag ariaLabel={'Training subsets tag'}>
                     {trainingSubsetRatio}/{validationSubsetRatio}/{testSubsetRatio}%
                 </Accordion.Tag>
             </Accordion.Title>

@@ -4,8 +4,6 @@ import os
 import re
 from unittest.mock import patch
 
-import pytest
-
 from application.export_management import DatasetExportOperationConfig
 from communication.helpers.job_helper import JobType
 from domain.entities.dataset_ie_file_metadata import ExportFormat
@@ -19,7 +17,6 @@ ENV_VARS = {
 }
 
 
-@pytest.mark.DatasetIEMsComponent
 class TestExportManager:
     def test_submit_export_job(
         self,

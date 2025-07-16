@@ -9,6 +9,9 @@ dependencies = [
     "geti-configuration-tools",
 ]
 
+[project.optional-dependencies]
+bson = ["bson~=0.5"]
+
 [tool.uv.sources]
 geti-configuration-tools = { path = "../../libs/configuration_tools", editable = true }
 
@@ -21,6 +24,7 @@ dev = [
     "mypy~=1.15",
     "types-cachetools",
     "types-PyYAML",
+    "geti-supported-models[bson]"
 ]
 
 [build-system]

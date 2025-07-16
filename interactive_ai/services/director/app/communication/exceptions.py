@@ -585,11 +585,8 @@ class ProjectConfigurationNotFoundException(GetiBaseException):
     """Exception raised when the project configuration could not be found in the database"""
 
     def __init__(self, project_id: ID, task_id: ID | None = None) -> None:
-        message = (
-            f"The requested project configuration could not be found. Project ID: `{project_id}`, task ID: `{task_id}`"
-            if task_id
-            else ""
-        )
+        base_message = f"The requested project configuration could not be found. Project ID: `{project_id}`"
+        message = base_message if task_id is None else f"{base_message}, task ID: `{task_id}`"
         super().__init__(
             http_status=http.HTTPStatus.NOT_FOUND,
             error_code="project_configuration_not_found",
@@ -622,4 +619,34 @@ class MissingTaskIDException(GetiBaseException):
             message="The required task ID was not provided in the request.",
             error_code="missing_task_id",
             http_status=http.HTTPStatus.BAD_REQUEST,
+        )
+
+
+class NotConfigurableParameterException(GetiBaseException):
+    """
+    Exception raised trying to set a non-configurable parameter.
+
+    :param parameter_name: The name of the parameter that is not configurable
+    """
+
+    def __init__(self, parameter_name: str) -> None:
+        super().__init__(
+            message=f"The parameter '{parameter_name}' is not configurable and cannot be set.",
+            error_code="not_configurable_parameter",
+            http_status=http.HTTPStatus.BAD_REQUEST,
+        )
+
+
+class ModelManifestNotFoundException(GetiBaseException):
+    """
+    Exception raised when a model manifest could not be found in the database.
+
+    :param model_manifest_id: ID of the model manifest
+    """
+
+    def __init__(self, model_manifest_id: str) -> None:
+        super().__init__(
+            message=f"The requested model manifest could not be found. Model Manifest ID: `{model_manifest_id}`.",
+            error_code="model_manifest_not_found",
+            http_status=http.HTTPStatus.NOT_FOUND,
         )

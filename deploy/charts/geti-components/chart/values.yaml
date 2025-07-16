@@ -6,7 +6,6 @@ enabled:
   inference_gateway: true
   jobs: true
   media: true
-  mlflow_geti_store: true
   model_registration: true
   project_ie: true
   resource: true

@@ -1,0 +1,52 @@
+type: object
+properties:
+  allowed_values:
+    type: ['null', array]
+    items:
+      type: integer
+    description: List of allowed values for the integer parameter (can be None if no restrictions)
+  default_value:
+    type: integer
+    description: Default value for the integer parameter when not explicitly set
+  description:
+    type: string
+    description: Detailed explanation of the integer parameter's purpose and usage
+  key:
+    type: string
+    description: Identifier for the integer parameter used in code references
+  name:
+    type: string
+    description: Display name of the integer parameter
+  max_value:
+    type: ['null', integer]
+    description: Maximum allowed value for the integer parameter (can be None for no upper limit)
+  min_value:
+    type: ['null', integer]
+    description: Minimum allowed value for the integer parameter (can be None for no lower limit)
+  type:
+    type: string
+    enum: [int]
+    description: Type of the parameter, which is 'int' in this case
+  value:
+    type: integer
+    description: Current configured value of the integer parameter
+
+required:
+  - default_value
+  - description
+  - key
+  - name
+  - max_value
+  - min_value
+  - type
+  - value
+
+example:
+  default_value: 1000
+  description: Maximum number of training epochs to run
+  key: max_epochs
+  name: Maximum epochs
+  max_value: null
+  min_value: 0
+  type: int
+  value: 64

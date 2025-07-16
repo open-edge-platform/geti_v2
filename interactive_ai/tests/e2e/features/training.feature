@@ -34,5 +34,5 @@ Feature: Model training
         | oriented detection          | Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_EfficientNetB2B |
         | instance segmentation       | Custom_Counting_Instance_Segmentation_MaskRCNN_EfficientNetB2B              |
         | semantic segmentation       | Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR                         |
-        | anomaly detection           | ote_anomaly_classification_padim                                            |
+        | anomaly detection           | ote_anomaly_padim                                                           |
         | detection > classification  | Custom_Object_Detection_Gen3_ATSS                                           |

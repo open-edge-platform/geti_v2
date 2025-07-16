@@ -75,6 +75,7 @@ export const EditPosePoint = ({
                     ariaLabel: 'Point visible',
                     handleMenuAction: onToggleVisibility,
                 });
+
                 return;
             }
 

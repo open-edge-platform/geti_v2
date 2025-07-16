@@ -30,7 +30,7 @@ class TestMAHelper:
         "param_fxt_task, param_fxt_config_type, param_fxt_called_method",
         [
             (
-                "fxt_anomaly_detection_task",
+                "fxt_anomaly_task",
                 AnomalyDatasetCounterConfig,
                 "_get_missing_annotations_anomaly_task",
             ),

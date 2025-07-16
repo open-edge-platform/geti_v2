@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Button, ButtonGroup, Content, Dialog, Divider, Flex, Heading } from '@geti/ui';
 
 import { useCodeDeployment } from '../../../../core/code-deployment/hooks/use-code-deployment.hook';
@@ -37,7 +36,6 @@ export const DownloadDialogSingleTask = ({
         optimisationId: undefined,
         versionId: modelsGroups[0].modelVersions[0].id,
     };
-    const { FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE } = useFeatureFlags();
     const { useDownloadDeploymentPackageMutation } = useCodeDeployment();
     const downloadDeploymentPackageMutation = useDownloadDeploymentPackageMutation();
 
@@ -79,12 +77,10 @@ export const DownloadDialogSingleTask = ({
 
             <Content>
                 <Flex direction={'column'} gap={'size-150'}>
-                    {FEATURE_FLAG_OVMS_DEPLOYMENT_PACKAGE && (
-                        <SelectDeploymentPackage
-                            onSelectDeploymentPackageType={setSelectedDeploymentPackageType}
-                            selectedDeploymentPackageType={selectedDeploymentPackageType}
-                        />
-                    )}
+                    <SelectDeploymentPackage
+                        onSelectDeploymentPackageType={setSelectedDeploymentPackageType}
+                        selectedDeploymentPackageType={selectedDeploymentPackageType}
+                    />
                     <ModelSelection
                         key={task.id}
                         models={modelsGroups}

@@ -1,0 +1,21 @@
+.drivers {
+    list-style-type: square;
+    padding-inline-start: var(--spectrum-global-dimension-size-300);
+}
+
+.releaseUrl {
+    color: var(--energy-blue);
+}
+
+.version {
+    font-weight: 700;
+}
+
+.currentVersion {
+    font-size: var(--spectrum-global-dimension-font-size-75);
+    font-weight: normal;
+}
+
+.buttonGroup {
+    padding-inline-start: 0;
+}

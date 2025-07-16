@@ -1,0 +1,25 @@
+type: object
+properties:
+  task_configs:
+    type: array
+    description: Array containing configuration for each task in the project
+    items:
+      $ref: "project_configuration_task_config.yaml"
+
+required:
+  - task_configs
+
+example:
+  task_configs:
+    - task_id: "61012cdb1d38a5e71ef3bafd"
+      training:
+        constraints:
+        - key: "min_images_per_label"
+          value: 0
+      auto_training:
+        - key: "enable"
+          value: true
+        - key: "enable_dynamic_required_annotations"
+          value: false
+        - key: "min_images_per_label"
+          value: 1

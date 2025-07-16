@@ -3,9 +3,9 @@
 
 import '@wessberg/pointer-events';
 
+import { getBoundingBox } from '@geti/smart-tools/utils';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { getBoundingBox } from '../../../../core/annotations/math';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { getMockedAnnotation } from '../../../../test-utils/mocked-items-factory/mocked-annotations';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';

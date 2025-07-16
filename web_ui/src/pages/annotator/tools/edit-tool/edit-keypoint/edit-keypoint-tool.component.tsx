@@ -3,8 +3,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { getBoundingBox } from '@geti/smart-tools/utils';
+
 import { KeypointAnnotation } from '../../../../../core/annotations/annotation.interface';
-import { getBoundingBox } from '../../../../../core/annotations/math';
 import { Point } from '../../../../../core/annotations/shapes.interface';
 import { useSelected } from '../../../../../providers/selected-provider/selected-provider.component';
 import { PoseEdges } from '../../../annotation/shapes/pose-edges.component';
@@ -97,7 +98,7 @@ export const EditKeypointTool = ({ annotation, annotationToolContext }: EditKeyp
         },
     });
 
-    const handleRoteShape = () => {
+    const handleRotateShape = () => {
         isEditing.current = true;
         const rotatedShape = {
             ...localShape,
@@ -130,7 +131,7 @@ export const EditKeypointTool = ({ annotation, annotationToolContext }: EditKeyp
                         pivot={poseLocations.middle}
                         position={{ x: poseLocations.middle.x, y: poseLocations.topWithGap.y }}
                         basePosition={{ x: poseLocations.middle.x, y: poseLocations.top.y }}
-                        onComplete={handleRoteShape}
+                        onComplete={handleRotateShape}
                         onMoveAnchorTo={setAngle}
                     />
 

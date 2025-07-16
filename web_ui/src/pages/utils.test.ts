@@ -8,6 +8,7 @@ import {
     getPointInRoi,
     hexaToRGBA,
     isSupportedImageFormat,
+    onValidImageFormat,
     PointAxis,
 } from './utils';
 
@@ -84,5 +85,35 @@ describe('page utils', () => {
         expect(maxX).toEqual(15);
         expect(minY).toEqual(10);
         expect(maxY).toEqual(30);
+    });
+
+    describe('onValidImageFormat', () => {
+        const validFiles = [
+            new File(['foo'], 'foo.jpg', { type: `image/${VALID_IMAGE_TYPES_SINGLE_UPLOAD[0]}` }),
+            new File(['bar'], 'bar.png', { type: `image/${VALID_IMAGE_TYPES_SINGLE_UPLOAD[1]}` }),
+        ];
+
+        const invalidFiles = [
+            new File(['bar'], 'bar.pdf', { type: 'application/pdf' }),
+            new File(['foo'], 'video.mov', { type: 'video/quicktime' }),
+        ];
+
+        it('invoke callback function when all provided files have valid image formats', () => {
+            const mockedCallback = jest.fn();
+            const mockedErrorCallback = jest.fn();
+            onValidImageFormat(mockedCallback, mockedErrorCallback)(validFiles);
+
+            expect(mockedCallback).toHaveBeenCalledWith(validFiles);
+            expect(mockedErrorCallback).not.toHaveBeenCalled();
+        });
+
+        it('invoke error callback when files with unsupported formats are provided', () => {
+            const mockedCallback = jest.fn();
+            const mockedErrorCallback = jest.fn();
+            onValidImageFormat(mockedCallback, mockedErrorCallback)(invalidFiles);
+
+            expect(mockedCallback).not.toHaveBeenCalled();
+            expect(mockedErrorCallback).toHaveBeenCalledWith(invalidFiles);
+        });
     });
 });

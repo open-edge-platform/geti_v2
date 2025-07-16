@@ -18,6 +18,7 @@ import { NotFound } from '@geti/ui/icons';
 import { isLargeSizeQuery } from '@geti/ui/theme';
 import { isEmpty } from 'lodash-es';
 
+import { isKeypointDetection } from '../../../../core/projects/domains';
 import { isKeypointTask } from '../../../../core/projects/utils';
 import { TUTORIAL_CARD_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { useViewMode } from '../../../../hooks/use-view-mode/use-view-mode.hook';
@@ -35,7 +36,7 @@ import { VALID_MEDIA_TYPES_DISPLAY } from '../../../../shared/media-utils';
 import { idMatchingFormat } from '../../../../test-utils/id-utils';
 import { MediaFilterChips } from '../../../media/components/media-filter-chips.component';
 import { useMedia } from '../../../media/providers/media-provider.component';
-import { getMediaId } from '../../../media/utils';
+import { disabledKeypointFilterRules, getMediaId } from '../../../media/utils';
 import { useProject } from '../../providers/project-provider/project-provider.component';
 import { getMatchedMediaCounts, getTotalMediaCounts } from '../../utils';
 import { AnomalyMediaHeaderInformation } from './anomaly-media-header-information.component';
@@ -88,10 +89,12 @@ export const MediaContentBucket = ({
     handleUploadMediaCallback,
 }: MediaContentBucketProps): JSX.Element => {
     const { project } = useProject();
-    const isAnomalyProject = mediaBucket !== MEDIA_CONTENT_BUCKET.GENERIC;
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
-    const { FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE } = useFeatureFlags();
     const [viewMode, setViewMode] = useViewMode(mediaBucket, INITIAL_VIEW_MODE);
+    const { FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE } = useFeatureFlags();
+
+    const isAnomalyProject = mediaBucket !== MEDIA_CONTENT_BUCKET.GENERIC;
+    const isKeypointProject = project.domains.some(isKeypointDetection);
 
     const {
         media,
@@ -160,6 +163,7 @@ export const MediaContentBucket = ({
                         viewMode={viewMode}
                         countElements={countElements}
                         isAnomalyProject={isAnomalyProject}
+                        disabledFilterRules={isKeypointProject ? disabledKeypointFilterRules : []}
                         hasExportImportButtons={!isAnomalyProject && isKeypointIeEnabled}
                         setViewMode={setViewMode}
                         onCameraSelected={onCameraSelected}
@@ -178,6 +182,7 @@ export const MediaContentBucket = ({
                 />
 
                 <MediaDropBox
+                    multiple
                     DropBoxIcon={DropBoxIcon}
                     dropBoxIconSize={dropBoxIconSize}
                     isVisible={shouldShowMediaDrop}
@@ -199,7 +204,6 @@ export const MediaContentBucket = ({
                     dropBoxHeader={
                         <MediaDropBoxHeader formats={acceptedFormats} bucket={mediaBucket} isMultipleUpload />
                     }
-                    multiple
                 >
                     <Flex height='100%' direction='column' position={'relative'}>
                         {hasMediaItems && (

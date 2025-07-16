@@ -42,7 +42,11 @@ func TestFileReaderKeysProvider_PublicKey(t *testing.T) {
 				if err != nil {
 					t.Fatalf("Failed to create temp file: %v", err)
 				}
-				defer os.Remove(tmpFile.Name())
+				defer func() {
+					if err := os.Remove(tmpFile.Name()); err != nil {
+						t.Errorf("Failed to remove temp file: %v", err)
+					}
+				}()
 
 				if _, err := tmpFile.Write([]byte(tt.fileContent)); err != nil {
 					t.Fatalf("Failed to write to temp file: %v", err)
@@ -54,8 +58,14 @@ func TestFileReaderKeysProvider_PublicKey(t *testing.T) {
 				tt.envValue = tmpFile.Name()
 			}
 
-			os.Setenv("JWT_CERTIFICATE_PUBLIC_KEY_PATH", tt.envValue)
-			defer os.Unsetenv("JWT_CERTIFICATE_PUBLIC_KEY_PATH")
+			if err := os.Setenv("JWT_CERTIFICATE_PUBLIC_KEY_PATH", tt.envValue); err != nil {
+				t.Fatalf("Failed to set environment variable: %v", err)
+			}
+			defer func() {
+				if err := os.Unsetenv("JWT_CERTIFICATE_PUBLIC_KEY_PATH"); err != nil {
+					t.Errorf("Failed to unset environment variable: %v", err)
+				}
+			}()
 
 			provider := &FileReaderKeysProvider{}
 			output, err := provider.PublicKey()
@@ -105,7 +115,11 @@ func TestFileReaderKeysProvider_PrivateKey(t *testing.T) {
 				if err != nil {
 					t.Fatalf("Failed to create temp file: %v", err)
 				}
-				defer os.Remove(tmpFile.Name())
+				defer func() {
+					if err := os.Remove(tmpFile.Name()); err != nil {
+						t.Errorf("Failed to remove temp file: %v", err)
+					}
+				}()
 
 				if _, err := tmpFile.Write([]byte(tt.fileContent)); err != nil {
 					t.Fatalf("Failed to write to temp file: %v", err)
@@ -117,8 +131,14 @@ func TestFileReaderKeysProvider_PrivateKey(t *testing.T) {
 				tt.envValue = tmpFile.Name()
 			}
 
-			os.Setenv("JWT_CERTIFICATE_PRIVATE_KEY_PATH", tt.envValue)
-			defer os.Unsetenv("JWT_CERTIFICATE_PRIVATE_KEY_PATH")
+			if err := os.Setenv("JWT_CERTIFICATE_PRIVATE_KEY_PATH", tt.envValue); err != nil {
+				t.Fatalf("Failed to set environment variable: %v", err)
+			}
+			defer func() {
+				if err := os.Unsetenv("JWT_CERTIFICATE_PRIVATE_KEY_PATH"); err != nil {
+					t.Errorf("Failed to unset environment variable: %v", err)
+				}
+			}()
 
 			provider := &FileReaderKeysProvider{}
 			output, err := provider.PrivateKey()

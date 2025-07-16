@@ -119,14 +119,14 @@ def fxt_classification_node(fxt_mongo_id):
 
 
 @pytest.fixture
-def fxt_anomaly_segmentation_label_schema(fxt_mongo_id):
+def fxt_anomaly_label_schema(fxt_mongo_id):
     label_schema = LabelSchema(id_=fxt_mongo_id(11))
     label_schema.add_group(
         LabelGroup(
-            name="default anomaly_segmentation",
+            name="default anomaly",
             labels=[
-                Label(name="normal", domain=Domain.ANOMALY_SEGMENTATION, id_=fxt_mongo_id(1), is_anomalous=False),
-                Label(name="anomalous", domain=Domain.ANOMALY_SEGMENTATION, id_=fxt_mongo_id(7), is_anomalous=True),
+                Label(name="normal", domain=Domain.ANOMALY, id_=fxt_mongo_id(1), is_anomalous=False),
+                Label(name="anomalous", domain=Domain.ANOMALY, id_=fxt_mongo_id(7), is_anomalous=True),
             ],
         )
     )
@@ -134,16 +134,16 @@ def fxt_anomaly_segmentation_label_schema(fxt_mongo_id):
 
 
 @pytest.fixture(scope="function")
-def fxt_anomaly_segmentation_node(fxt_mongo_id):
+def fxt_anomaly_node(fxt_mongo_id):
     task_properties = TaskProperties(
         task_family=TaskFamily.VISION,
-        task_type=TaskType.ANOMALY_SEGMENTATION,
+        task_type=TaskType.ANOMALY,
         is_trainable=True,
-        is_global=False,
+        is_global=True,
         is_anomaly=True,
     )
     yield TaskNode(
-        title="Anomaly Segmentation (MOCK)",
+        title="Anomaly (MOCK)",
         project_id=ID(),
         task_properties=task_properties,
         id_=ID(fxt_mongo_id(102)),
@@ -151,17 +151,17 @@ def fxt_anomaly_segmentation_node(fxt_mongo_id):
 
 
 @pytest.fixture
-def fxt_anomaly_segmentation_project(
+def fxt_anomaly_project(
     fxt_mongo_id,
-    fxt_anomaly_segmentation_node,
+    fxt_anomaly_node,
     fxt_dataset_storage,
 ):
     task_graph = TaskGraph()
-    task_graph.add_node(fxt_anomaly_segmentation_node)
+    task_graph.add_node(fxt_anomaly_node)
     yield Project(
-        name="test_anomaly_segmentation_project",
+        name="test_anomaly_project",
         creator_id="",
-        description="Dummy detection->classification project",
+        description="Dummy anomaly project",
         dataset_storages=[fxt_dataset_storage],
         task_graph=task_graph,
         id=fxt_mongo_id(103),
@@ -216,8 +216,8 @@ def fxt_node_to_schema(
     fxt_detection_label_schema,
     fxt_segmentation_node,
     fxt_segmentation_label_schema,
-    fxt_anomaly_segmentation_node,
-    fxt_anomaly_segmentation_label_schema,
+    fxt_anomaly_node,
+    fxt_anomaly_label_schema,
 ):
     def task_node_to_schema(task_id: ID) -> LabelSchema:
         if task_id == fxt_classification_node.id_:
@@ -226,8 +226,8 @@ def fxt_node_to_schema(
             return fxt_detection_label_schema
         if task_id == fxt_segmentation_node.id_:
             return fxt_segmentation_label_schema
-        if task_id == fxt_anomaly_segmentation_node.id_:
-            return fxt_anomaly_segmentation_label_schema
+        if task_id == fxt_anomaly_node.id_:
+            return fxt_anomaly_label_schema
         raise ValueError(f"Cannot map task with id {task_id} to a label schema")
 
     yield task_node_to_schema

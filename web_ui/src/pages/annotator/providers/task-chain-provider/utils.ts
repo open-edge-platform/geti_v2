@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { BoundingBox, getBoundingBox, hasEqualBoundingBox } from '@geti/smart-tools/utils';
 import { intersectionBy, isEmpty, isEqual, isNil } from 'lodash-es';
 
 import { Annotation, TaskChainInput } from '../../../../core/annotations/annotation.interface';
-import { BoundingBox, getBoundingBox, hasEqualBoundingBox } from '../../../../core/annotations/math';
 import { Rect, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { isRect } from '../../../../core/annotations/utils';

@@ -16,7 +16,7 @@ from pymongo import MongoClient
 from migration_job.mongodb_upgrades_history import MigrationHistory, MigrationStepDocument
 from migration_job.utils import create_mongo_client
 
-logger = initialize_logger(__name__, use_async=False)
+logger = initialize_logger(__name__)
 
 DEFAULT_DATABASE_NAME = "geti"
 

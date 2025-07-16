@@ -1,0 +1,59 @@
+type: object
+properties:
+  default_value:
+    anyOf:
+      - type: string
+      - type: integer
+      - type: number
+    description: Default value for the enum parameter when not explicitly set
+  description:
+    type: string
+    description: Detailed explanation of the enum parameter's purpose and usage
+  key:
+    type: string
+    description: Identifier for the enum parameter used in code references
+  name:
+    type: string
+    description: Display name of the enum parameter
+  type:
+    type: string
+    enum: [enum]
+    description: Type of the parameter, which is 'enum' in this case
+  value:
+    anyOf:
+      - type: string
+      - type: integer
+      - type: number
+    description: Current configured value of the enum parameter
+  allowed_values:
+    type: array
+    items:
+      anyOf:
+        - type: string
+        - type: integer
+        - type: number
+      description: Possible values for the enum parameter
+    description: List of all allowed values for the enum parameter
+
+required:
+  - default_value
+  - description
+  - key
+  - name
+  - type
+  - value
+  - allowed_values
+
+example:
+  default_value: False
+  description: Width dimension in pixels for model input images
+  key: input_size_width
+  name: Input size width
+  type: enum
+  value: 32
+  allowed_values:
+    - 16
+    - 32
+    - 64
+    - 128
+    - 256

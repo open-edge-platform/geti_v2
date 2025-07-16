@@ -1,9 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Flex, PressableElement, Tooltip, TooltipTrigger } from '@geti/ui';
+import { Flex, PhotoPlaceholder, PressableElement, Tooltip, TooltipTrigger } from '@geti/ui';
 
-import { PhotoPlaceholder } from '../../../../shared/components/photo-placeholder/photo-placeholder.component';
 import { TruncatedText } from '../../../../shared/components/truncated-text/truncated-text.component';
 import { OrganizationAdminsCopyText } from './organization-admins-copy-text.component';
 

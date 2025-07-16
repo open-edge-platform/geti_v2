@@ -7,7 +7,6 @@ import { GETI_SYSTEM_AUTHOR_ID, JobState } from '../../../../core/jobs/jobs.cons
 import { JobsResponse } from '../../../../core/jobs/services/jobs-service.interface';
 import { FUX_SETTINGS_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { UserGlobalSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
-import { getFuxSetting } from '../../../../shared/components/tutorials/utils';
 
 export const onFirstScheduledOrRunningAutoTrainingJob =
     (settings: UseSettings<UserGlobalSettings>, callback: (jobId: string) => void) =>
@@ -20,7 +19,7 @@ export const onFirstScheduledOrRunningAutoTrainingJob =
         const totalScheduledJobs = Number(jobsCount.numberOfScheduledJobs);
         const totalRunningJobs = Number(jobsCount.numberOfRunningJobs);
         const hasScheduledOrRunningTrainingJobs = totalScheduledJobs > 0 || totalRunningJobs > 0;
-        const neverAutoTrained = getFuxSetting(FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED, settings.config);
+        const neverAutoTrained = settings.config[FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED].value;
         const isAutoTrainingJob = jobs.find((job) => {
             return (
                 (job.state === JobState.SCHEDULED || job.state === JobState.RUNNING) &&

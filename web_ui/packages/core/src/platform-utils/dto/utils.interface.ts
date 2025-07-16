@@ -21,3 +21,31 @@ export interface ProductInfoEntityDTO {
     grafana_enabled: boolean;
     environment?: Environment;
 }
+
+export interface CheckBackupDTO {
+    is_backup_possible: boolean;
+}
+
+export interface PlatformVersionsDTO {
+    versions: {
+        version: string;
+        k3s_version: string;
+        nvidia_drivers_version: string;
+        intel_drivers_version: string;
+        is_current: boolean;
+        is_upgrade_required: boolean;
+    }[];
+}
+
+type PlatformUpgradeProgressStatusDTO = 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'ROLLING_BACK' | 'NOT_RUNNING';
+
+export interface PlatformUpgradeProgressDTO {
+    progress: string;
+    status: PlatformUpgradeProgressStatusDTO;
+    message: string;
+}
+
+export interface PlatformUpgradePayloadDTO {
+    version_number: string;
+    force_upgrade?: boolean;
+}

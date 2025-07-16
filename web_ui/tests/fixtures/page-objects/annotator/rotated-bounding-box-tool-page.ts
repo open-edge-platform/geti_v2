@@ -1,9 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { degreesToRadians } from '@geti/smart-tools/utils';
 import { expect, Page } from '@playwright/test';
 
-import { degreesToRadians } from '../../../../src/core/annotations/math';
 import { withRelative } from '../../../utils/mouse';
 
 interface Point {

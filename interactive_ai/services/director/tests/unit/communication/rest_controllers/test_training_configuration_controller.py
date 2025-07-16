@@ -1,18 +1,21 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from unittest.mock import patch
+from copy import deepcopy
+from unittest.mock import MagicMock, patch
 
 import pytest
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration
 
 from communication.controllers.training_configuration_controller import TrainingConfigurationRESTController
+from communication.exceptions import NotConfigurableParameterException
 from communication.views.training_configuration_rest_views import TrainingConfigurationRESTViews
 from service.configuration_service import ConfigurationService
 from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_types import ID
 from iai_core.entities.annotation_scene_state import AnnotationSceneState, AnnotationState
-from iai_core.repos import AnnotationSceneStateRepo, DatasetStorageRepo, TaskNodeRepo
+from iai_core.repos import AnnotationSceneStateRepo, DatasetStorageRepo, ModelRepo, TaskNodeRepo
+from iai_core.repos.mappers.mongodb_mappers.model_mapper import ModelConfigurationToMongo
 
 
 @pytest.fixture
@@ -244,8 +247,69 @@ class TestTrainingConfigurationController:
         assert updated_config.global_parameters.dataset_preparation.subset_split.validation == 30
         assert updated_config.global_parameters.dataset_preparation.subset_split.test == 10
 
+    @patch.object(TaskNodeRepo, "exists", return_value=True)
+    def test_update_configuration_with_input_size(
+        self,
+        request,
+        fxt_project_identifier,
+        fxt_training_configuration_task_level,
+        fxt_partial_training_configuration_manifest_level,
+    ) -> None:
+        # Arrange
+        repo = PartialTrainingConfigurationRepo(fxt_project_identifier)
+        request.addfinalizer(lambda: repo.delete_all())
+
+        # Save initial configurations
+        repo.save(fxt_training_configuration_task_level)
+        repo.save(fxt_partial_training_configuration_manifest_level)
+
+        # Create an update with modified parameters
+
+        update_config_rest = {
+            "task_id": fxt_training_configuration_task_level.task_id,
+            "model_manifest_id": fxt_partial_training_configuration_manifest_level.model_manifest_id,
+            "training": [
+                {
+                    "key": "input_size_width",
+                    "value": 64,
+                    "allowed_values": [32],  # this should be ignored during update
+                },
+                {
+                    "key": "input_size_height",
+                    "value": 64,
+                    "allowed_values": [32],  # this should be ignored during update
+                },
+            ],
+        }
+        allowed_values_input_size = {
+            "key": "allowed_values_input_size",
+            "value": [11, 22],
+        }
+        error_config_rest = deepcopy(update_config_rest)
+        error_config_rest["training"].append(allowed_values_input_size)  # this should be ignored during update
+        update_config = TrainingConfigurationRESTViews.training_configuration_from_rest(update_config_rest)
+
+        # Act & Assert
+        TrainingConfigurationRESTController.update_configuration(
+            project_identifier=fxt_project_identifier,
+            update_configuration=update_config,
+        )
+        updated_config = ConfigurationService.get_full_training_configuration(
+            project_identifier=fxt_project_identifier,
+            task_id=fxt_training_configuration_task_level.task_id,
+            model_manifest_id=fxt_partial_training_configuration_manifest_level.model_manifest_id,
+        )
+        # Verify the update was applied correctly
+        assert updated_config.hyperparameters.training.input_size_width == 64
+        assert updated_config.hyperparameters.training.input_size_height == 64
+
+        # check that allowed values cannot be set
+        with pytest.raises(NotConfigurableParameterException):
+            TrainingConfigurationRESTViews.training_configuration_from_rest(error_config_rest)
+
     def test_get_dataset_size(
         self,
+        request,
         fxt_project_identifier,
         fxt_image_identifier,
         fxt_video_frame_identifier,
@@ -254,6 +318,7 @@ class TestTrainingConfigurationController:
     ) -> None:
         task_id = ID("task_id")
         repo = AnnotationSceneStateRepo(fxt_dataset_storage.identifier)
+        request.addfinalizer(lambda: repo.delete_all())
         ann_state_image = AnnotationSceneState(
             media_identifier=fxt_image_identifier,
             annotation_scene_id=fxt_mongo_id(1),
@@ -287,3 +352,47 @@ class TestTrainingConfigurationController:
             )
 
             assert dataset_size == 2  # 1 annotated image + 1 partially annotated video frame
+
+    @patch.object(TaskNodeRepo, "exists", return_value=True)
+    def test_get_legacy_model_configuration(
+        self,
+        fxt_project_identifier,
+        fxt_model_storage,
+        fxt_legacy_model_configuration_doc,
+        fxt_legacy_model_configuration_rest_view,
+    ) -> None:
+        # Arrange
+        task_id = ID("task_id")
+        model_id = ID("model_id")
+        model_config = ModelConfigurationToMongo.backward(
+            fxt_legacy_model_configuration_doc, parameters=fxt_project_identifier
+        )
+        mock_model = MagicMock()
+        mock_model.configuration = model_config
+
+        # Act
+        with (
+            patch.object(
+                ConfigurationService,
+                "get_configuration_from_model",
+                return_value=(None, fxt_model_storage),
+            ) as mock_get_configuration_from_model,
+            patch.object(
+                ModelRepo,
+                "get_by_id",
+                return_value=mock_model,
+            ),
+        ):
+            config_rest = TrainingConfigurationRESTController.get_configuration(
+                project_identifier=fxt_project_identifier,
+                task_id=task_id,
+                model_id=model_id,
+            )
+
+        # Assert
+        mock_get_configuration_from_model.assert_called_once_with(
+            project_identifier=fxt_project_identifier,
+            task_id=task_id,
+            model_id=model_id,
+        )
+        assert config_rest == fxt_legacy_model_configuration_rest_view

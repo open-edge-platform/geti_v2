@@ -106,6 +106,9 @@ export const initialGeneralSettingsConfig: GeneralSettingsConfig = {
             end: 0,
         },
     },
+    [GENERAL_SETTINGS_KEYS.UPGRADE_BANNER]: {
+        dismissedVersion: null,
+    },
 };
 
 export const initialTutorialConfig: TutorialConfig = {
@@ -181,6 +184,9 @@ export const initialFuxNotificationsConfig: FuxNotificationsConfig = {
     [FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION]: {
         isEnabled: false,
     },
+    [FUX_NOTIFICATION_KEYS.CREDIT_BALANCE_BUTTON]: {
+        isEnabled: false,
+    },
 };
 
 export const initialFuxSettingsConfig: FuxSettingsConfig = {
@@ -210,16 +216,6 @@ export const initialFuxSettingsConfig: FuxSettingsConfig = {
     },
 };
 
-export const initialConfig = {
-    ...initialAnnotatorConfig,
-    ...initialTutorialConfig,
-    ...initialFuxNotificationsConfig,
-    ...initialFuxSettingsConfig,
-    ...initialCanvasConfig,
-    ...initialGlobalModalsConfig,
-    ...initialGeneralSettingsConfig,
-};
-
 export const INITIAL_PROJECT_SETTINGS = {
     ...initialAnnotatorConfig,
     ...initialCanvasConfig,
@@ -233,20 +229,7 @@ export const INITIAL_GLOBAL_SETTINGS = {
     ...initialFuxSettingsConfig,
 } satisfies UserGlobalSettings;
 
-export const getSettingsOfType = (
-    settings: UserGlobalSettings | UserProjectSettings,
-    enumType:
-        | typeof TUTORIAL_CARD_KEYS
-        | typeof FEATURES_KEYS
-        | typeof CANVAS_ADJUSTMENTS_KEYS
-        | typeof FUX_NOTIFICATION_KEYS
-        | typeof FUX_SETTINGS_KEYS
-        | typeof GLOBAL_MODALS_KEYS
-        | typeof GENERAL_SETTINGS_KEYS
-) => {
-    return Object.fromEntries(
-        Object.entries(settings).filter(([key]) => {
-            return Object.values(enumType).includes(key);
-        })
-    );
+export const initialConfig = {
+    ...INITIAL_GLOBAL_SETTINGS,
+    ...INITIAL_PROJECT_SETTINGS,
 };

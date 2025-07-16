@@ -101,7 +101,6 @@ describe('useDatasetImportQueries', () => {
                 workspaceId,
                 projectData: mockProjectData,
                 setAbortController,
-                anomalyRevamp: false,
             });
 
             await waitFor(() => {
@@ -110,7 +109,6 @@ describe('useDatasetImportQueries', () => {
                     workspaceId,
                     projectData: mockProjectData,
                     setAbortController,
-                    anomalyRevamp: false,
                 });
             });
         });
@@ -132,7 +130,6 @@ describe('useDatasetImportQueries', () => {
                 workspaceId,
                 projectData: mockProjectData,
                 setAbortController,
-                anomalyRevamp: false,
             });
 
             await waitFor(() => {

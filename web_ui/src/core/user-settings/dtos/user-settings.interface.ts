@@ -48,6 +48,7 @@ export enum FUX_NOTIFICATION_KEYS {
     ANNOTATOR_CONTINUE_ANNOTATING = 'annotatorContinueAnnotating',
     AUTO_TRAINING_MODAL = 'autoTrainingCreditModal',
     AUTO_TRAINING_NOTIFICATION = 'autoTrainingCreditNotification',
+    CREDIT_BALANCE_BUTTON = 'creditBalanceButton',
 }
 
 export enum FUX_SETTINGS_KEYS {
@@ -69,10 +70,8 @@ export enum GLOBAL_MODALS_KEYS {
 
 export enum GENERAL_SETTINGS_KEYS {
     MAINTENANCE_BANNER = 'maintenanceBanner',
+    UPGRADE_BANNER = 'upgradeBanner',
 }
-
-export type TutorialKeys = TUTORIAL_CARD_KEYS | FUX_NOTIFICATION_KEYS | FUX_SETTINGS_KEYS;
-export type SettingsKeys = FEATURES_KEYS | TutorialKeys;
 
 export interface SettingsFeature {
     title: string;
@@ -87,6 +86,7 @@ interface CanvasSettingsValues<T extends boolean | number> {
 
 export type GeneralSettingsConfig = {
     [GENERAL_SETTINGS_KEYS.MAINTENANCE_BANNER]: { wasDismissed: boolean; window: { start: number; end: number } };
+    [GENERAL_SETTINGS_KEYS.UPGRADE_BANNER]: { dismissedVersion: string | null };
 };
 
 export type GlobalModalsConfig = Record<GLOBAL_MODALS_KEYS, { isEnabled: boolean }>;

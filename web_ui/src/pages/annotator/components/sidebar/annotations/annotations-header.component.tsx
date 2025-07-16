@@ -6,7 +6,6 @@ import { isEmpty, isNil } from 'lodash-es';
 
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { FEATURES_KEYS } from '../../../../../core/user-settings/dtos/user-settings.interface';
-import { getSettingsOfType } from '../../../../../core/user-settings/utils';
 import { useAnnotatorMode } from '../../../hooks/use-annotator-mode';
 import { useIsSceneBusy } from '../../../hooks/use-annotator-scene-interaction-state.hook';
 import { useAnnotator } from '../../../providers/annotator-provider/annotator-provider.component';
@@ -23,8 +22,7 @@ export const AnnotationsHeader = (): JSX.Element => {
     const { isTaskChainDomainSelected, selectedTask } = useTask();
 
     const isAlltask = isNil(selectedTask);
-    const featuresConfig = getSettingsOfType(userProjectSettings.config, FEATURES_KEYS);
-    const isPredictionAsInitialAnnotations = Boolean(featuresConfig[FEATURES_KEYS.INITIAL_PREDICTION].isEnabled);
+    const isPredictionAsInitialAnnotations = userProjectSettings.config[FEATURES_KEYS.INITIAL_PREDICTION].isEnabled;
     const isTaskChainSelectedClassification = isTaskChainDomainSelected(DOMAIN.CLASSIFICATION);
 
     const isLearningModeWithThreshold = isActiveLearningMode && isPredictionAsInitialAnnotations;

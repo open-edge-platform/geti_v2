@@ -1,0 +1,19 @@
+.container {
+    background-color: var(--brand-daisy);
+    font-size: var(--spectrum-global-dimension-font-size-100);
+    color: var(--spectrum-global-color-gray-50);
+}
+
+.version {
+    font-weight: 500;
+}
+
+.button {
+    color: var(--spectrum-global-color-gray-50) !important;
+    border-color: var(--spectrum-global-color-gray-50) !important;
+}
+
+.closeButton {
+    border: none !important;
+    color: var(--spectrum-global-color-gray-50) !important;
+}

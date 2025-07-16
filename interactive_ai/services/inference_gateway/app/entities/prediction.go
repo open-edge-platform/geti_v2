@@ -80,6 +80,14 @@ type ImageExplainOutput struct {
 	MediaIdentifier ImageIdentifier `json:"media_identifier"`
 }
 
+type BatchExplainJSON struct {
+	BatchExplain []json.RawMessage `json:"explanations"`
+}
+
+type BatchPredictionJSON struct {
+	BatchPredictions []json.RawMessage `json:"batch_predictions"`
+}
+
 // GetCurrentTimeString returns current UTC time.
 func GetCurrentTimeString() string {
 	return time.Now().UTC().Format("2006-01-02 15:04:05.999999999 -0700")
