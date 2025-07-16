@@ -39,9 +39,11 @@ def export_project(
     :param project_id: ID of the project to export
     :return: id of the exported project
     """
-    if include_models not in ["all"]:
+    if include_models not in ["all", "none"]:
         raise NotImplementedError(
             f"Exporting projects including models of type '{include_models}' is not supported yet."
         )
 
-    ProjectExportUseCase.export_as_zip(project_id=ID(project_id), progress_callback=report_progress)
+    ProjectExportUseCase.export_as_zip(
+        project_id=ID(project_id), include_models=include_models, progress_callback=report_progress
+    )
