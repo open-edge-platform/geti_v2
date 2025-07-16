@@ -52,9 +52,6 @@ class Camera {
 
         To see how the upload process is initialized please refer to
         src/web_ui/src/pages/camera-page/components/loader-managers/dataset-loader-manager.component.tsx.
-
-        But the gist is that we update the item with "isAccepted" key, which
-        will then trigger the dataset loader useEffect and upload the files
     */
     async updateMedia(id: string, screenshot: Screenshot) {
         if (!screenshot.dataUrl) {

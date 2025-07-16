@@ -6,8 +6,8 @@ import { useOverlayTriggerState } from 'react-stately';
 
 import { getMockedScreenshot } from '../../../test-utils/mocked-items-factory/mocked-camera';
 import { providersRender } from '../../../test-utils/required-providers-render';
-import { Screenshot } from '../../camera-support/camera.interface';
 import { ImageOverlay } from './image-overlay.component';
+import { FileItem } from './util';
 
 const screenshotOne = getMockedScreenshot({ id: '1' });
 const screenshotTwo = getMockedScreenshot({ id: '2' });
@@ -15,11 +15,11 @@ const screenshotTwo = getMockedScreenshot({ id: '2' });
 describe('ImageOverlay', () => {
     const renderAp = async ({
         defaultIndex = 0,
-        screenshots = [],
+        items = [],
         mockedDelete = jest.fn(),
     }: {
         defaultIndex?: number;
-        screenshots?: Screenshot[];
+        items?: FileItem[];
         mockedDelete?: jest.Mock;
     }) => {
         const StateImageOverlay = () => {
@@ -27,7 +27,7 @@ describe('ImageOverlay', () => {
             return (
                 <>
                     <ImageOverlay
-                        screenshots={screenshots}
+                        items={items}
                         onDeleteItem={mockedDelete}
                         defaultIndex={defaultIndex}
                         dialogState={state}
@@ -41,14 +41,14 @@ describe('ImageOverlay', () => {
     };
 
     it('empty items', async () => {
-        await renderAp({ screenshots: [] });
+        await renderAp({ items: [] });
         fireEvent.click(await screen.findByRole('button', { name: /open overlay/i }));
 
         expect(screen.queryByRole('button', { name: 'close preview' })).not.toBeInTheDocument();
     });
 
     it('single item, navigation options are hidden', async () => {
-        await renderAp({ screenshots: [screenshotOne] });
+        await renderAp({ items: [screenshotOne] });
         fireEvent.click(await screen.findByRole('button', { name: /open overlay/i }));
 
         expect(screen.getByRole('img', { name: `full screen screenshot ${screenshotOne.id}` })).toBeVisible();
@@ -59,7 +59,7 @@ describe('ImageOverlay', () => {
 
     it('calls onDelete', async () => {
         const mockedDelete = jest.fn();
-        await renderAp({ screenshots: [screenshotOne], mockedDelete });
+        await renderAp({ items: [screenshotOne], mockedDelete });
         fireEvent.click(await screen.findByRole('button', { name: /open overlay/i }));
 
         fireEvent.click(screen.getByRole('button', { name: /delete/i }));
@@ -69,7 +69,7 @@ describe('ImageOverlay', () => {
     });
 
     it('close preview', async () => {
-        await renderAp({ screenshots: [screenshotOne] });
+        await renderAp({ items: [screenshotOne] });
 
         fireEvent.click(await screen.findByRole('button', { name: /open overlay/i }));
         fireEvent.click(await screen.findByRole('button', { name: /close preview/i }));
@@ -80,10 +80,10 @@ describe('ImageOverlay', () => {
     });
 
     describe('multiple items', () => {
-        it('gets back to the first item', async () => {
-            const mockedScreenshot = [screenshotOne, screenshotTwo];
+        const mockedScreenshot = [screenshotOne, screenshotTwo];
 
-            await renderAp({ screenshots: mockedScreenshot });
+        it('gets back to the first item', async () => {
+            await renderAp({ items: mockedScreenshot });
             fireEvent.click(await screen.findByRole('button', { name: /open overlay/i }));
 
             expect(screen.getByRole('img', { name: `full screen screenshot ${screenshotOne.id}` })).toBeVisible();
@@ -96,9 +96,7 @@ describe('ImageOverlay', () => {
         });
 
         it('moves to the last item', async () => {
-            const mockedScreenshot = [screenshotOne, screenshotTwo];
-
-            await renderAp({ screenshots: mockedScreenshot });
+            await renderAp({ items: mockedScreenshot });
             fireEvent.click(await screen.findByRole('button', { name: /open overlay/i }));
 
             expect(screen.getByRole('img', { name: `full screen screenshot ${screenshotOne.id}` })).toBeVisible();

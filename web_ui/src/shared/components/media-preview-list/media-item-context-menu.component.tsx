@@ -7,8 +7,8 @@ import { Button, CustomPopover, Item, Menu } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { isFunction } from 'lodash-es';
 
-import { useEventListener } from '../../../../hooks/event-listener/event-listener.hook';
-import { MouseEvents } from '../../../../shared/mouse-events/mouse.interface';
+import { useEventListener } from '../../../hooks/event-listener/event-listener.hook';
+import { MouseEvents } from '../../mouse-events';
 
 interface MediaItemContextMenuProps {
     options: [string, () => void][];

@@ -10,25 +10,25 @@ import { useOverlay } from 'react-aria';
 import { OverlayTriggerState, useOverlayTriggerState } from 'react-stately';
 
 import { isVideoFile } from '../../../shared/media-utils';
-import { Screenshot } from '../../camera-support/camera.interface';
 import { DeleteItemButton } from './delete-item-button.component';
 import { ImageVideoFactory } from './image-video-factory.component';
+import { FileItem } from './util';
 
-import classes from './camera-page.module.scss';
+import classes from './media-preview-list.module.scss';
 
-interface ImageOverlayProps {
-    screenshots: Screenshot[];
+interface ImageOverlayProps<T> {
+    items: T[];
     defaultIndex: number;
     dialogState: OverlayTriggerState;
     onDeleteItem: (id: string) => void;
 }
 
-export const ImageOverlay = ({
-    screenshots,
+export const ImageOverlay = <T extends FileItem>({
+    items,
     dialogState,
     defaultIndex,
     onDeleteItem,
-}: ImageOverlayProps): JSX.Element => {
+}: ImageOverlayProps<T>): JSX.Element => {
     const container = useRef(null);
     const overlayRef = useRef(null);
 
@@ -37,8 +37,8 @@ export const ImageOverlay = ({
     const [imageAnimationClasses, setImageAnimationClasses] = useState([classes.thumbnailPreviewImage]);
 
     const currentIndex = isNumber(internalIndex) ? internalIndex : defaultIndex;
-    const currentImage = screenshots.at(currentIndex);
-    const showNavigationArrows = screenshots.length > 1;
+    const currentImage = items.at(currentIndex);
+    const showNavigationArrows = items.length > 1;
 
     useOverlay(
         {
@@ -102,7 +102,7 @@ export const ImageOverlay = ({
                             UNSAFE_className={classes.previewButton}
                             onPress={() => {
                                 const newIndex = currentIndex - 1;
-                                setInternalIndex(newIndex < 0 ? screenshots.length - 1 : newIndex);
+                                setInternalIndex(newIndex < 0 ? items.length - 1 : newIndex);
                             }}
                             aria-label={'previous item'}
                         >
@@ -128,7 +128,7 @@ export const ImageOverlay = ({
                             UNSAFE_className={classes.previewButton}
                             onPress={() => {
                                 const newIndex = currentIndex + 1;
-                                setInternalIndex(newIndex >= screenshots.length ? 0 : newIndex);
+                                setInternalIndex(newIndex >= items.length ? 0 : newIndex);
                             }}
                             aria-label={'next item'}
                         >

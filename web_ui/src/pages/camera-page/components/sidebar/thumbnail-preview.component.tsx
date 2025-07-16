@@ -4,9 +4,9 @@
 import { ActionButton } from '@geti/ui';
 import { useOverlayTriggerState } from 'react-stately';
 
+import { ImageOverlay } from '../../../../shared/components/media-preview-list/image-overlay.component';
 import { Screenshot } from '../../../camera-support/camera.interface';
 import { useCameraStorage } from '../../hooks/use-camera-storage.hook';
-import { ImageOverlay } from '../image-overlay.component';
 import { AnimatedThumbnail } from './animated-thumbnail';
 
 interface ThumbnailPreviewProps {
@@ -48,7 +48,7 @@ export const ThumbnailPreview = ({
             <ImageOverlay
                 defaultIndex={0}
                 dialogState={dialogState}
-                screenshots={screenshots}
+                items={screenshots}
                 onDeleteItem={() => handleDeleteItem(currentImage.id).then(dialogState.toggle)}
             />
         </>

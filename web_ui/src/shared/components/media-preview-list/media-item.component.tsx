@@ -1,28 +1,28 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { useUnwrapDOMRef, View, type DimensionValue, type Responsive } from '@geti/ui';
+import { Loading, useUnwrapDOMRef, View, type DimensionValue, type Responsive } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
-import { isEmpty } from 'lodash-es';
+import { isEmpty, isNil } from 'lodash-es';
 import { usePress } from 'react-aria';
 
-import { Label } from '../../../../core/labels/label.interface';
-import { ViewModes } from '../../../../shared/components/media-view-modes/utils';
-import { isVideoFile } from '../../../../shared/media-utils';
-import { useTask } from '../../../annotator/providers/task-provider/task-provider.component';
-import { ConsensedLabelSelector } from '../../components/condensed-label-selector.component';
-import { DeleteItemButton } from '../../components/delete-item-button.component';
-import { ImageVideoFactory } from '../../components/image-video-factory.component';
-import { getSingleValidTask } from '../../util';
+import { Label } from '../../../core/labels/label.interface';
+import { useTask } from '../../../pages/annotator/providers/task-provider/task-provider.component';
+import { getSingleValidTask } from '../../../pages/camera-page/util';
+import { isVideoFile, loadImageFromFile } from '../../media-utils';
+import { ViewModes } from '../media-view-modes/utils';
+import { CondensedLabelSelector } from './condensed-label-selector.component';
+import { DeleteItemButton } from './delete-item-button.component';
+import { ImageVideoFactory } from './image-video-factory.component';
 import { MediaItemContextMenu } from './media-item-context-menu.component';
 
 import classes from './media-item.module.scss';
 
 export interface MediaItemProps {
     id: string;
-    url: string;
+    url: string | null | undefined;
     labelIds: string[];
     mediaFile: File;
     viewMode?: ViewModes;
@@ -32,9 +32,22 @@ export interface MediaItemProps {
     onSelectLabel: (labels: Label[]) => void;
 }
 
+interface FileLoadingProps {
+    file: File;
+    onLoaded: (url: string) => void;
+}
+const FileLoading = ({ file, onLoaded }: FileLoadingProps) => {
+    useEffect(() => {
+        loadImageFromFile(file).then(({ src }) => onLoaded(src));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [file]);
+
+    return <Loading />;
+};
+
 export const MediaItem = ({
     id,
-    url,
+    url: initUrl,
     labelIds,
     mediaFile,
     viewMode,
@@ -45,6 +58,7 @@ export const MediaItem = ({
 }: MediaItemProps): JSX.Element => {
     const { tasks } = useTask();
     const containerRef = useRef(null);
+    const [url, setUrl] = useState(initUrl);
 
     const alertDialogState = useOverlayTriggerState({});
     const labelSelectorState = useOverlayTriggerState({});
@@ -60,6 +74,10 @@ export const MediaItem = ({
               ['Delete', alertDialogState.toggle],
               ['Edit Label', labelSelectorState.open],
           ];
+
+    if (isNil(url)) {
+        return <FileLoading file={mediaFile} onLoaded={(newUrl) => setUrl(newUrl)} />;
+    }
 
     return (
         <View ref={containerRef} UNSAFE_className={classes.container} height={height}>
@@ -80,7 +98,7 @@ export const MediaItem = ({
                 alertDialogState={alertDialogState}
                 UNSAFE_className={[classes.deleteContainer, alertDialogState.isOpen ? classes.visible : ''].join(' ')}
             />
-            <ConsensedLabelSelector
+            <CondensedLabelSelector
                 name={'Unlabeled'}
                 labelIds={labelIds}
                 right={'size-50'}

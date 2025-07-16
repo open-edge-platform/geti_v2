@@ -12,15 +12,15 @@ import { OverlayTriggerState, useOverlayTriggerState } from 'react-stately';
 import { recursivelyAddLabel, recursivelyRemoveLabels } from '../../../core/labels/label-resolver';
 import { Label } from '../../../core/labels/label.interface';
 import { isAnomalyDomain } from '../../../core/projects/domains';
+import { useTask } from '../../../pages/annotator/providers/task-provider/task-provider.component';
+import { isClassificationOrAnomaly } from '../../../pages/camera-page/util';
+import { useProject } from '../../../pages/project-details/providers/project-provider/project-provider.component';
+import { getForegroundColor, hexaToRGBA } from '../../../pages/utils';
 import { ViewModes } from '../../../shared/components/media-view-modes/utils';
 import { TaskLabelTreeSearch } from '../../../shared/components/task-label-tree-search/task-label-tree-search.component';
 import { hasEqualId } from '../../../shared/utils';
-import { useTask } from '../../annotator/providers/task-provider/task-provider.component';
-import { useProject } from '../../project-details/providers/project-provider/project-provider.component';
-import { getForegroundColor, hexaToRGBA } from '../../utils';
-import { isClassificationOrAnomaly } from '../util';
 
-import classes from './camera-page.module.scss';
+import classes from './media-preview-list.module.scss';
 
 interface LabelSelectorProps extends Omit<ActionButtonProps, 'isQuiet'> {
     name: string;
@@ -31,7 +31,7 @@ interface LabelSelectorProps extends Omit<ActionButtonProps, 'isQuiet'> {
     onSelectLabel: (data: Label[]) => void;
 }
 
-export const ConsensedLabelSelector = ({
+export const CondensedLabelSelector = ({
     name,
     labelIds,
     isDisabled,

@@ -3,39 +3,43 @@
 
 import { useState } from 'react';
 
+import { DimensionValue, Responsive } from '@geti/ui';
 import { isEmpty, isNil } from 'lodash-es';
 import { useOverlayTriggerState } from 'react-stately';
 
-import { MediaItemsList } from '../../../../shared/components/media-items-list/media-items-list.component';
-import { ViewModes } from '../../../../shared/components/media-view-modes/utils';
-import { getIds, hasEqualId } from '../../../../shared/utils';
-import { Screenshot } from '../../../camera-support/camera.interface';
-import { ImageOverlay } from '../../components/image-overlay.component';
-import { useCameraStorage } from '../../hooks/use-camera-storage.hook';
+import { getIds, hasEqualId } from '../../utils';
+import { MediaItemsList } from '../media-items-list/media-items-list.component';
+import { ViewModes } from '../media-view-modes/utils';
+import { ImageOverlay } from './image-overlay.component';
 import { MediaItem } from './media-item.component';
+import { FileItem } from './util';
 
-interface MediaListProps {
+interface MediaPreviewListProps<T> {
+    items: T[];
     viewMode: ViewModes;
-    screenshots: Screenshot[];
+    height?: Responsive<DimensionValue>;
+    onDeleteItem: (id: string) => Promise<unknown>;
+    onUpdateItem: (id: string, item: Omit<Partial<T>, 'id'>) => Promise<unknown>;
 }
 
-export const MediaList = ({ viewMode, screenshots }: MediaListProps): JSX.Element => {
+export const MediaPreviewList = <T extends FileItem>({
+    items,
+    height,
+    viewMode,
+    onDeleteItem,
+    onUpdateItem,
+}: MediaPreviewListProps<T>): JSX.Element => {
     const dialogState = useOverlayTriggerState({});
     const [previewIndex, setPreviewIndex] = useState<null | number>(0);
-    const { deleteMany, updateMany } = useCameraStorage();
-
-    const handleDeleteItem = (id: string) => {
-        return deleteMany([id]);
-    };
 
     return (
         <>
             <MediaItemsList
                 viewMode={viewMode}
-                mediaItems={screenshots}
+                mediaItems={items}
+                height={height}
                 idFormatter={(item) => item.id}
                 getTextValue={(item) => item.file.name}
-                height={`calc(100% - size-550)`}
                 itemContent={(screenshot) => {
                     const { id, ...itemData } = screenshot;
 
@@ -44,23 +48,23 @@ export const MediaList = ({ viewMode, screenshots }: MediaListProps): JSX.Elemen
                             id={id}
                             key={id}
                             onPress={() => {
-                                setPreviewIndex(screenshots.findIndex(hasEqualId(id)));
+                                setPreviewIndex(items.findIndex(hasEqualId(id)));
                                 dialogState.open();
                             }}
                             height={'100%'}
                             viewMode={viewMode}
                             mediaFile={itemData.file}
-                            url={String(itemData.dataUrl)}
+                            url={itemData.dataUrl}
                             labelIds={itemData.labelIds}
-                            onDeleteItem={handleDeleteItem}
+                            onDeleteItem={onDeleteItem}
                             onSelectLabel={(newLabels) => {
                                 if (isEmpty(newLabels)) {
-                                    updateMany([id], { ...itemData, labelIds: [], labelName: null });
+                                    onUpdateItem(id, { ...itemData, labelIds: [], labelName: null });
                                 } else {
                                     const newLabelIds = getIds(newLabels);
                                     const newLabelName = newLabels.at(-1)?.name || null;
 
-                                    updateMany([id], { ...itemData, labelIds: newLabelIds, labelName: newLabelName });
+                                    onUpdateItem(id, { ...itemData, labelIds: newLabelIds, labelName: newLabelName });
                                 }
                             }}
                         />
@@ -70,10 +74,10 @@ export const MediaList = ({ viewMode, screenshots }: MediaListProps): JSX.Elemen
             {!isNil(previewIndex) && (
                 <ImageOverlay
                     dialogState={dialogState}
-                    screenshots={screenshots}
+                    items={items}
                     defaultIndex={previewIndex}
                     onDeleteItem={(id) => {
-                        handleDeleteItem(id).then(() => {
+                        onDeleteItem(id).then(() => {
                             dialogState.close();
                             setPreviewIndex(null);
                         });
