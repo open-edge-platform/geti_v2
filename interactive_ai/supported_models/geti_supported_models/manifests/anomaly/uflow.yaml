@@ -9,6 +9,8 @@ stats:
     accuracy: 3
     training_time: 1
     inference_speed: 1
+
+hyperparameters:
   training:
     allowed_values_input_size:
       - 448

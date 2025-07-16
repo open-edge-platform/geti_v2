@@ -105,7 +105,7 @@ class TestModelManifest:
                 "performance_ratings": {
                     "accuracy": 1,
                     "training_time": 2,
-                    "inference_time": 3,
+                    "inference_speed": 3,
                 },
             },
             "support_status": "active",
