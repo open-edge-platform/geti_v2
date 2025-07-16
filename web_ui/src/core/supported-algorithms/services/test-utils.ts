@@ -3,14 +3,20 @@
 
 import { DOMAIN } from '../../projects/core.interface';
 import { TASK_TYPE } from '../../projects/dtos/task.interface';
-import { LifecycleStage, PerformanceCategory, SupportedAlgorithmDTO } from '../dtos/supported-algorithms.interface';
-import { SupportedAlgorithm } from '../supported-algorithms.interface';
-import { getSupportedAlgorithmsEntities } from './utils';
+import {
+    LegacySupportedAlgorithmDTO,
+    LifecycleStage,
+    PerformanceCategory,
+} from '../dtos/supported-algorithms.interface';
+import { LegacySupportedAlgorithm } from '../supported-algorithms.interface';
+import { getLegacySupportedAlgorithmsEntities } from './utils';
 
-export const getMockedSupportedAlgorithm = (supportedAlgorithm?: Partial<SupportedAlgorithm>): SupportedAlgorithm => {
+export const getLegacyMockedSupportedAlgorithm = (
+    supportedAlgorithm?: Partial<LegacySupportedAlgorithm>
+): LegacySupportedAlgorithm => {
     const {
         name,
-        summary,
+        description,
         domain,
         templateName,
         modelTemplateId,
@@ -24,7 +30,7 @@ export const getMockedSupportedAlgorithm = (supportedAlgorithm?: Partial<Support
 
     return {
         name: name ?? 'Yolo algorithm',
-        summary: summary ?? 'Description of the algorithm',
+        description: description ?? 'Description of the algorithm',
         domain: domain ?? DOMAIN.DETECTION,
         modelTemplateId: modelTemplateId ?? 'yolo-template-id',
         modelSize: modelSize ?? 1.2,
@@ -37,7 +43,7 @@ export const getMockedSupportedAlgorithm = (supportedAlgorithm?: Partial<Support
     };
 };
 
-export const mockedSupportedAlgorithmsDTO: SupportedAlgorithmDTO[] = [
+export const mockedSupportedAlgorithmsDTO: LegacySupportedAlgorithmDTO[] = [
     {
         name: 'Yolo',
         task_type: TASK_TYPE.DETECTION,
@@ -128,7 +134,7 @@ export const mockedSupportedAlgorithmsDTO: SupportedAlgorithmDTO[] = [
     },
 ];
 
-export const mockedSupportedAlgorithms: SupportedAlgorithm[] = getSupportedAlgorithmsEntities({
+export const mockedSupportedAlgorithms: LegacySupportedAlgorithm[] = getLegacySupportedAlgorithmsEntities({
     supported_algorithms: mockedSupportedAlgorithmsDTO,
 });
 

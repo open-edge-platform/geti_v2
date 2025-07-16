@@ -1,0 +1,35 @@
+task: classification
+
+hyperparameters:
+  dataset_preparation:
+    augmentation:
+      random_affine:
+        enable: false
+      random_horizontal_flip:
+        enable: true
+      random_vertical_flip:
+        enable: false
+      gaussian_blur:
+        enable: false
+      color_jitter:
+        enable: false
+      gaussian_noise:
+        enable: false
+  evaluation:
+    metric: accuracy
+  training:
+    max_epochs: 100
+    early_stopping:
+      enable: true
+      patience: 7
+    allowed_values_input_size:
+      - 64
+      - 128
+      - 224
+      - 256
+      - 320
+      - 384
+      - 480
+      - 560
+    input_size_width: 224
+    input_size_height: 224

@@ -63,11 +63,8 @@ export const getLabelFullPath = (labelName: string, labels: DatasetImportLabel[]
     return `${parent ? getLabelFullPath(parent, labels) + '>' : ''}${group ? '@' + group + '>' : ''}${name}`;
 };
 
-export const getDatasetImportDomain = (
-    taskType: DATASET_IMPORT_TASK_TYPE,
-    anomalyRevamp: boolean
-): DATASET_IMPORT_DOMAIN | undefined => {
-    if (anomalyRevamp && taskType === DATASET_IMPORT_TASK_TYPE.ANOMALY_CLASSIFICATION) {
+export const getDatasetImportDomain = (taskType: DATASET_IMPORT_TASK_TYPE): DATASET_IMPORT_DOMAIN | undefined => {
+    if (taskType === DATASET_IMPORT_TASK_TYPE.ANOMALY_CLASSIFICATION) {
         return TASK_TYPE_TO_DOMAIN[DATASET_IMPORT_TASK_TYPE.ANOMALY_DETECTION];
     }
     return TASK_TYPE_TO_DOMAIN[taskType];

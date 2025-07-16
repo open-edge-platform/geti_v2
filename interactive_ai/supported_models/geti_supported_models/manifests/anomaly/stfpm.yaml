@@ -1,0 +1,11 @@
+id: ote_anomaly_stfpm
+name: STFPM
+
+description: "STFPM uses a student–teacher architecture with multi-scale feature pyramid matching: during training, student features are aligned with teacher outputs across layers; discrepancies at test time highlight anomalies. Due to such operations, this approach achieves accurate and fast pixel-level anomaly detection."
+stats:
+  gigaflops: 5.6
+  trainable_parameters: 2.8
+  performance_ratings:  # scores range from 1 (below average) to 3 (excellent)
+    accuracy: 2
+    training_time: 2
+    inference_speed: 2

@@ -28,7 +28,6 @@ export const DatasetImportToNewProjectDialog = ({
     trigger,
     deleteDialogTrigger,
 }: DatasetImportToNewProjectDialogProps): JSX.Element => {
-    const { FEATURE_FLAG_ANOMALY_REDUCTION } = useFeatureFlags();
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
     const { useCancelJob } = useJobs({ organizationId, workspaceId });
 
@@ -72,7 +71,6 @@ export const DatasetImportToNewProjectDialog = ({
                                         prepareDataset={prepareDataset}
                                         patchDatasetImport={patchDatasetImport}
                                         setActiveDatasetImportId={setActiveDatasetImportId}
-                                        anomalyRevamp={FEATURE_FLAG_ANOMALY_REDUCTION}
                                     />
                                 </View>
                             </View>

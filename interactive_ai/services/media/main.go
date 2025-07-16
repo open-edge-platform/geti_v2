@@ -40,16 +40,22 @@ func main() {
 	cleanup := telemetry.SetupTracing(context.Background())
 	defer cleanup()
 
-	router := createRouter()
+	clientManager, err := minio.NewClientManager()
+	if err != nil {
+		logger.Log().Fatalf("Cannot instantiate minio client manager: %s", err)
+	}
+	defer clientManager.Close()
+
+	router := createRouter(clientManager)
 	port := env.GetEnv("PORT", fallbackPort)
-	if err := router.Run(":" + port); err != nil {
+	if err = router.Run(":" + port); err != nil {
 		logger.Log().Fatalf("Cannot run server: %s", err)
 	}
 }
 
 // createRouter initializes and returns a new instance of *gin.Engine.
 // This function abstracts the setup of routes/route groups.
-func createRouter() *gin.Engine {
+func createRouter(mcm *minio.ClientManager) *gin.Engine {
 	router := gin.New()
 
 	router.Use(gin.Recovery())
@@ -62,7 +68,7 @@ func createRouter() *gin.Engine {
 		logger.Log().Fatalf("Cannot set trusted proxies: %s", err)
 	}
 
-	imageRepo := minio.NewImageRepositoryImpl()
+	imageRepo := minio.NewImageRepositoryImpl(mcm)
 	cropper := service.NewResizeCropper()
 	createThumbnailUseCase, err := usecase.NewGetOrCreateImageThumbnail(imageRepo, cropper)
 	if err != nil {

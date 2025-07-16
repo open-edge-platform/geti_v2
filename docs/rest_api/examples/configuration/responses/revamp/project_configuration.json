@@ -1,0 +1,94 @@
+{
+  "task_configs": [
+    {
+      "task_id": "61012cdb1d38a5e71ef3bafd",
+      "training": {
+        "constraints": [
+          {
+            "key": "min_images_per_label",
+            "name": "Minimum number of images per label",
+            "type": "int",
+            "description": "Minimum number of images that must be present for each label to train",
+            "value": 10,
+            "default_value": 0,
+            "min_value": 0,
+            "max_value": null
+          }
+        ]
+      },
+      "auto_training": [
+        {
+          "key": "enable",
+          "name": "Enable auto training",
+          "type": "bool",
+          "description": "Whether automatic training is enabled for this task",
+          "value": true,
+          "default_value": true
+        },
+        {
+          "key": "enable_dynamic_required_annotations",
+          "name": "Enable dynamic required annotations",
+          "type": "bool",
+          "description": "Whether to dynamically adjust the number of required annotations",
+          "value": false,
+          "default_value": false
+        },
+        {
+          "key": "min_images_per_label",
+          "name": "Minimum images per label",
+          "type": "int",
+          "description": "Minimum number of images needed for each label to trigger auto-training",
+          "value": 5,
+          "default_value": 12,
+          "min_value": 3,
+          "max_value": null
+        }
+      ]
+    },
+    {
+      "task_id": "61012cdb1d38a5e71ef3bafe",
+      "training": {
+        "constraints": [
+          {
+            "key": "min_images_per_label",
+            "name": "Minimum number of images per label",
+            "type": "int",
+            "description": "Minimum number of images that must be present for each label to train",
+            "value": 15,
+            "default_value": 0,
+            "min_value": 0,
+            "max_value": null
+          }
+        ]
+      },
+      "auto_training": [
+        {
+          "key": "enable",
+          "name": "Enable auto training",
+          "type": "bool",
+          "description": "Whether automatic training is enabled for this task",
+          "value": false,
+          "default_value": true
+        },
+        {
+          "key": "enable_dynamic_required_annotations",
+          "name": "Enable dynamic required annotations",
+          "type": "bool",
+          "description": "Whether to dynamically adjust the number of required annotations",
+          "value": true,
+          "default_value": false
+        },
+        {
+          "key": "min_images_per_label",
+          "name": "Minimum images per label",
+          "type": "int",
+          "description": "Minimum number of images needed for each label to trigger auto-training",
+          "value": 8,
+          "default_value": 12,
+          "min_value": 3,
+          "max_value": null
+        }
+      ]
+    }
+  ]
+}

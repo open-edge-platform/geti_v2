@@ -241,7 +241,7 @@ async def pydantic_validation_exception_handler(request: Request, exc: pydantic.
         status_code=status.HTTP_400_BAD_REQUEST,
         content=jsonable_encoder(
             {
-                "error_code": "bad_request",
+                "error_code": "invalid_payload",
                 "errors": errors,
                 "http_status": http.HTTPStatus.BAD_REQUEST.value,
             }

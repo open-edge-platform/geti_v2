@@ -59,8 +59,12 @@ class ConfigurableParametersRESTViews:
                 json_schema.get("exclusiveMaximum", type_any_of.get("maximum", type_any_of.get("exclusiveMaximum"))),
             )
         if "allowed_values" in json_schema:
-            # If the parameter has allowed values, add them to the REST view
+            # If the parameter has allowed values, the parameter is an enum
+            rest_view["type"] = "enum"
             rest_view["allowed_values"] = json_schema["allowed_values"]
+            # Remove numeric constraints for enum parameters
+            rest_view.pop("min_value", None)
+            rest_view.pop("max_value", None)
         return rest_view
 
     @classmethod

@@ -10,7 +10,7 @@ import { ModelsGroups } from '../../../../../../core/models/models.interface';
 import { isActiveModel } from '../../../../../../core/models/utils';
 import { Task } from '../../../../../../core/projects/task.interface';
 import {
-    SupportedAlgorithm,
+    LegacySupportedAlgorithm,
     TaskWithSupportedAlgorithms,
 } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { InfoTooltip } from '../../../../../../shared/components/info-tooltip/info-tooltip.component';
@@ -39,6 +39,13 @@ interface ModelTemplatesSelectionProps {
     handleSelectedTemplateId: (modelTemplateId: string | null) => void;
 }
 
+const getSupportedAlgorithms = (
+    tasksWithSupportedAlgorithms: TaskWithSupportedAlgorithms,
+    taskId: string
+): LegacySupportedAlgorithm[] => {
+    return (tasksWithSupportedAlgorithms[taskId] ?? []) as LegacySupportedAlgorithm[];
+};
+
 export const ModelTemplatesSelection = ({
     models,
     selectedTask,
@@ -59,15 +66,18 @@ export const ModelTemplatesSelection = ({
     const taskItems = tasks.filter(isNotCropTask);
     const [selectedDomain, setSelectedDomain] = useState<string>(selectedTask.domain);
 
-    const algorithms = useMemo<SupportedAlgorithm[]>(
+    const algorithms = useMemo<LegacySupportedAlgorithm[]>(
         () =>
-            (tasksWithSupportedAlgorithms[selectedTask.id] ?? []).filter(
+            getSupportedAlgorithms(tasksWithSupportedAlgorithms, selectedTask.id).filter(
                 ({ lifecycleStage }) => !isObsoleteAlgorithm(lifecycleStage)
             ),
         [tasksWithSupportedAlgorithms, selectedTask]
     );
 
-    const getActiveModelTemplateIdPerTask = (inputAlgorithms: SupportedAlgorithm[], inputSelectedTaskId: string) => {
+    const getActiveModelTemplateIdPerTask = (
+        inputAlgorithms: LegacySupportedAlgorithm[],
+        inputSelectedTaskId: string
+    ) => {
         if (isEmpty(inputAlgorithms) || models === undefined) {
             return undefined;
         }
@@ -91,7 +101,7 @@ export const ModelTemplatesSelection = ({
     );
 
     const handleInitialTemplateSelection = (
-        templates: SupportedAlgorithm[],
+        templates: LegacySupportedAlgorithm[],
         activeModelTemplateId: string | undefined = activeModelTemplateIdPerTask
     ): void => {
         if (activeModelTemplateId === undefined) {
@@ -120,7 +130,7 @@ export const ModelTemplatesSelection = ({
         }
 
         const newSelectedTask = tasks.find((task) => task.domain === domain) as Task;
-        const newAlgorithms = tasksWithSupportedAlgorithms[newSelectedTask.id];
+        const newAlgorithms = getSupportedAlgorithms(tasksWithSupportedAlgorithms, newSelectedTask.id);
         const newActiveTemplateId = getActiveModelTemplateIdPerTask(newAlgorithms, newSelectedTask.id);
 
         setSelectedDomain(String(domain));

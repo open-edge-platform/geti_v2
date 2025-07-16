@@ -25,9 +25,11 @@ type ImageRepositoryImpl struct {
 	storage.ObjectStorageHandler
 }
 
-func NewImageRepositoryImpl() *ImageRepositoryImpl {
+func NewImageRepositoryImpl(cm *ClientManager) *ImageRepositoryImpl {
 	return &ImageRepositoryImpl{
-		ObjectStorageHandler: new(ObjectStorageHandlerImpl),
+		ObjectStorageHandler: &ObjectStorageHandlerImpl{
+			cm: cm,
+		},
 	}
 }
 

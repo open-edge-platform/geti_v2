@@ -127,14 +127,14 @@ def fxt_project_with_anomaly_classification_task(
 
 
 @pytest.fixture
-def fxt_project_with_anomaly_detection_task(fxt_mongo_id, fxt_dataset_storage, fxt_anomaly_detection_task_graph):
+def fxt_project_with_anomaly_task(fxt_mongo_id, fxt_dataset_storage, fxt_anomaly_task_graph):
     yield Project(
-        name="dummy_anomaly_detection_project",
+        name="dummy_anomaly_project",
         creator_id="",
         description="Sample project with an anomaly detection task",
         user_names=["alice", "bob"],
         dataset_storages=[fxt_dataset_storage],
-        task_graph=fxt_anomaly_detection_task_graph,
+        task_graph=fxt_anomaly_task_graph,
         id=fxt_mongo_id(2),
     )
 

@@ -81,7 +81,6 @@ interface DatasetImportToNewProjectProps {
 
 export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToNewProjectProps): JSX.Element => {
     const client = useQueryClient();
-    const { FEATURE_FLAG_ANOMALY_REDUCTION } = useFeatureFlags();
 
     const { router } = useApplicationServices();
     const workspaceIdentifier = useWorkspaceIdentifier();
@@ -377,7 +376,6 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 workspaceId,
                 projectData: { uploadId, projectName: projectName.trim(), taskType, labels: labelsWithColors },
                 setAbortController,
-                anomalyRevamp: FEATURE_FLAG_ANOMALY_REDUCTION,
             },
             {
                 onSuccess: async () => {
@@ -419,7 +417,6 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 workspaceId,
                 projectData: { uploadId, projectName: projectName.trim(), taskType, labels: labelsWithColors },
                 setAbortController,
-                anomalyRevamp: FEATURE_FLAG_ANOMALY_REDUCTION,
             },
             {
                 onSuccess: ({ jobId }) => patchLsDatasetImport({ id, importingJobId: jobId }),

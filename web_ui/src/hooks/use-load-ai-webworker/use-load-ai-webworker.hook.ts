@@ -13,6 +13,8 @@ const WORKERS_WITH_BUILD_METHOD = [
     AlgorithmType.INFERENCE_IMAGE,
     AlgorithmType.SSIM,
     AlgorithmType.GRABCUT,
+    AlgorithmType.INTELLIGENT_SCISSORS,
+    AlgorithmType.RITM,
     // TODO: Add the rest of the tools here, one at a time
 ];
 

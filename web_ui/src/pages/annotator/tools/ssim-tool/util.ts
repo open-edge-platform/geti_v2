@@ -9,12 +9,7 @@ import { getBoundingBox } from '../../../../core/annotations/math';
 import { Rect, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { DOMAIN } from '../../../../core/projects/core.interface';
-import {
-    convertGetiShapeToToolShape,
-    convertGetiShapeTypeToToolShapeType,
-    convertToolShapeToGetiShape,
-    isShapeWithinRoi,
-} from '../utils';
+import { convertToolShapeToGetiShape, isShapeWithinRoi } from '../utils';
 import { RunSSIMProps, SSIMMatch } from './ssim-tool.interface';
 
 export const MAX_NUMBER_ITEMS = 500;
@@ -104,8 +99,8 @@ export const convertRunSSIMPropsToToolRunSSIMProps = (runSSIMProps: RunSSIMProps
             ...runSSIMProps.template,
             shapeType: 'rect',
         },
-        shapeType: convertGetiShapeTypeToToolShapeType(runSSIMProps.shapeType),
-        existingAnnotations: runSSIMProps.existingAnnotations.map(convertGetiShapeToToolShape),
+        shapeType: runSSIMProps.shapeType,
+        existingAnnotations: runSSIMProps.existingAnnotations,
     };
 };
 

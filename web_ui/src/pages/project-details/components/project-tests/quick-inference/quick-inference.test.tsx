@@ -327,15 +327,15 @@ describe('QuickInference', () => {
         expect(useFileButton).toBeInTheDocument();
         expect(useCameraButton).toBeInTheDocument();
 
-        expect(useFileButton).toHaveAttribute('data-activated', 'true');
-        expect(useCameraButton).toHaveAttribute('data-activated', 'false');
+        expect(useFileButton).toHaveAttribute('aria-pressed', 'true');
+        expect(useCameraButton).toHaveAttribute('aria-pressed', 'false');
     });
 
     describe('Live camera inference', () => {
         const clickUseCameraButton = () => {
             const useCameraButton = screen.getByRole('button', { name: 'Use camera' });
             fireEvent.click(useCameraButton);
-            expect(useCameraButton).toHaveAttribute('data-activated', 'true');
+            expect(useCameraButton).toHaveAttribute('aria-pressed', 'true');
         };
 
         it('shows loading when camera permission is not granted', async () => {

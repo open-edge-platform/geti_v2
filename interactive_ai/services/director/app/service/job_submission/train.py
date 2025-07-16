@@ -85,12 +85,10 @@ class ModelTrainingJobSubmitter(ModelJobSubmitter):
                 project_identifier=project.identifier,
                 task_id=task_node.id_,
                 model_manifest_id=model_storage.model_template.model_template_id,
-                strict_validation=False,
             )
             if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS)
             else None
         )
-
 
         train_job_data = TrainTaskJobData(
             model_storage=model_storage,

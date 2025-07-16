@@ -61,8 +61,8 @@ export const ModelTypesList: FC<ModelTypesListProps> = ({
 
                 return (
                     <ModelType
-                        name={name}
                         key={algorithm.modelTemplateId}
+                        name={name}
                         algorithm={algorithm}
                         selectedModelTemplateId={selectedModelTemplateId}
                         onChangeSelectedTemplateId={onChangeSelectedTemplateId}

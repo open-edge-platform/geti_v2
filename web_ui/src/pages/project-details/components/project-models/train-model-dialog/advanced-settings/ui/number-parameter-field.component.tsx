@@ -8,7 +8,7 @@ import { Flex, NumberField, Slider } from '@geti/ui';
 import { NumberParameter } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { getFloatingPointStep } from '../utils';
 
-type NumberGroupParamsProps = Pick<NumberParameter, 'type' | 'value' | 'minValue' | 'maxValue'> & {
+type NumberGroupParamsProps = Pick<NumberParameter, 'type' | 'value' | 'minValue' | 'maxValue' | 'name'> & {
     onChange: (value: number) => void;
     isDisabled?: boolean;
 };
@@ -23,6 +23,7 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({
     type,
     onChange,
     isDisabled,
+    name,
 }) => {
     const [parameterValue, setParameterValue] = useState<number>(value);
 
@@ -42,6 +43,7 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({
     if (maxValue === null) {
         return (
             <NumberField
+                aria-label={`Change ${name}`}
                 step={step}
                 value={parameterValue}
                 minValue={minValue}
@@ -72,6 +74,7 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({
                 maxValue={maxValue}
                 onChange={handleValueChange}
                 isDisabled={isDisabled}
+                aria-label={`Change ${name}`}
             />
         </Flex>
     );

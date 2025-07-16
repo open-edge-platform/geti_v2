@@ -1,26 +1,10 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from geti_configuration_tools import ConfigurationOverlayTools
-from geti_configuration_tools.hyperparameters import (
-    AugmentationParameters,
-    DatasetPreparationParameters,
-    EvaluationParameters,
-    Hyperparameters,
-    TrainingHyperParameters,
-)
-from geti_configuration_tools.training_configuration import (
-    Filtering,
-    GlobalDatasetPreparationParameters,
-    GlobalParameters,
-    MaxAnnotationObjects,
-    MaxAnnotationPixels,
-    MinAnnotationObjects,
-    MinAnnotationPixels,
-    PartialTrainingConfiguration,
-    SubsetSplit,
-    TrainingConfiguration,
-)
+from geti_configuration_tools.training_configuration import PartialTrainingConfiguration, TrainingConfiguration
+from geti_supported_models import NullModelManifest, SupportedModels
 
+from communication.exceptions import ModelManifestNotFoundException
 from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_fastapi_tools.exceptions import ModelNotFoundException
@@ -37,7 +21,6 @@ class ConfigurationService:
         project_identifier: ProjectIdentifier,
         task_id: ID,
         model_manifest_id: str,
-        strict_validation: bool = True,  # TODO: remove arg after ITEP-32190
     ) -> TrainingConfiguration:
         """
         Get the full training configuration for a specific model architecture.
@@ -50,35 +33,17 @@ class ConfigurationService:
         :param project_identifier: Identifier for the project
         :param task_id: ID of the task for which to get the configuration
         :param model_manifest_id: ID of the model manifest to use for algorithm-level configuration
-        :param strict_validation: If True, validates the result as a full TrainingConfiguration,
-                                 otherwise as a PartialTrainingConfiguration (to be removed after ITEP-32190)
         :return: The combined and validated training configuration
         """
-        # TODO after ITEP-32190: Load model manifest hyperparameters when model manifests are added
-        base_hyperparameters = Hyperparameters(
-            dataset_preparation=DatasetPreparationParameters(augmentation=AugmentationParameters()),
-            training=TrainingHyperParameters(
-                input_size_width=32, input_size_height=32, allowed_values_input_size=[32, 64, 128]
-            ),
-            evaluation=EvaluationParameters(),
-        )
-        base_global_params = GlobalParameters(
-            dataset_preparation=GlobalDatasetPreparationParameters(
-                subset_split=SubsetSplit(),
-                filtering=Filtering(
-                    min_annotation_pixels=MinAnnotationPixels(),
-                    max_annotation_pixels=MaxAnnotationPixels(),
-                    min_annotation_objects=MinAnnotationObjects(),
-                    max_annotation_objects=MaxAnnotationObjects(),
-                ),
-            ),
-        )
+        model_manifest = SupportedModels.get_model_manifest_by_id(model_manifest_id)
+        if isinstance(model_manifest, NullModelManifest):
+            raise ModelManifestNotFoundException(model_manifest_id=model_manifest_id)
+
         base_config = PartialTrainingConfiguration.model_validate(
             {
                 "id_": ID(f"full_training_configuration_{model_manifest_id}"),
                 "task_id": str(task_id),
-                "hyperparameters": base_hyperparameters.model_dump(),
-                "global_parameters": base_global_params.model_dump(),
+                "hyperparameters": model_manifest.hyperparameters.model_dump(),
             }
         )
         training_configuration_repo = PartialTrainingConfigurationRepo(project_identifier)
@@ -87,7 +52,7 @@ class ConfigurationService:
             training_configuration_repo.get_by_model_manifest_id(model_manifest_id) if model_manifest_id else None
         )
         return ConfigurationOverlayTools.overlay_training_configurations(
-            base_config, task_level_config, algo_level_config, validate_full_config=strict_validation
+            base_config, task_level_config, algo_level_config, validate_full_config=True
         )
 
     @staticmethod

@@ -20,7 +20,7 @@ from iai_core.repos import LabelRepo, LabelSchemaRepo
 def fxt_anomalous_label(fxt_mongo_id):
     yield Label(
         name=DummyValues.LABEL_NAME,
-        domain=Domain.ANOMALY_DETECTION,
+        domain=Domain.ANOMALY,
         color=Color.from_hex_str("#ff0000"),
         hotkey=DummyValues.LABEL_HOTKEY,
         id_=ID(fxt_mongo_id(2)),
@@ -182,17 +182,17 @@ def fxt_segmentation_label(fxt_segmentation_label_factory):
 
 
 @pytest.fixture
-def fxt_anomaly_classification_labels(fxt_mongo_id):
+def fxt_anomaly_labels(fxt_mongo_id):
     normal_label = Label(
         name="Normal",
-        domain=Domain.ANOMALY_CLASSIFICATION,
+        domain=Domain.ANOMALY,
         color=Color(red=139, green=174, blue=70),
         id_=fxt_mongo_id(51),
         is_anomalous=False,
     )
     anomalous_label = Label(
         name="Anomalous",
-        domain=Domain.ANOMALY_CLASSIFICATION,
+        domain=Domain.ANOMALY,
         color=Color(red=255, green=86, blue=98),
         id_=fxt_mongo_id(52),
         is_anomalous=True,
@@ -201,27 +201,8 @@ def fxt_anomaly_classification_labels(fxt_mongo_id):
 
 
 @pytest.fixture
-def fxt_anomaly_classification_label(fxt_anomaly_classification_labels):
-    yield fxt_anomaly_classification_labels[0]
-
-
-@pytest.fixture
-def fxt_anomaly_segmentation_labels(fxt_mongo_id):
-    normal_label = Label(
-        name="Normal",
-        domain=Domain.ANOMALY_SEGMENTATION,
-        color=Color(red=139, green=174, blue=70),
-        id_=fxt_mongo_id(51),
-        is_anomalous=False,
-    )
-    anomalous_label = Label(
-        name="Anomalous",
-        domain=Domain.ANOMALY_SEGMENTATION,
-        color=Color(red=255, green=86, blue=98),
-        id_=fxt_mongo_id(52),
-        is_anomalous=True,
-    )
-    yield [normal_label, anomalous_label]
+def fxt_anomaly_label(fxt_anomaly_labels):
+    yield fxt_anomaly_labels[0]
 
 
 @pytest.fixture
@@ -420,13 +401,8 @@ def fxt_segmentation_label_schema_factory(fxt_segmentation_label_factory, fxt_em
 
 
 @pytest.fixture
-def fxt_anomaly_classificaction_label_schema(fxt_anomaly_classification_labels):
-    yield LabelSchemaView.from_labels(fxt_anomaly_classification_labels)
-
-
-@pytest.fixture
-def fxt_anomaly_segmentation_label_schema(fxt_anomaly_segmentation_labels):
-    yield LabelSchemaView.from_labels(fxt_anomaly_segmentation_labels)
+def fxt_anomaly_label_schema(fxt_anomaly_labels):
+    yield LabelSchemaView.from_labels(fxt_anomaly_labels)
 
 
 @pytest.fixture

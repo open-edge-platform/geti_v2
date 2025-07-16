@@ -1,0 +1,16 @@
+type: object
+properties:
+  key:
+    type: string
+    description: Identifier for the float parameter used in code references
+  value:
+    type: number
+    description: Current configured value of the float parameter
+
+required:
+  - key
+  - value
+
+example:
+  key: learning_rate
+  value: 0.05
