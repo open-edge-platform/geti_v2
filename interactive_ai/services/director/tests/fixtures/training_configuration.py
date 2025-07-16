@@ -455,7 +455,7 @@ def fxt_training_configuration_full_rest_view(
                         "min_value": 0.0,
                         "name": "Tile overlap",
                         "type": "float",
-                        "value": 0.2
+                        "value": 0.2,
                     },
                 ],
             },
