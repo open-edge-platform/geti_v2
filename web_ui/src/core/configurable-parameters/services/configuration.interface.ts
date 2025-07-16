@@ -32,7 +32,9 @@ export interface StaticParameter extends ParameterBase {
     value: number | boolean;
 }
 
-export type ConfigurationParameter = BoolParameter | NumberParameter | EnumParameter<number>;
+export type EnumConfigurationParameter = EnumParameter<number>;
+
+export type ConfigurationParameter = BoolParameter | NumberParameter | EnumConfigurationParameter;
 
 interface ProjectConfigurationTaskConfigsTraining {
     constraints: ConfigurationParameter[];

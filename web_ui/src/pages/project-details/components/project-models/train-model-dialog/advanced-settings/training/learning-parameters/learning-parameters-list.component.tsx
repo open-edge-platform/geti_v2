@@ -1,15 +1,22 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Flex } from '@geti/ui';
-import { noop } from 'lodash-es';
+import { Flex, Grid, Item, minmax, Picker, Text } from '@geti/ui';
+import { noop, partition } from 'lodash-es';
 
 import {
     ConfigurationParameter,
+    EnumConfigurationParameter,
     TrainingConfiguration,
 } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
-import { isConfigurationParameter } from '../../../../../../../../core/configurable-parameters/utils';
-import { Parameters } from '../../ui/parameters.component';
+import { isConfigurationParameter, isEnumParameter } from '../../../../../../../../core/configurable-parameters/utils';
+import { ParameterLayout, Parameters } from '../../ui/parameters.component';
+import {
+    INPUT_SIZE_HEIGHT_KEY,
+    INPUT_SIZE_WIDTH_KEY,
+    InputSizeParameters,
+    NUMBER_OF_INPUT_SIZE_PARAMETERS,
+} from './input-size-parameters.component';
 
 export type LearningParametersType = TrainingConfiguration['training'];
 
@@ -105,9 +112,22 @@ export const LearningParametersList = ({
     onUpdateTrainingConfiguration = noop,
     isReadOnly = false,
 }: LearningParametersListProps) => {
+    const [inputSizeParameters, restParameters] = partition(
+        parameters,
+        (parameter) => parameter.key === INPUT_SIZE_WIDTH_KEY || parameter.key === INPUT_SIZE_HEIGHT_KEY
+    );
+
     return (
         <Flex direction={'column'} width={'100%'} gap={'size-300'}>
-            {parameters.map((parameter) => {
+            {inputSizeParameters.length === NUMBER_OF_INPUT_SIZE_PARAMETERS &&
+                inputSizeParameters.every(isEnumParameter) && (
+                    <InputSizeParameters
+                        isReadOnly={isReadOnly}
+                        inputSizeParameters={inputSizeParameters}
+                        onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                    />
+                )}
+            {restParameters.map((parameter) => {
                 if (isConfigurationParameter(parameter)) {
                     return (
                         <SingleLearningParameter
