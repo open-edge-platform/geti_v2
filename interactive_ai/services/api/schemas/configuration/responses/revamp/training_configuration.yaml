@@ -92,7 +92,7 @@ example:
           min_value: 0
         - key: "tile_overlap"
           name: "Tile overlap"
-          type: "int"
+          type: "float"
           description: "Overlap between adjacent tiles in pixels"
           value: 0.4
           default_value: 0.5
