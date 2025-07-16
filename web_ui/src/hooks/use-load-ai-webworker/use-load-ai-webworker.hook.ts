@@ -15,7 +15,7 @@ export const useLoadAIWebworker = <T extends AlgorithmType>(algorithmType: T) =>
             const baseWorker = getWorker(algorithmType);
             const worker = wrap<WorkerFactory<T>>(baseWorker);
 
-            return (await worker.build()) as Remote<MapAlgorithmToInstance[T]>;
+            return worker.build() as Remote<MapAlgorithmToInstance[T]>;
         },
         staleTime: Infinity,
     });
