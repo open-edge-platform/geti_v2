@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Grid, minmax, repeat, useMediaQuery } from '@geti/ui';
 import { isLargeSizeQuery } from '@geti/ui/theme';
 
