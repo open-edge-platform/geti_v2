@@ -36,6 +36,10 @@ const resetParameter = (name: string) => {
     fireEvent.click(screen.getByRole('button', { name: `Reset ${name}` }));
 };
 
+const getInputSizeParameter = (name: string) => {
+    return screen.getByRole('button', { name: new RegExp(`Select ${name}`) });
+};
+
 const expectParameterToUpdateProperly = (parameter: ConfigurationParameter) => {
     if (isBoolParameter(parameter)) {
         expect(getToggleEnableParameter(parameter.name)).toBeChecked();
@@ -155,5 +159,109 @@ describe('LearningParameters', () => {
                 });
             }
         });
+    });
+
+    it('updates input size parameters', () => {
+        const inputSizeWidthParameter = getMockedConfigurationParameter({
+            type: 'enum',
+            allowedValues: [256, 512, 1024],
+            value: 512,
+            key: 'input_size_width',
+            name: 'Input size width',
+        });
+
+        const inputSizeHeightParameter = getMockedConfigurationParameter({
+            type: 'enum',
+            allowedValues: [256, 512, 1024],
+            value: 512,
+            key: 'input_size_height',
+            name: 'Input size height',
+        });
+
+        const parameters = [inputSizeWidthParameter, inputSizeHeightParameter];
+
+        render(<App learningParameters={parameters} />);
+
+        parameters.forEach((parameter) => {
+            const parameterSelector = getInputSizeParameter(parameter.name);
+
+            expect(parameterSelector).toHaveTextContent(parameter.value.toString());
+
+            fireEvent.click(parameterSelector);
+
+            parameter.allowedValues.forEach((value) => {
+                expect(screen.getByRole('option', { name: value.toString() })).toBeInTheDocument();
+            });
+
+            fireEvent.keyDown(screen.getByRole('listbox', { name: `Select ${parameter.name}` }), { key: 'Escape' });
+        });
+
+        fireEvent.click(getInputSizeParameter(inputSizeWidthParameter.name));
+        fireEvent.click(screen.getByRole('option', { name: '1024' }));
+        expect(getInputSizeParameter(inputSizeWidthParameter.name)).toHaveTextContent('1024');
+
+        fireEvent.click(getInputSizeParameter(inputSizeHeightParameter.name));
+        fireEvent.click(screen.getByRole('option', { name: '256' }));
+        expect(getInputSizeParameter(inputSizeHeightParameter.name)).toHaveTextContent('256');
+    });
+
+    it('does not display input size parameters if there is only one of them', () => {
+        const inputSizeWidthParameter = getMockedConfigurationParameter({
+            type: 'enum',
+            allowedValues: [256, 512, 1024],
+            value: 512,
+            key: 'input_size_width',
+            name: 'Input size width',
+        });
+
+        const parameters = [inputSizeWidthParameter];
+
+        render(<App learningParameters={parameters} />);
+
+        expect(screen.queryByRole('button', { name: new RegExp(`Select Input size width`) })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: new RegExp(`Select Input size height`) })).not.toBeInTheDocument();
+    });
+
+    it('resets both input size parameters to default values', () => {
+        const inputSizeWidthParameter = getMockedConfigurationParameter({
+            type: 'enum',
+            allowedValues: [256, 512, 1024],
+            value: 512,
+            defaultValue: 256,
+            key: 'input_size_width',
+            name: 'Input size width',
+        });
+
+        const inputSizeHeightParameter = getMockedConfigurationParameter({
+            type: 'enum',
+            allowedValues: [256, 512, 1024],
+            value: 512,
+            defaultValue: 256,
+            key: 'input_size_height',
+            name: 'Input size height',
+        });
+
+        const parameters = [inputSizeWidthParameter, inputSizeHeightParameter];
+
+        render(<App learningParameters={parameters} />);
+
+        fireEvent.click(getInputSizeParameter(inputSizeWidthParameter.name));
+        fireEvent.click(screen.getByRole('option', { name: '1024' }));
+
+        expect(getInputSizeParameter(inputSizeWidthParameter.name)).toHaveTextContent('1024');
+
+        fireEvent.click(getInputSizeParameter(inputSizeHeightParameter.name));
+        fireEvent.click(screen.getByRole('option', { name: '1024' }));
+
+        expect(getInputSizeParameter(inputSizeHeightParameter.name)).toHaveTextContent('1024');
+
+        fireEvent.click(screen.getByRole('button', { name: 'Reset Input size' }));
+
+        expect(getInputSizeParameter(inputSizeWidthParameter.name)).toHaveTextContent(
+            inputSizeWidthParameter.defaultValue.toString()
+        );
+        expect(getInputSizeParameter(inputSizeHeightParameter.name)).toHaveTextContent(
+            inputSizeHeightParameter.defaultValue.toString()
+        );
     });
 });

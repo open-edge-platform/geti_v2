@@ -2,7 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import {
+    BoolParameter,
     ConfigurationParameter,
+    EnumConfigurationParameter,
+    NumberParameter,
     ProjectConfiguration,
     TrainingConfiguration,
 } from '../../core/configurable-parameters/services/configuration.interface';
@@ -80,11 +83,20 @@ export const getMockedTrainingConfiguration = (config: Partial<TrainingConfigura
     ...config,
 });
 
-export const getMockedConfigurationParameter = (
+export function getMockedConfigurationParameter(
+    parameter: Partial<EnumConfigurationParameter> & Required<Pick<ConfigurationParameter, 'type'>>
+): EnumConfigurationParameter;
+export function getMockedConfigurationParameter(
+    parameter: Partial<NumberParameter> & Required<Pick<NumberParameter, 'type'>>
+): NumberParameter;
+export function getMockedConfigurationParameter(
+    parameter: Partial<BoolParameter> & Required<Pick<BoolParameter, 'type'>>
+): BoolParameter;
+export function getMockedConfigurationParameter(
     parameter: Partial<ConfigurationParameter> & Required<Pick<ConfigurationParameter, 'type'>> = {
         type: 'float',
     }
-): ConfigurationParameter => {
+): ConfigurationParameter {
     if (parameter.type === 'float' || parameter.type === 'int') {
         return {
             value: 0,
@@ -122,4 +134,4 @@ export const getMockedConfigurationParameter = (
     }
 
     throw new Error(`Unsupported parameter type: ${parameter.type}`);
-};
+}
