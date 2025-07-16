@@ -77,7 +77,6 @@ export const TrainingModelMatrix = ({
                         <ConfusionMatrixZoom
                             title={header}
                             {...confusionMatrixData}
-                            key={confusionMatrix.key}
                             size={size}
                             matrixValues={confusionMatrix.matrixValues}
                         />
@@ -107,7 +106,6 @@ export const TrainingModelMatrix = ({
                     <ConfusionMatrixZoom
                         title={header}
                         {...confusionMatrixData}
-                        key={confusionMatrix.key}
                         size={size}
                         matrixValues={confusionMatrix.matrixValues}
                     />

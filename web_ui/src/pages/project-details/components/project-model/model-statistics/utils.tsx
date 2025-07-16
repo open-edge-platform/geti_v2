@@ -23,15 +23,15 @@ export const getModelStatisticPresentation = (
         case 'text':
             return <TrainingModelTextChart value={statistic.value} header={statistic.header} {...options} />;
         case 'line':
-            return <TrainingModelLineChart {...statistic} key={statistic.key} {...options} />;
+            return <TrainingModelLineChart {...statistic} {...options} />;
         case 'bar':
-            return <TrainingModelBarChart {...statistic} key={statistic.key} {...options} />;
+            return <TrainingModelBarChart {...statistic} {...options} />;
         case 'radial_bar':
-            return <TrainingModelRadialChart {...statistic} key={statistic.key} {...options} />;
+            return <TrainingModelRadialChart {...statistic} {...options} />;
         case 'matrix':
-            return <TrainingModelMatrix gridColumn={'1 / 4'} {...statistic} key={statistic.key} />;
+            return <TrainingModelMatrix gridColumn={'1 / 4'} {...statistic} />;
         case 'group':
-            return <TrainingModelGrouped {...statistic} key={statistic.key} />;
+            return <TrainingModelGrouped {...statistic} />;
         default:
             return <></>;
     }
