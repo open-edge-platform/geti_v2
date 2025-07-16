@@ -22,7 +22,6 @@ import { useAnnotator } from '../../providers/annotator-provider/annotator-provi
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useSelectedMediaItem } from '../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { TaskProvider } from '../../providers/task-provider/task-provider.component';
-import { convertGetiShapeToToolShape } from '../utils';
 import { PolygonStateProvider, usePolygonState } from './polygon-state-provider.component';
 import { PolygonTool } from './polygon-tool.component';
 import { PolygonMode } from './polygon-tool.enum';
@@ -221,7 +220,7 @@ describe('PolygonTool', () => {
         fireEvent.pointerUp(editor, { buttons: 1, clientX: 50, clientY: 50 });
 
         await waitFor(() => expect(onComplete).toHaveBeenCalledWith([shape]));
-        expect(mockOptimizePolygon).toHaveBeenCalledWith(convertGetiShapeToToolShape(shape));
+        expect(mockOptimizePolygon).toHaveBeenCalledWith(shape);
     });
 
     it('cancels a polygon if the user did not provide additional points', async (): Promise<void> => {

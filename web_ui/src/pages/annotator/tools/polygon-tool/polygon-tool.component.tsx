@@ -23,13 +23,7 @@ import { useZoom } from '../../zoom/zoom-provider.component';
 import { PolygonDraw } from '../polygon-draw.component';
 import { SvgToolCanvas } from '../svg-tool-canvas.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
-import {
-    convertGetiShapeToToolShape,
-    convertToolShapeToGetiShape,
-    drawingStyles,
-    isPolygonValid,
-    removeOffLimitPointsPolygon,
-} from '../utils';
+import { convertToolShapeToGetiShape, drawingStyles, isPolygonValid, removeOffLimitPointsPolygon } from '../utils';
 import { usePolygonState } from './polygon-state-provider.component';
 import { PointerIcons, PointerIconsOffset, PolygonMode } from './polygon-tool.enum';
 import { isCloseMode, START_POINT_FIELD_DEFAULT_RADIUS, START_POINT_FIELD_FOCUS_RADIUS } from './utils';
@@ -152,7 +146,7 @@ export const PolygonTool = ({ annotationToolContext }: ToolAnnotationContextProp
     const optimizePolygonOrSegments = async (iPolygon: Polygon): Promise<Polygon> => {
         if (worker) {
             if (mode === PolygonMode.MagneticLasso) {
-                return convertToolShapeToGetiShape(await worker.optimizePolygon(convertGetiShapeToToolShape(iPolygon)));
+                return convertToolShapeToGetiShape(await worker.optimizePolygon(iPolygon));
             }
 
             const lastSegment = differenceWith(iPolygon.points, segments.flat(), isEqual);
