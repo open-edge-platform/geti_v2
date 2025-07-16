@@ -57,7 +57,9 @@ export const FullscreenAction = ({ children, title, actionButton, id }: Fullscre
                         </TooltipTrigger>
                     </ButtonGroup>
 
-                    <Content UNSAFE_className={classes.fullscreenContent}>{children}</Content>
+                    <Content UNSAFE_className={classes.fullscreenContent} ref={container}>
+                        {children}
+                    </Content>
                 </Dialog>
             )}
         </DialogTrigger>
