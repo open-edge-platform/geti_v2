@@ -24,7 +24,7 @@ spec:
       repository: nvcr.io/nvidia/k8s-device-plugin
       tag: "v0.16.2.1-ubi8"
     runtimeClassName: nvidia
-    failOnInitError: false
+    failOnInitError: "false"
     deviceListStrategy: volume-mounts
     securityContext:
       allowPrivilegeEscalation: true
