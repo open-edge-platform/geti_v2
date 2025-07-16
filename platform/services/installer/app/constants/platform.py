@@ -1,14 +1,5 @@
-# INTEL CONFIDENTIAL
-#
-# Copyright (C) 2022 Intel Corporation
-#
-# This software and the related documents are Intel copyrighted materials, and your use of them is governed by
-# the express license under which they were provided to you ("License"). Unless the License provides otherwise,
-# you may not use, modify, copy, publish, distribute, disclose or transmit this software or the related documents
-# without Intel's prior written permission.
-#
-# This software and the related documents are provided as is, with no express or implied warranties,
-# other than those that are expressly stated in the License.
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 """Module containing other common variables used in the platform installer"""
 
 import os
@@ -37,3 +28,22 @@ GPU_PROVIDER_INTEL_ARC_A = "intel-arc-a"
 DEFAULT_HISTORY_MAX = 3
 
 DEFAULT_USERNAME = "admin@geti.com"
+
+# Geti namespaces
+ISTIO_NAMESPACE = "istio-system"
+PLATFORM_NAMESPACE = "impt"
+OPA_NAMESPACE = "opa-istio"
+CERT_MANAGER_NAMESPACE = "cert-manager"
+FLYTE_NAMESPACE = "flyte"
+JOBS_PRODUCTION_NAMESPACE = "impt-jobs-production"
+
+# Secret names
+CUSTOM_TLS_SECRET_NAME = "custom-tls"  # noqa: S105
+MONGODB_SECRET_NAME = "impt-mongodb"  # noqa: S105
+POSTGRESQL_SECRET_NAME = "impt-postgresql"  # noqa: S105
+SPICEDB_SECRET_NAME = "impt-spice-db"  # noqa: S105
+LDAP_SECRET_NAME = "impt-ldap-service-user"  # noqa: S105
+SEAWEEDFS_SECRET_NAME = "impt-seaweed-fs"  # noqa: S105
+
+GETI_LABEL_KEY = "needed_by_geti"
+GETI_LABEL_VALUE = "true"

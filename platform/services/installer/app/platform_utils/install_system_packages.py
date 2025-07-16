@@ -22,6 +22,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_ex
 from checks.resources import GPU_PROVIDER_NVIDIA
 from cli_utils.platform_logs import subprocess_run
 from configuration_models.install_config import InstallationConfig
+from configuration_models.migrate_config import MigrationConfig
 from configuration_models.upgrade_config import UpgradeConfig
 from constants.os import SupportedOS
 from constants.paths import (
@@ -161,7 +162,7 @@ def _install_packages_from_path_ubuntu(packages_path: str) -> None:
             raise InstallSystemPackagesError from ex
 
 
-def install_system_packages(config: InstallationConfig | UpgradeConfig) -> None:
+def install_system_packages(config: InstallationConfig | UpgradeConfig | MigrationConfig) -> None:
     """
     Install system packages for installation purposes
     """

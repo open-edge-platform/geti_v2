@@ -1,14 +1,5 @@
-# INTEL CONFIDENTIAL
-#
-# Copyright (C) 2024 Intel Corporation
-#
-# This software and the related documents are Intel copyrighted materials, and your use of them is governed by
-# the express license under which they were provided to you ("License"). Unless the License provides otherwise,
-# you may not use, modify, copy, publish, distribute, disclose or transmit this software or the related documents
-# without Intel's prior written permission.
-#
-# This software and the related documents are provided as is, with no express or implied warranties,
-# other than those that are expressly stated in the License.
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 """
 A module containing exceptions raised by checks functions.
@@ -254,4 +245,64 @@ class CRDPatchingError(StepsError):
 class PinImageVersionError(StepsError):
     """
     Exception raised when an error occurs while pinning registry image version
+    """
+
+
+class MigrateError(StepsError):
+    """
+    Exception raised when an error occurs while migrating the platform
+    """
+
+
+class PVInfoError(MigrateError):
+    """
+    Exception raised when an error occurs while getting PV info
+    """
+
+
+class TLSCertificateInfoError(MigrateError):
+    """
+    Exception raised when an error occurs while getting TLS certificate info
+    """
+
+
+class TLSCertificateEmptyError(MigrateError):
+    """
+    Exception raised when an error occurs while getting TLS certificate info
+    """
+
+
+class HelmReleaseError(MigrateError):
+    """
+    Exception raised when an error occurs while getting Helm release info
+    """
+
+
+class CredentialsError(MigrateError):
+    """
+    Exception raised when an error occurs while getting credentials info
+    """
+
+
+class PlatformVersionError(MigrateError):
+    """
+    Exception raised when an error occurs while getting credentials info
+    """
+
+
+class SecretsPreparationError(MigrateError):
+    """
+    Exception raised when an error occurs while preparing secrets for migration
+    """
+
+
+class PlatformCleanUpError(MigrateError):
+    """
+    Exception raised when an error occurs while preparing secrets for migration
+    """
+
+
+class NamespaceCleanUpError(MigrateError):
+    """
+    Exception raised when an error occurs while cleaning up namespaces
     """

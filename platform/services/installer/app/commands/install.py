@@ -210,7 +210,7 @@ def monitor_installation_progress(config: InstallationConfig) -> tuple[str, str]
     return status, message
 
 
-def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF100
+def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF100, PLR0915
     """
     Execute platform installation with passed configuration.
     """
@@ -261,10 +261,10 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
     except (StepsError, GetiControllerError):
         logger.exception("Error during installation.")
         click.secho("\n" + InstallCmdTexts.installation_failed, fg="red")
-        cluster_info_dump(kubeconfig=config.kube_config.value)
+        cluster_info_dump(kubeconfig=K3S_KUBECONFIG_PATH)
         sys.exit(1)
     finally:
-        uninstall_geti_controller_chart(config=config)
+        uninstall_geti_controller_chart()
         # shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)  # TODO uncomment
         if config.lightweight_installer.value:
             # remove 'tools' dir on failure,
