@@ -392,7 +392,7 @@ class ProjectBuilder:
                 name="Background",
                 domain=Domain.INSTANCE_SEGMENTATION,
                 color=Color(red=0, green=0, blue=0),
-                is_empty=True,
+                is_empty=False,
                 is_background=True,
                 id_=LabelRepo.generate_id(),
             )
