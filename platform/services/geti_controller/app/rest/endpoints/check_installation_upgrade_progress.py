@@ -175,12 +175,12 @@ def check_installation_upgrade_progress(background_tasks: BackgroundTasks) -> In
     logger.info("GET check_installation_upgrade_progress request received.")
     load_kube_config()
 
-    if not is_job_running(NAMESPACE):
-        logger.info("Job not found, returning stored data.")
-        return progress_manager.get_progress()
-
     if not progress_manager.task_started:
         background_tasks.add_task(periodic_progress_check, progress_manager)
         progress_manager.task_started = True
+
+    if not is_job_running(NAMESPACE):
+        logger.info("Job not found, returning stored data.")
+        return progress_manager.get_progress()
 
     return progress_manager.get_progress()
