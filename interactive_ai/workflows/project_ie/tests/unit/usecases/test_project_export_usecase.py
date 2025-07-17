@@ -122,6 +122,7 @@ class TestProjectExportUseCase:
                 stack.enter_context(m)
             ProjectExportUseCase.export_as_zip(
                 project_id=project_id,
+                include_models="all",
                 progress_callback=mocked_progress_callback,
             )
 
