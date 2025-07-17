@@ -387,7 +387,7 @@ class ProjectBuilder:
             custom_labels.extend([empty_label])
             custom_label_groups.extend([label_group])
 
-        if FeatureFlagProvider.is_enabled(FEATURE_FLAG_KEYPOINT_DETECTION) and domain == Domain.INSTANCE_SEGMENTATION:
+        if FeatureFlagProvider.is_enabled(FEATURE_FLAG_ANNOTATION_HOLE) and domain == Domain.SEGMENTATION:
             background_label = Label(
                 name="Background",
                 domain=Domain.INSTANCE_SEGMENTATION,
