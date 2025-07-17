@@ -20,6 +20,8 @@ def commence_upgrade(
     direction: str,
 ) -> None:
     """Commence the upgrade process by deploying the service job and updating the progress file."""
+    logger.info("Starting UPGRADE")
+
     update_upgrade_progress(
         {
             "source_version": source_version,
@@ -44,13 +46,16 @@ def update_upgrade_progress(patch: dict) -> dict:
     If the file does not exist, it will be created with default values used to fill in missing from the patch.
     """
     mode = "r+" if os.path.isfile(UPGRADE_FILE_PATH) else "w+"
+    logger.info("Updating upgrade progress file at %s with mode %s", UPGRADE_FILE_PATH, mode)
     try:
         with open(UPGRADE_FILE_PATH, mode) as f:
             # lock a file and read existing data to prevent TOCTOU errors
             fcntl.flock(f, fcntl.LOCK_EX)
             try:
                 stored = json.load(f)
+                logger.info(f"Loaded existing upgrade data: {stored}")
             except json.JSONDecodeError:
+                logger.info("NO data was stored in the upgrade file, initializing with defaults.")
                 stored = {}
 
             data = _fill_in_defaults(stored) | patch
@@ -60,6 +65,7 @@ def update_upgrade_progress(patch: dict) -> dict:
             json.dump(data, f, indent=2)
             f.truncate()
             fcntl.flock(f, fcntl.LOCK_UN)
+            logger.info(f"Stored upgrade data: {data}")
     except (IsADirectoryError, PermissionError):
         logger.exception(f"Unable to open {UPGRADE_FILE_PATH}. Progress will not be saved.")
 
@@ -69,9 +75,11 @@ def update_upgrade_progress(patch: dict) -> dict:
 def get_upgrade_progress() -> dict:
     """Retrieve the upgrade progress from the stored file."""
     stored = {}
+    logger.info(f"Retrieving upgrade progress from {UPGRADE_FILE_PATH}")
     try:
         with open(UPGRADE_FILE_PATH) as f:
             stored = json.load(f)
+            logger.info(f"Loaded stored upgrade data: {stored}")
     except FileNotFoundError:
         logger.info(f"Stored upgrade data file {UPGRADE_FILE_PATH} not found. Using default values.")
     except (IsADirectoryError, PermissionError):
