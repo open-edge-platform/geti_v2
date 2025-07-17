@@ -53,7 +53,7 @@ const MODEL_TABS_TO_PATH = {
 const useGroupIsActiveLifecycle = (modelIdentifier: ModelIdentifier, modelGroup: ModelsGroups | undefined) => {
     const { data: supportedAlgorithms } = useSupportedAlgorithms(modelIdentifier);
 
-    const group = supportedAlgorithms?.find(({ name }) => modelGroup?.groupName === name);
+    const group = supportedAlgorithms?.find(({ modelTemplateId }) => modelGroup?.modelTemplateId === modelTemplateId);
 
     return group?.lifecycleStage === LifecycleStage.ACTIVE;
 };

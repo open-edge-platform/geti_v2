@@ -44,7 +44,9 @@ export const ModelsContainer = ({
     const isObsolete = isObsoleteAlgorithm(lifecycleStage);
     const isDeprecated = isDeprecatedAlgorithm(lifecycleStage);
     const { tasksWithSupportedAlgorithms } = useTasksWithSupportedAlgorithms();
-    const algorithm = tasksWithSupportedAlgorithms[taskId].find((algorithms) => algorithms.name === groupName);
+    const algorithm = tasksWithSupportedAlgorithms[taskId].find(
+        (algorithms) => algorithms.modelTemplateId === modelTemplateId
+    );
     const complexity = algorithm?.gigaflops;
 
     return (
