@@ -6,8 +6,9 @@
   "main": "index.ts",
   "type": "module",
   "dependencies": {
-    "comlink": "^4.3.1",
-    "@doodle3d/clipper-js": "^1.0.11"
+    "@doodle3d/clipper-js": "^1.0.11",
+    "ndarray": "^1.0.19",
+    "ndarray-ops": "^1.2.2"
   },
   "devDependencies": {
     "@geti/config": "*",
@@ -18,7 +19,9 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "@types/ndarray": "^1.0.14",
+    "@types/ndarray-ops": "^1.2.7"
   },
   "exports": {
     ".": "./index.ts",

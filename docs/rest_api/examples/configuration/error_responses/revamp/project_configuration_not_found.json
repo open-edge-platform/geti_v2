@@ -1,0 +1,5 @@
+{
+  "http_status": 404,
+  "message": "The requested project configuration could not be found. Project ID: `60ec6bbfb98caeb87e34306e`, task ID: `60ec6bbfb98caeb87e34309f`",
+  "error_code": "project_configuration_not_found"
+}

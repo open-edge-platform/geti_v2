@@ -1,0 +1,29 @@
+task: detection
+capabilities:
+  tiling: true  # by default, all detection models support tiling (unless specified otherwise)
+
+hyperparameters:
+  dataset_preparation:
+      tiling:
+        enable: false
+        adaptive_tiling: false
+        tile_size: 400
+        tile_overlap: 0.2
+  evaluation:
+    metric: f_measure
+  training:
+    max_epochs: 200
+    early_stopping:
+      enable: true
+      patience: 10
+    allowed_values_input_size:
+      - 128
+      - 256
+      - 384
+      - 512
+      - 640
+      - 800
+      - 992
+      - 1024
+    input_size_width: 800
+    input_size_height: 992

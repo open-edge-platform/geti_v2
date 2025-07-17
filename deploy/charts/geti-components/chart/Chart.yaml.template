@@ -94,7 +94,7 @@ dependencies:
     version: ${TAG}
     repository: "file://../../../../../platform/services/user_directory/.build/chart"
     condition: enabled.user_directory
-  - name: weights_uploader
+  - name: weights-uploader
     version: ${TAG}
     repository: "file://../../../../../platform/services/weights_uploader/.build/chart"
     condition: enabled.weights_uploader

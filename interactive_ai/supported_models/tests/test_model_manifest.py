@@ -91,7 +91,7 @@ class TestModelManifest:
 
     def test_relative_path_parsing(self):
         sources = ("base.yaml", "dummy_base_model_manifest.yaml", "dummy_model_manifest.yaml")
-        expected_paths = [resources.files(manifests).joinpath(path) for path in sources]
+        expected_paths = [str(resources.files(manifests).joinpath(path)) for path in sources]
 
         # Create a more complete mock result with all required nested fields
         mock_yaml_result = {

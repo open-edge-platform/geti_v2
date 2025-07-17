@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 from importlib import resources
 
 import hiyapyco
@@ -23,7 +22,7 @@ def parse_manifest(*manifest_sources, relative: bool = True) -> ModelManifest:
     :return: A populated Algorithm object containing the parsed manifest data.
     """
     if relative:
-        manifest_sources = tuple(resources.files(manifests).joinpath(path) for path in manifest_sources)
+        manifest_sources = tuple(str(resources.files(manifests).joinpath(path)) for path in manifest_sources)
     yaml_manifest = hiyapyco.load(
         *manifest_sources, method=hiyapyco.METHOD_MERGE, interpolate=True, failonmissingfiles=True
     )

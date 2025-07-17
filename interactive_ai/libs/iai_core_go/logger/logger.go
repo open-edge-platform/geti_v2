@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-//nolint:gochecknoglobals // consider refactoring global variables
+//nolint:gochecknoglobals // logger is a global variable, which is acceptable in Go for centralized logging; it is initialized once and not mutated.
 package logger
 
 import (

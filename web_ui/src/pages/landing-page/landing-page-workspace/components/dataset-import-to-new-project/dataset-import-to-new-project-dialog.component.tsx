@@ -1,7 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Content, Dialog, DialogContainer, Divider, Heading, View } from '@geti/ui';
 import { OverlayTriggerState } from '@react-stately/overlays';
 
@@ -28,7 +27,6 @@ export const DatasetImportToNewProjectDialog = ({
     trigger,
     deleteDialogTrigger,
 }: DatasetImportToNewProjectDialogProps): JSX.Element => {
-    const { FEATURE_FLAG_ANOMALY_REDUCTION } = useFeatureFlags();
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
     const { useCancelJob } = useJobs({ organizationId, workspaceId });
 
@@ -72,7 +70,6 @@ export const DatasetImportToNewProjectDialog = ({
                                         prepareDataset={prepareDataset}
                                         patchDatasetImport={patchDatasetImport}
                                         setActiveDatasetImportId={setActiveDatasetImportId}
-                                        anomalyRevamp={FEATURE_FLAG_ANOMALY_REDUCTION}
                                     />
                                 </View>
                             </View>

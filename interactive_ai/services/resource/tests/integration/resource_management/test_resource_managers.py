@@ -125,7 +125,8 @@ def fxt_create_upload_annotate_project(
             dataset_storage_identifier=dataset_storage.identifier,
             basename=img_basename,
             extension=ImageExtensions.JPG,
-            data_stream=BytesStream(data=io.BytesIO(buffer), length=len(buffer)),
+            image_bytes=io.BytesIO(buffer),
+            length=len(buffer),
             user_id=ID("dummy_user"),
         )
         identifier = ImageIdentifier(image.id_)
@@ -172,13 +173,13 @@ def fxt_create_upload_annotate_project(
 
 
 @pytest.fixture
-def fxt_anomaly_classification_project_data():
+def fxt_anomaly_project_data():
     yield {
-        "name": "Test anomaly classification project",
+        "name": "Test anomaly project",
         "tasks_dict": {
             "Dataset": {"task_type": "dataset"},
             "Anomaly task": {
-                "task_type": "anomaly_classification",
+                "task_type": "anomaly",
             },
         },
     }
@@ -509,9 +510,8 @@ class TestResourceManagers:
         assert third_updated_label.color.hex_str == third_updated_label_color
         assert third_updated_label.name == pre_update_label_name
 
-    def test_update_project_anomaly(self, fxt_anomaly_classification_project_data) -> None:
-        model_template_id = "anomaly_classification"
-        project_type = fxt_anomaly_classification_project_data
+    def test_update_project_anomaly(self, fxt_anomaly_project_data) -> None:
+        project_type = fxt_anomaly_project_data
         session = CTX_SESSION_VAR.get()
         project_manager = ProjectManager()
         with patch.object(
@@ -519,7 +519,7 @@ class TestResourceManagers:
             "get_default_model_template_by_task_type",
             side_effect=[
                 ModelTemplateList().get_by_id("dataset"),
-                ModelTemplateList().get_by_id(model_template_id),
+                ModelTemplateList().get_by_id("anomaly"),
             ],
         ):
             project, label_schema, task_schema = PersistedProjectBuilder.build_full_project(

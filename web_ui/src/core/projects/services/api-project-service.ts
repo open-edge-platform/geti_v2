@@ -110,16 +110,12 @@ export const createApiProjectService: CreateApiService<ProjectService> = (
         return data;
     };
 
-    const editProject = async (
-        projectIdentifier: ProjectIdentifier,
-        project: ProjectProps,
-        anomalyRevampFlagEnabled = false
-    ): Promise<ProjectProps> => {
+    const editProject = async (projectIdentifier: ProjectIdentifier, project: ProjectProps): Promise<ProjectProps> => {
         const { data: currentProjectData } = await instance.get<ProjectDTO>(router.PROJECT(projectIdentifier));
 
         const { data } = await instance.put(
             router.PROJECT(projectIdentifier),
-            getEditProjectDTO(project, currentProjectData.pipeline.tasks, anomalyRevampFlagEnabled)
+            getEditProjectDTO(project, currentProjectData.pipeline.tasks)
         );
 
         return getProjectEntity(data, router);
@@ -189,15 +185,14 @@ export const createApiProjectService: CreateApiService<ProjectService> = (
         workspaceIdentifier: WorkspaceIdentifier,
         name: string,
         domains: DOMAIN[],
-        taskMetadata: TaskMetadata[],
-        anomalyRevampFlagEnabled = false
+        taskMetadata: TaskMetadata[]
     ): Promise<CreateProjectProps> => {
         const filteredDomains = domains.filter(isNotCropDomain);
         const connections = getConnectionsByTaskNames(filteredDomains);
 
         const tasks = domains.some(isKeypointDetection)
             ? getPreparedKeypointTasks(taskMetadata, filteredDomains)
-            : getPreparedTasks(taskMetadata, filteredDomains, anomalyRevampFlagEnabled);
+            : getPreparedTasks(taskMetadata, filteredDomains);
 
         const body = { name, pipeline: { connections, tasks } };
         const { data } = await instance.post<ProjectDTO>(router.PROJECTS(workspaceIdentifier), body);

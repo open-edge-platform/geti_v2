@@ -1,0 +1,47 @@
+type: object
+properties:
+  default_value:
+    type: number
+    description: Default value for the float parameter when not explicitly set
+  description:
+    type: string
+    description: Detailed explanation of the float parameter's purpose and usage
+  key:
+    type: string
+    description: Identifier for the float parameter used in code references
+  name:
+    type: string
+    description: Display name of the float parameter
+  max_value:
+    type: ['null', number]
+    description: Maximum allowed value for the float parameter (can be None for no upper limit)
+  min_value:
+    type: ['null', number]
+    description: Minimum allowed value for the float parameter (can be None for no lower limit)
+  type:
+    type: string
+    enum: [float]
+    description: Type of the parameter, which is 'float' in this case
+  value:
+    type: number
+    description: Current configured value of the float parameter
+
+required:
+  - default_value
+  - description
+  - key
+  - name
+  - max_value
+  - min_value
+  - type
+  - value
+
+example:
+  default_value: 0.001
+  description: Base learning rate for the optimizer
+  key: learning_rate
+  name: Learning Rate
+  max_value: 1.0
+  min_value: 0.0
+  type: float
+  value: 0.05

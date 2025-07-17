@@ -32,23 +32,6 @@ class EarlyStopping(BaseModel):
     )
 
 
-class MaxDetectionPerImage(BaseModel):
-    enable: bool = Field(
-        default=False,
-        title="Enable maximum detection per image",
-        description="Whether to limit the number of detections per image",
-    )
-    max_detection_per_image: int = Field(
-        default=10000,
-        gt=0,
-        title="Maximum number of detections per image",
-        description=(
-            "Maximum number of objects that can be detected in a single image, "
-            "only applicable for instance segmentation models"
-        ),
-    )
-
-
 class TrainingHyperParameters(BaseModel):
     """Hyperparameters for model training process."""
 
@@ -60,14 +43,6 @@ class TrainingHyperParameters(BaseModel):
     )
     learning_rate: float = Field(
         gt=0, lt=1, default=0.001, title="Learning rate", description="Base learning rate for the optimizer"
-    )
-    max_detection_per_image: MaxDetectionPerImage | None = Field(
-        default_factory=MaxDetectionPerImage,
-        title="Maximum number of detections per image",
-        description=(
-            "Maximum number of objects that can be detected in a single image, "
-            "only applicable for instance segmentation models"
-        ),
     )
     input_size_width: int | None = Field(
         default=None,
@@ -143,7 +118,7 @@ class TrainingHyperParameters(BaseModel):
 class EvaluationParameters(BaseModel):
     """Parameters for model evaluation."""
 
-    metric: None = Field(
+    metric: str | None = Field(
         default=None, title="Evaluation metric", description="Metric used to evaluate model performance"
     )
 
@@ -151,9 +126,21 @@ class EvaluationParameters(BaseModel):
 class Hyperparameters(BaseModel):
     """Complete set of configurable parameters for model training and evaluation."""
 
-    dataset_preparation: DatasetPreparationParameters
-    training: TrainingHyperParameters
-    evaluation: EvaluationParameters
+    dataset_preparation: DatasetPreparationParameters = Field(
+        default_factory=DatasetPreparationParameters,
+        title="Dataset preparation",
+        description="Parameters for preparing the dataset before training",
+    )
+    training: TrainingHyperParameters | None = Field(
+        default=None,
+        title="Training hyperparameters",
+        description="Hyperparameters for the model training process",
+    )
+    evaluation: EvaluationParameters = Field(
+        default_factory=EvaluationParameters,
+        title="Evaluation parameters",
+        description="Parameters for evaluating the trained model",
+    )
 
 
 @partial_model

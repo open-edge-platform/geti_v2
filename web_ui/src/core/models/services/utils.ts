@@ -54,7 +54,7 @@ export const getModelsEntity = (
         const algorithms = tasksWithSupportedAlgorithms[task_id] ?? [];
         const usedAlgorithm = algorithms.find((algorithm) => algorithm.modelTemplateId === model_template_id);
 
-        const summary = usedAlgorithm?.summary ?? '';
+        const summary = usedAlgorithm?.description ?? '';
         const templateName = usedAlgorithm?.templateName ?? '';
 
         const modelsEntity: ModelVersion[] = sortedModelsByVersion.map((model) => {

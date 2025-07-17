@@ -139,8 +139,8 @@ async def deploy_helm_charts(manifest: dict) -> None:
                 version="v1",
                 body=manifest,
             )
-        except client.exceptions.ApiException as e:
-            if e.status == 409:
+        except client.exceptions.ApiException as create_err:
+            if create_err.status == 409:
                 logger.warning("Helm chart already exists, updating the existing CR.")
                 try:
                     await asyncio.to_thread(
@@ -152,12 +152,12 @@ async def deploy_helm_charts(manifest: dict) -> None:
                         version="v1",
                         body=manifest,
                     )
-                except client.exceptions.ApiException as e:
-                    logger.exception(f"Failed to update helm chart CR: {e}")
-                    raise HelmChartDeployError(f"Failed to update helm chart CR: {e}")
+                except client.exceptions.ApiException as patch_err:
+                    logger.error(f"Failed to update helm chart CR: {patch_err}")
+                    raise HelmChartDeployError(f"Failed to update helm chart CR: {patch_err}")
             else:
-                logger.exception(f"Failed to create helm chart CR: {e}")
-                raise HelmChartDeployError(f"Failed to create helm chart CR: {e}")
+                logger.error(f"Failed to create helm chart CR: {create_err}")
+                raise HelmChartDeployError(f"Failed to create helm chart CR: {create_err}")
     logger.info("Deployed helm charts successfully.")
 
 
