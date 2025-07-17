@@ -3,10 +3,11 @@
 import contextlib
 import os.path
 import shutil
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import ANY, MagicMock, Mock, patch
 
 from geti_types import CTX_SESSION_VAR, ID, Session
 from iai_core.repos.base import SessionBasedRepo
+from iai_core.repos.storage.storage_client import BinaryObjectType
 from iai_core.versioning import DataVersion
 
 from job.entities.zip_archive import ProjectZipArchive, ProjectZipArchiveWrapper
@@ -136,3 +137,116 @@ class TestProjectExportUseCase:
         mock_metadata_update.assert_called_once_with(metadata={"download_url": download_url, "size": 0})
         mock_add_signature.assert_called_once_with(signature=dummy_signature_bytes)
         mock_add_public_key.assert_called_once_with(public_key=mocked_signing_use_case.public_key_bytes)
+
+    @patch("job.usecases.project_export_usecase.tempfile.TemporaryDirectory")
+    @patch("job.usecases.project_export_usecase.ProjectExportUseCase._ProjectExportUseCase__export_as_zip")
+    def test_export_as_zip_with_include_models_none(self, mock_export_as_zip, mock_temp_dir) -> None:
+        """Test that export_as_zip properly handles include_models='none'"""
+        mock_temp_dir_context = Mock()
+        mock_temp_dir_context.__enter__ = Mock(return_value="/tmp/test_dir")
+        mock_temp_dir_context.__exit__ = Mock(return_value=None)
+        mock_temp_dir.return_value = mock_temp_dir_context
+
+        project_id = "test_project_id"
+        include_models = "none"
+        progress_callback = Mock()
+
+        ProjectExportUseCase.export_as_zip(
+            project_id=project_id, include_models=include_models, progress_callback=progress_callback
+        )
+
+        mock_export_as_zip.assert_called_once_with(
+            project_id=project_id,
+            include_models="none",
+            tmp_folder="/tmp/test_dir",
+            progress_callback=progress_callback,
+        )
+
+    @patch("job.usecases.project_export_usecase.CTX_SESSION_VAR")
+    @patch("job.usecases.project_export_usecase.DocumentRepo")
+    @patch("job.usecases.project_export_usecase.BinaryStorageRepo")
+    @patch("job.usecases.project_export_usecase.ZipStorageRepo")
+    @patch("job.usecases.project_export_usecase.ProjectZipArchive")
+    @patch("job.usecases.project_export_usecase.ProjectZipArchiveWrapper")
+    @patch("job.usecases.project_export_usecase.ExportDataRedactionUseCase")
+    @patch("job.usecases.project_export_usecase.SignatureUseCaseHelper")
+    @patch("job.usecases.project_export_usecase.read_file_in_chunks")
+    @patch("job.usecases.project_export_usecase.publish_metadata_update")
+    def test_export_as_zip_include_models_none_purges_models_and_skips_binaries(
+        self,
+        mock_publish_metadata,
+        mock_read_file,
+        mock_signature_helper,
+        mock_redaction_usecase,
+        mock_wrapper_archive,
+        mock_zip_archive,
+        mock_zip_storage_repo,
+        mock_binary_storage_repo,
+        mock_document_repo,
+        mock_session_var,
+    ) -> None:
+        """Test that include_models='none' purges model documents and skips model binaries"""
+        # Setup mocks
+        mock_session = Mock()
+        mock_session.workspace_id = "workspace_id"
+        mock_session.organization_id = "org_id"
+        mock_session_var.get.return_value = mock_session
+
+        mock_doc_repo_instance = Mock()
+        mock_document_repo.return_value = mock_doc_repo_instance
+        mock_doc_repo_instance.get_collection_names.return_value = ["model", "other_collection"]
+        mock_doc_repo_instance.get_all_documents_from_db_for_collection.return_value = [{"_id": "doc1"}]
+
+        mock_binary_repo_instance = Mock()
+        mock_binary_storage_repo.return_value = mock_binary_repo_instance
+        mock_binary_repo_instance.get_object_types.return_value = [BinaryObjectType.MODELS, BinaryObjectType.MEDIA]
+        mock_binary_repo_instance.get_all_objects_by_type.return_value = [("local_path", "remote_path")]
+
+        mock_zip_storage_instance = Mock()
+        mock_zip_storage_repo.return_value = mock_zip_storage_instance
+
+        mock_redaction_instance = Mock()
+        mock_redaction_usecase.return_value = mock_redaction_instance
+        mock_redaction_instance.purge_model_docs_if_necessary = Mock(return_value={"_id": "purged_doc"})
+        mock_redaction_instance.objectid_replacement_min_id = "min_id"
+
+        mock_zip_archive_instance = Mock()
+        mock_zip_archive_instance.__enter__ = Mock(return_value=mock_zip_archive_instance)
+        mock_zip_archive_instance.__exit__ = Mock(return_value=None)
+        mock_zip_archive_instance.get_compressed_size.return_value = 1024
+        mock_zip_archive.return_value = mock_zip_archive_instance
+
+        mock_wrapper_instance = Mock()
+        mock_wrapper_instance.__enter__ = Mock(return_value=mock_wrapper_instance)
+        mock_wrapper_instance.__exit__ = Mock(return_value=None)
+        mock_wrapper_archive.return_value = mock_wrapper_instance
+
+        mock_signature_use_case = Mock()
+        mock_signature_use_case.generate_signature.return_value = "signature"
+        mock_signature_use_case.public_key_bytes = b"public_key"
+        mock_signature_helper.get_signature_use_case.return_value = mock_signature_use_case
+
+        # Call the method
+        ProjectExportUseCase._ProjectExportUseCase__export_as_zip(
+            project_id="test_project", tmp_folder="/tmp/test", include_models="none", progress_callback=Mock()
+        )
+
+        # Verify that purge_model_docs_if_necessary was called for model collection
+        mock_redaction_instance.purge_model_docs_if_necessary.assert_called()
+
+        # Verify that get_all_objects_by_type was called for both object types
+        mock_binary_repo_instance.get_all_objects_by_type.assert_any_call(
+            object_type=BinaryObjectType.MEDIA, target_folder="/tmp/test"
+        )
+        # Verify that MODELS object type was NOT processed (skipped due to include_models="none")
+        models_calls = [
+            call
+            for call in mock_binary_repo_instance.get_all_objects_by_type.call_args_list
+            if call[1]["object_type"] == BinaryObjectType.MODELS
+        ]
+        assert len(models_calls) == 0
+
+        # Verify zip archive operations were called
+        mock_zip_archive_instance.add_collection_with_documents.assert_called()
+        mock_zip_archive_instance.add_objects_by_type.assert_called()
+        mock_zip_archive_instance.add_manifest.assert_called()

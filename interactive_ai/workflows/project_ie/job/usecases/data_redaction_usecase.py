@@ -411,18 +411,17 @@ class ExportDataRedactionUseCase(BaseDataRedactionUseCase):
     @staticmethod
     def purge_model_docs_if_necessary(doc: dict) -> dict:
         purge_info = doc.get("purge_info")
-        if purge_info is not None:
-            if purge_info["is_purged"]:
-                return doc
+        if purge_info is not None and purge_info["is_purged"]:
+            return doc
 
-            new_purge_info = {
-                "is_purged": True,
-                "purge_time": now(),
-                "user_id": "export_project_job",
-            }
-            doc["purge_info"] = new_purge_info
-            doc["size"] = 0
-            doc["exportable_code_path"] = ""
+        new_purge_info = {
+            "is_purged": True,
+            "purge_time": now(),
+            "user_id": "export_project_job",
+        }
+        doc["purge_info"] = new_purge_info
+        doc["size"] = 0
+        doc["exportable_code_path"] = ""
         return doc
 
 
