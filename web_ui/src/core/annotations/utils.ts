@@ -1,12 +1,13 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { isPointInShape } from '@geti/smart-tools/utils';
+
 import { isNonEmptyArray } from '../../shared/utils';
 import { Label } from '../labels/label.interface';
 import { AnnotationStatePerTask, MEDIA_ANNOTATION_STATUS } from '../media/base.interface';
 import { Task } from '../projects/task.interface';
 import { Annotation, AnnotationLabel } from './annotation.interface';
-import { isPointInShape } from './math';
 import { Circle, Point, Polygon, Pose, Rect, RotatedRect, Shape } from './shapes.interface';
 import { ShapeType } from './shapetype.enum';
 

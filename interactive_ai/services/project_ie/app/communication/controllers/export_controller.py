@@ -5,6 +5,7 @@
 
 import logging
 import os
+from enum import Enum
 
 from grpc import RpcError
 from starlette.responses import RedirectResponse
@@ -26,27 +27,44 @@ JOB_SERVICE_GRPC_ADDRESS = os.environ.get("JOB_SERVICE_ADDRESS", "localhost:5005
 PROJECT_EXPORT_TYPE = "export_project"
 
 
+class IncludeModelsType(str, Enum):
+    """Enum for specifying which models to include in the export"""
+
+    all = "all"
+    none = "none"
+    latest_active = "latest_active"
+
+
 class ExportController:
     """
     The export controller submits the project export request to the job scheduler.
     """
 
     @classmethod
-    def submit_project_export_job(cls, project_identifier: ProjectIdentifier, author_id: ID) -> ID:
+    def submit_project_export_job(
+        cls, project_identifier: ProjectIdentifier, author_id: ID, include_models: IncludeModelsType
+    ) -> ID:
         """
         Submit project export job to the job scheduler
 
         :param project_identifier: Identifier of the project to export
         :param author_id: ID of the user triggering the export job
+        :param include_models: Specifies which models to include in the export
         :return: submitted job id
         :raises FailedJobSubmissionException: if the export job cannot be submitted to the scheduler
         """
+        if include_models not in [IncludeModelsType.all]:
+            raise NotImplementedError(
+                f"Exporting projects including models of type '{include_models}' is not supported yet."
+            )
+
         project_to_export = ProjectRepo().get_by_id(project_identifier.project_id)
         if isinstance(project_to_export, NullProject):
             raise ProjectNotFoundException(project_identifier.project_id)
 
         job_payload = {
             "project_id": str(project_to_export.id_),
+            "include_models": include_models.value,
         }
         job_metadata = {
             "project": {

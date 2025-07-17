@@ -5,7 +5,20 @@ import { FormEvent, useEffect, useState } from 'react';
 
 import { paths } from '@geti/core';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-import { ActionGroup, Button, ButtonGroup, Divider, Flex, Form, Item, Key, Text, TextField, View } from '@geti/ui';
+import {
+    ActionGroup,
+    Button,
+    ButtonGroup,
+    Divider,
+    Flex,
+    Form,
+    Item,
+    Key,
+    PhotoPlaceholder,
+    Text,
+    TextField,
+    View,
+} from '@geti/ui';
 import { CheckmarkCircleOutline, DeleteOutline, RemoveCircle } from '@geti/ui/icons';
 import dayjs from 'dayjs';
 import { isEmpty } from 'lodash-es';
@@ -14,7 +27,6 @@ import { useOverlayTriggerState } from 'react-stately';
 
 import { AccountStatus, Organization } from '../../../core/organizations/organizations.interface';
 import { DeleteDialog } from '../../../shared/components/delete-dialog/delete-dialog.component';
-import { PhotoPlaceholder } from '../../../shared/components/photo-placeholder/photo-placeholder.component';
 import { Header } from '../../shared/components/header/header.component';
 import { useOrganization } from './hooks/organization.hook';
 

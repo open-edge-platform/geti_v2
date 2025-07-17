@@ -3,9 +3,9 @@
 
 import { PointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { clampPointBetweenImage, isPointOverPoint } from '@geti/smart-tools/utils';
 import { differenceWith, isEmpty, isEqual } from 'lodash-es';
 
-import { clampPointBetweenImage, isPointOverPoint } from '../../../../core/annotations/math';
 import { Point, Polygon } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { useEventListener } from '../../../../hooks/event-listener/event-listener.hook';
@@ -146,7 +146,7 @@ export const PolygonTool = ({ annotationToolContext }: ToolAnnotationContextProp
     const optimizePolygonOrSegments = async (iPolygon: Polygon): Promise<Polygon> => {
         if (worker) {
             if (mode === PolygonMode.MagneticLasso) {
-                return worker.optimizePolygon(iPolygon);
+                return convertToolShapeToGetiShape(await worker.optimizePolygon(iPolygon));
             }
 
             const lastSegment = differenceWith(iPolygon.points, segments.flat(), isEqual);

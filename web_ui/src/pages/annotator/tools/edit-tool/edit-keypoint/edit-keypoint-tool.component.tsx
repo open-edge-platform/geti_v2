@@ -3,8 +3,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { getBoundingBox } from '@geti/smart-tools/utils';
+
 import { KeypointAnnotation } from '../../../../../core/annotations/annotation.interface';
-import { getBoundingBox } from '../../../../../core/annotations/math';
 import { Point } from '../../../../../core/annotations/shapes.interface';
 import { useSelected } from '../../../../../providers/selected-provider/selected-provider.component';
 import { PoseEdges } from '../../../annotation/shapes/pose-edges.component';

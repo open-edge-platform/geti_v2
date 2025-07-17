@@ -11,15 +11,14 @@ import {
     Polygon as ToolPolygon,
     Rect as ToolRect,
     RotatedRect as ToolRotatedRect,
-} from '@geti/smart-tools/src/shared/interfaces';
+} from '@geti/smart-tools/types';
+import { BoundingBox, getBoundingBox, getCenterOfShape, rotatedRectCorners, Vec2 } from '@geti/smart-tools/utils';
 import { defer, isEmpty } from 'lodash-es';
 
 import { Annotation, RegionOfInterest } from '../../../core/annotations/annotation.interface';
-import { BoundingBox, getBoundingBox, getCenterOfShape, rotatedRectCorners } from '../../../core/annotations/math';
 import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from '../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../core/annotations/shapetype.enum';
 import { isCircle, isPolygon, isPoseShape, isRect, isRotatedRect } from '../../../core/annotations/utils';
-import * as Vec2 from '../../../core/annotations/vec2';
 import { Label } from '../../../core/labels/label.interface';
 import { isLeftButton, isWheelButton } from '../../buttons-utils';
 import { ToolLabel, ToolType } from '../core/annotation-tool-context.interface';

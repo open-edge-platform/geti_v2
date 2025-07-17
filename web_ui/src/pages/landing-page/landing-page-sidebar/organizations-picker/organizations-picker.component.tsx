@@ -5,7 +5,7 @@ import { useRef } from 'react';
 
 import { getErrorMessage } from '@geti/core/src/services/utils';
 import { useOnboardUserMutation } from '@geti/core/src/users/hook/use-onboard-user-mutation.hook';
-import { CustomPopover, dimensionValue, Flex, Item, ListBox, Picker, View } from '@geti/ui';
+import { CustomPopover, dimensionValue, Flex, Item, ListBox, PhotoPlaceholder, Picker, View } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { isNil } from 'lodash-es';
 
@@ -17,7 +17,6 @@ import {
     isOrganizationVisible,
     isUserInvitedInOrg,
 } from '../../../../routes/organizations/util';
-import { PhotoPlaceholder } from '../../../../shared/components/photo-placeholder/photo-placeholder.component';
 import { QuietToggleButton } from '../../../../shared/components/quiet-button/quiet-toggle-button.component';
 import { hasEqualId, isNonEmptyString } from '../../../../shared/utils';
 

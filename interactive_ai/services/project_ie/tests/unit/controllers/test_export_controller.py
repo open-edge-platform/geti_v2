@@ -5,6 +5,7 @@ import os
 from unittest.mock import patch
 
 from communication.controllers import ExportController
+from communication.endpoints.export_endpoints import IncludeModelsType
 from communication.job_creation_helpers import JobDuplicatePolicy
 from repos import ZipStorageRepo
 
@@ -21,7 +22,8 @@ class TestExportController:
     def test_submit_project_export_job(self, fxt_ote_id, fxt_project) -> None:
         submitted_job_id = fxt_ote_id(100)
         author_id = fxt_ote_id(101)
-        payload = {"project_id": str(fxt_project.id_)}
+        include_models = IncludeModelsType.all
+        payload = {"project_id": str(fxt_project.id_), "include_models": include_models.value}
         metadata = {
             "project": {
                 "id": str(fxt_project.id_),
@@ -33,14 +35,14 @@ class TestExportController:
             patch.object(ProjectRepo, "get_by_id", return_value=fxt_project),
         ):
             job_id = ExportController.submit_project_export_job(
-                project_identifier=fxt_project.identifier, author_id=author_id
+                project_identifier=fxt_project.identifier, author_id=author_id, include_models=include_models
             )
 
         mock_grpc_client_submit.assert_called_once_with(
             priority=1,
             job_name="Project Export",
             job_type="export_project",
-            key=json.dumps(dict(payload, type="export_project")),
+            key=json.dumps({"project_id": str(fxt_project.id_), "type": "export_project"}),
             payload=payload,
             metadata=metadata,
             duplicate_policy=JobDuplicatePolicy.REPLACE.name.lower(),

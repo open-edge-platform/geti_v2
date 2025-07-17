@@ -3,8 +3,9 @@
 
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 
+import { getBoundingBox, roiFromImage } from '@geti/smart-tools/utils';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
-import { getBoundingBox, roiFromImage } from '../../../../core/annotations/math';
 import { getImageData } from '../../../../shared/canvas-utils';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { useSelectedMediaItem } from '../selected-media-item-provider/selected-media-item-provider.component';

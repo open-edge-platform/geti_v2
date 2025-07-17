@@ -3,6 +3,7 @@
 
 import { createContext, useContext, useEffect } from 'react';
 
+import { EncodingOutput } from '@geti/smart-tools';
 import { useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import { isEmpty } from 'lodash-es';
 
@@ -18,7 +19,6 @@ import { StateProviderProps } from '../tools.interface';
 import UndoRedoProvider from '../undo-redo/undo-redo-provider.component';
 import useUndoRedoState from '../undo-redo/use-undo-redo-state';
 import { useApplyLabelToPendingAnnotations } from '../useApplyLabelToPendingAnnotations';
-import { EncodingOutput } from './model/segment-anything-encoder';
 import { InteractiveAnnotationPoint } from './segment-anything.interface';
 import { useDecodingMutation, useDecodingQuery, useDecodingQueryOptions } from './use-decoding-query.hook';
 import { useSegmentAnythingModel } from './use-segment-anything-model.hook';

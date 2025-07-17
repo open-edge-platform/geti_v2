@@ -3,11 +3,11 @@
 
 import { PointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 
+import { clampBox, clampPointBetweenImage, isPointInShape, pointsToRect } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Annotation, Annotation as AnnotationInterface } from '../../../../../core/annotations/annotation.interface';
-import { clampBox, clampPointBetweenImage, isPointInShape, pointsToRect } from '../../../../../core/annotations/math';
 import { Point, Rect } from '../../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
 import { hasEqualId } from '../../../../../shared/utils';

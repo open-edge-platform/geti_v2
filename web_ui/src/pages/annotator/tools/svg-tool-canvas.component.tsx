@@ -3,7 +3,8 @@
 
 import { FC, PropsWithChildren, RefObject, SVGProps } from 'react';
 
-import { roiFromImage } from '../../../core/annotations/math';
+import { roiFromImage } from '@geti/smart-tools/utils';
+
 import { allowPanning } from './utils';
 
 type CanvasProps = SVGProps<SVGSVGElement> & { image: ImageData } & { canvasRef?: RefObject<SVGRectElement> };

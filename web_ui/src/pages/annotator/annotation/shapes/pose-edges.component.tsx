@@ -3,10 +3,10 @@
 
 import { Fragment } from 'react';
 
+import { BoundingBox, getBoundingBox } from '@geti/smart-tools/utils';
 import clsx from 'clsx';
 import { isEmpty, isNil } from 'lodash-es';
 
-import { BoundingBox, getBoundingBox } from '../../../../core/annotations/math';
 import { isKeypointTask } from '../../../../core/projects/utils';
 import { useSelected } from '../../../../providers/selected-provider/selected-provider.component';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';

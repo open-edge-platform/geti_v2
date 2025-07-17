@@ -3,9 +3,9 @@
 
 import { PointerEvent, useCallback, useEffect, useRef } from 'react';
 
+import { getIntersectionPoint } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 
-import { getIntersectionPoint } from '../../../core/annotations/math';
 import { Point, Polygon } from '../../../core/annotations/shapes.interface';
 import { leftRightMouseButtonHandler } from '../../utils';
 import { usePolygonState } from '../tools/polygon-tool/polygon-state-provider.component';

@@ -3,8 +3,9 @@
 
 import { PointerEvent, useEffect, useRef, useState } from 'react';
 
+import { clampPointBetweenImage, isPointInShape, pointInRectangle } from '@geti/smart-tools/utils';
+
 import { Annotation } from '../../../../core/annotations/annotation.interface';
-import { clampPointBetweenImage, isPointInShape, pointInRectangle } from '../../../../core/annotations/math';
 import { Point, Shape } from '../../../../core/annotations/shapes.interface';
 import { useThrottledCallback } from '../../../../hooks/use-throttled-callback/use-throttled-callback.hook';
 import { isRightButton } from '../../../buttons-utils';

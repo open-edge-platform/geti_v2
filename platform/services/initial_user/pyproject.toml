@@ -29,7 +29,7 @@ dev = [
     "mypy~=1.15",
     "types-requests",
     "pytest-mock>=3.14.0",
-    "protobuf~=4.23.4",
+    "protobuf~=4.25.8",
     "grpcio_tools==1.60.0",
     "mypy-protobuf==3.5"
 ]

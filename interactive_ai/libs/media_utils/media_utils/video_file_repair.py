@@ -80,6 +80,8 @@ class VideoFileRepair:
                     "0",
                     "-fps_mode:v",
                     "cfr",
+                    "-threads",
+                    "1",
                     temporary_file_path,
                 ],
                 stdout=subprocess.PIPE,

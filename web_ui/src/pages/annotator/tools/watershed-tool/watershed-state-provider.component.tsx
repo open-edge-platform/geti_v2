@@ -5,6 +5,7 @@ import { createContext, Dispatch, SetStateAction, useCallback, useContext, useMe
 
 import { type Watershed, type WatershedPolygon } from '@geti/smart-tools';
 import { UseMutateFunction, useMutation } from '@tanstack/react-query';
+import { Remote } from 'comlink';
 
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { AlgorithmType } from '../../../../hooks/use-load-ai-webworker/algorithm.interface';
@@ -87,7 +88,7 @@ const useWatershedUndoRedoState = (): [
 export const WatershedStateProvider = ({ children }: StateProviderProps): JSX.Element => {
     const { worker: watershed } = useLoadAIWebworker(AlgorithmType.WATERSHED);
 
-    const wsInstance = useRef<Watershed | null>(null);
+    const wsInstance = useRef<Remote<Watershed> | null>(null);
 
     const { addNotification } = useNotification();
     const { getToolSettings } = useAnnotationToolContext();

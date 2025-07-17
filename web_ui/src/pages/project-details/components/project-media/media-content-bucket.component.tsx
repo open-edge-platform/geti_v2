@@ -89,11 +89,12 @@ export const MediaContentBucket = ({
     handleUploadMediaCallback,
 }: MediaContentBucketProps): JSX.Element => {
     const { project } = useProject();
+    const isLargeSize = useMediaQuery(isLargeSizeQuery);
+    const [viewMode, setViewMode] = useViewMode(mediaBucket, INITIAL_VIEW_MODE);
+    const { FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE } = useFeatureFlags();
+
     const isAnomalyProject = mediaBucket !== MEDIA_CONTENT_BUCKET.GENERIC;
     const isKeypointProject = project.domains.some(isKeypointDetection);
-    const isLargeSize = useMediaQuery(isLargeSizeQuery);
-    const { FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE } = useFeatureFlags();
-    const [viewMode, setViewMode] = useViewMode(mediaBucket, INITIAL_VIEW_MODE);
 
     const {
         media,
@@ -181,6 +182,7 @@ export const MediaContentBucket = ({
                 />
 
                 <MediaDropBox
+                    multiple
                     DropBoxIcon={DropBoxIcon}
                     dropBoxIconSize={dropBoxIconSize}
                     isVisible={shouldShowMediaDrop}
@@ -202,7 +204,6 @@ export const MediaContentBucket = ({
                     dropBoxHeader={
                         <MediaDropBoxHeader formats={acceptedFormats} bucket={mediaBucket} isMultipleUpload />
                     }
-                    multiple
                 >
                     <Flex height='100%' direction='column' position={'relative'}>
                         {hasMediaItems && (

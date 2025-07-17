@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { RITM } from '@geti/smart-tools';
+import { RITM } from '@geti/smart-tools/ritm';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';

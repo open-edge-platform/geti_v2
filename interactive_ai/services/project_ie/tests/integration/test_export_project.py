@@ -26,10 +26,12 @@ class TestProjectExport:
     def test_start_export(self, fxt_session_ctx, fxt_test_app, fxt_project, fxt_ote_id) -> None:
         # Arrange
         export_job_id = fxt_ote_id(123)
+        include_models = "all"
         endpoint = (
             f"/api/v1/organizations/{str(fxt_session_ctx.organization_id)}"
             f"/workspaces/{str(fxt_session_ctx.workspace_id)}"
             f"/projects/{str(fxt_project.id_)}:export"
+            f"?include_models={include_models}"
         )
         with (
             patch.object(GRPCJobsClient, "__init__", new=do_nothing),
@@ -42,7 +44,7 @@ class TestProjectExport:
 
         # Assert
         expected_job_key = f'{{"project_id": "{str(fxt_project.id_)}", "type": "export_project"}}'
-        expected_job_payload = {"project_id": str(fxt_project.id_)}
+        expected_job_payload = {"project_id": str(fxt_project.id_), "include_models": include_models}
         expected_job_metadata = {
             "project": {
                 "id": str(fxt_project.id_),

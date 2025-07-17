@@ -15,6 +15,7 @@ post:
     - $ref: '../../parameters/path/organization_id.yaml'
     - $ref: '../../parameters/path/workspace_id.yaml'
     - $ref: '../../parameters/path/project_id.yaml'
+    - $ref: '../../parameters/query/include_models.yaml'
   responses:
     '200':
       description: Success

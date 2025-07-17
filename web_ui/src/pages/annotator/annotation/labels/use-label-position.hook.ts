@@ -3,10 +3,10 @@
 
 import { useMemo } from 'react';
 
+import { highestCorner, lowestCorner } from '@geti/smart-tools/utils';
 import polylabel from 'polylabel';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
-import { highestCorner, lowestCorner } from '../../../../core/annotations/math';
 import { isCircle, isPolygon, isPoseShape, isRect, isRotatedRect } from '../../../../core/annotations/utils';
 
 const getShapeHeight = (annotation: Annotation) => {

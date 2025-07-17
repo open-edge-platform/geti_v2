@@ -1,0 +1,13 @@
+name: include_models
+in: query
+description: |
+  Specify which models to include in the export.
+  Allowed values: `all` (include all models), `none` (exclude models), `latest_active` (include only the last active model).
+required: false
+schema:
+  type: string
+  default: all
+  enum:
+    - all
+    - none
+    - latest_active

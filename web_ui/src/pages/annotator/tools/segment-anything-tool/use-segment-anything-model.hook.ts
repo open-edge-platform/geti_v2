@@ -3,7 +3,9 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { EncodingOutput, SegmentAnythingModel } from '@geti/smart-tools';
 import { useQuery } from '@tanstack/react-query';
+import { Remote } from 'comlink';
 
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { DOMAIN } from '../../../../core/projects/core.interface';
@@ -14,8 +16,7 @@ import { useNextMediaItemWithImage } from '../../hooks/use-next-media-item-with-
 import { useSelectedMediaItem } from '../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { SelectedMediaItem } from '../../providers/selected-media-item-provider/selected-media-item.interface';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { SegmentAnythingModel } from './model/segment-anything';
-import { EncodingOutput } from './model/segment-anything-encoder';
+import { convertToolShapeToGetiShape } from '../utils';
 import { InteractiveAnnotationPoint } from './segment-anything.interface';
 
 const useDecoderOutput = () => {
@@ -34,7 +35,7 @@ const useDecoderOutput = () => {
     }, [activeDomains]);
 };
 
-const useDecodingFn = (model: SegmentAnythingModel | undefined, encoding: EncodingOutput | undefined) => {
+const useDecodingFn = (model: Remote<SegmentAnythingModel> | undefined, encoding: EncodingOutput | undefined) => {
     const shapeType = useDecoderOutput();
 
     // TODO: look into returning a new "decoder model" instance that already has the encoding data
@@ -61,12 +62,12 @@ const useDecodingFn = (model: SegmentAnythingModel | undefined, encoding: Encodi
             image: undefined,
         });
 
-        return shapes;
+        return shapes.map(convertToolShapeToGetiShape);
     };
 };
 
 const useEncodingQuery = (
-    model: SegmentAnythingModel | undefined,
+    model: Remote<SegmentAnythingModel> | undefined,
     selectedMediaItem: Pick<SelectedMediaItem, 'identifier' | 'image'> | undefined
 ) => {
     return useQuery({
@@ -93,7 +94,7 @@ const useSegmentAnythingWorker = (
 ) => {
     const { worker } = useLoadAIWebworker(algorithmType);
 
-    const modelRef = useRef<SegmentAnythingModel>();
+    const modelRef = useRef<Remote<SegmentAnythingModel>>();
     const [modelIsLoading, setModelIsLoading] = useState(false);
 
     useEffect(() => {
@@ -101,7 +102,7 @@ const useSegmentAnythingWorker = (
             setModelIsLoading(true);
 
             if (worker) {
-                const model: SegmentAnythingModel = await new worker.model();
+                const model = worker;
 
                 await model.init(algorithmType);
 

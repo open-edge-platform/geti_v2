@@ -2,10 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { SSIMMatch as ToolSSIMMatch, type RunSSIMProps as ToolRunSSIMProps } from '@geti/smart-tools';
+import { getBoundingBox } from '@geti/smart-tools/utils';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { intersectionOverUnion } from '../../../../core/annotations/intersection-over-union';
-import { getBoundingBox } from '../../../../core/annotations/math';
 import { Rect, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { DOMAIN } from '../../../../core/projects/core.interface';
