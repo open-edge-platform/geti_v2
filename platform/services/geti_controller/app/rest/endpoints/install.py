@@ -67,7 +67,7 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
 
     commence_upgrade(
         source_version="None",
-        target_version=str(INSTALL_VERSION),
+        target_version=INSTALL_VERSION,
         registry=GETI_REGISTRY,
         image_tag=INSTALL_VERSION,
         manifest_version=INSTALL_VERSION,
