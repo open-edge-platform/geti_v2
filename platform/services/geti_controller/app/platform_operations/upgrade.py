@@ -68,6 +68,9 @@ def update_upgrade_progress(patch: dict) -> dict:
             logger.info(f"Stored upgrade data: {data}")
     except (IsADirectoryError, PermissionError):
         logger.exception(f"Unable to open {UPGRADE_FILE_PATH}. Progress will not be saved.")
+    except FileNotFoundError:
+        logger.info(f"File {UPGRADE_FILE_PATH} not found. Progress will not be saved.")
+        data = _fill_in_defaults({}) | patch
 
     return data
 
