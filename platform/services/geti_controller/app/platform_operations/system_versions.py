@@ -15,7 +15,9 @@ def get_nvidia_driver_version() -> str | None:
     try:
         config.load_incluster_config()
         core_v1 = client.CoreV1Api()
-        pods = core_v1.list_namespaced_pod(namespace="kube-system", label_selector="app.kubernetes.io/name=nvidia-device-plugin")
+        pods = core_v1.list_namespaced_pod(
+            namespace="kube-system", label_selector="app.kubernetes.io/name=nvidia-device-plugin"
+        )
         if not pods.items:
             logger.warning("No nvidia-device-plugin pod found in kube-system namespace.")
             return None

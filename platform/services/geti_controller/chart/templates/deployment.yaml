@@ -65,6 +65,16 @@ spec:
                 configMapKeyRef:
                   name: {{ .Release.Namespace }}-configuration
                   key: platformVersion
+            - name: RENDER_GID
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Namespace }}-configuration
+                  key: render_gid
+            - name: GPU_LABEL
+              valueFrom:
+                configMapKeyRef:
+                  name: accelerator-configuration
+                  key: accelerator_name
             - name: ENABLE_TRACING
               value: "true"
             - name: OTEL_SERVICE_NAME

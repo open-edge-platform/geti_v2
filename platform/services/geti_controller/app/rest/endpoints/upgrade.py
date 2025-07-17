@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import logging
+import os
 import re
 
 from fastapi import HTTPException, status
@@ -95,6 +96,8 @@ def upgrade_platform(payload: UpgradeRequest) -> UpgradeResponse:
         image_tag=payload.version_number,
         manifest_version=payload.version_number,
         direction="upgrade",
+        render_gid=os.getenv("RENDER_GID"),
+        gpu_label=os.getenv("GPU_LABEL"),
     )
 
     logger.info(f"Upgrade to version {payload.version_number} has started.")

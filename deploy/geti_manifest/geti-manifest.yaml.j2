@@ -1,5 +1,5 @@
 k3s_version: "v1.33.1+k3s1"
-nvidia_drivers_version: "1.2"
+nvidia_drivers_version: "535.*.*"
 intel_drivers_version: "1.3"
 intel_device_plugin_version: $INTEL_DEVICE_PLUGIN_VERSION
 is_upgrade_required: false
@@ -13,10 +13,10 @@ metadata:
 spec:
   repo: https://nvidia.github.io/k8s-device-plugin
   chart: nvidia-device-plugin
-  version: v0.16.2
+  version: v0.17.1
   targetNamespace: kube-system
   createNamespace: false
-  timeout: 60m
+  timeout: 30m
   valuesContent: |-
     affinity:
       nodeAffinity:
@@ -27,11 +27,9 @@ spec:
               operator: In
               values:
               - "true"
-    nodeSelector:
-      nvidia.com/gpu: "true"
     image:
       repository: nvcr.io/nvidia/k8s-device-plugin
-      tag: "v0.16.2-ubi8"
+      tag: "v0.17.1-ubi8"
     runtimeClassName: nvidia
     failOnInitError: "false"
     deviceListStrategy: volume-mounts
