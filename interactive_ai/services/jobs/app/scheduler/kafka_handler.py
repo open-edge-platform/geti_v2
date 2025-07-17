@@ -193,8 +193,10 @@ class ProgressHandler(BaseKafkaHandler, metaclass=Singleton):
         )
         message = (
             (
-                "Task execution failed due to internal issue (Reason: OOM). "
-                "Please contact customer support for assistance."
+                "The job failed due to insufficient memory. "
+                "This may happen if the chosen model is too large for the available hardware, "
+                "or if there is an internal bug in the training pipeline. Please try again with a more "
+                "lightweight model if possible: if the problem persists, please report the issue."
             )
             if state == JobTaskState.FAILED and oom
             else None
