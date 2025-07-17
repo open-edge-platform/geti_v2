@@ -1,0 +1,16 @@
+type: object
+properties:
+  key:
+    type: string
+    description: Identifier for the integer parameter used in code references
+  value:
+    type: integer
+    description: Current configured value of the integer parameter
+
+required:
+  - key
+  - value
+
+example:
+  key: max_epochs
+  value: 64

@@ -1,0 +1,28 @@
+type: object
+properties:
+  task_id:
+    type: string
+    description: Unique identifier for the task
+  training:
+    $ref: './configurable_parameters/aggregated_parameters.yaml'
+  auto_training:
+    $ref: './configurable_parameters/aggregated_parameters.yaml'
+
+required:
+  - task_id
+  - training
+  - auto_training
+
+example:
+  task_id: "61012cdb1d38a5e71ef3bafd"
+  training:
+    constraints:
+      - key: "min_images_per_label"
+        value: 0
+  auto_training:
+    - key: "enable"
+      value: true
+    - key: "enable_dynamic_required_annotations"
+      value: false
+    - key: "min_images_per_label"
+      value: 1

@@ -4,9 +4,20 @@
 import { FC, Key, useState } from 'react';
 
 import { RESOURCE_TYPE, RoleResource, USER_ROLE } from '@geti/core/src/users/users.interface';
-import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Flex, Heading, Item, Picker } from '@geti/ui';
+import {
+    Button,
+    ButtonGroup,
+    Content,
+    Dialog,
+    DialogContainer,
+    Divider,
+    Flex,
+    Heading,
+    Item,
+    PhotoPlaceholder,
+    Picker,
+} from '@geti/ui';
 
-import { PhotoPlaceholder } from '../../../../shared/components/photo-placeholder/photo-placeholder.component';
 import { TruncatedText } from '../../../../shared/components/truncated-text/truncated-text.component';
 import { Membership } from '../mocked-memberships';
 

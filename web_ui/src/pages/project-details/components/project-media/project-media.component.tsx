@@ -12,7 +12,6 @@ import { UploadMedia } from '../../../../providers/media-upload-provider/media-u
 import { CustomerSupportLink } from '../../../../shared/components/customer-support-link/customer-support-link.component';
 import { getIds } from '../../../../shared/utils';
 import { useDatasetIdentifier } from '../../../annotator/hooks/use-dataset-identifier.hook';
-import { DatasetLoaderManager } from '../../../camera-page/components/loader-managers/dataset-loader-manager.component';
 import { useProject } from '../../providers/project-provider/project-provider.component';
 import { useDatasetMediaUpload } from '../project-dataset/hooks/dataset-media-upload';
 import { useSelectedDataset } from '../project-dataset/use-selected-dataset/use-selected-dataset.hook';
@@ -54,8 +53,6 @@ export const ProjectMedia = (): JSX.Element => {
 
     return (
         <Flex height='100%'>
-            <DatasetLoaderManager mediaUploadState={mediaUploadState} />
-
             {isSingleDomainClassification && (
                 <UploadLabelSelectorDialog
                     tasks={project.tasks}

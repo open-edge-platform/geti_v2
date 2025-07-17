@@ -8,7 +8,8 @@
   "dependencies": {
     "@doodle3d/clipper-js": "^1.0.11",
     "ndarray": "^1.0.19",
-    "ndarray-ops": "^1.2.2"
+    "ndarray-ops": "^1.2.2",
+    "polylabel": "^1.1.0"
   },
   "devDependencies": {
     "@geti/config": "*",
@@ -25,7 +26,10 @@
   },
   "exports": {
     ".": "./index.ts",
-    "./opencv": "./src/opencv/interfaces/index.d.ts"
+    "./opencv": "./src/opencv/interfaces/index.d.ts",
+    "./utils": "./src/utils/index.ts",
+    "./types": "./src/shared/index.ts",
+    "./ritm": "./src/ritm/index.ts"
   },
   "scripts": {
     "type-check": "tsc --noEmit -p tsconfig.json",

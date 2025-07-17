@@ -3,7 +3,8 @@
 
 import { useState } from 'react';
 
-import { getBoundingBox } from '../../../../core/annotations/math';
+import { getBoundingBox } from '@geti/smart-tools/utils';
+
 import { Rect, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { Circle } from '../../annotation/shapes/circle.component';

@@ -3,8 +3,9 @@
 
 import { RefObject, useCallback, useMemo, useRef, useState } from 'react';
 
+import { clampPointBetweenImage } from '@geti/smart-tools/utils';
+
 import { Annotation } from '../../../../core/annotations/annotation.interface';
-import { clampPointBetweenImage } from '../../../../core/annotations/math';
 import { isNotKeypointTask } from '../../../../core/projects/utils';
 import { useEventListener } from '../../../../hooks/event-listener/event-listener.hook';
 import { hasEqualId } from '../../../../shared/utils';

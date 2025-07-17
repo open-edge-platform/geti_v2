@@ -1,9 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { pointInRectangle } from '@geti/smart-tools/utils';
 import { expect, Locator } from '@playwright/test';
 
-import { pointInRectangle } from '../../../../src/core/annotations/math';
 import { Rect, RotatedRect } from '../../../../src/core/annotations/shapes.interface';
 import { annotatorTest as test } from '../../../fixtures/annotator-test';
 import { annotatorUrl, userAnnotationsResponse } from '../../../mocks/classification/mocks';

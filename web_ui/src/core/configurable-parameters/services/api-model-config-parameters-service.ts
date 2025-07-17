@@ -44,8 +44,6 @@ export interface TrainedModelConfigurationQueryParameters {
     modelId: string;
 }
 
-export type ProjectConfigurationQueryParameters = { taskId?: string };
-
 export interface CreateApiModelConfigParametersService {
     /**
      * @deprecated Please use getTrainingConfiguration instead
@@ -71,8 +69,7 @@ export interface CreateApiModelConfigParametersService {
     getProjectConfiguration: (projectIdentifier: ProjectIdentifier) => Promise<ProjectConfiguration>;
     updateProjectConfiguration: (
         projectIdentifier: ProjectIdentifier,
-        payload: ProjectConfigurationUploadPayload,
-        queryParameters?: ProjectConfigurationQueryParameters
+        payload: ProjectConfigurationUploadPayload
     ) => Promise<void>;
 
     getTrainingConfiguration: (
@@ -184,16 +181,11 @@ export const createApiModelConfigParametersService: CreateApiService<CreateApiMo
 
     const updateProjectConfiguration: CreateApiModelConfigParametersService['updateProjectConfiguration'] = async (
         projectIdentifier,
-        payload,
-        queryParameters
+        payload
     ) => {
         const payloadDTO = getProjectConfigurationUploadPayloadDTO(payload);
 
-        await instance.patch(router.CONFIGURATION.PROJECT(projectIdentifier), payloadDTO, {
-            params: {
-                task_id: queryParameters?.taskId,
-            },
-        });
+        await instance.patch(router.CONFIGURATION.PROJECT(projectIdentifier), payloadDTO);
     };
 
     return {

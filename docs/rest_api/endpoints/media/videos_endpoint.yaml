@@ -5,7 +5,10 @@ post:
   description: |-
     Upload a video to a dataset. Allowed formats are `.mp4`, `.avi`, `.mkv` `.mov`, `.webm` and `.m4v`. The maximum resolution for
     videos is 8K and the file may not be larger than 4.7 GB. For a classification project, all frames of the uploaded
-    video can be annotated directly by specifying the labels in the field upload_info. 
+    video can be annotated directly by specifying the labels in the field upload_info.
+    As soon as video is uploaded, asynchronous background preprocessing is started. 
+    This process generates video thumbnail and minimized video.
+    When preprocessing finishes, video is assigned either FINISHED or FAILED preprocessing status with a failure message.
   operationId: UploadVideo
   parameters:
     - $ref: '../../parameters/path/organization_id.yaml'
@@ -32,16 +35,6 @@ post:
                 Labels are applied to all video frames at 1 fps. 
                 Example: *{\"label_ids\":[\"613776cec8223e455a88383d\", \"613776cec8223e455a88383e\"]}*. 
   responses:
-    '200':
-      description: Video has been uploaded. The 'size' field represents bits, "duration" is in seconds.
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../interactive_ai/services/api/schemas/media/responses/video.yaml'
-          examples:
-            Video upload response:
-              value:
-                $ref: '../../examples/media/responses/single_video.json'
     '202':
       description: Video has been uploaded, preprocessing has been started. The 'size' field represents bits, "duration" is in seconds.
       content:

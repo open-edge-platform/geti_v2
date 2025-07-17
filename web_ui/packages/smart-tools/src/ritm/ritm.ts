@@ -4,8 +4,8 @@
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
 import * as ort from 'onnxruntime-web';
-import type OpenCVTypes from 'OpenCVTypes';
 
+import { OpenCVTypes } from '../opencv/interfaces';
 import { Point, Polygon, RegionOfInterest, Shape, ShapeType } from '../shared/interfaces';
 import { OpenCVLoader } from '../utils/opencv-loader';
 import { approximateShape, concatFloat32Arrays, isPolygonValid, loadSource, stackPlanes } from '../utils/tool-utils';

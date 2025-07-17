@@ -1,0 +1,167 @@
+{
+  "task_id": "60d31793d5f1fb7e6e3c1a65",
+  "model_manifest_id": "Custom_Semantic_Segmentation_DINOV2_S",
+  "dataset_preparation": {
+    "subset_split": [
+      {
+        "key": "training",
+        "value": 80
+      },
+      {
+        "key": "validation",
+        "value": 10
+      },
+      {
+        "key": "test",
+        "value": 10
+      },
+      {
+        "key": "auto_selection",
+        "value": true
+      },
+      {
+        "key": "remixing",
+        "value": false
+      },
+      {
+        "key": "dataset_size",
+        "value": 256
+      }
+    ],
+    "filtering": {
+      "min_annotation_pixels": [
+        {
+          "key": "enable",
+          "value": true
+        },
+        {
+          "key": "min_annotation_pixels",
+          "value": 10
+        }
+      ],
+      "max_annotation_pixels": [
+        {
+          "key": "enable",
+          "value": true
+        },
+        {
+          "key": "max_annotation_pixels",
+          "value": 1000
+        }
+      ],
+      "min_annotation_objects": [
+        {
+          "key": "enable",
+          "value": true
+        },
+        {
+          "key": "min_annotation_objects",
+          "value": 5
+        }
+      ],
+      "max_annotation_objects": [
+        {
+          "key": "enable",
+          "value": true
+        },
+        {
+          "key": "max_annotation_objects",
+          "value": 100
+        }
+      ]
+    },
+    "augmentation": {
+      "center_crop": [
+        {
+          "key": "enable",
+          "value": true
+        },
+        {
+          "key": "ratio",
+          "value": 0.6
+        }
+      ],
+      "random_affine": [
+        {
+          "key": "enable",
+          "value": true
+        },
+        {
+          "key": "degrees",
+          "value": 15.0
+        },
+        {
+          "key": "translate_x",
+          "value": 0.0
+        },
+        {
+          "key": "translate_y",
+          "value": 0.0
+        },
+        {
+          "key": "scale",
+          "value": 1.0
+        }
+      ],
+      "tiling": [
+        {
+          "key": "enable",
+          "value": true
+        },
+        {
+          "key": "adaptive_tiling",
+          "value": false
+        },
+        {
+          "key": "tile_size",
+          "value": 256
+        },
+        {
+          "key": "tile_overlap",
+          "value": 64
+        }
+      ]
+    }
+  },
+  "training": [
+    {
+      "key": "max_epochs",
+      "value": 50
+    },
+    {
+      "key": "learning_rate",
+      "value": 0.05
+    },
+    {
+      "key": "input_size_width",
+      "value": 32
+    },
+    {
+      "key": "input_size_height",
+      "value": 32
+    },
+    {
+      "early_stopping": [
+        {
+          "key": "enable",
+          "value": true
+        },
+        {
+          "key": "patience",
+          "value": 10
+        }
+      ],
+      "max_detection_per_image": [
+        {
+          "key": "enable",
+          "value": false
+        },
+        {
+          "key": "max_detection_per_image",
+          "value": 10000
+        }
+      ]
+    }
+  ],
+  "evaluation": []
+}

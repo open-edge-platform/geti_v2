@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
 import pytest
 from pydantic import ValidationError
 
@@ -12,7 +11,6 @@ from geti_configuration_tools.hyperparameters import (
     EvaluationParameters,
     GaussianBlur,
     Hyperparameters,
-    MaxDetectionPerImage,
     PartialHyperparameters,
     RandomAffine,
     RandomHorizontalFlip,
@@ -20,6 +18,7 @@ from geti_configuration_tools.hyperparameters import (
     Tiling,
     TrainingHyperParameters,
 )
+from geti_configuration_tools.hyperparameters.augmentation import ColorJitter, RandomIOUCrop, RandomVerticalFlip
 
 
 class TestHyperparameters:
@@ -68,6 +67,9 @@ class TestHyperparameters:
                                 "scale": 0.9,
                             },
                             "random_horizontal_flip": {"enable": True},
+                            "random_vertical_flip": {"enable": True},
+                            "random_iou_crop": {"enable": True},
+                            "color_jitter": {"enable": True},
                             "gaussian_blur": {"enable": True, "kernel_size": 3},
                             "tiling": {"enable": True, "adaptive_tiling": True, "tile_size": 224, "tile_overlap": 32},
                         }
@@ -76,7 +78,6 @@ class TestHyperparameters:
                         "max_epochs": 100,
                         "learning_rate": 0.001,
                         "early_stopping": {"enable": True, "patience": 10},
-                        "max_detection_per_image": {"enable": True, "max_detection_per_image": 100},
                         "input_size_width": 32,
                         "input_size_height": 64,
                         "allowed_values_input_size": [32, 64, 128],
@@ -92,6 +93,9 @@ class TestHyperparameters:
                                 enable=True, degrees=30, translate_x=0.1, translate_y=0.1, scale=0.9
                             ),
                             random_horizontal_flip=RandomHorizontalFlip(enable=True),
+                            random_vertical_flip=RandomVerticalFlip(enable=True),
+                            random_iou_crop=RandomIOUCrop(enable=True),
+                            color_jitter=ColorJitter(enable=True),
                             gaussian_blur=GaussianBlur(enable=True, kernel_size=3),
                             tiling=Tiling(enable=True, adaptive_tiling=True, tile_size=224, tile_overlap=32),
                         )
@@ -100,7 +104,6 @@ class TestHyperparameters:
                         max_epochs=100,
                         learning_rate=0.001,
                         early_stopping=EarlyStopping(enable=True, patience=10),
-                        max_detection_per_image=MaxDetectionPerImage(enable=True, max_detection_per_image=100),
                         input_size_width=32,
                         input_size_height=64,
                         allowed_values_input_size=[32, 64, 128],
@@ -160,6 +163,8 @@ class TestHyperparameters:
             == expected_params.dataset_preparation.augmentation.random_horizontal_flip
         )
 
+        assert expected_params.training
+        assert params.training
         assert params.training.early_stopping == expected_params.training.early_stopping
         assert params.training.max_epochs == expected_params.training.max_epochs
         assert params.training.learning_rate == expected_params.training.learning_rate
@@ -227,6 +232,7 @@ class TestHyperparameters:
         )
 
         # Verify that specified fields are set correctly
+        assert partial_hyperparams.training
         assert partial_hyperparams.training.learning_rate == 0.005
         assert partial_hyperparams.training.early_stopping.enable is True
 

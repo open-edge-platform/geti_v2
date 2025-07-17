@@ -3,9 +3,9 @@
 
 import { PointerEvent, ReactElement, SVGProps, useCallback, useRef, useState } from 'react';
 
+import { calculateDistance } from '@geti/smart-tools/utils';
 import { isEmpty, isFunction, partial } from 'lodash-es';
 
-import { calculateDistance } from '../../../../core/annotations/math';
 import { Point } from '../../../../core/annotations/shapes.interface';
 import { isLeftButton } from '../../../buttons-utils';
 import { getRelativePoint } from '../../../utils';

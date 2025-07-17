@@ -2,8 +2,8 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import Clipper from '@doodle3d/clipper-js';
-import type OpenCVTypes from 'OpenCVTypes';
 
+import { OpenCVTypes } from '../opencv/interfaces';
 import { Point, Polygon } from '../shared/interfaces';
 
 export const formatContourToPoints = (

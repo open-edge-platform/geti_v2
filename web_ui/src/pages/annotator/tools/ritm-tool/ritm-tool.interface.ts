@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { RITM } from '@geti/smart-tools';
+import { RITM } from '@geti/smart-tools/ritm';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { Point, Shape } from '../../../../core/annotations/shapes.interface';

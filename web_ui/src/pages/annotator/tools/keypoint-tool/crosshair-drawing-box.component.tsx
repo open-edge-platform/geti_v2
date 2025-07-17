@@ -3,8 +3,9 @@
 
 import { PointerEvent, useRef, useState } from 'react';
 
+import { clampBox, clampPointBetweenImage, pointsToRect } from '@geti/smart-tools/utils';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
-import { clampBox, clampPointBetweenImage, pointsToRect } from '../../../../core/annotations/math';
 import { Point } from '../../../../core/annotations/shapes.interface';
 import { runWhen } from '../../../../shared/utils';
 import { isLeftButton } from '../../../buttons-utils';

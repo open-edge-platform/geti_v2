@@ -3,8 +3,8 @@
 
 """Controllers for the project I/E REST API"""
 
-from .export_controller import ExportController
+from .export_controller import ExportController, IncludeModelsType
 from .import_controller import ImportController
 from .upload_controller import UploadController
 
-__all__ = ["ExportController", "ImportController", "UploadController"]
+__all__ = ["ExportController", "ImportController", "IncludeModelsType", "UploadController"]

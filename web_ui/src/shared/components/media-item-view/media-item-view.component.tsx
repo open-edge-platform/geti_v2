@@ -15,8 +15,8 @@ import { isMediaPreprocessing } from '../../../core/media/utils/preprocessing.ut
 import { isVideo, isVideoFrame } from '../../../core/media/video.interface';
 import { AnnotationStateIndicator } from '../annotation-indicator/annotation-state-indicator.component';
 import { VideoAnnotationIndicator } from '../annotation-indicator/video-annotation-indicator.component';
-import { VideoFrameNumberIndicator } from '../video-indicator/video-frame-number-indicator.component';
-import { VideoIndicator } from '../video-indicator/video-indicator.component';
+import { VideoFrameNumberIndicator } from './video-frame-number-indicator.component';
+import { VideoIndicator } from './video-indicator.component';
 
 import classes from '../../shared.module.scss';
 

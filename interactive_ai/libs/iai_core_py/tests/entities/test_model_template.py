@@ -148,9 +148,7 @@ class TestTaskType:
         assert task_type_to_label_domain(TaskType.DETECTION) == Domain.DETECTION
         assert task_type_to_label_domain(TaskType.SEGMENTATION) == Domain.SEGMENTATION
         assert task_type_to_label_domain(TaskType.INSTANCE_SEGMENTATION) == Domain.INSTANCE_SEGMENTATION
-        assert task_type_to_label_domain(TaskType.ANOMALY_CLASSIFICATION) == Domain.ANOMALY_CLASSIFICATION
-        assert task_type_to_label_domain(TaskType.ANOMALY_DETECTION) == Domain.ANOMALY_DETECTION
-        assert task_type_to_label_domain(TaskType.ANOMALY_SEGMENTATION) == Domain.ANOMALY_SEGMENTATION
+        assert task_type_to_label_domain(TaskType.ANOMALY) == Domain.ANOMALY
         for not_mapped_task in [
             TaskType.NULL,
             TaskType.DATASET,
@@ -819,14 +817,11 @@ class TestModelTemplate:
         Test passes if is_task_global method of ModelTemplate object returns expected bool values related to
         task_type attribute
         <b>Steps</b>
-        1. Check is_task_global method returns True if task_type equal to CLASSIFICATION or ANOMALY_CLASSIFICATION
-        2. Check is_task_global method returns False if task_type not equal to CLASSIFICATION or ANOMALY_CLASSIFICATION
+        1. Check is_task_global method returns True if task_type equal to CLASSIFICATION or ANOMALY
+        2. Check is_task_global method returns False if task_type not equal to CLASSIFICATION or ANOMALY
         """
-        # Check is_task_global method returns True for CLASSIFICATION and ANOMALY_CLASSIFICATION
-        for global_task_type in (
-            TaskType.CLASSIFICATION,
-            TaskType.ANOMALY_CLASSIFICATION,
-        ):
+        # Check is_task_global method returns True for CLASSIFICATION and ANOMALY
+        for global_task_type in [TaskType.CLASSIFICATION, TaskType.ANOMALY]:
             default_parameters = self.default_model_parameters()
             task_global_parameters = dict(default_parameters)
             task_global_parameters["task_type"] = global_task_type
@@ -845,7 +840,7 @@ class TestModelTemplate:
             non_global_task_template = ModelTemplate(**non_global_task_parameters)
             assert not non_global_task_template.is_task_global(), (
                 f"Expected False value returned by is_task_global method for {non_global_task}, "
-                f"only CLASSIFICATION and ANOMALY_CLASSIFICATION task types are global"
+                f"only CLASSIFICATION and ANOMALY task types are global"
             )
 
 
@@ -877,19 +872,13 @@ class TestTaskTypesConstants:
         <b>Expected results:</b>
         Test passes if ANOMALY_TASK_TYPES and TRAINABLE_TASK_TYPES constants return expected values
         """
-        assert ANOMALY_TASK_TYPES == (
-            TaskType.ANOMALY_DETECTION,
-            TaskType.ANOMALY_CLASSIFICATION,
-            TaskType.ANOMALY_SEGMENTATION,
-        )
+        assert ANOMALY_TASK_TYPES == (TaskType.ANOMALY,)
         assert TRAINABLE_TASK_TYPES == (
             TaskType.CLASSIFICATION,
             TaskType.DETECTION,
             TaskType.SEGMENTATION,
             TaskType.INSTANCE_SEGMENTATION,
-            TaskType.ANOMALY_DETECTION,
-            TaskType.ANOMALY_CLASSIFICATION,
-            TaskType.ANOMALY_SEGMENTATION,
+            TaskType.ANOMALY,
             TaskType.ROTATED_DETECTION,
             TaskType.ACTION_CLASSIFICATION,
             TaskType.ACTION_DETECTION,

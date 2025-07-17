@@ -45,6 +45,7 @@ class TestIntegrationMediaManager:
                 dataset_storage_identifier=dataset_storage.identifier,
                 basename="Zero byte image",
                 extension=ImageExtensions.JPG,
-                data_stream=BytesStream(data=io.BytesIO(b""), length=0),
+                image_bytes=io.BytesIO(b""),
+                length=0,
                 user_id=ID("dummy_user"),
             )

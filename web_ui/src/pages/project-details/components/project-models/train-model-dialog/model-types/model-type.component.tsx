@@ -5,9 +5,8 @@ import { FC, ReactNode } from 'react';
 
 import { Flex, Grid, Heading, Radio, RadioGroup, repeat, Tooltip, TooltipTrigger } from '@geti/ui';
 import clsx from 'clsx';
-import { capitalize, isFunction } from 'lodash-es';
+import { isFunction } from 'lodash-es';
 
-import { PerformanceCategory } from '../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { SupportedAlgorithm } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { InfoTooltip } from '../../../../../../shared/components/info-tooltip/info-tooltip.component';
 import { isDeprecatedAlgorithm } from '../../legacy-train-model-dialog/model-templates-selection/utils';
@@ -20,6 +19,7 @@ import { AttributeRating, Ratings } from './attribute-rating/attribute-rating.co
 import classes from './model-type.module.scss';
 
 interface ModelTypeProps {
+    name: string;
     algorithm: SupportedAlgorithm;
     selectedModelTemplateId: string | null;
     onChangeSelectedTemplateId: (modelTemplateId: string | null) => void;
@@ -54,6 +54,7 @@ const RATING_MAP: Record<PerformanceRating, Ratings> = {
 };
 
 export const ModelType: FC<ModelTypeProps> = ({
+    name,
     algorithm,
     selectedModelTemplateId,
     onChangeSelectedTemplateId,
@@ -62,8 +63,6 @@ export const ModelType: FC<ModelTypeProps> = ({
 }) => {
     const { modelTemplateId, lifecycleStage, description, performanceRatings } = algorithm;
     const isSelected = selectedModelTemplateId === modelTemplateId;
-    const isRecommendedAlgorithm = algorithm.performanceCategory !== PerformanceCategory.OTHER;
-    const name = isRecommendedAlgorithm ? capitalize(algorithm.performanceCategory) : algorithm.name;
 
     const shouldShowActiveTag = modelTemplateId === activeModelTemplateId;
 

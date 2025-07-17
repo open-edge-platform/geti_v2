@@ -78,7 +78,7 @@ paths:
     $ref: "./endpoints/annotations/latest_video_annotation_endpoint.yaml"
 #model endpoints
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/supported_algorithms:
-    $ref: "./endpoints/models/supported_algorithms_endpoint.yaml"
+    $ref: "./endpoints/models/revamp/supported_algorithms_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}:train:
     $ref: "./endpoints/models/train_model_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/model_groups:
@@ -154,7 +154,7 @@ paths:
     $ref: "./endpoints/status/incremental_learning_status.yaml"
   /organizations/{organization_id}/status:
     $ref: "./endpoints/status/organization_status_endpoint.yaml"
-#configuration endpoints
+#legacy configuration endpoints
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/configuration:
     $ref: "./endpoints/configuration/full_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/configuration/global:
@@ -163,6 +163,11 @@ paths:
     $ref: "./endpoints/configuration/task_chain_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/configuration/task_chain/{task_id}:
     $ref: "./endpoints/configuration/task_endpoint.yaml"
+#configuration endpoints
+  /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/project_configuration:
+    $ref: "./endpoints/configuration/project_configuration_endpoint.yaml"
+  /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/training_configuration:
+    $ref: "./endpoints/configuration/training_configuration_endpoint.yaml"
 #system endpoints
   /user_settings:
     $ref: "./endpoints/system/user_settings_endpoint.yaml"

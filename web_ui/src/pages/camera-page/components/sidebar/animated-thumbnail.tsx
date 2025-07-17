@@ -6,9 +6,9 @@ import { useOverlayTriggerState } from 'react-stately';
 
 import { MEDIA_ANNOTATION_STATUS } from '../../../../core/media/base.interface';
 import { AnnotationStateIndicator } from '../../../../shared/components/annotation-indicator/annotation-state-indicator.component';
+import { DeleteItemButton } from '../../../../shared/components/media-preview-list/delete-item-button.component';
+import { ImageVideoFactory } from '../../../../shared/components/media-preview-list/image-video-factory.component';
 import { isNonEmptyArray } from '../../../../shared/utils';
-import { DeleteItemButton } from '../delete-item-button.component';
-import { ImageVideoFactory } from '../image-video-factory.component';
 
 import classes from './sidebar.module.scss';
 

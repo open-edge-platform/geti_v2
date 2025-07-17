@@ -13,7 +13,6 @@ import {
     useState,
 } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { useQueryClient } from '@tanstack/react-query';
@@ -81,7 +80,6 @@ interface DatasetImportToNewProjectProps {
 
 export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToNewProjectProps): JSX.Element => {
     const client = useQueryClient();
-    const { FEATURE_FLAG_ANOMALY_REDUCTION } = useFeatureFlags();
 
     const { router } = useApplicationServices();
     const workspaceIdentifier = useWorkspaceIdentifier();
@@ -377,7 +375,6 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 workspaceId,
                 projectData: { uploadId, projectName: projectName.trim(), taskType, labels: labelsWithColors },
                 setAbortController,
-                anomalyRevamp: FEATURE_FLAG_ANOMALY_REDUCTION,
             },
             {
                 onSuccess: async () => {
@@ -419,7 +416,6 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 workspaceId,
                 projectData: { uploadId, projectName: projectName.trim(), taskType, labels: labelsWithColors },
                 setAbortController,
-                anomalyRevamp: FEATURE_FLAG_ANOMALY_REDUCTION,
             },
             {
                 onSuccess: ({ jobId }) => patchLsDatasetImport({ id, importingJobId: jobId }),

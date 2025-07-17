@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react';
 
 import { Grabcut, GrabcutData as ToolGrabcutData } from '@geti/smart-tools';
-import { Polygon as ToolPolygon } from '@geti/smart-tools/src/shared/interfaces';
+import { Polygon as ToolPolygon } from '@geti/smart-tools/types';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { Remote } from 'comlink';
 
@@ -13,7 +13,7 @@ import { AlgorithmType } from '../../../hooks/use-load-ai-webworker/algorithm.in
 import { useLoadAIWebworker } from '../../../hooks/use-load-ai-webworker/use-load-ai-webworker.hook';
 import { GrabcutToolType } from '../tools/grabcut-tool/grabcut-tool.enums';
 import { GrabcutData } from '../tools/grabcut-tool/grabcut-tool.interface';
-import { convertGetiShapeToToolShape, convertToolShapeToGetiShape } from '../tools/utils';
+import { convertToolShapeToGetiShape } from '../tools/utils';
 
 interface useGrabcutProps {
     onSuccess: (data: Polygon, variables: GrabcutData) => void;
@@ -30,7 +30,7 @@ const convertGetiDataToGrabcutData = (data: GrabcutData): ToolGrabcutData => {
     return {
         ...data,
         inOrder: data.activeTool === GrabcutToolType.ForegroundTool,
-        inputRect: convertGetiShapeToToolShape(data.inputRect),
+        inputRect: data.inputRect,
     };
 };
 

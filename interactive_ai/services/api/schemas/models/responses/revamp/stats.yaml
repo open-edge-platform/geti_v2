@@ -1,0 +1,38 @@
+type: object
+description: Statistics about the model
+properties:
+  gigaflops:
+    type: number
+    format: float
+    description: Billions of floating-point operations per second required by the model
+  trainable_parameters:
+    type: number
+    format: float
+    description: Number of trainable parameters in the model (in millions)
+  performance_ratings:
+    type: object
+    description: Standardized ratings for model performance metrics
+    properties:
+      accuracy:
+        type: integer
+        minimum: 1
+        maximum: 3
+        description: Rating of the model accuracy. The value should be interpreted relatively to the other available models, and it ranges from 1 (below average) to 3 (above average).
+      training_time:
+        type: integer
+        minimum: 1
+        maximum: 3
+        description: Rating of the model training time. The value should be interpreted relatively to the other available models, and it ranges from 1 (below average/slower) to 3 (above average/faster).
+      inference_speed:
+        type: integer
+        minimum: 1
+        maximum: 3
+        description: Rating of the model inference speed. The value should be interpreted relatively to the other available models, and it ranges from 1 (below average/slower) to 3 (above average/faster).
+    required:
+      - accuracy
+      - training_time
+      - inference_speed
+required:
+  - gigaflops
+  - trainable_parameters
+  - performance_ratings

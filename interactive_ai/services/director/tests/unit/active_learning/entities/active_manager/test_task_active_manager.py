@@ -71,11 +71,11 @@ class TestTaskActiveManager:
         fxt_model_template_classification,
         fxt_model_template_detection,
         fxt_model_template_segmentation,
-        fxt_model_template_anomaly_classification,
+        fxt_model_template_anomaly,
         fxt_classification_label_schema_factory,
         fxt_detection_label_schema_factory,
         fxt_segmentation_label_schema_factory,
-        fxt_anomaly_classificaction_label_schema,
+        fxt_anomaly_label_schema,
     ) -> None:
         active_manager: TaskActiveManager = fxt_task_active_manager
 
@@ -94,8 +94,8 @@ class TestTaskActiveManager:
             model_template = fxt_model_template_segmentation
             label_schema = fxt_segmentation_label_schema_factory()
         elif task_type == "anomaly":
-            model_template = fxt_model_template_anomaly_classification
-            label_schema = fxt_anomaly_classificaction_label_schema
+            model_template = fxt_model_template_anomaly
+            label_schema = fxt_anomaly_label_schema
         else:
             raise ValueError(f"Invalid task type {task_type}")
 

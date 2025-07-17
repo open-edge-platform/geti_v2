@@ -203,8 +203,8 @@ interactive_ai/migration_job:
   - .github/workflows/component.yml
 
 # Workflows
-interactive_ai/workflows/geti_domain/common:
-  - interactive_ai/workflows/geti_domain/common/**
+interactive_ai/workflows/common:
+  - interactive_ai/workflows/common/**
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**
   - libs/k8s_tools/**
@@ -214,10 +214,10 @@ interactive_ai/workflows/geti_domain/common:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/workflows/geti_domain/dataset_ie:
-  - interactive_ai/workflows/geti_domain/dataset_ie/**
-  - interactive_ai/workflows/geti_domain/common/jobs_common
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/datumaro_conversion
+interactive_ai/workflows/dataset_ie:
+  - interactive_ai/workflows/dataset_ie/**
+  - interactive_ai/workflows/common/jobs_common
+  - interactive_ai/workflows/common/jobs_common_extras/datumaro_conversion
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**
   - libs/k8s_tools/**
@@ -228,10 +228,10 @@ interactive_ai/workflows/geti_domain/dataset_ie:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/workflows/geti_domain/project_ie:
-  - interactive_ai/workflows/geti_domain/project_ie/**
-  - interactive_ai/workflows/geti_domain/common/jobs_common
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/datumaro_conversion
+interactive_ai/workflows/project_ie:
+  - interactive_ai/workflows/project_ie/**
+  - interactive_ai/workflows/common/jobs_common
+  - interactive_ai/workflows/common/jobs_common_extras/datumaro_conversion
   - interactive_ai/data_migration/**
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**
@@ -243,10 +243,10 @@ interactive_ai/workflows/geti_domain/project_ie:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/workflows/geti_domain/model_test:
-  - interactive_ai/workflows/geti_domain/model_test/**
-  - interactive_ai/workflows/geti_domain/common/jobs_common
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/evaluation
+interactive_ai/workflows/model_test:
+  - interactive_ai/workflows/model_test/**
+  - interactive_ai/workflows/common/jobs_common
+  - interactive_ai/workflows/common/jobs_common_extras/evaluation
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**
   - libs/k8s_tools/**
@@ -255,11 +255,11 @@ interactive_ai/workflows/geti_domain/model_test:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/workflows/geti_domain/optimize:
-  - interactive_ai/workflows/geti_domain/optimize/**
-  - interactive_ai/workflows/geti_domain/common/jobs_common
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/evaluation
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/shard_dataset
+interactive_ai/workflows/optimize:
+  - interactive_ai/workflows/optimize/**
+  - interactive_ai/workflows/common/jobs_common
+  - interactive_ai/workflows/common/jobs_common_extras/evaluation
+  - interactive_ai/workflows/common/jobs_common_extras/shard_dataset
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**
   - libs/k8s_tools/**
@@ -268,12 +268,13 @@ interactive_ai/workflows/geti_domain/optimize:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/workflows/geti_domain/train:
-  - interactive_ai/workflows/geti_domain/train/**
-  - interactive_ai/workflows/geti_domain/common/jobs_common
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/evaluation
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/experiments
-  - interactive_ai/workflows/geti_domain/common/jobs_common_extras/shard_dataset
+interactive_ai/workflows/train:
+  - interactive_ai/workflows/train/job/**
+  - interactive_ai/workflows/train/tests/**
+  - interactive_ai/workflows/common/jobs_common
+  - interactive_ai/workflows/common/jobs_common_extras/evaluation
+  - interactive_ai/workflows/common/jobs_common_extras/experiments
+  - interactive_ai/workflows/common/jobs_common_extras/shard_dataset
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**
   - libs/k8s_tools/**
@@ -282,25 +283,25 @@ interactive_ai/workflows/geti_domain/train:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/workflows/otx_domain/trainer/otx_v2/xpu:
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/xpu/**
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/scripts/**
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/tests/**
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/download_pretrained_weights.py
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/pyproject.toml
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/run
+interactive_ai/workflows/train/trainer/xpu:
+  - interactive_ai/workflows/train/trainer/xpu/**
+  - interactive_ai/workflows/train/trainer/scripts/**
+  - interactive_ai/workflows/train/trainer/tests/**
+  - interactive_ai/workflows/train/trainer/download_pretrained_weights.py
+  - interactive_ai/workflows/train/trainer/pyproject.toml
+  - interactive_ai/workflows/train/trainer/run
   - libs/telemetry_tools/**
   - libs/kafka_tools/**
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
-interactive_ai/workflows/otx_domain/trainer/otx_v2/gpu:
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/gpu/**
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/scripts/**
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/tests/**
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/download_pretrained_weights.py
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/pyproject.toml
-  - interactive_ai/workflows/otx_domain/trainer/otx_v2/run
+interactive_ai/workflows/train/trainer/gpu:
+  - interactive_ai/workflows/train/trainer/gpu/**
+  - interactive_ai/workflows/train/trainer/scripts/**
+  - interactive_ai/workflows/train/trainer/tests/**
+  - interactive_ai/workflows/train/trainer/download_pretrained_weights.py
+  - interactive_ai/workflows/train/trainer/pyproject.toml
+  - interactive_ai/workflows/train/trainer/run
   - libs/telemetry_tools/**
   - libs/kafka_tools/**
   - Makefile.shared-python

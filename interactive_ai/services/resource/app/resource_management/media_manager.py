@@ -8,11 +8,13 @@ import functools
 import logging
 import os
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import BinaryIO
 
-import cv2
 import numpy as np
+from PIL import Image as PILImage
+from PIL import UnidentifiedImageError
 
 from communication.constants import (
     MAX_IMAGE_SIZE,
@@ -47,7 +49,7 @@ from geti_telemetry_tools.metrics import (
     videos_resolution_histogram,
 )
 from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier, MediaType
-from iai_core.adapters.binary_interpreters import NumpyBinaryInterpreter, StreamBinaryInterpreter
+from iai_core.adapters.binary_interpreters import StreamBinaryInterpreter
 from iai_core.entities.annotation import Annotation
 from iai_core.entities.dataset_storage import DatasetStorage
 from iai_core.entities.image import Image, NullImage
@@ -501,16 +503,17 @@ class MediaManager:
 
     @staticmethod
     @unified_tracing
-    def upload_image(
+    def upload_image(  # noqa: C901, PLR0915
         dataset_storage_identifier: DatasetStorageIdentifier,
         basename: str,
         extension: ImageExtensions,
-        data_stream: BytesStream,
+        image_bytes: BinaryIO,
+        length: int,
         user_id: ID,
         update_metrics: bool = False,
     ) -> Image:
         """
-        Store a image uploaded by the user.
+        Store an image uploaded by the user.
 
         Specifically, this function:
          - Sanity checks the image data and filename
@@ -521,7 +524,8 @@ class MediaManager:
         :param dataset_storage_identifier: Identifier of the dataset storage where the image is uploaded
         :param basename: Basename of the image file uploaded by the user
         :param extension: Extension of the image file uploaded by the user
-        :param data_stream: Binary data stream of image
+        :param image_bytes: Image binary data
+        :param length: Image binary data size (in bytes)
         :param user_id: ID of the user who created or updated the annotation
         :param update_metrics: Whether to update telemetry metrics
         :return: Image entity created or Exception if it fails to upload
@@ -534,22 +538,25 @@ class MediaManager:
         if not save_extension:  # to avoid issue, we require each supported format to have an explicit mapping
             raise InvalidMediaException(f"Unsupported image extension: {extension}")
 
-        # Decode the image data
-        data = data_stream.data().read(data_stream.length())
+        # Read the image data
+        image_bytes.seek(0)
         try:
-            bgr_image = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
-        except cv2.error:
-            bgr_image = None
-        if bgr_image is None:
-            raise InvalidMediaException(
-                f"Cannot upload image `{basename}{extension}`. The server was not able to interpret it."
-            )
+            pil_image = PILImage.open(image_bytes)
+        except UnidentifiedImageError:
+            raise InvalidMediaException("Unable to read the image")
 
         # Check that the image size is within the allowed range
-        MediaManager.validate_image_dimensions(bgr_image)
+        MediaManager.validate_image_dimensions(width=pil_image.width, height=pil_image.height)
 
+        temp_converted_file: str | None = None
+        image_bytes.seek(0)
+        data_source: str | BytesStream = BytesStream(data=image_bytes, length=length)
         if extension != save_extension:
-            data = NumpyBinaryInterpreter.get_bytes_from_numpy(bgr_image, save_extension.value)
+            with tempfile.NamedTemporaryFile(suffix=save_extension.value, delete=False) as temp_file:
+                pil_image.save(temp_file.name)
+                temp_converted_file = temp_file.name
+            data_source = temp_converted_file
+            pil_image = PILImage.open(temp_converted_file)
 
         # Store the image with provided data and extension.
         # If the original extension does not match the save extension,
@@ -561,7 +568,7 @@ class MediaManager:
         try:
             # Store binary file
             filename = f"{str(image_id)}{save_extension.value}"
-            binary_filename = image_binary_repo.save(dst_file_name=filename, data_source=data)
+            binary_filename = image_binary_repo.save(dst_file_name=filename, data_source=data_source)
             size = image_binary_repo.get_object_size(binary_filename)
 
             image = Image(
@@ -569,8 +576,8 @@ class MediaManager:
                 uploader_id=user_id,
                 id=image_id,
                 extension=save_extension,
-                width=bgr_image.shape[1],
-                height=bgr_image.shape[0],
+                width=pil_image.width,
+                height=pil_image.height,
                 size=size,
                 preprocessing=MediaPreprocessing(status=MediaPreprocessingStatus.SCHEDULED)
                 if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING)
@@ -589,6 +596,8 @@ class MediaManager:
             )
             if binary_filename is not None:
                 image_binary_repo.delete_by_filename(binary_filename)
+            if temp_converted_file is not None:
+                os.remove(temp_converted_file)
             raise
 
         if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING):
@@ -608,16 +617,18 @@ class MediaManager:
         else:
             try:
                 # Create a thumbnail for the image
-                Media2DFactory.create_and_save_media_thumbnail(
-                    dataset_storage_identifier=dataset_storage_identifier,
-                    media_numpy=cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB),
-                    thumbnail_binary_filename=image.thumbnail_filename,
-                )
+                with tempfile.NamedTemporaryFile(suffix=image.thumbnail_filename) as temp_file:
+                    pil_image.resize((DEFAULT_THUMBNAIL_SIZE, DEFAULT_THUMBNAIL_SIZE)).save(temp_file.name)
+                    ThumbnailBinaryRepo(dataset_storage_identifier).save(
+                        data_source=temp_file.name, dst_file_name=image.thumbnail_filename
+                    )
                 image.preprocessing.finished()
             except Exception:
                 image.preprocessing.failed("Failed to preprocess image file")
                 raise
             finally:
+                if temp_converted_file is not None:
+                    os.remove(temp_converted_file)
                 image_repo.save(image)
 
         if update_metrics:
@@ -664,15 +675,15 @@ class MediaManager:
         videos_frames_histogram.record(video.total_frames, EmptyInstrumentAttributes().to_dict())
 
     @staticmethod
-    def validate_image_dimensions(image: np.ndarray) -> None:
+    def validate_image_dimensions(width: int, height: int) -> None:
         """
         Validates that the image does not exceed the minimum/maximum allowed dimensions, or the maximum number of pixels
         """
-        is_too_small = image.shape[0] < MIN_IMAGE_SIZE or image.shape[1] < MIN_IMAGE_SIZE
-        is_too_large = image.shape[0] > MAX_IMAGE_SIZE or image.shape[1] > MAX_IMAGE_SIZE
+        is_too_small = width < MIN_IMAGE_SIZE or height < MIN_IMAGE_SIZE
+        is_too_large = width > MAX_IMAGE_SIZE or height > MAX_IMAGE_SIZE
 
         if MAX_NUMBER_OF_PIXELS:
-            is_too_many_pixels = image.shape[0] * image.shape[1] > MAX_NUMBER_OF_PIXELS
+            is_too_many_pixels = width * height > MAX_NUMBER_OF_PIXELS
             if is_too_many_pixels or is_too_small or is_too_large:
                 raise InvalidMediaException(
                     f"Invalid image dimensions. Image width and height have to be within the range of "

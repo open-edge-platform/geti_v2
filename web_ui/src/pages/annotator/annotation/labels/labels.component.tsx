@@ -3,12 +3,12 @@
 
 import { useState } from 'react';
 
+import { highestCorner } from '@geti/smart-tools/utils';
 import { AnimatePresence } from 'framer-motion';
 import { isEmpty } from 'lodash-es';
 import { useHover } from 'react-aria';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
-import { highestCorner } from '../../../../core/annotations/math';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { isRect } from '../../../../core/annotations/utils';
 import { AnnotationToolContext, ToolType } from '../../core/annotation-tool-context.interface';

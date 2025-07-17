@@ -12,7 +12,9 @@ from geti_types import ID
 
 
 class TestProjectExportEndpoints:
-    def test_start_project_export(self, fxt_test_app, fxt_session_ctx, fxt_project_identifier, fxt_ote_id) -> None:
+    def test_start_project_export_default(
+        self, fxt_test_app, fxt_session_ctx, fxt_project_identifier, fxt_ote_id
+    ) -> None:
         # Arrange
         endpoint = (
             f"/api/v1/organizations/{fxt_session_ctx.organization_id}/workspaces/{fxt_session_ctx.workspace_id}"
@@ -29,7 +31,30 @@ class TestProjectExportEndpoints:
         # Assert
         assert result.status_code == HTTPStatus.OK
         mock_submit_export_job.assert_called_once_with(
-            project_identifier=fxt_project_identifier, author_id=ID("dummy_user")
+            project_identifier=fxt_project_identifier, author_id=ID("dummy_user"), include_models="all"
+        )
+        assert result.json() == {"job_id": str(submitted_job_id)}
+
+    def test_start_project_export_latest_active(
+        self, fxt_test_app, fxt_session_ctx, fxt_project_identifier, fxt_ote_id
+    ) -> None:
+        # Arrange
+        endpoint = (
+            f"/api/v1/organizations/{fxt_session_ctx.organization_id}/workspaces/{fxt_session_ctx.workspace_id}"
+            f"/projects/{fxt_project_identifier.project_id}:export?include_models=latest_active"
+        )
+        submitted_job_id = fxt_ote_id(100)
+
+        # Act
+        with patch.object(
+            ExportController, "submit_project_export_job", return_value=submitted_job_id
+        ) as mock_submit_export_job:
+            result = fxt_test_app.post(endpoint)
+
+        # Assert
+        assert result.status_code == HTTPStatus.OK
+        mock_submit_export_job.assert_called_once_with(
+            project_identifier=fxt_project_identifier, author_id=ID("dummy_user"), include_models="latest_active"
         )
         assert result.json() == {"job_id": str(submitted_job_id)}
 

@@ -2,8 +2,14 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
-import { useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
-import type { UseQueryOptions } from '@tanstack/react-query/src/types';
+import {
+    useMutation,
+    UseMutationResult,
+    useQuery,
+    useQueryClient,
+    UseQueryResult,
+    type UseQueryOptions,
+} from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { isEmpty } from 'lodash-es';
 

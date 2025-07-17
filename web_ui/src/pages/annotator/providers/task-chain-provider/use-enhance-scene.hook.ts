@@ -8,11 +8,11 @@
 
 import { useMemo } from 'react';
 
+import { getBoundingBox, getCenterOfShape, hasEqualBoundingBox } from '@geti/smart-tools/utils';
 import { intersectionBy, isEmpty, isNil, negate } from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
-import { getBoundingBox, getCenterOfShape, hasEqualBoundingBox } from '../../../../core/annotations/math';
 import { Rect, Shape } from '../../../../core/annotations/shapes.interface';
 import { isRect, labelFromUser } from '../../../../core/annotations/utils';
 import { Label } from '../../../../core/labels/label.interface';
