@@ -262,18 +262,22 @@ def is_job_completed_or_failed(namespace: str) -> tuple[bool, str]:
     Check if the job is completed or failed.
     Returns (is_finished, status_message)
     """
-    running_jobs = []
+    matching_jobs = []
     load_kube_config()
     try:
         batch_v1 = client.BatchV1Api()
         jobs = batch_v1.list_namespaced_job(namespace=namespace)
         for job in jobs.items:
-            if job.status.active and job.status.active > 0:
-                match = re.search(r"\d{14}", job.metadata.name)
-                if match:
-                    timestamp = match.group()
-                    running_jobs.append((job.metadata.name, timestamp))
-        latest_job = max(running_jobs, key=lambda x: x[1], default=None)
+            match = re.search(r"\d{14}", job.metadata.name)
+            if match:
+                timestamp = match.group()
+                matching_jobs.append((job.metadata.name, timestamp))
+
+        if not matching_jobs:
+            logger.info(f"No matching jobs found in namespace '{namespace}'.")
+            return False, "No jobs found"
+
+        latest_job = max(matching_jobs, key=lambda x: x[1])
         logger.debug(f"Latest job in namespace '{namespace}': {latest_job}")
 
         job = batch_v1.read_namespaced_job(name=latest_job[0], namespace=namespace)
@@ -287,7 +291,7 @@ def is_job_completed_or_failed(namespace: str) -> tuple[bool, str]:
             return False, "Job is running"
         return False, "Job status unclear"
     except Exception as e:
-        logger.error(f"Failed to check job status: {e}")
+        logger.exception("Failed to check job status")
         return False, f"Error checking job status: {e}"
 
 

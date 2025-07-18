@@ -99,7 +99,7 @@ def _fill_in_defaults(stored: dict) -> dict:
         "target_version": "",
         "progress_percentage": 0,
         "status": "NOT_RUNNING",
-        "message": "",
+        "message": "Installation/upgrade job is not running.",
     }
 
     return defaults | stored
