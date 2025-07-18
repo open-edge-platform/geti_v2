@@ -35,6 +35,8 @@ HTTPS_PROXY = os.getenv("HTTPS_PROXY", "")
 HTTP_PROXY = os.getenv("HTTP_PROXY", "")
 NO_PROXY = os.getenv("NO_PROXY", "")
 IMAGE_REGISTRY = os.getenv("IMAGE_REGISTRY") or None
+REPO_CA_DECODED = base64.b64decode(os.getenv("REPO_CA")).decode("utf-8") or None
+REPO_CA_ENCODED = os.getenv("REPO_CA") or None
 
 platform_router = APIRouter(prefix="/platform", tags=["Platform"])
 
@@ -126,6 +128,9 @@ async def render_jinja_template(template_string: str) -> dict:
         "no_proxy": NO_PROXY,
         "image_registry": IMAGE_REGISTRY,
         "geti_registry": GETI_REGISTRY,
+        "repoCA_dec": REPO_CA_DECODED,
+        "repoCA_enc": REPO_CA_ENCODED,
+        "IMAGE_REGISTRY": IMAGE_REGISTRY,
     }
 
     # Render the template with the variable

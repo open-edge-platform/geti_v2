@@ -56,6 +56,9 @@ class InstallationConfig(BaseConfig):
         self.tls_cert_content = ConfigurationField(type=str, required=False)
         self.tls_key_content = ConfigurationField(type=str, required=False)
 
+        # root CA ta pass to the helm controller
+        self.repoCA = ConfigurationField(type=str, required=False)
+
         # to determine local OS
         self.local_os = ConfigurationField(type=str, required=False, value=SupportedOS.UBUNTU.value)
 

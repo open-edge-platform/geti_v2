@@ -29,6 +29,7 @@ from constants.paths import INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH
 from constants.platform import (
     CERT_MANAGER_NAMESPACE,
     CUSTOM_TLS_SECRET_NAME,
+    DATA_STORAGE_VOLUME_CLAIM_NAME,
     DATA_STORAGE_VOLUME_NAME,
     FLYTE_NAMESPACE,
     GETI_LABEL_KEY,
@@ -44,6 +45,7 @@ from constants.platform import (
     POSTGRESQL_SECRET_NAME,
     SEAWEEDFS_SECRET_NAME,
     SPICEDB_SECRET_NAME,
+    STORAGE_CLASS,
 )
 from geti_controller.communication import (
     OperationStatus,
@@ -71,6 +73,7 @@ from platform_utils.kube_config_handler import KubernetesConfigHandler
 from platform_utils.management.state import InstallationHandlerState, cluster_info_dump
 from texts.install_command import InstallCmdConfirmationTexts, InstallCmdTexts
 from texts.migrate_command import MigrateCmdTexts
+from validators.filepath import is_filepath_valid
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -284,6 +287,10 @@ def display_final_confirmation(config: MigrationConfig) -> None:
     else:
         click.echo(InstallCmdConfirmationTexts.no_custom_certificate_message)
 
+    click.echo(
+        f"Following root CA will be used {config.repoCA.value}" if config.repoCA.value else "No root CA will be used."
+    )
+
     click.echo()
     click.echo(InstallCmdConfirmationTexts.confirm_data_message.format(path=config.data_folder.value))
 
@@ -307,6 +314,8 @@ def prepare_geti_for_migration(config: MigrationConfig) -> None:
         # Remove the existing backup directory if it exists and create a new one
         subprocess_run(["rm", "-rf", backup_location], log_file)
         os.makedirs(backup_location, exist_ok=True)
+        kafka = os.path.join(config.data_folder.value, "kafka")
+        subprocess_run(["cp", "-r", kafka, backup_location], log_file)
 
     KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
     with kube_client.ApiClient() as client:
@@ -354,6 +363,8 @@ def prepare_geti_for_migration(config: MigrationConfig) -> None:
                 raise PlatformCleanUpError("Failed to clean up platform.") from e
     cleanup_main_ns()
     cleanup_kubelet_csr_approver()
+    relabel_pv()
+    cleanup_kafka_pv(config=config)
 
 
 def cleanup_kubelet_csr_approver() -> None:
@@ -378,6 +389,48 @@ def cleanup_kubelet_csr_approver() -> None:
         except ApiException as e:
             logger.error(f"Failed to delete: {e}")
     logger.info("Kubelet csr approver deleted successfully.")
+
+
+def relabel_pv() -> None:
+    """
+    relabel pv components to fit new helm chart releases
+    """
+    KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
+    with kube_client.ApiClient() as client:
+        core_api = kube_client.CoreV1Api(client)
+        pv = core_api.read_persistent_volume(name=DATA_STORAGE_VOLUME_NAME)
+        if not pv.metadata.annotations:
+            pv.metadata.annotations = {}
+        pv.metadata.annotations.update({"meta.helm.sh/release-name": "geti-pv-creation"})
+        core_api.patch_persistent_volume(name=DATA_STORAGE_VOLUME_NAME, body=pv)
+
+        pvc = core_api.read_namespaced_persistent_volume_claim(
+            name=DATA_STORAGE_VOLUME_CLAIM_NAME, namespace=PLATFORM_NAMESPACE
+        )
+        if not pvc.metadata.annotations:
+            pvc.metadata.annotations = {}
+        pvc.metadata.annotations.update({"meta.helm.sh/release-name": "geti-pv-creation"})
+        core_api.patch_namespaced_persistent_volume_claim(
+            name=DATA_STORAGE_VOLUME_CLAIM_NAME, namespace=PLATFORM_NAMESPACE, body=pvc
+        )
+
+        storage_api = kube_client.StorageV1Api(client)
+        sc = storage_api.read_storage_class(name=STORAGE_CLASS)
+        if not sc.metadata.annotations:
+            sc.metadata.annotations = {}
+        sc.metadata.annotations.update({"meta.helm.sh/release-name": "geti-pv-creation"})
+        storage_api.patch_storage_class(name=STORAGE_CLASS, body=sc)
+
+
+def cleanup_kafka_pv(config: MigrationConfig) -> None:
+    """
+    Removal of kafka directory stored in the data folder.
+    """
+    logger.info("Removing Kafka PV...")
+    kafka_folder = os.path.join(config.data_folder.value, "kafka")
+    with open(INSTALL_LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
+        # Remove the existing backup directory if it exists and create a new one
+        subprocess_run(["rm", "-rf", kafka_folder], log_file)
 
 
 def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
@@ -479,6 +532,9 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
                     "modelmesh",
                     "reloader",
                     "platform-cleaner",
+                    "proxy-role",
+                    "metrics-reader",
+                    "cluster-role-gateway",
                 ]
             ):
                 try:
@@ -500,6 +556,7 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
                     "modelmesh",
                     "reloader",
                     "platform-cleaner",
+                    "proxy-rolebinding",
                 ]
             ):
                 try:
@@ -549,6 +606,46 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
             except ApiException as e:
                 logger.error(f"Failed to delete HPA {item.metadata.name}: {e}")
 
+        admission_reg_api = kube_client.AdmissionregistrationV1Api(client)
+        mutating_webhooks = admission_reg_api.list_mutating_webhook_configuration(label_selector=exclude_label_selector)
+        for item in mutating_webhooks.items:
+            try:
+                admission_reg_api.delete_mutating_webhook_configuration(name=item.metadata.name)
+                logger.debug(f"Deleted MutatingWebhookConfiguration: {item.metadata.name}")
+            except ApiException as e:
+                logger.error(f"Failed to delete MutatingWebhookConfiguration {item.metadata.name}: {e}")
+        validating_webhooks = admission_reg_api.list_validating_webhook_configuration(
+            label_selector=exclude_label_selector
+        )
+        for item in validating_webhooks.items:
+            try:
+                admission_reg_api.delete_validating_webhook_configuration(name=item.metadata.name)
+                logger.debug(f"Deleted ValidatingWebhookConfiguration: {item.metadata.name}")
+            except ApiException as e:
+                logger.error(f"Failed to delete ValidatingWebhookConfiguration {item.metadata.name}: {e}")
+
+        pod_disruption_budget_api = kube_client.PolicyV1Api(client)
+        pod_disruption_budgets = pod_disruption_budget_api.list_namespaced_pod_disruption_budget(
+            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        )
+        for item in pod_disruption_budgets.items:
+            try:
+                pod_disruption_budget_api.delete_namespaced_pod_disruption_budget(
+                    name=item.metadata.name, namespace=PLATFORM_NAMESPACE
+                )
+                logger.debug(f"Deleted PodDisruptionBudget: {item.metadata.name}")
+            except ApiException as e:
+                logger.error(f"Failed to delete PodDisruptionBudget {item.metadata.name}: {e}")
+        network_api = kube_client.NetworkingV1Api(client)
+        network_policies = network_api.list_namespaced_network_policy(
+            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        )
+        for item in network_policies.items:
+            try:
+                network_api.delete_namespaced_network_policy(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
+                logger.debug(f"Deleted NetworkPolicy: {item.metadata.name}")
+            except ApiException as e:
+                logger.error(f"Failed to delete NetworkPolicy {item.metadata.name}: {e}")
         api_instance = kube_client.ApiextensionsV1Api(client)
         custom_resources = api_instance.list_custom_resource_definition(
             label_selector=exclude_label_selector,
@@ -570,8 +667,9 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
         main_ns.metadata.labels.update({"app.kubernetes.io/managed-by": "Helm"})
         if not main_ns.metadata.annotations:
             main_ns.metadata.annotations = {}
-        main_ns.metadata.annotations.update({"meta.helm.sh/release-name": "geti-namespaces",
-                                             "meta.helm.sh/release-namespace": "impt"})
+        main_ns.metadata.annotations.update(
+            {"meta.helm.sh/release-name": "geti-namespaces", "meta.helm.sh/release-namespace": "default"}
+        )
         core_api.patch_namespace(name=PLATFORM_NAMESPACE, body=main_ns)
         logger.info("Main namespace annotations updated.")
 
@@ -646,8 +744,11 @@ def execute_migration(config: MigrationConfig) -> None:
         pass
 
 
+@click.option("--repo-ca", type=click.Path(), callback=is_filepath_valid)
 @click.command()
-def migrate() -> None:
+def migrate(
+    repo_ca: str | None = None,
+) -> None:
     """
     Migrate Geti from "old" version without Geti controller.
     """
@@ -656,6 +757,7 @@ def migrate() -> None:
     configure_logging()
     config = MigrationConfig()
     run_migration_checks()
+    config.repoCA.value = repo_ca
     gather_data_for_migration(config=config)
 
     display_final_confirmation(config=config)

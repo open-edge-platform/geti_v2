@@ -65,9 +65,16 @@ def deploy_geti_controller_chart(
             configuration_data["global"]["tlsCert"] = encode_data_b64(config.tls_cert_content.value.encode("utf-8"))
             configuration_data["global"]["tlsKey"] = encode_data_b64(config.tls_key_content.value.encode("utf-8"))
 
+        if config.repoCA.value:
+            with open(config.repoCA.value, "rb") as ca_file:
+                ca_content = ca_file.read()
+                configuration_data["global"]["repoCA"] = encode_data_b64(ca_content)
+
         values_file_path = os.path.join(charts_dir, "controller_values.yaml")
         with open(values_file_path, "w") as values_file:
             yaml.safe_dump(configuration_data, values_file)
+
+        logger.info(f"Config: {configuration_data}")
 
         upsert_chart(
             name=GETI_CONTROLLER_CHART.name,

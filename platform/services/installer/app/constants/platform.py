@@ -11,6 +11,7 @@ PLATFORM_VERSION_CM_KEY = "platformVersion"
 
 DATA_DIRS_REMOVAL_REQUIRED = ["mongodb", "ldap", "ldap-config"]
 DATA_STORAGE_VOLUME_NAME = "data-storage-volume"
+STORAGE_CLASS = "local-storage"
 DATA_STORAGE_VOLUME_CLAIM_NAME = f"{DATA_STORAGE_VOLUME_NAME}-claim"
 
 INTERNAL_REGISTRY_ADDRESS = "127.0.0.1:30000"
@@ -49,3 +50,7 @@ SEAWEEDFS_SECRET_NAME = "impt-seaweed-fs"  # noqa: S105
 GETI_LABEL_KEY = "needed_by_geti"
 GETI_LABEL_VALUE = "true"
 KUBELET_CSR_APPROVER_NAME = "kubelet-csr-approver"
+
+PV_CHART = "geti-pv-creation"
+NAMESPACE_CHART = "geti-namespaces"
+TOOLS_CHART = "geti-tools"
