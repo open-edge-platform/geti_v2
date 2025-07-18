@@ -11,7 +11,7 @@ from platform_operations.cluster import deploy_service_job
 logger = logging.getLogger(__name__)
 
 
-def commence_upgrade(
+def commence_version_change(
     source_version: str,
     target_version: str,
     registry: str,
@@ -19,10 +19,10 @@ def commence_upgrade(
     manifest_version: str,
     direction: str,
 ) -> None:
-    """Commence the upgrade process by deploying the service job and updating the progress file."""
+    """Commence the version change process by deploying the service job and updating the progress file."""
     logger.info("Starting UPGRADE")
 
-    update_upgrade_progress(
+    update_progress(
         {
             "source_version": source_version,
             "target_version": target_version,
@@ -40,9 +40,9 @@ def commence_upgrade(
     )
 
 
-def update_upgrade_progress(patch: dict) -> dict:
+def update_progress(patch: dict) -> dict:
     """
-    Update the upgrade progress file with the provided patch data.
+    Update the version change progress file with the provided patch data.
     If the file does not exist, it will be created with default values used to fill in missing from the patch.
     """
     mode = "r+" if os.path.isfile(UPGRADE_FILE_PATH) else "w+"
@@ -75,8 +75,8 @@ def update_upgrade_progress(patch: dict) -> dict:
     return data
 
 
-def get_upgrade_progress() -> dict:
-    """Retrieve the upgrade progress from the stored file."""
+def get_version_change_progress() -> dict:
+    """Retrieve the version change progress from the stored file."""
     stored = {}
     logger.info(f"Retrieving upgrade progress from {UPGRADE_FILE_PATH}")
     try:

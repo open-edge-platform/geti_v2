@@ -8,7 +8,7 @@ from fastapi import BackgroundTasks, status
 
 from constants.platform import MAX_RETRIES, NAMESPACE, RETRY_INTERVAL, SERVICE_NAME
 from platform_operations.cluster import is_job_completed_or_failed, is_job_running, load_kube_config
-from platform_operations.upgrade import get_upgrade_progress, update_upgrade_progress
+from platform_operations.version_change import get_version_change_progress, update_progress
 from rest.schema.check_installation_upgrade_progress import InstallationUpgradeProgressResponse, OperationStatus
 from routers import platform_router
 
@@ -19,11 +19,11 @@ logger = logging.getLogger(__name__)
 
 class ProgressManager:
     def __init__(self):
-        self.progress_data = InstallationUpgradeProgressResponse(**get_upgrade_progress())
+        self.progress_data = InstallationUpgradeProgressResponse(**get_version_change_progress())
         self.task_started = False
 
     def update_progress(self, data: dict) -> None:
-        self.progress_data = InstallationUpgradeProgressResponse(**update_upgrade_progress(data))
+        self.progress_data = InstallationUpgradeProgressResponse(**update_progress(data))
 
     def get_progress(self) -> InstallationUpgradeProgressResponse:
         return self.progress_data
@@ -182,5 +182,6 @@ def check_installation_upgrade_progress(background_tasks: BackgroundTasks) -> In
         logger.info("Starting periodic progress check task.")
         background_tasks.add_task(periodic_progress_check, progress_manager)
         progress_manager.task_started = True
+        progress_manager.update_progress({})  # force re-read of progress data from file
 
     return progress_manager.get_progress()

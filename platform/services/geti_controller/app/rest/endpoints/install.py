@@ -7,7 +7,7 @@ from fastapi import HTTPException, status
 
 from constants.platform import GETI_REGISTRY, INSTALL_VERSION
 from platform_operations.cluster import check_config_map_exists, load_kube_config
-from platform_operations.upgrade import commence_upgrade
+from platform_operations.version_change import commence_version_change
 from rest.schema.install import InstallRequest, InstallResponse
 from routers import platform_router
 
@@ -65,7 +65,7 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
     if check_config_map_exists(name="impt-configuration", namespace="impt"):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Platform is already installed.")
 
-    commence_upgrade(
+    commence_version_change(
         source_version="None",
         target_version=INSTALL_VERSION,
         registry=GETI_REGISTRY,
@@ -73,7 +73,6 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
         manifest_version=INSTALL_VERSION,
         direction="install",
     )
-
 
     logger.info(f"Installation of version {payload.version_number} has started.")
     return InstallResponse(detail=f"Installation of version {payload.version_number} has started.")
