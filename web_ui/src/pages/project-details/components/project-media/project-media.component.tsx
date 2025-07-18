@@ -10,6 +10,7 @@ import { isAnomalyDomain } from '../../../../core/projects/domains';
 import { MediaUploadActionTypes } from '../../../../providers/media-upload-provider/media-upload-reducer-actions';
 import { UploadMedia } from '../../../../providers/media-upload-provider/media-upload.interface';
 import { CustomerSupportLink } from '../../../../shared/components/customer-support-link/customer-support-link.component';
+import { isImgOrVideoFile } from '../../../../shared/media-utils';
 import { useDatasetIdentifier } from '../../../annotator/hooks/use-dataset-identifier.hook';
 import { useProject } from '../../providers/project-provider/project-provider.component';
 import { useDatasetMediaUpload } from '../project-dataset/hooks/dataset-media-upload';
@@ -36,7 +37,9 @@ export const ProjectMedia = (): JSX.Element => {
     const showTrainingProcessComponent = isSingleAnomalyProject && selectedDataset.useForTraining;
 
     const handleUploadMediaCallback = async (uploads: UploadMedia) => {
-        setDroppedFiles(uploads.files);
+        const validFiles = uploads.files.filter((file) => isImgOrVideoFile(file));
+
+        setDroppedFiles(validFiles);
         galleryPreviewState.open();
     };
 

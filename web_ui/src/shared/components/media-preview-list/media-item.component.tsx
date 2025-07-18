@@ -11,7 +11,7 @@ import { usePress } from 'react-aria';
 import { Label } from '../../../core/labels/label.interface';
 import { useTask } from '../../../pages/annotator/providers/task-provider/task-provider.component';
 import { getSingleValidTask } from '../../../pages/camera-page/util';
-import { isVideoFile, loadImageFromFile } from '../../media-utils';
+import { isVideoFile, loadImageFromFile, loadVideoFromFile } from '../../media-utils';
 import { ViewModes } from '../media-view-modes/utils';
 import { CondensedLabelSelector } from './condensed-label-selector.component';
 import { DeleteItemButton } from './delete-item-button.component';
@@ -37,13 +37,16 @@ interface FileLoadingProps {
     file: File;
     onLoaded: (url: string) => void;
 }
+
 const FileLoading = ({ file, onLoaded }: FileLoadingProps) => {
+    const loadHandler = isVideoFile(file) ? loadVideoFromFile : loadImageFromFile;
+
     useEffect(() => {
-        loadImageFromFile(file).then(({ src }) => onLoaded(src));
+        loadHandler(file).then(({ src }) => onLoaded(src));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [file]);
 
-    return <Loading />;
+    return <Loading size='S' />;
 };
 
 export const MediaItem = ({
@@ -84,6 +87,7 @@ export const MediaItem = ({
     return (
         <View ref={containerRef} UNSAFE_className={classes.container} height={height}>
             <ImageVideoFactory
+                controls
                 src={url}
                 isVideoFile={isVideoFile(mediaFile)}
                 alt={`media item ${id}`}
