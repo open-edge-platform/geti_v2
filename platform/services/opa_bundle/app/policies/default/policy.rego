@@ -127,7 +127,7 @@ allow if {
 	check_relation(spicedb_address, spicedb_key, "project", project_id, "parent_workspace", "workspace", workspace_id)
 }
 
-# PUT /api/<api_ver>/organizations/{organization_id}/workspaces/{work/space_id}/projects/{project_id}
+# PUT /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}
 # Edit project, user should be granted with "edit_project" project level permission
 allow if {
 	http_request.method == "PUT"
