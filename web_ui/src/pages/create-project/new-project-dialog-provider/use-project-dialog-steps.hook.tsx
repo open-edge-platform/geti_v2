@@ -77,6 +77,7 @@ export const useProjectDialogSteps = (): UseProjectDialogSteps => {
                 return {
                     component: (
                         <NameProject
+                            animationDirection={animationDirection}
                             metadata={projectCreationState}
                             updateProjectState={updateProjectState}
                             setValidationError={setTreeValidationError}

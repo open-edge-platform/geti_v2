@@ -6,6 +6,7 @@ import { FormEvent, useMemo, useState } from 'react';
 import { Form, TextField } from '@geti/ui';
 import { isEmpty, isFunction } from 'lodash-es';
 
+import { SliderAnimation } from '../../../../shared/components/slider-animation/slider-animation.component';
 import { ProjectMetadata } from '../../new-project-dialog-provider/new-project-dialog-provider.interface';
 import { MAX_NUMBER_OF_CHARACTERS_OF_PROJECT_NAME, REQUIRED_PROJECT_NAME_VALIDATION_MESSAGE } from '../utils';
 
@@ -14,6 +15,7 @@ interface NameProjectProps {
     metadata: ProjectMetadata;
     updateProjectState: (projectState: Partial<ProjectMetadata>) => void;
     goToNextStep: (() => void | null) | undefined;
+    animationDirection: number;
 }
 
 export const NameProject = ({
@@ -21,6 +23,7 @@ export const NameProject = ({
     metadata,
     updateProjectState,
     goToNextStep,
+    animationDirection,
 }: NameProjectProps): JSX.Element => {
     const { name } = metadata;
 
@@ -49,21 +52,23 @@ export const NameProject = ({
     };
 
     return (
-        <Form marginBottom={'size-300'} onSubmit={handleSubmit}>
-            <TextField
-                id='project-name-input-id'
-                width='100%'
-                marginBottom={'size-50'}
-                label='Project name'
-                value={projectName}
-                // eslint-disable-next-line jsx-a11y/no-autofocus
-                autoFocus
-                validationState={hasError ? 'invalid' : undefined}
-                errorMessage={hasError ? REQUIRED_PROJECT_NAME_VALIDATION_MESSAGE : undefined}
-                maxLength={MAX_NUMBER_OF_CHARACTERS_OF_PROJECT_NAME}
-                onFocus={(event) => (event.target as HTMLInputElement).select()}
-                onChange={handleProjectNameChange}
-            />
-        </Form>
+        <SliderAnimation animationDirection={animationDirection} style={{ height: '100%' }}>
+            <Form marginBottom={'size-300'} onSubmit={handleSubmit}>
+                <TextField
+                    id='project-name-input-id'
+                    width='100%'
+                    marginBottom={'size-50'}
+                    label='Project name'
+                    value={projectName}
+                    // eslint-disable-next-line jsx-a11y/no-autofocus
+                    autoFocus
+                    validationState={hasError ? 'invalid' : undefined}
+                    errorMessage={hasError ? REQUIRED_PROJECT_NAME_VALIDATION_MESSAGE : undefined}
+                    maxLength={MAX_NUMBER_OF_CHARACTERS_OF_PROJECT_NAME}
+                    onFocus={(event) => (event.target as HTMLInputElement).select()}
+                    onChange={handleProjectNameChange}
+                />
+            </Form>
+        </SliderAnimation>
     );
 };
