@@ -136,7 +136,6 @@ class TestProjectManager:
         ):
             ProjectManager().get_project_by_id(project_id=PROJECT_ID)
 
-    # fmt: off
     @pytest.mark.parametrize(
         "task_scope, multilabel, hierarchical, lazyfxt_task_graph, lazyfxt_label_schema_factory",
         [
@@ -156,7 +155,6 @@ class TestProjectManager:
             "Segmentation",
         ],
     )
-    # fmt: on
     def test_compute_labels_affected_by_schema_change_addition_single_task(
         self,
         request,
@@ -216,7 +214,6 @@ class TestProjectManager:
         else:
             raise ValueError(f"Unrecognized value for `task_scope`: `{task_scope}`")
 
-    # fmt: off
     @pytest.mark.parametrize(
         "multilabel_cls, hierarchical_cls",
         [
@@ -232,7 +229,6 @@ class TestProjectManager:
             "Detection -> classification multi-label hierarchical",
         ],
     )
-    # fmt: on
     def test_compute_labels_affected_by_schema_change_addition_det_cls_chain(
         self,
         multilabel_cls,

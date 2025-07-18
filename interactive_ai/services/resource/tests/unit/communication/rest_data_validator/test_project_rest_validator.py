@@ -1596,7 +1596,6 @@ def fxt_update_valid_project_rest_reuse_deleted_label_hotkeys(
 
 
 class TestProjectRestValidator:
-    # fmt: off
     @pytest.mark.parametrize(
         "lazyfxt_project_rest, expected_exception",
         (
@@ -1651,10 +1650,9 @@ class TestProjectRestValidator:
             "invalid due to duplicate label group across tasks",
             "invalid due to hierarchical labels having the same group",
             "invalid due to a label with the same name of the empty one",
-            "invalid due to too many tasks"
+            "invalid due to too many tasks",
         ],
     )
-    # fmt: on
     def test_validate_creation_data_statically(
         self, lazyfxt_project_rest, expected_exception, request: FixtureRequest
     ) -> None:
@@ -1670,7 +1668,6 @@ class TestProjectRestValidator:
         with context:
             ProjectRestValidator().validate_creation_data_statically(fxt_project_rest)
 
-    # fmt: off
     @pytest.mark.parametrize(
         "lazyfxt_project_rest, expected_exception",
         (
@@ -1734,7 +1731,6 @@ class TestProjectRestValidator:
             "valid where the hotkey of a deleted label gets reused",
         ],
     )
-    # fmt: on
     def test_validate_update_data_statically(
         self, lazyfxt_project_rest, expected_exception, request: FixtureRequest
     ) -> None:

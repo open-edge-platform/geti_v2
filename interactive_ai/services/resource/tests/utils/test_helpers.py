@@ -66,6 +66,7 @@ from iai_core.repos import (
     AnnotationSceneStateRepo,
     ConfigurableParametersRepo,
     DatasetRepo,
+    ImageRepo,
     LabelSchemaRepo,
     ProjectRepo,
     VideoRepo,
@@ -332,7 +333,6 @@ def generate_random_annotated_project(
             {"name": "ellipse", "color": "#0000ffff"},
             {"name": "triangle", "color": "#ff0000ff"},
         ]
-    from iai_core.repos import AnnotationSceneRepo, ImageRepo
 
     if isinstance(model_template_id, ModelTemplate):
         model_template_id = model_template_id.model_template_id
@@ -442,8 +442,6 @@ def generate_inference_dataset_of_all_media_in_project(project: Project) -> Data
     :param project: Project to generate inference Dataset for
     :return: Dataset
     """
-    from iai_core.repos import ImageRepo, VideoRepo
-
     dataset_storage = project.get_training_dataset_storage()
     image_identifiers = [i.media_identifier for i in ImageRepo(dataset_storage.identifier).get_all()]
     video_identifiers = [v.media_identifier for v in VideoRepo(dataset_storage.identifier).get_all()]
@@ -488,8 +486,6 @@ def generate_training_dataset_of_all_annotated_media_in_project(
     :param ignore_some_labels: If True, mark some labels within the item as ignored
     :return: generated Dataset
     """
-    from iai_core.repos import AnnotationSceneRepo, ImageRepo, VideoRepo
-
     dataset_storage = project.get_training_dataset_storage()
     ann_scene_repo = AnnotationSceneRepo(dataset_storage.identifier)
     image_repo = ImageRepo(dataset_storage.identifier)
@@ -570,7 +566,6 @@ def generate_and_save_random_simple_segmentation_project(
     :param request: pytest Request
     :param projectname: Name of the project that is created
     """
-    from iai_core.repos import AnnotationSceneRepo, ImageRepo, ProjectRepo
 
     register_model_template(request, type(None), "segmentation", "SEGMENTATION", trainable=True)
     project = ProjectFactory().create_project_single_task(
