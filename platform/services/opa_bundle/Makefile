@@ -15,7 +15,7 @@ prepare-policies:
 	cp app/policies/common/mask_sensitive_logs.rego ${BUNDLE_BUILD_DIR}/policies/all/mask_sensitive_logs.rego
 	cp app/policies/common/common.rego ${BUNDLE_BUILD_DIR}/policies/all/policy.rego
 	find app/policies/ -name all -prune -o -name "policy.rego" -print | xargs cat >> ${BUNDLE_BUILD_DIR}/policies/all/policy.rego
-	@for dir in acc credits default gtw; do \
+	@for dir in acc credits default gtw onboarding; do \
 		mkdir -p "${BUNDLE_BUILD_DIR}/policies/test/$$dir" || exit 1; \
 		cp "${BUNDLE_BUILD_DIR}/policies/all/policy.rego" "${BUNDLE_BUILD_DIR}/policies/test/$$dir/" || exit 1; \
 		cp "app/policies/$$dir/policy_test.rego" "${BUNDLE_BUILD_DIR}/policies/test/$$dir/" || exit 1; \
