@@ -109,7 +109,7 @@ describe('Train model dialog', () => {
         return await render(<TrainModelDialog isOpen={true} onClose={onClose} onSuccess={onSuccess} />, {
             ...options,
             services: { ...options.services, projectService: options.services?.projectService ?? projectService },
-            featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: false },
+            featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: false, FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false },
         });
     };
 
