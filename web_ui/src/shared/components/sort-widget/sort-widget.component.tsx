@@ -59,7 +59,7 @@ export const SortWidget = <T extends string>({ sortBy, onSort, items, ariaLabel 
                     <Section key={`${item[0].key}-${item[1].key}`}>
                         {item.map((option) => (
                             <Item key={option.key} textValue={option.name}>
-                                <SortWidgetItem key={option.key} item={option} />
+                                <SortWidgetItem item={option} />
                             </Item>
                         ))}
                     </Section>
