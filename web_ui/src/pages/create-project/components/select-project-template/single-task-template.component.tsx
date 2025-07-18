@@ -37,8 +37,6 @@ export const SingleTaskTemplate = ({ cards, metaData, setSelectedDomains }: Sing
         <Grid
             id='domain-grid'
             gap={'size-150'}
-            justifyItems={'center'}
-            alignContent={'space-between'}
             columns={gridColumns}
             UNSAFE_className={classes.projectCreationWellWrapper}
             maxHeight={'size-3600'}
