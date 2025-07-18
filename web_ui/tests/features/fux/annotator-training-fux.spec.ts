@@ -18,6 +18,8 @@ import {
     getScheduledTrainingJob,
     projectConfigAutoTrainingOffMock,
     projectConfigAutoTrainingOnMock,
+    projectConfigurationAutoTrainingOffMock,
+    projectConfigurationAutoTrainingOnMock,
 } from '../credit-system/mocks';
 import { project } from '../project-dataset/mocks';
 import { getModelGroups } from '../project-models/models.mocks';
@@ -37,8 +39,14 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
         test.use({ featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: false } });
 
         test.beforeEach(({ registerApiResponse }) => {
+            // TODO: Remove GetFullConfiguration mock when FEATURE_FLAG_CONFIGURABLE_PARAMETERS is removed
             registerApiResponse('GetFullConfiguration', (_, res, ctx) =>
                 res(ctx.status(200), ctx.json(projectConfigAutoTrainingOnMock))
+            );
+
+            registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+                // @ts-expect-error Issue ie openapi types
+                res(ctx.status(200), ctx.json(projectConfigurationAutoTrainingOnMock))
             );
         });
 
@@ -315,9 +323,16 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
                 );
             });
 
+            // TODO: Remove GetFullConfiguration mock when FEATURE_FLAG_CONFIGURABLE_PARAMETERS is removed
             registerApiResponse('GetFullConfiguration', (_, res, ctx) =>
                 res(ctx.status(200), ctx.json(projectConfigAutoTrainingOffMock))
             );
+
+            registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+                // @ts-expect-error Issue ie openapi types
+                res(ctx.status(200), ctx.json(projectConfigurationAutoTrainingOffMock))
+            );
+
             await goToAnnotatorInActiveMode(page);
 
             await startTaskTraining(page);
@@ -335,9 +350,15 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
             page,
             registerApiResponse,
         }) => {
+            // TODO: Remove GetFullConfiguration mock when FEATURE_FLAG_CONFIGURABLE_PARAMETERS is removed
             registerApiResponse('GetFullConfiguration', (_, res, ctx) =>
                 res(ctx.status(200), ctx.json(projectConfigAutoTrainingOnMock))
             );
+            registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+                // @ts-expect-error Issue ie openapi types
+                res(ctx.status(200), ctx.json(projectConfigurationAutoTrainingOnMock))
+            );
+
             registerStoreSettings(registerApiResponse, {
                 [FUX_NOTIFICATION_KEYS.ANNOTATOR_ACTIVE_SET]: {
                     isEnabled: true,
@@ -370,9 +391,15 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
 
         test.describe('with auto-training ON', () => {
             test.beforeEach(async ({ registerApiResponse }) => {
+                // TODO: Remove GetFullConfiguration mock when FEATURE_FLAG_CONFIGURABLE_PARAMETERS is removed
                 registerApiResponse('GetFullConfiguration', (_, res, ctx) =>
                     res(ctx.status(200), ctx.json(projectConfigAutoTrainingOnMock))
                 );
+                registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+                    // @ts-expect-error Issue ie openapi types
+                    res(ctx.status(200), ctx.json(projectConfigurationAutoTrainingOnMock))
+                );
+
                 registerApiResponse('get_balance_api_v1_organizations__org_id__balance_get', (_, res, ctx) =>
                     res(ctx.json({ incoming: 10, available: 100 }))
                 );
@@ -515,8 +542,14 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
                 registerApiResponse('get_balance_api_v1_organizations__org_id__balance_get', (_, res, ctx) =>
                     res(ctx.json({ incoming: 10, available: 100 }))
                 );
+                // TODO: Remove GetFullConfiguration mock when FEATURE_FLAG_CONFIGURABLE_PARAMETERS is removed
                 registerApiResponse('GetFullConfiguration', (_, res, ctx) =>
                     res(ctx.status(200), ctx.json(projectConfigAutoTrainingOffMock))
+                );
+
+                registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+                    // @ts-expect-error Issue ie openapi types
+                    res(ctx.status(200), ctx.json(projectConfigurationAutoTrainingOffMock))
                 );
             });
 

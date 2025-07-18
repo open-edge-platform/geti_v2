@@ -8,6 +8,7 @@ import {
     getScheduledAutoTrainingCostJob,
     getScheduledAutoTrainingJob,
     getScheduledTrainingCostJob,
+    projectConfigurationAutoTrainingOnMock,
 } from '../credit-system/mocks';
 import { getMockedJob } from '../project-dataset/mocks';
 import {
@@ -30,8 +31,13 @@ test.describe('Check FUX notifications on models page', () => {
             registerApiResponse('get_balance_api_v1_organizations__org_id__balance_get', (_, res, ctx) =>
                 res(ctx.json({ incoming: 10, available: 100 }))
             );
+            // TODO: Remove GetFullConfiguration when FEATURE_FLAG_CONFIGURABLE_PARAMETERS is removed
             registerApiResponse('GetFullConfiguration', (_, res, ctx) =>
                 res(ctx.status(200), ctx.json(detectionProjectAutoTrainingConfig))
+            );
+            registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+                // @ts-expect-error Issue in openapi types
+                res(ctx.status(200), ctx.json(projectConfigurationAutoTrainingOnMock))
             );
         });
 

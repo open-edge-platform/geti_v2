@@ -1,13 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ProjectConfigurationDTO } from '../../../src/core/configurable-parameters/dtos/configuration.interface';
 import { JobCostPropsDTO } from '../../../src/core/jobs/dtos/jobs-dto.interface';
 import { GETI_SYSTEM_AUTHOR_ID, JobState, JobType } from '../../../src/core/jobs/jobs.const';
-import { OpenApiResponseBody } from '../../../src/core/server/types';
 import { getMockedJob } from '../project-dataset/utils';
-import { yoloAlgorithm } from '../project-models/mocks';
 
-export const projectId = '60db493ed20945a0046f56ce';
 export const detectionTaskId = '60db493fd20945a0046f56d2';
 
 export const getScheduledTrainingJob = (job = getMockedJob({ state: JobState.SCHEDULED })) => ({
@@ -348,84 +346,192 @@ export const projectConfigAutoTrainingOffMock = {
     })),
 };
 
-export const modelGroups = {
-    model_groups: [
+export const projectConfigurationAutoTrainingOnMock: ProjectConfigurationDTO = {
+    task_configs: [
         {
-            id: '60dc3b8b3fc7834f46ea90d5',
-            name: yoloAlgorithm.name,
             task_id: detectionTaskId,
-
-            model_template_id: yoloAlgorithm.model_template_id,
-            models: [
-                {
-                    name: 'Model of Yolo',
-                    creation_date: '2021-06-30T09:38:19.677000+00:00',
-                    id: '60dc3b8b3fc7834f46ea90ag',
-                    size: 12813101,
-                    version: 1,
-                    performance: {
-                        score: 0.28953322601318,
+            training: {
+                constraints: [
+                    {
+                        key: 'min_images_per_label',
+                        name: 'Minimum number of images per label',
+                        type: 'int',
+                        description: 'Minimum number of images that must be present for each label to train',
+                        value: 0,
+                        default_value: 0,
+                        min_value: 0,
+                        max_value: null,
                     },
-                    label_schema_in_sync: false,
-                    score_up_to_date: true,
-                    active_model: false,
+                ],
+            },
+            auto_training: [
+                {
+                    key: 'enable',
+                    name: 'Enable auto training',
+                    type: 'bool',
+                    description: 'Whether automatic training is enabled for this task',
+                    value: true,
+                    default_value: true,
                 },
                 {
-                    name: 'Model of Yolo',
-                    creation_date: '2021-06-30T09:38:19.677000+00:00',
-                    id: '60dc3b8b3fc7834f46ea90af',
-                    size: 12813101,
-                    version: 2,
-                    performance: {
-                        score: 0.28953322601318,
+                    key: 'enable_dynamic_required_annotations',
+                    name: 'Enable dynamic required annotations',
+                    type: 'bool',
+                    description: 'Whether to dynamically adjust the number of required annotations',
+                    value: false,
+                    default_value: false,
+                },
+                {
+                    key: 'min_images_per_label',
+                    name: 'Minimum images per label',
+                    type: 'int',
+                    description: 'Minimum number of images needed for each label to trigger auto-training',
+                    value: 12,
+                    default_value: 12,
+                    min_value: 3,
+                    max_value: null,
+                },
+            ],
+        },
+        {
+            task_id: '60db493fd20945a0046f56d6',
+            training: {
+                constraints: [
+                    {
+                        key: 'min_images_per_label',
+                        name: 'Minimum number of images per label',
+                        type: 'int',
+                        description: 'Minimum number of images that must be present for each label to train',
+                        value: 0,
+                        default_value: 0,
+                        min_value: 0,
+                        max_value: null,
                     },
-                    label_schema_in_sync: true,
-                    score_up_to_date: true,
-                    active_model: true,
+                ],
+            },
+            auto_training: [
+                {
+                    key: 'enable',
+                    name: 'Enable auto training',
+                    type: 'bool',
+                    description: 'Whether automatic training is enabled for this task',
+                    value: true,
+                    default_value: true,
+                },
+                {
+                    key: 'enable_dynamic_required_annotations',
+                    name: 'Enable dynamic required annotations',
+                    type: 'bool',
+                    description: 'Whether to dynamically adjust the number of required annotations',
+                    value: false,
+                    default_value: false,
+                },
+                {
+                    key: 'min_images_per_label',
+                    name: 'Minimum images per label',
+                    type: 'int',
+                    description: 'Minimum number of images needed for each label to trigger auto-training',
+                    value: 12,
+                    default_value: 12,
+                    min_value: 3,
+                    max_value: null,
                 },
             ],
         },
     ],
 };
 
-export const modelGroup: OpenApiResponseBody<'GetModelGroup'> = {
-    id: '633aa0e210ccb847ccccc42b',
-    model_template_id: 'Custom_Image_Classification_EfficinetNet-B0',
-    models: [
+export const projectConfigurationAutoTrainingOffMock: ProjectConfigurationDTO = {
+    task_configs: [
         {
-            active_model: true,
-            creation_date: '2022-10-10T08:20:52.540000+00:00',
-            id: '6343d5e4aba8c6d87d17ab6a',
-            name: 'EfficientNet-B0',
-            performance: { score: 0.85 },
-            size: 16330443,
-            version: 2,
+            task_id: detectionTaskId,
+            training: {
+                constraints: [
+                    {
+                        key: 'min_images_per_label',
+                        name: 'Minimum number of images per label',
+                        type: 'int',
+                        description: 'Minimum number of images that must be present for each label to train',
+                        value: 0,
+                        default_value: 0,
+                        min_value: 0,
+                        max_value: null,
+                    },
+                ],
+            },
+            auto_training: [
+                {
+                    key: 'enable',
+                    name: 'Enable auto training',
+                    type: 'bool',
+                    description: 'Whether automatic training is enabled for this task',
+                    value: false,
+                    default_value: true,
+                },
+                {
+                    key: 'enable_dynamic_required_annotations',
+                    name: 'Enable dynamic required annotations',
+                    type: 'bool',
+                    description: 'Whether to dynamically adjust the number of required annotations',
+                    value: false,
+                    default_value: false,
+                },
+                {
+                    key: 'min_images_per_label',
+                    name: 'Minimum images per label',
+                    type: 'int',
+                    description: 'Minimum number of images needed for each label to trigger auto-training',
+                    value: 12,
+                    default_value: 12,
+                    min_value: 3,
+                    max_value: null,
+                },
+            ],
         },
         {
-            active_model: false,
-            creation_date: '2022-10-03T08:44:35.074000+00:00',
-            id: '633aa0f397e2d10e57eccdb7',
-            name: 'EfficientNet-B0',
-            performance: { score: 0.75 },
-            size: 16330444,
-            version: 1,
-        },
-    ],
-    name: 'EfficientNet-B0',
-    task_id: '6101254defba22ca453f11d1',
-};
-
-export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> = {
-    supported_algorithms: [
-        {
-            name: 'U-Net',
-            gigaflops: 5.6,
-            model_size: 21.1,
-            model_template_id: 'U-Net',
-            summary: 'This algorithm is only used for testing purposes',
-            task_type: 'detection',
-            default_algorithm: true,
-            lifecycle_stage: 'active',
+            task_id: '60db493fd20945a0046f56d6',
+            training: {
+                constraints: [
+                    {
+                        key: 'min_images_per_label',
+                        name: 'Minimum number of images per label',
+                        type: 'int',
+                        description: 'Minimum number of images that must be present for each label to train',
+                        value: 0,
+                        default_value: 0,
+                        min_value: 0,
+                        max_value: null,
+                    },
+                ],
+            },
+            auto_training: [
+                {
+                    key: 'enable',
+                    name: 'Enable auto training',
+                    type: 'bool',
+                    description: 'Whether automatic training is enabled for this task',
+                    value: false,
+                    default_value: true,
+                },
+                {
+                    key: 'enable_dynamic_required_annotations',
+                    name: 'Enable dynamic required annotations',
+                    type: 'bool',
+                    description: 'Whether to dynamically adjust the number of required annotations',
+                    value: false,
+                    default_value: false,
+                },
+                {
+                    key: 'min_images_per_label',
+                    name: 'Minimum images per label',
+                    type: 'int',
+                    description: 'Minimum number of images needed for each label to trigger auto-training',
+                    value: 12,
+                    default_value: 12,
+                    min_value: 3,
+                    max_value: null,
+                },
+            ],
         },
     ],
 };

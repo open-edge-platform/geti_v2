@@ -14,7 +14,6 @@ import {
 import { annotatorTest as test } from '../../../fixtures/annotator-test';
 import { OpenApiFixtures } from '../../../fixtures/open-api';
 import { settings } from '../../../fixtures/open-api/mocks';
-import { notFoundHandler } from '../../../fixtures/open-api/setup-open-api-handlers';
 import { registerStoreSettings } from '../../../utils/api';
 import { VIEWPORT_TYPE } from '../../../utils/test-type';
 import { expect } from '../detection-segmentation/expect';
@@ -26,58 +25,52 @@ import {
 import { project as detectionProject } from './../../../mocks/detection/mocks';
 import { projectConfiguration, taskChainConfiguration } from './mocks';
 
-const registerProjectConfigurationEndpoints = (
-    openApi: OpenApiFixtures['openApi'],
-    registerApiResponse: OpenApiFixtures['registerApiResponse']
-) => {
+const registerProjectConfigurationEndpoints = (registerApiResponse: OpenApiFixtures['registerApiResponse']) => {
     const localProjectConfiguration = structuredClone(projectConfiguration);
 
-    openApi.registerHandler('notFound', (context, res, ctx) => {
-        if (context.request.path.endsWith('project_configuration') && context.request.method === 'get') {
-            return res(ctx.status(200), ctx.json(localProjectConfiguration));
-        }
+    registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+        // @ts-expect-error Issue ie openapi types
+        res(ctx.status(200), ctx.json(localProjectConfiguration))
+    );
 
-        if (context.request.path.endsWith('project_configuration') && context.request.method === 'patch') {
-            const payload = context.request.requestBody as ProjectConfigurationUploadPayloadDTO;
+    registerApiResponse('UpdateProjectConfiguration', (req, res, ctx) => {
+        const payload = req.body as unknown as ProjectConfigurationUploadPayloadDTO;
 
-            const newTaskConfigs = localProjectConfiguration.task_configs.map((taskConfig) => {
-                const existingTaskConfig = payload.task_configs.find(({ task_id }) => task_id === taskConfig.task_id);
+        const newTaskConfigs = localProjectConfiguration.task_configs.map((taskConfig) => {
+            const existingTaskConfig = payload.task_configs.find(({ task_id }) => task_id === taskConfig.task_id);
 
-                if (existingTaskConfig !== undefined) {
-                    return {
-                        ...taskConfig,
-                        training: {
-                            constraints: taskConfig.training.constraints.map((constraint) => {
-                                const payloadConstraint = existingTaskConfig.training?.constraints.find(
-                                    (c) => c.key === constraint.key
-                                );
-                                return {
-                                    ...constraint,
-                                    value: payloadConstraint ? payloadConstraint.value : constraint.value,
-                                };
-                            }),
-                        },
-                        auto_training: taskConfig.auto_training.map((autoTraining) => {
-                            const payloadAutoTraining = existingTaskConfig.auto_training?.find(
-                                (a) => a.key === autoTraining.key
+            if (existingTaskConfig !== undefined) {
+                return {
+                    ...taskConfig,
+                    training: {
+                        constraints: taskConfig.training.constraints.map((constraint) => {
+                            const payloadConstraint = existingTaskConfig.training?.constraints.find(
+                                (c) => c.key === constraint.key
                             );
                             return {
-                                ...autoTraining,
-                                value: payloadAutoTraining ? payloadAutoTraining.value : autoTraining.value,
+                                ...constraint,
+                                value: payloadConstraint ? payloadConstraint.value : constraint.value,
                             };
                         }),
-                    };
-                }
+                    },
+                    auto_training: taskConfig.auto_training.map((autoTraining) => {
+                        const payloadAutoTraining = existingTaskConfig.auto_training?.find(
+                            (a) => a.key === autoTraining.key
+                        );
+                        return {
+                            ...autoTraining,
+                            value: payloadAutoTraining ? payloadAutoTraining.value : autoTraining.value,
+                        };
+                    }),
+                };
+            }
 
-                return taskConfig;
-            }) as ProjectConfigurationDTO['task_configs'];
+            return taskConfig;
+        }) as ProjectConfigurationDTO['task_configs'];
 
-            localProjectConfiguration.task_configs = newTaskConfigs;
+        localProjectConfiguration.task_configs = newTaskConfigs;
 
-            return res(ctx.status(200), ctx.json(localProjectConfiguration));
-        }
-
-        return notFoundHandler(context, res, ctx);
+        return res(ctx.status(200));
     });
 
     registerApiResponse('GetProjectStatus', (_, res, ctx) => {
@@ -163,7 +156,7 @@ test.describe('navigation toolbar', () => {
 });
 
 test.describe('Active learning configuration', () => {
-    test.beforeEach(async ({ registerApiResponse, openApi }) => {
+    test.beforeEach(async ({ registerApiResponse }) => {
         registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(detectionSegmentationProject)));
 
         registerApiResponse('GetImageAnnotation', (_, res, ctx) =>
@@ -174,7 +167,7 @@ test.describe('Active learning configuration', () => {
             return res(ctx.json({ ...userAnnotationsResponse, annotations: [] }));
         });
 
-        registerProjectConfigurationEndpoints(openApi, registerApiResponse);
+        registerProjectConfigurationEndpoints(registerApiResponse);
     });
 
     test('It allows the user to toggle suggesting predictions', async ({

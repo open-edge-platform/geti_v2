@@ -8,7 +8,7 @@ import { annotatorTest as test } from '../../../fixtures/annotator-test';
 import { disabledFUXSettings } from '../../../fixtures/open-api/mocks';
 import { annotatorUrl } from '../../../mocks/segmentation/mocks';
 import { registerStoreSettings } from '../../../utils/api';
-import { modelDetail, modelGroups, testResults } from './mocks';
+import { modelDetail, modelGroups, supportedAlgorithms, testResults } from './mocks';
 import { activeModelPredictions, registerProjectResponses, visualPromptPredictions } from './utils';
 
 const selectVisualPromptModel = async (page: Page) => {
@@ -131,9 +131,114 @@ test.describe('Visual prompting', () => {
         await expectToSeeAnnotations(page, activeModelPredictions.length);
     });
 
-    test.describe('Models & tests page', () => {
+    test.describe('Models & tests page [FEATURE_FLAG_CONFIGURABLE_PARAMETERS: false]', () => {
+        test.use({
+            featureFlags: {
+                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
+            },
+        });
         test.beforeEach(async ({ registerApiResponse }) => {
             // Mock API to return SAM model
+            registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(modelGroups)));
+            registerApiResponse('GetModelGroup', (_, res, ctx) => res(ctx.json(modelGroups.model_groups[0])));
+            registerApiResponse('GetModelDetail', (_, res, ctx) => res(ctx.json(modelDetail)));
+        });
+
+        test('Visual prompt models are shown in the models page', async ({ page }) => {
+            await page.goto(
+                // eslint-disable-next-line max-len
+                '/organizations/5b1f89f3-aba5-4a5f-84ab-de9abb8e0633/workspaces/61011e42d891c82e13ec92da/projects/61012cdb1d38a5e71ef3baf9/models'
+            );
+
+            const model = page.getByLabel('SAM version');
+            await expect(model).toBeVisible();
+
+            // Check that on visual prompt models we only allow running tests
+            const menu = model.getByLabel('Model action menu');
+            await menu.click();
+            const runTests = page.getByRole('menuitem', { name: /tests/ });
+            await expect(runTests).toBeEnabled();
+            await expect(page.getByRole('menuitem', { name: 'Set as active model' })).toBeDisabled();
+            await expect(page.getByRole('menuitem', { name: 'Retrain' })).toBeDisabled();
+            await runTests.click();
+
+            // Check that we can run tests
+            const runTestDialog = page.getByRole('dialog');
+            await expect(runTestDialog).toBeVisible();
+            await expect(page.getByText('Segmentation (SAM)Version')).toBeVisible();
+            await page.keyboard.press('Escape');
+            await expect(runTestDialog).toBeHidden();
+
+            // Inspect visual prompt model
+            await model.click();
+            await expect(page.getByRole('tab', { name: 'Model variants' })).toBeVisible();
+            await expect(page.getByRole('tab', { name: 'Reference dataset' })).toBeVisible();
+            await expect(page.getByRole('tab', { name: 'Labels' })).toBeVisible();
+            await expect(page.getByRole('tab', { name: 'Parameters' })).toBeHidden();
+            await expect(page.getByRole('tab', { name: 'Model metrics' })).toBeHidden();
+            await expect(page.getByText('BASELINE MODELS')).toBeVisible();
+
+            // Check that we can download the model or run tests using it
+            await page
+                .getByRole('gridcell', { name: 'download model Model action' })
+                .getByLabel('Model action menu')
+                .click();
+            await expect(page.getByRole('menuitem', { name: 'Download' })).toBeEnabled();
+            await expect(page.getByRole('menuitem', { name: 'Run tests' })).toBeEnabled();
+
+            // Check that we can run a test form the model page
+            await page.getByRole('menuitem', { name: 'Run tests' }).click();
+            await expect(page.getByRole('dialog')).toBeVisible();
+            await expect(page.getByText('Segmentation (SAM)Version')).toBeVisible();
+            await page.keyboard.press('Escape');
+            await expect(page.getByRole('dialog')).toBeHidden();
+        });
+
+        test('The reference dataset shows inference results from the visual prompt model', async ({
+            page,
+            annotatorPage,
+        }) => {
+            await page.goto(
+                // eslint-disable-next-line max-len
+                '/organizations/5b1f89f3-aba5-4a5f-84ab-de9abb8e0633/workspaces/61011e42d891c82e13ec92da/projects/61012cdb1d38a5e71ef3baf9/models/672d00c843da978dfb79fe98/672d00c843da978dfb79fe9a/training-datasets'
+            );
+
+            await page.getByRole('img', { name: /dummy_images/i }).click();
+
+            // Check that we show all visual prompt predictions with the correct labels
+            await expect(page.getByLabel('annotations').getByLabel('labels')).toHaveCount(0);
+            await annotatorPage.selectPredictionMode();
+            await expect(page.getByLabel('annotations').getByLabel('labels')).toHaveCount(
+                visualPromptPredictions.length
+            );
+
+            const annotations = await page.getByLabel('annotations').getByLabel('labels').all();
+            await Promise.all(annotations.map((annotation) => expect(annotation).toContainText('Card')));
+        });
+
+        test('Tests can be run using a visual prompt model', async ({ page, registerApiResponse, testsPage }) => {
+            registerApiResponse('GetAllTestsInAProject', (_, res, ctx) => res(ctx.json({ test_results: testResults })));
+            registerApiResponse('GetTestInAProject', (_, res, ctx) => res(ctx.json(testResults[0])));
+
+            await page.goto(
+                // eslint-disable-next-line max-len
+                '/organizations/5b1f89f3-aba5-4a5f-84ab-de9abb8e0633/workspaces/61011e42d891c82e13ec92da/projects/61012cdb1d38a5e71ef3baf9/tests'
+            );
+
+            const runTestDialog = await testsPage.runTest();
+            await expect(runTestDialog.getRunTestButton()).toBeEnabled();
+        });
+    });
+
+    test.describe('Models & tests page [FEATURE_FLAG_CONFIGURABLE_PARAMETERS: true]', () => {
+        test.use({
+            featureFlags: {
+                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true,
+            },
+        });
+        test.beforeEach(async ({ registerApiResponse }) => {
+            // Mock API to return SAM model
+            registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
             registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(modelGroups)));
             registerApiResponse('GetModelGroup', (_, res, ctx) => res(ctx.json(modelGroups.model_groups[0])));
             registerApiResponse('GetModelDetail', (_, res, ctx) => res(ctx.json(modelDetail)));
