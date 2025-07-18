@@ -36,6 +36,7 @@ describe('Name project step', () => {
     it("There's Name project step with name 'Project name' field", async () => {
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -50,6 +51,7 @@ describe('Name project step', () => {
     it('Check if empty name will show error', async () => {
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -68,6 +70,7 @@ describe('Name project step', () => {
     it('Check if name is limited to 100 characters', async () => {
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -90,6 +93,7 @@ describe('Name project step', () => {
     it('Clear validation errors upon unmounting', async () => {
         const { unmount } = await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -107,6 +111,7 @@ describe('Name project step', () => {
 
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -122,6 +127,7 @@ describe('Name project step', () => {
 
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
