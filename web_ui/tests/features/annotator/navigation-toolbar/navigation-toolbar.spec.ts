@@ -4,19 +4,106 @@
 import { clone } from 'lodash-es';
 
 import {
+    ProjectConfigurationDTO,
+    ProjectConfigurationUploadPayloadDTO,
+} from '../../../../src/core/configurable-parameters/dtos/configuration.interface';
+import {
     getMockedProjectStatusDTO,
     getMockedProjectStatusTask,
 } from '../../../../src/test-utils/mocked-items-factory/mocked-project';
 import { annotatorTest as test } from '../../../fixtures/annotator-test';
 import { OpenApiFixtures } from '../../../fixtures/open-api';
 import { settings } from '../../../fixtures/open-api/mocks';
+import { notFoundHandler } from '../../../fixtures/open-api/setup-open-api-handlers';
 import { registerStoreSettings } from '../../../utils/api';
 import { VIEWPORT_TYPE } from '../../../utils/test-type';
 import { expect } from '../detection-segmentation/expect';
-import { annotatorUrl, project, userAnnotationsResponse } from './../../../mocks/detection-segmentation/mocks';
+import {
+    annotatorUrl,
+    project as detectionSegmentationProject,
+    userAnnotationsResponse,
+} from './../../../mocks/detection-segmentation/mocks';
 import { project as detectionProject } from './../../../mocks/detection/mocks';
-import { taskChainConfiguration } from './mocks';
+import { projectConfiguration, taskChainConfiguration } from './mocks';
 
+const registerProjectConfigurationEndpoints = (
+    openApi: OpenApiFixtures['openApi'],
+    registerApiResponse: OpenApiFixtures['registerApiResponse']
+) => {
+    const localProjectConfiguration = structuredClone(projectConfiguration);
+
+    openApi.registerHandler('notFound', (context, res, ctx) => {
+        if (context.request.path.endsWith('project_configuration') && context.request.method === 'get') {
+            return res(ctx.status(200), ctx.json(localProjectConfiguration));
+        }
+
+        if (context.request.path.endsWith('project_configuration') && context.request.method === 'patch') {
+            const payload = context.request.requestBody as ProjectConfigurationUploadPayloadDTO;
+
+            const newTaskConfigs = localProjectConfiguration.task_configs.map((taskConfig) => {
+                const existingTaskConfig = payload.task_configs.find(({ task_id }) => task_id === taskConfig.task_id);
+
+                if (existingTaskConfig !== undefined) {
+                    return {
+                        ...taskConfig,
+                        training: {
+                            constraints: taskConfig.training.constraints.map((constraint) => {
+                                const payloadConstraint = existingTaskConfig.training?.constraints.find(
+                                    (c) => c.key === constraint.key
+                                );
+                                return {
+                                    ...constraint,
+                                    value: payloadConstraint ? payloadConstraint.value : constraint.value,
+                                };
+                            }),
+                        },
+                        auto_training: taskConfig.auto_training.map((autoTraining) => {
+                            const payloadAutoTraining = existingTaskConfig.auto_training?.find(
+                                (a) => a.key === autoTraining.key
+                            );
+                            return {
+                                ...autoTraining,
+                                value: payloadAutoTraining ? payloadAutoTraining.value : autoTraining.value,
+                            };
+                        }),
+                    };
+                }
+
+                return taskConfig;
+            }) as ProjectConfigurationDTO['task_configs'];
+
+            localProjectConfiguration.task_configs = newTaskConfigs;
+
+            return res(ctx.status(200), ctx.json(localProjectConfiguration));
+        }
+
+        return notFoundHandler(context, res, ctx);
+    });
+
+    registerApiResponse('GetProjectStatus', (_, res, ctx) => {
+        return res(
+            // @ts-expect-error Issue ie openapi types
+            ctx.json(
+                getMockedProjectStatusDTO({
+                    tasks: [
+                        getMockedProjectStatusTask({
+                            id: '635fce72fc03e87df9becd10',
+                            title: 'Detection',
+                            ready_to_train: true,
+                        }),
+                        getMockedProjectStatusTask({
+                            id: '635fce72fc03e87df9becd12',
+                            title: 'Segmentation',
+                            ready_to_train: true,
+                        }),
+                    ],
+                })
+            )
+        );
+    });
+};
+
+// TODO: Remove once FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS is removed
 const registerConfigurationEndpoints = (registerApiResponse: OpenApiFixtures['registerApiResponse']) => {
     const configuration = clone(taskChainConfiguration);
 
@@ -62,7 +149,7 @@ const registerConfigurationEndpoints = (registerApiResponse: OpenApiFixtures['re
 
 test.describe('navigation toolbar', () => {
     test.beforeEach(({ registerApiResponse }) => {
-        registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(project)));
+        registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(detectionSegmentationProject)));
         registerApiResponse('GetImageDetail', (_, res, ctx) => res(ctx.json({})));
     });
 
@@ -76,8 +163,8 @@ test.describe('navigation toolbar', () => {
 });
 
 test.describe('Active learning configuration', () => {
-    test.beforeEach(async ({ registerApiResponse }) => {
-        registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(project)));
+    test.beforeEach(async ({ registerApiResponse, openApi }) => {
+        registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(detectionSegmentationProject)));
 
         registerApiResponse('GetImageAnnotation', (_, res, ctx) =>
             res(ctx.json({ ...userAnnotationsResponse, annotations: [] }))
@@ -86,6 +173,8 @@ test.describe('Active learning configuration', () => {
         registerApiResponse('GetImageAnnotation', (_, res, ctx) => {
             return res(ctx.json({ ...userAnnotationsResponse, annotations: [] }));
         });
+
+        registerProjectConfigurationEndpoints(openApi, registerApiResponse);
     });
 
     test('It allows the user to toggle suggesting predictions', async ({
@@ -125,7 +214,11 @@ test.describe('Active learning configuration', () => {
         registerApiResponse,
     }) => {
         registerConfigurationEndpoints(registerApiResponse);
+
         await page.goto(annotatorUrl);
+
+        await expect(page.getByRole('button', { name: 'Detection', exact: true })).toBeVisible();
+
         await aiLearningConfigurationPage.open();
 
         // Check that we can change training settings for both tasks
