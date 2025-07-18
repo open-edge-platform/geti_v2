@@ -66,13 +66,10 @@ test.describe('Train model', () => {
         },
     });
 
-    test.beforeEach(({ registerApiResponse, openApi }) => {
-        openApi.registerHandler('notFound', (context, res, ctx) => {
-            if (context.request.path.endsWith('training_configuration')) {
-                return res(ctx.status(200), ctx.json(trainingConfiguration));
-            }
-
-            return notFoundHandler(context, res, ctx);
+    test.beforeEach(({ registerApiResponse }) => {
+        registerApiResponse('GetTrainingConfiguration', (_, res, ctx) => {
+            // @ts-expect-error Issue in openapi types
+            return res(ctx.status(200), ctx.json(trainingConfiguration));
         });
 
         registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => {
