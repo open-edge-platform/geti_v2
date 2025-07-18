@@ -1,14 +1,5 @@
-# INTEL CONFIDENTIAL
-#
-# Copyright (C) 2022 Intel Corporation
-#
-# This software and the related documents are Intel copyrighted materials, and your use of them is governed by
-# the express license under which they were provided to you ("License"). Unless the License provides otherwise,
-# you may not use, modify, copy, publish, distribute, disclose or transmit this software or the related documents
-# without Intel's prior written permission.
-#
-# This software and the related documents are provided as is, with no express or implied warranties,
-# other than those that are expressly stated in the License.
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 """
 Strings that are shown to the user by installation command.
@@ -21,6 +12,17 @@ class InstallCmdTexts:
     """
 
     start_message = "Running platform installer..."
+    skip_confirmation_help = "Skip the confirmation step and proceed with the installation."
+    third_party_licenses_help = (
+        "Accept the third-party licenses required for the installation. "
+        "Geti installs MongoDB database licensed under SSPL license (https://www.mongodb.com/legal/licensing/server-side-public-license) "  # noqa: E501
+        "and CUDA components licensed under the CUDA Toolkit End User License (https://docs.nvidia.com/cuda/eula/index.html). "  # noqa: E501
+    )
+    third_party_licenses_prompt = (
+        "Geti installs MongoDB database licensed under SSPL license (https://www.mongodb.com/legal/licensing/server-side-public-license) "  # noqa: E501
+        "and CUDA components licensed under the CUDA Toolkit End User License (https://docs.nvidia.com/cuda/eula/index.html). "  # noqa: E501
+        "Do you agree to continue the installation?"
+    )
     k8s_prompt = "Do you want to install the platform on an existing Kubernetes?"
     kube_config_prompt = "Path to kubeconfig file (example: /home/my-user/admin.conf)"
     username_help = "Login name (e.g. admin@my-company.com) of the user to be created during the installation"
@@ -28,14 +30,18 @@ class InstallCmdTexts:
     checks_error_message = "Pre-installation checks failed, aborting installation."
     execution_start_message = "Executing installation..."
     data_folder_location = "Path to the data storage: "
+    data_folder_creation_start = "Creating data folder: {path}"
+    data_folder_creation_succeeded = "Data folder created successfully"
+    data_folder_creation_failed = "Data folder creation failed. Look for errors in the log."
     selected_username = "Initial user: "
-    selected_password = "Password for initial user: "  # noqa: S105
+    selected_password = "Admin's password: "  # noqa: S105
     custom_certificate_prompt = "Do you want to configure your custom SSL certificate?"
     tls_cert_file_help = "Absolute path to the certificate file"
     tls_key_file_help = "Absolute path to the key file"
     k3s_installing = "Installing k3s. Detailed logs can be found in: platform_logs/k3s_install.log."
     k3s_installation_succeeded = "k3s installed successfully. Path to admin kubeconfig: /etc/rancher/k3s/k3s.yaml"
     k3s_installation_failed = "k3s installation failed. Look for errors in the log."
+    components_installing = "Installing initial components. Detailed logs can be found in: platform_logs/install.log."
     sys_pkgs_installing = "Installing system packages. Detailed logs can be found in: platform_logs/install.log."
     sys_pkgs_installation_succeeded = "system packages installed successfully."
     sys_pkgs_installation_failed = "system packages installation failed. Look for errors in the log."
@@ -82,8 +88,13 @@ class InstallCmdConfirmationTexts:
 
     confirm_k3s_message = "k3s single node cluster will be installed on the local machine."
     confirm_cluster_message = "Platform will be installed on Kubernetes cluster indicated in: {kubeconfig}"
-    confirm_username_message = "Admin user login name: {username}"
+    confirm_username_message = "Admin's username: {username}"
     confirm_data_message = "Path to the data storage: {path}"
+    confirm_data_creation_message = "The following folder for data storage will be created: {path}"
+    change_config_message = (
+        "If you would like to change the values above, look for details be executing: "
+        "sudo ./platform_installer install --help"
+    )
     accept_config_prompt = "Is the provided data correct and you want to proceed with the installation?"
     cert_file_message = "Path to the certificate file: {path}"
     key_file_message = "Path to the key file: {path}"

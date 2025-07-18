@@ -140,31 +140,13 @@ def fxt_model_template_segmentation():
 
 
 @pytest.fixture
-def fxt_model_template_anomaly_classification():
+def fxt_model_template_anomaly():
     yield ModelTemplate(
-        model_template_id="test_template_anomaly_classification",
+        model_template_id="test_template_anomaly",
         model_template_path="",
-        name="Sample Anomaly Classification Template",
+        name="Sample Anomaly Template",
         task_family=TaskFamily.VISION,
-        task_type=TaskType.ANOMALY_CLASSIFICATION,
-        is_trainable=True,
-        hyper_parameters=HyperParameterData(base_path=""),
-        instantiation=InstantiationType.NONE,
-        gigaflops=24,
-        size=88.8,
-        framework="dummy framework",
-        dataset_requirements=DatasetRequirements(classes=["Normal", "Anomalous"]),
-    )
-
-
-@pytest.fixture
-def fxt_model_template_anomaly_detection():
-    yield ModelTemplate(
-        model_template_id="test_template_anomaly_detection",
-        model_template_path="",
-        name="Sample Anomaly Detection Template",
-        task_family=TaskFamily.VISION,
-        task_type=TaskType.ANOMALY_DETECTION,
+        task_type=TaskType.ANOMALY,
         is_trainable=True,
         hyper_parameters=HyperParameterData(base_path=""),
         instantiation=InstantiationType.NONE,
@@ -311,22 +293,12 @@ def fxt_model_storage_segmentation(fxt_model_template_segmentation, fxt_mongo_id
 
 
 @pytest.fixture
-def fxt_model_storage_anomaly_classification(fxt_model_template_anomaly_classification, fxt_mongo_id):
+def fxt_model_storage_anomaly(fxt_model_template_anomaly, fxt_mongo_id):
     yield ModelStorage(
         id_=fxt_mongo_id(5),
         project_id=fxt_mongo_id(1),
         task_node_id=fxt_mongo_id(14),
-        model_template=fxt_model_template_anomaly_classification,
-    )
-
-
-@pytest.fixture
-def fxt_model_storage_anomaly_detection(fxt_model_template_anomaly_detection, fxt_mongo_id):
-    yield ModelStorage(
-        id_=fxt_mongo_id(5),
-        project_id=fxt_mongo_id(1),
-        task_node_id=fxt_mongo_id(14),
-        model_template=fxt_model_template_anomaly_detection,
+        model_template=fxt_model_template_anomaly,
     )
 
 

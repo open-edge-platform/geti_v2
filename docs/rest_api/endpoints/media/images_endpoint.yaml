@@ -5,7 +5,9 @@ post:
   description: |-
     Upload an image to a dataset. Allowed formats are `.jpg`, `.jpeg`, `.bmp`, `.png`, `.tif`, `.tiff`, `.jfif`, and `.webp`. Height and
     width of the images must be between 32 and 20000 pixels.   
-    For a classification project, the uploaded image can be annotated directly by specifying the labels in the field `upload_info`.   
+    For a classification project, the uploaded image can be annotated directly by specifying the labels in the field `upload_info`.
+    As soon as image is uploaded, asynchronous background preprocessing is started. This process generates image thumbnail.
+    When preprocessing finishes, image is assigned either FINISHED or FAILED preprocessing status with a failure message.
   operationId: UploadImage
   parameters:
     - $ref: '../../parameters/path/organization_id.yaml'
@@ -31,16 +33,6 @@ post:
                 The label id's could be found from the response of the [project detail](#Projects/GetProjectInfo) endpoint. 
                 Example: *{\"label_ids\":[\"613776cec8223e455a88383d\", \"613776cec8223e455a88383e\"]}*.                  
   responses:
-    '200':
-      description: The image has been uploaded. The 'size' field represents bits.
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../interactive_ai/services/api/schemas/media/responses/image.yaml'
-          examples:
-            Image upload response:
-              value:
-                $ref: '../../examples/media/responses/single_image.json'
     '202':
       description: The image has been uploaded, preprocessing has been started. The 'size' field represents bits.
       content:

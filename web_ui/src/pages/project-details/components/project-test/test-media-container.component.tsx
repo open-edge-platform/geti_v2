@@ -17,10 +17,12 @@ import {
 import { isClassificationDomain, isSegmentationDomain } from '../../../../core/projects/domains';
 import { TASK_TYPE } from '../../../../core/projects/dtos/task.interface';
 import { getDomain } from '../../../../core/projects/project.interface';
+import { isKeypointTask } from '../../../../core/projects/utils';
 import { SortDirection } from '../../../../core/shared/query-parameters';
 import { TestMediaItem } from '../../../../core/tests/test-media.interface';
 import { Test } from '../../../../core/tests/tests.interface';
 import { CardContent } from '../../../../shared/components/card-content/card-content.component';
+import { TooltipWithDisableButton } from '../../../../shared/components/custom-tooltip/tooltip-with-disable-button';
 import { hasEqualDomain, hasEqualId } from '../../../../shared/utils';
 import { TaskProvider } from '../../../annotator/providers/task-provider/task-provider.component';
 import { useProject } from '../../providers/project-provider/project-provider.component';
@@ -60,6 +62,8 @@ export const TestMediaContainer = ({
         project: { tasks, domains },
         isTaskChainProject,
     } = useProject();
+
+    const isKeypoint = tasks.some(isKeypointTask);
     const [threshold, setThreshold] = useState<number>(DEFAULT_THRESHOLD);
 
     const task = useMemo(() => {
@@ -154,21 +158,27 @@ export const TestMediaContainer = ({
             gridArea={'media'}
             title={'Annotations vs Predictions'}
             titleActions={
-                <Picker
-                    id={'select-label-id'}
-                    aria-label={'Select label'}
-                    items={formattedLabels}
-                    selectedKey={selectedLabelId}
-                    onSelectionChange={(key) =>
-                        onLabelChange(formattedLabels.find(hasEqualId(String(key))) as LabelItems)
-                    }
+                <TooltipWithDisableButton
+                    placement={'top'}
+                    disabledTooltip={'Keypoint detection only allows "All labels"'}
                 >
-                    {(item) => (
-                        <Item aria-label={item.name} key={item.id} textValue={item.name}>
-                            {item.name}
-                        </Item>
-                    )}
-                </Picker>
+                    <Picker
+                        id={'select-label-id'}
+                        aria-label={'Select label'}
+                        items={formattedLabels}
+                        isDisabled={isKeypoint}
+                        selectedKey={selectedLabelId}
+                        onSelectionChange={(key) =>
+                            onLabelChange(formattedLabels.find(hasEqualId(String(key))) as LabelItems)
+                        }
+                    >
+                        {(item) => (
+                            <Item aria-label={item.name} key={item.id} textValue={item.name}>
+                                {item.name}
+                            </Item>
+                        )}
+                    </Picker>
+                </TooltipWithDisableButton>
             }
             actions={
                 hideModelAccuracySlider ? undefined : (

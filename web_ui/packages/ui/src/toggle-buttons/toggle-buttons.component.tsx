@@ -20,7 +20,7 @@ const ToggleButton = <T extends string>({
 }: ToggleButtonProps<T>) => {
     return (
         <Button
-            data-activated={selectedOption === option}
+            aria-pressed={selectedOption === option}
             variant={selectedOption === option ? 'accent' : 'secondary'}
             UNSAFE_className={styles.toggleButton}
             onPress={() => {

@@ -7,12 +7,10 @@ import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 
 import { Point } from '../../../core/annotations/shapes.interface';
-import { AlgorithmType } from '../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { getMockedImage } from '../../../test-utils/utils';
 import { BUTTON_LEFT, BUTTON_RIGHT } from '../../buttons-utils';
 import { PolygonStateContextProps, usePolygonState } from '../tools/polygon-tool/polygon-state-provider.component';
 import { PolygonMode } from '../tools/polygon-tool/polygon-tool.enum';
-import { IntelligentScissorsWorker } from '../tools/polygon-tool/polygon-tool.interface';
 import { PointerType } from '../tools/tools.interface';
 import { IntelligentScissorsProps, useIntelligentScissors } from './use-intelligent-scissors.hook';
 
@@ -33,23 +31,6 @@ jest.mock('../tools/polygon-tool/polygon-state-provider.component', () => ({
     usePolygonState: jest.fn(),
 }));
 
-const intelligentScissorMock: IntelligentScissorsWorker = {
-    loadOpenCV: jest.fn(),
-    IntelligentScissors: jest.fn(() => ({
-        applyImage: jest.fn(),
-        hasInitialPoint: false,
-        loadTool: jest.fn(),
-        cleanImg: jest.fn(),
-        cleanPoints: jest.fn(),
-        buildMap: jest.fn(),
-        calcPoints: jest.fn(),
-    })),
-    optimizeSegments: jest.fn(),
-    terminate: jest.fn(),
-    optimizePolygon: jest.fn(),
-    type: AlgorithmType.INTELLIGENT_SCISSORS,
-};
-
 const mockProps = ({ canPathBeClosed = false }: { canPathBeClosed?: boolean }): IntelligentScissorsProps => ({
     zoom: 1,
     polygon: null,
@@ -63,8 +44,18 @@ const mockProps = ({ canPathBeClosed = false }: { canPathBeClosed?: boolean }): 
         (callback: (point: Point) => void) => (event: PointerEvent<SVGElement>) =>
             callback({ x: event.clientX, y: event.clientY })
     ),
-    // @ts-expect-error expect issue with comlink's Remote
-    worker: intelligentScissorMock,
+    worker: {
+        // @ts-expect-error IntelligentScissors is of Remote type
+        cleanImg: jest.fn(),
+        // @ts-expect-error IntelligentScissors is of Remote type
+        cleanPoints: jest.fn(),
+        // @ts-expect-error IntelligentScissors is of Remote type
+        buildMap: jest.fn(),
+        // @ts-expect-error IntelligentScissors is of Remote type
+        calcPoints: jest.fn(),
+        // @ts-expect-error IntelligentScissors is of Remote type
+        loadImage: jest.fn(),
+    },
     handleIsStartingPointHovered: jest.fn(),
 });
 
@@ -129,7 +120,7 @@ describe('useIntelligentScissors', () => {
                 result.current.onPointerDown(event);
             });
 
-            expect(event.preventDefault).toBeCalled();
+            expect(event.preventDefault).toHaveBeenCalled();
             expect(polygonState.setMode).not.toHaveBeenCalled();
             expect(hookProps.setLassoSegment).not.toHaveBeenCalled();
             expect(polygonState.setSegments).not.toHaveBeenCalled();
@@ -145,7 +136,7 @@ describe('useIntelligentScissors', () => {
                 result.current.onPointerDown(event);
             });
 
-            expect(event.preventDefault).toBeCalled();
+            expect(event.preventDefault).toHaveBeenCalled();
             expect(hookProps.setLassoSegment).not.toHaveBeenCalled();
             expect(polygonState.setSegments).not.toHaveBeenCalled();
             expect(polygonState.setMode).toHaveBeenCalledWith(PolygonMode.Eraser);
@@ -262,7 +253,7 @@ describe('useIntelligentScissors', () => {
                 result.current.onPointerUp(event);
             });
 
-            expect(hookProps.complete).not.toBeCalled();
+            expect(hookProps.complete).not.toHaveBeenCalled();
             expect(hookProps.setLassoSegment).toHaveBeenCalledWith([]);
             expect(polygonState.setSegments).toHaveBeenCalledTimes(1);
         });

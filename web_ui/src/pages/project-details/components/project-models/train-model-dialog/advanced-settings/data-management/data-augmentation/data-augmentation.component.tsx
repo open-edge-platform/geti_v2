@@ -28,7 +28,8 @@ export const DataAugmentation = ({ parameters, onUpdateTrainingConfiguration }: 
     return (
         <Accordion>
             <Accordion.Title>
-                Data Augmentation<Accordion.Tag>{isEnabled ? 'Yes' : 'No'}</Accordion.Tag>
+                Data Augmentation
+                <Accordion.Tag ariaLabel={'Data augmentation tag'}>{isEnabled ? 'Yes' : 'No'}</Accordion.Tag>
             </Accordion.Title>
             <Accordion.Content>
                 <Accordion.Description>

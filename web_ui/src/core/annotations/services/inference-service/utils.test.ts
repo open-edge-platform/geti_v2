@@ -67,7 +67,7 @@ describe('api-inference-service-utils', () => {
             isLocked: false,
             isSelected: false,
             labels: [label],
-            shape: { ...expectedShape, shapeType: 1 },
+            shape: { ...expectedShape, shapeType: 'rect' },
             zIndex: 0,
         };
 

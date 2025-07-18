@@ -12,7 +12,7 @@ import jinja2
 import yaml
 from fastapi import APIRouter, FastAPI
 from kubernetes import client, config, watch
-from kubernetes.client import V1Secret, V1ObjectMeta
+from kubernetes.client import V1ObjectMeta, V1Secret
 from kubernetes.client.rest import ApiException
 from oras.client import OrasClient
 
@@ -158,8 +158,8 @@ async def deploy_helm_charts(manifest: dict) -> None:
                 version="v1",
                 body=manifest,
             )
-        except client.exceptions.ApiException as e:
-            if e.status == 409:
+        except client.exceptions.ApiException as create_err:
+            if create_err.status == 409:
                 logger.warning("Helm chart already exists, updating the existing CR.")
                 try:
                     await asyncio.to_thread(
@@ -171,12 +171,12 @@ async def deploy_helm_charts(manifest: dict) -> None:
                         version="v1",
                         body=manifest,
                     )
-                except client.exceptions.ApiException as e:
-                    logger.error(f"Failed to update helm chart CR: {e}")
-                    raise HelmChartDeployError(f"Failed to update helm chart CR: {e}")
+                except client.exceptions.ApiException as patch_err:
+                    logger.error(f"Failed to update helm chart CR: {patch_err}")
+                    raise HelmChartDeployError(f"Failed to update helm chart CR: {patch_err}")
             else:
-                logger.error(f"Failed to create helm chart CR: {e}")
-                raise HelmChartDeployError(f"Failed to create helm chart CR: {e}")
+                logger.error(f"Failed to create helm chart CR: {create_err}")
+                raise HelmChartDeployError(f"Failed to create helm chart CR: {create_err}")
     logger.info("Deployed helm charts successfully.")
 
 
@@ -252,47 +252,49 @@ def deploy_secret() -> None:
     secret = V1Secret(
         metadata=V1ObjectMeta(name="external-registry"),
         string_data={
-            "overrideRegistry": yaml.dump({
-                "global": {
-                    "debian": {"registry": IMAGE_REGISTRY},
-                    "kubectl": {"registry": IMAGE_REGISTRY},
-                    "hub": f"{IMAGE_REGISTRY}/istio",
-                },
-                "env": {"WASM_INSECURE_REGISTRIES": IMAGE_REGISTRY},
-                "postgresql": {"image": {"registry": IMAGE_REGISTRY}},
-                "modelserver": {"image": {"registry": IMAGE_REGISTRY}},
-                "modelmesh-serving": {
-                    "controller": {"image": {"registry": IMAGE_REGISTRY}},
-                    "modelmesh": {"image": {"registry": IMAGE_REGISTRY}},
-                    "runtimeadapter": {"image": {"registry": IMAGE_REGISTRY}},
-                },
-                "account-service": {
-                    "postgresql": {"image": { "registry": IMAGE_REGISTRY}},
-                },
-                "credit-system": {
-                    "postgresql": {"image": {"registry": IMAGE_REGISTRY},},
-                },
-                "initial-user": {
+            "overrideRegistry": yaml.dump(
+                {
+                    "global": {
+                        "debian": {"registry": IMAGE_REGISTRY},
+                        "kubectl": {"registry": IMAGE_REGISTRY},
+                        "hub": f"{IMAGE_REGISTRY}/istio",
+                    },
+                    "env": {"WASM_INSECURE_REGISTRIES": IMAGE_REGISTRY},
                     "postgresql": {"image": {"registry": IMAGE_REGISTRY}},
-                },
-                "etcd": {
-                    "image": {"registry": IMAGE_REGISTRY},
-                    "volumePermissions": {"image": {"registry": IMAGE_REGISTRY}},
-                },
-                "kafka": {
-                    "image": {"registry": IMAGE_REGISTRY},
-                    "volumePermissions": {"image": {"registry": IMAGE_REGISTRY}},
-                },
-                "kafka-provisioning": {"image": {"registry": IMAGE_REGISTRY}},
-                "kafka-proxy": {"kafka_proxy": {"image": {"registry": IMAGE_REGISTRY}}},
-                "mongodb": {"image": {"registry": IMAGE_REGISTRY}},
-                "opa": {"image": {"registry": IMAGE_REGISTRY}},
-                "openldap": {"image": {"registry": IMAGE_REGISTRY}},
-                "opentelemetry-collector": {"image": {"registry": IMAGE_REGISTRY}},
-                "seaweed-fs": {"image": {"registry": IMAGE_REGISTRY}},
-                "spice-db": {"postgresql": {"image": {"registry": IMAGE_REGISTRY}}},
-                "xpu-manager": {"image": {"registry": IMAGE_REGISTRY}},
-            }),
+                    "modelserver": {"image": {"registry": IMAGE_REGISTRY}},
+                    "modelmesh-serving": {
+                        "controller": {"image": {"registry": IMAGE_REGISTRY}},
+                        "modelmesh": {"image": {"registry": IMAGE_REGISTRY}},
+                        "runtimeadapter": {"image": {"registry": IMAGE_REGISTRY}},
+                    },
+                    "account-service": {
+                        "postgresql": {"image": {"registry": IMAGE_REGISTRY}},
+                    },
+                    "credit-system": {
+                        "postgresql": {"image": {"registry": IMAGE_REGISTRY}},
+                    },
+                    "initial-user": {
+                        "postgresql": {"image": {"registry": IMAGE_REGISTRY}},
+                    },
+                    "etcd": {
+                        "image": {"registry": IMAGE_REGISTRY},
+                        "volumePermissions": {"image": {"registry": IMAGE_REGISTRY}},
+                    },
+                    "kafka": {
+                        "image": {"registry": IMAGE_REGISTRY},
+                        "volumePermissions": {"image": {"registry": IMAGE_REGISTRY}},
+                    },
+                    "kafka-provisioning": {"image": {"registry": IMAGE_REGISTRY}},
+                    "kafka-proxy": {"kafka_proxy": {"image": {"registry": IMAGE_REGISTRY}}},
+                    "mongodb": {"image": {"registry": IMAGE_REGISTRY}},
+                    "opa": {"image": {"registry": IMAGE_REGISTRY}},
+                    "openldap": {"image": {"registry": IMAGE_REGISTRY}},
+                    "opentelemetry-collector": {"image": {"registry": IMAGE_REGISTRY}},
+                    "seaweed-fs": {"image": {"registry": IMAGE_REGISTRY}},
+                    "spice-db": {"postgresql": {"image": {"registry": IMAGE_REGISTRY}}},
+                    "xpu-manager": {"image": {"registry": IMAGE_REGISTRY}},
+                }
+            ),
         },
         type="Opaque",
     )

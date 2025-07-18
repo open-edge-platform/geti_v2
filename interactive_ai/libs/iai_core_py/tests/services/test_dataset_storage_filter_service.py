@@ -12,7 +12,7 @@ from iai_core.entities.dataset_storage_filter_data import (
     ShapeFilterData,
     VideoFilterData,
 )
-from iai_core.entities.media import MediaPreprocessingStatus
+from iai_core.entities.media import MediaPreprocessing, MediaPreprocessingStatus
 from iai_core.repos import AnnotationSceneRepo, AnnotationSceneStateRepo, ImageRepo, VideoRepo
 from iai_core.repos.dataset_storage_filter_repo import DatasetStorageFilterRepo
 from iai_core.services.dataset_storage_filter_service import DatasetStorageFilterService
@@ -131,12 +131,23 @@ class TestDatasetStorageFilterService:
             MediaType.VIDEO_FRAME,
         ],
     )
+    @pytest.mark.parametrize(
+        "preprocessing_status",
+        [
+            MediaPreprocessingStatus.SCHEDULED,
+            MediaPreprocessingStatus.IN_PROGRESS,
+            MediaPreprocessingStatus.FINISHED,
+            MediaPreprocessingStatus.FAILED,
+        ],
+    )
     def test_on_new_annotation_scene(
         self,
         media_type,
+        preprocessing_status,
         fxt_annotation_scene,
         fxt_annotation_scene_state,
         fxt_video_entity,
+        fxt_image_entity_factory,
         fxt_ote_id,
     ) -> None:
         # Arrange
@@ -148,6 +159,10 @@ class TestDatasetStorageFilterService:
             media_identifier = VideoFrameIdentifier(video_id=media_id, frame_index=1)
         fxt_annotation_scene.media_identifier = media_identifier
         fxt_video_entity.id_ = media_id
+        fxt_video_entity.preprocessing = MediaPreprocessing(status=preprocessing_status)
+
+        image = fxt_image_entity_factory()
+        image.preprocessing = MediaPreprocessing(status=preprocessing_status)
 
         fxt_ote_id(1)
         project_id = fxt_ote_id(2)
@@ -182,7 +197,7 @@ class TestDatasetStorageFilterService:
             media_filter_data=expected_media_filter_data,
             annotation_scene_filter_data=expected_annotation_scene_filter_data,
             media_annotation_state=fxt_annotation_scene_state.get_state_media_level(),
-            preprocessing=MediaPreprocessingStatus.FINISHED,
+            preprocessing=preprocessing_status,
         )
 
         with (
@@ -206,6 +221,11 @@ class TestDatasetStorageFilterService:
                 "get_by_id",
                 return_value=fxt_video_entity,
             ) as mock_get_video,
+            patch.object(
+                ImageRepo,
+                "get_by_id",
+                return_value=image,
+            ) as mock_get_image,
         ):
             # Act
             DatasetStorageFilterService.on_new_annotation_scene(
@@ -221,5 +241,7 @@ class TestDatasetStorageFilterService:
 
         if media_type is MediaType.VIDEO_FRAME:
             mock_get_video.assert_called_once_with(media_id)
+            mock_get_image.assert_not_called()
         else:
+            mock_get_image.assert_called_once_with(media_id)
             mock_get_video.assert_not_called()

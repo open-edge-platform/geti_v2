@@ -1,0 +1,16 @@
+type: object
+properties:
+  key:
+    type: string
+    description: Identifier for the boolean parameter
+  value:
+    type: boolean
+    description: Current configured value of the boolean parameter
+
+required:
+  - key
+  - value
+
+example:
+  key: auto_selection
+  name: Auto selection

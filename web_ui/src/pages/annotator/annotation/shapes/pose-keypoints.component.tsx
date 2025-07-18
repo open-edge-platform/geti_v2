@@ -11,6 +11,7 @@ import { useSelected } from '../../../../providers/selected-provider/selected-pr
 import { KEYPOINT_RADIUS } from '../../../utils';
 import { useZoom } from '../../zoom/zoom-provider.component';
 import { KeypointProps } from './shape.interface';
+import { svgShadow } from './util';
 
 export interface PoseKeypointProps extends SVGProps<SVGCircleElement> {
     point: KeypointNode;
@@ -84,6 +85,7 @@ export const PoseKeypoint = ({ point, radius = KEYPOINT_RADIUS, ...svgProps }: P
             strokeWidth={`calc(${strokeWidth * widthMultiplier} / var(--zoom-level))`}
             fillOpacity={'var(--annotation-fill-opacity)'}
             strokeOpacity={'var(--annotation-border-opacity)'}
+            filter={svgShadow}
             {...svgProps}
         />
     );

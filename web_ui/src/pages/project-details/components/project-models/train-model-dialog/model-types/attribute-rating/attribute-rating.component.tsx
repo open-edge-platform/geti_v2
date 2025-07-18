@@ -44,15 +44,17 @@ interface AttributeRatingProps {
 
 export const AttributeRating: FC<AttributeRatingProps> = ({ name, rating }) => {
     return (
-        <Flex direction={'column'} gap={'size-100'} justifyContent={'space-between'}>
-            <Heading margin={0} UNSAFE_className={classes.attributeRatingTitle}>
-                {name}
-            </Heading>
-            <Flex alignItems={'center'} gap={'size-100'}>
-                {RateColors[rating].map((color, idx) => (
-                    <Rate key={idx} color={color} />
-                ))}
+        <div aria-label={`Attribute rating for ${name} is ${rating}`} style={{ height: '100%' }}>
+            <Flex direction={'column'} gap={'size-100'} justifyContent={'space-between'} height={'100%'}>
+                <Heading margin={0} UNSAFE_className={classes.attributeRatingTitle}>
+                    {name}
+                </Heading>
+                <Flex alignItems={'center'} gap={'size-100'}>
+                    {RateColors[rating].map((color, idx) => (
+                        <Rate key={idx} color={color} />
+                    ))}
+                </Flex>
             </Flex>
-        </Flex>
+        </div>
     );
 };

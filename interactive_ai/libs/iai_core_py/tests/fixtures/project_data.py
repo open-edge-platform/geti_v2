@@ -317,20 +317,20 @@ def fxt_label_hierarchy_task_chain_project_update_data(fxt_label_hierarchy_task_
 
 
 @pytest.fixture
-def fxt_update_anomaly_classification_project_data(fxt_anomaly_classification_project_data, fxt_mongo_id):
-    update_data = fxt_anomaly_classification_project_data
+def fxt_update_anomaly_project_data(fxt_anomaly_project_data, fxt_mongo_id):
+    update_data = fxt_anomaly_project_data
     update_data["tasks_dict"]["Anomaly task"]["labels"] = {
         "normal": {
             "color": "#fffffe",
             "is_anomalous": False,
             "is_empty": False,
-            "group": "default - anomaly_classification",
+            "group": "default - anomaly",
         },
         "anomalous": {
             "color": "#fffffc",
             "is_anomalous": True,
             "is_empty": False,
-            "group": "default - anomaly_classification",
+            "group": "default - anomaly",
         },
     }
     yield turn_creation_project_data_into_update(update_data, fxt_mongo_id)
@@ -349,21 +349,21 @@ def fxt_update_invalid_detection_classification_label_addition(fxt_detection_cla
 
 
 @pytest.fixture
-def fxt_update_invalid_anomaly_label_addition(fxt_update_anomaly_classification_project_data):
-    update_data = fxt_update_anomaly_classification_project_data
+def fxt_update_invalid_anomaly_label_addition(fxt_update_anomaly_project_data):
+    update_data = fxt_update_anomaly_project_data
     del update_data["tasks_dict"]["Anomaly task"]["labels"]["normal"]
     update_data["tasks_dict"]["Anomaly task"]["labels"]["new normal"] = {
         "color": "#fffffa",
         "is_anomalous": False,
         "is_empty": False,
-        "group": "default - anomaly_classification",
+        "group": "default - anomaly",
     }
     yield update_data
 
 
 @pytest.fixture
-def fxt_update_invalid_anomaly_label_deletion(fxt_update_anomaly_classification_project_data):
-    update_data = fxt_update_anomaly_classification_project_data
+def fxt_update_invalid_anomaly_label_deletion(fxt_update_anomaly_project_data):
+    update_data = fxt_update_anomaly_project_data
     update_data["tasks_dict"]["Anomaly task"]["labels"]["normal"]["is_deleted"] = True
     yield update_data
 
@@ -389,8 +389,8 @@ def fxt_update_hotkey_of_deleted_label_reused(fxt_binary_classification_project_
 
 
 @pytest.fixture
-def fxt_update_invalid_project_anomaly_task_without_labels(fxt_anomaly_classification_project_data, fxt_mongo_id):
-    yield turn_creation_project_data_into_update(fxt_anomaly_classification_project_data, fxt_mongo_id)
+def fxt_update_invalid_project_anomaly_task_without_labels(fxt_anomaly_project_data, fxt_mongo_id):
+    yield turn_creation_project_data_into_update(fxt_anomaly_project_data, fxt_mongo_id)
 
 
 @pytest.fixture
@@ -525,19 +525,19 @@ def fxt_segmentation_project_data():
 
 
 @pytest.fixture
-def fxt_anomaly_classification_project_data():
+def fxt_anomaly_project_data():
     yield {
-        "name": "Test anomaly classification  project",
+        "name": "Test anomaly project",
         "tasks_dict": {
             "Dataset": {"task_type": "dataset"},
-            "Anomaly task": {"task_type": "anomaly_classification"},
+            "Anomaly task": {"task_type": "anomaly"},
         },
     }
 
 
 @pytest.fixture
-def fxt_invalid_anomaly_classification_project_data(fxt_anomaly_classification_project_data):
-    fxt_anomaly_classification_project_data["tasks_dict"]["Anomaly task"]["labels"] = {
+def fxt_invalid_anomaly_project_data(fxt_anomaly_project_data):
+    fxt_anomaly_project_data["tasks_dict"]["Anomaly task"]["labels"] = {
         "car wheel": {
             "color": "#fffffe",
             "group": "Default Segmentation",
@@ -551,7 +551,7 @@ def fxt_invalid_anomaly_classification_project_data(fxt_anomaly_classification_p
             "hotkey": "crtl+3",
         },
     }
-    yield fxt_anomaly_classification_project_data
+    yield fxt_anomaly_project_data
 
 
 @pytest.fixture
@@ -563,9 +563,9 @@ def fxt_invalid_project_data_no_tasks():
 
 
 @pytest.fixture
-def fxt_invalid_project_data_no_empty_name(fxt_anomaly_classification_project_data):
-    fxt_anomaly_classification_project_data["name"] = "    \n"
-    yield fxt_anomaly_classification_project_data
+def fxt_invalid_project_data_no_empty_name(fxt_anomaly_project_data):
+    fxt_anomaly_project_data["name"] = "    \n"
+    yield fxt_anomaly_project_data
 
 
 @pytest.fixture

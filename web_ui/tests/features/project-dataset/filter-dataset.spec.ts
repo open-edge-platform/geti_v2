@@ -13,6 +13,7 @@ import {
     openAndTypeIntoSearchField,
     triggerFilterModal,
 } from '../../fixtures/search-by-name';
+import { project as keypointProject } from '../../mocks/keypoint-detection/mocks';
 import { projects } from './mocks';
 
 const [project] = projects.projects;
@@ -93,5 +94,30 @@ test.describe('filter dataset', () => {
         await triggerFilterModal(page);
 
         await checkMediaNameFilter(page, 'dog');
+    });
+
+    test('keypoint detection, unsupported filters are hidden', async ({ page, registerApiResponse }) => {
+        registerApiResponse('GetAllProjectsInAWorkspace', (_, res, ctx) =>
+            res(
+                ctx.json({
+                    next_page: '',
+                    project_counts: 1,
+                    project_page_count: 1,
+                    projects: [keypointProject],
+                })
+            )
+        );
+        registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(keypointProject)));
+
+        await page.goto('/', { timeout: 15000 });
+        await page.locator(`#project-id-${keypointProject.id}`).click();
+
+        await page.getByRole('button', { name: 'Filter media' }).click();
+        await page.getByRole('button', { name: 'media-filter-field' }).click();
+
+        await expect(page.getByRole('menuitemradio', { name: /label/i })).not.toBeInViewport();
+        await expect(page.getByRole('menuitemradio', { name: /Shape type/i })).not.toBeInViewport();
+        await expect(page.getByRole('menuitemradio', { name: /Shape area percentage/i })).not.toBeInViewport();
+        await expect(page.getByRole('menuitemradio', { name: /Shape area pixel/i })).not.toBeInViewport();
     });
 });

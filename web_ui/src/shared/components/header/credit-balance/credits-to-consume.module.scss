@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 .threeDotsFlashing {
-    display: inline-block;
+    display: inline-flex !important;
     margin-left: var(--spectrum-global-dimension-size-150);
     margin-right: var(--spectrum-global-dimension-size-150);
 }

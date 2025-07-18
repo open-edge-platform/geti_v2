@@ -14,3 +14,6 @@ test-component:
 
 test-integration:
 	@echo "Not applicable"
+
+test-unit:
+	@echo "Not applicable"

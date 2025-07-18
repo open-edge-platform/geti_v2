@@ -1,0 +1,15 @@
+id: Custom_Semantic_Segmentation_SegNext_t
+name: SegNext-T
+
+description: "SegNeXt-T is a lightweight semantic segmentation model that combines CNN efficiency with transformer-inspired enhancements. Designed for high speed and low latency, it achieves competitive accuracy on real-time tasks while maintaining a compact architecture suitable for edge devices. This model works well with 30+ training images and is ideal for applications requiring fast inference without sacrificing too much accuracy."
+stats:
+  gigaflops: 12.44
+  trainable_parameters: 4.23
+  performance_ratings:  # scores range from 1 (below average) to 3 (excellent)
+    accuracy: 2
+    training_time: 3
+    inference_speed: 3
+
+hyperparameters:
+  training:
+    learning_rate: 0.00006

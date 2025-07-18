@@ -43,16 +43,12 @@ projectService.createProject = async (
 
 const openImportDatasetDialog = {} as OverlayTriggerState;
 
-const renderApp = async (
-    { FEATURE_FLAG_ANOMALY_REDUCTION }: { FEATURE_FLAG_ANOMALY_REDUCTION: boolean } = {
-        FEATURE_FLAG_ANOMALY_REDUCTION: false,
-    }
-) => {
+const renderApp = async () => {
     render(
         <NewProjectDialogProvider>
             <NewProjectDialog buttonText={'test button'} openImportDatasetDialog={openImportDatasetDialog} />
         </NewProjectDialogProvider>,
-        { services: { projectService }, featureFlags: { FEATURE_FLAG_ANOMALY_REDUCTION } }
+        { services: { projectService } }
     );
 
     const button = screen.getByText('test button');
@@ -132,30 +128,12 @@ describe('New project dialog - Single task', () => {
         expect(screen.getByRole('button', { name: 'Create' })).not.toBeEnabled();
     });
 
-    it('Should not allow adding labels to anomaly projects [FEATURE_FLAG_ANOMALY_REDUCTION: true]', async () => {
-        await renderApp({ FEATURE_FLAG_ANOMALY_REDUCTION: true });
-
-        clickNextButton();
-        selectAnomalyDomain();
-
-        expect(screen.getByRole('button', { name: 'Create' })).toBeEnabled();
-    });
-
-    it('Should not allow adding labels to anomaly projects [FEATURE_FLAG_ANOMALY_REDUCTION: false]', async () => {
+    it('Should not allow adding labels to anomaly projects', async () => {
         await renderApp();
 
         clickNextButton();
         selectAnomalyDomain();
 
-        // Anomaly classification selected by default
-        expect(screen.getByRole('button', { name: 'Create' })).toBeEnabled();
-
-        // Select Anomaly Detection
-        fireEvent.click(screen.getByTestId('anomaly-detection-card-id'));
-        expect(screen.getByRole('button', { name: 'Create' })).toBeEnabled();
-
-        // Select Anomaly Segmentation
-        fireEvent.click(screen.getByTestId('anomaly-segmentation-card-id'));
         expect(screen.getByRole('button', { name: 'Create' })).toBeEnabled();
     });
 

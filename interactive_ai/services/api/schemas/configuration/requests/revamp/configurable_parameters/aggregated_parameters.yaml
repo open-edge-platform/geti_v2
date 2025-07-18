@@ -1,0 +1,28 @@
+oneOf:
+  - type: object
+  - type: array
+description: A parameter that contains nested parameters
+additionalProperties:
+  anyOf:
+    - type: array
+      items:
+        anyOf:
+          - $ref: bool.yaml
+          - $ref: float.yaml
+          - $ref: int.yaml
+          - $ref: string.yaml
+          - type: object # nested parameters object
+    - type: object # nested parameters object
+
+example:
+  augmentation:
+    center_crop:
+      - key: enable
+        value: true
+      - key: ratio
+        value: 0.8
+    color_jitter:
+      - key: enable
+        value: true
+      - key: brightness
+        value: 0.1

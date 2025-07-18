@@ -9,6 +9,7 @@ import sys
 import rich_click as click
 
 from commands.install import install
+from commands.version import version
 from commands.migrate import migrate
 from constants.paths import INSTALL_LOG_FILE_PATH
 
@@ -31,6 +32,7 @@ if __name__ == "__main__":
     os.chdir(os.path.dirname(sys.argv[0]))
     logger = logging.getLogger(__name__)
     cli.add_command(install)
+    cli.add_command(version)
     cli.add_command(migrate)
 
     try:

@@ -72,7 +72,7 @@ export const Filters: FC<FiltersProps> = ({ filtersConfiguration, onUpdateTraini
     return (
         <Accordion>
             <Accordion.Title>
-                Filters <Accordion.Tag> {areFiltersEnabled ? 'On' : 'Off'}</Accordion.Tag>
+                Filters <Accordion.Tag ariaLabel={'Filters tag'}>{areFiltersEnabled ? 'On' : 'Off'}</Accordion.Tag>
             </Accordion.Title>
             <Accordion.Content>
                 <Accordion.Description>

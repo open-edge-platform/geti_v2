@@ -1,14 +1,5 @@
-# INTEL CONFIDENTIAL
-#
-# Copyright (C) 2022 Intel Corporation
-#
-# This software and the related documents are Intel copyrighted materials, and your use of them is governed by
-# the express license under which they were provided to you ("License"). Unless the License provides otherwise,
-# you may not use, modify, copy, publish, distribute, disclose or transmit this software or the related documents
-# without Intel's prior written permission.
-#
-# This software and the related documents are provided as is, with no express or implied warranties,
-# other than those that are expressly stated in the License.
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 """
 Strings that are shown to the user by validators functions.
@@ -39,9 +30,6 @@ class PathValidatorsTexts:
     """
 
     invalid_path = "Provided path {path} format is not correct. It must be an absolute path (e.g. {folder})."
-    path_not_exists = (
-        "Provided path {path} does not point to an existing folder. It must be an absolute path (e.g. {folder})."
-    )
     path_not_folder = "Provided path {path} does not point to a folder."
     path_already_exists = (
         "Cannot create {path}. Please delete the folder or use '--data-folder'"

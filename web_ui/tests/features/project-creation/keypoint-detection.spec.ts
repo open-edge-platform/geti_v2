@@ -153,6 +153,26 @@ test.describe('Keypoint detection', () => {
             await expect(page.getByLabel(`hidden padded edge 2 - 4`)).toBeInViewport();
         });
 
+        test('ensure label name uniqueness when adding multiple points', async ({
+            page,
+            createProjectPage,
+            templateManagerPage,
+        }) => {
+            await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');
+
+            await templateManagerPage.addPoint({ x: 100, y: 100 });
+            await templateManagerPage.addPoint({ x: 200, y: 200 });
+            await templateManagerPage.addPoint({ x: 300, y: 300 });
+
+            await templateManagerPage.deletePoint('1');
+            await templateManagerPage.deletePoint('2');
+
+            await templateManagerPage.addPoint({ x: 100, y: 100 });
+            await templateManagerPage.addPoint({ x: 200, y: 200 });
+
+            await expect(page.getByText('Label names must be unique')).not.toBeInViewport();
+        });
+
         test.describe('edges', () => {
             test('prevents duplicates', async ({ page, createProjectPage, templateManagerPage }) => {
                 await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');

@@ -113,6 +113,7 @@ class TestConfigurationService:
         overlay_config["id_"] = ID(
             f"full_training_configuration_{fxt_partial_training_configuration_manifest_level.model_manifest_id}"
         )
+        overlay_config["hyperparameters"]["evaluation"] = {"metric": "f_measure"}
 
         expected_config = TrainingConfiguration.model_validate(overlay_config)
 
@@ -121,7 +122,6 @@ class TestConfigurationService:
             project_identifier=fxt_project_identifier,
             task_id=fxt_training_configuration_task_level.task_id,
             model_manifest_id=fxt_partial_training_configuration_manifest_level.model_manifest_id,
-            strict_validation=True,
         )
         assert full_config == expected_config
 

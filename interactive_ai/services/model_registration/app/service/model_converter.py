@@ -166,7 +166,7 @@ class ModelConverter:
             exportmodel = SegmentationModel.create_model(model_path, configuration={"labels": labels}, preload=False)
         elif graph_type == "INSTANCE_SEGMENTATION":
             exportmodel = MaskRCNNModel.create_model(model_path, configuration={"labels": labels}, preload=False)
-        elif graph_type in ("ANOMALY_CLASSIFICATION", "ANOMALY_DETECTION", "ANOMALY_SEGMENTATION"):
+        elif graph_type == "ANOMALY":
             exportmodel = AnomalyDetection.create_model(model_path, preload=False)
         else:
             logger.error(f"Unsupported model type: {graph_type}")
@@ -176,7 +176,7 @@ class ModelConverter:
         exportmodel.save(exported_model_path)
         self._update_label_ids(exported_model_path, project, model.task_id, graph_type)
         self._update_use_ellipse(exported_model_path, model.use_ellipse)
-        if graph_type in ("ANOMALY_CLASSIFICATION", "ANOMALY_DETECTION", "ANOMALY_SEGMENTATION"):
+        if graph_type == "ANOMALY":
             self._update_normalization_scale(exported_model_path, normalization_scale=1.0)
             self._update_labels(exported_model_path, labels=["Normal", "Anomalous"])
 

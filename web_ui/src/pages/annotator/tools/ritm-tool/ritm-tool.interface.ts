@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Shape as SmartToolsShape, ShapeType as SmartToolsShapeType } from '@geti/smart-tools/src/shared/interfaces';
+import { RITM } from '@geti/smart-tools';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { Point, Shape } from '../../../../core/annotations/shapes.interface';
@@ -26,13 +26,9 @@ export interface RITMResult {
     shape: Shape | undefined;
 }
 
-export interface RITMInstance {
-    new (): Promise<RITMMethods>;
-}
-
 export interface RITMWorker extends WebWorker {
-    RITM: RITMInstance;
     type: AlgorithmType.RITM;
+    build: () => Promise<RITM>;
 }
 
 export interface RITMData {
@@ -52,18 +48,3 @@ export const defaultRITMConfig = {
     dynamicBoxMode: true,
     rightClickMode: false,
 };
-
-export const TEMPLATE_SIZE = 384;
-
-export interface RITMMethods {
-    loadImage(imageData: ImageData): void;
-    load(): void;
-    reset(): void;
-    cleanMemory(): void;
-    execute(
-        imageArea: RegionOfInterest,
-        points: RITMPoint[],
-        outputShape: SmartToolsShapeType
-    ): Promise<SmartToolsShape | undefined>;
-    resetPointMask(): void;
-}

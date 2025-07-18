@@ -7,14 +7,14 @@ import { Divider, Grid, Item, Picker, View } from '@geti/ui';
 import { isEmpty, orderBy, partition } from 'lodash-es';
 
 import { PerformanceCategory } from '../../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { SupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { LegacySupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { SliderAnimation } from '../../../../../../../shared/components/slider-animation/slider-animation.component';
 import { ModelTemplate } from '../model-template/model-template.component';
 import { TrainModelTemplatesProps } from './model-templates-list.interface';
 
 import classes from './model-templates-list.module.scss';
 
-type SortingHandler = (templates: SupportedAlgorithm[]) => SupportedAlgorithm[];
+type SortingHandler = (templates: LegacySupportedAlgorithm[]) => LegacySupportedAlgorithm[];
 
 enum SortingOptions {
     RELEVANCE = 'relevance',
@@ -34,7 +34,7 @@ const sortingHandlers: Record<SortingOptions, SortingHandler> = {
 
 interface ModelTemplatesGridProps {
     sortingOption: SortingOptions;
-    templates: SupportedAlgorithm[];
+    templates: LegacySupportedAlgorithm[];
     activeModelTemplateIdPerTask: string | undefined;
     selectedModelTemplateId: string;
     handleSelectedTemplateId: (modelTemplateId: string | null) => void;
@@ -56,7 +56,7 @@ const ModelTemplatesGrid = ({
             justifyItems={{ base: 'baseline', S: 'center' }}
             columns={['1fr', '1fr']}
         >
-            {sortingHandler(templates).map((template: SupportedAlgorithm) => (
+            {sortingHandler(templates).map((template: LegacySupportedAlgorithm) => (
                 <ModelTemplate
                     key={template.modelTemplateId}
                     template={template}

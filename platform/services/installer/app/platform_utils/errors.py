@@ -8,6 +8,12 @@ A module containing exceptions raised by checks functions.
 import subprocess
 
 
+class PathCreationError(Exception):
+    """
+    Error raised by function used to create path.
+    """
+
+
 class StepsError(subprocess.SubprocessError):
     """
     Error raised by steps function.

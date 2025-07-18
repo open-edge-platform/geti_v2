@@ -25,6 +25,7 @@ annotation_example_to_schema_map = {
     "annotations/responses/video_annotation_range_response.json": "annotations/responses/video_annotation_range.yaml",
 }
 configuration_example_to_schema_map = {
+    # legacy configuration endpoints
     "configuration/requests/full_configuration_request.json": "configuration/requests/full_configuration.yaml",
     "configuration/requests/global_configuration_request.json": "configuration/requests/global_configuration.yaml",
     "configuration/requests/task_configuration_request.json": "configuration/requests/task_configuration.yaml",
@@ -38,6 +39,11 @@ configuration_example_to_schema_map = {
     "configuration/responses/task_chain_configuration_response.json": "configuration/responses"
     "/task_chain_configuration.yaml",
     "configuration/responses/model_configuration_response.json": "configuration/responses/task_configuration.yaml",
+    # revamped configuration endpoints
+    "configuration/requests/revamp/project_configuration.json": "configuration/requests/revamp/project_configuration.yaml",  # noqa: E501
+    "configuration/requests/revamp/training_configuration.json": "configuration/requests/revamp/training_configuration.yaml",  # noqa: E501
+    "configuration/responses/revamp/project_configuration.json": "configuration/responses/revamp/project_configuration.yaml",  # noqa: E501
+    "configuration/responses/revamp/training_configuration.json": "configuration/responses/revamp/training_configuration.yaml",  # noqa: E501
 }
 code_deployment_example_to_schema_map = {
     "code_deployment/requests/deployment_package_request_geti_sdk.json": "deployment_package/requests/deployment_package_request.yaml",  # noqa: E501
@@ -77,12 +83,13 @@ media_example_to_schema_map = {
     "media/responses/single_video.json": "media/responses/video.yaml",
 }
 model_example_to_schema_map = {
-    "models/requests/optimization_request.json": "models/requests/optimization_request.yaml",
     "models/responses/model_detail_response.json": "models/responses/model_detail.yaml",
     "models/responses/model_group_list_response.json": "models/responses/model_group_list.yaml",
     "models/responses/model_group_response.json": "models/responses/model_group.yaml",
     "models/responses/model_statistics_response.json": "models/responses/model_statistics.yaml",
+    # TODO ITEP-72105: remove old supported algorithms schema/example
     "models/responses/supported_algorithms.json": "models/responses/supported_algorithm.yaml",
+    "models/responses/revamp/supported_algorithms.json": "models/responses/revamp/supported_algorithm.yaml",
 }
 pipeline_example_to_schema_map = {
     "pipelines/responses/batch_explain_response.json": "pipelines/responses/batch_explanation.yaml",
@@ -146,7 +153,7 @@ video_prediction_example_to_schema_map = {
 project_import_export_example_to_schema_map = {
     "project_import_export/requests/import_project.json": "project_import_export/requests/import_parameters.yaml",
 }
-PATH_TO_EXAMPLES_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../docs/rest/examples"))
+PATH_TO_EXAMPLES_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../docs/rest_api/examples"))
 base_dir = os.path.dirname(__file__) + "/../../api/schemas/"
 
 

@@ -27,7 +27,6 @@ import { getDatasetImportDomain, isTaskChainedProject, sortProjectTypes } from '
 interface DatasetImportToNewProjectDomainProps {
     datasetImportItem: DatasetImportToNewProjectItem;
     patchDatasetImport: (item: Partial<DatasetImportToNewProjectItem>) => void;
-    anomalyRevamp: boolean;
 }
 
 const DEFAULT_PROJECT_NAME = 'Project';
@@ -35,7 +34,6 @@ const DEFAULT_PROJECT_NAME = 'Project';
 export const DatasetImportToNewProjectDomain = ({
     datasetImportItem,
     patchDatasetImport,
-    anomalyRevamp,
 }: DatasetImportToNewProjectDomainProps): JSX.Element => {
     const { id, supportedProjectTypes, projectName, taskType } = datasetImportItem;
 
@@ -160,14 +158,13 @@ export const DatasetImportToNewProjectDomain = ({
                     items={sortProjectTypes(projectTypes)}
                     marginTop='size-225'
                     allowsCustomValue={false}
-                    inputValue={getDatasetImportDomain(taskType as DATASET_IMPORT_TASK_TYPE, anomalyRevamp)}
+                    inputValue={getDatasetImportDomain(taskType as DATASET_IMPORT_TASK_TYPE)}
                     onSelectionChange={handleTaskTypeChange}
                     aria-label={'Project type'}
                 >
                     {(option: DatasetImportSupportedProjectType) => {
                         const taskDomain: DATASET_IMPORT_DOMAIN | undefined = getDatasetImportDomain(
-                            option.projectType as DATASET_IMPORT_TASK_TYPE,
-                            anomalyRevamp
+                            option.projectType as DATASET_IMPORT_TASK_TYPE
                         );
 
                         return (

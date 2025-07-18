@@ -38,6 +38,7 @@ from cli_utils.platform_logs import configure_logging, create_logs_dir
 from cli_utils.spinner import click_spinner
 from configuration_models.install_config import InstallationConfig
 from constants.paths import (
+    DATA_FOLDER,
     K3S_INSTALLATION_MARK_FILEPATH,
     K3S_KUBECONFIG_PATH,
     OFFLINE_TOOLS_DIR,
@@ -56,9 +57,10 @@ from geti_controller.uninstall import uninstall_geti_controller_chart
 from k3s.detect_ip import get_first_public_ip, get_master_node_ip_address
 from k3s.install import K3SInstallationError, install_k3s
 from k3s.uninstall import uninstall_k3s
-from platform_utils.errors import DownloadSystemPackagesError, StepsError
+from platform_utils.errors import DownloadSystemPackagesError, PathCreationError, StepsError
 from platform_utils.install_system_packages import install_system_packages
 from platform_utils.management.state import InstallationHandlerState, cluster_info_dump
+from platform_utils.path import create_data_folder
 from texts.checks import (
     DNSChecksTexts,
     InternetConnectionChecksTexts,
@@ -219,6 +221,17 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
     handler_state = InstallationHandlerState()
     set_custom_signal_handler(handler_state, config.data_folder.value)
 
+    data_folder_path = config.data_folder.value
+    if not os.path.exists(data_folder_path):
+        try:
+            click.echo(InstallCmdTexts.data_folder_creation_start.format(path=data_folder_path))
+            create_data_folder(data_folder_path)
+            click.secho(InstallCmdTexts.data_folder_creation_succeeded, fg="green")
+        except PathCreationError:
+            logger.exception("Error during data folder creation.")
+            click.secho(InstallCmdTexts.data_folder_creation_failed, fg="red")
+            sys.exit(1)
+
     try:
         click.echo(InstallCmdTexts.sys_pkgs_installing)
         install_system_packages(config)
@@ -251,6 +264,8 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
     if os.path.exists(K3S_INSTALLATION_MARK_FILEPATH):
         config.master_ip_autodetected.value = get_first_public_ip()
 
+    click.echo(InstallCmdTexts.components_installing)
+
     try:
         deploy_geti_controller_chart(config=config)
         controller_response = call_install_endpoint(kube_config=config.kube_config.value)
@@ -279,16 +294,19 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
     click.secho("\n" + InstallCmdTexts.installation_succeeded.format(platform_address=platform_address), fg="green")
 
 
-def display_final_confirmation(config: InstallationConfig) -> None:
+def display_final_confirmation(config: InstallationConfig, skip_confirmation_message: bool = False) -> None:
     """
     Display the gathered data and asks for the confirmation.
     """
     click.echo()
+    click.echo(InstallCmdConfirmationTexts.confirm_k3s_message)
+
+    click.echo()
     click.echo(InstallCmdConfirmationTexts.confirm_username_message.format(username=config.username.value))
     click.secho(InstallCmdTexts.selected_password, nl=False)
     click.secho(config.password.value, fg="yellow")
-    click.echo()
 
+    click.echo()
     if config.custom_certificate:
         click.echo(InstallCmdConfirmationTexts.cert_file_message.format(path=config.tls_cert_file.value))
         click.echo(InstallCmdConfirmationTexts.key_file_message.format(path=config.tls_key_file.value))
@@ -296,7 +314,17 @@ def display_final_confirmation(config: InstallationConfig) -> None:
         click.echo(InstallCmdConfirmationTexts.no_custom_certificate_message)
 
     click.echo()
-    click.echo(InstallCmdConfirmationTexts.confirm_data_message.format(path=config.data_folder.value))
+    if os.path.exists(config.data_folder.value):
+        click.echo(InstallCmdConfirmationTexts.confirm_data_message.format(path=config.data_folder.value))
+    else:
+        click.echo(InstallCmdConfirmationTexts.confirm_data_creation_message.format(path=config.data_folder.value))
+
+    if not skip_confirmation_message:
+        click.echo()
+        click.echo(InstallCmdConfirmationTexts.change_config_message)
+
+        click.echo()
+        click.confirm(InstallCmdConfirmationTexts.accept_config_prompt, default=True, abort=True)
 
 
 @click.command()
@@ -304,6 +332,7 @@ def display_final_confirmation(config: InstallationConfig) -> None:
     "--data-folder",
     type=click.Path(),
     callback=is_data_folder_valid,
+    default=DATA_FOLDER,
     help="Absolute path to directory where Geti data will be stored.",
 )
 @click.option(
@@ -315,12 +344,16 @@ def display_final_confirmation(config: InstallationConfig) -> None:
 @click.option("--password", callback=is_password_valid, help=InstallCmdTexts.password_help)
 @click.option("--tls-cert-file", type=click.Path(), callback=is_filepath_valid, help=InstallCmdTexts.tls_cert_file_help)
 @click.option("--tls-key-file", type=click.Path(), callback=is_filepath_valid, help=InstallCmdTexts.tls_key_file_help)
+@click.option("--accept-third-party-licenses", is_flag=True, help=InstallCmdTexts.third_party_licenses_help)
+@click.option("--skip-confirmation-message", is_flag=True, help=InstallCmdTexts.skip_confirmation_help)
 def install(
     data_folder: str | None,
     username: str,
     password: str,
     tls_cert_file: str | None = None,
     tls_key_file: str | None = None,
+    accept_third_party_licenses: bool = False,
+    skip_confirmation_message: bool = False,
 ) -> None:
     """
     Install platform.
@@ -337,6 +370,8 @@ def install(
     config.tls_cert_file.value = tls_cert_file
     config.tls_key_file.value = tls_key_file
     run_initial_checks(config=config)
+    if not accept_third_party_licenses:
+        click.confirm(InstallCmdTexts.third_party_licenses_prompt, default=True, abort=True)
     run_installation_checks(config=config)
-    display_final_confirmation(config=config)
+    display_final_confirmation(config=config, skip_confirmation_message=skip_confirmation_message)
     execute_installation(config=config)
