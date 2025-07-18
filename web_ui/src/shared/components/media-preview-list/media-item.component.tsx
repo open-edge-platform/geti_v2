@@ -25,6 +25,7 @@ export interface MediaItemProps {
     url: string | null | undefined;
     labelIds: string[];
     mediaFile: File;
+    hasItemPreview: boolean;
     viewMode?: ViewModes;
     height?: Responsive<DimensionValue>;
     onPress: (id: string) => void;
@@ -48,10 +49,11 @@ const FileLoading = ({ file, onLoaded }: FileLoadingProps) => {
 export const MediaItem = ({
     id,
     url: initUrl,
-    labelIds,
-    mediaFile,
-    viewMode,
     height,
+    labelIds,
+    viewMode,
+    mediaFile,
+    hasItemPreview,
     onPress,
     onDeleteItem,
     onSelectLabel,
@@ -85,7 +87,12 @@ export const MediaItem = ({
                 src={url}
                 isVideoFile={isVideoFile(mediaFile)}
                 alt={`media item ${id}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    cursor: hasItemPreview ? 'pointer' : 'default',
+                }}
                 {...pressProps}
             />
 

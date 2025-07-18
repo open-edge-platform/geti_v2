@@ -17,15 +17,17 @@ import { FileItem } from './util';
 interface MediaPreviewListProps<T> {
     items: T[];
     viewMode: ViewModes;
+    hasItemPreview?: boolean;
     height?: Responsive<DimensionValue>;
     onDeleteItem: (id: string) => Promise<unknown>;
-    onUpdateItem: (id: string, item: Omit<Partial<T>, 'id'>) => Promise<unknown>;
+    onUpdateItem: (id: string, item: T) => Promise<unknown>;
 }
 
 export const MediaPreviewList = <T extends FileItem>({
     items,
     height,
     viewMode,
+    hasItemPreview = false,
     onDeleteItem,
     onUpdateItem,
 }: MediaPreviewListProps<T>): JSX.Element => {
@@ -41,7 +43,7 @@ export const MediaPreviewList = <T extends FileItem>({
                 idFormatter={(item) => item.id}
                 getTextValue={(item) => item.file.name}
                 itemContent={(screenshot) => {
-                    const { id, ...itemData } = screenshot;
+                    const { id, dataUrl, labelIds, file } = screenshot;
 
                     return (
                         <MediaItem
@@ -52,26 +54,27 @@ export const MediaPreviewList = <T extends FileItem>({
                                 dialogState.open();
                             }}
                             height={'100%'}
+                            url={dataUrl}
+                            mediaFile={file}
+                            labelIds={labelIds}
                             viewMode={viewMode}
-                            mediaFile={itemData.file}
-                            url={itemData.dataUrl}
-                            labelIds={itemData.labelIds}
+                            hasItemPreview={hasItemPreview}
                             onDeleteItem={onDeleteItem}
                             onSelectLabel={(newLabels) => {
                                 if (isEmpty(newLabels)) {
-                                    onUpdateItem(id, { ...itemData, labelIds: [], labelName: null });
+                                    onUpdateItem(id, { ...screenshot, labelIds: [], labelName: null });
                                 } else {
                                     const newLabelIds = getIds(newLabels);
                                     const newLabelName = newLabels.at(-1)?.name || null;
 
-                                    onUpdateItem(id, { ...itemData, labelIds: newLabelIds, labelName: newLabelName });
+                                    onUpdateItem(id, { ...screenshot, labelIds: newLabelIds, labelName: newLabelName });
                                 }
                             }}
                         />
                     );
                 }}
             />
-            {!isNil(previewIndex) && (
+            {hasItemPreview && !isNil(previewIndex) && (
                 <ImageOverlay
                     dialogState={dialogState}
                     items={items}

@@ -4,30 +4,30 @@
 import { useState } from 'react';
 
 import { AlertDialog, DialogContainer, Flex } from '@geti/ui';
+import { useOverlayTriggerState } from 'react-stately';
 
-import { DOMAIN } from '../../../../core/projects/core.interface';
 import { isAnomalyDomain } from '../../../../core/projects/domains';
 import { MediaUploadActionTypes } from '../../../../providers/media-upload-provider/media-upload-reducer-actions';
 import { UploadMedia } from '../../../../providers/media-upload-provider/media-upload.interface';
 import { CustomerSupportLink } from '../../../../shared/components/customer-support-link/customer-support-link.component';
-import { getIds } from '../../../../shared/utils';
 import { useDatasetIdentifier } from '../../../annotator/hooks/use-dataset-identifier.hook';
 import { useProject } from '../../providers/project-provider/project-provider.component';
 import { useDatasetMediaUpload } from '../project-dataset/hooks/dataset-media-upload';
 import { useSelectedDataset } from '../project-dataset/use-selected-dataset/use-selected-dataset.hook';
 import { AnomalyMediaContent } from './anomaly-media-content.component';
 import { MediaContent } from './media-content.component';
+import { PreviewGalleryDialog } from './preview-gallery-dialog/preview-gallery-dialog.component';
 import { AnomalyProjectsNotification } from './training-notification/anomaly-projects-notification.component';
-import { UploadLabelSelectorDialog } from './upload-label-selector-dialog/upload-label-selector-dialog.component';
 import { UploadStatusBar } from './upload-status-bar/upload-status-bar.component';
 
 export const ProjectMedia = (): JSX.Element => {
+    const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
+
     const selectedDataset = useSelectedDataset();
+    const datasetIdentifier = useDatasetIdentifier();
+    const galleryPreviewState = useOverlayTriggerState({});
     const { isSingleDomainProject, project } = useProject();
-
     const { mediaUploadState, onUploadMedia, dispatch, abort, reset } = useDatasetMediaUpload();
-
-    const labels = project.labels;
 
     const isSingleAnomalyProject = isSingleDomainProject(isAnomalyDomain);
 
@@ -35,51 +35,32 @@ export const ProjectMedia = (): JSX.Element => {
     // and training datasets.
     const showTrainingProcessComponent = isSingleAnomalyProject && selectedDataset.useForTraining;
 
-    const datasetIdentifier = useDatasetIdentifier();
-    const [filesForLabelAssignment, setFilesForLabelAssignment] = useState<File[]>([]);
-    const labelSelectorDialogActivated = filesForLabelAssignment.length > 0;
-    const isSingleDomainClassification = isSingleDomainProject(DOMAIN.CLASSIFICATION);
-
     const handleUploadMediaCallback = async (uploads: UploadMedia) => {
-        if (isSingleDomainClassification) {
-            // Allow the user to assign a label to the files before uploading
-            setFilesForLabelAssignment(uploads.files);
+        setDroppedFiles(uploads.files);
+        galleryPreviewState.open();
+    };
 
-            return;
-        }
+    const handlePreviewLoad = (files: File[], labelIds: string[] | undefined) =>
+        onUploadMedia({ datasetIdentifier, files, labelIds });
 
-        onUploadMedia(uploads);
+    const handlePreviewClose = () => {
+        setDroppedFiles([]);
+        galleryPreviewState.close();
     };
 
     return (
         <Flex height='100%'>
-            {isSingleDomainClassification && (
-                <UploadLabelSelectorDialog
-                    tasks={project.tasks}
-                    isActivated={labelSelectorDialogActivated}
-                    onCancelUpload={abort}
-                    onDismiss={() => {
-                        setFilesForLabelAssignment([]);
-                    }}
-                    onSkipAction={() => {
-                        const files = filesForLabelAssignment;
-
-                        setFilesForLabelAssignment([]);
-                        onUploadMedia({ datasetIdentifier, files });
-                    }}
-                    onPrimaryAction={(assignedLabels) => {
-                        const files = filesForLabelAssignment;
-                        const labelIds = getIds(assignedLabels);
-
-                        setFilesForLabelAssignment([]);
-                        onUploadMedia({ datasetIdentifier, files, labelIds });
-                    }}
-                />
-            )}
+            <PreviewGalleryDialog
+                key={droppedFiles.length}
+                files={droppedFiles}
+                isOpen={galleryPreviewState.isOpen}
+                onClose={handlePreviewClose}
+                onUpload={handlePreviewLoad}
+            />
 
             {isSingleAnomalyProject ? (
                 <AnomalyMediaContent
-                    labels={labels}
+                    labels={project.labels}
                     onUploadMedia={handleUploadMediaCallback}
                     mediaUploadState={mediaUploadState}
                     dispatch={dispatch}

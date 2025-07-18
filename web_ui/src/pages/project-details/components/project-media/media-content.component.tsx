@@ -31,8 +31,8 @@ export const MediaContent = ({ mediaUploadState, dispatch, onUploadMedia }: Medi
     const uploadMediaMetadata = useMemo(() => ({ mediaUploadState, dispatch }), [mediaUploadState, dispatch]);
 
     const handleUploadMediaCallback = useCallback(
-        (files: File[]): void => {
-            onUploadMedia({ datasetIdentifier, files });
+        (files: File[], labelIds?: string[]): void => {
+            onUploadMedia({ datasetIdentifier, files, labelIds });
         },
         [datasetIdentifier, onUploadMedia]
     );

@@ -1,0 +1,93 @@
+// Copyright (C) 2022-2025 Intel Corporation
+// LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+import { useState } from 'react';
+
+import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Heading } from '@geti/ui';
+import { isEmpty, noop } from 'lodash-es';
+
+import { MediaPreviewList } from '../../../../../shared/components/media-preview-list/media-preview-list.component';
+import { ViewModes } from '../../../../../shared/components/media-view-modes/utils';
+import { hasDifferentId } from '../../../../../shared/utils';
+import { TaskProvider } from '../../../../annotator/providers/task-provider/task-provider.component';
+
+export interface PreviewGalleryDialogProps {
+    files: File[];
+    isOpen: boolean;
+    onClose: () => void;
+    onUpload: (files: File[], labelIds?: string[]) => Promise<void>;
+}
+
+interface PreviewFile {
+    id: string;
+    file: File;
+    labelIds: never[];
+}
+
+const updateItem = (id: string, updatedItem: PreviewFile) => (item: PreviewFile) =>
+    item.id !== id ? item : { ...updatedItem, id };
+
+const getFiles = (items: PreviewFile[] | undefined) => items?.map(({ file }) => file) ?? [];
+const getLabelsIds = (labelsIds: string) => (isEmpty(labelsIds) ? undefined : labelsIds.split(','));
+const getMediaItemFromFile = (file: File): PreviewFile => ({ id: file.name, file, labelIds: [] });
+
+export const PreviewGalleryDialog = ({ isOpen, files: initFiles, onClose, onUpload }: PreviewGalleryDialogProps) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [currentFiles, setCurrentFiles] = useState(initFiles.map(getMediaItemFromFile));
+
+    const handleDeleteItems = async (id: string) => {
+        setCurrentFiles((prevFiles) => prevFiles.filter(hasDifferentId(id)));
+    };
+
+    const handleUpdateItem = async (id: string, updatedItem: PreviewFile) => {
+        setCurrentFiles((currentItems) => currentItems.map(updateItem(id, updatedItem)));
+    };
+
+    const handleUpload = async () => {
+        setIsLoading(true);
+        const groupedByLabel = Object.groupBy(currentFiles, (file) => String(file.labelIds));
+
+        Object.entries(groupedByLabel).forEach(([ids, items]) => onUpload(getFiles(items), getLabelsIds(ids)));
+
+        setIsLoading(false);
+        onClose();
+    };
+
+    return (
+        <TaskProvider>
+            <DialogContainer onDismiss={noop} type='fullscreen'>
+                {isOpen && (
+                    <Dialog>
+                        <Heading>Preview gallery</Heading>
+                        <Divider />
+
+                        <Content>
+                            <MediaPreviewList
+                                items={currentFiles}
+                                hasItemPreview={false}
+                                viewMode={ViewModes.MEDIUM}
+                                onDeleteItem={handleDeleteItems}
+                                onUpdateItem={handleUpdateItem}
+                            />
+                        </Content>
+
+                        <ButtonGroup>
+                            <Button type='reset' variant={'secondary'} onPress={onClose} isDisabled={isLoading}>
+                                Cancel
+                            </Button>
+                            <Button
+                                type='button'
+                                variant={'accent'}
+                                onPress={handleUpload}
+                                isPending={isLoading}
+                                isDisabled={isLoading || isEmpty(currentFiles)}
+                            >
+                                Upload
+                            </Button>
+                        </ButtonGroup>
+                    </Dialog>
+                )}
+            </DialogContainer>
+        </TaskProvider>
+    );
+};
