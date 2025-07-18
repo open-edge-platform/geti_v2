@@ -243,12 +243,12 @@
         {
           "key": "tile_overlap",
           "name": "Tile overlap",
-          "type": "int",
-          "description": "Overlap between adjacent tiles in pixels",
-          "value": 64,
-          "default_value": 64,
-          "min_value": 0,
-          "max_value": null
+          "type": "float",
+          "description": "Overlap between adjacent tiles as a fraction of tile size",
+          "value": 0.4,
+          "default_value": 0.5,
+          "min_value": 0.0,
+          "max_value": 1.0
         }
       ]
     }

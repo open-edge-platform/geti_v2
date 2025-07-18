@@ -5,28 +5,28 @@ get:
   description: List the algorithms (model architectures) supported for the tasks within a project. 
   operationId: GetSupportedAlgorithms
   parameters:
-    - $ref: "../../parameters/path/organization_id.yaml"
-    - $ref: "../../parameters/path/workspace_id.yaml"
-    - $ref: "../../parameters/path/project_id.yaml"
-    - $ref: "../../parameters/query/include_obsolete.yaml"
+    - $ref: "../../../parameters/path/organization_id.yaml"
+    - $ref: "../../../parameters/path/workspace_id.yaml"
+    - $ref: "../../../parameters/path/project_id.yaml"
+    - $ref: "../../../parameters/query/include_obsolete.yaml"
   responses:
     '200':
       description: List of supported algorithms
       content:
         application/json:
           schema:
-            $ref: "../../../../interactive_ai/services/api/schemas/models/responses/revamp/supported_algorithm.yaml"
+            $ref: "../../../../../interactive_ai/services/api/schemas/models/responses/revamp/supported_algorithm.yaml"
           examples:
             Supported algorithms:
               value:
-                $ref: "../../examples/models/responses/revamp/supported_algorithms.json"
+                $ref: "../../../examples/models/responses/revamp/supported_algorithms.json"
     '400':
       description: Task type is not recognized or supported
       content:
         application/json:
           schema:
-            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+            $ref: "../../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
           examples:
             Invalid task type:
               value:
-                $ref: "../../examples/error_responses/bad_request_task_type.yaml"
+                $ref: "../../../examples/error_responses/bad_request_task_type.yaml"

@@ -1,5 +1,17 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+import {
+    TrainingConfigurationDTO,
+    TrainingConfigurationUpdatePayloadDTO,
+} from '../../../src/core/configurable-parameters/dtos/configuration.interface';
+import { TASK_TYPE } from '../../../src/core/projects/dtos/task.interface';
+import {
+    LifecycleStage,
+    PerformanceCategory,
+    SupportedAlgorithmDTO,
+} from '../../../src/core/supported-algorithms/dtos/supported-algorithms.interface';
+
 export const segmentationConfigurationMock = {
     global: [
         {
@@ -794,62 +806,6 @@ export const yoloAlgorithm = {
     default_algorithm: true,
     performance_category: 'speed',
     lifecycle_stage: 'active',
-};
-
-export const supportedAlgorithms = {
-    supported_algorithms: [
-        yoloAlgorithm,
-        {
-            name: 'SSD',
-            task_type: 'detection',
-            model_size: 200,
-            model_template_id: 'detection_ssd',
-            gigaflops: 5,
-            summary: 'SSD architecture for detection',
-            default_algorithm: false,
-            performance_category: 'balance',
-            lifecycle_stage: 'active',
-        },
-    ],
-};
-
-export const modelGroups = {
-    model_groups: [
-        {
-            id: '60dc3b8b3fc7834f46ea90d5',
-            name: yoloAlgorithm.name,
-            task_id: '60db493fd20945a0046f56d2',
-            model_template_id: yoloAlgorithm.model_template_id,
-            models: [
-                {
-                    name: 'Model of Yolo',
-                    creation_date: '2021-06-30T09:38:19.677000+00:00',
-                    id: '60dc3b8b3fc7834f46ea90ag',
-                    size: 12813101,
-                    version: 1,
-                    performance: {
-                        score: 0.28953322601318,
-                    },
-                    label_schema_in_sync: false,
-                    score_up_to_date: true,
-                    active_model: false,
-                },
-                {
-                    name: 'Model of Yolo',
-                    creation_date: '2021-06-30T09:38:19.677000+00:00',
-                    id: '60dc3b8b3fc7834f46ea90af',
-                    size: 12813101,
-                    version: 2,
-                    performance: {
-                        score: 0.28953322601318,
-                    },
-                    label_schema_in_sync: true,
-                    score_up_to_date: true,
-                    active_model: true,
-                },
-            ],
-        },
-    ],
 };
 
 export const modelGroupResponse = {
@@ -2258,3 +2214,971 @@ export const modelMetricsResponse = {
         },
     ],
 } as const;
+
+/* eslint-disable max-len */
+export const supportedAlgorithms: { supported_algorithms: SupportedAlgorithmDTO[] } = {
+    supported_algorithms: [
+        {
+            model_manifest_id: 'Custom_Semantic_Segmentation_SegNext_t',
+            task: TASK_TYPE.SEGMENTATION,
+            name: 'SegNext-T',
+            description:
+                'SegNeXt-T is a lightweight semantic segmentation model that combines CNN efficiency with transformer-inspired enhancements. Designed for high speed and low latency, it achieves competitive accuracy on real-time tasks while maintaining a compact architecture suitable for edge devices. This model works well with 30+ training images and is ideal for applications requiring fast inference without sacrificing too much accuracy.',
+            stats: {
+                gigaflops: 12.44,
+                trainable_parameters: 4.23,
+                performance_ratings: {
+                    accuracy: 2,
+                    training_time: 3,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR',
+            task: TASK_TYPE.SEGMENTATION,
+            name: 'LiteHRNet-18',
+            description:
+                'LiteHRNet-18 is a lightweight high-resolution semantic segmentation model that maintains strong spatial detail through parallel multi-resolution branches. It provides a good balance of accuracy and speed, making it well-suited for real-time applications on mid-tier hardware.',
+            stats: {
+                gigaflops: 2.63,
+                trainable_parameters: 1.1,
+                performance_ratings: {
+                    accuracy: 2,
+                    training_time: 3,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.BALANCE,
+        },
+        {
+            model_manifest_id: 'Custom_Semantic_Segmentation_SegNext_B',
+            task: TASK_TYPE.SEGMENTATION,
+            name: 'SegNext-B',
+            description:
+                'SegNeXt-B is a larger and more powerful model in the SegNeXt family, aimed at achieving high segmentation accuracy on complex datasets. It retains efficient computation while scaling up depth and width, making it suitable for scenarios where accuracy is prioritized over latency. This model works well with 30+ training images and outperforms other models on large datasets.',
+            stats: {
+                gigaflops: 64.65,
+                trainable_parameters: 27.56,
+                performance_ratings: {
+                    accuracy: 3,
+                    training_time: 1,
+                    inference_speed: 1,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Custom_Semantic_Segmentation_DINOV2_S',
+            task: TASK_TYPE.SEGMENTATION,
+            name: 'SegNext-S',
+            description:
+                'SegNeXt-S builds upon the Tiny version with increased capacity, offering a better accuracy-speed trade-off. It utilizes efficient convolutional blocks and long-range feature integration to provide strong performance for segmentation tasks in real-time and embedded applications. This model works well with 30+ training images.',
+            stats: {
+                gigaflops: 30.93,
+                trainable_parameters: 13.9,
+                performance_ratings: {
+                    accuracy: 3,
+                    training_time: 2,
+                    inference_speed: 2,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: true,
+            performance_category: PerformanceCategory.ACCURACY,
+        },
+        {
+            model_manifest_id: 'Custom_Semantic_Segmentation_Lite-HRNet-s-mod2_OCR',
+            task: TASK_TYPE.SEGMENTATION,
+            name: 'LiteHRNet-S',
+            description:
+                'LiteHRNet-Small is an ultra-efficient version of LiteHRNet optimized for low-power devices. It preserves key architectural strengths like high-resolution features while minimizing parameters and computational cost, ideal for mobile and embedded systems.',
+            stats: {
+                gigaflops: 1.44,
+                trainable_parameters: 0.82,
+                performance_ratings: {
+                    accuracy: 1,
+                    training_time: 3,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.SPEED,
+        },
+        {
+            model_manifest_id: 'Custom_Semantic_Segmentation_Lite-HRNet-x-mod3_OCR',
+            task: TASK_TYPE.SEGMENTATION,
+            name: 'LiteHRNet-X',
+            description:
+                "LiteHRNet-X is an extended variant of LiteHRNet with enhanced capacity or custom scaling. It targets use cases requiring higher accuracy than the standard or small variants, while still benefiting from LiteHRNet's efficient high-resolution processing.",
+            stats: {
+                gigaflops: 9.2,
+                trainable_parameters: 1.5,
+                performance_ratings: {
+                    accuracy: 2,
+                    training_time: 1,
+                    inference_speed: 1,
+                },
+            },
+            support_status: LifecycleStage.DEPRECATED,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Custom_Semantic_Segmentation_Lite-HRNet-18_OCR',
+            task: TASK_TYPE.SEGMENTATION,
+            name: 'LiteHRNet-18-mod1',
+            description:
+                'LiteHRNet-18 is a lightweight high-resolution semantic segmentation model that maintains strong spatial detail through parallel multi-resolution branches. It provides a good balance of accuracy and speed, making it well-suited for real-time applications on mid-tier hardware.',
+            stats: {
+                gigaflops: 2.63,
+                trainable_parameters: 1.1,
+                performance_ratings: {
+                    accuracy: 2,
+                    training_time: 3,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.OBSOLETE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Object_Detection_RTDetr_101',
+            task: TASK_TYPE.DETECTION,
+            name: 'RTDetr-R101',
+            description:
+                'RT-DETR is a real-time object detection algorithm based on the transformer architecture. It combines a convolutional backbone with an efficient encoder-decoder transformer to directly predict object classes and bounding boxes without the need for anchor boxes or NMS.',
+            stats: {
+                gigaflops: 259,
+                trainable_parameters: 76,
+                performance_ratings: {
+                    accuracy: 3,
+                    training_time: 1,
+                    inference_speed: 1,
+                },
+            },
+            support_status: LifecycleStage.DEPRECATED,
+            supported_gpus: {
+                intel: false,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Object_Detection_YOLOX_X',
+            task: TASK_TYPE.DETECTION,
+            name: 'YOLOX-X',
+            description:
+                'YOLOX is a high-performance, anchor-free object detection algorithm that builds on the YOLO series with modern improvements. It features a decoupled head for separate classification and regression tasks, strong data augmentation techniques, and advanced label assignment strategies. YOLOX achieves a great balance between speed and accuracy, making it suitable for real-time applications across various domains.',
+            stats: {
+                gigaflops: 281.9,
+                trainable_parameters: 99.1,
+                performance_ratings: {
+                    accuracy: 3,
+                    training_time: 2,
+                    inference_speed: 1,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Object_Detection_ResNeXt101_ATSS',
+            task: TASK_TYPE.DETECTION,
+            name: 'ATSS-ResNeXt101',
+            description:
+                'ATSS (Adaptive Training Sample Selection) is an anchor-based object detection algorithm that introduces an adaptive strategy for selecting positive and negative samples during training. Instead of using fixed IoU thresholds, ATSS dynamically determines positive samples based on the statistical characteristics of object candidates for each ground truth. This improves training stability and enhances detection performance, especially for objects of varying sizes and aspect ratios.',
+            stats: {
+                gigaflops: 20.6,
+                trainable_parameters: 3.9,
+                performance_ratings: {
+                    accuracy: 3,
+                    training_time: 1,
+                    inference_speed: 1,
+                },
+            },
+            support_status: LifecycleStage.DEPRECATED,
+            supported_gpus: {
+                intel: false,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Custom_Object_Detection_YOLOX',
+            task: TASK_TYPE.DETECTION,
+            name: 'YOLOX-Tiny',
+            description:
+                'YOLOX is a high-performance, anchor-free object detection algorithm that builds on the YOLO series with modern improvements. It features a decoupled head for separate classification and regression tasks, strong data augmentation techniques, and advanced label assignment strategies. YOLOX achieves a great balance between speed and accuracy, making it suitable for real-time applications across various domains.',
+            stats: {
+                gigaflops: 6.45,
+                trainable_parameters: 5.06,
+                performance_ratings: {
+                    accuracy: 1,
+                    training_time: 3,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.DEPRECATED,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Object_Detection_YOLOX_S',
+            task: TASK_TYPE.DETECTION,
+            name: 'YOLOX-S',
+            description:
+                'YOLOX is a high-performance, anchor-free object detection algorithm that builds on the YOLO series with modern improvements. It features a decoupled head for separate classification and regression tasks, strong data augmentation techniques, and advanced label assignment strategies. YOLOX achieves a great balance between speed and accuracy, making it suitable for real-time applications across various domains.',
+            stats: {
+                gigaflops: 26.8,
+                trainable_parameters: 9,
+                performance_ratings: {
+                    accuracy: 2,
+                    training_time: 3,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.SPEED,
+        },
+        {
+            model_manifest_id: 'Custom_Object_Detection_Gen3_SSD',
+            task: TASK_TYPE.DETECTION,
+            name: 'SSD-MobilenetV2',
+            description:
+                'SSD (Single Shot MultiBox Detector) is a real-time, anchor-based object detection algorithm that performs object localization and classification in a single forward pass. It uses a convolutional backbone and multiple feature maps at different scales to detect objects of various sizes. SSD balances speed and accuracy, making it efficient for deployment on resource-constrained devices.',
+            stats: {
+                gigaflops: 9.4,
+                trainable_parameters: 7.6,
+                performance_ratings: {
+                    accuracy: 1,
+                    training_time: 2,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.DEPRECATED,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Custom_Object_Detection_Gen3_ATSS',
+            task: TASK_TYPE.DETECTION,
+            name: 'ATSS-MobileNetV2',
+            description:
+                'ATSS (Adaptive Training Sample Selection) is an anchor-based object detection algorithm that introduces an adaptive strategy for selecting positive and negative samples during training. Instead of using fixed IoU thresholds, ATSS dynamically determines positive samples based on the statistical characteristics of object candidates for each ground truth. This improves training stability and enhances detection performance, especially for objects of varying sizes and aspect ratios.',
+            stats: {
+                gigaflops: 20.6,
+                trainable_parameters: 3.9,
+                performance_ratings: {
+                    accuracy: 2,
+                    training_time: 3,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: false,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.BALANCE,
+        },
+        {
+            model_manifest_id: 'Object_Detection_RTDetr_50',
+            task: TASK_TYPE.DETECTION,
+            name: 'RTDetr-R50',
+            description:
+                'RT-DETR is a real-time object detection algorithm based on the transformer architecture. It combines a convolutional backbone with an efficient encoder-decoder transformer to directly predict object classes and bounding boxes without the need for anchor boxes or NMS.',
+            stats: {
+                gigaflops: 136,
+                trainable_parameters: 42,
+                performance_ratings: {
+                    accuracy: 3,
+                    training_time: 1,
+                    inference_speed: 2,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: false,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Object_Detection_YOLOX_L',
+            task: TASK_TYPE.DETECTION,
+            name: 'YOLOX-L',
+            description:
+                'YOLOX is a high-performance, anchor-free object detection algorithm that builds on the YOLO series with modern improvements. It features a decoupled head for separate classification and regression tasks, strong data augmentation techniques, and advanced label assignment strategies. YOLOX achieves a great balance between speed and accuracy, making it suitable for real-time applications across various domains.',
+            stats: {
+                gigaflops: 155.6,
+                trainable_parameters: 54.2,
+                performance_ratings: {
+                    accuracy: 3,
+                    training_time: 3,
+                    inference_speed: 2,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Object_Detection_RTMDet_tiny',
+            task: TASK_TYPE.DETECTION,
+            name: 'RTMdet-Tiny',
+            description:
+                'RTMDet is a real-time object detection algorithm that builds on a unified and scalable architecture optimized for both speed and accuracy. It features an efficient backbone, a strong neck with task-specific design, and a decoupled head for improved classification and localization. ',
+            stats: {
+                gigaflops: 32,
+                trainable_parameters: 4.8,
+                performance_ratings: {
+                    accuracy: 3,
+                    training_time: 1,
+                    inference_speed: 1,
+                },
+            },
+            support_status: LifecycleStage.DEPRECATED,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+        {
+            model_manifest_id: 'Object_Detection_DFine_X',
+            task: TASK_TYPE.DETECTION,
+            name: 'DFine-X',
+            description:
+                'D-FINE is a powerful real-time object detector that redefines the bounding box regression task in DETRs as Fine-grained Distribution Refinement (FDR) and introduces Global Optimal Localization Self-Distillation (GO-LSD), achieving outstanding performance without introducing additional inference and training costs.',
+            stats: {
+                gigaflops: 202,
+                trainable_parameters: 240,
+                performance_ratings: {
+                    accuracy: 3,
+                    training_time: 1,
+                    inference_speed: 1,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: false,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: true,
+            performance_category: PerformanceCategory.ACCURACY,
+        },
+        {
+            model_manifest_id: 'Object_Detection_RTDetr_18',
+            task: TASK_TYPE.DETECTION,
+            name: 'RTDetr-R18',
+            description:
+                'RT-DETR is a real-time object detection algorithm based on the transformer architecture. It combines a convolutional backbone with an efficient encoder-decoder transformer to directly predict object classes and bounding boxes without the need for anchor boxes or NMS.',
+            stats: {
+                gigaflops: 59,
+                trainable_parameters: 20,
+                performance_ratings: {
+                    accuracy: 2,
+                    training_time: 2,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.DEPRECATED,
+            supported_gpus: {
+                intel: false,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
+        },
+    ],
+};
+
+export const trainingConfiguration: TrainingConfigurationDTO = {
+    task_id: '5487b3d253866fd3cd9aa6f3',
+    dataset_preparation: {
+        subset_split: [
+            {
+                key: 'training',
+                name: 'Training percentage',
+                type: 'int',
+                description: 'Percentage of data to use for training',
+                value: 70,
+                default_value: 70,
+                min_value: 1,
+                max_value: 100,
+            },
+            {
+                key: 'validation',
+                name: 'Validation percentage',
+                type: 'int',
+                description: 'Percentage of data to use for validation',
+                value: 20,
+                default_value: 20,
+                min_value: 1,
+                max_value: 100,
+            },
+            {
+                key: 'test',
+                name: 'Test percentage',
+                type: 'int',
+                description: 'Percentage of data to use for testing',
+                value: 10,
+                default_value: 10,
+                min_value: 1,
+                max_value: 100,
+            },
+            {
+                key: 'auto_selection',
+                name: 'Auto selection',
+                type: 'bool',
+                description: 'Whether to automatically select data for each subset',
+                value: true,
+                default_value: true,
+            },
+            {
+                key: 'remixing',
+                name: 'Remixing',
+                type: 'bool',
+                description: 'Whether to remix data between subsets',
+                value: false,
+                default_value: false,
+            },
+            {
+                key: 'dataset_size',
+                name: 'Dataset size',
+                type: 'int',
+                description: 'Total size of the dataset (read-only parameter, not configurable by users)',
+                value: 101,
+                default_value: 101,
+                min_value: 0,
+                max_value: null,
+            },
+        ],
+        filtering: {
+            min_annotation_pixels: [
+                {
+                    key: 'enable',
+                    name: 'Enable minimum annotation pixels filtering',
+                    type: 'bool',
+                    description: 'Whether to apply minimum annotation pixels filtering',
+                    value: false,
+                    default_value: false,
+                },
+                {
+                    key: 'min_annotation_pixels',
+                    name: 'Minimum annotation pixels',
+                    type: 'int',
+                    description: 'Minimum number of pixels in an annotation',
+                    value: 1,
+                    default_value: 1,
+                    min_value: 0,
+                    max_value: 200000000,
+                },
+            ],
+            max_annotation_pixels: [
+                {
+                    key: 'enable',
+                    name: 'Enable maximum annotation pixels filtering',
+                    type: 'bool',
+                    description: 'Whether to apply maximum annotation pixels filtering',
+                    value: false,
+                    default_value: false,
+                },
+                {
+                    key: 'max_annotation_pixels',
+                    name: 'Maximum annotation pixels',
+                    type: 'int',
+                    description: 'Maximum number of pixels in an annotation',
+                    value: 10000,
+                    default_value: 10000,
+                    min_value: 0,
+                    max_value: null,
+                },
+            ],
+            min_annotation_objects: [
+                {
+                    key: 'enable',
+                    name: 'Enable minimum annotation objects filtering',
+                    type: 'bool',
+                    description: 'Whether to apply minimum annotation objects filtering',
+                    value: false,
+                    default_value: false,
+                },
+                {
+                    key: 'min_annotation_objects',
+                    name: 'Minimum annotation objects',
+                    type: 'int',
+                    description: 'Minimum number of objects in an annotation',
+                    value: 1,
+                    default_value: 1,
+                    min_value: 0,
+                    max_value: null,
+                },
+            ],
+            max_annotation_objects: [
+                {
+                    key: 'enable',
+                    name: 'Enable maximum annotation objects filtering',
+                    type: 'bool',
+                    description: 'Whether to apply maximum annotation objects filtering',
+                    value: false,
+                    default_value: false,
+                },
+                {
+                    key: 'max_annotation_objects',
+                    name: 'Maximum annotation objects',
+                    type: 'int',
+                    description: 'Maximum number of objects in an annotation',
+                    value: 10000,
+                    default_value: 10000,
+                    min_value: 0,
+                    max_value: null,
+                },
+            ],
+        },
+        augmentation: {
+            center_crop: [
+                {
+                    default_value: false,
+                    description: 'Whether to apply center cropping to the image',
+                    key: 'enable',
+                    name: 'Enable center crop',
+                    type: 'bool',
+                    value: true,
+                },
+                {
+                    default_value: 1,
+                    description: 'Ratio of original dimensions to keep when cropping',
+                    key: 'ratio',
+                    max_value: null,
+                    min_value: 0,
+                    name: 'Crop ratio',
+                    type: 'float',
+                    value: 0.6,
+                },
+            ],
+            random_affine: [
+                {
+                    default_value: false,
+                    description: 'Whether to apply random affine transformations to the image',
+                    key: 'enable',
+                    name: 'Enable random affine',
+                    type: 'bool',
+                    value: true,
+                },
+                {
+                    default_value: 0,
+                    description: 'Maximum rotation angle in degrees',
+                    key: 'degrees',
+                    max_value: null,
+                    min_value: 0,
+                    name: 'Rotation degrees',
+                    type: 'float',
+                    value: 15,
+                },
+                {
+                    default_value: 0,
+                    description: 'Maximum horizontal translation as a fraction of image width',
+                    key: 'translate_x',
+                    max_value: null,
+                    min_value: 0,
+                    name: 'Horizontal translation',
+                    type: 'float',
+                    value: 0,
+                },
+                {
+                    default_value: 0,
+                    description: 'Maximum vertical translation as a fraction of image height',
+                    key: 'translate_y',
+                    max_value: null,
+                    min_value: 0,
+                    name: 'Vertical translation',
+                    type: 'float',
+                    value: 0,
+                },
+                {
+                    default_value: 1,
+                    description: 'Scaling factor for the image during affine transformation',
+                    key: 'scale',
+                    max_value: null,
+                    min_value: 1,
+                    name: 'Scale factor',
+                    type: 'float',
+                    value: 1,
+                },
+            ],
+            tiling: [
+                {
+                    default_value: false,
+                    description: 'Whether to apply tiling to the image',
+                    key: 'enable',
+                    name: 'Enable tiling',
+                    type: 'bool',
+                    value: true,
+                },
+                {
+                    default_value: false,
+                    description: 'Whether to use adaptive tiling based on image content',
+                    key: 'adaptive_tiling',
+                    name: 'Adaptive tiling',
+                    type: 'bool',
+                    value: false,
+                },
+                {
+                    default_value: 128,
+                    description: 'Size of each tile in pixels',
+                    key: 'tile_size',
+                    max_value: null,
+                    min_value: 0,
+                    name: 'Tile size',
+                    type: 'int',
+                    value: 256,
+                },
+                {
+                    default_value: 64,
+                    description: 'Overlap between adjacent tiles in pixels',
+                    key: 'tile_overlap',
+                    max_value: null,
+                    min_value: 0,
+                    name: 'Tile overlap',
+                    type: 'int',
+                    value: 64,
+                },
+            ],
+        },
+    },
+    training: [
+        {
+            key: 'max_epochs',
+            name: 'Maximum epochs',
+            type: 'int',
+            description: 'Maximum number of training epochs to run',
+            value: 200,
+            default_value: 1000,
+            min_value: 0,
+            max_value: null,
+        },
+        {
+            key: 'learning_rate',
+            name: 'Learning rate',
+            type: 'float',
+            description: 'Base learning rate for the optimizer',
+            value: 0.004,
+            default_value: 0.001,
+            min_value: 0,
+            max_value: 1,
+        },
+        {
+            early_stopping: [
+                {
+                    key: 'enable',
+                    name: 'Enable early stopping',
+                    type: 'bool',
+                    description: 'Whether to stop training early when performance stops improving',
+                    value: true,
+                    default_value: false,
+                },
+                {
+                    key: 'patience',
+                    name: 'Patience',
+                    type: 'int',
+                    description: 'Number of epochs with no improvement after which training will be stopped',
+                    value: 10,
+                    default_value: 1,
+                    min_value: 0,
+                    max_value: null,
+                },
+            ],
+        },
+    ],
+    evaluation: [],
+};
+
+export const expectedTrainingConfiguration: TrainingConfigurationUpdatePayloadDTO = {
+    task_id: '5487b3d253866fd3cd9aa6f3',
+    dataset_preparation: {
+        subset_split: [
+            {
+                key: 'training',
+                value: 60,
+            },
+            {
+                key: 'validation',
+                value: 25,
+            },
+            {
+                key: 'test',
+                value: 15,
+            },
+            {
+                key: 'auto_selection',
+                value: true,
+            },
+            {
+                key: 'remixing',
+                value: false,
+            },
+            {
+                key: 'dataset_size',
+                value: 101,
+            },
+        ],
+        filtering: {
+            min_annotation_pixels: [
+                {
+                    key: 'enable',
+                    value: false,
+                },
+                {
+                    key: 'min_annotation_pixels',
+                    value: 1,
+                },
+            ],
+            max_annotation_pixels: [
+                {
+                    key: 'enable',
+                    value: false,
+                },
+                {
+                    key: 'max_annotation_pixels',
+                    value: 10000,
+                },
+            ],
+            min_annotation_objects: [
+                {
+                    key: 'enable',
+                    value: false,
+                },
+                {
+                    key: 'min_annotation_objects',
+                    value: 1,
+                },
+            ],
+            max_annotation_objects: [
+                {
+                    key: 'enable',
+                    value: false,
+                },
+                {
+                    key: 'max_annotation_objects',
+                    value: 10000,
+                },
+            ],
+        },
+        augmentation: {
+            center_crop: [
+                {
+                    key: 'enable',
+                    value: false,
+                },
+                {
+                    key: 'ratio',
+                    value: 0.6,
+                },
+            ],
+            random_affine: [
+                {
+                    key: 'enable',
+                    value: true,
+                },
+                {
+                    key: 'degrees',
+                    value: 15,
+                },
+                {
+                    key: 'translate_x',
+                    value: 0,
+                },
+                {
+                    key: 'translate_y',
+                    value: 0,
+                },
+                {
+                    key: 'scale',
+                    value: 1,
+                },
+            ],
+            tiling: [
+                {
+                    key: 'enable',
+                    value: true,
+                },
+                {
+                    key: 'adaptive_tiling',
+                    value: false,
+                },
+                {
+                    key: 'tile_size',
+                    value: 128,
+                },
+                {
+                    key: 'tile_overlap',
+                    value: 64,
+                },
+            ],
+        },
+    },
+    training: [
+        {
+            key: 'max_epochs',
+            value: 250,
+        },
+        {
+            key: 'learning_rate',
+            value: 0.004,
+        },
+        {
+            early_stopping: [
+                {
+                    key: 'enable',
+                    value: false,
+                },
+                {
+                    key: 'patience',
+                    value: 10,
+                },
+            ],
+        },
+    ],
+};

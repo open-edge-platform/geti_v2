@@ -104,8 +104,12 @@ class Tiling(BaseModel):
         default=False, title="Adaptive tiling", description="Whether to use adaptive tiling based on image content"
     )
     tile_size: int = Field(gt=0, default=128, title="Tile size", description="Size of each tile in pixels")
-    tile_overlap: int = Field(
-        gt=0, default=64, title="Tile overlap", description="Overlap between adjacent tiles in pixels"
+    tile_overlap: float = Field(
+        ge=0.0,
+        lt=1.0,
+        default=0.5,
+        title="Tile overlap",
+        description="Overlap between adjacent tiles as a fraction of tile size",
     )
 
 

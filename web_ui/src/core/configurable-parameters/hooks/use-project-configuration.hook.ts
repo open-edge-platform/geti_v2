@@ -7,10 +7,7 @@ import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { ProjectIdentifier } from '../../projects/core.interface';
-import {
-    CreateApiModelConfigParametersService,
-    ProjectConfigurationQueryParameters,
-} from '../services/api-model-config-parameters-service';
+import { CreateApiModelConfigParametersService } from '../services/api-model-config-parameters-service';
 import {
     ConfigurationParameter,
     KeyValueParameter,
@@ -69,16 +66,15 @@ export const useProjectConfigurationMutation = () => {
         {
             projectIdentifier: ProjectIdentifier;
             payload: ProjectConfigurationUploadPayload;
-            queryParameters?: ProjectConfigurationQueryParameters;
         },
         {
             previousConfiguration?: ProjectConfiguration;
         }
     >({
-        mutationFn: ({ projectIdentifier, payload, queryParameters }) => {
-            return configParametersService.updateProjectConfiguration(projectIdentifier, payload, queryParameters);
+        mutationFn: ({ projectIdentifier, payload }) => {
+            return configParametersService.updateProjectConfiguration(projectIdentifier, payload);
         },
-        onMutate: async ({ projectIdentifier, payload, queryParameters }) => {
+        onMutate: async ({ projectIdentifier, payload }) => {
             const queryKey = projectConfigurationQueryOptions(configParametersService, projectIdentifier).queryKey;
             await queryClient.cancelQueries({
                 queryKey,
@@ -95,30 +91,26 @@ export const useProjectConfigurationMutation = () => {
             queryClient.setQueryData<ProjectConfiguration>(queryKey, () => {
                 const updatedConfiguration: ProjectConfiguration = {
                     taskConfigs: previousConfiguration.taskConfigs.map((taskConfig) => {
-                        if (taskConfig.taskId === queryParameters?.taskId || queryParameters?.taskId === undefined) {
-                            const payloadTaskConfig = payload.taskConfigs.find(
-                                (config) => config.taskId === taskConfig.taskId
-                            );
+                        const payloadTaskConfig = payload.taskConfigs.find(
+                            (config) => config.taskId === taskConfig.taskId
+                        );
 
-                            return {
-                                ...taskConfig,
-                                autoTraining:
-                                    payloadTaskConfig?.autoTraining === undefined
-                                        ? taskConfig.autoTraining
-                                        : getUpdatedParameters(payloadTaskConfig.autoTraining, taskConfig.autoTraining),
-                                training:
-                                    payloadTaskConfig?.training === undefined
-                                        ? taskConfig.training
-                                        : {
-                                              constraints: getUpdatedParameters(
-                                                  payloadTaskConfig.training.constraints,
-                                                  taskConfig.training.constraints
-                                              ),
-                                          },
-                            };
-                        }
-
-                        return taskConfig;
+                        return {
+                            ...taskConfig,
+                            autoTraining:
+                                payloadTaskConfig?.autoTraining === undefined
+                                    ? taskConfig.autoTraining
+                                    : getUpdatedParameters(payloadTaskConfig.autoTraining, taskConfig.autoTraining),
+                            training:
+                                payloadTaskConfig?.training === undefined
+                                    ? taskConfig.training
+                                    : {
+                                          constraints: getUpdatedParameters(
+                                              payloadTaskConfig.training.constraints,
+                                              taskConfig.training.constraints
+                                          ),
+                                      },
+                        };
                     }),
                 };
 

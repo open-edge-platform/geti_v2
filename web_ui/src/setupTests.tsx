@@ -145,11 +145,6 @@ jest.mock('@geti/core/src/services/use-deployment-config-query.hook', () => ({
 
 process.env.REACT_APP_VALIDATION_COMPONENT_TESTS = 'true';
 
-jest.mock('@geti/smart-tools', () => ({
-    sessionParams: {
-        numThreads: 0,
-        executionProviders: ['cpu'],
-        wasmRoot: {},
-    },
+jest.mock('@geti/smart-tools/ritm', () => ({
     RITM_TEMPLATE_SIZE: 10,
 }));

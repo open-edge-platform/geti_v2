@@ -48,7 +48,7 @@ example:
         - key: "tile_size"
           value: 256
         - key: "tile_overlap"
-          value: 64
+          value: 0.4
     filtering:
       max_annotation_objects:
         - key: "enable"

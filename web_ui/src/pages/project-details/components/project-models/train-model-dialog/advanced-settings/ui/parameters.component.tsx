@@ -3,10 +3,13 @@
 
 import { FC, ReactNode } from 'react';
 
-import { Grid, minmax, Text, ToggleButtons, View } from '@geti/ui';
+import { Grid, Item, minmax, Picker, Text, ToggleButtons, View } from '@geti/ui';
 import { isBoolean, isFunction } from 'lodash-es';
 
-import { ConfigurationParameter } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
+import {
+    ConfigurationParameter,
+    EnumConfigurationParameter,
+} from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { isBoolEnableParameter } from '../utils';
 import { BooleanParameter } from './boolean-parameter.component';
 import { NumberParameterField } from './number-parameter-field.component';
@@ -96,14 +99,23 @@ const ParameterReadOnly = ({ parameter, marginStart }: ParameterReadOnlyProps) =
     );
 };
 
-const ParameterField: FC<ParameterFieldProps> = ({ parameter, onChange, isDisabled }) => {
-    if (parameter.type === 'enum') {
-        const handleChange = (value: string) => {
-            onChange({
-                ...parameter,
-                value,
-            });
-        };
+export const EnumParameterField = ({
+    parameter,
+    onChange,
+    isDisabled,
+}: {
+    parameter: EnumConfigurationParameter;
+    onChange: (parameter: EnumConfigurationParameter) => void;
+    isDisabled?: boolean;
+}) => {
+    const handleChange = (value: EnumConfigurationParameter['value']) => {
+        onChange({
+            ...parameter,
+            value,
+        });
+    };
+
+    if (parameter.allowedValues.length < 4) {
         return (
             <ToggleButtons
                 options={parameter.allowedValues}
@@ -112,6 +124,29 @@ const ParameterField: FC<ParameterFieldProps> = ({ parameter, onChange, isDisabl
                 isDisabled={isDisabled}
             />
         );
+    }
+
+    const items = parameter.allowedValues.map((value) => ({ value }));
+
+    return (
+        <Picker
+            items={items}
+            selectedKey={parameter.value.toString()}
+            onSelectionChange={(key) => handleChange(key as EnumConfigurationParameter['value'])}
+            aria-label={`Select ${parameter.name}`}
+        >
+            {(item) => (
+                <Item key={item.value}>
+                    <Text>{item.value}</Text>
+                </Item>
+            )}
+        </Picker>
+    );
+};
+
+const ParameterField: FC<ParameterFieldProps> = ({ parameter, onChange, isDisabled }) => {
+    if (parameter.type === 'enum') {
+        return <EnumParameterField parameter={parameter} onChange={onChange} />;
     }
 
     if (parameter.type === 'float' || parameter.type === 'int') {
@@ -200,12 +235,23 @@ const ParametersList = ({ parameters, onChange, isReadOnly }: ParametersListProp
     ));
 };
 
-export const Parameters = ({ parameters, onChange, isReadOnly = false }: ParametersProps) => {
+const ParametersContainer = ({ children, isReadOnly }: { children: ReactNode; isReadOnly?: boolean }) => {
     const columns = isReadOnly ? ['size-3000', '1fr'] : ['size-3000', minmax('size-3400', '1fr'), 'size-400'];
 
     return (
         <Grid columns={columns} gap={'size-300'} alignItems={'center'}>
-            <ParametersList parameters={parameters} onChange={onChange} isReadOnly={isReadOnly} />
+            {children}
         </Grid>
     );
 };
+
+export const Parameters = ({ parameters, onChange, isReadOnly = false }: ParametersProps) => {
+    return (
+        <ParametersContainer>
+            <ParametersList parameters={parameters} onChange={onChange} isReadOnly={isReadOnly} />
+        </ParametersContainer>
+    );
+};
+
+Parameters.Container = ParametersContainer;
+Parameter.Layout = ParameterLayout;

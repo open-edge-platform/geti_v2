@@ -10,8 +10,6 @@ import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { useIsMounted } from 'usehooks-ts';
 
 import { DatasetIdentifier } from '../../../../core/projects/dataset.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { runWhen } from '../../../../shared/utils';
 import { useCameraParams } from '../../hooks/camera-params.hook';
 import { useCameraStorage } from '../../hooks/use-camera-storage.hook';
@@ -89,18 +87,12 @@ const DiscardAllButton = ({ isDisabled, datasetIdentifier, navigate, deleteAllIt
 
 export const ActionButtons = ({ isDisabled, canGoToCameraPage }: ActionButtonsProps): JSX.Element => {
     const navigate = useNavigate();
+
     const { ...datasetIdentifier } = useCameraParams();
     const { deleteAllItems, savedFilesQuery } = useCameraStorage();
-    const { addNotification } = useNotification();
-    const [isPending, setIsPending] = useState(false);
 
     const isEmptyItems = isEmpty(savedFilesQuery.data);
     const ButtonComponent = isEmptyItems ? CancelButton : DiscardAllButton;
-
-    const handleOnPress = () => {
-        setIsPending(true);
-        addNotification({ message: 'Preparing media upload...', type: NOTIFICATION_TYPE.INFO });
-    };
 
     return (
         <ButtonGroup>
@@ -113,7 +105,7 @@ export const ActionButtons = ({ isDisabled, canGoToCameraPage }: ActionButtonsPr
 
             {canGoToCameraPage && <TakeShotsButton />}
 
-            <AcceptButton isDisabled={isDisabled || isEmptyItems} onPress={handleOnPress} isPending={isPending} />
+            <AcceptButton navigate={navigate} isDisabled={isDisabled || isEmptyItems} />
         </ButtonGroup>
     );
 };

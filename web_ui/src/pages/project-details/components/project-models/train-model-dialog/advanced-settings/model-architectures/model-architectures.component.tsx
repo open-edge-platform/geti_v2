@@ -1,15 +1,14 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { FC, Key, useState } from 'react';
+import { FC, useState } from 'react';
 
-import { ActionButton, Flex, Icon, Item, Menu, MenuTrigger, Text, View } from '@geti/ui';
-import { SortDown, SortUp, SortUpDown } from '@geti/ui/icons';
+import { Flex, View } from '@geti/ui';
 import { orderBy } from 'lodash-es';
-import { Section } from 'react-stately';
 
 import { PerformanceCategory } from '../../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { SupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { SortWidget } from '../../../../../../../shared/components/sort-widget/sort-widget.component';
 import { ModelArchitecturesMainContent } from './model-architectures-main-content.component';
 import { SortingOptions } from './utils';
 
@@ -35,11 +34,6 @@ const sortingHandlers: Record<SortingOptions, SortingHandler> = {
     [SortingOptions.NAME_ASC]: (templates) => orderBy(templates, (algorithm) => algorithm.name, 'asc'),
     [SortingOptions.NAME_DESC]: (templates) => orderBy(templates, (algorithm) => algorithm.name, 'desc'),
 };
-
-interface SortArchitecturesPickerProps {
-    sortBy: SortingOptions;
-    onSort: (option: SortingOptions) => void;
-}
 
 const SORT_OPTIONS = [
     [
@@ -94,32 +88,6 @@ const SORT_OPTIONS = [
     ],
 ];
 
-const SortArchitecturesPicker: FC<SortArchitecturesPickerProps> = ({ sortBy, onSort }) => {
-    return (
-        <MenuTrigger>
-            <ActionButton isQuiet aria-label={'Sort architectures'}>
-                <SortUpDown />
-            </ActionButton>
-            <Menu
-                selectionMode={'single'}
-                onAction={(key: Key) => onSort(key as SortingOptions)}
-                defaultSelectedKeys={[sortBy]}
-            >
-                {SORT_OPTIONS.map((section, index) => (
-                    <Section key={index}>
-                        {section.map((option) => (
-                            <Item key={option.key} textValue={option.name}>
-                                <Text>{option.name}</Text>
-                                <Icon>{option.key.endsWith('asc') ? <SortUp /> : <SortDown />}</Icon>
-                            </Item>
-                        ))}
-                    </Section>
-                ))}
-            </Menu>
-        </MenuTrigger>
-    );
-};
-
 interface ModelArchitecturesProps {
     algorithms: SupportedAlgorithm[];
     selectedModelTemplateId: string | null;
@@ -137,17 +105,19 @@ export const ModelArchitectures: FC<ModelArchitecturesProps> = ({
     const sortedAlgorithms = sortingHandlers[sortBy](algorithms);
 
     return (
-        <View>
+        <Flex direction={'column'} gap={'size-100'}>
             <Flex direction={'row-reverse'}>
-                <SortArchitecturesPicker onSort={setSortBy} sortBy={sortBy} />
+                <SortWidget sortBy={sortBy} onSort={setSortBy} items={SORT_OPTIONS} />
             </Flex>
-            <ModelArchitecturesMainContent
-                algorithms={sortedAlgorithms}
-                selectedModelTemplateId={selectedModelTemplateId}
-                onChangeSelectedTemplateId={onChangeSelectedTemplateId}
-                activeModelTemplateId={activeModelTemplateId}
-                sortBy={sortBy}
-            />
-        </View>
+            <View flex={1}>
+                <ModelArchitecturesMainContent
+                    algorithms={sortedAlgorithms}
+                    selectedModelTemplateId={selectedModelTemplateId}
+                    onChangeSelectedTemplateId={onChangeSelectedTemplateId}
+                    activeModelTemplateId={activeModelTemplateId}
+                    sortBy={sortBy}
+                />
+            </View>
+        </Flex>
     );
 };

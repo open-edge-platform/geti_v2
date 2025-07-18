@@ -321,7 +321,7 @@ describe('ModelsGroupsPerTasks', () => {
         });
 
         fireEvent.click(screen.getByRole('button', { name: /sort models/i }));
-        const scoreAscending = screen.getAllByRole('menuitemradio', { name: 'Score' })[0];
+        const scoreAscending = screen.getAllByRole('option', { name: 'Score' })[0];
         fireEvent.click(scoreAscending);
 
         const modelCardsAscendingScore = screen.getAllByTestId(/model-card/);
@@ -334,7 +334,7 @@ describe('ModelsGroupsPerTasks', () => {
         ]);
 
         fireEvent.click(screen.getByRole('button', { name: /sort models/i }));
-        const scoreDescending = screen.getAllByRole('menuitemradio', { name: 'Score' })[1];
+        const scoreDescending = screen.getAllByRole('option', { name: 'Score' })[1];
         fireEvent.click(scoreDescending);
 
         const modelCardsDescendingScore = screen.getAllByTestId(/model-card/);

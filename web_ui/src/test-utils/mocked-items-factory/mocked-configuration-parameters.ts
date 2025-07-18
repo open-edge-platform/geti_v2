@@ -2,7 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import {
+    BoolParameter,
     ConfigurationParameter,
+    EnumConfigurationParameter,
+    NumberParameter,
     ProjectConfiguration,
     TrainingConfiguration,
 } from '../../core/configurable-parameters/services/configuration.interface';
@@ -80,11 +83,20 @@ export const getMockedTrainingConfiguration = (config: Partial<TrainingConfigura
     ...config,
 });
 
-export const getMockedConfigurationParameter = (
+export function getMockedConfigurationParameter(
+    parameter: Partial<EnumConfigurationParameter> & Required<Pick<ConfigurationParameter, 'type'>>
+): EnumConfigurationParameter;
+export function getMockedConfigurationParameter(
+    parameter: Partial<NumberParameter> & Required<Pick<NumberParameter, 'type'>>
+): NumberParameter;
+export function getMockedConfigurationParameter(
+    parameter: Partial<BoolParameter> & Required<Pick<BoolParameter, 'type'>>
+): BoolParameter;
+export function getMockedConfigurationParameter(
     parameter: Partial<ConfigurationParameter> & Required<Pick<ConfigurationParameter, 'type'>> = {
         type: 'float',
     }
-): ConfigurationParameter => {
+): ConfigurationParameter {
     if (parameter.type === 'float' || parameter.type === 'int') {
         return {
             value: 0,
@@ -111,15 +123,15 @@ export const getMockedConfigurationParameter = (
 
     if (parameter.type === 'enum') {
         return {
-            allowedValues: ['option1', 'option2'],
-            defaultValue: 'option1',
+            allowedValues: [100, 200],
+            defaultValue: 100,
             name: 'Mocked Enum Parameter',
             description: 'This is a mocked enum configuration parameter',
-            value: 'option1',
+            value: 100,
             key: 'mocked_enum_parameter',
             ...parameter,
         };
     }
 
     throw new Error(`Unsupported parameter type: ${parameter.type}`);
-};
+}

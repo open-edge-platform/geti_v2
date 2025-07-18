@@ -1,7 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from geti_configuration_tools.utils import partial_model
 
@@ -11,6 +11,8 @@ from .augmentation import AugmentationParameters
 class DatasetPreparationParameters(BaseModel):
     """Parameters for dataset preparation before training."""
 
+    model_config = ConfigDict(extra="forbid")
+
     augmentation: AugmentationParameters = Field(
         default_factory=AugmentationParameters,
         title="Data augmentation",
@@ -19,6 +21,7 @@ class DatasetPreparationParameters(BaseModel):
 
 
 class EarlyStopping(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     enable: bool = Field(
         default=False,
         title="Enable early stopping",
@@ -35,6 +38,7 @@ class EarlyStopping(BaseModel):
 class TrainingHyperParameters(BaseModel):
     """Hyperparameters for model training process."""
 
+    model_config = ConfigDict(extra="forbid")
     max_epochs: int = Field(
         gt=0, default=1000, title="Maximum epochs", description="Maximum number of training epochs to run"
     )
@@ -126,6 +130,7 @@ class EvaluationParameters(BaseModel):
 class Hyperparameters(BaseModel):
     """Complete set of configurable parameters for model training and evaluation."""
 
+    model_config = ConfigDict(extra="forbid")
     dataset_preparation: DatasetPreparationParameters = Field(
         default_factory=DatasetPreparationParameters,
         title="Dataset preparation",

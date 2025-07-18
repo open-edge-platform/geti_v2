@@ -15,7 +15,6 @@ import {
 } from '../../fixtures/search-by-name';
 import { switchCallsAfter } from '../../utils/api';
 import { Subset } from './../../../src/pages/project-details/components/project-model/training-dataset/utils';
-import { testWithModelsApiExamples } from './fixtures';
 
 const MODEL_DETAILS_URL =
     // eslint-disable-next-line max-len
@@ -228,8 +227,8 @@ const modelDetailsWithOptimizedPOTModel = {
     ],
 };
 
-testWithModelsApiExamples.describe('project model details', () => {
-    testWithModelsApiExamples.beforeEach(async ({ page, registerApiResponse }) => {
+test.describe('project model details', () => {
+    test.beforeEach(async ({ page, registerApiResponse }) => {
         const switchCallsAfterTwo = switchCallsAfter(2);
 
         registerApiResponse(
@@ -247,49 +246,43 @@ testWithModelsApiExamples.describe('project model details', () => {
         await page.goto(MODEL_DETAILS_URL, { timeout: 15000 });
     });
 
-    testWithModelsApiExamples.describe('Training datasets', () => {
-        testWithModelsApiExamples.beforeEach(async ({ page }) => {
+    test.describe('Training datasets', () => {
+        test.beforeEach(async ({ page }) => {
             await page.getByText('Training datasets').click();
         });
 
-        testWithModelsApiExamples(
-            'Check if typing filter will set chip with the filter and after removing it filter is removed',
-            async ({ page }) => {
-                /** Implementation of test cases:
-                 * test_annotator_dataset_searchbar_auto_label[modelPage]
-                 * test_annotator_dataset_searchbar_remove_label[modelPage]
-                 */
+        test('Check if typing filter will set chip with the filter and after removing it filter is removed', async ({
+            page,
+        }) => {
+            /** Implementation of test cases:
+             * test_annotator_dataset_searchbar_auto_label[modelPage]
+             * test_annotator_dataset_searchbar_remove_label[modelPage]
+             */
 
-                await openAndTypeIntoSearchField(page, 'cat', testingPrefix);
+            await openAndTypeIntoSearchField(page, 'cat', testingPrefix);
 
-                await closeSearchByNameFilterPopover(page, testingPrefix);
-                await expect(page.getByTestId(`${testingPrefix}chip-search-rule-id`)).toHaveText(
-                    'Media name contains cat'
-                );
+            await closeSearchByNameFilterPopover(page, testingPrefix);
+            await expect(page.getByTestId(`${testingPrefix}chip-search-rule-id`)).toHaveText('Media name contains cat');
 
-                await page.getByRole('button', { name: `${testingPrefix}remove-rule-search-rule-id` }).click();
-                await expect(page.getByTestId(`${testingPrefix}chip-search-rule-id`)).toBeHidden();
+            await page.getByRole('button', { name: `${testingPrefix}remove-rule-search-rule-id` }).click();
+            await expect(page.getByTestId(`${testingPrefix}chip-search-rule-id`)).toBeHidden();
 
-                await triggerFilterModal(page, testingPrefix);
-                expect(await page.locator('#media-filter-delete-row').count()).toBe(0);
-                await page.keyboard.press('Escape');
-            }
-        );
+            await triggerFilterModal(page, testingPrefix);
+            expect(await page.locator('#media-filter-delete-row').count()).toBe(0);
+            await page.keyboard.press('Escape');
+        });
 
-        testWithModelsApiExamples(
-            'Check if submitting filter shorter than 3 chars will add chip with filter',
-            async ({ page }) => {
-                /** test_annotator_dataset_searchbar_manual_label[modelPage] */
+        test('Check if submitting filter shorter than 3 chars will add chip with filter', async ({ page }) => {
+            /** test_annotator_dataset_searchbar_manual_label[modelPage] */
 
-                await openAndTypeIntoSearchField(page, 'im', testingPrefix);
-                await acceptFilter(page, testingPrefix);
+            await openAndTypeIntoSearchField(page, 'im', testingPrefix);
+            await acceptFilter(page, testingPrefix);
 
-                await closeSearchByNameFilterPopover(page, testingPrefix);
-                await checkChipsValue(page, 'Media name contains im', testingPrefix);
-            }
-        );
+            await closeSearchByNameFilterPopover(page, testingPrefix);
+            await checkChipsValue(page, 'Media name contains im', testingPrefix);
+        });
 
-        testWithModelsApiExamples('Check if changing search will update filter rule', async ({ page }) => {
+        test('Check if changing search will update filter rule', async ({ page }) => {
             /** test_annotator_dataset_searchbar_overwrite_label[modelPage] */
 
             await openAndTypeIntoSearchField(page, 'cat', testingPrefix);
@@ -302,262 +295,256 @@ testWithModelsApiExamples.describe('project model details', () => {
             await checkMediaNameFilter(page, 'dog');
         });
 
-        testWithModelsApiExamples(
-            'Opening image and video previews',
-            async ({ page, registerApiResponse, openApi }) => {
-                registerApiResponse('FilterVideoFramesInTrainingRevision', (_, res, ctx) => {
-                    const { mock } = openApi.mockResponseForOperation('FilterVideoFramesInTrainingRevision');
-                    return res(
-                        ctx.json({
-                            media: mock.video_frames,
-                            total_images: 0,
-                            total_matched_images: 0,
-                            total_matched_video_frames: 2,
-                            total_matched_videos: 1,
-                            total_videos: 2,
-                        })
-                    );
-                });
+        test('Opening image and video previews', async ({ page, registerApiResponse, openApi }) => {
+            registerApiResponse('FilterVideoFramesInTrainingRevision', (_, res, ctx) => {
+                const { mock } = openApi.mockResponseForOperation('FilterVideoFramesInTrainingRevision');
+                return res(
+                    ctx.json({
+                        media: mock.video_frames,
+                        total_images: 0,
+                        total_matched_images: 0,
+                        total_matched_video_frames: 2,
+                        total_matched_videos: 1,
+                        total_videos: 2,
+                    })
+                );
+            });
 
-                //
-                const trainingBucket = page.getByTestId(`${Subset.TRAINING}-subset`);
+            //
+            const trainingBucket = page.getByTestId(`${Subset.TRAINING}-subset`);
 
-                // Test that we can open an image preview
-                const images = trainingBucket.getByRole('img', { name: /dummy_images/ });
-                await images.click();
-                const dialog = page.getByRole('dialog');
-                await expect(dialog).toBeVisible();
-                await expect(page.getByText(/training subset/i)).toBeVisible();
-                await page.getByRole('button', { name: /close preview modal/ }).click();
-                await expect(dialog).toBeHidden();
+            // Test that we can open an image preview
+            const images = trainingBucket.getByRole('img', { name: /dummy_images/ });
+            await images.click();
+            const dialog = page.getByRole('dialog');
+            await expect(dialog).toBeVisible();
+            await expect(page.getByText(/training subset/i)).toBeVisible();
+            await page.getByRole('button', { name: /close preview modal/ }).click();
+            await expect(dialog).toBeHidden();
 
-                // Test that we can open an video preview
-                const video = trainingBucket.getByRole('img', { name: /dummy_video/ });
-                await video.click();
+            // Test that we can open an video preview
+            const video = trainingBucket.getByRole('img', { name: /dummy_video/ });
+            await video.click();
 
-                await expect(dialog).toBeVisible();
-                await expect(page.getByText(/training subset/i)).toBeVisible();
+            await expect(dialog).toBeVisible();
+            await expect(page.getByText(/training subset/i)).toBeVisible();
 
-                // Navigate within video
-                const next = page.getByRole('button', { name: /go to next frame/i });
-                await expect(next).toBeEnabled();
-                await next.click();
+            // Navigate within video
+            const next = page.getByRole('button', { name: /go to next frame/i });
+            await expect(next).toBeEnabled();
+            await next.click();
 
-                const previous = page.getByRole('button', { name: /go to previous frame/i });
-                await expect(previous).toBeEnabled();
-                await previous.click();
+            const previous = page.getByRole('button', { name: /go to previous frame/i });
+            await expect(previous).toBeEnabled();
+            await previous.click();
 
-                // Close dialog
-                await page.getByRole('button', { name: /close preview modal/ }).click();
-                await expect(dialog).toBeHidden();
-            }
-        );
+            // Close dialog
+            await page.getByRole('button', { name: /close preview modal/ }).click();
+            await expect(dialog).toBeHidden();
+        });
 
-        testWithModelsApiExamples(
-            'Edit an image from the model testing set',
-            async ({ page, registerApiResponse, openApi }) => {
-                registerApiResponse('FilterVideoFramesInTrainingRevision', (_, res, ctx) => {
-                    const { mock } = openApi.mockResponseForOperation('FilterVideoFramesInTrainingRevision');
-                    return res(
-                        ctx.json({
-                            media: mock.video_frames,
-                            total_images: 0,
-                            total_matched_images: 0,
-                            total_matched_video_frames: 2,
-                            total_matched_videos: 1,
-                            total_videos: 2,
-                        })
-                    );
-                });
+        test('Edit an image from the model testing set', async ({ page, registerApiResponse, openApi }) => {
+            registerApiResponse('FilterVideoFramesInTrainingRevision', (_, res, ctx) => {
+                const { mock } = openApi.mockResponseForOperation('FilterVideoFramesInTrainingRevision');
+                return res(
+                    ctx.json({
+                        media: mock.video_frames,
+                        total_images: 0,
+                        total_matched_images: 0,
+                        total_matched_video_frames: 2,
+                        total_matched_videos: 1,
+                        total_videos: 2,
+                    })
+                );
+            });
 
-                //
-                const testingBucket = page.getByTestId(`${Subset.TESTING}-subset`);
+            //
+            const testingBucket = page.getByTestId(`${Subset.TESTING}-subset`);
 
-                // Test that we can open an image preview
-                const images = testingBucket.getByRole('img', { name: /dummy_images/ });
-                await images.click();
-                const dialog = page.getByRole('dialog');
-                await expect(dialog).toBeVisible();
-                await expect(page.getByText(/testing subset/i)).toBeVisible();
+            // Test that we can open an image preview
+            const images = testingBucket.getByRole('img', { name: /dummy_images/ });
+            await images.click();
+            const dialog = page.getByRole('dialog');
+            await expect(dialog).toBeVisible();
+            await expect(page.getByText(/testing subset/i)).toBeVisible();
 
-                await page.getByRole('button', { name: /edit annotations/i }).click();
-                await expect(dialog).toBeHidden();
+            await page.getByRole('button', { name: /edit annotations/i }).click();
+            await expect(dialog).toBeHidden();
 
-                expect(page.url()).toContain('annotator');
-            }
-        );
+            expect(page.url()).toContain('annotator');
+        });
     });
 
-    testWithModelsApiExamples(
-        'Shows progress when model is being optimized, when is optimized shows that model in a table',
-        async ({ page, registerApiResponse }) => {
-            const runningJobs = {
-                jobs: [
-                    {
-                        id: '6728b85b7f17fba4f71cac99',
-                        type: 'optimize_pot',
-                        creation_time: '2024-11-04T12:04:43.749000+00:00',
-                        start_time: '2024-11-04T12:04:49.735000+00:00',
-                        end_time: null,
-                        name: 'Optimization',
-                        author: '660db1b9-d91e-4671-b04e-8ed03a23312b',
-                        state: 'running',
-                        steps: [
-                            {
-                                message: 'Dataset sharding is done and model is prepared',
-                                index: 1,
-                                progress: 100,
-                                state: 'running',
-                                step_name: 'Shard dataset',
-                            },
-                            {
-                                message: null,
-                                index: 2,
-                                progress: -1,
-                                state: 'waiting',
-                                step_name: 'Optimizing model',
-                            },
-                            {
-                                message: null,
-                                index: 3,
-                                progress: -1,
-                                state: 'waiting',
-                                step_name: 'Evaluating optimized model',
-                            },
-                        ],
-                        cancellation_info: {
-                            cancellable: true,
-                            is_cancelled: false,
-                            user_uid: null,
-                            cancel_time: null,
+    test('Shows progress when model is being optimized, when is optimized shows that model in a table', async ({
+        page,
+        registerApiResponse,
+    }) => {
+        const runningJobs = {
+            jobs: [
+                {
+                    id: '6728b85b7f17fba4f71cac99',
+                    type: 'optimize_pot',
+                    creation_time: '2024-11-04T12:04:43.749000+00:00',
+                    start_time: '2024-11-04T12:04:49.735000+00:00',
+                    end_time: null,
+                    name: 'Optimization',
+                    author: '660db1b9-d91e-4671-b04e-8ed03a23312b',
+                    state: 'running',
+                    steps: [
+                        {
+                            message: 'Dataset sharding is done and model is prepared',
+                            index: 1,
+                            progress: 100,
+                            state: 'running',
+                            step_name: 'Shard dataset',
                         },
-                        metadata: {
-                            project: {
-                                id: '5d10b5fb212b36bd37c48bc6',
-                                name: 'Candy',
-                            },
-                            task: {
-                                task_id: '5d10b5fb212b36bd37c48bc9',
-                                model_template_id: 'Custom_Object_Detection_Gen3_ATSS',
-                                model_architecture: 'MobileNetV2-ATSS',
-                            },
-                            model_storage_id: '60dc3b8b3fc7834f46ea90d5',
-                            base_model_id: '60dc3b8b3fc7834f46ea90af',
-                            optimization_type: 'POT',
-                            optimized_model_id: null,
+                        {
+                            message: null,
+                            index: 2,
+                            progress: -1,
+                            state: 'waiting',
+                            step_name: 'Optimizing model',
                         },
+                        {
+                            message: null,
+                            index: 3,
+                            progress: -1,
+                            state: 'waiting',
+                            step_name: 'Evaluating optimized model',
+                        },
+                    ],
+                    cancellation_info: {
+                        cancellable: true,
+                        is_cancelled: false,
+                        user_uid: null,
+                        cancel_time: null,
                     },
-                ],
-                jobs_count: {
-                    n_scheduled_jobs: 0,
-                    n_running_jobs: 1,
-                    n_finished_jobs: 0,
-                    n_failed_jobs: 0,
-                    n_cancelled_jobs: 0,
-                },
-            };
-            const finishedJobs = {
-                jobs: [
-                    {
-                        id: '6728b85b7f17fba4f71cac99',
-                        type: 'optimize_pot',
-                        creation_time: '2024-11-04T12:04:43.749000+00:00',
-                        start_time: '2024-11-04T12:04:49.735000+00:00',
-                        end_time: '2024-11-04T12:07:29.459000+00:00',
-                        name: 'Optimization',
-                        author: '660db1b9-d91e-4671-b04e-8ed03a23312b',
-                        state: 'finished',
-                        steps: [
-                            {
-                                message: 'Dataset sharding is done and model is prepared',
-                                index: 1,
-                                progress: 100,
-                                state: 'finished',
-                                step_name: 'Shard dataset',
-                                duration: 10.208,
-                            },
-                            {
-                                message: 'Model optimized',
-                                index: 2,
-                                progress: 100.0,
-                                state: 'finished',
-                                step_name: 'Optimizing model',
-                                duration: 14.012,
-                            },
-                            {
-                                message: 'Model evaluated',
-                                index: 3,
-                                progress: 100,
-                                state: 'finished',
-                                step_name: 'Evaluating optimized model',
-                                duration: 16.011,
-                            },
-                        ],
-                        cancellation_info: {
-                            cancellable: true,
-                            is_cancelled: false,
-                            user_uid: null,
-                            cancel_time: null,
+                    metadata: {
+                        project: {
+                            id: '5d10b5fb212b36bd37c48bc6',
+                            name: 'Candy',
                         },
-                        metadata: {
-                            project: {
-                                id: '5d10b5fb212b36bd37c48bc6',
-                                name: 'Candy',
-                            },
-                            task: {
-                                task_id: '5d10b5fb212b36bd37c48bc9',
-                                model_template_id: 'Custom_Object_Detection_Gen3_ATSS',
-                                model_architecture: 'MobileNetV2-ATSS',
-                            },
-                            model_storage_id: '60dc3b8b3fc7834f46ea90d5',
-                            base_model_id: '60dc3b8b3fc7834f46ea90af',
-                            optimization_type: 'POT',
-                            optimized_model_id: '6728b87dacb382cc9d1149c7',
+                        task: {
+                            task_id: '5d10b5fb212b36bd37c48bc9',
+                            model_template_id: 'Custom_Object_Detection_Gen3_ATSS',
+                            model_architecture: 'MobileNetV2-ATSS',
                         },
+                        model_storage_id: '60dc3b8b3fc7834f46ea90d5',
+                        base_model_id: '60dc3b8b3fc7834f46ea90af',
+                        optimization_type: 'POT',
+                        optimized_model_id: null,
                     },
-                ],
-                jobs_count: {
-                    n_scheduled_jobs: 0,
-                    n_running_jobs: 0,
-                    n_finished_jobs: 1,
-                    n_failed_jobs: 0,
-                    n_cancelled_jobs: 0,
                 },
-            };
-
-            registerApiResponse('GetJobs', (_, res, ctx) =>
-                res(
-                    ctx.json({
-                        jobs: [],
-                        jobs_count: {
-                            n_scheduled_jobs: 0,
-                            n_running_jobs: 0,
-                            n_finished_jobs: 0,
-                            n_failed_jobs: 0,
-                            n_cancelled_jobs: 0,
+            ],
+            jobs_count: {
+                n_scheduled_jobs: 0,
+                n_running_jobs: 1,
+                n_finished_jobs: 0,
+                n_failed_jobs: 0,
+                n_cancelled_jobs: 0,
+            },
+        };
+        const finishedJobs = {
+            jobs: [
+                {
+                    id: '6728b85b7f17fba4f71cac99',
+                    type: 'optimize_pot',
+                    creation_time: '2024-11-04T12:04:43.749000+00:00',
+                    start_time: '2024-11-04T12:04:49.735000+00:00',
+                    end_time: '2024-11-04T12:07:29.459000+00:00',
+                    name: 'Optimization',
+                    author: '660db1b9-d91e-4671-b04e-8ed03a23312b',
+                    state: 'finished',
+                    steps: [
+                        {
+                            message: 'Dataset sharding is done and model is prepared',
+                            index: 1,
+                            progress: 100,
+                            state: 'finished',
+                            step_name: 'Shard dataset',
+                            duration: 10.208,
                         },
-                    })
-                )
-            );
+                        {
+                            message: 'Model optimized',
+                            index: 2,
+                            progress: 100.0,
+                            state: 'finished',
+                            step_name: 'Optimizing model',
+                            duration: 14.012,
+                        },
+                        {
+                            message: 'Model evaluated',
+                            index: 3,
+                            progress: 100,
+                            state: 'finished',
+                            step_name: 'Evaluating optimized model',
+                            duration: 16.011,
+                        },
+                    ],
+                    cancellation_info: {
+                        cancellable: true,
+                        is_cancelled: false,
+                        user_uid: null,
+                        cancel_time: null,
+                    },
+                    metadata: {
+                        project: {
+                            id: '5d10b5fb212b36bd37c48bc6',
+                            name: 'Candy',
+                        },
+                        task: {
+                            task_id: '5d10b5fb212b36bd37c48bc9',
+                            model_template_id: 'Custom_Object_Detection_Gen3_ATSS',
+                            model_architecture: 'MobileNetV2-ATSS',
+                        },
+                        model_storage_id: '60dc3b8b3fc7834f46ea90d5',
+                        base_model_id: '60dc3b8b3fc7834f46ea90af',
+                        optimization_type: 'POT',
+                        optimized_model_id: '6728b87dacb382cc9d1149c7',
+                    },
+                },
+            ],
+            jobs_count: {
+                n_scheduled_jobs: 0,
+                n_running_jobs: 0,
+                n_finished_jobs: 1,
+                n_failed_jobs: 0,
+                n_cancelled_jobs: 0,
+            },
+        };
 
-            await page.getByRole('button', { name: 'Start optimization' }).click();
-
-            registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(runningJobs)));
-
-            await expect(page.getByRole('button', { name: 'Optimization in progress' })).toBeVisible();
-
-            registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(finishedJobs)));
-
-            await expect(page.getByRole('button', { name: 'Optimization in progress' })).toBeHidden();
-            await expect(page.getByRole('button', { name: 'Start optimization' })).toBeHidden();
-
-            await expect(
-                page.getByRole('row', {
-                    name: /EfficientNet\-B0 OpenVINO INT8 post\-training optimization/i,
+        registerApiResponse('GetJobs', (_, res, ctx) =>
+            res(
+                ctx.json({
+                    jobs: [],
+                    jobs_count: {
+                        n_scheduled_jobs: 0,
+                        n_running_jobs: 0,
+                        n_finished_jobs: 0,
+                        n_failed_jobs: 0,
+                        n_cancelled_jobs: 0,
+                    },
                 })
-            ).toBeVisible();
-        }
-    );
+            )
+        );
+
+        await page.getByRole('button', { name: 'Start optimization' }).click();
+
+        registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(runningJobs)));
+
+        await expect(page.getByRole('button', { name: 'Optimization in progress' })).toBeVisible();
+
+        registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(finishedJobs)));
+
+        await expect(page.getByRole('button', { name: 'Optimization in progress' })).toBeHidden();
+        await expect(page.getByRole('button', { name: 'Start optimization' })).toBeHidden();
+
+        await expect(
+            page.getByRole('row', {
+                name: /EfficientNet\-B0 OpenVINO INT8 post\-training optimization/i,
+            })
+        ).toBeVisible();
+    });
 
     test('When model variant is obsolete, start optimization button should be disabled', async ({
         page,

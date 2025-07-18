@@ -4,9 +4,10 @@ capabilities:
 
 hyperparameters:
   dataset_preparation:
+    augmentation:
       tiling:
         enable: false
-        adaptive_tiling: false
+        adaptive_tiling: true
         tile_size: 400
         tile_overlap: 0.2
   evaluation:

@@ -105,7 +105,7 @@ class TestModelManifest:
                 "performance_ratings": {
                     "accuracy": 1,
                     "training_time": 2,
-                    "inference_time": 3,
+                    "inference_speed": 3,
                 },
             },
             "support_status": "active",
@@ -114,7 +114,7 @@ class TestModelManifest:
                 "dataset_preparation": {
                     "augmentation": {
                         "gaussian_blur": {"kernel_size": 2},
-                        "tiling": {"adaptive_tiling": True, "tile_size": 100, "tile_overlap": 50},
+                        "tiling": {"adaptive_tiling": True, "tile_size": 100, "tile_overlap": 0.3},
                     }
                 },
                 "training": {"max_epochs": 100, "learning_rate": 0.01, "early_stopping": {"patience": 3}},

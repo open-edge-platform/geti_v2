@@ -1,0 +1,5 @@
+.sortWidget {
+    & button svg[class*='spectrum-Dropdown-chevron'] {
+        display: none;
+    }
+}

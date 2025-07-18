@@ -10,7 +10,7 @@ from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse
 
-from communication.controllers import ExportController
+from communication.controllers import ExportController, IncludeModelsType
 from communication.dependencies import get_export_operation_id, get_request_domain
 
 from geti_fastapi_tools.dependencies import get_project_identifier, get_user_id_fastapi, setup_session_fastapi
@@ -26,9 +26,12 @@ router = APIRouter(
 def initialize_project_export(
     project_identifier: Annotated[ProjectIdentifier, Depends(get_project_identifier)],
     user_id: Annotated[ID, Depends(get_user_id_fastapi)],
+    include_models: IncludeModelsType = IncludeModelsType.all,
 ) -> JSONResponse:
     """Start exporting the selected project"""
-    job_id = ExportController.submit_project_export_job(project_identifier=project_identifier, author_id=user_id)
+    job_id = ExportController.submit_project_export_job(
+        project_identifier=project_identifier, author_id=user_id, include_models=include_models
+    )
     return JSONResponse({"job_id": job_id})
 
 

@@ -19,7 +19,12 @@ import {
     EntityIdentifier,
     NumberGroupParams,
 } from './services/configurable-parameters.interface';
-import { BoolParameter, ConfigurationParameter, NumberParameter } from './services/configuration.interface';
+import {
+    BoolParameter,
+    ConfigurationParameter,
+    EnumConfigurationParameter,
+    NumberParameter,
+} from './services/configuration.interface';
 
 const hasEqualHeader =
     <T extends { header: string }>(toFind: string | null | undefined) =>
@@ -252,6 +257,15 @@ export const getNewParameterValue = <T extends string | boolean | number>(
 
 export const isBoolParameter = (input: unknown): input is BoolParameter => {
     return isObject(input) && get(input, 'type') === 'bool' && isBoolean(get(input, 'value'));
+};
+
+export const isEnumParameter = (input: unknown): input is EnumConfigurationParameter => {
+    return (
+        isObject(input) &&
+        get(input, 'type') === 'enum' &&
+        get(input, 'allowedValues') !== undefined &&
+        get(input, 'value') !== undefined
+    );
 };
 
 export const isNumberParameter = (input: unknown): input is NumberParameter => {

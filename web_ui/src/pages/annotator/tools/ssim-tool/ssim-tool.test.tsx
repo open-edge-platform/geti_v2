@@ -84,7 +84,6 @@ const createFakeSSIM = (shapes: Shape[]): Partial<SSIM> => {
 const mockSSIMWorker = (shapes: Shape[]) => {
     const FakeSSIM = createFakeSSIM(shapes);
 
-    // @ts-expect-error ignore this typescript error until we finish ITEP-66305
     jest.mocked(useLoadAIWebworker).mockReturnValue({ worker: FakeSSIM });
 };
 

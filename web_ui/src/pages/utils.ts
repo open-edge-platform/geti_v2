@@ -3,11 +3,11 @@
 
 import { PointerEvent } from 'react';
 
+import { clampBetween } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Annotation, RegionOfInterest } from '../core/annotations/annotation.interface';
-import { clampBetween } from '../core/annotations/math';
 import { KeypointNode, Point } from '../core/annotations/shapes.interface';
 import { isEmptyLabel } from '../core/labels/utils';
 import { KeypointStructure } from '../core/projects/task.interface';

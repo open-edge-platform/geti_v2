@@ -12,7 +12,7 @@ from geti_configuration_tools.hyperparameters import (
     Hyperparameters,
     TrainingHyperParameters,
 )
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 from geti_supported_models.default_models import DefaultCategory, DefaultModels
 
@@ -43,6 +43,7 @@ class ModelManifestDeprecationStatus(str, Enum):
 class PerformanceRatings(BaseModel):
     """Ratings for different performance aspects of a model."""
 
+    model_config = ConfigDict(extra="forbid")
     accuracy: int = Field(
         ge=1,
         le=3,
@@ -75,6 +76,7 @@ class PerformanceRatings(BaseModel):
 class ModelStats(BaseModel):
     """Information about a machine learning model."""
 
+    model_config = ConfigDict(extra="forbid")
     gigaflops: float = Field(
         ge=0, title="Gigaflops", description="Billions of floating-point operations per second required by the model"
     )
@@ -92,6 +94,7 @@ class ModelStats(BaseModel):
 class Capabilities(BaseModel):
     """Model capabilities configuration."""
 
+    model_config = ConfigDict(extra="forbid")
     xai: bool = Field(
         default=False, title="Explainable AI Support", description="Whether the model supports explainable AI features"
     )
@@ -105,6 +108,7 @@ class Capabilities(BaseModel):
 class ModelManifest(BaseModel):
     """ModelManifest contains the necessary information for training a specific machine learning model."""
 
+    model_config = ConfigDict(extra="forbid")
     id: str = Field(title="Model architecture ID", description="Unique identifier for the model architecture")
     name: str = Field(title="Model architecture name", description="Friendly name of the model architecture")
     description: str = Field(title="Description", description="Detailed description of the model capabilities")

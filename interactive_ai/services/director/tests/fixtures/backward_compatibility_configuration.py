@@ -3727,7 +3727,7 @@ def fxt_revamped_detection_configs(fxt_model_template, fxt_task):
                         "enable": False,
                         "adaptive_tiling": True,
                         "tile_size": 400,
-                        "tile_overlap": 80,
+                        "tile_overlap": 0.2,
                     }
                 },
             },
@@ -3770,7 +3770,7 @@ def fxt_revamped_rotated_detection_configs(fxt_model_template, fxt_task):
                         "enable": False,
                         "adaptive_tiling": True,
                         "tile_size": 400,
-                        "tile_overlap": 80,
+                        "tile_overlap": 0.2,
                     }
                 },
             },
@@ -3813,7 +3813,7 @@ def fxt_revamped_instance_segmentation_configs(fxt_model_template, fxt_task):
                         "enable": False,
                         "adaptive_tiling": True,
                         "tile_size": 400,
-                        "tile_overlap": 80,
+                        "tile_overlap": 0.2,
                     }
                 },
             },
@@ -4629,12 +4629,12 @@ def fxt_legacy_model_configuration_rest_view():
                     {
                         "key": "tile_overlap",
                         "name": "Tile overlap",
-                        "type": "int",
-                        "description": "Overlap between adjacent tiles in pixels",
-                        "value": 80,
-                        "default_value": 64,
-                        "min_value": 0,
-                        "max_value": None,
+                        "type": "float",
+                        "description": "Overlap between adjacent tiles as a fraction of tile size",
+                        "value": 0.2,
+                        "default_value": 0.5,
+                        "min_value": 0.0,
+                        "max_value": 1.0,
                     },
                 ]
             }

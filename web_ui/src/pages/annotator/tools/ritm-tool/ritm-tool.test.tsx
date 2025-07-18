@@ -3,10 +3,10 @@
 
 import '@wessberg/pointer-events';
 
+import { getBoundingBox } from '@geti/smart-tools/utils';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { TaskChainInput } from '../../../../core/annotations/annotation.interface';
-import { getBoundingBox } from '../../../../core/annotations/math';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { fakeAnnotationToolContext } from '../../../../test-utils/fake-annotator-context';

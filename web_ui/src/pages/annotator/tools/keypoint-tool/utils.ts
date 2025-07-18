@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { degreesToRadians, getBoundingBox } from '@geti/smart-tools/utils';
 import { isEmpty } from 'lodash-es';
 
 import {
@@ -8,7 +9,6 @@ import {
     KeypointAnnotation,
     RegionOfInterest,
 } from '../../../../core/annotations/annotation.interface';
-import { degreesToRadians, getBoundingBox } from '../../../../core/annotations/math';
 import { KeypointNode, Point } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { KeypointStructure } from '../../../../core/projects/task.interface';

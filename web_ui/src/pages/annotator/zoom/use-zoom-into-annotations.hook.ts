@@ -3,9 +3,9 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 
+import { getShapesBoundingBox } from '@geti/smart-tools/utils';
 import { isEqual, isNil } from 'lodash-es';
 
-import { getShapesBoundingBox } from '../../../core/annotations/math';
 import { useAnnotationScene } from '../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { useSelectedMediaItem } from '../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { getInputForTask } from '../providers/task-chain-provider/utils';

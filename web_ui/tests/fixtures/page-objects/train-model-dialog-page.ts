@@ -12,12 +12,76 @@ export class TrainModelDialogPage {
         await this.page.getByRole('radio', { name: modelTemplate }).check();
     }
 
+    async advancedSettings() {
+        await this.page.getByRole('button', { name: /advanced settings/i }).click();
+    }
+
+    async changeSubsetRange(range: 'start' | 'end', iterations: number) {
+        await this.page.getByLabel(range === 'start' ? 'Start range' : 'End range').click();
+
+        for (let i = 0; i < iterations; i++) {
+            await this.page.keyboard.press('ArrowLeft');
+        }
+    }
+
+    getNumberParameter(parameterName: string) {
+        return this.page.getByRole('textbox', { name: `Change ${parameterName}` });
+    }
+
+    async changeNumberParameter(parameterName: string, value: number) {
+        await this.getNumberParameter(parameterName).fill(value.toString());
+    }
+
+    getBooleanParameter(parameterName: string) {
+        return this.page.getByRole('switch', { name: `Toggle ${parameterName}` });
+    }
+
+    async toggleEnableParameter(parameterName: string) {
+        await this.getBooleanParameter(parameterName).click();
+    }
+
+    getToggleFilter(parameterName: string) {
+        return this.page.getByRole('checkbox', { name: `Toggle ${parameterName}` });
+    }
+
+    async toggleFilter(parameterName: string) {
+        await this.getToggleFilter(parameterName).click();
+    }
+
+    async resetParameterToDefault(parameterName: string) {
+        await this.page.getByRole('button', { name: `Reset ${parameterName}` }).click();
+    }
+
+    getFineTuneParameter(parameterName: string) {
+        return this.page.getByRole('radio', { name: new RegExp(parameterName, 'i') });
+    }
+
+    getReshuffleSubsets() {
+        return this.page.getByRole('checkbox', { name: 'Reshuffle subsets' });
+    }
+
+    async toggleReshuffleSubsets() {
+        await this.getReshuffleSubsets().click();
+    }
+
+    async selectFineTuneParameter(parameterName: string) {
+        await this.getFineTuneParameter(parameterName).click();
+    }
+
+    getTag(tagName: string) {
+        return this.page.getByLabel(tagName);
+    }
+
+    async selectTab(name: 'Architecture' | 'Data management' | 'Training') {
+        await this.page.getByRole('tab', { name }).click();
+    }
+
     async selectModelConfigurationOption(option: ModelConfigurationOption) {
         await this.page.getByRole('radio', { name: option }).check();
     }
 
     async selectModelAlgorithm(name: string) {
-        await this.page.getByRole('radio', { name }).check();
+        await this.page.getByRole('radio', { name, exact: true }).check();
     }
 
     async nextStep() {
