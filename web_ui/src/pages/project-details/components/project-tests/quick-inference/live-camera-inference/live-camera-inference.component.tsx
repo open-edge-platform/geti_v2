@@ -155,7 +155,7 @@ const LiveCameraInferenceContent = () => {
     const { userPermissions } = useDeviceSettings();
 
     if (isPermissionPending(userPermissions)) {
-        return <Loading aria-label='permissions pending' />;
+        return <Loading mode={'inline'} aria-label='permissions pending' style={{ height: '100%' }} />;
     }
 
     if (hasPermissionsDenied(userPermissions)) {
