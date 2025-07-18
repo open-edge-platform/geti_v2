@@ -53,10 +53,10 @@ export const Card = ({
             {...pressProps}
             id={id}
             data-testid={id}
-            className={clsx({
-                [classes.card]: true,
+            className={clsx(classes.card, {
                 [classes.selected]: isSelected,
                 [classes.disabled]: isDisabled,
+                [classes.notSelected]: !isSelected,
             })}
             aria-label={title}
         >
