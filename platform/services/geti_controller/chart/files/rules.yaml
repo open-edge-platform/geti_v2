@@ -12,7 +12,7 @@
   verbs: ["create", "patch", "update"]
 - apiGroups: [""]
   resources: ["services"]
-  verbs: ["create", "list", "watch", "get"]
+  verbs: ["create", "list", "watch", "get", "patch", "update"]
 - apiGroups: ["rbac.authorization.k8s.io"]
   resources: ["clusterroles", "clusterrolebindings"]
   verbs: ["create"]

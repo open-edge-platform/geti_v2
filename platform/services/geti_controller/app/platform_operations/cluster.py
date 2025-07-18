@@ -126,7 +126,12 @@ def deploy_service(service: V1Service, namespace: str) -> None:
         logger.info(f"Service '{service.metadata.name}' deployed successfully in namespace '{namespace}'.")
     except ApiException as e:
         if e.status == http.HTTPStatus.CONFLICT:
-            logger.warning(f"Service '{service.metadata.name}' already exists, skipping creation.")
+            logger.warning(f"Service '{service.metadata.name}' already exists, attempting to patch it.")
+            try:
+                v1.patch_namespaced_service(name=service.metadata.name, namespace=namespace, body=service)
+                logger.info(f"Service '{service.metadata.name}' patched successfully in namespace '{namespace}'.")
+            except ApiException as inner:
+                logger.error(f"An error occurred: {inner}")
         else:
             logger.error(f"An error occurred: {e}")
 
