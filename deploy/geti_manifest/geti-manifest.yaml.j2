@@ -13,7 +13,7 @@ metadata:
 spec:
   repo: https://nvidia.github.io/k8s-device-plugin
   chart: nvidia-device-plugin
-  version: v0.17.1
+  version: v0.17.2
   targetNamespace: kube-system
   createNamespace: false
   timeout: 30m
@@ -29,7 +29,7 @@ spec:
               - "true"
     image:
       repository: nvcr.io/nvidia/k8s-device-plugin
-      tag: "v0.17.1-ubi8"
+      tag: "v0.17.2-ubi9"
     runtimeClassName: nvidia
     failOnInitError: "false"
     deviceListStrategy: volume-mounts
