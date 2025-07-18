@@ -143,6 +143,9 @@ def periodic_progress_check(progress_manager: ProgressManager, interval: int = 1
 
         time.sleep(interval)
 
+    logger.info("Periodic progress check completed.")
+    progress_manager.task_started = False
+
 
 @platform_router.get(
     path="/check_installation_upgrade_progress",
@@ -176,11 +179,8 @@ def check_installation_upgrade_progress(background_tasks: BackgroundTasks) -> In
     load_kube_config()
 
     if not progress_manager.task_started:
+        logger.info("Starting periodic progress check task.")
         background_tasks.add_task(periodic_progress_check, progress_manager)
         progress_manager.task_started = True
-
-    if not is_job_running(NAMESPACE):
-        logger.info("Job not found, returning stored data.")
-        return progress_manager.get_progress()
 
     return progress_manager.get_progress()
