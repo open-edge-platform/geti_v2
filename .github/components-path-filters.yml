@@ -177,6 +177,7 @@ interactive_ai/services/resource:
   - libs/feature_tools/**
   - libs/kafka_tools/**
   - libs/fastapi_tools/**
+  - libs/spicedb_tools/**
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
