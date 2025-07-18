@@ -3,13 +3,18 @@
 
 import { useState } from 'react';
 
-import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Heading } from '@geti/ui';
+import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Flex, Heading, Text } from '@geti/ui';
 import { isEmpty, noop } from 'lodash-es';
 
+import { DOMAIN } from '../../../../../core/projects/core.interface';
+import { useViewMode } from '../../../../../hooks/use-view-mode/use-view-mode.hook';
+import { MEDIA_CONTENT_BUCKET } from '../../../../../providers/media-upload-provider/media-upload.interface';
 import { MediaPreviewList } from '../../../../../shared/components/media-preview-list/media-preview-list.component';
-import { ViewModes } from '../../../../../shared/components/media-view-modes/utils';
+import { MediaViewModes } from '../../../../../shared/components/media-view-modes/media-view-modes.component';
+import { INITIAL_VIEW_MODE, ViewModes } from '../../../../../shared/components/media-view-modes/utils';
 import { hasDifferentId } from '../../../../../shared/utils';
 import { TaskProvider } from '../../../../annotator/providers/task-provider/task-provider.component';
+import { useProject } from '../../../providers/project-provider/project-provider.component';
 
 export interface PreviewGalleryDialogProps {
     files: File[];
@@ -32,7 +37,9 @@ const getLabelsIds = (labelsIds: string) => (isEmpty(labelsIds) ? undefined : la
 const getMediaItemFromFile = (file: File): PreviewFile => ({ id: file.name, file, labelIds: [] });
 
 export const PreviewGalleryDialog = ({ isOpen, files: initFiles, onClose, onUpload }: PreviewGalleryDialogProps) => {
+    const { isSingleDomainProject } = useProject();
     const [isLoading, setIsLoading] = useState(false);
+    const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC, INITIAL_VIEW_MODE);
     const [currentFiles, setCurrentFiles] = useState(initFiles.map(getMediaItemFromFile));
 
     const handleDeleteItems = async (id: string) => {
@@ -62,10 +69,21 @@ export const PreviewGalleryDialog = ({ isOpen, files: initFiles, onClose, onUplo
                         <Divider />
 
                         <Content>
+                            <Flex gap={'size-100'} alignItems={'center'} justifyContent={'end'}>
+                                <Text>{viewMode} </Text>
+                                <MediaViewModes
+                                    viewMode={viewMode}
+                                    setViewMode={setViewMode}
+                                    items={[ViewModes.LARGE, ViewModes.MEDIUM, ViewModes.SMALL]}
+                                />
+                            </Flex>
+
                             <MediaPreviewList
                                 items={currentFiles}
+                                height={`calc(100% - size-550)`}
+                                viewMode={viewMode}
                                 hasItemPreview={false}
-                                viewMode={ViewModes.MEDIUM}
+                                hasLabelSelector={isSingleDomainProject(DOMAIN.CLASSIFICATION)}
                                 onDeleteItem={handleDeleteItems}
                                 onUpdateItem={handleUpdateItem}
                             />

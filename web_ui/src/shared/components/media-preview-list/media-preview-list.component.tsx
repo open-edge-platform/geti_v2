@@ -18,6 +18,7 @@ interface MediaPreviewListProps<T> {
     items: T[];
     viewMode: ViewModes;
     hasItemPreview?: boolean;
+    hasLabelSelector?: boolean;
     height?: Responsive<DimensionValue>;
     onDeleteItem: (id: string) => Promise<unknown>;
     onUpdateItem: (id: string, item: T) => Promise<unknown>;
@@ -28,6 +29,7 @@ export const MediaPreviewList = <T extends FileItem>({
     height,
     viewMode,
     hasItemPreview = false,
+    hasLabelSelector = true,
     onDeleteItem,
     onUpdateItem,
 }: MediaPreviewListProps<T>): JSX.Element => {
@@ -59,6 +61,7 @@ export const MediaPreviewList = <T extends FileItem>({
                             labelIds={labelIds}
                             viewMode={viewMode}
                             hasItemPreview={hasItemPreview}
+                            hasLabelSelector={hasLabelSelector}
                             onDeleteItem={onDeleteItem}
                             onSelectLabel={(newLabels) => {
                                 if (isEmpty(newLabels)) {

@@ -25,9 +25,10 @@ export interface MediaItemProps {
     url: string | null | undefined;
     labelIds: string[];
     mediaFile: File;
-    hasItemPreview: boolean;
-    viewMode?: ViewModes;
     height?: Responsive<DimensionValue>;
+    viewMode?: ViewModes;
+    hasItemPreview: boolean;
+    hasLabelSelector: boolean;
     onPress: (id: string) => void;
     onDeleteItem: (id: string) => void;
     onSelectLabel: (labels: Label[]) => void;
@@ -57,6 +58,7 @@ export const MediaItem = ({
     viewMode,
     mediaFile,
     hasItemPreview,
+    hasLabelSelector,
     onPress,
     onDeleteItem,
     onSelectLabel,
@@ -109,18 +111,20 @@ export const MediaItem = ({
                 alertDialogState={alertDialogState}
                 UNSAFE_className={[classes.deleteContainer, alertDialogState.isOpen ? classes.visible : ''].join(' ')}
             />
-            <CondensedLabelSelector
-                name={'Unlabeled'}
-                labelIds={labelIds}
-                right={'size-50'}
-                bottom={'size-50'}
-                viewMode={viewMode}
-                position={'absolute'}
-                isDisabled={isEmpty(taskLabels)}
-                triggerState={labelSelectorState}
-                selectedLabels={taskLabels.filter((label) => labelIds.includes(label.id))}
-                onSelectLabel={onSelectLabel}
-            />
+            {hasLabelSelector && (
+                <CondensedLabelSelector
+                    name={'Unlabeled'}
+                    labelIds={labelIds}
+                    right={'size-50'}
+                    bottom={'size-50'}
+                    viewMode={viewMode}
+                    position={'absolute'}
+                    isDisabled={isEmpty(taskLabels)}
+                    triggerState={labelSelectorState}
+                    selectedLabels={taskLabels.filter((label) => labelIds.includes(label.id))}
+                    onSelectLabel={onSelectLabel}
+                />
+            )}
             <MediaItemContextMenu containerRef={unwrappedContainerRef} options={contextMenuOptions} />
         </View>
     );
