@@ -173,8 +173,8 @@ def check_installation_upgrade_progress(background_tasks: BackgroundTasks) -> In
 
     if not progress_manager.task_started:
         logger.info("Starting periodic progress check task.")
+        progress_manager.update_progress({})  # force re-read of progress data from file
         background_tasks.add_task(periodic_progress_check, progress_manager)
         progress_manager.task_started = True
-        progress_manager.update_progress({})  # force re-read of progress data from file
 
     return progress_manager.get_progress()
