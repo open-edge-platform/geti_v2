@@ -796,7 +796,7 @@ dev = [
     { name = "mypy", specifier = "~=1.15" },
     { name = "pre-commit", specifier = "~=4.1" },
     { name = "pytest", specifier = "~=8.3" },
-    { name = "ruff", specifier = "~=0.11" },
+    { name = "ruff", specifier = "~=0.11.2" },
 ]
 
 [[package]]
@@ -873,7 +873,7 @@ dev = [
     { name = "pre-commit", specifier = "~=4.1" },
     { name = "pytest", specifier = "~=8.3" },
     { name = "pytest-freezegun" },
-    { name = "ruff", specifier = "~=0.11" },
+    { name = "ruff", specifier = "~=0.11.2" },
     { name = "testfixtures" },
 ]
 
