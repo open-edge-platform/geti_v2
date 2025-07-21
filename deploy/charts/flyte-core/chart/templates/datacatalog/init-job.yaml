@@ -8,6 +8,7 @@ metadata:
   labels:
     app: {{ template "datacatalog.name" . }}
 spec:
+  ttlSecondsAfterFinished: 600
   backoffLimit: 10
   template:
     metadata:
@@ -18,7 +19,6 @@ spec:
       labels:
         app: {{ template "datacatalog.name" . }}
     spec:
-      ttlSecondsAfterFinished: 600
       serviceAccountName: {{ template "datacatalog.name" . }}
       restartPolicy: Never
       initContainers:

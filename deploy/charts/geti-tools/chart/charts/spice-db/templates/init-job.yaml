@@ -8,6 +8,7 @@ metadata:
   labels:
     app: {{ .Chart.Name }}
 spec:
+  ttlSecondsAfterFinished: 600
   backoffLimit: {{ .Values.jobs.backoffLimit }}
   template:
     metadata:
@@ -18,7 +19,6 @@ spec:
       labels:
         app: {{ .Chart.Name }}
     spec:
-      ttlSecondsAfterFinished: 600
       serviceAccountName: {{ include "spice-db.fullname" . }}
       restartPolicy: Never
       volumes:

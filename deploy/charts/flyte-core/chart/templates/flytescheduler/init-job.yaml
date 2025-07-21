@@ -9,6 +9,7 @@ metadata:
     job_type: init
     app: {{ template "flytescheduler.name" . }}
 spec:
+  ttlSecondsAfterFinished: 600
   backoffLimit: 10
   template:
     metadata:
@@ -20,7 +21,6 @@ spec:
         job_type: init
         app: {{ template "flytescheduler.name" . }}
     spec:
-      ttlSecondsAfterFinished: 600
       serviceAccountName: {{ template "flytescheduler.name" . }}
       restartPolicy: Never
       initContainers:

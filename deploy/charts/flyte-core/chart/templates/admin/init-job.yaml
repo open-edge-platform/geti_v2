@@ -7,6 +7,7 @@ metadata:
   labels:
     app: {{ template "flyteadmin.name" . }}
 spec:
+  ttlSecondsAfterFinished: 600
   backoffLimit: 10
   template:
     metadata:
@@ -17,7 +18,6 @@ spec:
       labels:
         app: {{ template "flyteadmin.name" . }}
     spec:
-      ttlSecondsAfterFinished: 600
       serviceAccountName: {{ template "flyteadmin.name" . }}-init-job
       restartPolicy: Never
       volumes:
