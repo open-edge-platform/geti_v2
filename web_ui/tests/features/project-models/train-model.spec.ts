@@ -8,7 +8,6 @@ import {
     getMockedProjectStatusTask,
 } from '../../../src/test-utils/mocked-items-factory/mocked-project';
 import { expect, test } from '../../fixtures/base-test';
-import { notFoundHandler } from '../../fixtures/open-api/setup-open-api-handlers';
 import { project as detectionSegmentationProject } from '../../mocks/detection-segmentation/mocks';
 import { project as detectionProject } from '../../mocks/detection/mocks';
 import { expectedTrainingConfiguration, supportedAlgorithms, trainingConfiguration } from './mocks';

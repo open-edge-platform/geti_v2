@@ -3,11 +3,12 @@
 
 import { labelFromUser } from '../../../../src/core/annotations/utils';
 import { OpenApiFixtures } from '../../../fixtures/open-api';
-import { notFoundHandler } from '../../../fixtures/open-api/setup-open-api-handlers';
+
+import '../../../fixtures/open-api/setup-open-api-handlers';
+
 import { media, project, userAnnotationsResponse } from '../../../mocks/segmentation/mocks';
 import { registerFullImage, registerFullVideoFrame } from '../../../utils/api';
 import { resolveTestAssetPath } from '../../../utils/dataset';
-import { projectConfigurationAutoTrainingOnMock } from '../../credit-system/mocks';
 import { projectConfiguration } from './mocks';
 
 const labelId = '6101254defba22ca453f11c6';

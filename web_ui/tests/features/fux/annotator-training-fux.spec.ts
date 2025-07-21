@@ -32,6 +32,7 @@ import {
     goToAnnotatorInActiveMode,
     manualTrainingCreditSystemToastNotificationRegex,
     startTaskTraining,
+    supportedAlgorithms,
 } from './utils';
 
 test.describe('Check FUX notifications in Annotator related to training', () => {
@@ -160,6 +161,7 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
                     value: '6343d5e4aba8c6d87d17ab6a',
                 },
             });
+            registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
             registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(getModelGroups)));
             registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(getFinishedAutoTrainingJob())));
             await goToAnnotatorInActiveMode(page);
@@ -198,6 +200,7 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
 
             await expect(page.getByText(autoTrainingNotificationRegex)).toBeVisible();
 
+            registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
             registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(getModelGroups)));
             registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(getFinishedAutoTrainingJob())));
 
