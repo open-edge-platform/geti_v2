@@ -1,9 +1,18 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+// Copyright (C) 2022-2025 Intel Corporation
+// LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
 import { paths } from '@geti/core';
 import { cloneDeep } from 'lodash-es';
 
+import { TASK_TYPE } from '../../../src/core/projects/dtos/task.interface';
+import {
+    LifecycleStage,
+    PerformanceCategory,
+    SupportedAlgorithmDTO,
+} from '../../../src/core/supported-algorithms/dtos/supported-algorithms.interface';
 import { DatasetTabActions } from '../../../src/pages/project-details/components/project-dataset/utils';
 import { test as baseTest, expect } from '../../fixtures/base-test';
 import { extendWithOpenApi } from '../../fixtures/open-api';
@@ -34,72 +43,182 @@ import {
 const test = extendWithOpenApi(baseTest);
 
 test.describe('Project dataset page', () => {
-    test('obsolete active model notification', async ({ page, datasetPage, registerApiResponse }) => {
-        registerApiResponse('GetProjectInfo', (_, res, ctx) => {
-            return res(ctx.json(cloneDeep(project)));
+    test.describe('FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false', () => {
+        test.use({
+            featureFlags: {
+                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
+            },
         });
-        const obsoleteAlgorithm = {
-            name: 'EfficientNet-B0',
-            task_type: 'classification',
-            model_size: 200,
-            model_template_id: 'classification_efficient',
-            gigaflops: 5,
-            summary: 'EfficientNet-B0 architecture for classification',
-            supports_auto_hpo: true,
-            default_algorithm: false,
-            performance_category: 'balance',
-            lifecycle_stage: 'obsolete',
-        };
-        const supportedAlgorithms = {
-            supported_algorithms: [obsoleteAlgorithm],
-        };
-        registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
-        registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(getObsoleteModelGroups)));
+        test('obsolete active model notification', async ({ page, datasetPage, registerApiResponse }) => {
+            registerApiResponse('GetProjectInfo', (_, res, ctx) => {
+                return res(ctx.json(cloneDeep(project)));
+            });
+            const obsoleteAlgorithm = {
+                name: 'EfficientNet-B0',
+                task_type: 'classification',
+                model_size: 200,
+                model_template_id: 'classification_efficient',
+                gigaflops: 5,
+                summary: 'EfficientNet-B0 architecture for classification',
+                supports_auto_hpo: true,
+                default_algorithm: false,
+                performance_category: 'balance',
+                lifecycle_stage: 'obsolete',
+            };
+            const supportedAlgorithms = {
+                supported_algorithms: [obsoleteAlgorithm],
+            };
+            registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
+            registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(getObsoleteModelGroups)));
 
-        await datasetPage.goToDatasetURL(project.id, project.datasets[0].id);
+            await datasetPage.goToDatasetURL(project.id, project.datasets[0].id);
 
-        await expectDatasetTabsToBeLoaded(page);
+            await expectDatasetTabsToBeLoaded(page);
 
-        const notification = page.getByLabel('notification toast');
+            const notification = page.getByLabel('notification toast');
 
-        await expect(notification.getByText(`Your active model “${obsoleteAlgorithm.name}" is Obsolete`)).toBeVisible();
-        await expect(notification.getByRole('button', { name: /Go to models page/i })).toBeVisible();
-        await expect(notification.getByRole('button', { name: /dismiss/i })).toBeVisible();
+            await expect(
+                notification.getByText(`Your active model “${obsoleteAlgorithm.name}" is Obsolete`)
+            ).toBeVisible();
+            await expect(notification.getByRole('button', { name: /Go to models page/i })).toBeVisible();
+            await expect(notification.getByRole('button', { name: /dismiss/i })).toBeVisible();
+        });
+
+        test('deprecated active model notification', async ({ page, datasetPage, registerApiResponse }) => {
+            registerApiResponse('GetProjectInfo', (_, res, ctx) => {
+                return res(ctx.json(cloneDeep(project)));
+            });
+            const deprecatedAlgorithm = {
+                name: 'EfficientNet-B0',
+                task_type: 'classification',
+                model_size: 200,
+                model_template_id: 'classification_efficient',
+                gigaflops: 5,
+                summary: 'EfficientNet-B0 architecture for classification',
+                supports_auto_hpo: true,
+                default_algorithm: false,
+                performance_category: 'balance',
+                lifecycle_stage: 'deprecated',
+            };
+            const supportedAlgorithms = {
+                supported_algorithms: [deprecatedAlgorithm],
+            };
+            registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
+            registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(getDeprecatedModelGroups)));
+
+            await datasetPage.goToDatasetURL(project.id, project.datasets[0].id);
+
+            await expectDatasetTabsToBeLoaded(page);
+
+            const notification = page.getByLabel('notification toast');
+
+            await expect(
+                notification.getByText(`Your active model “${deprecatedAlgorithm.name}" is deprecated`)
+            ).toBeVisible();
+            await expect(notification.getByRole('button', { name: /Go to models page/i })).toBeVisible();
+            await expect(notification.getByRole('button', { name: /dismiss/i })).toBeVisible();
+        });
     });
 
-    test('deprecated active model notification', async ({ page, datasetPage, registerApiResponse }) => {
-        registerApiResponse('GetProjectInfo', (_, res, ctx) => {
-            return res(ctx.json(cloneDeep(project)));
+    test.describe('FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true', () => {
+        test.use({
+            featureFlags: {
+                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true,
+            },
         });
-        const deprecatedAlgorithm = {
-            name: 'EfficientNet-B0',
-            task_type: 'classification',
-            model_size: 200,
-            model_template_id: 'classification_efficient',
-            gigaflops: 5,
-            summary: 'EfficientNet-B0 architecture for classification',
-            supports_auto_hpo: true,
-            default_algorithm: false,
-            performance_category: 'balance',
-            lifecycle_stage: 'deprecated',
-        };
-        const supportedAlgorithms = {
-            supported_algorithms: [deprecatedAlgorithm],
-        };
-        registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
-        registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(getDeprecatedModelGroups)));
+        test('obsolete active model notification', async ({ page, datasetPage, registerApiResponse }) => {
+            registerApiResponse('GetProjectInfo', (_, res, ctx) => {
+                return res(ctx.json(cloneDeep(project)));
+            });
+            const obsoleteAlgorithm: SupportedAlgorithmDTO = {
+                name: 'EfficientNet-B0',
+                task: TASK_TYPE.CLASSIFICATION,
+                model_manifest_id: 'classification_efficient',
+                stats: {
+                    gigaflops: 5,
+                    trainable_parameters: 2000000,
+                    performance_ratings: {
+                        inference_speed: 1,
+                        accuracy: 2,
+                        training_time: 3,
+                    },
+                },
+                description: 'EfficientNet-B0 architecture for classification',
+                is_default_model: false,
+                performance_category: PerformanceCategory.BALANCE,
+                support_status: LifecycleStage.OBSOLETE,
+                supported_gpus: {
+                    intel: true,
+                    nvidia: true,
+                },
+                capabilities: { xai: true, tiling: true },
+            };
+            const supportedAlgorithms = {
+                supported_algorithms: [obsoleteAlgorithm],
+            };
+            registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
+            registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(getObsoleteModelGroups)));
 
-        await datasetPage.goToDatasetURL(project.id, project.datasets[0].id);
+            await datasetPage.goToDatasetURL(project.id, project.datasets[0].id);
 
-        await expectDatasetTabsToBeLoaded(page);
+            await expectDatasetTabsToBeLoaded(page);
 
-        const notification = page.getByLabel('notification toast');
+            const notification = page.getByLabel('notification toast');
 
-        await expect(
-            notification.getByText(`Your active model “${deprecatedAlgorithm.name}" is deprecated`)
-        ).toBeVisible();
-        await expect(notification.getByRole('button', { name: /Go to models page/i })).toBeVisible();
-        await expect(notification.getByRole('button', { name: /dismiss/i })).toBeVisible();
+            await expect(
+                notification.getByText(`Your active model “${obsoleteAlgorithm.name}" is Obsolete`)
+            ).toBeVisible();
+            await expect(notification.getByRole('button', { name: /Go to models page/i })).toBeVisible();
+            await expect(notification.getByRole('button', { name: /dismiss/i })).toBeVisible();
+        });
+
+        test('deprecated active model notification', async ({ page, datasetPage, registerApiResponse }) => {
+            registerApiResponse('GetProjectInfo', (_, res, ctx) => {
+                return res(ctx.json(cloneDeep(project)));
+            });
+
+            const deprecatedAlgorithm: SupportedAlgorithmDTO = {
+                name: 'EfficientNet-B0',
+                task: TASK_TYPE.CLASSIFICATION,
+                model_manifest_id: 'classification_efficient',
+                stats: {
+                    gigaflops: 5,
+                    trainable_parameters: 2000000,
+                    performance_ratings: {
+                        inference_speed: 1,
+                        accuracy: 2,
+                        training_time: 3,
+                    },
+                },
+                description: 'EfficientNet-B0 architecture for classification',
+                is_default_model: false,
+                performance_category: PerformanceCategory.BALANCE,
+                support_status: LifecycleStage.DEPRECATED,
+                supported_gpus: {
+                    intel: true,
+                    nvidia: true,
+                },
+                capabilities: { xai: true, tiling: true },
+            };
+
+            const supportedAlgorithms = {
+                supported_algorithms: [deprecatedAlgorithm],
+            };
+            registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
+            registerApiResponse('GetModelGroups', (_, res, ctx) => res(ctx.json(getDeprecatedModelGroups)));
+
+            await datasetPage.goToDatasetURL(project.id, project.datasets[0].id);
+
+            await expectDatasetTabsToBeLoaded(page);
+
+            const notification = page.getByLabel('notification toast');
+
+            await expect(
+                notification.getByText(`Your active model “${deprecatedAlgorithm.name}" is deprecated`)
+            ).toBeVisible();
+            await expect(notification.getByRole('button', { name: /Go to models page/i })).toBeVisible();
+            await expect(notification.getByRole('button', { name: /dismiss/i })).toBeVisible();
+        });
     });
 
     test('Initially should have only one dataset with create button, more menu is not visible', async ({
