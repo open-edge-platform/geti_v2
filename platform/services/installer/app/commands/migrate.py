@@ -11,9 +11,11 @@ import json
 import logging
 import os
 import re
+import shutil
 import signal
 import sys
 import time
+from functools import partial
 from typing import TYPE_CHECKING
 
 import rich_click as click
@@ -21,16 +23,21 @@ from kubernetes import client as kube_client
 from kubernetes.client import ApiException
 from kubernetes.client.models import V1Secret
 
+from checks.dns import check_dns_ipv4_handling
 from checks.errors import CumulativeCheckError
+from checks.internet import check_internet_connection
+from checks.os import check_os_version
+from checks.user import check_user_id
 from cli_utils.credentials import hash_ldap_password
 from cli_utils.platform_logs import configure_logging, create_logs_dir, subprocess_run
 from configuration_models.migrate_config import MigrationConfig
-from constants.paths import INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH
+from constants.paths import INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH, OFFLINE_TOOLS_DIR
 from constants.platform import (
     CERT_MANAGER_NAMESPACE,
     CUSTOM_TLS_SECRET_NAME,
     DATA_STORAGE_VOLUME_CLAIM_NAME,
     DATA_STORAGE_VOLUME_NAME,
+    DEFAULT_NAMESPACE,
     FLYTE_NAMESPACE,
     GETI_LABEL_KEY,
     GETI_LABEL_VALUE,
@@ -40,12 +47,15 @@ from constants.platform import (
     KUBELET_CSR_APPROVER_NAME,
     LDAP_SECRET_NAME,
     MONGODB_SECRET_NAME,
+    NAMESPACE_CHART,
     OPA_NAMESPACE,
     PLATFORM_NAMESPACE,
     POSTGRESQL_SECRET_NAME,
+    PV_CHART,
     SEAWEEDFS_SECRET_NAME,
     SPICEDB_SECRET_NAME,
     STORAGE_CLASS,
+    TOOLS_CHART,
 )
 from geti_controller.communication import (
     OperationStatus,
@@ -54,6 +64,7 @@ from geti_controller.communication import (
 )
 from geti_controller.errors import GetiControllerError
 from geti_controller.install import deploy_geti_controller_chart
+from geti_controller.uninstall import uninstall_geti_controller_chart
 from platform_configuration.versions import get_current_platform_version
 from platform_utils.errors import (
     CredentialsError,
@@ -79,7 +90,13 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 from checks.migrate import is_migration_possible
 from cli_utils.checks import run_checks
-from texts.checks import MigrationChecksTexts
+from texts.checks import (
+    DNSChecksTexts,
+    InternetConnectionChecksTexts,
+    LocalOSChecksTexts,
+    LocalUserChecksTexts,
+    MigrationChecksTexts,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -113,23 +130,29 @@ def set_custom_signal_handler(handler_state: InstallationHandlerState) -> None:
     signal.signal(signal.SIGINT, handler)
 
 
-def migration_checks() -> None:
+def initial_checks(config: MigrationConfig) -> None:
     """
-    Run initial checks, executed before install wizard prompts.
+    Run initial checks, executed before upgrade wizard prompts.
     """
     checks: list[tuple[str, Callable]] = [
+        (LocalUserChecksTexts.user_check_start, check_user_id),
+        (LocalOSChecksTexts.os_check_start, partial(check_os_version, config=config)),
+        (
+            InternetConnectionChecksTexts.internet_connection_check_start,
+            partial(check_internet_connection, config=config),
+        ),
+        (DNSChecksTexts.dns_ipv4_config_check, partial(check_dns_ipv4_handling, config=config)),
         (MigrationChecksTexts.migration_check_start, is_migration_possible),
     ]
-
     run_checks(checks=checks)
 
 
-def run_migration_checks() -> None:
+def run_initial_checks() -> None:
     """
     Run migration_checks, print a message and terminate script execution on error.
     """
     try:
-        migration_checks()
+        initial_checks()
     except CumulativeCheckError:
         click.echo(MigrateCmdTexts.checks_error_message)
         sys.exit(1)
@@ -305,7 +328,7 @@ def prepare_geti_for_migration(config: MigrationConfig) -> None:
     try:
         current_platform_version: str = get_current_platform_version(kubeconfig_path=K3S_KUBECONFIG_PATH)
     except ApiException as e:
-        logger.error(f"Failed to get current platform version: {e}")
+        logger.exception(f"Failed to get current platform version: {e}")
         raise PlatformVersionError("Failed to get current platform version.") from e
     backup_location = os.path.join(config.data_folder.value, f"backup_data_{current_platform_version}")
     config.backup_location.value = backup_location
@@ -339,7 +362,7 @@ def prepare_geti_for_migration(config: MigrationConfig) -> None:
                 secret_data.metadata.labels.update({GETI_LABEL_KEY: GETI_LABEL_VALUE})
                 if not secret_data.metadata.annotations:
                     secret_data.metadata.annotations = {}
-                secret_data.metadata.annotations.update({"meta.helm.sh/release-name": "geti-tools"})
+                secret_data.metadata.annotations.update({"meta.helm.sh/release-name": TOOLS_CHART})
                 core_api.patch_namespaced_secret(name=secret_name, namespace=PLATFORM_NAMESPACE, body=secret_data)
         except ApiException as e:
             logger.error(f"Failed to prepared secrets: {e}")
@@ -359,7 +382,7 @@ def prepare_geti_for_migration(config: MigrationConfig) -> None:
             if e.status == 404:
                 logger.info("Namespace already deleted.")
             else:
-                logger.error(f"Failed to clean up platform: {e}")
+                logger.exception(f"Failed to clean up platform: {e}")
                 raise PlatformCleanUpError("Failed to clean up platform.") from e
     cleanup_main_ns()
     cleanup_kubelet_csr_approver()
@@ -376,18 +399,24 @@ def cleanup_kubelet_csr_approver() -> None:
     with kube_client.ApiClient() as client:
         try:
             app_api = kube_client.AppsV1Api(client)
-            app_api.delete_namespaced_deployment(name=KUBELET_CSR_APPROVER_NAME, namespace=KUBE_SYSTEM_NAMESPACE)
             rbac_api = kube_client.RbacAuthorizationV1Api(client)
+            core_api = kube_client.CoreV1Api(client)
+
+            # Delete deployment, cluster role, and cluster role binding
+            app_api.delete_namespaced_deployment(name=KUBELET_CSR_APPROVER_NAME, namespace=KUBE_SYSTEM_NAMESPACE)
             rbac_api.delete_cluster_role(name=KUBELET_CSR_APPROVER_NAME)
             rbac_api.delete_cluster_role_binding(name=KUBELET_CSR_APPROVER_NAME)
-            core_api = kube_client.CoreV1Api(client)
+
+            # Delete service account
             core_api.delete_namespaced_service_account(name=KUBELET_CSR_APPROVER_NAME, namespace=KUBE_SYSTEM_NAMESPACE)
+
+            # Delete secrets containing the approver name
             secrets = core_api.list_namespaced_secret(namespace=KUBE_SYSTEM_NAMESPACE)
-            for item in secrets.items:
-                if KUBELET_CSR_APPROVER_NAME in item.metadata.name:
-                    core_api.delete_namespaced_secret(name=item.metadata.name, namespace=KUBE_SYSTEM_NAMESPACE)
+            for secret in (s for s in secrets.items if KUBELET_CSR_APPROVER_NAME in s.metadata.name):
+                core_api.delete_namespaced_secret(name=secret.metadata.name, namespace=KUBE_SYSTEM_NAMESPACE)
+
         except ApiException as e:
-            logger.error(f"Failed to delete: {e}")
+            logger.error(f"Failed to delete kubelet csr approver components: {e}")
     logger.info("Kubelet csr approver deleted successfully.")
 
 
@@ -401,25 +430,28 @@ def relabel_pv() -> None:
         pv = core_api.read_persistent_volume(name=DATA_STORAGE_VOLUME_NAME)
         if not pv.metadata.annotations:
             pv.metadata.annotations = {}
-        pv.metadata.annotations.update({"meta.helm.sh/release-name": "geti-pv-creation"})
+        pv.metadata.annotations.update({"meta.helm.sh/release-name": PV_CHART})
         core_api.patch_persistent_volume(name=DATA_STORAGE_VOLUME_NAME, body=pv)
+        logger.info("Relabeled Persistent Volume.")
 
         pvc = core_api.read_namespaced_persistent_volume_claim(
             name=DATA_STORAGE_VOLUME_CLAIM_NAME, namespace=PLATFORM_NAMESPACE
         )
         if not pvc.metadata.annotations:
             pvc.metadata.annotations = {}
-        pvc.metadata.annotations.update({"meta.helm.sh/release-name": "geti-pv-creation"})
+        pvc.metadata.annotations.update({"meta.helm.sh/release-name": PV_CHART})
         core_api.patch_namespaced_persistent_volume_claim(
             name=DATA_STORAGE_VOLUME_CLAIM_NAME, namespace=PLATFORM_NAMESPACE, body=pvc
         )
+        logger.info("Relabeled Persistent Volume Claim.")
 
         storage_api = kube_client.StorageV1Api(client)
         sc = storage_api.read_storage_class(name=STORAGE_CLASS)
         if not sc.metadata.annotations:
             sc.metadata.annotations = {}
-        sc.metadata.annotations.update({"meta.helm.sh/release-name": "geti-pv-creation"})
+        sc.metadata.annotations.update({"meta.helm.sh/release-name": PV_CHART})
         storage_api.patch_storage_class(name=STORAGE_CLASS, body=sc)
+        logger.info("Relabeled Storage Class.")
 
 
 def cleanup_kafka_pv(config: MigrationConfig) -> None:
@@ -431,6 +463,7 @@ def cleanup_kafka_pv(config: MigrationConfig) -> None:
     with open(INSTALL_LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
         # Remove the existing backup directory if it exists and create a new one
         subprocess_run(["rm", "-rf", kafka_folder], log_file)
+    logger.info("Kafka PV removed successfully.")
 
 
 def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
@@ -668,7 +701,7 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
         if not main_ns.metadata.annotations:
             main_ns.metadata.annotations = {}
         main_ns.metadata.annotations.update(
-            {"meta.helm.sh/release-name": "geti-namespaces", "meta.helm.sh/release-namespace": "default"}
+            {"meta.helm.sh/release-name": NAMESPACE_CHART, "meta.helm.sh/release-namespace": DEFAULT_NAMESPACE}
         )
         core_api.patch_namespace(name=PLATFORM_NAMESPACE, body=main_ns)
         logger.info("Main namespace annotations updated.")
@@ -740,8 +773,9 @@ def execute_migration(config: MigrationConfig) -> None:
         cluster_info_dump(kubeconfig=K3S_KUBECONFIG_PATH)
         sys.exit(1)
     finally:
-        # uninstall_geti_controller_chart()
-        pass
+        uninstall_geti_controller_chart()
+        # to be able to re-run without any side effects
+        shutil.rmtree(OFFLINE_TOOLS_DIR)
 
 
 @click.option("--repo-ca", type=click.Path(), callback=is_filepath_valid)
@@ -756,7 +790,7 @@ def migrate(
     create_logs_dir()
     configure_logging()
     config = MigrationConfig()
-    run_migration_checks()
+    run_initial_checks()
     config.repoCA.value = repo_ca
     gather_data_for_migration(config=config)
 

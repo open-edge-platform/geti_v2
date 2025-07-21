@@ -38,6 +38,7 @@ CERT_MANAGER_NAMESPACE = "cert-manager"
 FLYTE_NAMESPACE = "flyte"
 JOBS_PRODUCTION_NAMESPACE = "impt-jobs-production"
 KUBE_SYSTEM_NAMESPACE = "kube-system"
+DEFAULT_NAMESPACE = "default"
 
 # Secret names
 CUSTOM_TLS_SECRET_NAME = "custom-tls"  # noqa: S105

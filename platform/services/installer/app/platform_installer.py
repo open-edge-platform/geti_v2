@@ -9,8 +9,8 @@ import sys
 import rich_click as click
 
 from commands.install import install
-from commands.version import version
 from commands.migrate import migrate
+from commands.version import version
 from constants.paths import INSTALL_LOG_FILE_PATH
 
 sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined, union-attr]
