@@ -36,6 +36,8 @@ const getFiles = (items: PreviewFile[] | undefined) => items?.map(({ file }) => 
 const getLabelsIds = (labelsIds: string) => (isEmpty(labelsIds) ? undefined : labelsIds.split(','));
 const getMediaItemFromFile = (file: File): PreviewFile => ({ id: file.name, file, labelIds: [] });
 
+const PREVIEW_GALLERY_HEIGHT_OFFSET = 'size-550';
+
 export const PreviewGalleryDialog = ({ isOpen, files: initFiles, onClose, onUpload }: PreviewGalleryDialogProps) => {
     const { isSingleDomainProject } = useProject();
     const [isLoading, setIsLoading] = useState(false);
@@ -80,7 +82,7 @@ export const PreviewGalleryDialog = ({ isOpen, files: initFiles, onClose, onUplo
 
                             <MediaPreviewList
                                 items={currentFiles}
-                                height={`calc(100% - size-550)`}
+                                height={`calc(100% - ${PREVIEW_GALLERY_HEIGHT_OFFSET})`}
                                 viewMode={viewMode}
                                 hasItemPreview={false}
                                 hasLabelSelector={isSingleDomainProject(DOMAIN.CLASSIFICATION)}
