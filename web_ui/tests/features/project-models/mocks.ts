@@ -796,18 +796,6 @@ export const segmentationConfigurationMock = {
     ],
 };
 
-export const yoloAlgorithm = {
-    name: 'Yolo',
-    task_type: 'detection',
-    model_size: 200,
-    model_template_id: 'detection_yolo',
-    gigaflops: 5,
-    summary: 'YOLO architecture for detection',
-    default_algorithm: true,
-    performance_category: 'speed',
-    lifecycle_stage: 'active',
-};
-
 export const modelGroupResponse = {
     id: '59e94836734b717fbbfe0b79',
     name: 'MobileNetV2-ATSS',
