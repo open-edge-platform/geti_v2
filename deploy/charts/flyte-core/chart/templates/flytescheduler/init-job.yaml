@@ -20,6 +20,7 @@ spec:
         job_type: init
         app: {{ template "flytescheduler.name" . }}
     spec:
+      ttlSecondsAfterFinished: 600
       serviceAccountName: {{ template "flytescheduler.name" . }}
       restartPolicy: Never
       initContainers:
