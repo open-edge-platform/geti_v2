@@ -10,23 +10,17 @@ import os
 import subprocess
 from subprocess import CalledProcessError, TimeoutExpired
 
-import click_spinner
-import rich_click as click
 from geti_k8s_tools.calculate_cluster_resources import k8s_memory_to_kibibytes
 from GPUtil import getGPUs
 from packaging import version
 from psutil import cpu_count, disk_partitions, disk_usage, virtual_memory
 
 from checks.errors import (
-    CheckIgnored,
     CheckSkipped,
-    K8SCheckError,
     ResourcesCheckError,
     ResourcesCheckWarning,
     UnsupportedGpuWarning,
 )
-from cli_utils.checks import CROSS_MARK
-from cli_utils.prompts import prompt_for_configuration_value
 from configuration_models.install_config import InstallationConfig
 from configuration_models.upgrade_config import UpgradeConfig
 from constants.paths import INSTALL_LOG_FILE_PATH
@@ -36,12 +30,7 @@ from constants.platform import (
     GPU_PROVIDER_INTEL_MAX,
     GPU_PROVIDER_NVIDIA,
 )
-from k3s.detect_k3s import is_kubernetes_running_on_k3s
-from platform_configuration.platform import get_data_folder_path
-from platform_utils.kube_config_handler import KubernetesConfigHandler
-from texts.checks import K8SChecksTexts, ResourcesChecksTexts
-from texts.upgrade_command import UpgradeCmdTexts
-from validators.path import is_path_valid
+from texts.checks import ResourcesChecksTexts
 
 logger = logging.getLogger(__name__)
 
@@ -308,84 +297,3 @@ def _get_used_storage(data_folder_path: str) -> int:
         ]
     )
     return int(next(iter(filter(lambda x: x, process.stdout.split("\t")))))
-
-
-def check_upgrade_storage_requirements(  # noqa: ANN201
-    config: UpgradeConfig, spinner: click_spinner.Spinner | None = None
-):
-    """
-    Check if environment has minimum amount of storage to perform upgrade.
-    """
-    config.running_on_k3s.value = is_kubernetes_running_on_k3s(config.kube_config.value)
-
-    if not config.running_on_k3s.value:
-        logger.warning("Skipping upgrade storage requirements check.")
-        raise CheckSkipped
-
-    KubernetesConfigHandler(kube_config=config.kube_config.value)
-
-    interactive_mode = config.interactive_mode
-
-    if spinner is None:
-        raise Exception("spinner is required for this check")
-
-    data_folder_path = get_data_folder_path(kubeconfig=config.kube_config.value)
-
-    available_storage = _get_available_storage_for_directory(directory=data_folder_path)
-    used_storage = _get_used_storage(data_folder_path=data_folder_path)
-
-    # required storage = space in data folder + 50 GB to keep the installer, and for kubernetes
-    required_storage = used_storage + 50000
-    if required_storage > available_storage:
-        if not config.running_on_k3s.value or (not interactive_mode and config.skip_backup.value is None):
-            raise K8SCheckError(
-                K8SChecksTexts.storage_requirements_check_error.format(
-                    location=data_folder_path, available_storage=available_storage, required_storage=required_storage
-                )
-            )
-
-        spinner.stop()
-
-        # if there is no space on the 'data_folder_path'
-        # do not exit, but ask user if backup should be skipped
-        click.secho(f" {CROSS_MARK}", fg="red")
-        click.secho(
-            K8SChecksTexts.storage_requirements_check_error.format(
-                location=data_folder_path, available_storage=available_storage, required_storage=required_storage
-            ),
-            fg="red",
-            nl=True,
-        )
-
-        # ask user if backup should be skipped ('skip_backup')
-        if interactive_mode:
-            prompt_for_configuration_value(config.skip_backup, UpgradeCmdTexts.skip_backup_prompt)
-        if config.skip_backup.value:
-            raise CheckIgnored
-
-        if interactive_mode:
-            config.backup_location.validation_callback = is_path_valid
-            prompt_for_configuration_value(config.backup_location, UpgradeCmdTexts.backup_location_prompt)
-        backup_location = config.backup_location.value
-
-        spinner.start()
-        click.echo(
-            K8SChecksTexts.backup_location_storage_requirements_check_start.format(location=backup_location),
-            nl=False,
-        )
-
-        # check if 'backup_location' meets disk space requirement
-        backup_location_available_storage = _get_available_storage_for_directory(directory=backup_location)
-        if used_storage > backup_location_available_storage:
-            raise K8SCheckError(
-                K8SChecksTexts.storage_requirements_check_error.format(
-                    location=backup_location,
-                    available_storage=backup_location_available_storage,
-                    required_storage=required_storage,
-                )
-            )
-    else:
-        # ignore 'skip_backup' and 'backup_location' params if provided by user,
-        # in case there is enough space under the data_folder to perform the backup
-        config.skip_backup.value = False
-        config.backup_location.value = None

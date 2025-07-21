@@ -13,6 +13,7 @@ import os
 import re
 import shutil
 import signal
+import subprocess
 import sys
 import time
 from functools import partial
@@ -26,11 +27,13 @@ from kubernetes.client.models import V1Secret
 from checks.dns import check_dns_ipv4_handling
 from checks.errors import CumulativeCheckError
 from checks.internet import check_internet_connection
+from checks.k8s import check_k8s_connection, check_k8s_gpu_requirements
 from checks.os import check_os_version
+from checks.resources import check_gpu_driver_version
 from checks.user import check_user_id
 from cli_utils.credentials import hash_ldap_password
 from cli_utils.platform_logs import configure_logging, create_logs_dir, subprocess_run
-from configuration_models.migrate_config import MigrationConfig
+from configuration_models.upgrade_config import UpgradeConfig
 from constants.paths import INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH, OFFLINE_TOOLS_DIR
 from constants.platform import (
     CERT_MANAGER_NAMESPACE,
@@ -52,6 +55,7 @@ from constants.platform import (
     PLATFORM_NAMESPACE,
     POSTGRESQL_SECRET_NAME,
     PV_CHART,
+    REGCRED_SECRET_NAME,
     SEAWEEDFS_SECRET_NAME,
     SPICEDB_SECRET_NAME,
     STORAGE_CLASS,
@@ -70,20 +74,24 @@ from platform_utils.errors import (
     CredentialsError,
     DownloadSystemPackagesError,
     HelmReleaseError,
-    MigrateError,
-    PlatformCleanUpError,
+    KafkaPVRemovalError,
+    NamespaceCleanUpError,
     PlatformVersionError,
     PVInfoError,
+    ResourceDeletionError,
+    ResourceListError,
+    ResourcePatchError,
     SecretsPreparationError,
     TLSCertificateEmptyError,
     TLSCertificateInfoError,
+    UpgradeError,
 )
 from platform_utils.install_system_packages import install_system_packages
 from platform_utils.k8s import decode_string_b64
 from platform_utils.kube_config_handler import KubernetesConfigHandler
 from platform_utils.management.state import InstallationHandlerState, cluster_info_dump
 from texts.install_command import InstallCmdConfirmationTexts, InstallCmdTexts
-from texts.migrate_command import MigrateCmdTexts
+from texts.upgrade_command import UpgradeCmdTexts
 from validators.filepath import is_filepath_valid
 
 if TYPE_CHECKING:
@@ -93,12 +101,16 @@ from cli_utils.checks import run_checks
 from texts.checks import (
     DNSChecksTexts,
     InternetConnectionChecksTexts,
+    K8SChecksTexts,
     LocalOSChecksTexts,
     LocalUserChecksTexts,
     MigrationChecksTexts,
+    ResourcesChecksTexts,
 )
 
 logger = logging.getLogger(__name__)
+
+EXCLUDE_LABEL_SELECTOR = f"!{GETI_LABEL_KEY}"
 
 
 def custom_interrupt_handler_with_args(handler_state: InstallationHandlerState):  # noqa: ANN201
@@ -130,7 +142,7 @@ def set_custom_signal_handler(handler_state: InstallationHandlerState) -> None:
     signal.signal(signal.SIGINT, handler)
 
 
-def initial_checks(config: MigrationConfig) -> None:
+def initial_checks(config: UpgradeConfig) -> None:
     """
     Run initial checks, executed before upgrade wizard prompts.
     """
@@ -143,18 +155,36 @@ def initial_checks(config: MigrationConfig) -> None:
         ),
         (DNSChecksTexts.dns_ipv4_config_check, partial(check_dns_ipv4_handling, config=config)),
         (MigrationChecksTexts.migration_check_start, is_migration_possible),
+        (
+            K8SChecksTexts.connection_check_start,
+            partial(check_k8s_connection, kubeconfig_path=K3S_KUBECONFIG_PATH),
+        ),
+        (
+            K8SChecksTexts.gpu_requirements_check_start,
+            partial(
+                check_k8s_gpu_requirements,
+                config=config,
+            ),
+        ),
+        (
+            ResourcesChecksTexts.gpu_driver_version_check_start,
+            partial(
+                check_gpu_driver_version,
+                config=config,
+            ),
+        ),
     ]
     run_checks(checks=checks)
 
 
-def run_initial_checks() -> None:
+def run_initial_checks(config: UpgradeConfig) -> None:
     """
     Run migration_checks, print a message and terminate script execution on error.
     """
     try:
-        initial_checks()
+        initial_checks(config=config)
     except CumulativeCheckError:
-        click.echo(MigrateCmdTexts.checks_error_message)
+        click.echo(UpgradeCmdTexts.checks_error_message)
         sys.exit(1)
 
 
@@ -229,7 +259,7 @@ def _get_credentials() -> tuple[str, str]:
         with kube_client.ApiClient() as client:
             core_api = kube_client.CoreV1Api(client)
             latest_impt_secret: V1Secret = _get_newest_helm_release_secret(namespace=PLATFORM_NAMESPACE)
-            logger.debug(f"Latest impt helm release: {latest_impt_secret.metadata.name}")
+            logger.debug(f"Latest control-plane helm release: {latest_impt_secret.metadata.name}")
             secret = core_api.read_namespaced_secret(
                 name=latest_impt_secret.metadata.name, namespace=PLATFORM_NAMESPACE
             )
@@ -237,44 +267,31 @@ def _get_credentials() -> tuple[str, str]:
 
             # Decode the base64 data twice
             decoded_once = base64.b64decode(encoded_release)
-
             decoded_twice = base64.b64decode(decoded_once)
 
             # Decompress the gzip data
             decompressed_data = gzip.decompress(decoded_twice)
+
+            # Parse the JSON data
             release_data = json.loads(decompressed_data)
             global_section = release_data["config"]["global"]
             password = global_section.get("initial_admin_user_password")
             username = global_section.get("initial_admin_user_login")
-            logger.info(f"Username: {username}, Password: {password}")
             return username, password
     except ApiException as e:
         logger.error(f"Failed to get credentials from Helm release secret: {e}")
         raise CredentialsError("Failed to get credentials from Helm release secret.") from e
 
 
-# def _get_gpu_configuration() -> tuple[str, str]:
-#     KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
-#     with kube_client.ApiClient() as client:
-#         core_api = kube_client.CoreV1Api(client)
-#         accelerator_config_cm = core_api.read_namespaced_config_map(
-#         "accelerator-configuration", namespace=PLATFORM_NAMESPACE
-#         )
-#         accelerator_name = accelerator_config_cm.data.get("accelerator_name")
-#         accelerator_type = accelerator_config_cm.data.get("accelerator_type")
-#         return accelerator_type, accelerator_name
-
-
-def gather_data_for_migration(config: MigrationConfig) -> None:
+def gather_data_for_migration(config: UpgradeConfig) -> None:
     """
     - get data-folder from pv and compare it with impt-configuration cm
     - get tls-cert and tls-key from secret custom-tls and check for cert-manager annotations.
         If not present, take tls.key and tls.crt.
     - get username and password from initial-user job (will have different names depending on the geti version).
-    - get gpu config from accelerator-config cm.
     reuse those values and start installation.
     """
-    click.echo(MigrateCmdTexts.gather_message)
+    click.echo(UpgradeCmdTexts.gather_message)
     try:
         config.data_folder.value = _get_data_folder()
         tls_certificates = _get_tls_certificates()
@@ -287,12 +304,12 @@ def gather_data_for_migration(config: MigrationConfig) -> None:
         config.username.value = username
         config.password.value = password
         config.password_sha.value = hash_ldap_password(password)
-    except MigrateError as e:
+    except UpgradeError as e:
         logger.error(f"Failed to gather info for migration: {e}")
         sys.exit(1)
 
 
-def display_final_confirmation(config: MigrationConfig) -> None:
+def display_final_confirmation(config: UpgradeConfig, skip_confirmation_message: bool = False) -> None:
     """
     Display the gathered data and asks for the confirmation.
     """
@@ -317,14 +334,18 @@ def display_final_confirmation(config: MigrationConfig) -> None:
     click.echo()
     click.echo(InstallCmdConfirmationTexts.confirm_data_message.format(path=config.data_folder.value))
 
+    if not skip_confirmation_message:
+        click.echo()
+        click.confirm(InstallCmdConfirmationTexts.accept_config_prompt, default=True, abort=True)
 
-def prepare_geti_for_migration(config: MigrationConfig) -> None:
+
+def prepare_geti_for_migration(config: UpgradeConfig) -> None:
     """
     Prepare the Geti platform for migration.
     Delete everything except for secrets with credentials and custom-tls secret.
     Store secrets as a backup in the data folder.
     """
-    click.echo(MigrateCmdTexts.prepare_message)
+    click.echo(UpgradeCmdTexts.prepare_message)
     try:
         current_platform_version: str = get_current_platform_version(kubeconfig_path=K3S_KUBECONFIG_PATH)
     except ApiException as e:
@@ -340,6 +361,19 @@ def prepare_geti_for_migration(config: MigrationConfig) -> None:
         kafka = os.path.join(config.data_folder.value, "kafka")
         subprocess_run(["cp", "-r", kafka, backup_location], log_file)
 
+    prepare_secrets(config=config)
+    delete_namespaces()
+    cleanup_main_ns()
+    cleanup_kubelet_csr_approver()
+    relabel_pv()
+    cleanup_kafka_pv(config=config)
+    cleanup_platform()
+
+
+def prepare_secrets(config: UpgradeConfig) -> None:
+    """
+    Function that will back up secrets and label them with GETI_LABEL_KEY and GETI_LABEL_VALUE.
+    """
     KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
     with kube_client.ApiClient() as client:
         core_api = kube_client.CoreV1Api(client)
@@ -365,8 +399,17 @@ def prepare_geti_for_migration(config: MigrationConfig) -> None:
                 secret_data.metadata.annotations.update({"meta.helm.sh/release-name": TOOLS_CHART})
                 core_api.patch_namespaced_secret(name=secret_name, namespace=PLATFORM_NAMESPACE, body=secret_data)
         except ApiException as e:
-            logger.error(f"Failed to prepared secrets: {e}")
+            logger.exception(f"Failed to prepared secrets: {e}")
             raise SecretsPreparationError("Failed to prepare secrets.") from e
+
+
+def delete_namespaces() -> None:
+    """
+    Function that will delete all namespaces except for the main one.
+    """
+    KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
+    with kube_client.ApiClient() as client:
+        core_api = kube_client.CoreV1Api(client)
         try:
             logger.debug("Cleaning up platform...")
             for ns in [
@@ -383,11 +426,138 @@ def prepare_geti_for_migration(config: MigrationConfig) -> None:
                 logger.info("Namespace already deleted.")
             else:
                 logger.exception(f"Failed to clean up platform: {e}")
-                raise PlatformCleanUpError("Failed to clean up platform.") from e
-    cleanup_main_ns()
-    cleanup_kubelet_csr_approver()
-    relabel_pv()
-    cleanup_kafka_pv(config=config)
+                raise NamespaceCleanUpError("Failed to clean up platform.") from e
+
+
+def _delete_resources(
+    list_method,  # noqa: ANN001
+    delete_method,  # noqa: ANN001
+    resource_type,  # noqa: ANN001
+    label_selector=EXCLUDE_LABEL_SELECTOR,  # noqa: ANN001
+    namespaced: bool = False,
+):
+    """
+    Helper function to delete resources from k3s
+    """
+    try:
+        if namespaced:
+            resources = list_method(namespace=PLATFORM_NAMESPACE, label_selector=label_selector)
+        else:
+            resources = list_method(label_selector=label_selector)
+        for item in resources.items:
+            if item.metadata.name == "default":
+                # Do not delete default service account
+                continue
+            try:
+                if namespaced:
+                    delete_method(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
+                else:
+                    delete_method(name=item.metadata.name)
+                logger.debug(f"Deleted {resource_type}: {item.metadata.name}")
+            except ApiException as e:
+                if e.status == 404:
+                    logger.error(f"Resource {item.metadata.name} already deleted.")
+                else:
+                    logger.exception(f"Failed to delete {resource_type} {item.metadata.name}: {e}")
+                    raise ResourceDeletionError from e
+    except ApiException as e:
+        logger.exception(f"Failed to list {resource_type}s: {e}")
+        raise ResourceListError from e
+
+
+def cleanup_platform() -> None:  # noqa: C901
+    """
+    Cleanup the platform by removing not needed resources.
+    """
+    KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
+    logger.info("Cleaning up platform resources...")
+    with kube_client.ApiClient() as client:
+        core_api = kube_client.CoreV1Api(client)
+        try:
+            core_api.delete_namespaced_secret(name=REGCRED_SECRET_NAME, namespace=KUBE_SYSTEM_NAMESPACE)
+        except ApiException as e:
+            if e.status == 404:
+                logger.info(f"Secret {REGCRED_SECRET_NAME} already deleted.")
+            else:
+                logger.exception(
+                    f"Failed to delete secret {REGCRED_SECRET_NAME} in namespace {KUBE_SYSTEM_NAMESPACE}: {e}"
+                )
+                raise ResourceDeletionError from e
+        rbac_api = kube_client.RbacAuthorizationV1Api(client)
+        cluster_roles = rbac_api.list_cluster_role(label_selector=EXCLUDE_LABEL_SELECTOR)
+        for item in cluster_roles.items:
+            if any(
+                name in item.metadata.name
+                for name in [
+                    "dex",
+                    "cert-manager",
+                    "istio",
+                    "kserve",
+                    "impt",
+                    "flyte",
+                    "modelmesh",
+                    "reloader",
+                    "platform-cleaner",
+                    "proxy-role",
+                    "metrics-reader",
+                    "cluster-role-gateway",
+                ]
+            ):
+                try:
+                    rbac_api.delete_cluster_role(name=item.metadata.name)
+                    logger.debug(f"Deleted ClusterRole: {item.metadata.name}")
+                except ApiException as e:
+                    logger.exception(f"Failed to delete ClusterRole {item.metadata.name}: {e}")
+                    raise ResourceDeletionError from e
+        cluster_role_bindings = rbac_api.list_cluster_role_binding(label_selector=EXCLUDE_LABEL_SELECTOR)
+        for item in cluster_role_bindings.items:
+            if any(
+                name in item.metadata.name
+                for name in [
+                    "dex",
+                    "cert-manager",
+                    "istio",
+                    "kserve",
+                    "impt",
+                    "flyte",
+                    "modelmesh",
+                    "reloader",
+                    "platform-cleaner",
+                    "proxy-rolebinding",
+                ]
+            ):
+                try:
+                    rbac_api.delete_cluster_role_binding(name=item.metadata.name)
+                    logger.debug(f"Deleted ClusterRoleBinding: {item.metadata.name}")
+                except ApiException as e:
+                    logger.exception(f"Failed to delete ClusterRoleBinding {item.metadata.name}: {e}")
+                    raise ResourceDeletionError from e
+        admission_reg_api = kube_client.AdmissionregistrationV1Api(client)
+        _delete_resources(
+            list_method=admission_reg_api.list_mutating_webhook_configuration,
+            delete_method=admission_reg_api.delete_mutating_webhook_configuration,
+            resource_type="MutatingWebhookConfiguration",
+        )
+        _delete_resources(
+            list_method=admission_reg_api.list_validating_webhook_configuration,
+            delete_method=admission_reg_api.delete_validating_webhook_configuration,
+            resource_type="ValidatingWebhookConfiguration",
+        )
+        api_extensions = kube_client.ApiextensionsV1Api(client)
+        custom_resources = api_extensions.list_custom_resource_definition(
+            label_selector=EXCLUDE_LABEL_SELECTOR,
+        )
+        for item in custom_resources.items:
+            if any(group in item.spec.group for group in ["dex", "cert-manager", "istio", "kserve", "flyte"]):
+                try:
+                    api_extensions.delete_custom_resource_definition(
+                        name=item.metadata.name,
+                    )
+                    logger.debug(f"Deleted custom resource: {item.metadata.name}")
+                except ApiException as e:
+                    logger.exception(f"Failed to delete custom resource {item['metadata']['name']}: {e}")
+                    raise ResourceDeletionError from e
+    logger.info("Cleaned up platform resources...")
 
 
 def cleanup_kubelet_csr_approver() -> None:
@@ -416,7 +586,11 @@ def cleanup_kubelet_csr_approver() -> None:
                 core_api.delete_namespaced_secret(name=secret.metadata.name, namespace=KUBE_SYSTEM_NAMESPACE)
 
         except ApiException as e:
-            logger.error(f"Failed to delete kubelet csr approver components: {e}")
+            if e.status == 404:
+                logger.info("Kubelet csr approver components already deleted.")
+            else:
+                logger.error(f"Failed to delete kubelet csr approver components: {e}")
+                raise ResourceDeletionError from e
     logger.info("Kubelet csr approver deleted successfully.")
 
 
@@ -431,7 +605,11 @@ def relabel_pv() -> None:
         if not pv.metadata.annotations:
             pv.metadata.annotations = {}
         pv.metadata.annotations.update({"meta.helm.sh/release-name": PV_CHART})
-        core_api.patch_persistent_volume(name=DATA_STORAGE_VOLUME_NAME, body=pv)
+        try:
+            core_api.patch_persistent_volume(name=DATA_STORAGE_VOLUME_NAME, body=pv)
+        except ApiException as e:
+            logger.exception(f"Failed to patch pv {pv}: {e}")
+            raise ResourcePatchError from e
         logger.info("Relabeled Persistent Volume.")
 
         pvc = core_api.read_namespaced_persistent_volume_claim(
@@ -440,9 +618,13 @@ def relabel_pv() -> None:
         if not pvc.metadata.annotations:
             pvc.metadata.annotations = {}
         pvc.metadata.annotations.update({"meta.helm.sh/release-name": PV_CHART})
-        core_api.patch_namespaced_persistent_volume_claim(
-            name=DATA_STORAGE_VOLUME_CLAIM_NAME, namespace=PLATFORM_NAMESPACE, body=pvc
-        )
+        try:
+            core_api.patch_namespaced_persistent_volume_claim(
+                name=DATA_STORAGE_VOLUME_CLAIM_NAME, namespace=PLATFORM_NAMESPACE, body=pvc
+            )
+        except ApiException as e:
+            logger.exception(f"Failed to patch pvc {pvc}: {e}")
+            raise ResourcePatchError from e
         logger.info("Relabeled Persistent Volume Claim.")
 
         storage_api = kube_client.StorageV1Api(client)
@@ -450,11 +632,15 @@ def relabel_pv() -> None:
         if not sc.metadata.annotations:
             sc.metadata.annotations = {}
         sc.metadata.annotations.update({"meta.helm.sh/release-name": PV_CHART})
-        storage_api.patch_storage_class(name=STORAGE_CLASS, body=sc)
+        try:
+            storage_api.patch_storage_class(name=STORAGE_CLASS, body=sc)
+        except ApiException as e:
+            logger.exception(f"Failed to patch storage class {sc}: {e}")
+            raise ResourcePatchError from e
         logger.info("Relabeled Storage Class.")
 
 
-def cleanup_kafka_pv(config: MigrationConfig) -> None:
+def cleanup_kafka_pv(config: UpgradeConfig) -> None:
     """
     Removal of kafka directory stored in the data folder.
     """
@@ -462,11 +648,15 @@ def cleanup_kafka_pv(config: MigrationConfig) -> None:
     kafka_folder = os.path.join(config.data_folder.value, "kafka")
     with open(INSTALL_LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
         # Remove the existing backup directory if it exists and create a new one
-        subprocess_run(["rm", "-rf", kafka_folder], log_file)
+        try:
+            subprocess_run(["rm", "-rf", kafka_folder], log_file)
+        except subprocess.CalledProcessError as e:
+            logger.exception(f"Failed to remove Kafka PV directory: {kafka_folder}")
+            raise KafkaPVRemovalError from e
     logger.info("Kafka PV removed successfully.")
 
 
-def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
+def cleanup_main_ns() -> None:
     """
     Cleanup the main namespace by removing all resources except for selected secrets.
     """
@@ -474,224 +664,102 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
     KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
     with kube_client.ApiClient() as client:
         app_api = kube_client.AppsV1Api(client)
-        exclude_label_selector = f"!{GETI_LABEL_KEY}"
-        deployments = app_api.list_namespaced_deployment(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=app_api.list_namespaced_deployment,
+            delete_method=app_api.delete_namespaced_deployment,
+            resource_type="Deployment",
+            namespaced=True,
         )
-        for item in deployments.items:
-            try:
-                app_api.delete_namespaced_deployment(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted deployment: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete deployment {item.metadata.name}: {e}")
-        daemonsets = app_api.list_namespaced_daemon_set(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=app_api.list_namespaced_daemon_set,
+            delete_method=app_api.delete_namespaced_daemon_set,
+            resource_type="DaemonSet",
+            namespaced=True,
         )
-        for item in daemonsets.items:
-            try:
-                app_api.delete_namespaced_daemon_set(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted daemon set: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete daemon set {item.metadata.name}: {e}")
-        statefulsets = app_api.list_namespaced_stateful_set(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=app_api.list_namespaced_stateful_set,
+            delete_method=app_api.delete_namespaced_stateful_set,
+            resource_type="StatefulSet",
+            namespaced=True,
         )
-        for item in statefulsets.items:
-            try:
-                app_api.delete_namespaced_stateful_set(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted statefulset: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete statefulset {item.metadata.name}: {e}")
         batch_api = kube_client.BatchV1Api(client)
-        cronjobs = batch_api.list_namespaced_cron_job(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=batch_api.list_namespaced_cron_job,
+            delete_method=batch_api.delete_namespaced_cron_job,
+            resource_type="CronJob",
+            namespaced=True,
         )
-        for item in cronjobs.items:
-            try:
-                batch_api.delete_namespaced_cron_job(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted cron job: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete cron job {item.metadata.name}: {e}")
-        jobs = batch_api.list_namespaced_job(namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector)
-        for item in jobs.items:
-            try:
-                batch_api.delete_namespaced_job(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted job: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete job {item.metadata.name}: {e}")
+        _delete_resources(
+            list_method=batch_api.list_namespaced_job,
+            delete_method=batch_api.delete_namespaced_job,
+            resource_type="Job",
+            namespaced=True,
+        )
         core_api = kube_client.CoreV1Api(client)
-        services = core_api.list_namespaced_service(namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector)
-        for item in services.items:
-            try:
-                core_api.delete_namespaced_service(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted service: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete service {item.metadata.name}: {e}")
-        secrets = core_api.list_namespaced_secret(namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector)
-        for item in secrets.items:
-            try:
-                core_api.delete_namespaced_secret(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted secrets: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete secrets {item.metadata.name}: {e}")
-        configmaps = core_api.list_namespaced_config_map(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=core_api.list_namespaced_service,
+            delete_method=core_api.delete_namespaced_service,
+            resource_type="Service",
+            namespaced=True,
         )
-        for item in configmaps.items:
-            try:
-                core_api.delete_namespaced_config_map(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted configmap: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete configmap {item.metadata.name}: {e}")
-        pods = core_api.list_namespaced_pod(namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector)
-        for item in pods.items:
-            try:
-                core_api.delete_namespaced_pod(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted pod: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete pod {item.metadata.name}: {e}")
+        _delete_resources(
+            list_method=core_api.list_namespaced_secret,
+            delete_method=core_api.delete_namespaced_secret,
+            resource_type="Secret",
+            namespaced=True,
+        )
+        _delete_resources(
+            list_method=core_api.list_namespaced_config_map,
+            delete_method=core_api.delete_namespaced_config_map,
+            resource_type="ConfigMap",
+            namespaced=True,
+        )
+        _delete_resources(
+            list_method=core_api.list_namespaced_pod,
+            delete_method=core_api.delete_namespaced_pod,
+            resource_type="Pod",
+            namespaced=True,
+        )
         rbac_api = kube_client.RbacAuthorizationV1Api(client)
-        cluster_roles = rbac_api.list_cluster_role(label_selector=exclude_label_selector)
-        for item in cluster_roles.items:
-            if any(
-                name in item.metadata.name
-                for name in [
-                    "dex",
-                    "cert-manager",
-                    "istio",
-                    "kserve",
-                    "impt",
-                    "flyte",
-                    "modelmesh",
-                    "reloader",
-                    "platform-cleaner",
-                    "proxy-role",
-                    "metrics-reader",
-                    "cluster-role-gateway",
-                ]
-            ):
-                try:
-                    rbac_api.delete_cluster_role(name=item.metadata.name)
-                    logger.debug(f"Deleted ClusterRole: {item.metadata.name}")
-                except ApiException as e:
-                    logger.error(f"Failed to delete ClusterRole {item.metadata.name}: {e}")
-        cluster_role_bindings = rbac_api.list_cluster_role_binding(label_selector=exclude_label_selector)
-        for item in cluster_role_bindings.items:
-            if any(
-                name in item.metadata.name
-                for name in [
-                    "dex",
-                    "cert-manager",
-                    "istio",
-                    "kserve",
-                    "impt",
-                    "flyte",
-                    "modelmesh",
-                    "reloader",
-                    "platform-cleaner",
-                    "proxy-rolebinding",
-                ]
-            ):
-                try:
-                    rbac_api.delete_cluster_role_binding(name=item.metadata.name)
-                    logger.debug(f"Deleted ClusterRoleBinding: {item.metadata.name}")
-                except ApiException as e:
-                    logger.error(f"Failed to delete ClusterRoleBinding {item.metadata.name}: {e}")
-        role_bindings = rbac_api.list_namespaced_role_binding(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=rbac_api.list_namespaced_role_binding,
+            delete_method=rbac_api.delete_namespaced_role_binding,
+            resource_type="RoleBinding",
+            namespaced=True,
         )
-        for item in role_bindings.items:
-            try:
-                rbac_api.delete_namespaced_role_binding(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted RoleBinding: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete RoleBinding {item.metadata.name}: {e}")
-        roles = rbac_api.list_namespaced_role(namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector)
-        for item in roles.items:
-            try:
-                rbac_api.delete_namespaced_role(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted Role: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete Role {item.metadata.name}: {e}")
-        service_accounts = core_api.list_namespaced_service_account(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=rbac_api.list_namespaced_role,
+            delete_method=rbac_api.delete_namespaced_role,
+            resource_type="Role",
+            namespaced=True,
         )
-        for item in service_accounts.items:
-            if item.metadata.name == "default":
-                # Do not delete default service account
-                continue
-            try:
-                core_api.delete_namespaced_service_account(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted ServiceAccount: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete ServiceAccount {item.metadata.name}: {e}")
-
+        _delete_resources(
+            list_method=core_api.list_namespaced_service_account,
+            delete_method=core_api.delete_namespaced_service_account,
+            resource_type="ServiceAccount",
+            namespaced=True,
+        )
         autoscaling_api = kube_client.AutoscalingV1Api(client)
-        hpas = autoscaling_api.list_namespaced_horizontal_pod_autoscaler(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=autoscaling_api.list_namespaced_horizontal_pod_autoscaler,
+            delete_method=autoscaling_api.delete_namespaced_horizontal_pod_autoscaler,
+            resource_type="HorizontalPodAutoscaler",
+            namespaced=True,
         )
-        for item in hpas.items:
-            try:
-                autoscaling_api.delete_namespaced_horizontal_pod_autoscaler(
-                    name=item.metadata.name, namespace=PLATFORM_NAMESPACE
-                )
-                logger.debug(f"Deleted HPA: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete HPA {item.metadata.name}: {e}")
-
-        admission_reg_api = kube_client.AdmissionregistrationV1Api(client)
-        mutating_webhooks = admission_reg_api.list_mutating_webhook_configuration(label_selector=exclude_label_selector)
-        for item in mutating_webhooks.items:
-            try:
-                admission_reg_api.delete_mutating_webhook_configuration(name=item.metadata.name)
-                logger.debug(f"Deleted MutatingWebhookConfiguration: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete MutatingWebhookConfiguration {item.metadata.name}: {e}")
-        validating_webhooks = admission_reg_api.list_validating_webhook_configuration(
-            label_selector=exclude_label_selector
-        )
-        for item in validating_webhooks.items:
-            try:
-                admission_reg_api.delete_validating_webhook_configuration(name=item.metadata.name)
-                logger.debug(f"Deleted ValidatingWebhookConfiguration: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete ValidatingWebhookConfiguration {item.metadata.name}: {e}")
-
         pod_disruption_budget_api = kube_client.PolicyV1Api(client)
-        pod_disruption_budgets = pod_disruption_budget_api.list_namespaced_pod_disruption_budget(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=pod_disruption_budget_api.list_namespaced_pod_disruption_budget,
+            delete_method=pod_disruption_budget_api.delete_namespaced_pod_disruption_budget,
+            resource_type="PodDisruptionBudget",
+            namespaced=True,
         )
-        for item in pod_disruption_budgets.items:
-            try:
-                pod_disruption_budget_api.delete_namespaced_pod_disruption_budget(
-                    name=item.metadata.name, namespace=PLATFORM_NAMESPACE
-                )
-                logger.debug(f"Deleted PodDisruptionBudget: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete PodDisruptionBudget {item.metadata.name}: {e}")
         network_api = kube_client.NetworkingV1Api(client)
-        network_policies = network_api.list_namespaced_network_policy(
-            namespace=PLATFORM_NAMESPACE, label_selector=exclude_label_selector
+        _delete_resources(
+            list_method=network_api.list_namespaced_network_policy,
+            delete_method=network_api.delete_namespaced_network_policy,
+            resource_type="NetworkPolicy",
+            namespaced=True,
         )
-        for item in network_policies.items:
-            try:
-                network_api.delete_namespaced_network_policy(name=item.metadata.name, namespace=PLATFORM_NAMESPACE)
-                logger.debug(f"Deleted NetworkPolicy: {item.metadata.name}")
-            except ApiException as e:
-                logger.error(f"Failed to delete NetworkPolicy {item.metadata.name}: {e}")
-        api_instance = kube_client.ApiextensionsV1Api(client)
-        custom_resources = api_instance.list_custom_resource_definition(
-            label_selector=exclude_label_selector,
-        )
-        for item in custom_resources.items:
-            if any(group in item.spec.group for group in ["dex", "cert-manager", "istio", "kserve", "flyte"]):
-                try:
-                    api_instance.delete_custom_resource_definition(
-                        name=item.metadata.name,
-                    )
-                    logger.debug(f"Deleted custom resource: {item.metadata.name}")
-                except ApiException as e:
-                    logger.error(f"Failed to delete custom resource {item['metadata']['name']}: {e}")
         logger.info("Main namespace cleaned.")
         logger.info("Updating main namespace annotations...")
         main_ns = core_api.read_namespace(name=PLATFORM_NAMESPACE)
@@ -703,7 +771,11 @@ def cleanup_main_ns() -> None:  # noqa: PLR0912, PLR0915, C901
         main_ns.metadata.annotations.update(
             {"meta.helm.sh/release-name": NAMESPACE_CHART, "meta.helm.sh/release-namespace": DEFAULT_NAMESPACE}
         )
-        core_api.patch_namespace(name=PLATFORM_NAMESPACE, body=main_ns)
+        try:
+            core_api.patch_namespace(name=PLATFORM_NAMESPACE, body=main_ns)
+        except ApiException as e:
+            logger.exception(f"Failed to patch main namespace {PLATFORM_NAMESPACE}: {e}")
+            raise ResourcePatchError from e
         logger.info("Main namespace annotations updated.")
 
 
@@ -741,11 +813,11 @@ def monitor_installation_progress() -> tuple[str, str]:
     return status, message
 
 
-def execute_migration(config: MigrationConfig) -> None:
+def execute_migration(config: UpgradeConfig) -> None:
     """
     Execute the migration process.
     """
-    click.echo(MigrateCmdTexts.execution_start_message)
+    click.echo(UpgradeCmdTexts.execution_start_message)
     handler_state = InstallationHandlerState()
     set_custom_signal_handler(handler_state)
 
@@ -779,21 +851,23 @@ def execute_migration(config: MigrationConfig) -> None:
 
 
 @click.option("--repo-ca", type=click.Path(), callback=is_filepath_valid)
+@click.option("--skip-confirmation-message", is_flag=True, help=InstallCmdTexts.skip_confirmation_help)
 @click.command()
-def migrate(
+def upgrade(
     repo_ca: str | None = None,
+    skip_confirmation_message: bool = False,
 ) -> None:
     """
-    Migrate Geti from "old" version without Geti controller.
+    Upgrade Geti from "old" version without Geti controller.
     """
-    click.echo(MigrateCmdTexts.start_message)
+    click.echo(UpgradeCmdTexts.start_message)
     create_logs_dir()
     configure_logging()
-    config = MigrationConfig()
-    run_initial_checks()
+    config = UpgradeConfig()
+    run_initial_checks(config=config)
     config.repoCA.value = repo_ca
     gather_data_for_migration(config=config)
 
-    display_final_confirmation(config=config)
+    display_final_confirmation(config=config, skip_confirmation_message=skip_confirmation_message)
     prepare_geti_for_migration(config=config)
     execute_migration(config=config)

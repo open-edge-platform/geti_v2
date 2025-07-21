@@ -7,7 +7,7 @@ import os
 import yaml
 
 from configuration_models.install_config import InstallationConfig
-from configuration_models.migrate_config import MigrationConfig
+from configuration_models.upgrade_config import UpgradeConfig
 from constants.charts import GETI_CONTROLLER_CHART
 from constants.paths import GETI_CONTROLLER_CHART_PATH
 from constants.platform import PLATFORM_NAMESPACE
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 def deploy_geti_controller_chart(
-    config: InstallationConfig | MigrationConfig, charts_dir: str = GETI_CONTROLLER_CHART_PATH
+    config: InstallationConfig | UpgradeConfig, charts_dir: str = GETI_CONTROLLER_CHART_PATH
 ) -> None:
     """
     Method used to deploy Geti Controller chart

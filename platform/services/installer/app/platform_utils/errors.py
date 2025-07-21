@@ -254,61 +254,85 @@ class PinImageVersionError(StepsError):
     """
 
 
-class MigrateError(StepsError):
+class UpgradeError(StepsError):
     """
     Exception raised when an error occurs while migrating the platform
     """
 
 
-class PVInfoError(MigrateError):
+class PVInfoError(UpgradeError):
     """
     Exception raised when an error occurs while getting PV info
     """
 
 
-class TLSCertificateInfoError(MigrateError):
+class TLSCertificateInfoError(UpgradeError):
     """
     Exception raised when an error occurs while getting TLS certificate info
     """
 
 
-class TLSCertificateEmptyError(MigrateError):
+class TLSCertificateEmptyError(UpgradeError):
     """
     Exception raised when an error occurs while getting TLS certificate info
     """
 
 
-class HelmReleaseError(MigrateError):
+class HelmReleaseError(UpgradeError):
     """
     Exception raised when an error occurs while getting Helm release info
     """
 
 
-class CredentialsError(MigrateError):
+class CredentialsError(UpgradeError):
     """
     Exception raised when an error occurs while getting credentials info
     """
 
 
-class PlatformVersionError(MigrateError):
+class PlatformVersionError(UpgradeError):
     """
     Exception raised when an error occurs while getting credentials info
     """
 
 
-class SecretsPreparationError(MigrateError):
+class SecretsPreparationError(UpgradeError):
     """
     Exception raised when an error occurs while preparing secrets for migration
     """
 
 
-class PlatformCleanUpError(MigrateError):
+class PlatformCleanUpError(UpgradeError):
     """
     Exception raised when an error occurs while preparing secrets for migration
     """
 
 
-class NamespaceCleanUpError(MigrateError):
+class NamespaceCleanUpError(UpgradeError):
     """
     Exception raised when an error occurs while cleaning up namespaces
+    """
+
+
+class ResourceDeletionError(UpgradeError):
+    """
+    Exception raised when an error occurs while deleting resources
+    """
+
+
+class ResourceListError(UpgradeError):
+    """
+    Exception raised when an error occurs while listing resources
+    """
+
+
+class ResourcePatchError(UpgradeError):
+    """
+    Exception raised when an error occurs while patching resources
+    """
+
+
+class KafkaPVRemovalError(UpgradeError):
+    """
+    Exception raised when an error occurs while removing Kafka PVs
     """

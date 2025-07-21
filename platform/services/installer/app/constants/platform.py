@@ -47,6 +47,7 @@ POSTGRESQL_SECRET_NAME = "impt-postgresql"  # noqa: S105
 SPICEDB_SECRET_NAME = "impt-spice-db"  # noqa: S105
 LDAP_SECRET_NAME = "impt-ldap-service-user"  # noqa: S105
 SEAWEEDFS_SECRET_NAME = "impt-seaweed-fs"  # noqa: S105
+REGCRED_SECRET_NAME = "regcred"  # noqa: S105
 
 GETI_LABEL_KEY = "needed_by_geti"
 GETI_LABEL_VALUE = "true"
