@@ -6,10 +6,12 @@ import { noop, partition } from 'lodash-es';
 
 import {
     ConfigurationParameter,
+    NumberParameter,
     TrainingConfiguration,
 } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { isConfigurationParameter, isEnumParameter } from '../../../../../../../../core/configurable-parameters/utils';
-import { Parameters } from '../../ui/parameters.component';
+import { NumberParameterField } from '../../ui/number-parameter-field.component';
+import { Parameter, Parameters } from '../../ui/parameters.component';
 import {
     INPUT_SIZE_HEIGHT_KEY,
     INPUT_SIZE_WIDTH_KEY,
@@ -35,6 +37,10 @@ interface SingleLearningParameterProps {
     isReadOnly: boolean;
 }
 
+const isLearningRateParameter = (parameter: ConfigurationParameter): parameter is NumberParameter => {
+    return parameter.type === 'float' && parameter.key === 'learning_rate';
+};
+
 const SingleLearningParameter = ({
     parameter,
     onUpdateTrainingConfiguration,
@@ -57,6 +63,36 @@ const SingleLearningParameter = ({
             return newConfig;
         });
     };
+
+    if (isLearningRateParameter(parameter)) {
+        const handleLearningRateChange = (value: number) => {
+            handleChange({
+                ...parameter,
+                value,
+            });
+        };
+
+        const learningRateStep = 1e-6;
+
+        return (
+            <Parameters.Container>
+                <Parameter.Layout description={parameter.description} header={parameter.name}>
+                    <NumberParameterField
+                        onChange={handleLearningRateChange}
+                        isDisabled={isReadOnly}
+                        value={parameter.value}
+                        name={parameter.name}
+                        type={parameter.type}
+                        step={learningRateStep}
+                        maxValue={parameter.maxValue}
+                        minValue={parameter.minValue}
+                    />
+                </Parameter.Layout>
+            </Parameters.Container>
+        );
+    }
+
+    console.log({ parameter });
 
     return <Parameters key={parameter.key} parameters={[parameter]} onChange={handleChange} isReadOnly={isReadOnly} />;
 };
