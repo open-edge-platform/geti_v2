@@ -2,6 +2,6 @@
 # The original version of this file is located at /manifests/helm-profiles directory.
 # If you want to make a change in this file, edit the original one and run "make gen".
 
-cni:
-  cniConfDir: /var/lib/rancher/k3s/agent/etc/cni/net.d
-  cniBinDir: /var/lib/rancher/k3s/data/cni
+ambient:
+  # 1.26 behavioral changes
+  shareHostNetworkNamespace: true

@@ -4,9 +4,6 @@
 
 pilot:
   env:
-    # 1.23 behavioral changes
-    ENABLE_DELIMITED_STATS_TAG_REGEX: "false"
-    
     # 1.24 behavioral changes
     ENABLE_INBOUND_RETRY_POLICY: "false"
     EXCLUDE_UNSAFE_503_FROM_DEFAULT_RETRY: "false"
@@ -17,10 +14,12 @@ pilot:
 meshConfig:
   defaultConfig:
     proxyMetadata:
-      # 1.22 behavioral changes
-      ENABLE_DEFERRED_CLUSTER_CREATION: "false"
-      # 1.23 behavioral changes
-      ENABLE_DELIMITED_STATS_TAG_REGEX: "false"
       # 1.24 behaviour changes
       ENABLE_DEFERRED_STATS_CREATION: "false"
       BYPASS_OVERLOAD_MANAGER_FOR_STATIC_LISTENERS: "false"
+
+ambient:
+  # Not present in <1.24, defaults to `true` in 1.25+
+  reconcileIptablesOnStartup: false
+  # 1.26 behavioral changes
+  shareHostNetworkNamespace: true
