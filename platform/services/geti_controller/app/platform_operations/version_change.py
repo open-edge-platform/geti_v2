@@ -15,7 +15,8 @@ def commence_version_change(
     source_version: str,
     target_version: str,
     registry: str,
-    image_tag: str,
+    source_image_tag: str,
+    target_image_tag: str,
     manifest_version: str,
     direction: str,
 ) -> None:
@@ -26,6 +27,8 @@ def commence_version_change(
         {
             "source_version": source_version,
             "target_version": target_version,
+            "source_image_tag": source_image_tag,
+            "target_image_tag": target_image_tag,
             "progress_percentage": 0,
             "status": "RUNNING",
             "message": "Upgrade process has started.",
@@ -34,7 +37,7 @@ def commence_version_change(
 
     deploy_service_job(
         registry=registry,
-        image_tag=image_tag,
+        image_tag=target_image_tag,
         manifest_version=manifest_version,
         direction=direction,
     )
@@ -97,6 +100,8 @@ def _fill_in_defaults(stored: dict) -> dict:
     defaults = {
         "source_version": "",
         "target_version": "",
+        "source_image_tag": "",
+        "target_image_tag": "",
         "progress_percentage": 0,
         "status": "NOT_RUNNING",
         "message": "Installation/upgrade job is not running.",

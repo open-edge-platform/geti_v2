@@ -95,7 +95,8 @@ def upgrade_platform(payload: UpgradeRequest) -> UpgradeResponse:
         source_version=str(current_version),
         target_version=str(selected_version),
         registry=GETI_REGISTRY,
-        image_tag=payload.version_number,
+        source_image_tag=PLATFORM_VERSION,
+        target_image_tag=payload.version_number,
         manifest_version=payload.version_number,
         direction="upgrade",
     )
