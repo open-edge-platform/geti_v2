@@ -22,13 +22,14 @@ const (
 )
 
 type grpcConfig struct {
-	Timeout int `env:"INFERENCE_TIMEOUT"           envDefault:"10"`
+	// Timeout specifies the maximum duration (in seconds) to wait for a gRPC call to complete.
+	Timeout int `env:"INFERENCE_TIMEOUT" envDefault:"10"`
 }
 
 func NewGRPCClient(address string) (*grpc.ClientConn, error) {
 	cfg := grpcConfig{}
 	if err := env.Parse(&cfg); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse gRPC config: %w", err)
 	}
 
 	keepAlive := keepalive.ClientParameters{
