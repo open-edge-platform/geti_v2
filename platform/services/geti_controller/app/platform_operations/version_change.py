@@ -21,7 +21,7 @@ def commence_version_change(
     direction: str,
 ) -> None:
     """Commence the version change process by deploying the service job and updating the progress file."""
-    logger.info("Starting UPGRADE")
+    logger.info(f"Starting {direction.upper()}")
 
     update_progress(
         {
