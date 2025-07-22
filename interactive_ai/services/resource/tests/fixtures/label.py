@@ -210,6 +210,7 @@ def fxt_label_rest(fxt_label):
         "is_empty": False,
         "is_anomalous": False,
         "parent_id": None,
+        "is_background": False,
     }
 
 
