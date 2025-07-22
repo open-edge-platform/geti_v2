@@ -7,6 +7,7 @@ import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Flex, H
 import { isEmpty, noop } from 'lodash-es';
 
 import { DOMAIN } from '../../../../../core/projects/core.interface';
+import { isAnomalyDomain } from '../../../../../core/projects/domains';
 import { useViewMode } from '../../../../../hooks/use-view-mode/use-view-mode.hook';
 import { MEDIA_CONTENT_BUCKET } from '../../../../../providers/media-upload-provider/media-upload.interface';
 import { MediaPreviewList } from '../../../../../shared/components/media-preview-list/media-preview-list.component';
@@ -15,18 +16,14 @@ import { INITIAL_VIEW_MODE, ViewModes } from '../../../../../shared/components/m
 import { hasDifferentId } from '../../../../../shared/utils';
 import { TaskProvider } from '../../../../annotator/providers/task-provider/task-provider.component';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
+import { PreviewFile } from './utils';
 
 export interface PreviewGalleryDialogProps {
     files: File[];
     isOpen: boolean;
+    labelIds: string[];
     onClose: () => void;
     onUpload: (files: File[], labelIds?: string[]) => Promise<void>;
-}
-
-interface PreviewFile {
-    id: string;
-    file: File;
-    labelIds: never[];
 }
 
 const updateItem = (id: string, updatedItem: PreviewFile) => (item: PreviewFile) =>
@@ -34,15 +31,25 @@ const updateItem = (id: string, updatedItem: PreviewFile) => (item: PreviewFile)
 
 const getFiles = (items: PreviewFile[] | undefined) => items?.map(({ file }) => file) ?? [];
 const getLabelsIds = (labelsIds: string) => (isEmpty(labelsIds) ? undefined : labelsIds.split(','));
-const getMediaItemFromFile = (file: File): PreviewFile => ({ id: file.name, file, labelIds: [] });
+const getMediaItemFromFile =
+    (labelIds: string[]) =>
+    (file: File): PreviewFile => ({ id: file.name, file, labelIds });
 
 const PREVIEW_GALLERY_HEIGHT_OFFSET = 'size-550';
 
-export const PreviewGalleryDialog = ({ isOpen, files: initFiles, onClose, onUpload }: PreviewGalleryDialogProps) => {
+export const PreviewGalleryDialog = ({
+    isOpen,
+    files: initFiles,
+    labelIds,
+    onClose,
+    onUpload,
+}: PreviewGalleryDialogProps) => {
     const { isSingleDomainProject } = useProject();
     const [isLoading, setIsLoading] = useState(false);
     const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC, INITIAL_VIEW_MODE);
-    const [currentFiles, setCurrentFiles] = useState(initFiles.map(getMediaItemFromFile));
+    const [currentFiles, setCurrentFiles] = useState(initFiles.map(getMediaItemFromFile(labelIds)));
+
+    const hasLabelSelector = isSingleDomainProject(DOMAIN.CLASSIFICATION) || isSingleDomainProject(isAnomalyDomain);
 
     const handleDeleteItems = async (id: string) => {
         setCurrentFiles((prevFiles) => prevFiles.filter(hasDifferentId(id)));
@@ -85,7 +92,7 @@ export const PreviewGalleryDialog = ({ isOpen, files: initFiles, onClose, onUplo
                                 height={`calc(100% - ${PREVIEW_GALLERY_HEIGHT_OFFSET})`}
                                 viewMode={viewMode}
                                 hasItemPreview={false}
-                                hasLabelSelector={isSingleDomainProject(DOMAIN.CLASSIFICATION)}
+                                hasLabelSelector={hasLabelSelector}
                                 onDeleteItem={handleDeleteItems}
                                 onUpdateItem={handleUpdateItem}
                             />

@@ -21,8 +21,10 @@ import { PreviewGalleryDialog } from './preview-gallery-dialog/preview-gallery-d
 import { AnomalyProjectsNotification } from './training-notification/anomaly-projects-notification.component';
 import { UploadStatusBar } from './upload-status-bar/upload-status-bar.component';
 
+type BucketFiles = Pick<UploadMedia, 'files' | 'labelIds'>;
+
 export const ProjectMedia = (): JSX.Element => {
-    const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
+    const [droppedFiles, setDroppedFiles] = useState<BucketFiles | null>(null);
 
     const selectedDataset = useSelectedDataset();
     const datasetIdentifier = useDatasetIdentifier();
@@ -39,7 +41,7 @@ export const ProjectMedia = (): JSX.Element => {
     const handleUploadMediaCallback = async (uploads: UploadMedia) => {
         const validFiles = uploads.files.filter((file) => isImgOrVideoFile(file));
 
-        setDroppedFiles(validFiles);
+        setDroppedFiles({ files: validFiles, labelIds: uploads.labelIds });
         galleryPreviewState.open();
     };
 
@@ -47,15 +49,16 @@ export const ProjectMedia = (): JSX.Element => {
         onUploadMedia({ datasetIdentifier, files, labelIds });
 
     const handlePreviewClose = () => {
-        setDroppedFiles([]);
+        setDroppedFiles(null);
         galleryPreviewState.close();
     };
 
     return (
         <Flex height='100%'>
             <PreviewGalleryDialog
-                key={droppedFiles.length}
-                files={droppedFiles}
+                key={droppedFiles?.files.length}
+                files={droppedFiles?.files ?? []}
+                labelIds={droppedFiles?.labelIds ?? []}
                 isOpen={galleryPreviewState.isOpen}
                 onClose={handlePreviewClose}
                 onUpload={handlePreviewLoad}

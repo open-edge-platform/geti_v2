@@ -44,8 +44,8 @@ export const MediaPreviewList = <T extends FileItem>({
                 height={height}
                 idFormatter={(item) => item.id}
                 getTextValue={(item) => item.file.name}
-                itemContent={(screenshot) => {
-                    const { id, dataUrl, labelIds, file } = screenshot;
+                itemContent={(item) => {
+                    const { id, dataUrl, labelIds, file } = item;
 
                     return (
                         <MediaItem
@@ -65,12 +65,12 @@ export const MediaPreviewList = <T extends FileItem>({
                             onDeleteItem={onDeleteItem}
                             onSelectLabel={(newLabels) => {
                                 if (isEmpty(newLabels)) {
-                                    onUpdateItem(id, { ...screenshot, labelIds: [], labelName: null });
+                                    onUpdateItem(id, { ...item, labelIds: [], labelName: null });
                                 } else {
                                     const newLabelIds = getIds(newLabels);
                                     const newLabelName = newLabels.at(-1)?.name || null;
 
-                                    onUpdateItem(id, { ...screenshot, labelIds: newLabelIds, labelName: newLabelName });
+                                    onUpdateItem(id, { ...item, labelIds: newLabelIds, labelName: newLabelName });
                                 }
                             }}
                         />

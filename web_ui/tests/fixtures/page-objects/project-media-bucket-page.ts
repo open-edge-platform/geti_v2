@@ -38,6 +38,13 @@ export class ProjectMediaBucketPage {
         }
     }
 
+    async acceptPreviewFiles() {
+        const container = this.page.getByRole('dialog');
+
+        await expect(container).toBeInViewport();
+        await container.getByRole('button', { name: /upload/i }).click();
+    }
+
     getBucketLocator(): Locator {
         return this.bucket;
     }

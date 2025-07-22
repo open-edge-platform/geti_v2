@@ -20,7 +20,7 @@ describe('PreviewGalleryDialog', () => {
         onUpload = jest.fn(),
     }: Partial<PreviewGalleryDialogProps>) => {
         return annotatorRender(
-            <PreviewGalleryDialog isOpen={isOpen} onClose={onClose} files={files} onUpload={onUpload} />
+            <PreviewGalleryDialog isOpen={isOpen} onClose={onClose} files={files} onUpload={onUpload} labelIds={[]} />
         );
     };
 

@@ -96,6 +96,8 @@ test.describe('Anomaly media', () => {
 
         const normalBucket = await anomalyMediaPage.getNormalBucket();
         await normalBucket.uploadFiles(files);
+        await normalBucket.acceptPreviewFiles();
+
         await normalBucket.expectTotalMedia({ images: 3 });
         await expectBucketDescription(
             normalBucket,
@@ -106,6 +108,7 @@ test.describe('Anomaly media', () => {
 
         const anomalousBucket = await anomalyMediaPage.getAnomalousBucket();
         await anomalousBucket.uploadFiles(files);
+        await anomalousBucket.acceptPreviewFiles();
         await anomalousBucket.expectTotalMedia({ images: 3 });
         await expectBucketDescription(
             anomalousBucket,
