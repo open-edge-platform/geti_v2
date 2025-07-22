@@ -69,7 +69,8 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
         source_version="None",
         target_version=INSTALL_VERSION,
         registry=GETI_REGISTRY,
-        image_tag=INSTALL_VERSION,
+        source_image_tag="None",
+        target_image_tag=INSTALL_VERSION,
         manifest_version=INSTALL_VERSION,
         direction="install",
     )
