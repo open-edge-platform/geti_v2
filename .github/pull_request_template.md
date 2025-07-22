@@ -3,9 +3,9 @@
 <!--  
 Provide a clear summary of the changes and the context behind them. Describe **what** was changed, **why** it was needed, and **how** the changes address the issue or add value.
 
-If the PR addresses a specific GitHub Issue, link it through the 'Development' panel on the side.
+If the PR addresses a specific GitHub issue, link it through the 'Development' panel on the side.
 This will ensure that the issue is automatically closed after the PR is merged.
-Alternatively, include one of the special GH keywords in the description, for example:
+Alternatively, include one of the special GitHub keywords in the description, for example:
 - Fixes #<issue_number>
 - Closes #<issue_number>
 -->
