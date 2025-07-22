@@ -1209,6 +1209,8 @@ export interface paths {
          * @description Upload an image to a dataset. Allowed formats are `.jpg`, `.jpeg`, `.bmp`, `.png`, `.tif`, `.tiff`, `.jfif`, and `.webp`. Height and
          *     width of the images must be between 32 and 20000 pixels.
          *     For a classification project, the uploaded image can be annotated directly by specifying the labels in the field `upload_info`.
+         *     As soon as image is uploaded, asynchronous background preprocessing is started. This process generates image thumbnail.
+         *     When preprocessing finishes, image is assigned either FINISHED or FAILED preprocessing status with a failure message.
          */
         post: operations["UploadImage"];
         delete?: never;
@@ -1295,6 +1297,9 @@ export interface paths {
          * @description Upload a video to a dataset. Allowed formats are `.mp4`, `.avi`, `.mkv` `.mov`, `.webm` and `.m4v`. The maximum resolution for
          *     videos is 8K and the file may not be larger than 4.7 GB. For a classification project, all frames of the uploaded
          *     video can be annotated directly by specifying the labels in the field upload_info.
+         *     As soon as video is uploaded, asynchronous background preprocessing is started.
+         *     This process generates video thumbnail and minimized video.
+         *     When preprocessing finishes, video is assigned either FINISHED or FAILED preprocessing status with a failure message.
          */
         post: operations["UploadVideo"];
         delete?: never;
@@ -2308,6 +2313,7 @@ export interface paths {
         };
         /**
          * Get the current configuration for all components in the project.
+         * @deprecated
          * @description This endpoint gets the configuration for all components in the project, as well as the current algorithms used in the task chain. The configuration is subdivided into components. Examples of configuration components are the deep learning parameters, postprocessing parameters or subset-related parameters. Some components are further divided into parameter groups.
          */
         get: operations["GetFullConfiguration"];
@@ -2332,6 +2338,7 @@ export interface paths {
         };
         /**
          * Get the current configuration for all components in the project.
+         * @deprecated
          * @description This endpoint gets the configuration for all components in the project that are acting project-wide. The configuration is subdivided into components. Examples of configuration components are the active learning parameters or dataset management related parameters. Some components are further divided into parameter groups.
          */
         get: operations["GetGlobalConfiguration"];
@@ -2356,6 +2363,7 @@ export interface paths {
         };
         /**
          * Get the current configuration for all tasks in the project's task chain.
+         * @deprecated
          * @description This endpoint pulls the configuration for all tasks in the project. For every task in the project, the configuration is subdivided into components. Examples of configuration components are the deep learning parameters, postprocessing parameters or subset-related parameters. Some components are further divided into parameter groups.
          */
         get: operations["GetTaskChainConfiguration"];
@@ -2380,6 +2388,7 @@ export interface paths {
         };
         /**
          * Get the current configuration for a specific task
+         * @deprecated
          * @description This endpoint pulls the configuration for a specific task. The configuration is subdivided into components, and every component is divided into parameter groups. This endpoint can also be used to pull the configurable parameters related to a single model or an algorithm, from a trainable task.
          */
         get: operations["GetTaskConfiguration"];
@@ -2393,6 +2402,75 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/project_configuration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve project or task-specific configuration settings
+         * @description Retrieves the configuration settings for a project or a specific task within a project.
+         *
+         *     - If task_id is provided, returns only configuration for that specific task
+         *     - Otherwise, returns configuration for the entire project, including all tasks
+         *
+         */
+        get: operations["GetProjectConfiguration"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update project or task-specific configuration settings
+         * @description Updates the configuration settings for a project or a specific task within a project.
+         *
+         *     - If task_id is provided, updates only configuration for that specific task
+         *     - Otherwise, updates configuration for the entire project
+         *
+         */
+        patch: operations["UpdateProjectConfiguration"];
+        trace?: never;
+    };
+    "/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/training_configuration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve task-specific training configuration
+         * @description Retrieves the training configuration for a specific project and task.
+         *
+         *     - Task ID is required for task chain projects
+         *     - If model_manifest_id is provided, returns configuration for that specific model architecture
+         *     - If model_id is provided, returns configuration for a specific trained model
+         *     - Without model_manifest_id or model_id, returns only general task-related configuration
+         *
+         */
+        get: operations["GetTrainingConfiguration"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update training configuration parameters
+         * @description Updates the training configuration parameters for a task or specific model architecture.
+         *
+         *     - Task ID is required for task chain projects
+         *     - If only task_id is provided, updates general task-related configuration
+         *     - If model_manifest_id is provided, updates configuration for that specific model architecture
+         *
+         *     The updated configuration will affect future training sessions but will not modify already trained models.
+         *
+         */
+        patch: operations["UpdateTrainingConfiguration"];
         trace?: never;
     };
     "/user_settings": {
@@ -2830,69 +2908,6 @@ export interface paths {
          *     after it completes, the id of the imported project can be found in the job metadata.
          */
         post: operations["ImportProject"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments:prepare": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Prepare code deployment for project
-         * @deprecated
-         * @description This endpoint triggers preparation for code deployment for a specific project. For single-task projects (Detection, Segmentation, etc), it will export the only model used. For task-chain projects, it will export all the models. Only models in OpenVINO IR format are supported.
-         *     This endpoint is deprecated. Use the [deployment package endpoint](../deployment_package/download_deployment_package_endpoint.yaml) to prepare and download code deployment.
-         */
-        post: operations["PrepareCodeDeployment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments/{deployment_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get details of a code deployment process
-         * @description Get details for the code deployment process, which includes the state, the progress, models, the creator id and creation time.
-         */
-        get: operations["GetCodeDeployment"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/code_deployments/{deployment_id}/download": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Download the deployed code as a zip file
-         * @deprecated
-         * @description Download the deployed code as a zip file. This endpoint is deprecated. Use the [deployment package endpoint](../deployment_package/download_deployment_package_endpoint.yaml) to prepare and download code deployment.
-         */
-        get: operations["DownloadCodeDeployment"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -8456,69 +8471,6 @@ export interface operations {
             };
         };
         responses: {
-            /** @description The image has been uploaded. The 'size' field represents bits. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /**
-                         * @description Mongo ID of the object
-                         * @example 60d31793d5f1fb7e6e3c1a4c
-                         */
-                        id?: string;
-                        media_information?: {
-                            /** @description Display URL of the image or video frame */
-                            display_url?: string;
-                            /** @description Height of the image or video frame */
-                            height?: number;
-                            /** @description Width of the image or video frame */
-                            width?: number;
-                            /** @description Size of the image or video in bytes */
-                            size?: number;
-                            /** @description Extension of the image or video in lowercase with a dot (e.g. '.jpg') */
-                            extension?: string;
-                        };
-                        /** @description Name of the image */
-                        name?: string;
-                        /** @description ID of the uploader */
-                        uploader_id?: string;
-                        /** @description List of per-task states obtained aggregating the annotation state with the revisit information */
-                        annotation_state_per_task?: {
-                            /**
-                             * @description Mongo ID of the object
-                             * @example 60d31793d5f1fb7e6e3c1a4c
-                             */
-                            task_id?: string;
-                            /**
-                             * @description Annotation state of the media for this task
-                             * @enum {string|null}
-                             */
-                            state?: "annotated" | "partially_annotated" | "none" | "to_revisit" | null;
-                        }[];
-                        /** @description Media preprocessing related information */
-                        preprocessing?: {
-                            /**
-                             * @description Status of the preprocessing operation
-                             * @enum {string}
-                             */
-                            status: "SCHEDULED" | "IN_PROGRESS" | "FINISHED" | "FAILED";
-                            /** @description Message associated with the preprocessing operation */
-                            message?: string;
-                        };
-                        /** @description Relative URL to the media thumbnail */
-                        thumbnail?: string;
-                        /**
-                         * @description Type of media. 'image', 'video' or 'video_frame'
-                         * @enum {string}
-                         */
-                        type?: "image";
-                        /** @description Upload time of the image */
-                        upload_time?: string;
-                    };
-                };
-            };
             /** @description The image has been uploaded, preprocessing has been started. The 'size' field represents bits. */
             202: {
                 headers: {
@@ -8925,6 +8877,22 @@ export interface operations {
                     };
                 };
             };
+            /** @description Precondition failed */
+            412: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
             /** @description Internal server error */
             500: {
                 headers: {
@@ -8976,83 +8944,6 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Video has been uploaded. The 'size' field represents bits, "duration" is in seconds. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /**
-                         * @description Mongo ID of the object
-                         * @example 60d31793d5f1fb7e6e3c1a4c
-                         */
-                        id?: string;
-                        media_information?: {
-                            /** @description Display URL of the image or video */
-                            display_url?: string;
-                            /** @description Duration of the video */
-                            duration?: number;
-                            /** @description Number of frames in the video */
-                            frame_count?: number;
-                            /** @description Frame stride of the video */
-                            frame_stride?: number;
-                            /** @description Frame rate of the video */
-                            frame_rate?: number;
-                            /** @description Height of the video */
-                            height?: number;
-                            /** @description Width of the video */
-                            width?: number;
-                            /** @description Size of the video in bytes */
-                            size?: number;
-                        };
-                        /** @description Name of the video */
-                        name?: string;
-                        /** @description ID of the uploader */
-                        uploader_id?: string;
-                        /** @description List of per-task states obtained aggregating the annotation state with the revisit information */
-                        annotation_state_per_task?: {
-                            /**
-                             * @description Mongo ID of the object
-                             * @example 60d31793d5f1fb7e6e3c1a4c
-                             */
-                            task_id?: string;
-                            /**
-                             * @description Annotation state of the media for this task
-                             * @enum {string|null}
-                             */
-                            state?: "annotated" | "partially_annotated" | "none" | "to_revisit" | null;
-                        }[];
-                        annotation_statistics?: {
-                            /** @description Number of annotated frames within video */
-                            annotated?: number;
-                            /** @description Number of partially annotated frames within video */
-                            partially_annotated?: number;
-                            /** @description Number of unannotated frames within video */
-                            unannotated?: number;
-                        };
-                        /** @description Media preprocessing related information */
-                        preprocessing?: {
-                            /**
-                             * @description Status of the preprocessing operation
-                             * @enum {string}
-                             */
-                            status: "SCHEDULED" | "IN_PROGRESS" | "FINISHED" | "FAILED";
-                            /** @description Message associated with the preprocessing operation */
-                            message?: string;
-                        };
-                        /** @description Relative URL to the video thumbnail */
-                        thumbnail?: string;
-                        /**
-                         * @description Type of media. 'image', 'video' or 'video_frame'
-                         * @enum {string}
-                         */
-                        type?: "video";
-                        /** @description Upload time of the video */
-                        upload_time?: string;
-                    };
-                };
-            };
             /** @description Video has been uploaded, preprocessing has been started. The 'size' field represents bits, "duration" is in seconds. */
             202: {
                 headers: {
@@ -9653,6 +9544,22 @@ export interface operations {
                     };
                 };
             };
+            /** @description Precondition failed */
+            412: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
             /** @description Internal server error */
             500: {
                 headers: {
@@ -9773,6 +9680,22 @@ export interface operations {
             };
             /** @description Object not found. See the examples for details. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
+            /** @description Precondition failed */
+            412: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -11286,41 +11209,56 @@ export interface operations {
                              * @description Task type of the algorithm.
                              * @enum {string}
                              */
-                            task_type?: "detection" | "rotated_detection" | "anomaly" | "segmentation" | "instance_segmentation" | "classification" | "keypoint_detection";
-                            /**
-                             * Format: float
-                             * @description Storage size of the model, in MB
-                             */
-                            model_size?: number;
+                            task?: "detection" | "rotated_detection" | "anomaly" | "segmentation" | "instance_segmentation" | "classification" | "keypoint_detection";
+                            /** @description Detailed description of the model capabilities */
+                            description?: string;
                             /** @description Unique identifier for the algorithm */
-                            model_template_id?: string;
+                            model_manifest_id?: string;
+                            /** @description Statistics about the model */
+                            stats?: {
+                                /**
+                                 * Format: float
+                                 * @description Billions of floating-point operations per second required by the model
+                                 */
+                                gigaflops: number;
+                                /**
+                                 * Format: float
+                                 * @description Number of trainable parameters in the model (in millions)
+                                 */
+                                trainable_parameters: number;
+                                /** @description Standardized ratings for model performance metrics */
+                                performance_ratings: {
+                                    /** @description Rating of the model accuracy. The value should be interpreted relatively to the other available models, and it ranges from 1 (below average) to 3 (above average). */
+                                    accuracy: number;
+                                    /** @description Rating of the model training time. The value should be interpreted relatively to the other available models, and it ranges from 1 (below average/slower) to 3 (above average/faster). */
+                                    training_time: number;
+                                    /** @description Rating of the model inference speed. The value should be interpreted relatively to the other available models, and it ranges from 1 (below average/slower) to 3 (above average/faster). */
+                                    inference_speed: number;
+                                };
+                            };
                             /**
-                             * Format: float
-                             * @description Theoretical complexity of the model, in billions of operations
+                             * @description Current support level (active, deprecated, or obsolete)
+                             * @enum {string}
                              */
-                            gigaflops?: number;
-                            /** @description A short summary that gives information about the algorithm */
-                            summary?: string;
+                            support_status?: "active" | "deprecated" | "obsolete";
+                            /** @description Mapping GPU types to compatibility status */
+                            supported_gpus?: {
+                                intel?: boolean;
+                                nvidia?: boolean;
+                            };
+                            capabilities?: {
+                                /** @description Whether the model supports eXplainable AI (XAI) features */
+                                xai?: boolean;
+                                /** @description Whether the model supports tiling for large images */
+                                tiling?: boolean;
+                            };
+                            /** @description Indicates whether the model is the default selection for its task */
+                            is_default_model?: boolean;
                             /**
-                             * @deprecated
-                             * @description Boolean that indicates whether the algorithm supports automatic hyper parameter optimization.
-                             *     This field is deprecated and should not be used, it will be removed in the future.
-                             */
-                            supports_auto_hpo?: boolean;
-                            /** @description Boolean that indicates whether the model template is the default selection for the task */
-                            default_algorithm?: boolean;
-                            /**
-                             * @description The category of the model template. Some algorithms focus more on accuracy, others on inference speed.
+                             * @description The performance category of the model. Some algorithms focus more on accuracy, others on inference speed.
                              * @enum {string}
                              */
                             performance_category?: "balance" | "speed" | "accuracy" | "other";
-                            /**
-                             * @description The current support status of the model architecture. 'Active' algorithms are fully supported and maintained.
-                             *     'Deprecated' ones are still supported, but not recommended for training; in a later version, they may be
-                             *     discontinued and become 'obsolete', which means that new models cannot be trained with such algorithms.
-                             * @enum {string}
-                             */
-                            lifecycle_stage?: "active" | "deprecated" | "obsolete";
                         }[];
                     };
                 };
@@ -22537,6 +22475,1220 @@ export interface operations {
             };
         };
     };
+    GetProjectConfiguration: {
+        parameters: {
+            query?: {
+                /** @description The ID of the task in the project. */
+                task_id?: string;
+            };
+            header?: never;
+            path: {
+                /** @description The ID of the organization. */
+                organization_id: string;
+                /** @description The ID of the workspace. */
+                workspace_id: string;
+                /** @description The ID of the project. */
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Get full configuration response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description Array containing configuration for each task in the project */
+                        task_configs: {
+                            /** @description Unique identifier for the task */
+                            task_id: string;
+                            /**
+                             * @description A parameter that contains nested parameters
+                             * @example {
+                             *       "augmentation": {
+                             *         "center_crop": [
+                             *           {
+                             *             "default_value": false,
+                             *             "description": "Whether to apply center cropping to the image",
+                             *             "key": "enable",
+                             *             "name": "Enable center crop",
+                             *             "type": "bool",
+                             *             "value": true
+                             *           },
+                             *           {
+                             *             "default_value": 1,
+                             *             "description": "Ratio of original dimensions to keep when cropping",
+                             *             "key": "ratio",
+                             *             "name": "Crop ratio",
+                             *             "type": "float",
+                             *             "value": 0.8
+                             *           }
+                             *         ],
+                             *         "color_jitter": [
+                             *           {
+                             *             "default_value": false,
+                             *             "description": "Whether to apply color jittering to the image",
+                             *             "key": "enable",
+                             *             "name": "Enable color jitter",
+                             *             "type": "bool",
+                             *             "value": true
+                             *           },
+                             *           {
+                             *             "default_value": 0.2,
+                             *             "description": "Maximum brightness adjustment factor",
+                             *             "key": "brightness",
+                             *             "name": "Brightness factor",
+                             *             "type": "float",
+                             *             "value": 0.1
+                             *           }
+                             *         ]
+                             *       }
+                             *     }
+                             */
+                            training: {
+                                [key: string]: ({
+                                    /** @description Default value for the boolean parameter when not explicitly set */
+                                    default_value: boolean;
+                                    /** @description Detailed explanation of the boolean parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the boolean parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the boolean parameter */
+                                    name: string;
+                                    /**
+                                     * @description Type of the parameter, which is 'bool' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "bool";
+                                    /** @description Current configured value of the boolean parameter */
+                                    value: boolean;
+                                } | {
+                                    /** @description Default value for the float parameter when not explicitly set */
+                                    default_value: number;
+                                    /** @description Detailed explanation of the float parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the float parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the float parameter */
+                                    name: string;
+                                    /** @description Maximum allowed value for the float parameter (can be None for no upper limit) */
+                                    max_value: null | number;
+                                    /** @description Minimum allowed value for the float parameter (can be None for no lower limit) */
+                                    min_value: null | number;
+                                    /**
+                                     * @description Type of the parameter, which is 'float' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "float";
+                                    /** @description Current configured value of the float parameter */
+                                    value: number;
+                                } | {
+                                    /** @description List of allowed values for the integer parameter (can be None if no restrictions) */
+                                    allowed_values?: null | number[];
+                                    /** @description Default value for the integer parameter when not explicitly set */
+                                    default_value: number;
+                                    /** @description Detailed explanation of the integer parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the integer parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the integer parameter */
+                                    name: string;
+                                    /** @description Maximum allowed value for the integer parameter (can be None for no upper limit) */
+                                    max_value: null | number;
+                                    /** @description Minimum allowed value for the integer parameter (can be None for no lower limit) */
+                                    min_value: null | number;
+                                    /**
+                                     * @description Type of the parameter, which is 'int' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "int";
+                                    /** @description Current configured value of the integer parameter */
+                                    value: number;
+                                } | {
+                                    /** @description Optional list of allowed values for the string parameter, if applicable */
+                                    allowed_values?: string[];
+                                    /** @description Default value for the string parameter when not explicitly set */
+                                    default_value: string;
+                                    /** @description Detailed explanation of the string parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the string parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the string parameter */
+                                    name: string;
+                                    /**
+                                     * @description Type of the parameter, which is 'string' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "string";
+                                    /** @description Current configured value of the string parameter */
+                                    value: string;
+                                } | {
+                                    /** @description Default value for the enum parameter when not explicitly set */
+                                    default_value: string | number;
+                                    /** @description Detailed explanation of the enum parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the enum parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the enum parameter */
+                                    name: string;
+                                    /**
+                                     * @description Type of the parameter, which is 'enum' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "enum";
+                                    /** @description Current configured value of the enum parameter */
+                                    value: string | number;
+                                    /** @description List of all allowed values for the enum parameter */
+                                    allowed_values: (string | number)[];
+                                } | Record<string, never>)[] | Record<string, never>;
+                            } & (Record<string, never> | unknown[]);
+                            /**
+                             * @description A parameter that contains nested parameters
+                             * @example {
+                             *       "augmentation": {
+                             *         "center_crop": [
+                             *           {
+                             *             "default_value": false,
+                             *             "description": "Whether to apply center cropping to the image",
+                             *             "key": "enable",
+                             *             "name": "Enable center crop",
+                             *             "type": "bool",
+                             *             "value": true
+                             *           },
+                             *           {
+                             *             "default_value": 1,
+                             *             "description": "Ratio of original dimensions to keep when cropping",
+                             *             "key": "ratio",
+                             *             "name": "Crop ratio",
+                             *             "type": "float",
+                             *             "value": 0.8
+                             *           }
+                             *         ],
+                             *         "color_jitter": [
+                             *           {
+                             *             "default_value": false,
+                             *             "description": "Whether to apply color jittering to the image",
+                             *             "key": "enable",
+                             *             "name": "Enable color jitter",
+                             *             "type": "bool",
+                             *             "value": true
+                             *           },
+                             *           {
+                             *             "default_value": 0.2,
+                             *             "description": "Maximum brightness adjustment factor",
+                             *             "key": "brightness",
+                             *             "name": "Brightness factor",
+                             *             "type": "float",
+                             *             "value": 0.1
+                             *           }
+                             *         ]
+                             *       }
+                             *     }
+                             */
+                            auto_training: {
+                                [key: string]: ({
+                                    /** @description Default value for the boolean parameter when not explicitly set */
+                                    default_value: boolean;
+                                    /** @description Detailed explanation of the boolean parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the boolean parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the boolean parameter */
+                                    name: string;
+                                    /**
+                                     * @description Type of the parameter, which is 'bool' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "bool";
+                                    /** @description Current configured value of the boolean parameter */
+                                    value: boolean;
+                                } | {
+                                    /** @description Default value for the float parameter when not explicitly set */
+                                    default_value: number;
+                                    /** @description Detailed explanation of the float parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the float parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the float parameter */
+                                    name: string;
+                                    /** @description Maximum allowed value for the float parameter (can be None for no upper limit) */
+                                    max_value: null | number;
+                                    /** @description Minimum allowed value for the float parameter (can be None for no lower limit) */
+                                    min_value: null | number;
+                                    /**
+                                     * @description Type of the parameter, which is 'float' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "float";
+                                    /** @description Current configured value of the float parameter */
+                                    value: number;
+                                } | {
+                                    /** @description List of allowed values for the integer parameter (can be None if no restrictions) */
+                                    allowed_values?: null | number[];
+                                    /** @description Default value for the integer parameter when not explicitly set */
+                                    default_value: number;
+                                    /** @description Detailed explanation of the integer parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the integer parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the integer parameter */
+                                    name: string;
+                                    /** @description Maximum allowed value for the integer parameter (can be None for no upper limit) */
+                                    max_value: null | number;
+                                    /** @description Minimum allowed value for the integer parameter (can be None for no lower limit) */
+                                    min_value: null | number;
+                                    /**
+                                     * @description Type of the parameter, which is 'int' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "int";
+                                    /** @description Current configured value of the integer parameter */
+                                    value: number;
+                                } | {
+                                    /** @description Optional list of allowed values for the string parameter, if applicable */
+                                    allowed_values?: string[];
+                                    /** @description Default value for the string parameter when not explicitly set */
+                                    default_value: string;
+                                    /** @description Detailed explanation of the string parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the string parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the string parameter */
+                                    name: string;
+                                    /**
+                                     * @description Type of the parameter, which is 'string' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "string";
+                                    /** @description Current configured value of the string parameter */
+                                    value: string;
+                                } | {
+                                    /** @description Default value for the enum parameter when not explicitly set */
+                                    default_value: string | number;
+                                    /** @description Detailed explanation of the enum parameter's purpose and usage */
+                                    description: string;
+                                    /** @description Identifier for the enum parameter used in code references */
+                                    key: string;
+                                    /** @description Display name of the enum parameter */
+                                    name: string;
+                                    /**
+                                     * @description Type of the parameter, which is 'enum' in this case
+                                     * @enum {string}
+                                     */
+                                    type: "enum";
+                                    /** @description Current configured value of the enum parameter */
+                                    value: string | number;
+                                    /** @description List of all allowed values for the enum parameter */
+                                    allowed_values: (string | number)[];
+                                } | Record<string, never>)[] | Record<string, never>;
+                            } & (Record<string, never> | unknown[]);
+                        }[];
+                    };
+                };
+            };
+            /** @description Object not found. See the examples for details. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
+        };
+    };
+    UpdateProjectConfiguration: {
+        parameters: {
+            query?: {
+                /** @description The ID of the task in the project. */
+                task_id?: string;
+            };
+            header?: never;
+            path: {
+                /** @description The ID of the organization. */
+                organization_id: string;
+                /** @description The ID of the workspace. */
+                workspace_id: string;
+                /** @description The ID of the project. */
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Array containing configuration for each task in the project */
+                    task_configs: {
+                        /** @description Unique identifier for the task */
+                        task_id: string;
+                        /**
+                         * @description A parameter that contains nested parameters
+                         * @example {
+                         *       "augmentation": {
+                         *         "center_crop": [
+                         *           {
+                         *             "key": "enable",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "key": "ratio",
+                         *             "value": 0.8
+                         *           }
+                         *         ],
+                         *         "color_jitter": [
+                         *           {
+                         *             "key": "enable",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "key": "brightness",
+                         *             "value": 0.1
+                         *           }
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        training: {
+                            [key: string]: ({
+                                /** @description Identifier for the boolean parameter */
+                                key: string;
+                                /** @description Current configured value of the boolean parameter */
+                                value: boolean;
+                            } | {
+                                /** @description Identifier for the float parameter used in code references */
+                                key: string;
+                                /** @description Current configured value of the float parameter */
+                                value: number;
+                            } | {
+                                /** @description Identifier for the integer parameter used in code references */
+                                key: string;
+                                /** @description Current configured value of the integer parameter */
+                                value: number;
+                            } | {
+                                /** @description Identifier for the string parameter used in code references */
+                                key: string;
+                                /** @description Current configured value of the string parameter */
+                                value: string;
+                            } | Record<string, never>)[] | Record<string, never>;
+                        } & (Record<string, never> | unknown[]);
+                        /**
+                         * @description A parameter that contains nested parameters
+                         * @example {
+                         *       "augmentation": {
+                         *         "center_crop": [
+                         *           {
+                         *             "key": "enable",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "key": "ratio",
+                         *             "value": 0.8
+                         *           }
+                         *         ],
+                         *         "color_jitter": [
+                         *           {
+                         *             "key": "enable",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "key": "brightness",
+                         *             "value": 0.1
+                         *           }
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        auto_training: {
+                            [key: string]: ({
+                                /** @description Identifier for the boolean parameter */
+                                key: string;
+                                /** @description Current configured value of the boolean parameter */
+                                value: boolean;
+                            } | {
+                                /** @description Identifier for the float parameter used in code references */
+                                key: string;
+                                /** @description Current configured value of the float parameter */
+                                value: number;
+                            } | {
+                                /** @description Identifier for the integer parameter used in code references */
+                                key: string;
+                                /** @description Current configured value of the integer parameter */
+                                value: number;
+                            } | {
+                                /** @description Identifier for the string parameter used in code references */
+                                key: string;
+                                /** @description Current configured value of the string parameter */
+                                value: string;
+                            } | Record<string, never>)[] | Record<string, never>;
+                        } & (Record<string, never> | unknown[]);
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Configuration updated successfully */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Payload configuration contains validation error. See the examples for details. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
+            /** @description Object not found. See the examples for details. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
+        };
+    };
+    GetTrainingConfiguration: {
+        parameters: {
+            query?: {
+                /** @description The ID of the task in the project. */
+                task_id?: string;
+                /** @description The ID of the model manifest (AKA model architecture) */
+                model_manifest_id?: string;
+                /** @description The ID of the model of interest */
+                model_id?: string;
+            };
+            header?: never;
+            path: {
+                /** @description The ID of the organization. */
+                organization_id: string;
+                /** @description The ID of the workspace. */
+                workspace_id: string;
+                /** @description The ID of the project. */
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Training configuration retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description Unique identifier for the task */
+                        task_id: string;
+                        /** @description Unique identifier for the model manifest */
+                        model_manifest_id?: string;
+                        /**
+                         * @description A parameter that contains nested parameters
+                         * @example {
+                         *       "augmentation": {
+                         *         "center_crop": [
+                         *           {
+                         *             "default_value": false,
+                         *             "description": "Whether to apply center cropping to the image",
+                         *             "key": "enable",
+                         *             "name": "Enable center crop",
+                         *             "type": "bool",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "default_value": 1,
+                         *             "description": "Ratio of original dimensions to keep when cropping",
+                         *             "key": "ratio",
+                         *             "name": "Crop ratio",
+                         *             "type": "float",
+                         *             "value": 0.8
+                         *           }
+                         *         ],
+                         *         "color_jitter": [
+                         *           {
+                         *             "default_value": false,
+                         *             "description": "Whether to apply color jittering to the image",
+                         *             "key": "enable",
+                         *             "name": "Enable color jitter",
+                         *             "type": "bool",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "default_value": 0.2,
+                         *             "description": "Maximum brightness adjustment factor",
+                         *             "key": "brightness",
+                         *             "name": "Brightness factor",
+                         *             "type": "float",
+                         *             "value": 0.1
+                         *           }
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        dataset_preparation: {
+                            [key: string]: ({
+                                /** @description Default value for the boolean parameter when not explicitly set */
+                                default_value: boolean;
+                                /** @description Detailed explanation of the boolean parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the boolean parameter used in code references */
+                                key: string;
+                                /** @description Display name of the boolean parameter */
+                                name: string;
+                                /**
+                                 * @description Type of the parameter, which is 'bool' in this case
+                                 * @enum {string}
+                                 */
+                                type: "bool";
+                                /** @description Current configured value of the boolean parameter */
+                                value: boolean;
+                            } | {
+                                /** @description Default value for the float parameter when not explicitly set */
+                                default_value: number;
+                                /** @description Detailed explanation of the float parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the float parameter used in code references */
+                                key: string;
+                                /** @description Display name of the float parameter */
+                                name: string;
+                                /** @description Maximum allowed value for the float parameter (can be None for no upper limit) */
+                                max_value: null | number;
+                                /** @description Minimum allowed value for the float parameter (can be None for no lower limit) */
+                                min_value: null | number;
+                                /**
+                                 * @description Type of the parameter, which is 'float' in this case
+                                 * @enum {string}
+                                 */
+                                type: "float";
+                                /** @description Current configured value of the float parameter */
+                                value: number;
+                            } | {
+                                /** @description List of allowed values for the integer parameter (can be None if no restrictions) */
+                                allowed_values?: null | number[];
+                                /** @description Default value for the integer parameter when not explicitly set */
+                                default_value: number;
+                                /** @description Detailed explanation of the integer parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the integer parameter used in code references */
+                                key: string;
+                                /** @description Display name of the integer parameter */
+                                name: string;
+                                /** @description Maximum allowed value for the integer parameter (can be None for no upper limit) */
+                                max_value: null | number;
+                                /** @description Minimum allowed value for the integer parameter (can be None for no lower limit) */
+                                min_value: null | number;
+                                /**
+                                 * @description Type of the parameter, which is 'int' in this case
+                                 * @enum {string}
+                                 */
+                                type: "int";
+                                /** @description Current configured value of the integer parameter */
+                                value: number;
+                            } | {
+                                /** @description Optional list of allowed values for the string parameter, if applicable */
+                                allowed_values?: string[];
+                                /** @description Default value for the string parameter when not explicitly set */
+                                default_value: string;
+                                /** @description Detailed explanation of the string parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the string parameter used in code references */
+                                key: string;
+                                /** @description Display name of the string parameter */
+                                name: string;
+                                /**
+                                 * @description Type of the parameter, which is 'string' in this case
+                                 * @enum {string}
+                                 */
+                                type: "string";
+                                /** @description Current configured value of the string parameter */
+                                value: string;
+                            } | {
+                                /** @description Default value for the enum parameter when not explicitly set */
+                                default_value: string | number;
+                                /** @description Detailed explanation of the enum parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the enum parameter used in code references */
+                                key: string;
+                                /** @description Display name of the enum parameter */
+                                name: string;
+                                /**
+                                 * @description Type of the parameter, which is 'enum' in this case
+                                 * @enum {string}
+                                 */
+                                type: "enum";
+                                /** @description Current configured value of the enum parameter */
+                                value: string | number;
+                                /** @description List of all allowed values for the enum parameter */
+                                allowed_values: (string | number)[];
+                            } | Record<string, never>)[] | Record<string, never>;
+                        } & (Record<string, never> | unknown[]);
+                        /**
+                         * @description A parameter that contains nested parameters
+                         * @example {
+                         *       "augmentation": {
+                         *         "center_crop": [
+                         *           {
+                         *             "default_value": false,
+                         *             "description": "Whether to apply center cropping to the image",
+                         *             "key": "enable",
+                         *             "name": "Enable center crop",
+                         *             "type": "bool",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "default_value": 1,
+                         *             "description": "Ratio of original dimensions to keep when cropping",
+                         *             "key": "ratio",
+                         *             "name": "Crop ratio",
+                         *             "type": "float",
+                         *             "value": 0.8
+                         *           }
+                         *         ],
+                         *         "color_jitter": [
+                         *           {
+                         *             "default_value": false,
+                         *             "description": "Whether to apply color jittering to the image",
+                         *             "key": "enable",
+                         *             "name": "Enable color jitter",
+                         *             "type": "bool",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "default_value": 0.2,
+                         *             "description": "Maximum brightness adjustment factor",
+                         *             "key": "brightness",
+                         *             "name": "Brightness factor",
+                         *             "type": "float",
+                         *             "value": 0.1
+                         *           }
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        training: {
+                            [key: string]: ({
+                                /** @description Default value for the boolean parameter when not explicitly set */
+                                default_value: boolean;
+                                /** @description Detailed explanation of the boolean parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the boolean parameter used in code references */
+                                key: string;
+                                /** @description Display name of the boolean parameter */
+                                name: string;
+                                /**
+                                 * @description Type of the parameter, which is 'bool' in this case
+                                 * @enum {string}
+                                 */
+                                type: "bool";
+                                /** @description Current configured value of the boolean parameter */
+                                value: boolean;
+                            } | {
+                                /** @description Default value for the float parameter when not explicitly set */
+                                default_value: number;
+                                /** @description Detailed explanation of the float parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the float parameter used in code references */
+                                key: string;
+                                /** @description Display name of the float parameter */
+                                name: string;
+                                /** @description Maximum allowed value for the float parameter (can be None for no upper limit) */
+                                max_value: null | number;
+                                /** @description Minimum allowed value for the float parameter (can be None for no lower limit) */
+                                min_value: null | number;
+                                /**
+                                 * @description Type of the parameter, which is 'float' in this case
+                                 * @enum {string}
+                                 */
+                                type: "float";
+                                /** @description Current configured value of the float parameter */
+                                value: number;
+                            } | {
+                                /** @description List of allowed values for the integer parameter (can be None if no restrictions) */
+                                allowed_values?: null | number[];
+                                /** @description Default value for the integer parameter when not explicitly set */
+                                default_value: number;
+                                /** @description Detailed explanation of the integer parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the integer parameter used in code references */
+                                key: string;
+                                /** @description Display name of the integer parameter */
+                                name: string;
+                                /** @description Maximum allowed value for the integer parameter (can be None for no upper limit) */
+                                max_value: null | number;
+                                /** @description Minimum allowed value for the integer parameter (can be None for no lower limit) */
+                                min_value: null | number;
+                                /**
+                                 * @description Type of the parameter, which is 'int' in this case
+                                 * @enum {string}
+                                 */
+                                type: "int";
+                                /** @description Current configured value of the integer parameter */
+                                value: number;
+                            } | {
+                                /** @description Optional list of allowed values for the string parameter, if applicable */
+                                allowed_values?: string[];
+                                /** @description Default value for the string parameter when not explicitly set */
+                                default_value: string;
+                                /** @description Detailed explanation of the string parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the string parameter used in code references */
+                                key: string;
+                                /** @description Display name of the string parameter */
+                                name: string;
+                                /**
+                                 * @description Type of the parameter, which is 'string' in this case
+                                 * @enum {string}
+                                 */
+                                type: "string";
+                                /** @description Current configured value of the string parameter */
+                                value: string;
+                            } | {
+                                /** @description Default value for the enum parameter when not explicitly set */
+                                default_value: string | number;
+                                /** @description Detailed explanation of the enum parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the enum parameter used in code references */
+                                key: string;
+                                /** @description Display name of the enum parameter */
+                                name: string;
+                                /**
+                                 * @description Type of the parameter, which is 'enum' in this case
+                                 * @enum {string}
+                                 */
+                                type: "enum";
+                                /** @description Current configured value of the enum parameter */
+                                value: string | number;
+                                /** @description List of all allowed values for the enum parameter */
+                                allowed_values: (string | number)[];
+                            } | Record<string, never>)[] | Record<string, never>;
+                        } & (Record<string, never> | unknown[]);
+                        /**
+                         * @description A parameter that contains nested parameters
+                         * @example {
+                         *       "augmentation": {
+                         *         "center_crop": [
+                         *           {
+                         *             "default_value": false,
+                         *             "description": "Whether to apply center cropping to the image",
+                         *             "key": "enable",
+                         *             "name": "Enable center crop",
+                         *             "type": "bool",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "default_value": 1,
+                         *             "description": "Ratio of original dimensions to keep when cropping",
+                         *             "key": "ratio",
+                         *             "name": "Crop ratio",
+                         *             "type": "float",
+                         *             "value": 0.8
+                         *           }
+                         *         ],
+                         *         "color_jitter": [
+                         *           {
+                         *             "default_value": false,
+                         *             "description": "Whether to apply color jittering to the image",
+                         *             "key": "enable",
+                         *             "name": "Enable color jitter",
+                         *             "type": "bool",
+                         *             "value": true
+                         *           },
+                         *           {
+                         *             "default_value": 0.2,
+                         *             "description": "Maximum brightness adjustment factor",
+                         *             "key": "brightness",
+                         *             "name": "Brightness factor",
+                         *             "type": "float",
+                         *             "value": 0.1
+                         *           }
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        evaluation: {
+                            [key: string]: ({
+                                /** @description Default value for the boolean parameter when not explicitly set */
+                                default_value: boolean;
+                                /** @description Detailed explanation of the boolean parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the boolean parameter used in code references */
+                                key: string;
+                                /** @description Display name of the boolean parameter */
+                                name: string;
+                                /**
+                                 * @description Type of the parameter, which is 'bool' in this case
+                                 * @enum {string}
+                                 */
+                                type: "bool";
+                                /** @description Current configured value of the boolean parameter */
+                                value: boolean;
+                            } | {
+                                /** @description Default value for the float parameter when not explicitly set */
+                                default_value: number;
+                                /** @description Detailed explanation of the float parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the float parameter used in code references */
+                                key: string;
+                                /** @description Display name of the float parameter */
+                                name: string;
+                                /** @description Maximum allowed value for the float parameter (can be None for no upper limit) */
+                                max_value: null | number;
+                                /** @description Minimum allowed value for the float parameter (can be None for no lower limit) */
+                                min_value: null | number;
+                                /**
+                                 * @description Type of the parameter, which is 'float' in this case
+                                 * @enum {string}
+                                 */
+                                type: "float";
+                                /** @description Current configured value of the float parameter */
+                                value: number;
+                            } | {
+                                /** @description List of allowed values for the integer parameter (can be None if no restrictions) */
+                                allowed_values?: null | number[];
+                                /** @description Default value for the integer parameter when not explicitly set */
+                                default_value: number;
+                                /** @description Detailed explanation of the integer parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the integer parameter used in code references */
+                                key: string;
+                                /** @description Display name of the integer parameter */
+                                name: string;
+                                /** @description Maximum allowed value for the integer parameter (can be None for no upper limit) */
+                                max_value: null | number;
+                                /** @description Minimum allowed value for the integer parameter (can be None for no lower limit) */
+                                min_value: null | number;
+                                /**
+                                 * @description Type of the parameter, which is 'int' in this case
+                                 * @enum {string}
+                                 */
+                                type: "int";
+                                /** @description Current configured value of the integer parameter */
+                                value: number;
+                            } | {
+                                /** @description Optional list of allowed values for the string parameter, if applicable */
+                                allowed_values?: string[];
+                                /** @description Default value for the string parameter when not explicitly set */
+                                default_value: string;
+                                /** @description Detailed explanation of the string parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the string parameter used in code references */
+                                key: string;
+                                /** @description Display name of the string parameter */
+                                name: string;
+                                /**
+                                 * @description Type of the parameter, which is 'string' in this case
+                                 * @enum {string}
+                                 */
+                                type: "string";
+                                /** @description Current configured value of the string parameter */
+                                value: string;
+                            } | {
+                                /** @description Default value for the enum parameter when not explicitly set */
+                                default_value: string | number;
+                                /** @description Detailed explanation of the enum parameter's purpose and usage */
+                                description: string;
+                                /** @description Identifier for the enum parameter used in code references */
+                                key: string;
+                                /** @description Display name of the enum parameter */
+                                name: string;
+                                /**
+                                 * @description Type of the parameter, which is 'enum' in this case
+                                 * @enum {string}
+                                 */
+                                type: "enum";
+                                /** @description Current configured value of the enum parameter */
+                                value: string | number;
+                                /** @description List of all allowed values for the enum parameter */
+                                allowed_values: (string | number)[];
+                            } | Record<string, never>)[] | Record<string, never>;
+                        } & (Record<string, never> | unknown[]);
+                    };
+                };
+            };
+            /** @description Query parameter error. See the examples for details. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
+            /** @description Object not found. See the examples for details. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
+        };
+    };
+    UpdateTrainingConfiguration: {
+        parameters: {
+            query?: {
+                /** @description The ID of the task in the project. */
+                task_id?: string;
+                /** @description The ID of the model manifest (AKA model architecture) */
+                model_manifest_id?: string;
+            };
+            header?: never;
+            path: {
+                /** @description The ID of the organization. */
+                organization_id: string;
+                /** @description The ID of the workspace. */
+                workspace_id: string;
+                /** @description The ID of the project. */
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Unique identifier for the task */
+                    task_id: string;
+                    /** @description Unique identifier for the model manifest */
+                    model_manifest_id?: string;
+                    /**
+                     * @description A parameter that contains nested parameters
+                     * @example {
+                     *       "augmentation": {
+                     *         "center_crop": [
+                     *           {
+                     *             "key": "enable",
+                     *             "value": true
+                     *           },
+                     *           {
+                     *             "key": "ratio",
+                     *             "value": 0.8
+                     *           }
+                     *         ],
+                     *         "color_jitter": [
+                     *           {
+                     *             "key": "enable",
+                     *             "value": true
+                     *           },
+                     *           {
+                     *             "key": "brightness",
+                     *             "value": 0.1
+                     *           }
+                     *         ]
+                     *       }
+                     *     }
+                     */
+                    dataset_preparation: {
+                        [key: string]: ({
+                            /** @description Identifier for the boolean parameter */
+                            key: string;
+                            /** @description Current configured value of the boolean parameter */
+                            value: boolean;
+                        } | {
+                            /** @description Identifier for the float parameter used in code references */
+                            key: string;
+                            /** @description Current configured value of the float parameter */
+                            value: number;
+                        } | {
+                            /** @description Identifier for the integer parameter used in code references */
+                            key: string;
+                            /** @description Current configured value of the integer parameter */
+                            value: number;
+                        } | {
+                            /** @description Identifier for the string parameter used in code references */
+                            key: string;
+                            /** @description Current configured value of the string parameter */
+                            value: string;
+                        } | Record<string, never>)[] | Record<string, never>;
+                    } & (Record<string, never> | unknown[]);
+                    /**
+                     * @description A parameter that contains nested parameters
+                     * @example {
+                     *       "augmentation": {
+                     *         "center_crop": [
+                     *           {
+                     *             "key": "enable",
+                     *             "value": true
+                     *           },
+                     *           {
+                     *             "key": "ratio",
+                     *             "value": 0.8
+                     *           }
+                     *         ],
+                     *         "color_jitter": [
+                     *           {
+                     *             "key": "enable",
+                     *             "value": true
+                     *           },
+                     *           {
+                     *             "key": "brightness",
+                     *             "value": 0.1
+                     *           }
+                     *         ]
+                     *       }
+                     *     }
+                     */
+                    training: {
+                        [key: string]: ({
+                            /** @description Identifier for the boolean parameter */
+                            key: string;
+                            /** @description Current configured value of the boolean parameter */
+                            value: boolean;
+                        } | {
+                            /** @description Identifier for the float parameter used in code references */
+                            key: string;
+                            /** @description Current configured value of the float parameter */
+                            value: number;
+                        } | {
+                            /** @description Identifier for the integer parameter used in code references */
+                            key: string;
+                            /** @description Current configured value of the integer parameter */
+                            value: number;
+                        } | {
+                            /** @description Identifier for the string parameter used in code references */
+                            key: string;
+                            /** @description Current configured value of the string parameter */
+                            value: string;
+                        } | Record<string, never>)[] | Record<string, never>;
+                    } & (Record<string, never> | unknown[]);
+                    /**
+                     * @description A parameter that contains nested parameters
+                     * @example {
+                     *       "augmentation": {
+                     *         "center_crop": [
+                     *           {
+                     *             "key": "enable",
+                     *             "value": true
+                     *           },
+                     *           {
+                     *             "key": "ratio",
+                     *             "value": 0.8
+                     *           }
+                     *         ],
+                     *         "color_jitter": [
+                     *           {
+                     *             "key": "enable",
+                     *             "value": true
+                     *           },
+                     *           {
+                     *             "key": "brightness",
+                     *             "value": 0.1
+                     *           }
+                     *         ]
+                     *       }
+                     *     }
+                     */
+                    evaluation: {
+                        [key: string]: ({
+                            /** @description Identifier for the boolean parameter */
+                            key: string;
+                            /** @description Current configured value of the boolean parameter */
+                            value: boolean;
+                        } | {
+                            /** @description Identifier for the float parameter used in code references */
+                            key: string;
+                            /** @description Current configured value of the float parameter */
+                            value: number;
+                        } | {
+                            /** @description Identifier for the integer parameter used in code references */
+                            key: string;
+                            /** @description Current configured value of the integer parameter */
+                            value: number;
+                        } | {
+                            /** @description Identifier for the string parameter used in code references */
+                            key: string;
+                            /** @description Current configured value of the string parameter */
+                            value: string;
+                        } | Record<string, never>)[] | Record<string, never>;
+                    } & (Record<string, never> | unknown[]);
+                };
+            };
+        };
+        responses: {
+            /** @description Training configuration updated successfully */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Payload configuration contains validation error. See the examples for details. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
+            /** @description Object not found. See the examples for details. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {integer} */
+                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
+                        /** @description Message from server */
+                        message: string;
+                        /** @description Error code from server */
+                        error_code: string;
+                    };
+                };
+            };
+        };
+    };
     GetSettings: {
         parameters: {
             query?: {
@@ -23909,7 +25061,12 @@ export interface operations {
     };
     TriggerProjectExport: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Specify which models to include in the export.
+                 *     Allowed values: `all` (include all models), `none` (exclude models), `latest_active` (include only the last active model).
+                 *      */
+                include_models?: "all" | "none" | "latest_active";
+            };
             header?: never;
             path: {
                 /** @description The ID of the organization. */
@@ -24063,249 +25220,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
-                };
-            };
-        };
-    };
-    PrepareCodeDeployment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description The ID of the organization. */
-                organization_id: string;
-                /** @description The ID of the workspace. */
-                workspace_id: string;
-                /** @description The ID of the project. */
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Array of model identifiers */
-                    models: {
-                        /**
-                         * @description Mongo ID of the object
-                         * @example 60d31793d5f1fb7e6e3c1a4c
-                         */
-                        model_id: string;
-                        /**
-                         * @description Mongo ID of the object
-                         * @example 60d31793d5f1fb7e6e3c1a4c
-                         */
-                        model_group_id: string;
-                    }[];
-                };
-            };
-        };
-        responses: {
-            /** @description Code deployment started successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /**
-                         * @description Mongo ID of the object
-                         * @example 60d31793d5f1fb7e6e3c1a4c
-                         */
-                        id?: string;
-                        /** @description progress of code deployment */
-                        progress?: number;
-                        /**
-                         * @description State of the deployment
-                         * @enum {string}
-                         */
-                        state?: "NONE" | "PREPARING" | "DONE" | "FAILED";
-                        /** @description Identifiers of the exported models */
-                        models?: {
-                            /**
-                             * @description Mongo ID of the object
-                             * @example 60d31793d5f1fb7e6e3c1a4c
-                             */
-                            model_id: string;
-                            /**
-                             * @description Mongo ID of the object
-                             * @example 60d31793d5f1fb7e6e3c1a4c
-                             */
-                            model_group_id: string;
-                        }[];
-                        /** @description Id of the user who started the deployment */
-                        creator_id?: string;
-                        /** @description Creation time of the model */
-                        creation_time?: string;
-                    };
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @enum {integer} */
-                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
-                        /** @description Message from server */
-                        message: string;
-                        /** @description Error code from server */
-                        error_code: string;
-                    };
-                };
-            };
-            /** @description Object not found. See the examples for details. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @enum {integer} */
-                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
-                        /** @description Message from server */
-                        message: string;
-                        /** @description Error code from server */
-                        error_code: string;
-                    };
-                };
-            };
-        };
-    };
-    GetCodeDeployment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description The ID of the organization. */
-                organization_id: string;
-                /** @description The ID of the workspace. */
-                workspace_id: string;
-                /** @description The ID of the project. */
-                project_id: string;
-                /** @description The ID of the deployment */
-                deployment_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Retrieved details for deployment on code level */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /**
-                         * @description Mongo ID of the object
-                         * @example 60d31793d5f1fb7e6e3c1a4c
-                         */
-                        id?: string;
-                        /** @description progress of code deployment */
-                        progress?: number;
-                        /**
-                         * @description State of the deployment
-                         * @enum {string}
-                         */
-                        state?: "NONE" | "PREPARING" | "DONE" | "FAILED";
-                        /** @description Identifiers of the exported models */
-                        models?: {
-                            /**
-                             * @description Mongo ID of the object
-                             * @example 60d31793d5f1fb7e6e3c1a4c
-                             */
-                            model_id: string;
-                            /**
-                             * @description Mongo ID of the object
-                             * @example 60d31793d5f1fb7e6e3c1a4c
-                             */
-                            model_group_id: string;
-                        }[];
-                        /** @description Id of the user who started the deployment */
-                        creator_id?: string;
-                        /** @description Creation time of the model */
-                        creation_time?: string;
-                    };
-                };
-            };
-            /** @description Object not found. See the examples for details. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @enum {integer} */
-                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
-                        /** @description Message from server */
-                        message: string;
-                        /** @description Error code from server */
-                        error_code: string;
-                    };
-                };
-            };
-        };
-    };
-    DownloadCodeDeployment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description The ID of the organization. */
-                organization_id: string;
-                /** @description The ID of the workspace. */
-                workspace_id: string;
-                /** @description The ID of the project. */
-                project_id: string;
-                /** @description The ID of the deployment */
-                deployment_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Retrieved code deployment zipfile */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "zip file": string;
-                };
-            };
-            /** @description Object not found. See the examples for detail. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @enum {integer} */
-                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
-                        /** @description Message from server */
-                        message: string;
-                        /** @description Error code from server */
-                        error_code: string;
-                    };
-                };
-            };
-            /** @description Deployment is not ready. See the examples for detail. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @enum {integer} */
-                        http_status: 400 | 404 | 405 | 409 | 412 | 413 | 415 | 422 | 423 | 500 | 501 | 503;
-                        /** @description Message from server */
-                        message: string;
-                        /** @description Error code from server */
-                        error_code: string;
-                    };
                 };
             };
         };

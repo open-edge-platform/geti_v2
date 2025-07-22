@@ -9,6 +9,7 @@ import {
     getScheduledAutoTrainingJob,
     getScheduledTrainingJob,
     projectConfigAutoTrainingOnMock,
+    projectConfigurationAutoTrainingOnMock,
 } from '../credit-system/mocks';
 import {
     autoTrainingCreditSystemModalRegex,
@@ -35,8 +36,13 @@ test.describe('Check FUX notifications on tests page', () => {
                 [FUX_NOTIFICATION_KEYS.AUTO_TRAINING_NOTIFICATION]: { isEnabled: false },
             });
             registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(getScheduledAutoTrainingCostJob([]))));
+            // TODO: Remove GetFullConfiguration when FEATURE_FLAG_CONFIGURABLE_PARAMETERS is removed
             registerApiResponse('GetFullConfiguration', (_, res, ctx) =>
                 res(ctx.status(200), ctx.json(projectConfigAutoTrainingOnMock))
+            );
+            registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+                // @ts-expect-error Issue in openapi types
+                res(ctx.status(200), ctx.json(projectConfigurationAutoTrainingOnMock))
             );
 
             await page.goto(TESTS_PAGE_URL);

@@ -22,7 +22,7 @@ geti-configuration-tools = { path = "../../../libs/configuration_tools" , editab
 geti-feature-tools = { path = "../../../libs/feature_tools", editable = true}
 
 [dependency-groups]
-dev = ["pytest~=8.3", "ruff~=0.11", "pre-commit~=4.1", "mypy~=1.15", "testcontainers[mongodb]~=4.9", "pytest-freezegun"]
+dev = ["pytest~=8.3", "ruff~=0.11.2", "pre-commit~=4.1", "mypy~=1.15", "testcontainers[mongodb]~=4.9", "pytest-freezegun"]
 
 [tool.ruff]
 target-version = "py310"

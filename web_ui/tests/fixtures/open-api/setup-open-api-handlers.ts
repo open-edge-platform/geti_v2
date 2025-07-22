@@ -216,6 +216,8 @@ const registerDefaultHandlers = (api: OpenAPIBackend) => {
     };
 
     const GetSupportedAlgorithms: OperationHandler = async (_: Context<Document>, res, ctx) => {
+        // TODO: Replace this with supportedAlgorithms from `project-models/mocks.ts`
+        // when FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS is removed
         return res(ctx.json(legacySupportedAlgorithms));
     };
 

@@ -9,7 +9,12 @@ import {
     getMockedProjectStatusTask,
 } from '../../../src/test-utils/mocked-items-factory/mocked-project';
 import { test } from '../../fixtures/base-test';
-import { getScheduledTrainingCostJob, getScheduledTrainingJob, projectConfigAutoTrainingOffMock } from './mocks';
+import {
+    getScheduledTrainingCostJob,
+    getScheduledTrainingJob,
+    projectConfigAutoTrainingOffMock,
+    projectConfigurationAutoTrainingOffMock,
+} from './mocks';
 
 const ANNOTATOR_URL = paths.project.annotator.image({
     organizationId: '5b1f89f3-aba5-4a5f-84ab-de9abb8e0633',
@@ -33,8 +38,14 @@ test.beforeEach(async ({ registerApiResponse }) => {
     registerApiResponse('get_balance_api_v1_organizations__org_id__balance_get', (_, res, ctx) =>
         res(ctx.json({ incoming: 10, available: 100 }))
     );
+    // TODO: Remove GetFullConfiguration when FEATURE_FLAG_CONFIGURABLE_PARAMETERS is removed
     registerApiResponse('GetFullConfiguration', (_, res, ctx) =>
         res(ctx.status(200), ctx.json(projectConfigAutoTrainingOffMock))
+    );
+
+    registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+        // @ts-expect-error Issue ie openapi types
+        res(ctx.json(projectConfigurationAutoTrainingOffMock))
     );
 });
 

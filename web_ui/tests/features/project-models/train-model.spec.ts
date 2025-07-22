@@ -8,7 +8,6 @@ import {
     getMockedProjectStatusTask,
 } from '../../../src/test-utils/mocked-items-factory/mocked-project';
 import { expect, test } from '../../fixtures/base-test';
-import { notFoundHandler } from '../../fixtures/open-api/setup-open-api-handlers';
 import { project as detectionSegmentationProject } from '../../mocks/detection-segmentation/mocks';
 import { project as detectionProject } from '../../mocks/detection/mocks';
 import { expectedTrainingConfiguration, supportedAlgorithms, trainingConfiguration } from './mocks';
@@ -66,13 +65,10 @@ test.describe('Train model', () => {
         },
     });
 
-    test.beforeEach(({ registerApiResponse, openApi }) => {
-        openApi.registerHandler('notFound', (context, res, ctx) => {
-            if (context.request.path.endsWith('training_configuration')) {
-                return res(ctx.status(200), ctx.json(trainingConfiguration));
-            }
-
-            return notFoundHandler(context, res, ctx);
+    test.beforeEach(({ registerApiResponse }) => {
+        registerApiResponse('GetTrainingConfiguration', (_, res, ctx) => {
+            // @ts-expect-error Issue in openapi types
+            return res(ctx.status(200), ctx.json(trainingConfiguration));
         });
 
         registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => {

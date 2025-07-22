@@ -4,6 +4,14 @@
 
 import { Page } from '@playwright/test';
 
+import { TASK_TYPE } from '../../../src/core/projects/dtos/task.interface';
+import {
+    LifecycleStage,
+    PerformanceCategory,
+    SupportedAlgorithmDTO,
+} from '../../../src/core/supported-algorithms/dtos/supported-algorithms.interface';
+import { getModelGroups } from '../project-models/models.mocks';
+
 export const autoTrainingCreditSystemNotificationRegex =
     /the auto-training job has been started, 6 credits deducted. Check your credit balance here./i;
 export const autoTrainingCreditSystemModalRegex = /Accelerate the time-to-model/i;
@@ -733,6 +741,37 @@ export const detectionProjectAutoTrainingConfig = {
             ],
             task_id: '60db493fd20945a0046f56d2',
             task_title: 'Detection',
+        },
+    ],
+};
+
+export const supportedAlgorithms: { supported_algorithms: SupportedAlgorithmDTO[] } = {
+    supported_algorithms: [
+        {
+            model_manifest_id: getModelGroups.model_groups?.[0].model_template_id as string,
+            task: TASK_TYPE.SEGMENTATION,
+            name: 'SegNext-T',
+            description: 'ABC',
+            stats: {
+                gigaflops: 12.44,
+                trainable_parameters: 4.23,
+                performance_ratings: {
+                    accuracy: 2,
+                    training_time: 3,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
         },
     ],
 };

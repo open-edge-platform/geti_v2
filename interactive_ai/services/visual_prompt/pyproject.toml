@@ -30,8 +30,8 @@ media_utils = { path = "../../libs/media_utils", editable = true }
 
 [dependency-groups]
 dev = [
-    "pytest~=8.3",
-    "ruff~=0.11",
+    "pytest~=8.3.5",
+    "ruff~=0.11.2",
     "pre-commit~=4.1",
     "mypy~=1.15",
     "pytest-freezegun~=0.4",

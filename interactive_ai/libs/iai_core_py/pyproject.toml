@@ -28,12 +28,12 @@ geti-feature-tools = { path = "../../../libs/feature_tools", editable = true }
 [dependency-groups]
 dev = [
     "pytest~=8.3",
-    "ruff~=0.11",
+    "ruff~=0.11.2",
     "pre-commit~=4.1",
     "testfixtures~=7.2",
     "requests~=2.32",
     "pytest-freezegun",
-    "mypy~=1.15",
+    "mypy~=1.15.0",
     "types-cachetools",
     "types-PyYAML",
     "types-requests",
