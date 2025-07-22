@@ -72,11 +72,22 @@ const SingleLearningParameter = ({
             });
         };
 
+        const handleLearningRateReset = () => {
+            handleChange({
+                ...parameter,
+                value: parameter.defaultValue,
+            });
+        };
+
         const learningRateStep = 1e-6;
 
         return (
             <Parameters.Container>
-                <Parameter.Layout description={parameter.description} header={parameter.name}>
+                <Parameter.Layout
+                    description={parameter.description}
+                    header={parameter.name}
+                    onReset={handleLearningRateReset}
+                >
                     <NumberParameterField
                         onChange={handleLearningRateChange}
                         isDisabled={isReadOnly}
@@ -91,8 +102,6 @@ const SingleLearningParameter = ({
             </Parameters.Container>
         );
     }
-
-    console.log({ parameter });
 
     return <Parameters key={parameter.key} parameters={[parameter]} onChange={handleChange} isReadOnly={isReadOnly} />;
 };

@@ -51,7 +51,9 @@ const expectParameterToUpdateProperly = (parameter: ConfigurationParameter) => {
         resetParameter(parameter.name);
         expect(getToggleEnableParameter(parameter.name)).toBeChecked();
     } else {
-        const step = parameter.type === 'float' ? 0.001 : 1;
+        const learningRateStep = 1e-6;
+        const isLearningRate = parameter.key === 'learning_rate';
+        const step = parameter.type === 'float' ? (isLearningRate ? learningRateStep : 0.001) : 1;
 
         expect(getParameter(parameter.name)).toHaveValue(parameter.value.toString());
 
