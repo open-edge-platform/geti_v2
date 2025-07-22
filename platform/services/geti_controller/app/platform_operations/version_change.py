@@ -31,7 +31,7 @@ def commence_version_change(
             "target_image_tag": target_image_tag,
             "progress_percentage": 0,
             "status": "RUNNING",
-            "message": "Upgrade process has started.",
+            "message": f"{direction.capitalize()} process has started.",
         }
     )
 
