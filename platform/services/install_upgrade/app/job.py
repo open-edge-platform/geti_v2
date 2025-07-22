@@ -418,6 +418,12 @@ async def run() -> None:
             pass
     except asyncio.CancelledError:
         logger.info("Server task correctly cancelled")
+        sys.exit(1)
+
+    if job_manager.status == "FAILED":
+        logger.error("Task failed")
+        sys.exit(1)
+
     logger.info("Task finished successfully")
 
 
