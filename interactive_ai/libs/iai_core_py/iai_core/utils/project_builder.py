@@ -326,6 +326,7 @@ class ProjectBuilder:
         :return: The label groups and the labels relevant to the domain
         """
         empty_label_created = False
+        background_label_created = False
         custom_labels = []
         custom_label_groups = []
         top_level_multiclass_classification_groups_found = False
@@ -341,13 +342,15 @@ class ProjectBuilder:
             group_has_empty_label: bool = any(label.is_empty for label in labels)
             if group_has_empty_label:  # empty label provided along with custom labels
                 if len(labels) > 1:
-                    logger.error(
-                        "Found empty label in a group '%s' with more than 1 label: %s",
-                        group_name,
-                        labels,
-                    )
+                    logger.error(f"Found empty label in a group {group_name} with more than 1 label: {labels}")
                     raise ValueError("Invalid group for empty label")
                 empty_label_created = True
+            group_has_background_label: bool = any(label.is_background for label in labels)
+            if group_has_background_label:  # background label provided along with custom labels
+                if len(labels) > 1:
+                    logger.error(f"Found background label in a group {group_name} with more than 1 label: {labels}")
+                    raise ValueError("Invalid group for background label")
+                background_label_created = True
             label_group = LabelGroup(
                 name=group_name,
                 labels=labels,
@@ -387,7 +390,11 @@ class ProjectBuilder:
             custom_labels.extend([empty_label])
             custom_label_groups.extend([label_group])
 
-        if FeatureFlagProvider.is_enabled(FEATURE_FLAG_ANNOTATION_HOLE) and domain == Domain.SEGMENTATION:
+        if (
+            not background_label_created
+            and FeatureFlagProvider.is_enabled(FEATURE_FLAG_ANNOTATION_HOLE)
+            and domain == Domain.SEGMENTATION
+        ):
             background_label = Label(
                 name="Background",
                 domain=Domain.SEGMENTATION,
