@@ -19,15 +19,15 @@ _internal_defaults_do_not_set:
   # Can be a full hub/image:tag
   image: pilot
   traceSampling: 1.0
-    
+
   # Resources for a small pilot install
   resources:
     limits:
-      cpu: 400m
-      memory: 1024Mi
+      cpu: 500m
+      memory: 2048Mi
     requests:
-      cpu: 400m
-      memory: 1024Mi
+      cpu: 500m
+      memory: 2048Mi
 
   # Set to `type: RuntimeDefault` to use the default profile if available.
   seccompProfile: {}
@@ -54,11 +54,13 @@ _internal_defaults_do_not_set:
     ENABLE_CA_SERVER: "false"
     ENABLE_DEBUG_ON_HTTP: "false"
 
+  envVarFrom: []
+
   # Settings related to the untaint controller
   # This controller will remove `cni.istio.io/not-ready` from nodes when the istio-cni pod becomes ready
   # It should be noted that cluster operator/owner is responsible for having the taint set by their infrastructure provider when new nodes are added to the cluster; the untaint controller does not taint nodes
   taint:
-    # Controls whether the untaint controller is active
+    # Controls whether or not the untaint controller is active
     enabled: false
     # What namespace the untaint controller should watch for istio-cni pods. This is only required when istio-cni is running in a different namespace than istiod
     namespace: ""
@@ -116,7 +118,7 @@ _internal_defaults_do_not_set:
 
   # Additional labels to apply to the deployment.
   deploymentLabels: {}
-  
+
   # Additional annotations to apply to the deployment
   deploymentAnnotations:
     secret.reloader.stakater.com/reload: "istiod-tls"
@@ -141,6 +143,8 @@ _internal_defaults_do_not_set:
   # If unset, `istiod` will assume the trusted node proxy ztunnel resides
   # in the same namespace as itself.
   trustedZtunnelNamespace: ""
+  # Set this if you install ztunnel with a name different from the default.
+  trustedZtunnelName: ""
 
   sidecarInjectorWebhook:
     # You can use the field called alwaysInjectSelector and neverInjectSelector which will always inject the sidecar or
@@ -286,7 +290,7 @@ _internal_defaults_do_not_set:
     # Dev builds from prow are on gcr.io
     hub: docker.io/istio
     # Default tag for Istio images.
-    tag: 1.24.2
+    tag: 1.26.2
     # Variant of the image to use.
     # Currently supported are: [debug, distroless]
     variant: ""
@@ -406,16 +410,16 @@ _internal_defaults_do_not_set:
       startupProbe:
         enabled: true
         failureThreshold: 600 # 10 minutes
-          
+
       # Resources for the sidecar.
       resources:
-        limits:
-          memory: 512Mi
         requests:
-          cpu: 35m
-          memory: 40Mi
-      
-      
+          cpu: 2000m
+          memory: 1024Mi
+        limits:
+          cpu: 2000m
+          memory: 1024Mi
+
       # Default port for Pilot agent health checks. A value of 0 will disable health checking.
       statusPort: 15020
 
@@ -582,3 +586,13 @@ _internal_defaults_do_not_set:
 
     # Set to `type: RuntimeDefault` to use the default profile for templated gateways, if your container runtime supports it
     seccompProfile: {}
+
+  # gatewayClasses allows customizing the configuration of the default deployment of Gateways per GatewayClass.
+  # For example:
+  # gatewayClasses:
+  #   istio:
+  #     service:
+  #       spec:
+  #         type: ClusterIP
+  # Per-Gateway configuration can also be set in the `Gateway.spec.infrastructure.parametersRef` field.
+  gatewayClasses: {}
