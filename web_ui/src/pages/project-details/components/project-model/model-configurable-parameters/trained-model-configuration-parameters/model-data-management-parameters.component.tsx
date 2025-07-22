@@ -55,7 +55,7 @@ const TilingParameters = ({ parameters }: TilingParametersProps) => {
     return (
         <Accordion>
             <Accordion.Title>
-                Title <Accordion.Tag>{tilingMode}</Accordion.Tag>
+                Tiling <Accordion.Tag>{tilingMode}</Accordion.Tag>
             </Accordion.Title>
             <Accordion.Content>
                 <Flex direction={'column'} gap={'size-300'}>
