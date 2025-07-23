@@ -66,7 +66,11 @@ const SingleLearningParameter = ({
         });
     };
 
-    if (isLearningRateParameter(parameter) && !isReadOnly) {
+    if (isReadOnly) {
+        return <Parameters key={parameter.key} parameters={[parameter]} onChange={handleChange} isReadOnly />;
+    }
+
+    if (isLearningRateParameter(parameter)) {
         const handleLearningRateChange = (value: number) => {
             handleChange({
                 ...parameter,
@@ -103,7 +107,7 @@ const SingleLearningParameter = ({
         );
     }
 
-    return <Parameters key={parameter.key} parameters={[parameter]} onChange={handleChange} isReadOnly={isReadOnly} />;
+    return <Parameters key={parameter.key} parameters={[parameter]} onChange={handleChange} />;
 };
 
 interface LearningParametersGroupProps {
