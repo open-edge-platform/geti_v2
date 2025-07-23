@@ -108,12 +108,6 @@ Both `demo.py` script and the `demo_notebook.ipynb` notebook contain a code samp
 
 4. Visualizing the inference results.
 
-### Inference with OpenVINO Model Server
-Inference with OpenVINO Model Server (OVMS) is deprecated in Intel® Geti™ SDK.
-
-To use OVMS, create a new model deployment in Intel® Geti™ and select "OpenVINO Model Server deployment". 
-After downloading the deployment package, follow the included README instructions to run OVMS.
-
 ### Running the demo script
 
 In your terminal:
@@ -206,7 +200,6 @@ The code deployment files are structured as follows:
 - example_code
     - `demo.py`
     - `demo_notebook.ipynb`
-    - `demo_ovms.ipynb`  
     - `README.md`
     - `requirements.txt`
     - `requirements-notebook.txt`
