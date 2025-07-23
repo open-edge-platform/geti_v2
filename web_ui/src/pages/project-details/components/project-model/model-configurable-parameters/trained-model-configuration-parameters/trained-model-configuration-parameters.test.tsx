@@ -42,6 +42,22 @@ describe('TrainedModelConfigurationParameters', () => {
                 maxValue: 1,
                 minValue: 0,
             }),
+            getMockedConfigurationParameter({
+                type: 'enum',
+                allowedValues: [256, 512, 1024],
+                value: 512,
+                defaultValue: 256,
+                key: 'input_size_width',
+                name: 'Input size width',
+            }),
+            getMockedConfigurationParameter({
+                type: 'enum',
+                allowedValues: [256, 512, 1024],
+                value: 512,
+                defaultValue: 256,
+                key: 'input_size_height',
+                name: 'Input size height',
+            }),
             {
                 early_stopping: [
                     getMockedConfigurationParameter({
