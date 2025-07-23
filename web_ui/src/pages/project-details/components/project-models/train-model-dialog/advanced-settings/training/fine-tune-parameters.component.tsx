@@ -25,6 +25,8 @@ enum TRAINING_WEIGHTS {
     PREVIOUS_TRAINING_WEIGHTS = 'Previous training weights',
 }
 
+const ADVANCED_SETTINGS_URL = 'docs/user-guide/geti-fundamentals/model-training-and-optimization/#advanced-settings';
+
 export const FineTuneParameters: FC<FineTuneParametersProps> = ({
     trainFromScratch,
     onTrainFromScratchChange,
@@ -32,8 +34,7 @@ export const FineTuneParameters: FC<FineTuneParametersProps> = ({
     onReshufflingSubsetsEnabledChange,
 }) => {
     const docsUrl = useDocsUrl();
-    // eslint-disable-next-line max-len
-    const originalModelUrl = `${docsUrl}docs/user-guide/geti-fundamentals/model-training-and-optimization/#advanced-settings`;
+    const originalModelUrl = `${docsUrl}${ADVANCED_SETTINGS_URL}`;
 
     const trainingWeight = trainFromScratch
         ? TRAINING_WEIGHTS.PRE_TRAINED_WEIGHTS

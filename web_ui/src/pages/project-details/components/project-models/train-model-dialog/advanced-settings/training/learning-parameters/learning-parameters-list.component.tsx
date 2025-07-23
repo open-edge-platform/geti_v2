@@ -41,6 +41,8 @@ const isLearningRateParameter = (parameter: ConfigurationParameter): parameter i
     return parameter.type === 'float' && parameter.key === 'learning_rate';
 };
 
+export const LEARNING_RATE_STEP = 1e-6;
+
 const SingleLearningParameter = ({
     parameter,
     onUpdateTrainingConfiguration,
@@ -79,8 +81,6 @@ const SingleLearningParameter = ({
             });
         };
 
-        const learningRateStep = 1e-6;
-
         return (
             <Parameters.Container>
                 <Parameter.Layout
@@ -94,7 +94,7 @@ const SingleLearningParameter = ({
                         value={parameter.value}
                         name={parameter.name}
                         type={parameter.type}
-                        step={learningRateStep}
+                        step={LEARNING_RATE_STEP}
                         maxValue={parameter.maxValue}
                         minValue={parameter.minValue}
                     />
