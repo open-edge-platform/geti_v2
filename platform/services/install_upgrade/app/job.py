@@ -35,8 +35,9 @@ HTTPS_PROXY = os.getenv("HTTPS_PROXY", "")
 HTTP_PROXY = os.getenv("HTTP_PROXY", "")
 NO_PROXY = os.getenv("NO_PROXY", "")
 IMAGE_REGISTRY = os.getenv("IMAGE_REGISTRY") or None
-REPO_CA_DECODED = base64.b64decode(os.getenv("REPO_CA")).decode("utf-8") or None
-REPO_CA_ENCODED = os.getenv("REPO_CA") or None
+REPO_CA = os.getenv("REPO_CA")
+REPO_CA_DECODED = base64.b64decode(REPO_CA).decode("utf-8") if REPO_CA else None
+REPO_CA_ENCODED = REPO_CA or None
 
 platform_router = APIRouter(prefix="/platform", tags=["Platform"])
 
