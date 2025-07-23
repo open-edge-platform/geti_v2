@@ -27,7 +27,7 @@ DOMAIN_TO_EMPTY_LABEL_NAME = {
 }
 
 DOMAIN_TO_BACKGROUND_LABEL_NAME = {
-    Domain.INSTANCE_SEGMENTATION: "Background",
+    Domain.SEGMENTATION: "Background",
 }
 
 

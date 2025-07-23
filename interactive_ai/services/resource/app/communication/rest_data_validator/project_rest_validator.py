@@ -221,6 +221,7 @@ class ProjectRestValidator(RestApiValidator):
         ProjectRestValidator._validate_parent_labels(data=data)
         ProjectRestValidator._validate_label_groups(labels=labels)
         ProjectRestValidator._validate_empty_labels(labels=labels)
+        ProjectRestValidator._validate_background_labels(labels=labels)
         ProjectRestValidator._validate_label_deletion(data=data)
         if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_KEYPOINT_DETECTION):
             ProjectRestValidator._validate_keypoint_structure(data=data, labels=labels)
@@ -620,7 +621,7 @@ class ProjectRestValidator(RestApiValidator):
         :param labels: List of LabelProperties, each entry representing the properties
             for a single label that are up for validation
         :raises ReservedLabelNameException: if any label has the same name of the label
-            of the empty/background one for the same domain
+            of the empty one for the same domain
         """
         for label in labels:
             empty_label_name = DOMAIN_TO_EMPTY_LABEL_NAME.get(label.domain, None)
@@ -628,15 +629,24 @@ class ProjectRestValidator(RestApiValidator):
                 continue
             if (empty_label_name in (label.name, label.group)) and not label.is_empty:
                 raise ReservedLabelNameException(label_name=empty_label_name)
-            if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+
+    @staticmethod
+    def _validate_background_labels(labels: list[LabelProperties]) -> None:
+        """
+        Validates that user defined label names do not include the name of the background
+        label for that domain
+
+        :param labels: List of LabelProperties, each entry representing the properties
+            for a single label that are up for validation
+        :raises ReservedLabelNameException: if any label has the same name of the label
+            of the background one for the same domain
+        """
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+            for label in labels:
                 background_label_name = DOMAIN_TO_BACKGROUND_LABEL_NAME.get(label.domain, None)
                 if background_label_name is None:
                     continue
-                if (
-                    label.domain == Domain.INSTANCE_SEGMENTATION
-                    and label.name == background_label_name
-                    and not label.is_background
-                ):
+                if label.name == background_label_name and not label.is_background:
                     raise ReservedLabelNameException(label_name=label.name)
 
     @staticmethod
