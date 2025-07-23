@@ -1,4 +1,4 @@
 # syntax=docker/dockerfile:1.7
-FROM docker.io/python:3.10-slim-bookworm@sha256:9dd6774a1276178f94b0cc1fb1f0edd980825d0ea7634847af9940b1b6273c13 AS dex_templates
+FROM debian:bookworm-slim@sha256:6ac2c08566499cc2415926653cf2ed7c3aedac445675a013cc09469c9e118fdd AS dex_templates
 
 COPY --link . /dex_templates/
