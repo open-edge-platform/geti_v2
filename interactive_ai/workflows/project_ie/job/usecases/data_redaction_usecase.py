@@ -413,10 +413,7 @@ class ExportDataRedactionUseCase(BaseDataRedactionUseCase):
         """
         Purge model document metadata by marking it as purged and resetting specific fields.
 
-        This method updates the `purge_info` field in the document to indicate that it has been purged.
-        It also sets the `size` field to 0 and clears the `exportable_code_path` field.
-
-        :param doc: A dictionary representing the document to be purged.
+        :param doc: A dictionary representing a model document.
         :return: The modified document after purging.
         """
         purge_info = doc.get("purge_info")

@@ -10,6 +10,7 @@ from iai_core.repos.base import SessionBasedRepo
 from iai_core.repos.storage.storage_client import BinaryObjectType
 from iai_core.versioning import DataVersion
 
+from job.entities.include_models import IncludeModels
 from job.entities.zip_archive import ProjectZipArchive, ProjectZipArchiveWrapper
 from job.repos import BinaryStorageRepo, DocumentRepo, ZipStorageRepo
 from job.usecases import ExportDataRedactionUseCase, ProjectExportUseCase, SignatureUseCaseHelper
@@ -24,7 +25,9 @@ def identity_map(self, x):
 
 
 def mock_add_collection_with_documents(collection_name, documents):
-    # Consume the generator to trigger the redaction functions
+    """
+    Mock for "add_collection_with_documents" that ensures the documents generator is consumed.
+    """
     list(documents)
 
 
@@ -128,7 +131,7 @@ class TestProjectExportUseCase:
                 stack.enter_context(m)
             ProjectExportUseCase.export_as_zip(
                 project_id=project_id,
-                include_models="all",
+                include_models=IncludeModels.ALL,
                 progress_callback=mocked_progress_callback,
             )
 
@@ -254,7 +257,7 @@ class TestProjectExportUseCase:
                 stack.enter_context(m)
             ProjectExportUseCase.export_as_zip(
                 project_id=project_id,
-                include_models="none",
+                include_models=IncludeModels.NONE,
                 progress_callback=mocked_progress_callback,
             )
 

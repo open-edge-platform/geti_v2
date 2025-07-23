@@ -23,6 +23,7 @@ from jobs_common.tasks.utils.progress import publish_metadata_update
 
 from job.entities import ProjectZipArchive, ProjectZipArchiveWrapper
 from job.entities.exceptions import ExportProjectFailedException
+from job.entities.include_models import IncludeModels
 from job.repos.binary_storage_repo import BinaryStorageRepo
 from job.repos.document_repo import DocumentRepo
 from job.repos.zip_storage_repo import ZipStorageRepo
@@ -46,7 +47,7 @@ class ProjectExportUseCase:
         cls,
         project_id: ID,
         tmp_folder: str,
-        include_models: str,
+        include_models: IncludeModels,
         progress_callback: Callable[[float, str], None],
     ) -> None:
         """
@@ -54,6 +55,7 @@ class ProjectExportUseCase:
 
         :param project_id: ID of the project to export
         :param tmp_folder: Temporary local folder that can be used to store files
+        :param include_models: Indicates which models to include in the export
         :param progress_callback: callback function to report progress
         """
         session: Session = CTX_SESSION_VAR.get()
@@ -103,7 +105,8 @@ class ProjectExportUseCase:
                 )
                 purge_info_redaction: list[Callable] = (
                     [data_redaction_use_case.purge_model_docs_if_necessary]
-                    if include_models == "none" and collection_name in ProjectExportUseCase.COLLECTIONS_FOR_MODELS
+                    if include_models == IncludeModels.NONE
+                    and collection_name in ProjectExportUseCase.COLLECTIONS_FOR_MODELS
                     else []
                 )
                 redacted_docs = multi_map(
@@ -187,11 +190,14 @@ class ProjectExportUseCase:
         logger.info("Project '%s' has been successfully exported", project_id)
 
     @staticmethod
-    def export_as_zip(project_id: ID, include_models: str, progress_callback: Callable[[float, str], None]) -> None:
+    def export_as_zip(
+        project_id: ID, include_models: IncludeModels, progress_callback: Callable[[float, str], None]
+    ) -> None:
         """
         Create a zip file containing all the data of the project to export
 
         :param project_id: ID of the project to export
+        :param include_models: Indicates which models to include in the export
         :param progress_callback: callback function to report progress
         """
         try:
