@@ -3,7 +3,7 @@
 
 import { FC, ReactNode } from 'react';
 
-import { Divider, Flex, Grid, Heading, minmax, Radio, RadioGroup, repeat, Tooltip, TooltipTrigger } from '@geti/ui';
+import { Divider, Flex, Grid, Heading, Radio, RadioGroup, repeat, Tooltip, TooltipTrigger } from '@geti/ui';
 import clsx from 'clsx';
 import { isFunction } from 'lodash-es';
 
