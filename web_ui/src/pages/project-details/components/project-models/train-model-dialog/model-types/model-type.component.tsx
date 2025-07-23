@@ -45,13 +45,13 @@ const TemplateRating: FC<TemplateRatingProps> = ({ ratings }) => {
     );
 };
 
-interface ModelTypeAttributeProps {
+interface ModelAttributeProps {
     value: string;
     title: string;
     gridArea: string;
 }
 
-const ModelTypeAttribute = ({ title, value, gridArea }: ModelTypeAttributeProps) => {
+const ModelAttribute = ({ title, value, gridArea }: ModelAttributeProps) => {
     return (
         <>
             <Heading margin={0} UNSAFE_className={classes.attributeTitle} gridArea={`${gridArea}-title`}>
@@ -67,37 +67,20 @@ const ModelTypeAttribute = ({ title, value, gridArea }: ModelTypeAttributeProps)
             </span>
         </>
     );
-
-    return (
-        <Flex direction={'column'} gap={'size-100'} justifyContent={'space-between'}>
-            <Heading margin={0} UNSAFE_className={classes.attributeTitle}>
-                {title}
-            </Heading>
-            <span aria-label={title}>{value}</span>
-        </Flex>
-    );
 };
 
-type ModelAttributesProps = Pick<SupportedAlgorithm, 'license' | 'trainableParameters' | 'gigaflops'>;
+type ModelAttributesProps = Pick<SupportedAlgorithm, 'trainableParameters' | 'gigaflops'>;
 
-const ModelAttributes = ({ trainableParameters, gigaflops, license }: ModelAttributesProps) => {
+const ModelAttributes = ({ trainableParameters, gigaflops }: ModelAttributesProps) => {
     return (
         <Grid
             columns={repeat(2, 'max-content')}
             gap={'size-200'}
             areas={['model-size-title complexity-title', 'model-size-attribute complexity-attribute']}
         >
-            <ModelTypeAttribute gridArea={'model-size'} title={'Model size'} value={`${trainableParameters} M`} />
-            <ModelTypeAttribute gridArea={'complexity'} title={'Complexity'} value={`${gigaflops} GFlops`} />
+            <ModelAttribute gridArea={'model-size'} title={'Model size'} value={`${trainableParameters} M`} />
+            <ModelAttribute gridArea={'complexity'} title={'Complexity'} value={`${gigaflops} GFlops`} />
         </Grid>
-    );
-
-    return (
-        <Flex gap={'size-200'} alignItems={'center'}>
-            <ModelTypeAttribute title={'Model size'} value={`${trainableParameters} M`} />
-            <ModelTypeAttribute title={'Complexity'} value={`${gigaflops} GFlops`} />
-            <ModelTypeAttribute title={'License'} value={`${license}`} />
-        </Flex>
     );
 };
 
@@ -188,7 +171,6 @@ export const ModelType: FC<ModelTypeProps> = ({
                     <ModelAttributes
                         gigaflops={algorithm.gigaflops}
                         trainableParameters={algorithm.trainableParameters}
-                        license={algorithm.license}
                     />
                 </Flex>
             }
