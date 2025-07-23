@@ -40,7 +40,7 @@ def export_project(
     :param project_id: ID of the project to export
     :return: id of the exported project
     """
-    include_models_enum = IncludeModels[include_models.upper()]
+    include_models_enum = IncludeModels(include_models)
     if include_models_enum not in [IncludeModels.ALL, IncludeModels.NONE]:
         raise NotImplementedError(
             f"Exporting projects including models of type '{include_models_enum.value}' is not supported yet."
