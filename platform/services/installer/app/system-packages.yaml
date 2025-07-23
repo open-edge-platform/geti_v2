@@ -1,9 +1,5 @@
 shared:
   packages:
-    - name: helm
-      destination: tools
-      urls:
-        - https://get.helm.sh/helm-v3.16.1-linux-amd64.tar.gz
     - name: k3s
       destination: tools/k3s
       urls:

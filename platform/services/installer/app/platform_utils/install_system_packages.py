@@ -120,17 +120,6 @@ def _download_packages(system_packages: dict) -> None:
                 logger.info(f"Downloading {url} to {file_name}...")
                 _download_file(url, file_name)
 
-                # Extract helm tar.gz archive
-                if package["name"] == "helm" and file_name.endswith(".tar.gz"):
-                    with tarfile.open(file_name, "r:gz") as tar:
-                        member = next((m for m in tar.getmembers() if "linux-amd64/helm" in m.name), None)
-                        if member:
-                            member.name = os.path.basename(member.name)
-                            tar.extract(member, path=OFFLINE_TOOLS_DIR)
-                            logger.info(f"Extracted {member.name} to {OFFLINE_TOOLS_DIR}/")
-                    shutil.rmtree(file_name, ignore_errors=True)
-                    logger.info(f"Removed archive {file_name}")
-
 
 def _install_packages_from_path_ubuntu(packages_path: str) -> None:
     env = os.environ.copy()

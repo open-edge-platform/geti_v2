@@ -15,7 +15,6 @@ OFFLINE_TOOLS_DIR = "tools"
 USR_LOCAL_BIN_PATH = "/usr/local/bin/"
 OFFLINE_IMAGES_DIR = "images"
 PLATFORM_INSTALL_PATH = "/tmp/impp-install"  # noqa: S108
-HELM_BINARY = f"{OFFLINE_TOOLS_DIR}/helm"
 
 ###
 # k3s related
@@ -50,7 +49,7 @@ MIGRATION_LOG_FILE_PATH = f"{PLATFORM_LOGS_DIR}/migration.log"
 ###
 # installation related
 ###
-GETI_CONTROLLER_CHART_PATH = f"{getattr(sys, '_MEIPASS', '.')}/geti_controller_chart"
+GETI_CONTROLLER_CHART_PATH = f"{getattr(sys, '_MEIPASS', '.')}/geti_controller.yaml.j2"
 CHARTS_DIR = "charts"
 INSTALLER_DIR = "installer"
 REDHAT_PACKAGES_PATH = f"{OFFLINE_TOOLS_DIR}/RedHat"
@@ -60,7 +59,6 @@ UBUNTU_PACKAGES_PATH = f"{OFFLINE_TOOLS_DIR}/Ubuntu"
 UBUNTU_NVIDIA_PACKAGES_PATH = f"{OFFLINE_TOOLS_DIR}/Ubuntu/nvidia"
 RESOURCE_VALUES_FILE_NAME = "impt-resource-values.yaml"
 DATA_CAN_BE_RESTORED_FLAG = ".can_be_restored.flag"
-TEMPLATES_DIR = f"{getattr(sys, '_MEIPASS', '..')}/templates"
 VERSION_YAML_PATH = f"{getattr(sys, '_MEIPASS', '.')}/version.yaml"
 DATA_FOLDER = "/data"
 CONTAINERD_CERT_DIR = "/etc/containerd/certs.d"
