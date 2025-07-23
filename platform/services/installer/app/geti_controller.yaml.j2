@@ -1,0 +1,37 @@
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: geti-components
+spec:
+  insecureSkipTLSVerify: true
+  chart: "oci://{{ geti_registry }}/geti/charts/geti-controller"
+{#  version: $VERSION#}
+  version: 2.12.0-manual-33e27556
+  targetNamespace: default
+  timeout: 60m
+  backOffLimit: 0
+  failurePolicy: abort
+  valuesSecrets:
+    - name: external-registry
+      ignoreUpdates: true
+      keys:
+        - overrideRegistry
+  valuesContent: |-
+    global:
+      ingress_enabled: false
+      platformVersion: "{{ platform_version }}"
+      registry_address: "{{ geti_registry }}"
+{#      tag: "$TAG" # TODO temporary solution to get new images, remove when CI will be ready#}
+      tag: 2.12.0-manual-33e27556
+      login: "{{ username }}"
+      passwordHash: "{{ password_hash }}"
+      dataFolder: "{{ data_folder }}"
+      tlsCert: "{{ tls_cert_file }}"
+      tlsKey: "{{ tls_key_file }}"
+      imageRegistry: "{{ image_registry }}"
+      proxy:
+        enabled: "{{ proxy_enabled }}"
+        https_proxy: "{{ https_proxy }}"
+        http_proxy: "{{ http_proxy }}"
+        no_proxy: "{{ no_proxy }}"

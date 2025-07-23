@@ -6,8 +6,7 @@ include ../../../Makefile.shared-python
 
 COMPONENT_NAME = installer
 
-DOCKER_BUILD_CONTEXT := --build-context libs=../../../libs \
- 						--build-context geti_controller_chart=../geti_controller/.build/chart
+DOCKER_BUILD_CONTEXT := --build-context libs=../../../libs
 
 build_installer_dev: build-image
 	$(eval CONTAINER_ID := $(shell docker run -d --rm $(REGISTRY)/open-edge-platform/geti/${COMPONENT_NAME}:${TAG} sleep 10))
