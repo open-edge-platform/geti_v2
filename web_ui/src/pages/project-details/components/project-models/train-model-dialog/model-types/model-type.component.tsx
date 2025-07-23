@@ -3,7 +3,7 @@
 
 import { FC, ReactNode } from 'react';
 
-import { Flex, Grid, Heading, Radio, RadioGroup, repeat, Tooltip, TooltipTrigger } from '@geti/ui';
+import { Divider, Flex, Grid, Heading, minmax, Radio, RadioGroup, repeat, Tooltip, TooltipTrigger } from '@geti/ui';
 import clsx from 'clsx';
 import { isFunction } from 'lodash-es';
 
@@ -42,6 +42,62 @@ const TemplateRating: FC<TemplateRatingProps> = ({ ratings }) => {
             <AttributeRating name={'Training time'} rating={ratings.trainingTime} />
             <AttributeRating name={'Accuracy'} rating={ratings.accuracy} />
         </Grid>
+    );
+};
+
+interface ModelTypeAttributeProps {
+    value: string;
+    title: string;
+    gridArea: string;
+}
+
+const ModelTypeAttribute = ({ title, value, gridArea }: ModelTypeAttributeProps) => {
+    return (
+        <>
+            <Heading margin={0} UNSAFE_className={classes.attributeTitle} gridArea={`${gridArea}-title`}>
+                {title}
+            </Heading>
+            <span
+                aria-label={title}
+                style={{
+                    gridArea: `${gridArea}-attribute`,
+                }}
+            >
+                {value}
+            </span>
+        </>
+    );
+
+    return (
+        <Flex direction={'column'} gap={'size-100'} justifyContent={'space-between'}>
+            <Heading margin={0} UNSAFE_className={classes.attributeTitle}>
+                {title}
+            </Heading>
+            <span aria-label={title}>{value}</span>
+        </Flex>
+    );
+};
+
+type ModelAttributesProps = Pick<SupportedAlgorithm, 'license' | 'trainableParameters' | 'gigaflops'>;
+
+const ModelAttributes = ({ trainableParameters, gigaflops, license }: ModelAttributesProps) => {
+    return (
+        <Grid
+            columns={repeat(2, 'max-content')}
+            gap={'size-200'}
+            areas={['model-size-title complexity-title', 'model-size-attribute complexity-attribute']}
+        >
+            <ModelTypeAttribute gridArea={'model-size'} title={'Model size'} value={`${trainableParameters} M`} />
+            <ModelTypeAttribute gridArea={'complexity'} title={'Complexity'} value={`${gigaflops} GFlops`} />
+        </Grid>
+    );
+
+    return (
+        <Flex gap={'size-200'} alignItems={'center'}>
+            <ModelTypeAttribute title={'Model size'} value={`${trainableParameters} M`} />
+            <ModelTypeAttribute title={'Complexity'} value={`${gigaflops} GFlops`} />
+            <ModelTypeAttribute title={'License'} value={`${license}`} />
+        </Flex>
     );
 };
 
@@ -120,13 +176,21 @@ export const ModelType: FC<ModelTypeProps> = ({
                 </>
             }
             descriptionContent={
-                <TemplateRating
-                    ratings={{
-                        accuracy: RATING_MAP[performanceRatings.accuracy],
-                        trainingTime: RATING_MAP[performanceRatings.trainingTime],
-                        inferenceSpeed: RATING_MAP[performanceRatings.inferenceSpeed],
-                    }}
-                />
+                <Flex direction={'column'} gap={'size-200'}>
+                    <TemplateRating
+                        ratings={{
+                            accuracy: RATING_MAP[performanceRatings.accuracy],
+                            trainingTime: RATING_MAP[performanceRatings.trainingTime],
+                            inferenceSpeed: RATING_MAP[performanceRatings.inferenceSpeed],
+                        }}
+                    />
+                    <Divider size={'S'} />
+                    <ModelAttributes
+                        gigaflops={algorithm.gigaflops}
+                        trainableParameters={algorithm.trainableParameters}
+                        license={algorithm.license}
+                    />
+                </Flex>
             }
         />
     );
