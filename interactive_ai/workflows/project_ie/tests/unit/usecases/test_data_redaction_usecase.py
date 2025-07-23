@@ -859,7 +859,7 @@ class TestImportDataRedactionUseCase:
             "purge_info": {
                 "is_purged": True,
                 "purge_time": datetime(2023, 1, 1),
-                "user_id": "previous_user",
+                "user_uid": "previous_user",
             },
         }
 
@@ -882,13 +882,15 @@ class TestImportDataRedactionUseCase:
             "name": "test_model",
             "size": 1024,
             "exportable_code_path": "/path/to/code",
-            "purge_info": {"is_purged": False, "purge_time": datetime(2023, 1, 1), "user_id": "original_user"},
+            "purge_info": {"is_purged": False, "purge_time": datetime(2023, 1, 1), "user_uid": "original_user"},
+            "weight_paths": ["item_1"],
         }
 
         result = data_redaction_use_case.purge_model_docs_if_necessary(doc)
 
         assert result["purge_info"]["is_purged"] is True
         assert result["purge_info"]["purge_time"] == mock_time
-        assert result["purge_info"]["user_id"] == "export_project_job"
+        assert result["purge_info"]["user_uid"] == "export_project_job"
         assert result["size"] == 0
         assert result["exportable_code_path"] == ""
+        assert result["weight_paths"] == []

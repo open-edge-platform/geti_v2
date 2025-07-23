@@ -426,11 +426,12 @@ class ExportDataRedactionUseCase(BaseDataRedactionUseCase):
         new_purge_info = {
             "is_purged": True,
             "purge_time": now(),
-            "user_id": "export_project_job",
+            "user_uid": "export_project_job",
         }
         doc["purge_info"] = new_purge_info
         doc["size"] = 0
         doc["exportable_code_path"] = ""
+        doc["weight_paths"] = []
         return doc
 
 
