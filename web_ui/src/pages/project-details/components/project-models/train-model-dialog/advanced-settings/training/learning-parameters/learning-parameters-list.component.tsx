@@ -66,7 +66,7 @@ const SingleLearningParameter = ({
         });
     };
 
-    if (isLearningRateParameter(parameter)) {
+    if (isLearningRateParameter(parameter) && !isReadOnly) {
         const handleLearningRateChange = (value: number) => {
             handleChange({
                 ...parameter,
