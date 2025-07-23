@@ -11,7 +11,7 @@ metadata:
   name: geti-namespaces
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   version: $VERSION
   chart: "oci://{{ geti_registry }}/geti/helm/geti-namespaces"
   backOffLimit: 0
@@ -23,7 +23,7 @@ metadata:
   name: reloader
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/reloader"
   version: $VERSION
   targetNamespace: kube-system
@@ -36,7 +36,7 @@ metadata:
   name: geti-pv-creation
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/geti-pv-creation"
   version: $VERSION
   targetNamespace: impt
@@ -51,7 +51,7 @@ metadata:
   name: cert-manager
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/cert-manager"
   version: $VERSION
   targetNamespace: cert-manager
@@ -64,7 +64,7 @@ metadata:
   name: cert-manager-addon
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-addon"
   version: $VERSION
   targetNamespace: cert-manager
@@ -75,7 +75,7 @@ metadata:
   name: cert-manager-istio-csr
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-istio-csr"
   version: $VERSION
   targetNamespace: cert-manager
@@ -88,7 +88,7 @@ metadata:
   name: istio-base
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/istio-base"
   version: $VERSION
   targetNamespace: istio-system
@@ -101,7 +101,7 @@ metadata:
   name: istio-istiod
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/istio-istiod"
   version: $VERSION
   targetNamespace: istio-system
@@ -118,7 +118,7 @@ metadata:
   name: istio-gateway
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/istio-gateway"
   version: $VERSION
   targetNamespace: istio-system
@@ -140,7 +140,7 @@ metadata:
   name: geti-tools
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/geti-tools"
   version: $VERSION
   targetNamespace: impt
@@ -163,7 +163,7 @@ metadata:
   name: geti-components
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/geti-components"
   version: $VERSION
   targetNamespace: impt
@@ -200,7 +200,7 @@ metadata:
   name: modelmesh-serving-addon
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/modelmesh-serving-addon"
   version: $VERSION
   targetNamespace: impt
@@ -216,7 +216,7 @@ metadata:
   name: flyte-core
 spec:
   repoCA: |
-    {{ repoCA_dec | indent(4) -}}
+    {{ repoCA_dec | indent(4) }}
   chart: "oci://{{ geti_registry }}/geti/helm/flyte-core"
   version: $VERSION
   targetNamespace: flyte
