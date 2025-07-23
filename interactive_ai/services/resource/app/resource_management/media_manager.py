@@ -502,6 +502,14 @@ class MediaManager:
         )
 
     @staticmethod
+    def _convert_image(pil_image: PILImage.Image, save_extension: ImageExtensions) -> tuple[str, PILImage.Image]:
+        if save_extension in (ImageExtensions.JPEG, ImageExtensions.JPG) and pil_image.mode in ("RGBA", "P"):
+            pil_image = pil_image.convert("RGB")
+        with tempfile.NamedTemporaryFile(suffix=save_extension.value, delete=False) as temp_file:
+            pil_image.save(temp_file.name)
+            return temp_file.name, PILImage.open(temp_file.name)
+
+    @staticmethod
     @unified_tracing
     def upload_image(  # noqa: C901, PLR0915
         dataset_storage_identifier: DatasetStorageIdentifier,
@@ -541,7 +549,7 @@ class MediaManager:
         # Read the image data
         image_bytes.seek(0)
         try:
-            pil_image = PILImage.open(image_bytes)
+            pil_image: PILImage.Image = PILImage.open(image_bytes)
         except UnidentifiedImageError:
             raise InvalidMediaException("Unable to read the image")
 
@@ -552,11 +560,7 @@ class MediaManager:
         image_bytes.seek(0)
         data_source: str | BytesStream = BytesStream(data=image_bytes, length=length)
         if extension != save_extension:
-            with tempfile.NamedTemporaryFile(suffix=save_extension.value, delete=False) as temp_file:
-                pil_image.save(temp_file.name)
-                temp_converted_file = temp_file.name
-            data_source = temp_converted_file
-            pil_image = PILImage.open(temp_converted_file)
+            data_source, pil_image = MediaManager._convert_image(pil_image=pil_image, save_extension=save_extension)
 
         # Store the image with provided data and extension.
         # If the original extension does not match the save extension,

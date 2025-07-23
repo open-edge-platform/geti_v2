@@ -79,9 +79,12 @@ class MediaUploadedUseCase:
             # Create a thumbnail for the image
             dst_file_name = Image.thumbnail_filename_by_image_id(image_id)
             with tempfile.NamedTemporaryFile(suffix=dst_file_name) as temp_file:
-                MediaUploadedUseCase.crop_to_thumbnail(
+                thumbnail_image = MediaUploadedUseCase.crop_to_thumbnail(
                     pil_image=pil_image, target_width=DEFAULT_THUMBNAIL_SIZE, target_height=DEFAULT_THUMBNAIL_SIZE
-                ).save(temp_file.name)
+                )
+                if thumbnail_image.mode in ("RGBA", "P"):
+                    thumbnail_image = thumbnail_image.convert("RGB")
+                thumbnail_image.save(temp_file.name)
                 ThumbnailBinaryRepo(dataset_storage_identifier).save(
                     data_source=temp_file.name, dst_file_name=dst_file_name
                 )
