@@ -53,7 +53,6 @@ from geti_controller.communication import (
 )
 from geti_controller.errors import GetiControllerError
 from geti_controller.install import deploy_geti_controller_chart
-from geti_controller.uninstall import uninstall_geti_controller_chart
 from k3s.detect_ip import get_first_public_ip, get_master_node_ip_address
 from k3s.install import K3SInstallationError, install_k3s
 from k3s.uninstall import uninstall_k3s
@@ -319,6 +318,11 @@ def display_final_confirmation(config: InstallationConfig, skip_confirmation_mes
     else:
         click.echo(InstallCmdConfirmationTexts.confirm_data_creation_message.format(path=config.data_folder.value))
 
+    if config.repoCA.value:
+        click.echo(InstallCmdConfirmationTexts.root_ca_message.format(path=config.repoCA.value))
+    else:
+        click.echo(InstallCmdConfirmationTexts.no_root_ca_message)
+
     if not skip_confirmation_message:
         click.echo()
         click.echo(InstallCmdConfirmationTexts.change_config_message)
@@ -346,7 +350,8 @@ def display_final_confirmation(config: InstallationConfig, skip_confirmation_mes
 @click.option("--tls-key-file", type=click.Path(), callback=is_filepath_valid, help=InstallCmdTexts.tls_key_file_help)
 @click.option("--accept-third-party-licenses", is_flag=True, help=InstallCmdTexts.third_party_licenses_help)
 @click.option("--skip-confirmation-message", is_flag=True, help=InstallCmdTexts.skip_confirmation_help)
-def install(
+@click.option("--repo-ca", type=click.Path(), callback=is_filepath_valid)
+def install(  # noqa: PLR0913
     data_folder: str | None,
     username: str,
     password: str,
@@ -354,6 +359,7 @@ def install(
     tls_key_file: str | None = None,
     accept_third_party_licenses: bool = False,
     skip_confirmation_message: bool = False,
+    repo_ca: str | None = None,
 ) -> None:
     """
     Install platform.
@@ -369,6 +375,7 @@ def install(
     check_tls_certificates(tls_cert_file=tls_cert_file, tls_key_file=tls_key_file)
     config.tls_cert_file.value = tls_cert_file
     config.tls_key_file.value = tls_key_file
+    config.repoCA.value = repo_ca
     run_initial_checks(config=config)
     if not accept_third_party_licenses:
         click.confirm(InstallCmdTexts.third_party_licenses_prompt, default=True, abort=True)

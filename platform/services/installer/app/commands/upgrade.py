@@ -327,9 +327,10 @@ def display_final_confirmation(config: UpgradeConfig, skip_confirmation_message:
     else:
         click.echo(InstallCmdConfirmationTexts.no_custom_certificate_message)
 
-    click.echo(
-        f"Following root CA will be used {config.repoCA.value}" if config.repoCA.value else "No root CA will be used."
-    )
+    if config.repoCA.value:
+        click.echo(InstallCmdConfirmationTexts.root_ca_message.format(path=config.repoCA.value))
+    else:
+        click.echo(InstallCmdConfirmationTexts.no_root_ca_message)
 
     click.echo()
     click.echo(InstallCmdConfirmationTexts.confirm_data_message.format(path=config.data_folder.value))
