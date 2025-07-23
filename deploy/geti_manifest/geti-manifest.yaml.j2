@@ -1,9 +1,49 @@
-k3s_version: "1.1"
-nvidia_drivers_version: "1.2"
+k3s_version: "v1.33.1+k3s1"
+nvidia_drivers_version: "535.*.*"
 intel_drivers_version: "1.3"
-nvidia_device_plugin_version: "1.4"
-intel_device_plugin_version: "1.5"
+intel_device_plugin_version: $INTEL_DEVICE_PLUGIN_VERSION
 is_upgrade_required: false
+
+{% if 'nvidia' in gpu_label %}
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: nvidia-device-plugin
+spec:
+  repo: https://nvidia.github.io/k8s-device-plugin
+  chart: nvidia-device-plugin
+  version: v0.17.2
+  targetNamespace: kube-system
+  createNamespace: false
+  timeout: 30m
+  valuesContent: |-
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: "nvidia.com/gpu"
+              operator: In
+              values:
+              - "true"
+    image:
+      repository: nvcr.io/nvidia/k8s-device-plugin
+      tag: "v0.17.2-ubi9"
+    runtimeClassName: nvidia
+    failOnInitError: "false"
+    deviceListStrategy: volume-mounts
+    securityContext:
+      allowPrivilegeEscalation: true
+      privileged: true
+    resources:
+      requests:
+        cpu: 50m
+        memory: 50Mi
+      limits:
+        memory: 50Mi
+{% endif %}
+
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
@@ -150,6 +190,9 @@ spec:
   valuesContent: |-
     global:
       registry_address: "{{ geti_registry }}"
+    enabled:
+      dcgm-exporter: {{ 'nvidia' in gpu_label | default(true) }}
+      xpu-manager: {{ 'i915' in gpu_label | default(false) }}
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
@@ -171,6 +214,10 @@ spec:
   valuesContent: |-
     configuration:
       dataStoragePath: "{{ data_folder }}"
+      render_gid: {{ render_gid }}
+      accelerator:
+        type: {{ 'gpu' if gpu_label else 'cpu' }}
+        name: {{ gpu_label | default('') }}
     global:
       registry_address: "{{ geti_registry }}"
       tag: "$TAG" # TODO temporary solution to get new images, remove when CI will be ready

@@ -6,6 +6,8 @@ from pydantic import BaseModel
 
 class InstallRequest(BaseModel):
     version_number: str
+    gpu_label: str | None = None
+    render_gid: int | None = None
 
 
 class InstallResponse(BaseModel):

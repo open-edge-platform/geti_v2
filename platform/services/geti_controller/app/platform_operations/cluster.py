@@ -171,7 +171,15 @@ def deploy_cluster_role_binding(cluster_role_binding: V1ClusterRoleBinding) -> N
         logger.error(f"An error occurred: {e}")
 
 
-def create_job(name: str, image: str, registry: str, manifest_version: str, port: int) -> V1Job:
+def create_job(
+    name: str,
+    image: str,
+    registry: str,
+    manifest_version: str,
+    port: int,
+    gpu_label: str | None = None,
+    render_gid: int | None = None,
+) -> V1Job:
     """Create a Job object."""
     http_proxy = os.getenv("HTTP_PROXY")
     https_proxy = os.getenv("HTTPS_PROXY")
@@ -187,6 +195,8 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
         env=[
             V1EnvVar(name="GETI_REGISTRY", value=registry),
             V1EnvVar(name="GETI_MANIFEST_VERSION", value=manifest_version),
+            V1EnvVar(name="GPU_LABEL", value=gpu_label or ""),
+            V1EnvVar(name="RENDER_GID", value=str(render_gid) if render_gid else ""),
             V1EnvVar(
                 name="DATA_FOLDER",
                 value_from=V1EnvVarSource(
@@ -343,13 +353,13 @@ def wait_for_job_creation(namespace: str, timeout: int = 300, interval: int = 10
 
 
 def deploy_service_job(
-    name: str = SERVICE_NAME,
-    namespace: str = NAMESPACE,
     registry: str | None = None,
     image_tag: str | None = None,
     manifest_version: str | None = None,
     port: int = 8000,
     direction: str = "install",
+    gpu_label: str | None = None,
+    render_gid: int | None = None,
 ) -> None:
     """
     Deploys the installation and upgrade job for the platform.
@@ -363,12 +373,12 @@ def deploy_service_job(
     version = Version(re.match(r"^\d+\.\d+\.\d+", image_tag).group())
     prepared_name = f"{direction}-job-{version}-{timestamp_string}"
     load_kube_config()
-    se = create_service(name=name, namespace=namespace, selector={"direction": direction})
-    sa = create_service_account(name=prepared_name, namespace=namespace)
+    se = create_service(name=SERVICE_NAME, namespace=NAMESPACE, selector={"direction": direction})
+    sa = create_service_account(name=prepared_name, namespace=NAMESPACE)
     cr = create_cluster_role(name=prepared_name)
-    crb = create_cluster_role_binding(name=prepared_name, service_account_name=prepared_name, namespace=namespace)
-    deploy_service(se, namespace=namespace)
-    deploy_service_account(sa, namespace=namespace)
+    crb = create_cluster_role_binding(name=prepared_name, service_account_name=prepared_name, namespace=NAMESPACE)
+    deploy_service(se, namespace=NAMESPACE)
+    deploy_service_account(sa, namespace=NAMESPACE)
     deploy_cluster_role(cr)
     deploy_cluster_role_binding(crb)
     job = create_job(
@@ -377,5 +387,7 @@ def deploy_service_job(
         image=f"{registry}/geti/install-upgrade:{image_tag}",
         manifest_version=manifest_version,
         port=port,
+        gpu_label=gpu_label,
+        render_gid=render_gid,
     )
     deploy_job(job, namespace="default")

@@ -9,6 +9,11 @@ from http import HTTPStatus
 
 import requests
 
+from constants.platform import (
+    GPU_PROVIDER_INTEL_ARC,
+    GPU_PROVIDER_INTEL_MAX,
+    GPU_PROVIDER_NVIDIA,
+)
 from geti_controller.errors import GetiControllerCommunicationError
 from platform_configuration.versions import get_target_product_build
 
@@ -52,7 +57,7 @@ def establish_port_forwarding(kube_config: str) -> subprocess.Popen:
     return process
 
 
-def call_install_endpoint(kube_config: str) -> dict:
+def call_install_endpoint(kube_config: str, render_gid: int, gpu_provider: str | None = None) -> dict:
     """
     Calls the POST /api/v1/platform/install endpoint of the Geti Controller service
     with port-forwarding.
@@ -65,6 +70,16 @@ def call_install_endpoint(kube_config: str) -> dict:
     try:
         url = f"http://localhost:{LOCAL_PORT}/api/v1/platform/install"
         payload = {"version_number": get_target_product_build()}
+        if gpu_provider:
+            if gpu_provider == GPU_PROVIDER_NVIDIA:
+                gpu_label = "nvidia.com/gpu"
+            elif gpu_provider in (GPU_PROVIDER_INTEL_ARC, GPU_PROVIDER_INTEL_MAX):
+                gpu_label = "gpu.intel.com/i915"
+            else:
+                gpu_label = "gpu.intel.com/xe"
+
+            payload["gpu_label"] = gpu_label
+            payload["render_gid"] = render_gid
         response = requests.post(url, json=payload, timeout=10)
 
         if response.status_code != HTTPStatus.OK:

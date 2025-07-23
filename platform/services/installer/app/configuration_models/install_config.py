@@ -52,6 +52,8 @@ class InstallationConfig(BaseConfig):
         # from the client perspective, GPU is always required.
         _skip_gpu_support = os.getenv("PLATFORM_GPU_REQUIRED") == "false"
         self.gpu_support = ConfigurationField(type=bool, required=False, value=not _skip_gpu_support)
+        self.gpu_provider = ConfigurationField(type=str, required=False, value="")
+        self.render_gid = ConfigurationField(type=int, required=False, value=0)
 
         # To determine if a platform is running on a VM or something else. Can be used  to disable resource intensive
         # components such as horizontal pod autoscaling
@@ -83,15 +85,12 @@ class InstallationConfig(BaseConfig):
 
         self.master_ip_autodetected = ConfigurationField(type=str, required=False)
 
-        self.gpu_provider = ConfigurationField(type=str, required=False, value="")
-
         self.internet_access = ConfigurationField(type=bool, required=False, value=True)
 
         _tools_in_package = self.tools_in_package()
         self.lightweight_installer = ConfigurationField(type=bool, required=False, value=not _tools_in_package)
 
         self.image_registry = ConfigurationField(type=str, required=False, value=EXTERNAL_REGISTRY_ADDRESS)
-
         self.geti_image_registry = ConfigurationField(type=str, required=False, value=PLATFORM_REGISTRY_ADDRESS)
 
         self.smtp_address = ConfigurationField(type=str, required=False, value="")

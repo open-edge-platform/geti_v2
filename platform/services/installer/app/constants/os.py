@@ -19,3 +19,6 @@ class RequiredOS(str, Enum):
     UBUNTU_24 = "Ubuntu 24.04"
     UBUNTU_25_04 = "Ubuntu 25.04"
     RHEL_9 = "Red Hat Enterprise Linux 9"
+
+
+RENDER_GROUP = "render"

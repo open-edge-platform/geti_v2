@@ -45,8 +45,6 @@ spec:
           env:
             - name: GETI_REGISTRY
               value: {{ .Values.global.registry_address }}
-            - name: INSTALL_VERSION
-              value: {{ .Values.global.tag | default .Chart.AppVersion }}
             - name: DATA_FOLDER
               value: {{ .Values.mountPath }}
             - name: PROXY_ENABLED
@@ -67,6 +65,16 @@ spec:
                 configMapKeyRef:
                   name: {{ .Release.Namespace }}-configuration
                   key: platformVersion
+            - name: RENDER_GID
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Namespace }}-configuration
+                  key: render_gid
+            - name: GPU_LABEL
+              valueFrom:
+                configMapKeyRef:
+                  name: accelerator-configuration
+                  key: accelerator_name
             - name: ENABLE_TRACING
               value: "true"
             - name: OTEL_SERVICE_NAME
