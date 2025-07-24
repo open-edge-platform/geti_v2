@@ -5,12 +5,13 @@ import socket
 
 from checks.errors import CheckSkipped, DNSCheckError
 from configuration_models.install_config import InstallationConfig
+from configuration_models.upgrade_config import UpgradeConfig
 from texts.checks import DNSChecksTexts
 
 logger = logging.getLogger(__name__)
 
 
-def check_dns_ipv4_handling(config: InstallationConfig) -> None:
+def check_dns_ipv4_handling(config: InstallationConfig | UpgradeConfig) -> None:
     """
     Check that platforms' DNS resolves the IPv4
     Usage: install, upgrade

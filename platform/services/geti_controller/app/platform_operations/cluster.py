@@ -177,6 +177,8 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
     https_proxy = os.getenv("HTTPS_PROXY")
     no_proxy = os.getenv("NO_PROXY") or ""
     image_registry = os.getenv("IMAGE_REGISTRY") or None
+    repo_ca = os.getenv("REPO_CA") or None
+    logger.info(f"Repo CA '{repo_ca}'")
     short_name = name.split("-")[0]
     container = V1Container(
         name=short_name,
@@ -233,7 +235,8 @@ def create_job(name: str, image: str, registry: str, manifest_version: str, port
                     secret_key_ref=V1SecretKeySelector(name="geti-install-data", key="tlsKey", optional=True)
                 ),
             ),
-            *([V1EnvVar(name="IMAGE_REGISTRY", value=image_registry)] if image_registry else []),
+            *([V1EnvVar(name="IMAGE_REGISTRY", value=image_registry)] if image_registry else None),
+            *([V1EnvVar(name="REPO_CA", value=repo_ca)] if repo_ca else []),
         ],
         ports=[V1ContainerPort(container_port=port)],
     )

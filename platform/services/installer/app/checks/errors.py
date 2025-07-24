@@ -126,6 +126,12 @@ class VenvContentCheckError(CheckError):
     """
 
 
+class MigrateCheckError(CheckError):
+    """
+    Error raise by check function of DNS resolves
+    """
+
+
 class CumulativeCheckError(Exception):
     """
     Error raised by checks running function, aggregating all the failed checks.

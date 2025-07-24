@@ -7,6 +7,7 @@ import os
 import yaml
 
 from configuration_models.install_config import InstallationConfig
+from configuration_models.upgrade_config import UpgradeConfig
 from constants.charts import GETI_CONTROLLER_CHART
 from constants.paths import GETI_CONTROLLER_CHART_PATH
 from constants.platform import PLATFORM_NAMESPACE
@@ -19,13 +20,15 @@ from platform_utils.k8s import encode_data_b64
 logger = logging.getLogger(__name__)
 
 
-def deploy_geti_controller_chart(config: InstallationConfig, charts_dir: str = GETI_CONTROLLER_CHART_PATH) -> None:
+def deploy_geti_controller_chart(
+    config: InstallationConfig | UpgradeConfig, charts_dir: str = GETI_CONTROLLER_CHART_PATH
+) -> None:
     """
     Method used to deploy Geti Controller chart
     """
 
     try:
-        chart_version = get_target_product_build() if config.lightweight_installer.value else None
+        chart_version = get_target_product_build()
         http_proxy = os.getenv("http_proxy") or os.getenv("HTTP_PROXY")
         https_proxy = os.getenv("https_proxy") or os.getenv("HTTPS_PROXY")
         no_proxy = os.getenv("no_proxy") or os.getenv("NO_PROXY") or ""
@@ -58,6 +61,14 @@ def deploy_geti_controller_chart(config: InstallationConfig, charts_dir: str = G
             with open(config.tls_key_file.value, "rb") as key_file:
                 key_content = key_file.read()
                 configuration_data["global"]["tlsKey"] = encode_data_b64(key_content)
+        elif config.tls_cert_content.value and config.tls_key_content.value:
+            configuration_data["global"]["tlsCert"] = encode_data_b64(config.tls_cert_content.value.encode("utf-8"))
+            configuration_data["global"]["tlsKey"] = encode_data_b64(config.tls_key_content.value.encode("utf-8"))
+
+        if config.repoCA.value:
+            with open(config.repoCA.value, "rb") as ca_file:
+                ca_content = ca_file.read()
+                configuration_data["global"]["repoCA"] = encode_data_b64(ca_content)
 
         values_file_path = os.path.join(charts_dir, "controller_values.yaml")
         with open(values_file_path, "w") as values_file:

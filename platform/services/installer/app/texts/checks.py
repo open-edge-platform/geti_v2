@@ -207,3 +207,16 @@ class ResourcesChecksTexts:
     intel_gpu_max_card = "Data Center GPU Max 1100"
     intel_gpu_arc_device_name = "Device Name"
     intel_gpu_arc_a_card = "Arc(TM) A"
+
+
+class MigrationChecksTexts:
+    """
+    Strings that are shown to the user by migration checks functions.
+    """
+
+    migration_check_start = "Checking if the platform can be migrated..."
+    migration_check_error = (
+        "Migration is not supported for the current platform version: {platform_version}. "
+        "Only versions lower than {border_versions} can be migrated."
+    )
+    migration_version_check_error = "Incorrect platform version format: {platform_version}. "

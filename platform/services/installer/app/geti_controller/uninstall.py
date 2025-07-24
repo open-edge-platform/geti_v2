@@ -5,15 +5,14 @@ import logging
 import subprocess
 
 from cli_utils.platform_logs import subprocess_run
-from configuration_models.install_config import InstallationConfig
 from constants.charts import GETI_CONTROLLER_CHART
-from constants.paths import HELM_BINARY, INSTALL_LOG_FILE_PATH
+from constants.paths import HELM_BINARY, INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH
 from geti_controller.errors import GetiControllerUninstallationError
 
 logger = logging.getLogger(__name__)
 
 
-def uninstall_geti_controller_chart(config: InstallationConfig) -> None:
+def uninstall_geti_controller_chart() -> None:
     """
     Method used to uninstall Geti Controller chart
     """
@@ -29,7 +28,7 @@ def uninstall_geti_controller_chart(config: InstallationConfig) -> None:
             GETI_CONTROLLER_CHART.name,
             f"--namespace={GETI_CONTROLLER_CHART.namespace}",
             "--ignore-not-found",
-            f"--kubeconfig={config.kube_config.value}",
+            f"--kubeconfig={K3S_KUBECONFIG_PATH}",
         ]
         with open(INSTALL_LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
             subprocess_run(command, log_file)

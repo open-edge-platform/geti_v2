@@ -10,8 +10,11 @@ kind: HelmChart
 metadata:
   name: geti-namespaces
 spec:
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   version: $VERSION
-  insecureSkipTLSVerify: true
   chart: "oci://{{ geti_registry }}/geti/helm/geti-namespaces"
   backOffLimit: 0
   failurePolicy: abort
@@ -21,7 +24,10 @@ kind: HelmChart
 metadata:
   name: reloader
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/reloader"
   version: $VERSION
   targetNamespace: kube-system
@@ -33,7 +39,10 @@ kind: HelmChart
 metadata:
   name: geti-pv-creation
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/geti-pv-creation"
   version: $VERSION
   targetNamespace: impt
@@ -47,7 +56,10 @@ kind: HelmChart
 metadata:
   name: cert-manager
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/cert-manager"
   version: $VERSION
   targetNamespace: cert-manager
@@ -59,7 +71,10 @@ kind: HelmChart
 metadata:
   name: cert-manager-addon
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-addon"
   version: $VERSION
   targetNamespace: cert-manager
@@ -69,7 +84,10 @@ kind: HelmChart
 metadata:
   name: cert-manager-istio-csr
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-istio-csr"
   version: $VERSION
   targetNamespace: cert-manager
@@ -81,7 +99,10 @@ kind: HelmChart
 metadata:
   name: istio-base
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/istio-base"
   version: $VERSION
   targetNamespace: istio-system
@@ -93,17 +114,15 @@ kind: HelmChart
 metadata:
   name: istio-istiod
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/istio-istiod"
   version: $VERSION
   targetNamespace: istio-system
   backOffLimit: 0
   failurePolicy: abort
-  valuesSecrets:
-    - name: external-registry
-      ignoreUpdates: true
-      keys:
-        - overrideRegistry
   valuesContent: |-
     global:
       proxy:
@@ -114,7 +133,10 @@ kind: HelmChart
 metadata:
   name: istio-gateway
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/istio-gateway"
   version: $VERSION
   targetNamespace: istio-system
@@ -135,7 +157,10 @@ kind: HelmChart
 metadata:
   name: geti-tools
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/geti-tools"
   version: $VERSION
   targetNamespace: impt
@@ -149,6 +174,7 @@ spec:
         - overrideRegistry
   valuesContent: |-
     global:
+      tag: "$TAG" # TODO temporary solution to get new images, remove when CI will be ready
       registry_address: "{{ geti_registry }}"
 ---
 apiVersion: helm.cattle.io/v1
@@ -156,7 +182,10 @@ kind: HelmChart
 metadata:
   name: geti-components
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/geti-components"
   version: $VERSION
   targetNamespace: impt
@@ -185,13 +214,19 @@ spec:
         https_proxy: "{{ https_proxy }}"
         http_proxy: "{{ http_proxy }}"
         no_proxy: "{{ no_proxy }}"
+{% if repoCA_dec %}
+      repoCA: {{ repoCA_enc }}
+{% endif %}
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
   name: modelmesh-serving-addon
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/modelmesh-serving-addon"
   version: $VERSION
   targetNamespace: impt
@@ -206,7 +241,10 @@ kind: HelmChart
 metadata:
   name: flyte-core
 spec:
-  insecureSkipTLSVerify: true
+{% if repoCA_dec %}
+  repoCA: |
+    {{ repoCA_dec | indent(4) }}
+{% endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/flyte-core"
   version: $VERSION
   targetNamespace: flyte

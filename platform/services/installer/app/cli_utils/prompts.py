@@ -21,7 +21,7 @@ def prompt_for_configuration_value(config_field: ConfigurationField, prompt_mess
     else:
         value = click.prompt(prompt_message, type=config_field.type, **kwargs)
 
-    if config_field.trim:
+    if config_field.trim and isinstance(value, str):
         value = value.strip()
 
     try:

@@ -11,12 +11,13 @@ import requests
 
 from checks.errors import CheckSkipped
 from configuration_models.install_config import InstallationConfig
+from configuration_models.upgrade_config import UpgradeConfig
 from texts.checks import InternetConnectionChecksTexts
 
 logger = logging.getLogger(__name__)
 
 
-def check_internet_connection(config: InstallationConfig) -> None:
+def check_internet_connection(config: InstallationConfig | UpgradeConfig) -> None:
     """
     Check that internet is accessible.
     Usage: install, upgrade, uninstall

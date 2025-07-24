@@ -252,3 +252,87 @@ class PinImageVersionError(StepsError):
     """
     Exception raised when an error occurs while pinning registry image version
     """
+
+
+class UpgradeError(StepsError):
+    """
+    Exception raised when an error occurs while migrating the platform
+    """
+
+
+class PVInfoError(UpgradeError):
+    """
+    Exception raised when an error occurs while getting PV info
+    """
+
+
+class TLSCertificateInfoError(UpgradeError):
+    """
+    Exception raised when an error occurs while getting TLS certificate info
+    """
+
+
+class TLSCertificateEmptyError(UpgradeError):
+    """
+    Exception raised when an error occurs while getting TLS certificate info
+    """
+
+
+class HelmReleaseError(UpgradeError):
+    """
+    Exception raised when an error occurs while getting Helm release info
+    """
+
+
+class CredentialsError(UpgradeError):
+    """
+    Exception raised when an error occurs while getting credentials info
+    """
+
+
+class PlatformVersionError(UpgradeError):
+    """
+    Exception raised when an error occurs while getting credentials info
+    """
+
+
+class SecretsPreparationError(UpgradeError):
+    """
+    Exception raised when an error occurs while preparing secrets for migration
+    """
+
+
+class PlatformCleanUpError(UpgradeError):
+    """
+    Exception raised when an error occurs while preparing secrets for migration
+    """
+
+
+class NamespaceCleanUpError(UpgradeError):
+    """
+    Exception raised when an error occurs while cleaning up namespaces
+    """
+
+
+class ResourceDeletionError(UpgradeError):
+    """
+    Exception raised when an error occurs while deleting resources
+    """
+
+
+class ResourceListError(UpgradeError):
+    """
+    Exception raised when an error occurs while listing resources
+    """
+
+
+class ResourcePatchError(UpgradeError):
+    """
+    Exception raised when an error occurs while patching resources
+    """
+
+
+class KafkaPVRemovalError(UpgradeError):
+    """
+    Exception raised when an error occurs while removing Kafka PVs
+    """
