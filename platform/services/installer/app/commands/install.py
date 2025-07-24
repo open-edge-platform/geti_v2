@@ -277,7 +277,7 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
         cluster_info_dump(kubeconfig=K3S_KUBECONFIG_PATH)
         sys.exit(1)
     finally:
-        uninstall_geti_controller_chart()
+        # uninstall_geti_controller_chart()
         # shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)  # TODO uncomment
         if config.lightweight_installer.value:
             # remove 'tools' dir on failure,
