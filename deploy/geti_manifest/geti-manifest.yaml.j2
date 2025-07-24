@@ -52,7 +52,7 @@ metadata:
 spec:
   version: $VERSION
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/geti-namespaces"
+  chart: "oci://{{ geti_registry }}/geti/charts/geti-namespaces"
   backOffLimit: 0
   failurePolicy: abort
 ---
@@ -62,7 +62,7 @@ metadata:
   name: reloader
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/reloader"
+  chart: "oci://{{ geti_registry }}/geti/charts/reloader"
   version: $VERSION
   targetNamespace: kube-system
   backOffLimit: 0
@@ -74,7 +74,7 @@ metadata:
   name: geti-pv-creation
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/geti-pv-creation"
+  chart: "oci://{{ geti_registry }}/geti/charts/geti-pv-creation"
   version: $VERSION
   targetNamespace: impt
   backOffLimit: 0
@@ -88,7 +88,7 @@ metadata:
   name: cert-manager
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/cert-manager"
+  chart: "oci://{{ geti_registry }}/geti/charts/cert-manager"
   version: $VERSION
   targetNamespace: cert-manager
   backOffLimit: 0
@@ -100,7 +100,7 @@ metadata:
   name: cert-manager-addon
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-addon"
+  chart: "oci://{{ geti_registry }}/geti/charts/cert-manager-addon"
   version: $VERSION
   targetNamespace: cert-manager
 ---
@@ -110,7 +110,7 @@ metadata:
   name: cert-manager-istio-csr
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-istio-csr"
+  chart: "oci://{{ geti_registry }}/geti/charts/cert-manager-istio-csr"
   version: $VERSION
   targetNamespace: cert-manager
   backOffLimit: 0
@@ -122,7 +122,7 @@ metadata:
   name: istio-base
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/istio-base"
+  chart: "oci://{{ geti_registry }}/geti/charts/istio-base"
   version: $VERSION
   targetNamespace: istio-system
   backOffLimit: 0
@@ -134,7 +134,7 @@ metadata:
   name: istio-istiod
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/istio-istiod"
+  chart: "oci://{{ geti_registry }}/geti/charts/istio-istiod"
   version: $VERSION
   targetNamespace: istio-system
   backOffLimit: 0
@@ -155,7 +155,7 @@ metadata:
   name: istio-gateway
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/istio-gateway"
+  chart: "oci://{{ geti_registry }}/geti/charts/istio-gateway"
   version: $VERSION
   targetNamespace: istio-system
   backOffLimit: 0
@@ -176,7 +176,7 @@ metadata:
   name: geti-tools
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/geti-tools"
+  chart: "oci://{{ geti_registry }}/geti/charts/geti-tools"
   version: $VERSION
   targetNamespace: impt
   timeout: 20m
@@ -200,7 +200,7 @@ metadata:
   name: geti-components
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/geti-components"
+  chart: "oci://{{ geti_registry }}/geti/charts/geti-components"
   version: $VERSION
   targetNamespace: impt
   timeout: 60m
@@ -239,7 +239,7 @@ metadata:
   name: modelmesh-serving-addon
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/modelmesh-serving-addon"
+  chart: "oci://{{ geti_registry }}/geti/charts/modelmesh-serving-addon"
   version: $VERSION
   targetNamespace: impt
   valuesSecrets:
@@ -254,7 +254,7 @@ metadata:
   name: flyte-core
 spec:
   insecureSkipTLSVerify: true
-  chart: "oci://{{ geti_registry }}/geti/helm/flyte-core"
+  chart: "oci://{{ geti_registry }}/geti/charts/flyte-core"
   version: $VERSION
   targetNamespace: flyte
   timeout: 20m
