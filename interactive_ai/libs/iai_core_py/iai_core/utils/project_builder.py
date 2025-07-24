@@ -342,13 +342,21 @@ class ProjectBuilder:
             group_has_empty_label: bool = any(label.is_empty for label in labels)
             if group_has_empty_label:  # empty label provided along with custom labels
                 if len(labels) > 1:
-                    logger.error(f"Found empty label in a group {group_name} with more than 1 label: {labels}")
+                    logger.error(
+                        "Found empty label in a group '%s' with more than 1 label: %s",
+                        group_name,
+                        labels,
+                    )
                     raise ValueError("Invalid group for empty label")
                 empty_label_created = True
             group_has_background_label: bool = any(label.is_background for label in labels)
             if group_has_background_label:  # background label provided along with custom labels
                 if len(labels) > 1:
-                    logger.error(f"Found background label in a group {group_name} with more than 1 label: {labels}")
+                    logger.error(
+                        "Found background label in a group '%s' with more than 1 label: %s",
+                        group_name,
+                        labels,
+                    )
                     raise ValueError("Invalid group for background label")
                 background_label_created = True
             label_group = LabelGroup(
