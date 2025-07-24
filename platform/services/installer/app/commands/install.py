@@ -43,8 +43,6 @@ from constants.paths import (
     K3S_KUBECONFIG_PATH,
     OFFLINE_TOOLS_DIR,
 )
-
-# from platform_configuration.versions import get_target_product_build
 from constants.platform import DEFAULT_USERNAME
 from geti_controller.communication import (
     OperationStatus,
@@ -53,6 +51,7 @@ from geti_controller.communication import (
 )
 from geti_controller.errors import GetiControllerError
 from geti_controller.install import deploy_geti_controller_chart
+from geti_controller.uninstall import uninstall_geti_controller_chart
 from k3s.detect_ip import get_first_public_ip, get_master_node_ip_address
 from k3s.install import K3SInstallationError, install_k3s
 from k3s.uninstall import uninstall_k3s
@@ -278,7 +277,7 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
         cluster_info_dump(kubeconfig=K3S_KUBECONFIG_PATH)
         sys.exit(1)
     finally:
-        # uninstall_geti_controller_chart()
+        uninstall_geti_controller_chart()
         # shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)  # TODO uncomment
         if config.lightweight_installer.value:
             # remove 'tools' dir on failure,

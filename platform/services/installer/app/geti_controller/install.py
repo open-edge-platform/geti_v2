@@ -74,8 +74,6 @@ def deploy_geti_controller_chart(
         with open(values_file_path, "w") as values_file:
             yaml.safe_dump(configuration_data, values_file)
 
-        logger.info(f"Config: {configuration_data}")
-
         upsert_chart(
             name=GETI_CONTROLLER_CHART.name,
             version=chart_version,

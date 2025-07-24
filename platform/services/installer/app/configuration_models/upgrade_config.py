@@ -2,7 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 """
-A module containing config classes for migration operation.
+A module containing config classes for upgrade operation.
 """
 
 import os
@@ -15,7 +15,7 @@ from constants.platform import EXTERNAL_REGISTRY_ADDRESS, PLATFORM_REGISTRY_ADDR
 
 class UpgradeConfig(BaseConfig):
     """
-    A Config model for installation operation.
+    A Config model for upgrade operation.
     """
 
     @property
@@ -24,6 +24,10 @@ class UpgradeConfig(BaseConfig):
         Return value specifying whether custom certificate settings were provided.
         """
         return bool(self.tls_cert_file.value) and bool(self.tls_key_file.value)
+
+    @staticmethod
+    def tools_in_package() -> bool:
+        return os.path.isdir(OFFLINE_TOOLS_DIR) and bool(os.listdir(OFFLINE_TOOLS_DIR))
 
     def __init__(self) -> None:
         self.username = ConfigurationField(type=str, required=True)
@@ -61,7 +65,3 @@ class UpgradeConfig(BaseConfig):
         self.lightweight_installer = ConfigurationField(type=bool, required=False, value=not _tools_in_package)
         self.internet_access = ConfigurationField(type=bool, required=False, value=True)
         self.kube_config = ConfigurationField(type=str, required=False, value=K3S_KUBECONFIG_PATH)
-
-    @staticmethod
-    def tools_in_package() -> bool:
-        return os.path.isdir(OFFLINE_TOOLS_DIR) and bool(os.listdir(OFFLINE_TOOLS_DIR))
