@@ -57,7 +57,7 @@
                         "hotkey": "",
                         "id": "610123e5efba22ca453f11c1",
                         "parent_id": null,
-                        "is_empty": true,
+                        "is_empty": false,
                         "is_anomalous": false,
                         "is_background": true,
                         "name": "Background"
