@@ -13,6 +13,8 @@ import {
 } from '../../../../test-utils/mocked-items-factory/mocked-users';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { EditUserRoleDialog } from './edit-user-role-dialog.component';
+import { User } from '@react-aria/test-utils';
+import { simulateDesktop } from '../../../../test-utils/utils';
 
 const mockProjectIdentifier = {
     organizationId: 'organization-id',
@@ -26,6 +28,12 @@ jest.mock('../../../../hooks/use-project-identifier/use-project-identifier', () 
 }));
 
 describe('EditUserRoleDialog', () => {
+    const testUtilUser = new User();
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     it('displays current user role', async () => {
         const activeUser = getMockedOrganizationAdminUser();
         const user = getMockedUser({
@@ -74,16 +82,15 @@ describe('EditUserRoleDialog', () => {
                 services: { usersService },
             });
 
-            await userEvent.click(screen.getByRole('button', { name: /Project manager/ }));
-
-            expect(screen.getAllByRole('option')).toHaveLength(2);
-            expect(screen.getByRole('option', { name: /Project manager/ })).toBeVisible();
-            expect(screen.getByRole('option', { name: /Project contributor/ })).toBeVisible();
-
-            await userEvent.selectOptions(
-                screen.getByRole('listbox', { name: 'Role' }),
-                screen.getByRole('option', { name: /Project contributor/ })
-            );
+            const selectTester = testUtilUser.createTester('Select', {
+                root: screen.getByRole('button', { name: /Project manager/ }),
+            });
+            await selectTester.open();
+            expect(selectTester.options().map(option => option.textContent)).toEqual([
+                'Project manager',
+                'Project contributor',
+            ]);
+            await selectTester.selectOption({ option: 'Project contributor' });
 
             await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
@@ -125,14 +132,12 @@ describe('EditUserRoleDialog', () => {
                 services: { usersService },
             });
 
-            await userEvent.click(screen.getByRole('button', { name: /Project contributor/ }));
-
-            expect(screen.getAllByRole('option')).toHaveLength(1);
-
-            await userEvent.selectOptions(
-                screen.getByRole('listbox', { name: 'Role' }),
-                screen.getByRole('option', { name: /Project contributor/ })
-            );
+            const selectTester = testUtilUser.createTester('Select', {
+                root: screen.getByRole('button', { name: /Project contributor/ }),
+            });
+            await selectTester.open();
+            expect(selectTester.options().map(option => option.textContent)).toEqual(['Project contributor']);
+            await selectTester.selectOption({ option: 'Project contributor' });
 
             await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 

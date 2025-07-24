@@ -11,6 +11,8 @@ import { getMockedProjectIdentifier } from '../../../../../../../test-utils/mock
 import { providersRender as render } from '../../../../../../../test-utils/required-providers-render';
 import { ProjectProvider } from '../../../../../providers/project-provider/project-provider.component';
 import { ModelTemplatesList } from './model-templates-list.component';
+import { simulateDesktop } from '../../../../../../../test-utils/utils';
+import { User } from '@react-aria/test-utils';
 
 const getTemplateId = ({ name }: LegacySupportedAlgorithm) => `${name.toLowerCase()}-id`;
 const getCardsIds = () => screen.getAllByLabelText(/selected/i).map(({ id }) => id);
@@ -80,8 +82,15 @@ describe('ModelTemplatesSelection', () => {
         otherRecommendedTemplate,
     ];
 
+    const userTestUtil = new User();
+
     beforeEach(() => {
         jest.clearAllMocks();
+
+    });
+
+    beforeAll(() => {
+        simulateDesktop();
     });
 
     const renderApp = async () => {
@@ -118,11 +127,12 @@ describe('ModelTemplatesSelection', () => {
     it('sorted by size desc', async () => {
         await renderApp();
 
-        fireEvent.click(screen.getByRole('button', { name: /sort by/i }));
-        await userEvent.selectOptions(
-            screen.getByRole('listbox'),
-            screen.getByRole('option', { name: 'Size: Small to big' })
-        );
+        const selectTester = userTestUtil.createTester('Select', {
+            root: screen.getByRole('button', { name: /sort by/i }),
+        });
+
+        await selectTester.open();
+        await selectTester.selectOption({ option: 'Size: Small to big' });
 
         const [firstElement] = getCardsIds();
         expect(firstElement).toEqual(getTemplateId(smallSizeTemplate));
@@ -131,11 +141,12 @@ describe('ModelTemplatesSelection', () => {
     it('sorted by size asc', async () => {
         await renderApp();
 
-        fireEvent.click(screen.getByRole('button', { name: /sort by/i }));
-        await userEvent.selectOptions(
-            screen.getByRole('listbox'),
-            screen.getByRole('option', { name: 'Size: Big to small' })
-        );
+        const selectTester = userTestUtil.createTester('Select', {
+            root: screen.getByRole('button', { name: /sort by/i }),
+        });
+
+        await selectTester.open();
+        await selectTester.selectOption({ option: 'Size: Big to small' });
 
         const [firstElement] = getCardsIds();
         expect(firstElement).toEqual(getTemplateId(bigSizeTemplate));
@@ -144,11 +155,12 @@ describe('ModelTemplatesSelection', () => {
     it('sorted by complexity asc', async () => {
         await renderApp();
 
-        fireEvent.click(screen.getByRole('button', { name: /sort by/i }));
-        await userEvent.selectOptions(
-            screen.getByRole('listbox'),
-            screen.getByRole('option', { name: 'Complexity: Low to high' })
-        );
+        const selectTester = userTestUtil.createTester('Select', {
+            root: screen.getByRole('button', { name: /sort by/i }),
+        });
+
+        await selectTester.open();
+        await selectTester.selectOption({ option: 'Complexity: Low to high' });
 
         const [firstElement] = getCardsIds();
         expect(firstElement).toEqual(getTemplateId(lowComplexityTemplate));
@@ -157,11 +169,12 @@ describe('ModelTemplatesSelection', () => {
     it('sorted by complexity desc', async () => {
         await renderApp();
 
-        fireEvent.click(screen.getByRole('button', { name: /sort by/i }));
-        await userEvent.selectOptions(
-            screen.getByRole('listbox'),
-            screen.getByRole('option', { name: 'Complexity: High to low' })
-        );
+        const selectTester = userTestUtil.createTester('Select', {
+            root: screen.getByRole('button', { name: /sort by/i }),
+        });
+
+        await selectTester.open();
+        await selectTester.selectOption({ option: 'Complexity: High to low' });
 
         const [firstElement] = getCardsIds();
         expect(firstElement).toEqual(getTemplateId(highComplexityTemplate));

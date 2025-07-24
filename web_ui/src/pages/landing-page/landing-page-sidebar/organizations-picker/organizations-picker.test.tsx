@@ -7,6 +7,8 @@ import { ThemeProvider } from '@geti/ui/theme';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
+import { simulateDesktop } from '../../../../test-utils/utils';
+
 import { useSelectedOrganization } from '../../../../core/organizations/hook/use-selected-organization.hook';
 import { AccountStatus } from '../../../../core/organizations/organizations.interface';
 import { providersRender } from '../../../../test-utils/required-providers-render';
@@ -66,6 +68,14 @@ const renderApp = ({
     );
 };
 describe('OrganizationsPicker', () => {
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
+    afterAll(() => {
+        jest.resetAllMocks();
+    });
+
     it('do not render the component if there is only one organization', async () => {
         renderApp({
             isLargeSize: false,

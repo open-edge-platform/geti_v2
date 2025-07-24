@@ -1,8 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { fireEvent, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { screen } from '@testing-library/react';
+import { User } from '@react-aria/test-utils';
 import { useNavigate } from 'react-router-dom';
 
 import { DOMAIN } from '../../../../../../core/projects/core.interface';
@@ -10,6 +10,7 @@ import { createInMemoryProjectService } from '../../../../../../core/projects/se
 import { getMockedDatasetIdentifier } from '../../../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedProject } from '../../../../../../test-utils/mocked-items-factory/mocked-project';
 import { getMockedTask } from '../../../../../../test-utils/mocked-items-factory/mocked-tasks';
+import { simulateDesktop } from '../../../../../../test-utils/utils';
 import { useDataset } from '../../../../providers/dataset-provider/dataset-provider.component';
 import { annotatorRender } from '../../../../test-utils/annotator-render';
 import { DatasetPicker } from './dataset-picker.component';
@@ -29,6 +30,16 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('DatasetPicker', () => {
+    const testUtilUser = new User();
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
+    afterAll(() => {
+        jest.restoreAllMocks();
+    });
+
     const mockUseDataset = (isInActiveMode = true) => {
         // @ts-expect-error We're only interested in mocking properties used by DatasetPicker
         jest.mocked(useDataset).mockImplementation(() => ({
@@ -49,12 +60,11 @@ describe('DatasetPicker', () => {
 
         expect(screen.queryByRole('option', { hidden: true, name: 'Active set', selected: true })).toBeInTheDocument();
 
-        fireEvent.click(screen.getByRole('button', { name: /Choose annotation dataset/ }));
+        const picker = screen.getByRole('button', { name: /Choose annotation dataset/ });
+        const selectTester = testUtilUser.createTester('Select', { root: picker });
 
-        await userEvent.selectOptions(
-            screen.getByRole('listbox'),
-            screen.getByRole('option', { name: 'In memory dataset' })
-        );
+        await selectTester.open();
+        await selectTester.selectOption({ option: 'In memory dataset' });
 
         expect(mockPush).toHaveBeenCalledWith(
             '/organizations/organization-id/workspaces/workspace-id/projects/project-id/datasets/in-memory-dataset/annotator'
@@ -68,9 +78,11 @@ describe('DatasetPicker', () => {
 
         await annotatorRender(<DatasetPicker />, { datasetIdentifier });
 
-        fireEvent.click(screen.getByRole('button', { name: /Choose annotation dataset/ }));
+        const picker = screen.getByRole('button', { name: /Choose annotation dataset/ });
+        const selectTester = testUtilUser.createTester('Select', { root: picker });
 
-        await userEvent.selectOptions(screen.getByRole('listbox'), screen.getByRole('option', { name: 'Active set' }));
+        await selectTester.open();
+        await selectTester.selectOption({ option: 'Active set' });
 
         expect(mockPush).toHaveBeenCalledWith(
             '/organizations/organization-id/workspaces/workspace-id/projects/project-id/datasets/in-memory-dataset/annotator?active=true'
@@ -89,9 +101,11 @@ describe('DatasetPicker', () => {
             ],
         });
 
-        fireEvent.click(screen.getByRole('button', { name: /Choose annotation dataset/ }));
+        const picker = screen.getByRole('button', { name: /Choose annotation dataset/ });
+        const selectTester = testUtilUser.createTester('Select', { root: picker });
 
-        await userEvent.selectOptions(screen.getByRole('listbox'), screen.getByRole('option', { name: 'Active set' }));
+        await selectTester.open();
+        await selectTester.selectOption({ option: 'Active set' });
 
         expect(mockPush).toHaveBeenCalledWith(
             '/organizations/organization-id/workspaces/workspace-id/projects/project-id/datasets/in-memory-dataset/annotator?task_id=task&active=true'

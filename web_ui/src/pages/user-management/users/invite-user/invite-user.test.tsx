@@ -9,6 +9,7 @@ import { getMockedAdminUser } from '../../../../test-utils/mocked-items-factory/
 import { getMockedWorkspace } from '../../../../test-utils/mocked-items-factory/mocked-workspace';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { InviteUser } from './invite-user.component';
+import { simulateDesktop } from '../../../../test-utils/utils';
 
 const mockedAdmin = getMockedAdminUser();
 const mockedInviteUserMutation = jest.fn();
@@ -39,6 +40,10 @@ jest.mock('@geti/core/src/users/hook/use-users.hook', () => ({
 }));
 
 describe('Invite user to the workspace', () => {
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     it('Check if user invitation is sending proper roles', async () => {
         render(
             <InviteUser

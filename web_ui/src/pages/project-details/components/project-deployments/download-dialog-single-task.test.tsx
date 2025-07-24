@@ -18,6 +18,7 @@ import { getMockedTask } from '../../../../test-utils/mocked-items-factory/mocke
 import { CustomRenderOptions, providersRender } from '../../../../test-utils/required-providers-render';
 import { DownloadDialogSingleTask } from './download-dialog-single-task.component';
 import { DEPLOYMENT_PACKAGE_TYPES } from './select-deployment-package.component';
+import { simulateDesktop } from '../../../../test-utils/utils';
 
 const render = ({
     close = jest.fn(),
@@ -68,6 +69,10 @@ describe('DownloadDialogSingleTask', () => {
             },
         });
     };
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
 
     it('allows user to select deployment package', async () => {
         render({ task, modelsGroups });

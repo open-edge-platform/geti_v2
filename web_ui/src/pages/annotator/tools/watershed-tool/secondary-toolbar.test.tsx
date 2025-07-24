@@ -9,7 +9,7 @@ import { fakeAnnotationToolContext } from '../../../../test-utils/fake-annotator
 import { getMockedAnnotation } from '../../../../test-utils/mocked-items-factory/mocked-annotations';
 import { getMockedLabel } from '../../../../test-utils/mocked-items-factory/mocked-labels';
 import { projectRender as render } from '../../../../test-utils/project-provider-render';
-import { getMockedImage, getMockedROI } from '../../../../test-utils/utils';
+import { getMockedImage, getMockedROI, simulateDesktop } from '../../../../test-utils/utils';
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { AnnotationSceneProvider } from '../../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { useAnnotationToolContext } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
@@ -94,6 +94,10 @@ const renderMockApp = async () =>
 describe('Secondary Toolbar', () => {
     const getAcceptButton = () => screen.queryByLabelText('accept watershed annotation');
     const getRejectButton = () => screen.queryByLabelText('reject watershed annotation');
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
 
     beforeEach(() => {
         (useTask as jest.Mock).mockImplementation(() => ({

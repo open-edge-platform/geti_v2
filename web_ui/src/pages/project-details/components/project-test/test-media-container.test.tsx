@@ -13,10 +13,11 @@ import { getMockedLabel } from '../../../../test-utils/mocked-items-factory/mock
 import { getMockedProject } from '../../../../test-utils/mocked-items-factory/mocked-project';
 import { getMockedTask } from '../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
-import { checkTooltip } from '../../../../test-utils/utils';
+import { checkTooltip, simulateDesktop } from '../../../../test-utils/utils';
 import { ProjectProvider } from '../../providers/project-provider/project-provider.component';
 import { MediaItemsBucketTitle } from './media-items-bucket.interface';
 import { TestMediaContainer } from './test-media-container.component';
+import { User } from '@react-aria/test-utils';
 
 const inMemoryProjectService = createInMemoryProjectService();
 
@@ -45,6 +46,11 @@ const renderTestMediaContainer = async (taskType?: TASK_TYPE, onLabelChange = je
 };
 
 describe('TestMediaContainer', () => {
+    const userTestUtil = new User();
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -145,12 +151,12 @@ describe('TestMediaContainer', () => {
         const mockedOnLabelChange = jest.fn();
         await renderTestMediaContainer(undefined, mockedOnLabelChange);
 
-        fireEvent.click(screen.getByLabelText(/Select label/i));
+        const selectTester = userTestUtil.createTester('Select', {
+            root: screen.getByLabelText(/Select label/i),
+        });
 
-        await userEvent.selectOptions(
-            screen.getByRole('listbox'),
-            screen.getByRole('option', { name: selectedLabel.id })
-        );
+        await selectTester.open();
+        await selectTester.selectOption({ option: selectedLabel.name });
 
         expect(mockedOnLabelChange).toHaveBeenCalledWith(selectedLabel);
     });

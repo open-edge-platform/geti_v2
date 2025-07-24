@@ -14,6 +14,8 @@ import { getMockedProject } from '../../../../test-utils/mocked-items-factory/mo
 import { getMockedTask } from '../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { projectRender as render } from '../../../../test-utils/project-provider-render';
 import { ActiveLearningConfiguration, CornerIndicator } from './active-learning-configuration.component';
+import { User } from '@react-aria/test-utils';
+import { simulateDesktop } from '../../../../test-utils/utils';
 
 const renderApp = async ({
     isDarkMode = true,
@@ -39,7 +41,12 @@ const renderApp = async ({
 };
 
 describe('ActiveLearningConfiguration', () => {
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     describe('with FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS disabled', () => {
+        const testUtilUser = new User();
         const projectService = createInMemoryProjectService();
         const configParametersService = createInMemoryApiModelConfigParametersService();
 
@@ -94,11 +101,11 @@ describe('ActiveLearningConfiguration', () => {
 
             expect(await screen.findByRole('heading', { name: 'Training' })).toBeInTheDocument();
 
-            fireEvent.click(screen.getByRole('button', { name: /Select a task to configure its training settings/ }));
-
-            for (const task of project.tasks) {
-                expect(await screen.findByRole('option', { name: task.title })).toBeVisible();
-            }
+            const selectTester = testUtilUser.createTester('Select', {
+                root: screen.getByRole('button', { name: /Select a task to configure its training settings/ }),
+            });
+            await selectTester.open();
+            expect(selectTester.options().map(option => option.textContent)).toEqual(project.tasks.map(task => task.title));
         });
     });
 
@@ -153,11 +160,13 @@ describe('ActiveLearningConfiguration', () => {
 
             expect(await screen.findByRole('heading', { name: 'Training' })).toBeInTheDocument();
 
-            fireEvent.click(screen.getByRole('button', { name: /Select a task to configure its training settings/ }));
-
-            for (const task of project.tasks) {
-                expect(await screen.findByRole('option', { name: task.title })).toBeVisible();
-            }
+            const selectTester = new User().createTester('Select', {
+                root: screen.getByRole('button', { name: /Select a task to configure its training settings/ }),
+            });
+            await selectTester.open();
+            expect(selectTester.options().map(option => option.textContent)).toEqual(
+                project.tasks.map(task => task.title)
+            );
         });
     });
 });

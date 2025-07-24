@@ -6,9 +6,10 @@ import userEvent from '@testing-library/user-event';
 
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { JobsDialog } from './jobs-dialog.component';
+import { simulateDesktop } from '../../../../test-utils/utils';
 
 const checkComboBoxValue = (comboBoxName: string, value: string) => {
-    expect(screen.getByRole('button', { name: `${comboBoxName} ${value}` })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: comboBoxName })).toHaveValue(value);
 };
 
 jest.mock('react-router-dom', () => ({
@@ -20,6 +21,10 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('jobs dialog', (): void => {
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     beforeEach((): void => {
         jest.clearAllMocks();
     });

@@ -29,6 +29,7 @@ import { getMockedTask } from '../../../../../test-utils/mocked-items-factory/mo
 import { projectRender as render } from '../../../../../test-utils/project-provider-render';
 import { CustomRenderOptions } from '../../../../../test-utils/required-providers-render';
 import { TrainModel } from './train-model-dialog.component';
+import { simulateDesktop } from '../../../../../test-utils/utils';
 
 const mockedSingleProject = getMockedProject({
     id: 'singleProject',
@@ -175,6 +176,10 @@ const renderTrainModelDialog = async ({
 };
 
 describe('Train model dialog', () => {
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     it('displays message that training is not allowed', async () => {
         const projectService = createInMemoryProjectService();
 

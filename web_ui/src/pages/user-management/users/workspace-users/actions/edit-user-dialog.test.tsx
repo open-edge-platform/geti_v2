@@ -11,6 +11,8 @@ import { getMockedWorkspaceIdentifier } from '../../../../../test-utils/mocked-i
 import { getMockedAdminUser, getMockedUser } from '../../../../../test-utils/mocked-items-factory/mocked-users';
 import { getMockedWorkspace } from '../../../../../test-utils/mocked-items-factory/mocked-workspace';
 import { EditUserDialog } from './edit-user-dialog.component';
+import { User } from '@react-aria/test-utils';
+import { simulateDesktop } from '../../../../../test-utils/utils';
 
 const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier({ workspaceId: 'testing-workspace' });
 const mockedAdminUser = getMockedAdminUser(
@@ -28,6 +30,12 @@ jest.mock('../../../../../providers/workspaces-provider/workspaces-provider.comp
 }));
 
 describe('EditUserDialog', () => {
+    const testUtilUser = new User();
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     describe('WORKSPACE_ACTION FF enabled', () => {
         it('save button is disabled when member data has not been changed', async () => {
             await render(
@@ -159,12 +167,11 @@ describe('EditUserDialog', () => {
             expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
 
-            fireEvent.click(screen.getByRole('button', { name: /role/i }));
-
-            await userEvent.selectOptions(
-                screen.getByRole('listbox', { name: 'Role' }),
-                screen.getByRole('option', { name: /Contributor/ })
-            );
+            const selectTester = testUtilUser.createTester('Select', {
+                root: screen.getByRole('button', { name: /role/i }),
+            });
+            await selectTester.open();
+            await selectTester.selectOption({ option: 'Contributor' });
         });
 
         describe('roles edition', () => {
@@ -196,11 +203,11 @@ describe('EditUserDialog', () => {
                     }
                 );
 
-                await userEvent.click(screen.getByRole('button', { name: /role/i }));
-                await userEvent.selectOptions(
-                    screen.getByRole('listbox', { name: 'Role' }),
-                    screen.getByRole('option', { name: /Contributor/ })
-                );
+                const selectTester = testUtilUser.createTester('Select', {
+                    root: screen.getByRole('button', { name: /role/i }),
+                });
+                await selectTester.open();
+                await selectTester.selectOption({ option: 'Contributor' });
 
                 await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
@@ -300,10 +307,14 @@ describe('EditUserDialog', () => {
                 }
             );
 
-            await userEvent.click(screen.getByRole('button', { name: /role/i }));
-
-            expect(screen.getByRole('option', { name: /Contributor/ })).toBeInTheDocument();
-            expect(screen.getByRole('option', { name: /Admin/ })).toBeInTheDocument();
+            const selectTester = testUtilUser.createTester('Select', {
+                root: screen.getByRole('button', { name: /role/i }),
+            });
+            await selectTester.open();
+            expect(selectTester.options().map(option => option.textContent)).toEqual([
+                'Admin',
+                'Contributor',
+            ]);
         });
 
         it('active member can edit member their role when there are more admins than one', async () => {
@@ -325,10 +336,14 @@ describe('EditUserDialog', () => {
                 }
             );
 
-            await userEvent.click(screen.getByRole('button', { name: /role/i }));
-
-            expect(screen.getByRole('option', { name: /Contributor/ })).toBeInTheDocument();
-            expect(screen.getByRole('option', { name: /Admin/ })).toBeInTheDocument();
+            const selectTester = testUtilUser.createTester('Select', {
+                root: screen.getByRole('button', { name: /role/i }),
+            });
+            await selectTester.open();
+            expect(selectTester.options().map(option => option.textContent)).toEqual([
+                'Admin',
+                'Contributor',
+            ]);
         });
     });
 });

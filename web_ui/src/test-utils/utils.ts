@@ -64,3 +64,10 @@ export const hover = (element: HTMLElement) => {
 export const unhover = (element: HTMLElement) => {
     fireEvent.mouseLeave(element);
 };
+
+export const simulateDesktop = (width: number = 701, height: number = 1000): void => {
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => width);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => height);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => height);
+};

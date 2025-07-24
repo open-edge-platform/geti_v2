@@ -6,12 +6,17 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { SortingOptions } from '../../util';
 import { SortByDropdown } from './sort-by-dropdown.component';
+import { simulateDesktop } from '../../../../test-utils/utils';
 
 describe('SortByDropdown', () => {
-    it('"Most Recent" is selected by default', async () => {
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
+    it('"Most Recent" is selected by default', () => {
         const mockedOnSelect = jest.fn();
 
-        await render(
+        render(
             <Provider theme={defaultTheme}>
                 <SortByDropdown onSelect={mockedOnSelect} />
             </Provider>

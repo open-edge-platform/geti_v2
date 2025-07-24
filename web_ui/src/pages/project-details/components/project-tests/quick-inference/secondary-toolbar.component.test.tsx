@@ -2,8 +2,8 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { ApplicationServicesProvider } from '@geti/core/src/services/application-services-provider.component';
-import { fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { User } from '@react-aria/test-utils';
 
 import { createInMemoryInferenceService } from '../../../../../core/annotations/services/in-memory-inference-service';
 import { Label } from '../../../../../core/labels/label.interface';
@@ -13,6 +13,7 @@ import { getMockedAnnotation } from '../../../../../test-utils/mocked-items-fact
 import { getMockedLabel } from '../../../../../test-utils/mocked-items-factory/mocked-labels';
 import { getMockedUserProjectSettingsObject } from '../../../../../test-utils/mocked-items-factory/mocked-settings';
 import { providersRender as render } from '../../../../../test-utils/required-providers-render';
+import { simulateDesktop } from '../../../../../test-utils/utils';
 import { AnnotatorCanvasSettingsProvider } from '../../../../annotator/providers/annotator-canvas-settings-provider/annotator-canvas-settings-provider.component';
 import { ProjectProvider } from '../../../providers/project-provider/project-provider.component';
 import { QuickInferenceContextProps, useQuickInference } from './quick-inference-provider.component';
@@ -111,8 +112,15 @@ const setQuickInference = (options: Partial<QuickInferenceContextProps>) => {
 };
 
 describe('SecondaryToolbar', () => {
+    let user: User;
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     beforeEach(() => {
         setQuickInference({});
+        user = new User();
     });
 
     it('does not render explanation options', async () => {
@@ -165,9 +173,12 @@ describe('SecondaryToolbar', () => {
 
         await renderApp({ labels: [label1, label2] });
 
-        fireEvent.click(screen.getByLabelText('show explanations dropdown'));
+        const explanationSelectTester = user.createTester('Select', {
+            root: screen.getByLabelText('show explanations dropdown'),
+        });
 
-        await userEvent.selectOptions(screen.getByRole('listbox'), screen.getByRole('option', { name: label2.name }));
+        await explanationSelectTester.open();
+        await explanationSelectTester.selectOption({ option: label2.name });
 
         expect(mockedSetExplanation).toHaveBeenCalledWith(explanationTwo);
     });

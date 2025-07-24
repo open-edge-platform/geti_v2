@@ -1,8 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { fireEvent, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { screen } from '@testing-library/react';
+import { User } from '@react-aria/test-utils';
 
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { createInMemoryProjectService } from '../../../../core/projects/services/in-memory-project-service';
@@ -10,6 +10,7 @@ import { createInMemoryUserSettingsService } from '../../../../core/user-setting
 import { getMockedProject } from '../../../../test-utils/mocked-items-factory/mocked-project';
 import { getMockedTask } from '../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { projectRender as render } from '../../../../test-utils/project-provider-render';
+import { simulateDesktop } from '../../../../test-utils/utils';
 import { SelectModel } from './select-model.component';
 
 jest.mock('react-router-dom', () => ({
@@ -18,6 +19,16 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('SelectModel', () => {
+    const testUtilUser = new User();
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
+    afterAll(() => {
+        jest.resetAllMocks();
+    });
+
     it('does not render for classification tasks', async () => {
         const project = getMockedProject({
             tasks: [getMockedTask({ id: '1', domain: DOMAIN.CLASSIFICATION })],
@@ -97,16 +108,16 @@ describe('SelectModel', () => {
             services: { userSettingsService },
         });
 
-        fireEvent.click(screen.getByRole('button'));
-        const activeModel = screen.getByRole('option', { name: 'Active model' });
+        const selectTester = testUtilUser.createTester('Select', {root: screen.getByRole('button')});
+        const picker = selectTester.trigger;
 
-        await userEvent.selectOptions(screen.getByRole('listbox'), activeModel);
+        await selectTester.open();
+        await selectTester.selectOption({ option: 'Active model' });
+        expect(picker).toHaveTextContent('Active model');
 
-        fireEvent.click(await screen.findByRole('button', { name: /Active model/i }));
+        await selectTester.open();
+        await selectTester.selectOption({ option: 'LVM: SAM (Beta)' });
+        expect(picker).toHaveTextContent('LVM: SAM (Beta)');
 
-        const visualPromptModel = screen.getByRole('option', { name: /LVM: SAM/ });
-        await userEvent.selectOptions(screen.getByRole('listbox'), visualPromptModel);
-
-        expect(await screen.findByRole('button', { name: /LVM: SAM/i })).toBeInTheDocument();
     });
 });

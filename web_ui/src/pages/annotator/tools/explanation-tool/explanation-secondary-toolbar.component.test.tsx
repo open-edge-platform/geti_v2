@@ -15,7 +15,7 @@ import { getMockedAnnotation } from '../../../../test-utils/mocked-items-factory
 import { getMockedLabel } from '../../../../test-utils/mocked-items-factory/mocked-labels';
 import { getMockedTask, mockedTaskContextProps } from '../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { projectRender as render } from '../../../../test-utils/project-provider-render';
-import { checkTooltip } from '../../../../test-utils/utils';
+import { checkTooltip, simulateDesktop } from '../../../../test-utils/utils';
 import {
     useStreamingVideoPlayer,
     VideoPlayerPlayerContextProps,
@@ -153,6 +153,10 @@ const noObjectPrediction = getMockedAnnotation(
 );
 
 describe('ExplanationSecondaryToolbar', () => {
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     beforeEach(() => {
         jest.useRealTimers();
 

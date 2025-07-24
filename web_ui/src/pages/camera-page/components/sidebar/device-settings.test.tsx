@@ -3,11 +3,12 @@
 
 import { defaultTheme, Provider as ThemeProvider } from '@geti/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { User } from '@react-aria/test-utils';
 
 import { SettingsContextProps, useDeviceSettings } from '../../providers/device-settings-provider.component';
 import { applySettings } from '../../providers/util';
 import { getUseCameraSettings } from '../../test-utils/camera-setting';
+import { simulateDesktop } from '../../../../test-utils/utils';
 import { DeviceSettings } from './device-settings.component';
 
 jest.mock('../../providers/util', () => ({
@@ -27,6 +28,17 @@ const getMockedDevice = (number: number) =>
     }) as MediaDeviceInfo;
 
 describe('Settings', () => {
+    let user: User;
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+        user = new User();
+    });
+
     const renderApp = (config: Partial<SettingsContextProps & { stream: unknown }> = {}) => {
         jest.mocked(useDeviceSettings).mockReturnValue(getUseCameraSettings(config));
 
@@ -37,10 +49,6 @@ describe('Settings', () => {
         );
     };
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
     it('update selected device id', async () => {
         const cameraOne = getMockedDevice(1);
         const cameraTwo = getMockedDevice(2);
@@ -49,12 +57,12 @@ describe('Settings', () => {
 
         renderApp({ videoDevices, setSelectedDeviceId: mockedSetSelectedDeviceId });
 
-        fireEvent.click(screen.getByLabelText('devices'));
+        const deviceSelectTester = user.createTester('Select', {
+            root: screen.getByLabelText('devices'),
+        });
 
-        await userEvent.selectOptions(
-            screen.getByRole('listbox'),
-            screen.getByRole('option', { name: cameraTwo.label })
-        );
+        await deviceSelectTester.open();
+        await deviceSelectTester.selectOption({ option: cameraTwo.label });
 
         expect(mockedSetSelectedDeviceId).toHaveBeenCalledWith(cameraTwo.deviceId);
     });
@@ -64,8 +72,13 @@ describe('Settings', () => {
 
         renderApp({ setIsMirrored });
 
-        fireEvent.click(screen.getByRole('button', { name: /Mirror camera selection/ }));
-        await userEvent.selectOptions(screen.getByRole('listbox'), screen.getByRole('option', { name: 'On' }));
+        const mirrorSelectTester = user.createTester('Select', {
+            root: screen.getByRole('button', { name: /Mirror camera selection/ }),
+        });
+
+        await mirrorSelectTester.open();
+        await mirrorSelectTester.selectOption({ option: 'On' });
+
         expect(setIsMirrored).toHaveBeenCalledWith(true);
     });
 

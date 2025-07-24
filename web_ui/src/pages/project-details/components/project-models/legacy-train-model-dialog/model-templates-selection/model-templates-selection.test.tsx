@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { fireEvent, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { User } from '@react-aria/test-utils';
 
 import { mockedArchitectureModels } from '../../../../../../core/models/services/test-utils';
 import { DOMAIN } from '../../../../../../core/projects/core.interface';
@@ -14,11 +14,22 @@ import { getMockedProjectIdentifier } from '../../../../../../test-utils/mocked-
 import { getMockedProject } from '../../../../../../test-utils/mocked-items-factory/mocked-project';
 import { getMockedTask } from '../../../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { projectRender as render } from '../../../../../../test-utils/project-provider-render';
+import { simulateDesktop } from '../../../../../../test-utils/utils';
 import { ProjectProvider } from '../../../../providers/project-provider/project-provider.component';
 import { ModelTemplatesSelection } from './model-templates-selection.component';
 import { ModelConfigurationOption } from './utils';
 
 describe('ModelTemplatesSelection', () => {
+    let user: User;
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
+    beforeEach(() => {
+        user = new User();
+    });
+
     const mockedSupportedAlgorithmsForDetection = [
         getLegacyMockedSupportedAlgorithm({
             name: 'YOLO',
@@ -200,11 +211,12 @@ describe('ModelTemplatesSelection', () => {
             { services: { projectService } }
         );
 
-        fireEvent.click(screen.getByRole('button', { name: 'Detection Select domain Task' }));
+        const taskSelectTester = user.createTester('Select', {
+            root: screen.getByRole('button', { name: 'Detection Select domain Task' }),
+        });
 
-        const listbox = await screen.findByRole('listbox', { name: /Task/i });
-
-        await userEvent.selectOptions(listbox, screen.getByRole('option', { name: /Classification/ }));
+        await taskSelectTester.open();
+        await taskSelectTester.selectOption({ option: 'Classification' });
 
         expect(setSelectedTask).toHaveBeenCalled();
         expect(handleSelectedTemplateId).toHaveBeenCalled();

@@ -12,6 +12,7 @@ import { isLargeSizeQuery as mockIsLargeSizeQuery } from '@geti/ui/theme';
 
 import { initializeMetrics } from './analytics/metrics';
 import * as CanvasUtils from './shared/canvas-utils';
+import { simulateDesktop } from './test-utils/utils';
 
 window.ResizeObserver = class ResizeObserver {
     observe() {

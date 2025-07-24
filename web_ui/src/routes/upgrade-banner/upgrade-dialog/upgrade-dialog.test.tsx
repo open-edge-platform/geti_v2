@@ -7,9 +7,16 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { getMockedPlatformVersion } from '../../../test-utils/mocked-items-factory/mocked-platform-utils';
 import { providersRender as render } from '../../../test-utils/required-providers-render';
 import { UpgradeDialog } from './upgrade-dialog.component';
+import { simulateDesktop } from '../../../test-utils/utils';
+import { User } from '@react-aria/test-utils';
 
 describe('UpgradeDialog', () => {
+    const testUtilUser = new User();
     const currentVersion = '2.11.0';
+
+    beforeAll(() => {
+        simulateDesktop();
+    });
 
     it('displays current version, required drivers versions and release notes link', () => {
         const availableVersions = [
@@ -65,7 +72,7 @@ describe('UpgradeDialog', () => {
         expect(screen.queryByRole('button', { name: /version/i })).not.toBeInTheDocument();
     });
 
-    it('displays versions picker when multiple versions are available', () => {
+    it('displays versions picker when multiple versions are available', async () => {
         const availableVersions = [
             getMockedPlatformVersion({
                 version: '2.12.0',
@@ -90,8 +97,13 @@ describe('UpgradeDialog', () => {
             />
         );
 
-        expect(screen.getByRole('button', { name: /version/i })).toBeInTheDocument();
-        fireEvent.click(screen.getByRole('button', { name: /version/i }));
+        const selectTester = testUtilUser.createTester('Select', {
+            root: screen.getByRole('button', { name: /version/i }),
+        });
+        await selectTester.open();
+        expect(selectTester.options().map(option => option.textContent)).toEqual(
+            availableVersions.map(version => version.version)
+        );
 
         availableVersions.forEach((version) => {
             expect(screen.getByRole('option', { name: version.version })).toBeInTheDocument();

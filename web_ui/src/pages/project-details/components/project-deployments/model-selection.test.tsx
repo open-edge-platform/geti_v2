@@ -17,6 +17,7 @@ import { getMockedModelsGroup, getMockedModelVersion } from '../../../../test-ut
 import { getMockedSupportedAlgorithm } from '../../../../test-utils/mocked-items-factory/mocked-supported-algorithms';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { ModelSelection } from './model-selection.component';
+import { simulateDesktop } from '../../../../test-utils/utils';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -52,6 +53,10 @@ const renderApp = async ({
 };
 
 describe('ModelSelection', () => {
+    beforeAll(() => {
+        simulateDesktop();
+    });
+
     beforeEach(() => {
         jest.clearAllMocks();
     });
