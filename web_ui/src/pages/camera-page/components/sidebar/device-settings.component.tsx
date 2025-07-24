@@ -6,7 +6,6 @@ import { isEqual, isUndefined } from 'lodash-es';
 
 import { useDeviceSettings } from '../../providers/device-settings-provider.component';
 import { DeviceSettingsCategory } from './device-settings-category.component';
-import { DeviceSettingsDefaultCategory } from './device-settings-default-category.component';
 import { settingsMetadata } from './device-settings-metadata';
 
 const Header = ({ text }: { text: string }) => (
@@ -55,7 +54,6 @@ export const DeviceSettings = () => {
                 return <DeviceSettingsCategory name={categoryName} configuration={configuration} key={categoryName} />;
             })}
             <DeviceSettingsCategory name={defaultCategory} configuration={defaultCategoryAttributesKeys} />
-            <DeviceSettingsDefaultCategory deviceConfig={deviceConfig} />
         </View>
     );
 };
