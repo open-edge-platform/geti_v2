@@ -408,6 +408,29 @@ class ExportDataRedactionUseCase(BaseDataRedactionUseCase):
             doc.pop(key, None)
         return doc
 
+    @staticmethod
+    def purge_model_docs_if_necessary(doc: dict) -> dict:
+        """
+        Purge model document metadata by marking it as purged and resetting specific fields.
+
+        :param doc: A dictionary representing a model document.
+        :return: The modified document after purging.
+        """
+        purge_info = doc.get("purge_info")
+        if purge_info is not None and purge_info["is_purged"]:
+            return doc
+
+        new_purge_info = {
+            "is_purged": True,
+            "purge_time": now(),
+            "user_uid": "export_project_job",
+        }
+        doc["purge_info"] = new_purge_info
+        doc["size"] = 0
+        doc["exportable_code_path"] = ""
+        doc["weight_paths"] = []
+        return doc
+
 
 class ImportDataRedactionUseCase(BaseDataRedactionUseCase):
     """

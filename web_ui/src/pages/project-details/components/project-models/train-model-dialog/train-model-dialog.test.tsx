@@ -476,7 +476,7 @@ describe('Train model dialog', () => {
         fireEvent.click(screen.getByRole('button', { name: /advanced settings/i }));
         fireEvent.click(screen.getByRole('tab', { name: /training/i }));
 
-        fireEvent.click(screen.getByRole('radio', { name: /pre\-trained weights \- fine\-tune the original model/i }));
+        fireEvent.click(screen.getByRole('radio', { name: /pre\-trained weights \- fine\-tune/i }));
         fireEvent.click(screen.getByRole('checkbox', { name: /reshuffle subsets/i }));
 
         fireEvent.click(screen.getByRole('button', { name: /start/i }));

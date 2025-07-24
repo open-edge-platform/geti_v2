@@ -52,7 +52,7 @@ from geti_telemetry_tools import unified_tracing
 from iai_core.entities.color import Color
 from iai_core.entities.label import Domain
 from iai_core.entities.model_template import TaskType
-from iai_core.factories.project_parser import DOMAIN_TO_EMPTY_LABEL_NAME
+from iai_core.factories.project_parser import DOMAIN_TO_BACKGROUND_LABEL_NAME, DOMAIN_TO_EMPTY_LABEL_NAME
 
 CONNECTIONS = "connections"
 EDGES = "edges"
@@ -110,6 +110,7 @@ class LabelProperties:
     domain: Domain
     group: str | None = None
     is_empty: bool = False
+    is_background: bool = False
     hotkey: str = ""
     color: str = ""
     id: str | None = None
@@ -220,6 +221,7 @@ class ProjectRestValidator(RestApiValidator):
         ProjectRestValidator._validate_parent_labels(data=data)
         ProjectRestValidator._validate_label_groups(labels=labels)
         ProjectRestValidator._validate_empty_labels(labels=labels)
+        ProjectRestValidator._validate_background_labels(labels=labels)
         ProjectRestValidator._validate_label_deletion(data=data)
         if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_KEYPOINT_DETECTION):
             ProjectRestValidator._validate_keypoint_structure(data=data, labels=labels)
@@ -627,6 +629,25 @@ class ProjectRestValidator(RestApiValidator):
                 continue
             if (empty_label_name in (label.name, label.group)) and not label.is_empty:
                 raise ReservedLabelNameException(label_name=empty_label_name)
+
+    @staticmethod
+    def _validate_background_labels(labels: list[LabelProperties]) -> None:
+        """
+        Validates that user defined label names do not include the name of the background
+        label for that domain
+
+        :param labels: List of LabelProperties, each entry representing the properties
+            for a single label that are up for validation
+        :raises ReservedLabelNameException: if any label has the same name of the label
+            of the background one for the same domain
+        """
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+            for label in labels:
+                background_label_name = DOMAIN_TO_BACKGROUND_LABEL_NAME.get(label.domain, None)
+                if background_label_name is None:
+                    continue
+                if label.name == background_label_name and not label.is_background:
+                    raise ReservedLabelNameException(label_name=label.name)
 
     @staticmethod
     def _validate_keypoint_structure(data: dict[str, Any], labels: list[LabelProperties]) -> None:

@@ -16,6 +16,7 @@ import {
     getMockedTrainingConfiguration,
 } from '../../../../../../../../test-utils/mocked-items-factory/mocked-configuration-parameters';
 import { providersRender as render } from '../../../../../../../../test-utils/required-providers-render';
+import { LEARNING_RATE_STEP } from './learning-parameters-list.component';
 import { LearningParameters } from './learning-parameters.component';
 
 type LearningParametersType = TrainingConfiguration['training'];
@@ -51,7 +52,8 @@ const expectParameterToUpdateProperly = (parameter: ConfigurationParameter) => {
         resetParameter(parameter.name);
         expect(getToggleEnableParameter(parameter.name)).toBeChecked();
     } else {
-        const step = parameter.type === 'float' ? 0.001 : 1;
+        const isLearningRate = parameter.key === 'learning_rate';
+        const step = parameter.type === 'float' ? (isLearningRate ? LEARNING_RATE_STEP : 0.001) : 1;
 
         expect(getParameter(parameter.name)).toHaveValue(parameter.value.toString());
 

@@ -25,7 +25,7 @@ export const AdvancedConfigurationParameters = ({ parameters }: AdvancedConfigur
                     {parameters.map((parameter) => (
                         <Fragment key={parameter.key}>
                             <ParameterName name={parameter.name} description={parameter.description} />
-                            <ParameterReadOnlyValue value={parameter.value} />
+                            <ParameterReadOnlyValue name={parameter.name} value={parameter.value} />
                         </Fragment>
                     ))}
                 </Grid>

@@ -19,6 +19,7 @@ PARENT_ID = "parent_id"
 SHOW_TO_USER = "show_to_user"
 TASK_ID = "task_id"
 IS_ANOMALOUS = "is_anomalous"
+IS_BACKGROUND = "is_background"
 
 
 class LabelRESTViews:
@@ -43,6 +44,7 @@ class LabelRESTViews:
             COLOR: label.color.hex_str,
             HOTKEY: label.hotkey,
             IS_EMPTY: label.is_empty,
+            IS_BACKGROUND: label.is_background,
             GROUP: label_group.name if label_group is not None else "",
             PARENT_ID: None if parent is None else str(parent.id_),
         }
@@ -65,6 +67,7 @@ class LabelRESTViews:
         is_empty = label_dict.get(IS_EMPTY, False)
         id_ = label_dict.get(ID_)
         ephemeral = False
+        is_background = label_dict.get(IS_BACKGROUND, False)
         if id_ is None:
             id_ = LabelRepo.generate_id()
             ephemeral = True
@@ -74,6 +77,7 @@ class LabelRESTViews:
             color=color,
             hotkey=hotkey,
             is_empty=is_empty,
+            is_background=is_background,
             id_=id_,
             ephemeral=ephemeral,
         )

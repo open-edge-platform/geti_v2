@@ -25,6 +25,7 @@ feature_flags_data:
   FEATURE_FLAG_REQ_ACCESS: "false"
   FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS: "false"
   FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING: "true"
+  FEATURE_FLAG_ANNOTATION_HOLE: "false"
 
 main_namespace: impt
 flyte_workflows:

@@ -9,4 +9,5 @@ logger = logging.getLogger(__name__)
 
 class FeatureFlag(Enum):
     FEATURE_FLAG_KEYPOINT_DETECTION = auto()
+    FEATURE_FLAG_ANNOTATION_HOLE = auto()
     FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING = auto()
