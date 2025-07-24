@@ -2,13 +2,13 @@
     overflow: hidden;
     position: relative;
 
-    &:hover .deleteContainer {
+    &:hover .floatingContainer {
         opacity: 1;
     }
 }
 
 .deleteContainer {
-    opacity: 0;
+    //opacity: 0;
     background: var(--spectrum-global-color-gray-50) !important;
     border-radius: var(--spectrum-global-dimension-size-50) !important;
 
@@ -18,4 +18,21 @@
 }
 .visible {
     opacity: 1;
+}
+
+.floatingContainer {
+    opacity: 0;
+    position: absolute;
+    background: var(--spectrum-global-color-gray-50) !important;
+    border-radius: var(--spectrum-global-dimension-size-50) !important;
+}
+
+.leftTopElement {
+    top: var(--spectrum-global-dimension-size-50);
+    left: var(--spectrum-global-dimension-size-50);
+}
+
+.rightTopElement {
+    top: var(--spectrum-global-dimension-size-50);
+    right: var(--spectrum-global-dimension-size-50);
 }

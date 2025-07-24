@@ -3,20 +3,16 @@
 
 import { ActionButton, AlertDialog, DialogContainer, type ActionButtonProps } from '@geti/ui';
 import { Delete } from '@geti/ui/icons';
-import { OverlayTriggerState } from 'react-stately';
+import { useOverlayTriggerState } from 'react-stately';
 
 interface DeleteItemButtonProps extends Omit<ActionButtonProps, 'isQuiet'> {
     id: string;
-    alertDialogState: OverlayTriggerState;
     onDeleteItem: (id: string) => void;
 }
 
-export const DeleteItemButton = ({
-    id,
-    alertDialogState,
-    onDeleteItem,
-    ...styleProps
-}: DeleteItemButtonProps): JSX.Element => {
+export const DeleteItemButton = ({ id, onDeleteItem, ...styleProps }: DeleteItemButtonProps): JSX.Element => {
+    const alertDialogState = useOverlayTriggerState({});
+
     return (
         <>
             <ActionButton isQuiet onPress={alertDialogState.toggle} {...styleProps} aria-label={'delete'}>
@@ -36,7 +32,7 @@ export const DeleteItemButton = ({
                             alertDialogState.close();
                         }}
                     >
-                        Are you sure you want to delete this file?
+                        Are you sure you want to delete this item?
                     </AlertDialog>
                 )}
             </DialogContainer>

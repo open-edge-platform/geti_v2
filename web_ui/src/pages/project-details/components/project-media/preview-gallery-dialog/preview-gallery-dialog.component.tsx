@@ -22,6 +22,8 @@ import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
 import { useViewMode } from '../../../../../hooks/use-view-mode/use-view-mode.hook';
 import { MEDIA_CONTENT_BUCKET } from '../../../../../providers/media-upload-provider/media-upload.interface';
+import { DeleteItemButton } from '../../../../../shared/components/delete-item-button/delete-item-button.component';
+import { SelectionCheckbox } from '../../../../../shared/components/media-preview-list/checkbox.component';
 import { MediaPreviewList } from '../../../../../shared/components/media-preview-list/media-preview-list.component';
 import { MediaViewModes } from '../../../../../shared/components/media-view-modes/media-view-modes.component';
 import { INITIAL_VIEW_MODE, ViewModes } from '../../../../../shared/components/media-view-modes/utils';
@@ -62,10 +64,6 @@ export const PreviewGalleryDialog = ({
 
     const hasLabelSelector = isSingleDomainProject(DOMAIN.CLASSIFICATION) || isSingleDomainProject(isAnomalyDomain);
 
-    const handleDeleteItems = async (id: string) => {
-        setCurrentFiles((prevFiles) => prevFiles.filter(hasDifferentId(id)));
-    };
-
     const handleUpdateItem = async (id: string, updatedItem: PreviewFile) => {
         setCurrentFiles((currentItems) => currentItems.map(updateItem(id, updatedItem)));
     };
@@ -78,10 +76,14 @@ export const PreviewGalleryDialog = ({
         onClose();
     };
 
-    const sortFiles = (option: SortingOptions) => {
+    const handleSortFiles = (option: Key) => {
         const order = option === SortingOptions.LABEL_NAME_A_Z ? 'asc' : 'desc';
 
         setCurrentFiles((prevFiles) => orderBy(prevFiles, ['labelName'], order));
+    };
+
+    const handleDeleteFile = (id: string) => {
+        setCurrentFiles((prevFiles) => prevFiles.filter(hasDifferentId(id)));
     };
 
     return (
@@ -101,7 +103,7 @@ export const PreviewGalleryDialog = ({
                                         isQuiet
                                         maxWidth={'size-2000'}
                                         aria-label='sorting options'
-                                        onSelectionChange={(key: Key) => sortFiles(key as SortingOptions)}
+                                        onSelectionChange={handleSortFiles}
                                     >
                                         <Item key={SortingOptions.LABEL_NAME_A_Z}>Label Name (A-Z)</Item>
                                         <Item key={SortingOptions.LABEL_NAME_Z_A}>Label Name (Z-A)</Item>
@@ -121,10 +123,17 @@ export const PreviewGalleryDialog = ({
                                 items={currentFiles}
                                 height={`calc(100% - ${PREVIEW_GALLERY_HEIGHT_OFFSET})`}
                                 viewMode={viewMode}
-                                hasItemPreview={false}
                                 hasLabelSelector={hasLabelSelector}
-                                onDeleteItem={handleDeleteItems}
                                 onUpdateItem={handleUpdateItem}
+                                topLeftElement={() => (
+                                    <SelectionCheckbox
+                                        isSelected={false}
+                                        onToggle={(isSelected) => console.log('isSelected', isSelected)}
+                                    />
+                                )}
+                                topRightElement={(id: string) => (
+                                    <DeleteItemButton id={id} onDeleteItem={handleDeleteFile} />
+                                )}
                             />
                         </Content>
 
