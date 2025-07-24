@@ -1,10 +1,22 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useState } from 'react';
+import { Key, useState } from 'react';
 
-import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Flex, Heading, Text } from '@geti/ui';
-import { isEmpty } from 'lodash-es';
+import {
+    Button,
+    ButtonGroup,
+    Content,
+    Dialog,
+    DialogContainer,
+    Divider,
+    Flex,
+    Heading,
+    Item,
+    Picker,
+    Text,
+} from '@geti/ui';
+import { isEmpty, orderBy } from 'lodash-es';
 
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
@@ -16,7 +28,7 @@ import { INITIAL_VIEW_MODE, ViewModes } from '../../../../../shared/components/m
 import { hasDifferentId } from '../../../../../shared/utils';
 import { TaskProvider } from '../../../../annotator/providers/task-provider/task-provider.component';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
-import { PreviewFile } from './utils';
+import { PreviewFile, SortingOptions } from './utils';
 
 export interface PreviewGalleryDialogProps {
     files: File[];
@@ -66,6 +78,12 @@ export const PreviewGalleryDialog = ({
         onClose();
     };
 
+    const sortFiles = (option: SortingOptions) => {
+        const order = option === SortingOptions.LABEL_NAME_A_Z ? 'asc' : 'desc';
+
+        setCurrentFiles((prevFiles) => orderBy(prevFiles, ['labelName'], order));
+    };
+
     return (
         <TaskProvider>
             <DialogContainer onDismiss={onClose} type='fullscreen'>
@@ -75,13 +93,28 @@ export const PreviewGalleryDialog = ({
                         <Divider />
 
                         <Content>
-                            <Flex gap={'size-100'} alignItems={'center'} justifyContent={'end'}>
-                                <Text>{viewMode} </Text>
-                                <MediaViewModes
-                                    viewMode={viewMode}
-                                    setViewMode={setViewMode}
-                                    items={[ViewModes.LARGE, ViewModes.MEDIUM, ViewModes.SMALL]}
-                                />
+                            <Flex gap={'size-100'} alignItems={'center'} justifyContent={'space-between'}>
+                                <Flex alignItems={'center'} gap={'size-100'}>
+                                    <Text UNSAFE_style={{ fontWeight: 'bold' }}>Sort by: </Text>
+
+                                    <Picker
+                                        isQuiet
+                                        maxWidth={'size-2000'}
+                                        aria-label='sorting options'
+                                        onSelectionChange={(key: Key) => sortFiles(key as SortingOptions)}
+                                    >
+                                        <Item key={SortingOptions.LABEL_NAME_A_Z}>Label Name (A-Z)</Item>
+                                        <Item key={SortingOptions.LABEL_NAME_Z_A}>Label Name (Z-A)</Item>
+                                    </Picker>
+                                </Flex>
+                                <Flex gap={'size-100'} alignItems={'center'}>
+                                    <Text>{viewMode} </Text>
+                                    <MediaViewModes
+                                        viewMode={viewMode}
+                                        setViewMode={setViewMode}
+                                        items={[ViewModes.LARGE, ViewModes.MEDIUM, ViewModes.SMALL]}
+                                    />
+                                </Flex>
                             </Flex>
 
                             <MediaPreviewList
