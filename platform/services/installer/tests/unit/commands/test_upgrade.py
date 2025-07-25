@@ -219,7 +219,7 @@ def test_get_newest_helm_release_secret_ok(core_api_mock):
     latest_secret: V1Secret = _get_newest_helm_release_secret(namespace="dummy")
 
     # Assert the result
-    latest_secret.metadata.name = mock_control_plane_secret_2.metadata.name
+    assert latest_secret.metadata.name == mock_control_plane_secret_2.metadata.name
 
 
 def test_get_newest_helm_release_secret_empty(core_api_mock):
