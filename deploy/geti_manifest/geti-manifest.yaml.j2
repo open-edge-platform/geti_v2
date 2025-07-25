@@ -3,8 +3,7 @@ nvidia_drivers_version: "535.*.*"
 intel_drivers_version: "1.3"
 intel_device_plugin_version: $INTEL_DEVICE_PLUGIN_VERSION
 is_upgrade_required: false
-
-{% if 'nvidia' in gpu_label %}
+{%- if 'nvidia' in gpu_label %}
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart

@@ -367,6 +367,7 @@ async def main(job_manager: JobManager) -> None:
             deploy_secret()
         for index, helm in enumerate(helm_charts):
             rendered_helm = yaml.safe_load(helm)
+            logger.debug(f"Rendered helm chart {rendered_helm['metadata']['name']}:\n{rendered_helm}")
             try:
                 job_manager.set_status(
                     "RUNNING",
