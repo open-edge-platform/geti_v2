@@ -103,7 +103,6 @@ test('Media upload', async ({ page, mediaPage, registerApiResponse, openApi }) =
     const files = range(1, 4).map((_) => resolveAntelopePath());
     const bucket = await mediaPage.getBucket();
     await bucket.uploadFiles(files);
-    await bucket.acceptPreviewFiles();
 
     // Select image
     await bucket.selectImage('Antelope 0');

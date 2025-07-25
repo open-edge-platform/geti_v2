@@ -32,9 +32,8 @@ const classificationLabels = [
     },
 ];
 
-// TODO: The upcoming component tests for MediaPreviewList will cover these cases,
-// since it handles labels managing
-test.skip('Upload media with label', async ({ page, mediaPage, registerApiResponse }) => {
+// TODO: add test for MediaPreviewList
+test('Upload media with label', async ({ page, mediaPage, registerApiResponse }) => {
     registerApiResponse('GetProjectInfo', (_, res, ctx) => {
         const classificationProject = cloneDeep(project);
         classificationProject.pipeline.tasks[1].labels = classificationLabels;

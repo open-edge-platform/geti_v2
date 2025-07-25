@@ -4,7 +4,7 @@
 import { useState } from 'react';
 
 import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Flex, Heading, Text } from '@geti/ui';
-import { isEmpty, noop } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
@@ -45,7 +45,6 @@ export const PreviewGalleryDialog = ({
     onUpload,
 }: PreviewGalleryDialogProps) => {
     const { isSingleDomainProject } = useProject();
-    const [isLoading, setIsLoading] = useState(false);
     const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC, INITIAL_VIEW_MODE);
     const [currentFiles, setCurrentFiles] = useState(initFiles.map(getMediaItemFromFile(labelIds)));
 
@@ -60,18 +59,16 @@ export const PreviewGalleryDialog = ({
     };
 
     const handleUpload = async () => {
-        setIsLoading(true);
         const groupedByLabel = Object.groupBy(currentFiles, (file) => String(file.labelIds));
 
         Object.entries(groupedByLabel).forEach(([ids, items]) => onUpload(getFiles(items), getLabelsIds(ids)));
 
-        setIsLoading(false);
         onClose();
     };
 
     return (
         <TaskProvider>
-            <DialogContainer onDismiss={noop} type='fullscreen'>
+            <DialogContainer onDismiss={onClose} type='fullscreen'>
                 {isOpen && (
                     <Dialog>
                         <Heading>Preview gallery</Heading>
@@ -99,15 +96,14 @@ export const PreviewGalleryDialog = ({
                         </Content>
 
                         <ButtonGroup>
-                            <Button type='reset' variant={'secondary'} onPress={onClose} isDisabled={isLoading}>
+                            <Button type='button' variant={'secondary'} onPress={onClose}>
                                 Cancel
                             </Button>
                             <Button
                                 type='button'
                                 variant={'accent'}
                                 onPress={handleUpload}
-                                isPending={isLoading}
-                                isDisabled={isLoading || isEmpty(currentFiles)}
+                                isDisabled={isEmpty(currentFiles)}
                             >
                                 Upload
                             </Button>

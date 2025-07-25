@@ -91,7 +91,6 @@ test.describe('Media upload', () => {
             const bucket = await mediaPage.getBucket();
 
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 1 of 1 file')).toBeVisible();
 
@@ -107,17 +106,14 @@ test.describe('Media upload', () => {
             const bucket = await mediaPage.getBucket();
 
             await bucket.uploadFiles([files[0]]);
-            await bucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 1 of 1 file')).toBeVisible();
 
             await bucket.uploadFiles([files[1]]);
-            await bucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 2 of 2 files')).toBeVisible();
 
             await bucket.uploadFiles([files[2]]);
-            await bucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 3 of 3 files')).toBeVisible();
 
@@ -135,19 +131,15 @@ test.describe('Media upload', () => {
 
             const bucket = await mediaPage.getBucket();
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 5 of 5 file')).toBeVisible();
         });
 
-        // TODO: The upcoming component tests for MediaPreviewList will cover these cases,
-        // since it handles invalid files.
-        test.skip('Upload 1 invalid file', async ({ page, mediaPage }) => {
+        test('Upload 1 invalid file', async ({ page, mediaPage }) => {
             const files = [resolveMockFilesPath('test.json')];
             const bucket = await mediaPage.getBucket();
 
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 0 of 1 file - 1 error')).toBeVisible();
 
@@ -159,7 +151,7 @@ test.describe('Media upload', () => {
             await expect(dialog.getByRole('link', { name: 'Error' })).toBeVisible();
         });
 
-        test.skip('Upload multiple invalid files', async ({ page, mediaPage }) => {
+        test('Upload multiple invalid files', async ({ page, mediaPage }) => {
             const files = [
                 resolveMockFilesPath('test.json'),
                 resolveMockFilesPath('test.json'),
@@ -178,10 +170,7 @@ test.describe('Media upload', () => {
             await expect(dialog.getByRole('link', { name: 'Error' })).toHaveCount(3);
         });
 
-        test.skip('Uploads normally if invalid files were uploaded before (images, json)', async ({
-            page,
-            mediaPage,
-        }) => {
+        test('Uploads normally if invalid files were uploaded before (images, json)', async ({ page, mediaPage }) => {
             const imageFiles = range(0, 4).map((_) => resolveAntelopePath());
             const invalidFiles = [resolveMockFilesPath('test.json')];
             const bucket = await mediaPage.getBucket();
@@ -203,7 +192,7 @@ test.describe('Media upload', () => {
             await expect(dialog.getByText('antelope.png')).toHaveCount(4);
         });
 
-        test.skip('Uploads normally if invalid files were uploaded before (videos only)', async ({
+        test('Uploads normally if invalid files were uploaded before (videos only)', async ({
             page,
             registerApiResponse,
             mediaPage,
@@ -255,15 +244,16 @@ test.describe('Media upload', () => {
             const bucket = await mediaPage.getBucket();
 
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
 
-            await expect(page.getByText('Uploaded 5 of 5 files')).toBeVisible();
+            await expect(page.getByText('Uploaded 5 of 6 files - 1 error')).toBeVisible();
 
             await bucket.openDetailsDialog();
 
             const dialog = page.getByRole('dialog');
             await expect(dialog.getByText('small-vid.mp4')).toBeVisible();
+            await expect(dialog.getByText('test.json')).toBeVisible();
             await expect(dialog.getByText('antelope.png')).toHaveCount(4);
+            await expect(dialog.getByRole('link', { name: 'Error' })).toBeVisible();
         });
 
         test('Cancels all pending uploads', async ({ page, mediaPage, registerApiResponse, openApi }) => {
@@ -279,8 +269,6 @@ test.describe('Media upload', () => {
             const bucket = await mediaPage.getBucket();
 
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
-
             await bucket.openDetailsDialog();
             await bucket.cancelPendingUploads();
 
@@ -305,7 +293,6 @@ test.describe('Media upload', () => {
             const bucket = await mediaPage.getBucket();
 
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
             await bucket.openDetailsDialog();
 
             // Wait for 1 upload to succeed and cancel the rest
@@ -322,7 +309,6 @@ test.describe('Media upload', () => {
             const bucket = await mediaPage.getBucket();
 
             await bucket.uploadFiles(imageFiles);
-            await bucket.acceptPreviewFiles();
             await bucket.openDetailsDialog();
 
             await page.getByRole('button', { name: /upload more/i }).click();
@@ -333,7 +319,6 @@ test.describe('Media upload', () => {
             ]);
 
             await fileChooser.setFiles(videoFiles);
-            await bucket.acceptPreviewFiles();
 
             const dialog = page.getByRole('dialog');
             await expect(dialog.getByText('small-vid.mp4')).toBeVisible();
@@ -354,11 +339,8 @@ test.describe('Media upload', () => {
 
             // Upload the same batch of files three times
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
 
             await bucket.openDetailsDialog();
 
@@ -385,12 +367,10 @@ test.describe('Media upload', () => {
             const bucket = await mediaPage.getBucket();
 
             await bucket.uploadFiles(videoFile);
-            await bucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 0 of 1 file - 1 error')).toBeVisible();
 
             await bucket.uploadFiles(imgFiles);
-            await bucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 0 of 3 files - 3 errors')).toBeVisible();
         });
@@ -417,7 +397,6 @@ test.describe('Media upload', () => {
             const bucket = await mediaPage.getBucket(MEDIA_CONTENT_BUCKET.NORMAL);
 
             await bucket.uploadFiles(files);
-            await bucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 1 of 1 file')).toBeVisible();
 
@@ -434,12 +413,10 @@ test.describe('Media upload', () => {
             const anomalousBucket = await mediaPage.getBucket(MEDIA_CONTENT_BUCKET.ANOMALOUS);
 
             await normalBucket.uploadFiles([...take(imageFiles, 2)]);
-            await normalBucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 2 of 2 file')).toBeVisible();
 
             await anomalousBucket.uploadFiles([...takeRight(imageFiles, 2)]);
-            await anomalousBucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 4 of 4 file')).toBeVisible();
 
@@ -464,9 +441,7 @@ test.describe('Media upload', () => {
             const anomalousBucket = await mediaPage.getBucket(MEDIA_CONTENT_BUCKET.ANOMALOUS);
 
             await normalBucket.uploadFiles([...take(imageFiles, 2)]);
-            await normalBucket.acceptPreviewFiles();
             await anomalousBucket.uploadFiles([...takeRight(imageFiles, 2)]);
-            await anomalousBucket.acceptPreviewFiles();
 
             await expect(page.getByText('Uploaded 4 of 4 file')).toBeVisible();
 
@@ -493,12 +468,9 @@ test.describe('Media upload', () => {
             const anomalousBucket = await mediaPage.getBucket(MEDIA_CONTENT_BUCKET.ANOMALOUS);
 
             await normalBucket.uploadFiles([...imageFiles, ...invalidFiles]);
-            await normalBucket.acceptPreviewFiles();
-
             await anomalousBucket.uploadFiles([...videoFiles]);
-            await anomalousBucket.acceptPreviewFiles();
 
-            await expect(page.getByText('Uploaded 5 of 5 files')).toBeVisible();
+            await expect(page.getByText('Uploaded 5 of 6 files - 1 error')).toBeVisible();
 
             await anomalousBucket.openDetailsDialog();
 

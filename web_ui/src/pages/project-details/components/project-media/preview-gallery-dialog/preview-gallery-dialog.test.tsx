@@ -24,13 +24,11 @@ describe('PreviewGalleryDialog', () => {
         );
     };
 
-    it('calls onClose when close button is clicked', async () => {
+    it('calls onClose when cancel button is clicked', async () => {
         const mockOnClose = jest.fn();
         await renderApp({ onClose: mockOnClose });
 
         fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
-        screen.debug(screen.getByRole('button', { name: /Cancel/i }));
-
         expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
 
