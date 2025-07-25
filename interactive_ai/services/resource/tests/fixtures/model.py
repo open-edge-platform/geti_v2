@@ -488,6 +488,7 @@ def fxt_model_info_rest(fxt_model, fxt_dataset_counts):
                 "is_anomalous": False,
                 "name": "dog",
                 "parent_id": None,
+                "is_background": False,
             }
         ],
         "training_dataset_info": fxt_dataset_counts,
@@ -529,6 +530,7 @@ def fxt_obsolete_model_info_rest(fxt_obsolete_model, fxt_dataset_counts):
                 "is_anomalous": False,
                 "name": "dog",
                 "parent_id": None,
+                "is_background": False,
             }
         ],
         "training_dataset_info": fxt_dataset_counts,

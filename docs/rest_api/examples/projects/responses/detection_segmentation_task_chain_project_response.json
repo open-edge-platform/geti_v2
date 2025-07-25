@@ -41,6 +41,7 @@
                         "hotkey": "ctrl+5",
                         "id": "60db493ed20945a0046f56c6",
                         "is_empty": false,
+                        "is_background": false,
                         "is_deleted": false,
                         "name": "object"
                     },
@@ -71,6 +72,7 @@
                         "hotkey": "ctrl+6",
                         "id": "60db493ed20945a0046f56c7",
                         "is_empty": false,
+                        "is_background": false,
                         "is_deleted": false,
                         "name": "rectangle",
                         "parent_id": null

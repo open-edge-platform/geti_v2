@@ -17,7 +17,7 @@ interface InputSizeParameterProps {
 
 const InputSizeParameter = ({ parameter, onChange, isReadOnly }: InputSizeParameterProps) => {
     if (isReadOnly) {
-        return <Text>{parameter.value}</Text>;
+        return <span aria-label={parameter.name}>{parameter.value}</span>;
     }
 
     const items = parameter.allowedValues.map((value) => ({ value }));

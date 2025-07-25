@@ -79,22 +79,20 @@ interface ParameterReadOnlyProps {
     marginStart?: string;
 }
 
-interface ParameterReadOnlyValueProps {
-    value: Pick<ConfigurationParameter, 'value'>['value'];
-}
+type ParameterReadOnlyValueProps = Pick<ConfigurationParameter, 'value' | 'name'>;
 
-export const ParameterReadOnlyValue = ({ value }: ParameterReadOnlyValueProps) => {
+export const ParameterReadOnlyValue = ({ value, name }: ParameterReadOnlyValueProps) => {
     if (isBoolean(value)) {
-        return <Text>{value ? 'On' : 'Off'}</Text>;
+        return <span aria-label={name}>{value ? 'On' : 'Off'}</span>;
     }
 
-    return <Text>{value}</Text>;
+    return <span aria-label={name}>{value}</span>;
 };
 
 const ParameterReadOnly = ({ parameter, marginStart }: ParameterReadOnlyProps) => {
     return (
         <ParameterLayout header={parameter.name} description={parameter.description} marginStart={marginStart}>
-            <ParameterReadOnlyValue value={parameter.value} />
+            <ParameterReadOnlyValue value={parameter.value} name={parameter.name} />
         </ParameterLayout>
     );
 };

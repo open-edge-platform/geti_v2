@@ -7,6 +7,7 @@ import {
     EnumConfigurationParameter,
     NumberParameter,
     ProjectConfiguration,
+    TrainedModelConfiguration,
     TrainingConfiguration,
 } from '../../core/configurable-parameters/services/configuration.interface';
 
@@ -80,6 +81,19 @@ export const getMockedTrainingConfiguration = (config: Partial<TrainingConfigura
     },
     taskId: '',
     evaluation: [],
+    ...config,
+});
+
+export const getMockedTrainedModelConfigurationParameters = (
+    config: Partial<TrainedModelConfiguration> = {}
+): TrainedModelConfiguration => ({
+    training: [],
+    datasetPreparation: {
+        augmentation: {},
+    },
+    evaluation: [],
+    taskId: '',
+    advancedConfiguration: [],
     ...config,
 });
 

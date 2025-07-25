@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import base64
 import os
 from collections.abc import Mapping
 from typing import Any

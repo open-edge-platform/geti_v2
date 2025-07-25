@@ -48,6 +48,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "head",
                                 "parent_id": null
@@ -58,6 +59,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475e",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "neck",
                                 "parent_id": null

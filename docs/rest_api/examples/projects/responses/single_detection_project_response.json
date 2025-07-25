@@ -36,6 +36,7 @@
                         "id": "60d31793d5f1fb7e6e3c1a46",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_deleted": false,
                         "is_anomalous": false,
                         "name": "rectangle"

@@ -59,6 +59,10 @@ spec:
             - name: IMAGE_REGISTRY
               value: "{{ .Values.global.imageRegistry }}"
             {{- end }}
+            {{- if .Values.global.repoCA }}
+            - name: REPO_CA
+              value: "{{ .Values.global.repoCA }}"
+            {{- end }}
             {{- if .Values.global.ingress_enabled }}
             - name: PLATFORM_VERSION
               valueFrom:

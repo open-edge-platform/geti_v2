@@ -55,6 +55,7 @@ from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier
 logger = logging.getLogger(__name__)
 
 FEATURE_FLAG_KEYPOINT_DETECTION = "FEATURE_FLAG_KEYPOINT_DETECTION"
+FEATURE_FLAG_ANNOTATION_HOLE = "FEATURE_FLAG_ANNOTATION_HOLE"
 
 
 class ProjectBuilder:
@@ -325,6 +326,7 @@ class ProjectBuilder:
         :return: The label groups and the labels relevant to the domain
         """
         empty_label_created = False
+        background_label_created = False
         custom_labels = []
         custom_label_groups = []
         top_level_multiclass_classification_groups_found = False
@@ -347,6 +349,16 @@ class ProjectBuilder:
                     )
                     raise ValueError("Invalid group for empty label")
                 empty_label_created = True
+            group_has_background_label: bool = any(label.is_background for label in labels)
+            if group_has_background_label:  # background label provided along with custom labels
+                if len(labels) > 1:
+                    logger.error(
+                        "Found background label in a group '%s' with more than 1 label: %s",
+                        group_name,
+                        labels,
+                    )
+                    raise ValueError("Invalid group for background label")
+                background_label_created = True
             label_group = LabelGroup(
                 name=group_name,
                 labels=labels,
@@ -385,6 +397,26 @@ class ProjectBuilder:
             )
             custom_labels.extend([empty_label])
             custom_label_groups.extend([label_group])
+
+        if (
+            not background_label_created
+            and FeatureFlagProvider.is_enabled(FEATURE_FLAG_ANNOTATION_HOLE)
+            and domain == Domain.SEGMENTATION
+        ):
+            background_label = Label(
+                name="Background",
+                domain=Domain.SEGMENTATION,
+                color=Color(red=0, green=0, blue=0),
+                is_background=True,
+                id_=LabelRepo.generate_id(),
+            )
+            label_group = LabelGroup(
+                name=background_label.name,
+                labels=[background_label],
+                group_type=LabelGroupType.EXCLUSIVE,
+            )
+            custom_labels.append(background_label)
+            custom_label_groups.append(label_group)
 
         return custom_label_groups, custom_labels
 
@@ -708,26 +740,14 @@ class ProjectBuilder:
         old_label_names = [label.name for label in old_labels]
         new_label_names = parser.get_custom_labels_names_by_task(task_name=task_name)
         for label_name in new_label_names:
-            label_id = parser.get_label_id_by_name(
-                task_name=task_name,
-                label_name=label_name,
-            )
+            label_id = parser.get_label_id_by_name(task_name=task_name, label_name=label_name)
             if not label_id and label_name not in old_label_names:
                 # The label exists only in the REST data and not in the project,
                 # this means that the label is to be added, and not to be edited
                 continue
-            label_color_hex_str = parser.get_label_color_by_name(
-                task_name=task_name,
-                label_name=label_name,
-            )
-            label_hotkey = parser.get_label_hotkey_by_name(
-                task_name=task_name,
-                label_name=label_name,
-            )
-            label_group_name = parser.get_label_group_by_name(
-                task_name=task_name,
-                label_name=label_name,
-            )
+            label_color_hex_str = parser.get_label_color_by_name(task_name=task_name, label_name=label_name)
+            label_hotkey = parser.get_label_hotkey_by_name(task_name=task_name, label_name=label_name)
+            label_group_name = parser.get_label_group_by_name(task_name=task_name, label_name=label_name)
             for old_group in old_groups:
                 group_label_ids = [label.id_ for label in old_group.labels]
                 if label_id in group_label_ids and label_group_name != old_group.name:

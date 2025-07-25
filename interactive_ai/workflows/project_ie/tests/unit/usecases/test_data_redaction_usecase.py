@@ -847,3 +847,50 @@ class TestImportDataRedactionUseCase:
         # Assert
         assert lowercase_result == expected_file
         assert uppercase_result == expected_file
+
+    def test_purge_model_docs_if_necessary_already_purged(self) -> None:
+        """Test that already purged documents are returned unchanged"""
+        data_redaction_use_case = ExportDataRedactionUseCase()
+        doc = {
+            "_id": "test_id",
+            "name": "test_model",
+            "size": 1024,
+            "exportable_code_path": "/path/to/code",
+            "purge_info": {
+                "is_purged": True,
+                "purge_time": datetime(2023, 1, 1),
+                "user_uid": "previous_user",
+            },
+        }
+
+        result = data_redaction_use_case.purge_model_docs_if_necessary(doc)
+
+        assert result == doc
+        assert result["purge_info"]["is_purged"] is True
+        assert result["size"] == 1024
+        assert result["exportable_code_path"] == "/path/to/code"
+
+    @patch("job.usecases.data_redaction_usecase.now")
+    def test_purge_model_docs_if_necessary_not_purged(self, mock_now) -> None:
+        """Test that non-purged documents are properly purged"""
+        mock_time = datetime(2023, 6, 15, 12, 0, 0)
+        mock_now.return_value = mock_time
+
+        data_redaction_use_case = ExportDataRedactionUseCase()
+        doc = {
+            "_id": "test_id",
+            "name": "test_model",
+            "size": 1024,
+            "exportable_code_path": "/path/to/code",
+            "purge_info": {"is_purged": False, "purge_time": datetime(2023, 1, 1), "user_uid": "original_user"},
+            "weight_paths": ["item_1"],
+        }
+
+        result = data_redaction_use_case.purge_model_docs_if_necessary(doc)
+
+        assert result["purge_info"]["is_purged"] is True
+        assert result["purge_info"]["purge_time"] == mock_time
+        assert result["purge_info"]["user_uid"] == "export_project_job"
+        assert result["size"] == 0
+        assert result["exportable_code_path"] == ""
+        assert result["weight_paths"] == []

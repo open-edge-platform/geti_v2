@@ -12,13 +12,14 @@ from subprocess import CalledProcessError, TimeoutExpired
 
 from checks.errors import CheckSkipped, LocalOSCheckWarning
 from configuration_models.install_config import InstallationConfig
+from configuration_models.upgrade_config import UpgradeConfig
 from constants.os import RequiredOS, SupportedOS
 from texts.checks import LocalOSChecksTexts
 
 logger = logging.getLogger(__name__)
 
 
-def check_os_version(config: InstallationConfig) -> None:
+def check_os_version(config: InstallationConfig | UpgradeConfig) -> None:
     """
     Check that OS version matches expected.
     """

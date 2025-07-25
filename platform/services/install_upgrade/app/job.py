@@ -37,6 +37,9 @@ NO_PROXY = os.getenv("NO_PROXY", "")
 IMAGE_REGISTRY = os.getenv("IMAGE_REGISTRY") or None
 GPU_LABEL = os.getenv("GPU_LABEL", "")
 RENDER_GID = os.getenv("RENDER_GID", "")
+REPO_CA = os.getenv("REPO_CA")
+REPO_CA_DECODED = base64.b64decode(REPO_CA).decode("utf-8") if REPO_CA else ""
+REPO_CA_ENCODED = REPO_CA or ""
 
 platform_router = APIRouter(prefix="/platform", tags=["Platform"])
 
@@ -79,9 +82,10 @@ async def download_manifest(manifest_name: str, version: str) -> str:
     """
     logger.info(f"Downloading {manifest_name} from the OCI registry...")
     oc = OrasClient(tls_verify=False)
-    res = await asyncio.to_thread(oc.pull, target=f"{GETI_REGISTRY}/geti/charts/{manifest_name}:{version}", outdir=".")
+    manifest = f"{GETI_REGISTRY}/geti/charts/{manifest_name}:{version}"
+    res = await asyncio.to_thread(oc.pull, target=manifest, outdir=".")
     logger.info(f"{manifest_name} downloaded successfully.")
-    logger.debug(f"Downloaded file: {res[0]}")
+    logger.debug(f"Downloaded manifest file {manifest} to {res[0]}")
     return res[0]
 
 
@@ -118,6 +122,9 @@ async def render_full_manifest_template(template_path: str) -> str:
         "geti_registry": GETI_REGISTRY,
         "gpu_label": GPU_LABEL,
         "render_gid": RENDER_GID,
+        "repoCA_dec": REPO_CA_DECODED,
+        "repoCA_enc": REPO_CA_ENCODED,
+        "IMAGE_REGISTRY": IMAGE_REGISTRY,
     }
     return template.render(context)
 
@@ -352,7 +359,8 @@ async def main(job_manager: JobManager) -> None:
             logger.info("Intel device plugin added to the cluster.")
 
         helm_charts = [
-            section for i, section in enumerate(rendered_manifest.split("---")) if i != 0 and section.strip()
+            section for i, section in enumerate(re.split(r"^---$", rendered_manifest, flags=re.MULTILINE))
+            if i != 0 and section.strip()
         ]  # remove the first (metadata) section
         total_charts = len(helm_charts)
 
@@ -360,6 +368,7 @@ async def main(job_manager: JobManager) -> None:
             deploy_secret()
         for index, helm in enumerate(helm_charts):
             rendered_helm = yaml.safe_load(helm)
+            logger.debug(f"Rendered helm chart {rendered_helm['metadata']['name']}:\n{rendered_helm}")
             try:
                 job_manager.set_status(
                     "RUNNING",

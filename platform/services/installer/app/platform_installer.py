@@ -9,6 +9,7 @@ import sys
 import rich_click as click
 
 from commands.install import install
+from commands.upgrade import upgrade
 from commands.version import version
 from constants.paths import INSTALL_LOG_FILE_PATH
 
@@ -32,6 +33,7 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     cli.add_command(install)
     cli.add_command(version)
+    cli.add_command(upgrade)
 
     try:
         cli()

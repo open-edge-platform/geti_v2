@@ -16,12 +16,14 @@ from bson.binary import UuidRepresentation
 from bson.json_util import DatetimeRepresentation, JSONOptions, dumps
 from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier, Session
 from iai_core.repos.base import SessionBasedRepo
+from iai_core.repos.storage.storage_client import BinaryObjectType
 from iai_core.utils.iteration import multi_map
 from iai_core.versioning import DataVersion
 from jobs_common.tasks.utils.progress import publish_metadata_update
 
 from job.entities import ProjectZipArchive, ProjectZipArchiveWrapper
 from job.entities.exceptions import ExportProjectFailedException
+from job.entities.include_models import IncludeModels
 from job.repos.binary_storage_repo import BinaryStorageRepo
 from job.repos.document_repo import DocumentRepo
 from job.repos.zip_storage_repo import ZipStorageRepo
@@ -38,12 +40,14 @@ class ProjectExportUseCase:
     COLLECTIONS_WITH_MEDIA_BASED_ID = ["active_score", "dataset_storage_filter_data"]
     COLLECTIONS_FOR_EVALUATION_RESULTS = ["model_test_result", "evaluation_result"]
     COLLECTIONS_WITH_LOCKS = ["project"]
+    COLLECTIONS_FOR_MODELS = ["model"]
 
     @classmethod
     def __export_as_zip(
         cls,
         project_id: ID,
         tmp_folder: str,
+        include_models: IncludeModels,
         progress_callback: Callable[[float, str], None],
     ) -> None:
         """
@@ -51,6 +55,7 @@ class ProjectExportUseCase:
 
         :param project_id: ID of the project to export
         :param tmp_folder: Temporary local folder that can be used to store files
+        :param include_models: Indicates which models to include in the export
         :param progress_callback: callback function to report progress
         """
         session: Session = CTX_SESSION_VAR.get()
@@ -98,12 +103,19 @@ class ProjectExportUseCase:
                     if collection_name in ProjectExportUseCase.COLLECTIONS_WITH_MEDIA_BASED_ID
                     else []
                 )
+                purge_info_redaction: list[Callable] = (
+                    [data_redaction_use_case.purge_model_docs_if_necessary]
+                    if include_models == IncludeModels.NONE
+                    and collection_name in ProjectExportUseCase.COLLECTIONS_FOR_MODELS
+                    else []
+                )
                 redacted_docs = multi_map(
                     db_raw_documents,
                     data_redaction_use_case.remove_container_info_in_mongodb_doc,
                     data_redaction_use_case.remove_job_id_in_mongodb_doc,
                     *lock_redaction,
                     *media_based_id_redaction,
+                    *purge_info_redaction,
                     partial(dumps, json_options=json_options),
                     data_redaction_use_case.replace_objectid_in_mongodb_doc,
                     data_redaction_use_case.replace_objectid_based_binary_filename_in_mongodb_doc,
@@ -124,6 +136,8 @@ class ProjectExportUseCase:
             # Fetch binary objects from S3, adjust their paths and finally add them to the zip archive
             logger.info("Exporting binary objects from S3 storage for project '%s'", project_id)
             for object_type in binary_storage_repo.get_object_types():
+                if include_models == "none" and object_type is BinaryObjectType.MODELS:
+                    continue
                 objects_local_and_remote_paths = binary_storage_repo.get_all_objects_by_type(
                     object_type=object_type, target_folder=tmp_folder
                 )
@@ -176,17 +190,21 @@ class ProjectExportUseCase:
         logger.info("Project '%s' has been successfully exported", project_id)
 
     @staticmethod
-    def export_as_zip(project_id: ID, progress_callback: Callable[[float, str], None]) -> None:
+    def export_as_zip(
+        project_id: ID, include_models: IncludeModels, progress_callback: Callable[[float, str], None]
+    ) -> None:
         """
         Create a zip file containing all the data of the project to export
 
         :param project_id: ID of the project to export
+        :param include_models: Indicates which models to include in the export
         :param progress_callback: callback function to report progress
         """
         try:
             with tempfile.TemporaryDirectory() as tmp_dir_path:
                 ProjectExportUseCase.__export_as_zip(
                     project_id=project_id,
+                    include_models=include_models,
                     tmp_folder=tmp_dir_path,
                     progress_callback=progress_callback,
                 )

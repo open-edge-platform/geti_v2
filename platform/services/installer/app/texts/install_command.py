@@ -98,7 +98,10 @@ class InstallCmdConfirmationTexts:
     accept_config_prompt = "Is the provided data correct and you want to proceed with the installation?"
     cert_file_message = "Path to the certificate file: {path}"
     key_file_message = "Path to the key file: {path}"
+    custom_certificate_k3s_message = "Custom SSL certificate will be taken from the k3s cluster."
     no_custom_certificate_message = "Custom SSL certificate will not be configured."
+    root_ca_message = "Following file with root CA will be used: {path}"
+    no_root_ca_message = "Root CA will not be configured."
     no_custom_domain_message = "Custom domain name will not be configured."
     fqdn_message = "Domain name for the cluster: {name}.{domain}"
     gpu_requirements_warning = (

@@ -17,7 +17,7 @@ def get_current_platform_version(kubeconfig_path: str) -> str:
     try:
         with kube_client.ApiClient() as client:
             core_api = kube_client.CoreV1Api(client)
-            result = core_api.read_namespaced_config_map(f"{PLATFORM_NAMESPACE}-versions", PLATFORM_NAMESPACE)
+            result = core_api.read_namespaced_config_map(f"{PLATFORM_NAMESPACE}-configuration", PLATFORM_NAMESPACE)
         return result.data["platformVersion"]
     except ApiException:
         return "unknown version"

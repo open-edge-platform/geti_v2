@@ -195,4 +195,19 @@ describe('TrainingSubsets', () => {
             testSize: defaultTestSize,
         });
     });
+
+    it('updates subsets sizes in a way that validation subset cannot be empty', () => {
+        const iterationCount = Number(validationSubset.value);
+        render(<App subsetParameters={subsetsParameters} />);
+
+        for (let i = 0; i < iterationCount; i++) {
+            fireEvent.keyDown(screen.getByLabelText('End range'), { key: 'Left' });
+        }
+
+        expectTrainingSubsetsDistribution({
+            trainingSubset: Number(trainingSubset.value),
+            validationSubset: Number(validationSubset.value) - iterationCount + 1,
+            testSubset: Number(testSubset.value) + iterationCount - 1,
+        });
+    });
 });

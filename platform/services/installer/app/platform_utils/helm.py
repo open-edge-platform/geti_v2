@@ -13,7 +13,6 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fi
 from cli_utils.platform_logs import subprocess_run
 from constants.paths import HELM_BINARY, INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH
 from platform_utils.errors import ChartInstallationError
-from platform_utils.k8s import ensure_endpoint
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +20,6 @@ STOP_AFTER_ATTEMPT = 1
 WAIT_FIXED = 30
 
 
-@ensure_endpoint()
 @retry(
     retry=retry_if_exception_type(ChartInstallationError),
     stop=stop_after_attempt(STOP_AFTER_ATTEMPT),

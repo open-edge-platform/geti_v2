@@ -36,6 +36,7 @@
                         "id": "61012cdb1d38a5e71ef3baf1",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "animal"
                     },
@@ -46,6 +47,7 @@
                         "id": "61012cdb1d38a5e71ef3baf2",
                         "parent_id": "61012cdb1d38a5e71ef3baf1",
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "horse"
                     },
@@ -56,6 +58,7 @@
                         "id": "61012cdb1d38a5e71ef3baf3",
                         "parent_id": "61012cdb1d38a5e71ef3baf1",
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "donkey"
                     },
@@ -66,6 +69,7 @@
                         "id": "61012cdb1d38a5e71ef3baf4",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "saddled"
                     },
@@ -76,6 +80,7 @@
                         "id": "61012cdb1d38a5e71ef3baf5",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "unsaddled"
                     },

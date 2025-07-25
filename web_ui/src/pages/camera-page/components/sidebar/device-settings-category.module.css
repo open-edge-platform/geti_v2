@@ -1,0 +1,12 @@
+.sectionHeader {
+    & > button {
+        font-size: 1.5rem;
+        font-weight: 400;
+    }
+}
+
+.sectionContent {
+    & > button {
+        padding-inline-start: 0px;
+    }
+}

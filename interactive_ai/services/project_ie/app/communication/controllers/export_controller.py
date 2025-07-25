@@ -30,9 +30,9 @@ PROJECT_EXPORT_TYPE = "export_project"
 class IncludeModelsType(str, Enum):
     """Enum for specifying which models to include in the export"""
 
-    all = "all"
-    none = "none"
-    latest_active = "latest_active"
+    ALL = "all"
+    NONE = "none"
+    LATEST_ACTIVE = "latest_active"
 
 
 class ExportController:
@@ -53,9 +53,9 @@ class ExportController:
         :return: submitted job id
         :raises FailedJobSubmissionException: if the export job cannot be submitted to the scheduler
         """
-        if include_models not in [IncludeModelsType.all]:
+        if include_models not in [IncludeModelsType.ALL, IncludeModelsType.NONE]:
             raise NotImplementedError(
-                f"Exporting projects including models of type '{include_models}' is not supported yet."
+                f"Exporting projects including models of type '{include_models.value}' is not supported yet."
             )
 
         project_to_export = ProjectRepo().get_by_id(project_identifier.project_id)
