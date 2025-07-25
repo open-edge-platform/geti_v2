@@ -1,8 +1,7 @@
----
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
-  name: geti-components
+  name: {{ chart_name }}
 spec:
   insecureSkipTLSVerify: true
   chart: "oci://{{ geti_registry }}/geti/charts/geti-controller"

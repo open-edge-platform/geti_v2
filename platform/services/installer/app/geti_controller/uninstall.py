@@ -2,13 +2,14 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import logging
-import subprocess
+from http import HTTPStatus
 
-from cli_utils.platform_logs import subprocess_run
+from kubernetes import client
+
 from configuration_models.install_config import InstallationConfig
-from constants.charts import GETI_CONTROLLER_CHART
-from constants.paths import HELM_BINARY, INSTALL_LOG_FILE_PATH
+from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
 from geti_controller.errors import GetiControllerUninstallationError
+from platform_utils.kube_config_handler import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
 
@@ -17,23 +18,21 @@ def uninstall_geti_controller_chart(config: InstallationConfig) -> None:
     """
     Method used to uninstall Geti Controller chart
     """
-
+    KubernetesConfigHandler(kube_config=config.kube_config.value)
     try:
-        logger.info(
-            f"Uninstalling Geti Controller chart '{GETI_CONTROLLER_CHART.name}' from the namespace "
-            f"'{GETI_CONTROLLER_CHART.namespace}'."
-        )
-        command = [
-            HELM_BINARY,
-            "uninstall",
-            GETI_CONTROLLER_CHART.name,
-            f"--namespace={GETI_CONTROLLER_CHART.namespace}",
-            "--ignore-not-found",
-            f"--kubeconfig={config.kube_config.value}",
-        ]
-        with open(INSTALL_LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
-            subprocess_run(command, log_file)
-        logger.info("Geti Controller chart uninstalled successfully.")
-    except subprocess.CalledProcessError as ex:
-        logger.exception("Failed to uninstall Geti Controller chart.")
-        raise GetiControllerUninstallationError from ex
+        with client.ApiClient() as api_client:
+            custom_api = client.CustomObjectsApi(api_client)
+            custom_api.delete_namespaced_custom_object(
+                group="helm.cattle.io",
+                version="v1",
+                namespace=GETI_CONTROLLER_NAMESPACE,
+                plural="helmcharts",
+                name=GETI_CONTROLLER_CHART_NAME,
+            )
+        logger.info("Geti Controller HelmChart CR deleted successfully.")
+    except client.exceptions.ApiException as ex:
+        if ex.status == HTTPStatus.NOT_FOUND:
+            logger.warning("HelmChart CR not found, nothing to delete.")
+        else:
+            logger.exception("Failed to delete Geti Controller HelmChart CR.")
+            raise GetiControllerUninstallationError from ex

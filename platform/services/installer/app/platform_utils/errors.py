@@ -61,6 +61,7 @@ class DownloadSystemPackagesError(StepsError):
     Exception raised when an error occurs while downloading system packages.
     """
 
+
 class GenerateTemplateError(StepsError):
     """
     Error raised by function used to render template.

@@ -3,26 +3,31 @@
 
 import logging
 import os
+from http import HTTPStatus
+
 import jinja2
 import yaml
 from kubernetes import client
+
 from configuration_models.install_config import InstallationConfig
-from constants.charts import GETI_CONTROLLER_CHART
-from constants.paths import GETI_CONTROLLER_CHART_PATH
+from constants.paths import GETI_CONTROLLER_CHART_PATH, K3S_KUBECONFIG_PATH
 from constants.platform import PLATFORM_NAMESPACE
+from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
 from geti_controller.errors import GetiControllerInstallationError
 from platform_configuration.versions import get_target_product_build
-from platform_utils.errors import ChartInstallationError
 from platform_utils.k8s import encode_data_b64
+from platform_utils.kube_config_handler import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
 
 
-def apply_manifest(manifest: dict, namespace: str = "default") -> None:
+def apply_manifest(manifest: dict, namespace: str = GETI_CONTROLLER_NAMESPACE) -> None:
     """
     Apply a HelmChart manifest to the Kubernetes cluster.
     If the resource exists, it will be patched.
     """
+    logger.debug(f"Applying Geti Controller HelmChart manifest to namespace: {namespace}")
+    KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
     with client.ApiClient() as api_client:
         custom_api = client.CustomObjectsApi(api_client)
         try:
@@ -33,9 +38,9 @@ def apply_manifest(manifest: dict, namespace: str = "default") -> None:
                 plural="helmcharts",
                 body=manifest,
             )
-            logger.info(f"Created HelmChart CR: {manifest['metadata']['name']}")
+            logger.debug(f"Created HelmChart CR: {manifest['metadata']['name']}")
         except client.exceptions.ApiException as create_err:
-            if create_err.status == 409:
+            if create_err.status == HTTPStatus.CONFLICT:
                 logger.warning("HelmChart already exists, patching the existing CR.")
                 try:
                     custom_api.patch_namespaced_custom_object(
@@ -51,7 +56,7 @@ def apply_manifest(manifest: dict, namespace: str = "default") -> None:
                     logger.exception(f"Failed to patch HelmChart CR: {patch_err}")
                     raise
             else:
-                logger.exception(f"Failed to create HelmChart CR: {create_err}")
+                logger.exception(f"Failed to create HelmChart CR {manifest['metadata']['name']}: {create_err}")
                 raise
 
 
@@ -65,12 +70,11 @@ def deploy_geti_controller_chart(config: InstallationConfig, template_path: str 
         no_proxy = os.getenv("no_proxy") or os.getenv("NO_PROXY") or ""
         no_proxy += f",127.0.0.1,localhost,.{PLATFORM_NAMESPACE},.svc,.cluster.local"
 
-        # context for Jinja2 template
         context = {
+            "chart_name": GETI_CONTROLLER_CHART_NAME,
             "username": config.username.value,
             "password_hash": config.password_sha.value,
             "data_folder": config.data_folder.value,
-            # "geti_registry": f"{config.geti_image_registry.value}/open-edge-platform" #TODO only in dev-registry?
             "geti_registry": config.geti_image_registry.value,
             "image_registry": config.image_registry.value,
             "platform_version": get_target_product_build(),
@@ -92,11 +96,11 @@ def deploy_geti_controller_chart(config: InstallationConfig, template_path: str 
         with open(template_path) as f:
             template_content = f.read()
         template = jinja2.Template(template_content)
-        rendered_yaml = template.render(context)
-
-        manifest = list(yaml.safe_load_all(rendered_yaml))
-
-        apply_manifest(manifest, namespace=GETI_CONTROLLER_CHART.namespace)
+        rendered_str = template.render(context)
+        manifest = yaml.safe_load(rendered_str)
+        apply_manifest(manifest, namespace=GETI_CONTROLLER_NAMESPACE)
+        logger.info("Geti Controller HelmChart deployed successfully.")
 
     except Exception as ex:
+        logger.exception("Failed to deploy Geti Controller HelmChart.")
         raise GetiControllerInstallationError from ex

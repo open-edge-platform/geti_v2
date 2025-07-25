@@ -4,7 +4,6 @@ import logging
 import os
 import shutil
 import subprocess
-import tarfile
 
 import requests
 import yaml

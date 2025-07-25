@@ -14,13 +14,9 @@ from constants.platform import (
     GPU_PROVIDER_INTEL_MAX,
     GPU_PROVIDER_NVIDIA,
 )
+from geti_controller.constants import GETI_CONTROLLER_NAMESPACE, LOCAL_PORT, SERVICE_NAME, SERVICE_PORT
 from geti_controller.errors import GetiControllerCommunicationError
 from platform_configuration.versions import get_target_product_build
-
-LOCAL_PORT = 9200
-SERVICE_PORT = 9200
-SERVICE_NAME = "geti-controller"
-NAMESPACE = "default"
 
 
 class OperationStatus(str, Enum):
@@ -50,7 +46,7 @@ def establish_port_forwarding(kube_config: str) -> subprocess.Popen:
         f"svc/{SERVICE_NAME}",
         f"{LOCAL_PORT}:{SERVICE_PORT}",
         "--namespace",
-        NAMESPACE,
+        GETI_CONTROLLER_NAMESPACE,
     ]
     process = subprocess.Popen(port_forward_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # noqa: S603
     time.sleep(3)  # wait for port-forwarding to start
