@@ -5,8 +5,6 @@ import '@wessberg/pointer-events';
 
 import { act, fireEvent, screen } from '@testing-library/react';
 
-import '@testing-library/jest-dom/extend-expect';
-
 import { SelectedProvider } from '../../../../../providers/selected-provider/selected-provider.component';
 import { getMockedKeypointNode } from '../../../../../test-utils/mocked-items-factory/mocked-keypoint';
 import { getMockedLabel } from '../../../../../test-utils/mocked-items-factory/mocked-labels';
