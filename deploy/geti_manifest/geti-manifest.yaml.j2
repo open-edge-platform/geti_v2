@@ -214,7 +214,9 @@ spec:
   valuesContent: |-
     configuration:
       dataStoragePath: "{{ data_folder }}"
+{% if "intel" in gpu_label %}
       render_gid: {{ render_gid }}
+{% endif %}
       accelerator:
         type: {{ 'gpu' if gpu_label else 'cpu' }}
         name: {{ gpu_label | default('') }}
