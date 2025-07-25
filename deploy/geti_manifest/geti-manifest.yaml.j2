@@ -42,18 +42,17 @@ spec:
         memory: 50Mi
       limits:
         memory: 50Mi
-{% endif %}
-
+{%- endif %}
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
   name: geti-namespaces
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   version: $VERSION
   chart: "oci://{{ geti_registry }}/geti/helm/geti-namespaces"
   backOffLimit: 0
@@ -64,10 +63,10 @@ kind: HelmChart
 metadata:
   name: reloader
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/reloader"
   version: $VERSION
   targetNamespace: kube-system
@@ -79,10 +78,10 @@ kind: HelmChart
 metadata:
   name: geti-pv-creation
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/geti-pv-creation"
   version: $VERSION
   targetNamespace: impt
@@ -96,10 +95,10 @@ kind: HelmChart
 metadata:
   name: cert-manager
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/cert-manager"
   version: $VERSION
   targetNamespace: cert-manager
@@ -111,10 +110,10 @@ kind: HelmChart
 metadata:
   name: cert-manager-addon
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-addon"
   version: $VERSION
   targetNamespace: cert-manager
@@ -124,10 +123,10 @@ kind: HelmChart
 metadata:
   name: cert-manager-istio-csr
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/cert-manager-istio-csr"
   version: $VERSION
   targetNamespace: cert-manager
@@ -139,10 +138,10 @@ kind: HelmChart
 metadata:
   name: istio-base
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/istio-base"
   version: $VERSION
   targetNamespace: istio-system
@@ -154,10 +153,10 @@ kind: HelmChart
 metadata:
   name: istio-istiod
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/istio-istiod"
   version: $VERSION
   targetNamespace: istio-system
@@ -173,10 +172,10 @@ kind: HelmChart
 metadata:
   name: istio-gateway
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/istio-gateway"
   version: $VERSION
   targetNamespace: istio-system
@@ -197,10 +196,10 @@ kind: HelmChart
 metadata:
   name: geti-tools
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/geti-tools"
   version: $VERSION
   targetNamespace: impt
@@ -225,10 +224,10 @@ kind: HelmChart
 metadata:
   name: geti-components
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/geti-components"
   version: $VERSION
   targetNamespace: impt
@@ -261,19 +260,19 @@ spec:
         https_proxy: "{{ https_proxy }}"
         http_proxy: "{{ http_proxy }}"
         no_proxy: "{{ no_proxy }}"
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
       repoCA: {{ repoCA_enc }}
-{% endif %}
+{%- endif %}
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
   name: modelmesh-serving-addon
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/modelmesh-serving-addon"
   version: $VERSION
   targetNamespace: impt
@@ -288,10 +287,10 @@ kind: HelmChart
 metadata:
   name: flyte-core
 spec:
-{% if repoCA_dec %}
+{%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{% endif %}
+{%- endif %}
   chart: "oci://{{ geti_registry }}/geti/helm/flyte-core"
   version: $VERSION
   targetNamespace: flyte
