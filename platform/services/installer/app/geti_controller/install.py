@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
+import base64
 import logging
 import os
 from http import HTTPStatus
@@ -15,10 +15,13 @@ from constants.platform import PLATFORM_NAMESPACE
 from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
 from geti_controller.errors import GetiControllerInstallationError
 from platform_configuration.versions import get_target_product_build
-from platform_utils.k8s import encode_data_b64
 from platform_utils.kube_config_handler import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
+
+
+def encode_data_b64(data: bytes) -> str:  # noqa: D103
+    return base64.b64encode(data).decode("utf-8")
 
 
 def apply_manifest(manifest: dict, namespace: str = GETI_CONTROLLER_NAMESPACE) -> None:
