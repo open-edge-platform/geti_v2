@@ -5,7 +5,7 @@ import { CSSProperties, ReactChild, ReactElement } from 'react';
 
 import { ActionButton, Divider, Flex, Text } from '@geti/ui';
 import { CloseSmall } from '@geti/ui/icons';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isEmpty, isString } from 'lodash-es';
 import { useId } from 'react-aria';
 

@@ -5,7 +5,7 @@ import { ReactNode, RefObject, useRef, useState } from 'react';
 
 import { useUnwrapDOMRef, type DOMRefValue } from '@geti/ui';
 import { useHover, useInteractOutside } from '@react-aria/interactions';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { KeypointNode, Point } from '../../../../../core/annotations/shapes.interface';
 import { CursorContextMenu } from './cursor-context-menu/cursor-context-menu.component';
