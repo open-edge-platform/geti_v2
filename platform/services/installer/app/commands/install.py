@@ -37,6 +37,7 @@ from cli_utils.credentials import hash_ldap_password
 from cli_utils.platform_logs import configure_logging, create_logs_dir
 from cli_utils.spinner import click_spinner
 from configuration_models.install_config import InstallationConfig
+from configuration_models.upgrade_config import UpgradeConfig
 from constants.paths import (
     DATA_FOLDER,
     K3S_INSTALLATION_MARK_FILEPATH,
@@ -177,7 +178,7 @@ def run_installation_checks(config: InstallationConfig) -> None:
         sys.exit(1)
 
 
-def monitor_installation_progress(config: InstallationConfig) -> tuple[str, str]:
+def monitor_installation_progress() -> tuple[str, str]:
     """
     Monitor the installation progress and update the user with the current status.
     """
@@ -186,7 +187,7 @@ def monitor_installation_progress(config: InstallationConfig) -> tuple[str, str]
     status, message = "", ""
 
     while True:
-        installation_status = get_installation_status(kube_config=config.kube_config.value)
+        installation_status = get_installation_status(kube_config=K3S_KUBECONFIG_PATH)
 
         if installation_status.status == OperationStatus.NOT_RUNNING:
             # waiting for installation to start
@@ -198,7 +199,7 @@ def monitor_installation_progress(config: InstallationConfig) -> tuple[str, str]
                 length=total_progress, label=InstallCmdTexts.installation_start, show_eta=False
             ) as progress_bar:
                 while installation_status.status == OperationStatus.RUNNING:
-                    installation_status = get_installation_status(kube_config=config.kube_config.value)
+                    installation_status = get_installation_status(kube_config=K3S_KUBECONFIG_PATH)
                     progress_bar.update(installation_status.progress - previous_progress)
                     previous_progress = installation_status.progress
                     if installation_status.progress == total_progress:
@@ -211,7 +212,7 @@ def monitor_installation_progress(config: InstallationConfig) -> tuple[str, str]
     return status, message
 
 
-def run_geti_controller_installation(config: InstallationConfig) -> None:
+def run_geti_controller_installation(config: InstallationConfig | UpgradeConfig) -> None:
     """
     Deploy temporarily Geti Controller and monitor the platform installation's progress.
     """
@@ -224,7 +225,7 @@ def run_geti_controller_installation(config: InstallationConfig) -> None:
             gpu_provider=gpu_provider,
         )
         logger.info(f"Response from the GetiController installation endpoint: {controller_response}")
-        status, message = monitor_installation_progress(config=config)
+        status, message = monitor_installation_progress()
         if status != OperationStatus.SUCCEEDED:
             raise GetiControllerError(f"Installation failed with status: {status}, message: {message}")
     except GetiControllerError:
@@ -233,7 +234,7 @@ def run_geti_controller_installation(config: InstallationConfig) -> None:
         cluster_info_dump(kubeconfig=config.kube_config.value)
         sys.exit(1)
 
-    uninstall_geti_controller_chart(config=config)
+    uninstall_geti_controller_chart()
     shutil.rmtree(PLATFORM_INSTALL_PATH, ignore_errors=True)
     if config.lightweight_installer.value:
         # remove 'tools' dir on failure,

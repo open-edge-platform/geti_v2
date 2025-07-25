@@ -79,7 +79,7 @@ def call_install_endpoint(kube_config: str, render_gid: int, gpu_provider: str |
                 gpu_label = "gpu.intel.com/xe"
 
             payload["gpu_label"] = gpu_label
-            payload["render_gid"] = render_gid
+            payload["render_gid"] = str(render_gid)
         response = requests.post(url, json=payload, timeout=10)
 
         if response.status_code != HTTPStatus.OK:

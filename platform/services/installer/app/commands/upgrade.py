@@ -11,11 +11,9 @@ import json
 import logging
 import os
 import re
-import shutil
 import signal
 import subprocess
 import sys
-import time
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -33,8 +31,9 @@ from checks.resources import check_gpu_driver_version
 from checks.user import check_user_id
 from cli_utils.credentials import hash_ldap_password
 from cli_utils.platform_logs import configure_logging, create_logs_dir, subprocess_run
+from commands.install import run_geti_controller_installation
 from configuration_models.upgrade_config import UpgradeConfig
-from constants.paths import INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH, OFFLINE_TOOLS_DIR
+from constants.paths import INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH
 from constants.platform import (
     CERT_MANAGER_NAMESPACE,
     CUSTOM_TLS_SECRET_NAME,
@@ -61,14 +60,6 @@ from constants.platform import (
     STORAGE_CLASS,
     TOOLS_CHART,
 )
-from geti_controller.communication import (
-    OperationStatus,
-    call_install_endpoint,
-    get_installation_status,
-)
-from geti_controller.errors import GetiControllerError
-from geti_controller.install import deploy_geti_controller_chart
-from geti_controller.uninstall import uninstall_geti_controller_chart
 from platform_configuration.versions import get_current_platform_version
 from platform_utils.errors import (
     CredentialsError,
@@ -89,7 +80,7 @@ from platform_utils.errors import (
 from platform_utils.install_system_packages import install_system_packages
 from platform_utils.k8s import decode_string_b64
 from platform_utils.kube_config_handler import KubernetesConfigHandler
-from platform_utils.management.state import InstallationHandlerState, cluster_info_dump
+from platform_utils.management.state import InstallationHandlerState
 from texts.install_command import InstallCmdConfirmationTexts, InstallCmdTexts
 from texts.upgrade_command import UpgradeCmdTexts
 from validators.filepath import is_filepath_valid
@@ -780,40 +771,6 @@ def cleanup_main_ns() -> None:
         logger.info("Main namespace annotations updated.")
 
 
-def monitor_installation_progress() -> tuple[str, str]:
-    """
-    Monitor the installation progress and update the user with the current status.
-    """
-    total_progress = 100  # progress is reported as a percentage
-    previous_progress = 0
-    status, message = "", ""
-
-    while True:
-        installation_status = get_installation_status(kube_config=K3S_KUBECONFIG_PATH)
-
-        if installation_status.status == OperationStatus.NOT_RUNNING:
-            # waiting for installation to start
-            time.sleep(1)
-            continue
-
-        if installation_status.status == OperationStatus.RUNNING:
-            with click.progressbar(
-                length=total_progress, label=InstallCmdTexts.installation_start, show_eta=False
-            ) as progress_bar:
-                while installation_status.status == OperationStatus.RUNNING:
-                    installation_status = get_installation_status(kube_config=K3S_KUBECONFIG_PATH)
-                    progress_bar.update(installation_status.progress - previous_progress)
-                    previous_progress = installation_status.progress
-                    if installation_status.progress == total_progress:
-                        break
-                    time.sleep(1)
-
-        status, message = installation_status.status, installation_status.message
-        break
-
-    return status, message
-
-
 def execute_migration(config: UpgradeConfig) -> None:
     """
     Execute the migration process.
@@ -833,22 +790,8 @@ def execute_migration(config: UpgradeConfig) -> None:
 
     handler_state.reset()
 
-    try:
-        deploy_geti_controller_chart(config=config)
-        controller_response = call_install_endpoint(kube_config=K3S_KUBECONFIG_PATH)
-        logger.info(f"Response from the GetiController installation endpoint: {controller_response}")
-        status, message = monitor_installation_progress()
-        if status != OperationStatus.SUCCEEDED:
-            raise GetiControllerError(f"Installation failed with status: {status}, message: {message}")
-    except GetiControllerError:
-        logger.exception("Error during installation.")
-        click.secho("\n" + InstallCmdTexts.installation_failed, fg="red")
-        cluster_info_dump(kubeconfig=K3S_KUBECONFIG_PATH)
-        sys.exit(1)
-    finally:
-        uninstall_geti_controller_chart()
-        # to be able to re-run without any side effects
-        shutil.rmtree(OFFLINE_TOOLS_DIR)
+    click.echo(InstallCmdTexts.components_installing)
+    run_geti_controller_installation(config)
 
 
 @click.option("--repo-ca", type=click.Path(), callback=is_filepath_valid)
