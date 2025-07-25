@@ -7,15 +7,17 @@ import { omit, pick } from 'lodash-es';
 import { getBrowserConstraints, getVideoUserMedia } from '../../../shared/navigator-utils';
 import { isNonEmptyArray } from '../../../shared/utils';
 import { UserCameraPermission, UserCameraPermissionError } from '../../camera-support/camera.interface';
+import { DeviceSettingsDependency } from '../components/sidebar/device-settings-config.interface';
 
 const INVALID_CAPABILITIES: CapabilitiesKeys[] = ['groupId', 'deviceId', 'aspectRatio'];
 
 type CapabilitiesKeys = keyof MediaTrackCapabilities;
-export type SettingMinMax = { type: 'minMax'; max: number; min: number; value: number };
-export type SettingSelection = { type: 'selection'; options: string[]; value: string };
+export type SettingMinMax = { type: 'minMax'; max: number; min: number; value: number; defaultValue: number };
+export type SettingSelection = { type: 'selection'; options: string[]; value: string; defaultValue: string };
 export interface DeviceConfiguration {
     name: string;
     config: SettingMinMax | SettingSelection;
+    onChange: (value: number | string) => void;
 }
 
 export const isDesktop = () => !isIPhone() && !isIPad();
@@ -56,15 +58,15 @@ export const getValidCapabilities = (capabilities: MediaTrackCapabilities) => {
 export const mergeSettingAndCapabilities = (
     capabilities: MediaTrackCapabilities,
     settings: MediaTrackSettings
-): DeviceConfiguration[] =>
+): Omit<DeviceConfiguration, 'onChange'>[] =>
     Object.entries(capabilities).map(([name, options]) => {
         const value = settings[name as keyof MediaTrackSettings];
 
         return {
             name,
             config: isNonEmptyArray(options)
-                ? ({ type: 'selection', value, options } as SettingSelection)
-                : ({ type: 'minMax', value, ...(options as object) } as SettingMinMax),
+                ? ({ type: 'selection', value, defaultValue: value, options } as SettingSelection)
+                : ({ type: 'minMax', value, defaultValue: value, ...(options as object) } as SettingMinMax),
         };
     });
 
@@ -83,4 +85,17 @@ export const getBrowserPermissions = async () => {
     } catch (error: unknown) {
         return { permissions: getPermissionError(error), stream: null };
     }
+};
+
+export const isSettingVisible = (
+    setting: DeviceConfiguration,
+    deviceConfig: DeviceConfiguration[],
+    dependencies: DeviceSettingsDependency[]
+) => {
+    const dependency = dependencies.find(({ children }) => children.includes(setting.name));
+    const dependencyKeySetting = deviceConfig.find(({ name }) => name === dependency?.key);
+
+    return dependencyKeySetting?.config.type === 'selection'
+        ? dependencyKeySetting.config.options[1] === dependencyKeySetting.config.value
+        : true;
 };

@@ -11,10 +11,33 @@ import { getFloatingPointStep } from '../utils';
 type NumberGroupParamsProps = Pick<NumberParameter, 'type' | 'value' | 'minValue' | 'maxValue' | 'name'> & {
     onChange: (value: number) => void;
     isDisabled?: boolean;
+    step?: number;
 };
 
 const DEFAULT_INT_STEP = 1;
 const DEFAULT_FLOAT_STEP = 0.1;
+
+const getStep = ({
+    step,
+    maxValue,
+    minValue,
+    type,
+}: {
+    step?: number;
+    minValue: number;
+    maxValue: number | null;
+    type: NumberParameter['type'];
+}): number => {
+    if (step !== undefined) {
+        return step;
+    }
+
+    if (maxValue === null) {
+        return type === 'int' ? DEFAULT_INT_STEP : DEFAULT_FLOAT_STEP;
+    }
+
+    return getFloatingPointStep(minValue, maxValue);
+};
 
 export const NumberParameterField: FC<NumberGroupParamsProps> = ({
     value,
@@ -24,12 +47,12 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({
     onChange,
     isDisabled,
     name,
+    step,
 }) => {
     const [parameterValue, setParameterValue] = useState<number>(value);
 
-    const floatingPointStep = maxValue === null ? DEFAULT_FLOAT_STEP : getFloatingPointStep(minValue, maxValue);
-
-    const step = type === 'int' ? DEFAULT_INT_STEP : floatingPointStep;
+    const fieldStep = getStep({ step, type, maxValue, minValue });
+    const formatOptions = type === 'float' ? { maximumFractionDigits: Math.abs(Math.log10(fieldStep)) } : undefined;
 
     const handleValueChange = (inputValue: number): void => {
         setParameterValue(inputValue);
@@ -44,7 +67,7 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({
         return (
             <NumberField
                 aria-label={`Change ${name}`}
-                step={step}
+                step={fieldStep}
                 value={parameterValue}
                 minValue={minValue}
                 onChange={handleValueChange}
@@ -61,20 +84,21 @@ export const NumberParameterField: FC<NumberGroupParamsProps> = ({
                 maxValue={maxValue}
                 onChange={setParameterValue}
                 onChangeEnd={handleValueChange}
-                step={step}
+                step={fieldStep}
                 isFilled
                 flex={1}
                 isDisabled={isDisabled}
             />
             <NumberField
                 isQuiet
-                step={step}
+                step={fieldStep}
                 value={parameterValue}
                 minValue={minValue}
                 maxValue={maxValue}
                 onChange={handleValueChange}
                 isDisabled={isDisabled}
                 aria-label={`Change ${name}`}
+                formatOptions={formatOptions}
             />
         </Flex>
     );

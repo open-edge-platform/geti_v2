@@ -222,6 +222,7 @@ MOCK_MODEL_DETAIL: dict = {
             "is_empty": False,
             "group": "from_label_list",
             "parent_id": None,
+            "is_background": False,
         }
     ],
     "training_dataset_info": {

@@ -42,6 +42,7 @@
                         "hotkey": "",
                         "id": "6290a8f9003ddb3967f1438c",
                         "is_empty": false,
+                        "is_background": false,
                         "name": "Normal",
                         "parent_id": null
                     },
@@ -51,6 +52,7 @@
                         "hotkey": "",
                         "id": "6290a8f9003ddb3967f1438d",
                         "is_empty": false,
+                        "is_background": false,
                         "name": "Anomalous",
                         "parent_id": null
                     }

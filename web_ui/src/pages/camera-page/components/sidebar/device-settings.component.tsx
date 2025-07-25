@@ -1,23 +1,37 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Divider, Flex, Heading, Item, Key, Picker, View } from '@geti/ui';
-import { orderBy } from 'lodash-es';
+import { Flex, Heading, Item, Key, Picker, View } from '@geti/ui';
+import { isEqual, isUndefined } from 'lodash-es';
 
 import { useDeviceSettings } from '../../providers/device-settings-provider.component';
-import { applySettings } from '../../providers/util';
-import { SettingOption } from './setting-option.component';
+import { DeviceSettingsCategory } from './device-settings-category.component';
+import { DeviceSettingsDefaultCategory } from './device-settings-default-category.component';
+import { settingsMetadata } from './device-settings-metadata';
+
+const Header = ({ text }: { text: string }) => (
+    <Flex alignItems={'center'} justifyContent={'space-between'}>
+        <Heading level={3}>{text}</Heading>
+    </Flex>
+);
 
 export const DeviceSettings = () => {
-    const { webcamRef, videoDevices, selectedDeviceId, deviceConfig, setSelectedDeviceId, isMirrored, setIsMirrored } =
-        useDeviceSettings();
-    const sortedByOptions = orderBy(deviceConfig, ['config.options'], 'desc');
+    const { categories, defaultCategory } = settingsMetadata;
+
+    const { videoDevices, selectedDeviceId, deviceConfig, setSelectedDeviceId } = useDeviceSettings();
+
+    const settingsMetadataFieldsKeys = categories.reduce(
+        (list: string[], category) => [...list, ...category.attributesKeys],
+        []
+    );
+
+    const defaultCategoryAttributesKeys = deviceConfig?.filter(
+        ({ name }) => !settingsMetadataFieldsKeys.includes(name)
+    );
 
     return (
         <View position={'relative'}>
-            <Flex alignItems={'center'} justifyContent={'space-between'}>
-                <Heading level={3}>Camera Settings</Heading>
-            </Flex>
+            <Header text={'Camera Settings'} />
 
             <Picker
                 width={'100%'}
@@ -31,28 +45,17 @@ export const DeviceSettings = () => {
                 {({ deviceId, label }) => <Item key={deviceId}>{label}</Item>}
             </Picker>
 
-            <Divider size={'S'} marginTop={'size-250'} marginBottom={'size-250'} />
+            {categories.map(({ categoryName, attributesKeys }) => {
+                const configuration = attributesKeys
+                    .map((key) => {
+                        return deviceConfig.find(({ name }) => isEqual(name, key));
+                    })
+                    .filter((config) => !isUndefined(config));
 
-            <SettingOption
-                label='Mirror camera'
-                config={{ type: 'selection', options: ['Off', 'On'], value: isMirrored ? 'On' : 'Off' }}
-                onChange={(value) => {
-                    setIsMirrored(value === 'On');
-                }}
-            />
-
-            {sortedByOptions.map(({ name, config }) => (
-                <SettingOption
-                    key={name}
-                    label={name}
-                    config={config}
-                    onChange={(value) => {
-                        if (webcamRef.current?.stream) {
-                            applySettings(webcamRef.current?.stream, { [name]: value });
-                        }
-                    }}
-                />
-            ))}
+                return <DeviceSettingsCategory name={categoryName} configuration={configuration} key={categoryName} />;
+            })}
+            <DeviceSettingsCategory name={defaultCategory} configuration={defaultCategoryAttributesKeys} />
+            <DeviceSettingsDefaultCategory deviceConfig={deviceConfig} />
         </View>
     );
 };

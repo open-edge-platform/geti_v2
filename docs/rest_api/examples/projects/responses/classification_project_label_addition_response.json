@@ -36,6 +36,7 @@
                         "id": "6101254defba22ca453f11c6",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "horse"
                     },
@@ -46,6 +47,7 @@
                         "id": "6101254defba22ca453f11c7",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "donkey"
                     },
@@ -56,6 +58,7 @@
                         "id": "6101254defba22ca453f11dd",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "zebra"
                     },
@@ -66,6 +69,7 @@
                         "id": "6101254defba22ca453f11c8",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "saddled"
                     },
@@ -76,6 +80,7 @@
                         "id": "6101254defba22ca453f11c9",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "unsaddled"
                     },

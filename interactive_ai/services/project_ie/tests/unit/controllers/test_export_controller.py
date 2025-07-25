@@ -22,7 +22,7 @@ class TestExportController:
     def test_submit_project_export_job(self, fxt_ote_id, fxt_project) -> None:
         submitted_job_id = fxt_ote_id(100)
         author_id = fxt_ote_id(101)
-        include_models = IncludeModelsType.all
+        include_models = IncludeModelsType.ALL
         payload = {"project_id": str(fxt_project.id_), "include_models": include_models.value}
         metadata = {
             "project": {

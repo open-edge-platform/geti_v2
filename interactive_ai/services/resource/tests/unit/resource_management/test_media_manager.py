@@ -91,11 +91,9 @@ class TestMediaManager:
 
     @patch("tempfile.NamedTemporaryFile")
     @patch("PIL.Image.open")
+    @pytest.mark.parametrize("extension", [ImageExtensions.JPG, ImageExtensions.PNG, ImageExtensions.TIFF])
     def test_upload_image(
-        self,
-        mock_image_open,
-        mock_temp_file_context,
-        fxt_dataset_storage_identifier,
+        self, mock_image_open, mock_temp_file_context, fxt_dataset_storage_identifier, extension
     ) -> None:
         # Arrange
         mock_temp_file = MagicMock()
@@ -113,6 +111,9 @@ class TestMediaManager:
         # Act
         with (
             patch.object(MediaManager, "_update_image_metrics") as mock_update_image_metrics,
+            patch.object(
+                MediaManager, "_convert_image", return_value=["/tmp/converted_image", pil_image]
+            ) as mock_convert_image,
             patch.object(MediaManager, "validate_image_dimensions") as mock_validate_dims,
             patch.object(ImageRepo, "save") as mock_save_image,
             patch.object(ImageBinaryRepo, "save") as mock_save_binary_image,
@@ -121,7 +122,7 @@ class TestMediaManager:
             image = MediaManager.upload_image(
                 dataset_storage_identifier=fxt_dataset_storage_identifier,
                 basename="test_image",
-                extension=ImageExtensions.JPG,
+                extension=extension,
                 image_bytes=data_stream,
                 length=100,
                 user_id=ID("dummy_user"),
@@ -130,9 +131,15 @@ class TestMediaManager:
 
         # Assert
         mock_validate_dims.assert_called_once()
-        mock_save_binary_image.assert_called_once_with(
-            dst_file_name=f"{image.id_}.jpg", data_source=BytesStream(data=data_stream, length=100)
-        )
+        if extension == ImageExtensions.TIFF:
+            mock_convert_image.assert_called_once_with(pil_image=pil_image, save_extension=ImageExtensions.JPEG)
+            mock_save_binary_image.assert_called_once_with(
+                dst_file_name=f"{image.id_}.jpeg", data_source="/tmp/converted_image"
+            )
+        else:
+            mock_save_binary_image.assert_called_once_with(
+                dst_file_name=f"{image.id_}{extension.value}", data_source=BytesStream(data=data_stream, length=100)
+            )
         assert mock_save_image.call_count == 2
         mock_save_image.assert_has_calls(
             [
@@ -141,7 +148,7 @@ class TestMediaManager:
                         name="test_image",
                         uploader_id="dummy_user",
                         id=ANY,
-                        extension=ImageExtensions.JPG,
+                        extension=extension,
                         width=50,
                         height=50,
                         size=100,
@@ -156,7 +163,7 @@ class TestMediaManager:
                         name="test_image",
                         uploader_id="dummy_user",
                         id=ANY,
-                        extension=ImageExtensions.JPG,
+                        extension=extension,
                         width=50,
                         height=50,
                         size=100,
@@ -180,10 +187,12 @@ class TestMediaManager:
 
     @patch("PIL.Image.open")
     @patch.dict(os.environ, {"FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING": "true"})
+    @pytest.mark.parametrize("extension", [ImageExtensions.JPG, ImageExtensions.PNG, ImageExtensions.TIFF])
     def test_upload_image_async_preprocessing(
         self,
         mock_image_open,
         fxt_dataset_storage_identifier,
+        extension,
     ) -> None:
         # Arrange
         data_stream = MagicMock()
@@ -198,6 +207,9 @@ class TestMediaManager:
         # Act
         with (
             patch.object(MediaManager, "_update_image_metrics") as mock_update_image_metrics,
+            patch.object(
+                MediaManager, "_convert_image", return_value=["/tmp/converted_image", pil_image]
+            ) as mock_convert_image,
             patch.object(MediaManager, "validate_image_dimensions") as mock_validate_dims,
             patch.object(ImageRepo, "save") as mock_save_image,
             patch.object(ImageBinaryRepo, "save") as mock_save_binary_image,
@@ -206,7 +218,7 @@ class TestMediaManager:
             image = MediaManager.upload_image(
                 dataset_storage_identifier=fxt_dataset_storage_identifier,
                 basename="test_image",
-                extension=ImageExtensions.JPG,
+                extension=extension,
                 image_bytes=data_stream,
                 length=100,
                 user_id=ID("dummy_user"),
@@ -219,16 +231,22 @@ class TestMediaManager:
                 name="test_image",
                 uploader_id="dummy_user",
                 id=ANY,
-                extension=ImageExtensions.JPG,
+                extension=extension,
                 width=50,
                 height=50,
                 size=100,
                 preprocessing=MediaPreprocessing(status=MediaPreprocessingStatus.SCHEDULED, start_timestamp=ANY),
             )
         )
-        mock_save_binary_image.assert_called_once_with(
-            dst_file_name=f"{image.id_}.jpg", data_source=BytesStream(data=data_stream, length=100)
-        )
+        if extension == ImageExtensions.TIFF:
+            mock_convert_image.assert_called_once_with(pil_image=pil_image, save_extension=ImageExtensions.JPEG)
+            mock_save_binary_image.assert_called_once_with(
+                dst_file_name=f"{image.id_}.jpeg", data_source="/tmp/converted_image"
+            )
+        else:
+            mock_save_binary_image.assert_called_once_with(
+                dst_file_name=f"{image.id_}{extension.value}", data_source=BytesStream(data=data_stream, length=100)
+            )
         mock_publish_event.assert_called_once_with(
             topic="media_preprocessing",
             body={
@@ -246,6 +264,36 @@ class TestMediaManager:
 
         assert isinstance(image, Image)
         assert image.width == 50 and image.height == 50
+
+    @patch("tempfile.NamedTemporaryFile")
+    @patch("PIL.Image.open")
+    @pytest.mark.parametrize("mode", ["RGBA", "P", "RGB"])
+    @pytest.mark.parametrize("save_extension", [ImageExtensions.JPG, ImageExtensions.JPEG, ImageExtensions.PNG])
+    def test_convert_image(self, mock_image_open, mock_temp_file_context, save_extension, mode):
+        # Arrange
+        pil_image = MagicMock()
+        pil_image.mode = mode
+        pil_image.convert.return_value = pil_image
+
+        mock_temp_file = MagicMock()
+        mock_temp_file.name = "/tmp/file"
+        mock_temp_file_context.return_value.__enter__.return_value = mock_temp_file
+
+        converted_image = MagicMock()
+        mock_image_open.return_value = converted_image
+
+        # Act
+        result = MediaManager._convert_image(pil_image=pil_image, save_extension=save_extension)
+
+        # Assert
+        if save_extension in (ImageExtensions.JPG, ImageExtensions.JPEG) and mode in ("RGBA", "P"):
+            pil_image.convert.assert_called_once_with("RGB")
+
+        mock_temp_file_context.assert_called_once_with(suffix=save_extension.value, delete=False)
+        pil_image.save.assert_called_once_with("/tmp/file")
+        mock_image_open.assert_called_once_with("/tmp/file")
+
+        assert result == ("/tmp/file", converted_image)
 
     @patch("resource_management.media_manager.MAX_NUMBER_OF_PIXELS", 7680 * 4620)
     @pytest.mark.parametrize(

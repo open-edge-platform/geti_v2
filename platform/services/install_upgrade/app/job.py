@@ -34,7 +34,9 @@ PROXY_ENABLED = os.getenv("PROXY_ENABLED", "")
 HTTPS_PROXY = os.getenv("HTTPS_PROXY", "")
 HTTP_PROXY = os.getenv("HTTP_PROXY", "")
 NO_PROXY = os.getenv("NO_PROXY", "")
-IMAGE_REGISTRY = os.getenv("IMAGE_REGISTRY") or ""
+IMAGE_REGISTRY = os.getenv("IMAGE_REGISTRY") or None
+GPU_LABEL = os.getenv("GPU_LABEL", "")
+RENDER_GID = os.getenv("RENDER_GID", "")
 REPO_CA = os.getenv("REPO_CA")
 REPO_CA_DECODED = base64.b64decode(REPO_CA).decode("utf-8") if REPO_CA else ""
 REPO_CA_ENCODED = REPO_CA or ""
@@ -73,50 +75,40 @@ async def get_job_status() -> dict[str, str | int]:
     return job_manager.get_status()
 
 
-async def download_manifest() -> str:
+async def download_manifest(manifest_name: str, version: str) -> str:
     """
-    Download the GETI manifest file from the OCI registry.
+    Download a manifest file from the OCI registry.
     Returns the path to the downloaded manifest file.
     """
-    logger.info("Downloading GETI manifest from the OCI registry...")
+    logger.info(f"Downloading {manifest_name} from the OCI registry...")
     oc = OrasClient(tls_verify=False)
-    manifest = f"{GETI_REGISTRY}/geti/charts/geti-manifest:{GETI_MANIFEST_VERSION}"
+    manifest = f"{GETI_REGISTRY}/geti/charts/{manifest_name}:{version}"
     res = await asyncio.to_thread(oc.pull, target=manifest, outdir=".")
-    logger.info("Geti manifest downloaded successfully.")
+    logger.info(f"{manifest_name} downloaded successfully.")
     logger.debug(f"Downloaded manifest file {manifest} to {res[0]}")
     return res[0]
 
 
-async def load_and_split_file(path: str) -> list[str]:
+async def read_file_async(path: str) -> str:
     """
-    Load file specified by path and split it into sections based on '---'.
-    Removes the first section which is geti metadata.
-    Returns a list of sections.
+    Read a file asynchronously and return its content as a string.
     """
-    logger.info(f"Loading file {path}...")
 
-    def read_file() -> str:
-        with open(path) as file:
-            return file.read()
+    def _read():
+        with open(path) as f:
+            return f.read()
 
-    content = await asyncio.to_thread(read_file)
-    file_sections = content.split("---")
-    file_sections.pop(0)  # Remove the first section
-
-    logger.info(f"Following {len(file_sections)} sections found.")
-    return file_sections
+    return await asyncio.to_thread(_read)
 
 
-async def render_jinja_template(template_string: str) -> dict:
+async def render_full_manifest_template(template_path: str) -> str:
     """
-    Render the Jinja template with the required variables.
-    Return the rendered template as a dictionary.
+    Render the full Jinja2 manifest template with the provided context.
+    Returns the rendered manifest as a string.
     """
-    logger.info("Rendering Jinja template...")
+    template_string = await read_file_async(template_path)
     template = jinja2.Template(template_string)
-
-    # Define the variable
-    data = {
+    context = {
         "data_folder": DATA_FOLDER,
         "username": USERNAME,
         "password_hash": PASSWORD_HASH,
@@ -128,17 +120,13 @@ async def render_jinja_template(template_string: str) -> dict:
         "no_proxy": NO_PROXY,
         "image_registry": IMAGE_REGISTRY,
         "geti_registry": GETI_REGISTRY,
+        "gpu_label": GPU_LABEL,
+        "render_gid": RENDER_GID,
         "repoCA_dec": REPO_CA_DECODED,
         "repoCA_enc": REPO_CA_ENCODED,
         "IMAGE_REGISTRY": IMAGE_REGISTRY,
     }
-
-    # Render the template with the variable
-    rendered_output = template.render(data)
-    logger.debug(f"Rendered Jinja template: {rendered_output}")
-
-    logger.info("Rendered template successfully.")
-    return yaml.safe_load(rendered_output)
+    return template.render(context)
 
 
 async def deploy_helm_charts(manifest: dict) -> None:
@@ -178,6 +166,37 @@ async def deploy_helm_charts(manifest: dict) -> None:
                 logger.error(f"Failed to create helm chart CR: {create_err}")
                 raise HelmChartDeployError(f"Failed to create helm chart CR: {create_err}")
     logger.info("Deployed helm charts successfully.")
+
+
+async def apply_yaml_to_cluster(yaml_path: str) -> None:
+    """
+    Apply a YAML manifest to the Kubernetes cluster.
+    If the resource exists, it will be replaced.
+    """
+    yaml_content = await read_file_async(yaml_path)
+    docs = list(yaml.safe_load_all(yaml_content))
+    k8s_client = client.ApiClient()
+    for doc in docs:
+        if not doc or "kind" not in doc:
+            continue
+        kind = doc["kind"]
+        metadata = doc.get("metadata", {})
+        name = metadata.get("name")
+        namespace = metadata.get("namespace", "kube-system")
+        try:
+            if kind == "DaemonSet":
+                api = client.AppsV1Api(k8s_client)
+                try:
+                    await asyncio.to_thread(api.read_namespaced_daemon_set, name, namespace)
+                    await asyncio.to_thread(api.replace_namespaced_daemon_set, name, namespace, doc)
+                except ApiException as e:
+                    if e.status == 404:
+                        await asyncio.to_thread(api.create_namespaced_daemon_set, namespace, doc)
+                    else:
+                        raise
+        except Exception as e:
+            logger.exception(f"Failed to apply {kind} {name} in {namespace}: {e}")
+            raise
 
 
 def _watch_job_events(job_name: str, namespace: str, timeout: int, batch_v1: client.BatchV1Api, w: watch.Watch) -> str:
@@ -306,7 +325,7 @@ def deploy_secret() -> None:
         if e.status == 409:
             logger.warning(f"Secret already exists: {e.body}")
         else:
-            logger.error(f"An error occurred: {e}")
+            logger.exception(f"An error occurred: {e}")
             sys.exit(1)
     logger.info("Configuration for external registry deployed.")
 
@@ -326,13 +345,28 @@ async def main(job_manager: JobManager) -> None:
     config.load_config()
     logger.info("Initialized Kubernetes client configuration...")
     try:
-        geti_manifest = await download_manifest()
-        helm_charts = await load_and_split_file(geti_manifest)
+        template_path = await download_manifest(manifest_name="geti-manifest", version=GETI_MANIFEST_VERSION)
+        rendered_manifest = await render_full_manifest_template(template_path)
+        logger.debug(f"Rendered manifest:\n{rendered_manifest}")
+
+        if GPU_LABEL and "intel" in GPU_LABEL.lower():
+            manifest_content = yaml.safe_load(rendered_manifest)
+            intel_device_plugin_version = str(manifest_content.get("intel_device_plugin_version", "0.32.0"))
+            intel_plugin_path = await download_manifest(
+                manifest_name="intel-device-plugin", version=intel_device_plugin_version
+            )
+            await apply_yaml_to_cluster(intel_plugin_path)
+            logger.info("Intel device plugin added to the cluster.")
+
+        helm_charts = [
+            section for i, section in enumerate(rendered_manifest.split("---")) if i != 0 and section.strip()
+        ]  # remove the first (metadata) section
         total_charts = len(helm_charts)
+
         if IMAGE_REGISTRY:
             deploy_secret()
         for index, helm in enumerate(helm_charts):
-            rendered_helm = await render_jinja_template(helm)
+            rendered_helm = yaml.safe_load(helm)
             try:
                 job_manager.set_status(
                     "RUNNING",
@@ -341,7 +375,7 @@ async def main(job_manager: JobManager) -> None:
                 )
                 await deploy_helm_charts(rendered_helm)
             except HelmChartDeployError as e:
-                logger.error(f"Failed to deploy helm chart: {e}")
+                logger.exception(f"Failed to deploy helm chart: {e}")
                 job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 99))
                 break
 
@@ -356,7 +390,7 @@ async def main(job_manager: JobManager) -> None:
                     job_name=job_name, namespace=namespace, timeout=parsed_timeout if parsed_timeout else 300
                 )
             except (FailedJobError, TimeoutJobError) as e:
-                logger.error(f"Job '{job_name}' in namespace '{namespace}' failed: {e}")
+                logger.exception(f"Job '{job_name}' in namespace '{namespace}' failed: {e}")
                 job_manager.set_status("FAILED", str(e), progress_percentage=int((index + 1) / total_charts * 99))
                 break
             except UnknownJobError as e:
@@ -379,7 +413,7 @@ async def main(job_manager: JobManager) -> None:
             logger.info("Installation process completed successfully.")
     except Exception as e:
         job_manager.set_status("FAILED", str(e))
-        logger.error(f"Installation process failed: {e}")
+        logger.exception(f"Installation process failed: {e}")
 
 
 async def run() -> None:

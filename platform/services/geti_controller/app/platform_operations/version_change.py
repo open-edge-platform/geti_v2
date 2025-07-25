@@ -4,6 +4,7 @@ import fcntl
 import json
 import logging
 import os
+from dataclasses import dataclass
 
 from constants.platform import UPGRADE_FILE_PATH
 from platform_operations.cluster import deploy_service_job
@@ -11,35 +12,42 @@ from platform_operations.cluster import deploy_service_job
 logger = logging.getLogger(__name__)
 
 
-def commence_version_change(
-    source_version: str,
-    target_version: str,
-    registry: str,
-    source_image_tag: str,
-    target_image_tag: str,
-    manifest_version: str,
-    direction: str,
-) -> None:
-    """Commence the version change process by deploying the service job and updating the progress file."""
-    logger.info(f"Starting {direction.upper()}")
+@dataclass
+class VersionChangeParams:
+    source_version: str
+    target_version: str
+    registry: str
+    source_image_tag: str
+    target_image_tag: str
+    manifest_version: str
+    direction: str
+    gpu_label: str | None = None
+    render_gid: int | None = None
+
+
+def commence_version_change(params: VersionChangeParams) -> None:
+    """Start the version change process based on the provided parameters."""
+    logger.info(f"Starting {params.direction.upper()}")
 
     update_progress(
         {
-            "source_version": source_version,
-            "target_version": target_version,
-            "source_image_tag": source_image_tag,
-            "target_image_tag": target_image_tag,
+            "source_version": params.source_version,
+            "target_version": params.target_version,
+            "source_image_tag": params.source_image_tag,
+            "target_image_tag": params.target_image_tag,
             "progress_percentage": 0,
             "status": "RUNNING",
-            "message": f"{direction.capitalize()} process has started.",
+            "message": f"{params.direction.capitalize()} process has started.",
         }
     )
 
     deploy_service_job(
-        registry=registry,
-        image_tag=target_image_tag,
-        manifest_version=manifest_version,
-        direction=direction,
+        registry=params.registry,
+        image_tag=params.target_image_tag,
+        manifest_version=params.manifest_version,
+        direction=params.direction,
+        gpu_label=params.gpu_label,
+        render_gid=params.render_gid,
     )
 
 

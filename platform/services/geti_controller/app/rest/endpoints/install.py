@@ -2,12 +2,13 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import logging
+import re
 
 from fastapi import HTTPException, status
 
-from constants.platform import GETI_REGISTRY, INSTALL_VERSION
+from constants.platform import GETI_REGISTRY
 from platform_operations.cluster import check_config_map_exists, load_kube_config
-from platform_operations.version_change import commence_version_change
+from platform_operations.version_change import VersionChangeParams, commence_version_change
 from rest.schema.install import InstallRequest, InstallResponse
 from routers import platform_router
 
@@ -55,7 +56,7 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
             detail="Version number is required.",
         )
 
-    if payload.version_number == "invalid_version":  # TODO validation
+    if not re.match(r"^\d+\.\d+\.\d+(?:-[\w\-]+)?$", payload.version_number):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid version number provided.",
@@ -65,15 +66,18 @@ def install_platform(payload: InstallRequest) -> InstallResponse:
     if check_config_map_exists(name="impt-configuration", namespace="impt"):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Platform is already installed.")
 
-    commence_version_change(
+    install_params = VersionChangeParams(
         source_version="None",
-        target_version=INSTALL_VERSION,
+        target_version=payload.version_number,
         registry=GETI_REGISTRY,
         source_image_tag="None",
-        target_image_tag=INSTALL_VERSION,
-        manifest_version=INSTALL_VERSION,
+        target_image_tag=payload.version_number,
+        manifest_version=payload.version_number,
         direction="install",
+        gpu_label=payload.gpu_label,
+        render_gid=payload.render_gid,
     )
+    commence_version_change(install_params)
 
     logger.info(f"Installation of version {payload.version_number} has started.")
     return InstallResponse(detail=f"Installation of version {payload.version_number} has started.")

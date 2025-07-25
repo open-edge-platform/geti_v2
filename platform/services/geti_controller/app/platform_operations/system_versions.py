@@ -10,14 +10,16 @@ logger = logging.getLogger(__name__)
 
 def get_nvidia_driver_version() -> str | None:
     """
-    Retrieve the NVIDIA driver version by executing nvidia-smi in the nvidia-device-plugin-daemonset pod.
+    Retrieve the NVIDIA driver version by executing nvidia-smi in the nvidia-device-plugin pod.
     """
     try:
         config.load_incluster_config()
         core_v1 = client.CoreV1Api()
-        pods = core_v1.list_namespaced_pod(namespace="kube-system", label_selector="name=nvidia-device-plugin-ds")
+        pods = core_v1.list_namespaced_pod(
+            namespace="kube-system", label_selector="app.kubernetes.io/name=nvidia-device-plugin"
+        )
         if not pods.items:
-            logger.warning("No nvidia-device-plugin-daemonset pod found in kube-system namespace.")
+            logger.warning("No nvidia-device-plugin pod found in kube-system namespace.")
             return None
         pod_name = pods.items[0].metadata.name
         exec_command = ["/bin/bash", "-c", "nvidia-smi --query-gpu=driver_version --format=csv,noheader"]

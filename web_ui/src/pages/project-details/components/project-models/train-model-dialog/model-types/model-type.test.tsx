@@ -135,6 +135,27 @@ describe('ModelType', () => {
         expect(screen.getByLabelText('Attribute rating for Accuracy is HIGH')).toBeInTheDocument();
     });
 
+    it('displays model size, complexity and the license', () => {
+        const algorithm = getMockedSupportedAlgorithm({
+            gigaflops: 2.6,
+            trainableParameters: 4.5,
+        });
+
+        render(
+            <ModelType
+                name={algorithm.name}
+                algorithm={algorithm}
+                selectedModelTemplateId={'test'}
+                onChangeSelectedTemplateId={jest.fn()}
+                activeModelTemplateId={'test'}
+                renderTag={undefined}
+            />
+        );
+
+        expect(screen.getByLabelText('Complexity')).toHaveTextContent('2.6 GFlops');
+        expect(screen.getByLabelText('Model size')).toHaveTextContent('4.5 M');
+    });
+
     it('passes model template id to onChangeSelectedTemplateId when model is clicked', () => {
         const algorithm = getMockedSupportedAlgorithm({
             lifecycleStage: LifecycleStage.ACTIVE,

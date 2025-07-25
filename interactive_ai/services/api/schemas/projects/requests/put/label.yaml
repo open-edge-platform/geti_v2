@@ -26,6 +26,9 @@ properties:
   is_deleted:
     type: boolean
     description: Indicates whether the label is going to be deleted
+  is_background:
+    type: boolean
+    description: Indicates whether the label is the background label
   parent_id:
     description: 'Name of parent label'
   revisit_affected_annotations:

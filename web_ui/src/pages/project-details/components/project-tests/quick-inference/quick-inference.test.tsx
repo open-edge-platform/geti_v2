@@ -379,35 +379,43 @@ describe('QuickInference', () => {
                             config: {
                                 type: 'minMax',
                                 value: 30,
+                                defaultValue: 30,
                                 max: 30,
                                 min: 0,
                             },
+                            onChange: jest.fn(),
                         },
                         {
                             name: 'height',
                             config: {
                                 type: 'minMax',
                                 value: 480,
+                                defaultValue: 480,
                                 max: 1920,
                                 min: 1,
                             },
+                            onChange: jest.fn(),
                         },
                         {
                             name: 'resizeMode',
                             config: {
                                 type: 'selection',
                                 value: 'none',
+                                defaultValue: 'none',
                                 options: ['none', 'crop-and-scale'],
                             },
+                            onChange: jest.fn(),
                         },
                         {
                             name: 'width',
                             config: {
                                 type: 'minMax',
                                 value: 640,
+                                defaultValue: 640,
                                 max: 1920,
                                 min: 1,
                             },
+                            onChange: jest.fn(),
                         },
                     ],
                     userPermissions: UserCameraPermission.GRANTED,

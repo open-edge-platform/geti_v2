@@ -20,6 +20,7 @@ export interface SettingOptionProps {
 const unFormatText = (text: string) => words(text).join(' ');
 
 export const SettingOption = ({ label, config, onChange }: SettingOptionProps) => {
+    const marginStart = 'size-50';
     const [value, setValue] = useState<number | string>(config.value);
 
     const updateValue = (key: Key) => {
@@ -30,17 +31,22 @@ export const SettingOption = ({ label, config, onChange }: SettingOptionProps) =
     return (
         <>
             <Flex
-                marginTop={'size-200'}
+                marginTop={'size-50'}
                 marginBottom={'size-50'}
+                marginStart={marginStart}
                 justifyContent={'space-between'}
                 alignItems={'center'}
             >
-                <Heading level={4} margin={0}>
+                <Heading level={4} margin={0} UNSAFE_style={{ fontWeight: 400 }}>
                     {capitalize(unFormatText(label))}
                 </Heading>
 
                 <TooltipTrigger placement={'bottom'}>
-                    <ActionButton isQuiet aria-label={`reset ${label}`} onPress={() => updateValue(config.value)}>
+                    <ActionButton
+                        isQuiet
+                        aria-label={`reset ${label}`}
+                        onPress={() => updateValue(config.defaultValue)}
+                    >
                         <Revisit />
                     </ActionButton>
                     <Tooltip>{`Reset ${label}`}</Tooltip>
@@ -49,6 +55,7 @@ export const SettingOption = ({ label, config, onChange }: SettingOptionProps) =
 
             {config.type === 'selection' ? (
                 <Picker
+                    marginStart={marginStart}
                     width={'100%'}
                     aria-label={`${label} selection options`}
                     items={config.options.map((name) => ({ id: name, name }))}
@@ -59,6 +66,7 @@ export const SettingOption = ({ label, config, onChange }: SettingOptionProps) =
                 </Picker>
             ) : (
                 <Slider
+                    marginStart={marginStart}
                     label=' '
                     width={'100%'}
                     value={Number(value)}

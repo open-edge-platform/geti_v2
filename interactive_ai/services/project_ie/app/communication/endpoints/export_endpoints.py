@@ -26,7 +26,7 @@ router = APIRouter(
 def initialize_project_export(
     project_identifier: Annotated[ProjectIdentifier, Depends(get_project_identifier)],
     user_id: Annotated[ID, Depends(get_user_id_fastapi)],
-    include_models: IncludeModelsType = IncludeModelsType.all,
+    include_models: IncludeModelsType = IncludeModelsType.ALL,
 ) -> JSONResponse:
     """Start exporting the selected project"""
     job_id = ExportController.submit_project_export_job(

@@ -12,12 +12,14 @@ const mockedMinMaxConfig: SettingMinMax = {
     min: 1,
     max: 200,
     value: 100,
+    defaultValue: 100,
     type: 'minMax',
 };
 
 const mockedSelectionConfig: SettingSelection = {
     type: 'selection',
     value: 'none',
+    defaultValue: 'none',
     options: ['none', 'crop-and-scale'],
 };
 
