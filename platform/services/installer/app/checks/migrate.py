@@ -23,12 +23,12 @@ from texts.checks import MigrationChecksTexts
 
 logger = logging.getLogger(__name__)
 
-GETI_VERSION_WITHOUT_CONTROLLER = "2.12.0"
+GETI_VERSION_WITHOUT_CONTROLLER = "2.13.0"
 
 
 def is_migration_possible() -> None:
     """
-    Check if the Geti version is older than 2.11.0.
+    Check if the Geti version is older than 2.13.0.
     This function is used to determine if migration is required.
     """
     logger.debug("Checking if Geti platform version is correct.")
@@ -51,7 +51,7 @@ def is_migration_possible() -> None:
     platform_version = Version(platform_version_match.group())
     border_version = Version(GETI_VERSION_WITHOUT_CONTROLLER)
 
-    if platform_version > border_version:
+    if platform_version >= border_version:
         raise MigrateCheckError(
             MigrationChecksTexts.migration_check_error.format(
                 platform_version=platform_version, border_versions=GETI_VERSION_WITHOUT_CONTROLLER
