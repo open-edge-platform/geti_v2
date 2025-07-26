@@ -48,9 +48,27 @@ class ProjectExportUseCase:
 
     @classmethod
     def _add_collections_and_documents_to_zip(
-        cls, zip_archive: ProjectZipArchive, project_identifier: ProjectIdentifier, include_models: IncludeModels
+        cls,
+        zip_archive: ProjectZipArchive,
+        data_redaction_use_case: ExportDataRedactionUseCase,
+        project_identifier: ProjectIdentifier,
+        include_models: IncludeModels,
     ) -> set[str]:
-        data_redaction_use_case = ExportDataRedactionUseCase()
+        """
+        Export MongoDB collections and documents to the zip archive with data redaction.
+
+        Fetches all documents from project collections, applies various redaction functions
+        to remove sensitive or unnecessary data, and adds the processed documents to the
+        zip archive. When include_models is LATEST_ACTIVE, only the latest active models
+        and their associated binary paths are included.
+
+        :param zip_archive: The zip archive to add collections and documents to
+        :param data_redaction_use_case: Use case for applying data redaction operations
+        :param project_identifier: Identifier of the project being exported
+        :param include_models: Specifies which models to include in the export
+        :returns: Set of binary paths that should be included in the export (relevant
+            when include_models is LATEST_ACTIVE)
+        """
         document_repo = DocumentRepo(project_identifier=project_identifier)
         json_options = JSONOptions(
             uuid_representation=UuidRepresentation.STANDARD,
@@ -147,7 +165,10 @@ class ProjectExportUseCase:
             )
             progress_callback(25, "Exporting project database")
             include_model_binary_paths = cls._add_collections_and_documents_to_zip(
-                zip_archive=zip_archive, project_identifier=project_identifier, include_models=include_models
+                zip_archive=zip_archive,
+                data_redaction_use_case=data_redaction_use_case,
+                project_identifier=project_identifier,
+                include_models=include_models,
             )
 
             progress_callback(50, "Exporting project binary files")
