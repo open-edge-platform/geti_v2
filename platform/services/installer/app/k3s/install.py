@@ -12,8 +12,10 @@ import re
 import shutil
 import stat
 import subprocess
+import tempfile
 import time
 from typing import IO
+from urllib.parse import urlparse
 
 import requests
 import yaml
@@ -27,11 +29,12 @@ from constants.paths import (
     K3S_INSTALLATION_MARK_FILEPATH,
     K3S_KUBECONFIG_PATH,
     K3S_OFFLINE_INSTALLATION_FILES_PATH,
+    K3S_REGISTRIES_FILE_PATH,
     K3S_REMOTE_KUBECONFIG_PATH,
     K3S_SELINUX_OFFLINE_INSTALLATION_FILES_PATH,
     USR_LOCAL_BIN_PATH,
 )
-from constants.platform import PLATFORM_NAMESPACE
+from constants.platform import EXTERNAL_REGISTRY_ADDRESS, PLATFORM_NAMESPACE
 from k3s.config import k3s_configuration
 from k3s.detect_ip import get_first_public_ip
 from k3s.detect_selinux import is_selinux_installed
@@ -58,6 +61,41 @@ def _download_script(target_file: IO[bytes]):
 
     target_file_stat = os.stat(target_file.name)
     os.chmod(target_file.name, target_file_stat.st_mode | stat.S_IEXEC)
+
+
+def _set_local_registry(external_registry_address: str):
+    """
+    Configures local docker registry - as a replacement for docker.io registry to avoid docker pull limit
+    Function called only when the EXTERNAL_REGISTRY_ADDRESS env variable is set.
+    :param external_registry_address: Address of the external registry to be used as a replacement for docker.io
+    """
+    if not external_registry_address.startswith("http"):
+        external_registry_address = "https://" + external_registry_address
+    parsed_url = urlparse(external_registry_address)
+
+    content = f"""mirrors:
+  docker.io:
+    endpoint:
+      - "{parsed_url.scheme}://{parsed_url.netloc}" """
+
+    if parsed_url.path.strip('/'):
+        content += f"""
+    rewrite:
+      "(.*)": "{parsed_url.path.strip('/')}/$1" """
+
+    content += f"""
+configs:
+  "{parsed_url.scheme}://{parsed_url.netloc}":
+    tls:
+      insecure_skip_verify: true """
+
+    os.makedirs(os.path.dirname(K3S_REGISTRIES_FILE_PATH), exist_ok=True)
+
+    try:
+        with open(K3S_REGISTRIES_FILE_PATH, "w", encoding="utf-8") as file:
+            file.write(content)
+    except (OSError) as error:
+        logger.exception(f"Error occurred while setting up local registry: {str(error)}")
 
 
 def _update_containerd_config(logs_file_path: str):
@@ -224,16 +262,21 @@ def install_k3s(  # noqa: ANN201
     Install K3S to current system. Write installation logs to 'logs_dir'. Use optionally 'external_address' to adjust
     produced kubeconfig.
     """
-    try:
-        k3s_script_path = f"{K3S_OFFLINE_INSTALLATION_FILES_PATH}/install.sh"
-        _prepare_k3s_files_structure()
-        _install_k3s_selinux_rpm()
-        _run_installer(k3s_script_path=k3s_script_path, logs_file_path=logs_file_path)
-        _update_containerd_config(logs_file_path=logs_file_path)
-        _mark_k3s_installation()
-    except subprocess.CalledProcessError as ex:
-        raise K3SInstallationError from ex
+    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+        try:
+            if EXTERNAL_REGISTRY_ADDRESS:
+                _set_local_registry(EXTERNAL_REGISTRY_ADDRESS)
+            _download_script(tmp)
+            tmp.close()
+            _install_k3s_selinux_rpm()
+            _run_installer(k3s_script_path=tmp.name, logs_file_path=logs_file_path)
+            _update_containerd_config(logs_file_path=logs_file_path)
+            _mark_k3s_installation()
+        except subprocess.CalledProcessError as ex:
+            raise K3SInstallationError from ex
+        finally:
+            os.remove(tmp.name)
 
-    if setup_remote_kubeconfig:
-        _adjust_k3s_kubeconfig_server_address()
-    _set_default_namespace()
+        if setup_remote_kubeconfig:
+            _adjust_k3s_kubeconfig_server_address()
+        _set_default_namespace()

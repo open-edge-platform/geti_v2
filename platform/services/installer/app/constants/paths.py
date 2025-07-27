@@ -34,6 +34,7 @@ CONFIG_TOML_TMPL_PATH = f"{K3S_VAR_LIB_RANCHER_AGENT}/etc/containerd/config.toml
 K3S_BACKUP_RESTORE_PATH = f"{K3S_VAR_LIB_RANCHER}/backup"
 K3S_KILLALL_SCRIPT_PATH = "/usr/local/bin/k3s-killall.sh"
 K3S_OFFLINE_INSTALLATION_FILES_PATH = f"{OFFLINE_TOOLS_DIR}/k3s"
+K3S_REGISTRIES_FILE_PATH = "/etc/rancher/k3s/registries.yaml"
 
 ###
 # logs related
