@@ -147,9 +147,9 @@ class TestDocumentRepo:
         proj_id = IDToMongo.forward(fxt_project_identifier.project_id)
 
         # Setup test data
-        model_storage_id = fxt_ote_id(1)
-        base_model_id = fxt_ote_id(2)
-        optimized_model_id = fxt_ote_id(3)
+        model_storage_id = IDToMongo.forward(fxt_ote_id(1))
+        base_model_id = IDToMongo.forward(fxt_ote_id(2))
+        optimized_model_id = IDToMongo.forward(fxt_ote_id(3))
 
         # Insert active model state
         active_model_state_collection = MongoConnector.get_collection(collection_name="active_model_state")
@@ -165,7 +165,7 @@ class TestDocumentRepo:
         # Insert base framework model
         model_collection = MongoConnector.get_collection(collection_name="model")
         base_model_doc = {
-            "_id": IDToMongo.forward(base_model_id),
+            "_id": base_model_id,
             "organization_id": org_id,
             "workspace_id": ws_id,
             "project_id": proj_id,
@@ -181,7 +181,7 @@ class TestDocumentRepo:
 
         # Insert optimized model
         optimized_model_doc = {
-            "_id": IDToMongo.forward(optimized_model_id),
+            "_id": optimized_model_id,
             "organization_id": org_id,
             "workspace_id": ws_id,
             "project_id": proj_id,
@@ -189,7 +189,7 @@ class TestDocumentRepo:
             "model_format": "OPTIMIZED",
             "model_status": "SUCCESS",
             "version": 1,
-            "previous_trained_revision_id": IDToMongo.forward(base_model_id),
+            "previous_trained_revision_id": base_model_id,
             "weight_paths": [["binary", "models/optimized_model/weights.bin"]],
         }
 
@@ -205,8 +205,8 @@ class TestDocumentRepo:
         assert optimized_model_id in model_ids
 
         expected_binary_paths = {
-            "models/base_model/weights.bin",
-            "models/base_model/config.json",
-            "models/optimized_model/weights.bin",
+            f"model_storages/{model_storage_id}/models/base_model/weights.bin",
+            f"model_storages/{model_storage_id}/models/base_model/config.json",
+            f"model_storages/{model_storage_id}/models/optimized_model/weights.bin",
         }
         assert binary_paths == expected_binary_paths
