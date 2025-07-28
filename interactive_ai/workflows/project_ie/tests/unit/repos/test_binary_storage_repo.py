@@ -272,7 +272,7 @@ class TestBinaryStorageRepo:
             ) in storage_repo.get_all_objects_by_type(
                 object_type=BinaryObjectType.MODELS,
                 target_folder=temp_folder,
-                include_binary_paths=include_binary_paths,
+                whitelisted_paths=include_binary_paths,
             ):
                 assert local_path_iter == local_paths[1]
                 assert object_name_iter == object_names_from_project_root[1]

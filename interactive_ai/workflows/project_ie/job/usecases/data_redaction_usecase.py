@@ -410,11 +410,11 @@ class ExportDataRedactionUseCase(BaseDataRedactionUseCase):
         return doc
 
     @staticmethod
-    def purge_model_docs_if_necessary(include_model_ids: set[ObjectId]) -> Callable[[dict], dict]:
+    def purge_all_model_docs(model_ids_to_keep: set[ObjectId]) -> Callable[[dict], dict]:
         """
         Return a redaction method that purges model docs, except if the model should be included in the export.
 
-        :param include_model_ids: Set of model ids that should be included in the export
+        :param model_ids_to_keep: Set of model ids that should be included in the export
         :return: Callable that takes a model doc and returns it as purged model doc, unless in include_model_ids
         """
 
@@ -427,7 +427,7 @@ class ExportDataRedactionUseCase(BaseDataRedactionUseCase):
             :param doc: A dictionary representing a model document.
             :return: The modified document after purging.
             """
-            if doc["_id"] in include_model_ids:
+            if doc["_id"] in model_ids_to_keep:
                 return doc
             purge_info = doc.get("purge_info")
             if purge_info is not None and purge_info["is_purged"]:

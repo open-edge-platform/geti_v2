@@ -862,7 +862,7 @@ class TestImportDataRedactionUseCase:
                 "user_uid": "previous_user",
             },
         }
-        purge_model_docs_method = data_redaction_use_case.purge_model_docs_if_necessary(include_model_ids=set())
+        purge_model_docs_method = data_redaction_use_case.purge_all_model_docs(model_ids_to_keep=set())
         result = purge_model_docs_method(doc)
 
         assert result == doc
@@ -886,7 +886,7 @@ class TestImportDataRedactionUseCase:
             "weight_paths": ["item_1"],
         }
 
-        purge_model_docs_method = data_redaction_use_case.purge_model_docs_if_necessary(include_model_ids=set())
+        purge_model_docs_method = data_redaction_use_case.purge_all_model_docs(model_ids_to_keep=set())
         result = purge_model_docs_method(doc)
 
         assert result["purge_info"]["is_purged"] is True
@@ -913,7 +913,7 @@ class TestImportDataRedactionUseCase:
             "weight_paths": ["item_1"],
         }
 
-        purge_model_docs_method = data_redaction_use_case.purge_model_docs_if_necessary(include_model_ids={id_})
+        purge_model_docs_method = data_redaction_use_case.purge_all_model_docs(model_ids_to_keep={id_})
         result = purge_model_docs_method(doc)
 
         assert doc == result

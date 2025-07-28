@@ -95,7 +95,7 @@ class ProjectExportUseCase:
                 else []
             )
             purge_info_redaction: list[Callable] = (
-                [data_redaction_use_case.purge_model_docs_if_necessary(include_model_ids=include_model_ids)]
+                [data_redaction_use_case.purge_all_model_docs(model_ids_to_keep=include_model_ids)]
                 if collection_name in ProjectExportUseCase.COLLECTIONS_FOR_MODELS
                 and include_models in {IncludeModels.NONE, IncludeModels.LATEST_ACTIVE}
                 else []
@@ -181,7 +181,7 @@ class ProjectExportUseCase:
                     objects_local_and_remote_paths = binary_storage_repo.get_all_objects_by_type(
                         object_type=object_type,
                         target_folder=tmp_folder,
-                        include_binary_paths=include_model_binary_paths,
+                        whitelisted_paths=include_model_binary_paths,
                     )
                 else:
                     objects_local_and_remote_paths = binary_storage_repo.get_all_objects_by_type(

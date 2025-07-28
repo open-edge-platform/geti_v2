@@ -73,7 +73,7 @@ class BinaryStorageRepo(StorageRepo):
         )
 
     def get_all_objects_by_type(
-        self, object_type: BinaryObjectType, target_folder: str, include_binary_paths: set[str] | None = None
+        self, object_type: BinaryObjectType, target_folder: str, whitelisted_paths: set[str] | None = None
     ) -> Iterator[tuple[str, str]]:
         """
         Iterates over objects of a specific project and type. For each object, it downloads it to a temporary local
@@ -81,7 +81,7 @@ class BinaryStorageRepo(StorageRepo):
 
         :param object_type: The type of the binary object to be processed, corresponds to a bucket
         :param target_folder: Folder in the local filesystem where to download the objects from S3
-        :param include_binary_paths: Set of paths to objects to include in the output
+        :param whitelisted_paths: Set of paths to objects to include in the output
         :return: An iterator yielding tuples of:
             - The local path where the object is downloaded to
             - The remote path from the project root onward where the object was downloaded from
@@ -103,7 +103,7 @@ class BinaryStorageRepo(StorageRepo):
         for s3_object in objects_to_fetch:
             object_name = s3_object.object_name
             object_name_from_project_root = object_name.replace(self.s3_project_root + "/", "")
-            if include_binary_paths is None or object_name_from_project_root in include_binary_paths:
+            if whitelisted_paths is None or object_name_from_project_root in whitelisted_paths:
                 local_path = os.path.join(target_folder, object_name_from_project_root)
                 try:
                     self.minio_client.fget_object(
