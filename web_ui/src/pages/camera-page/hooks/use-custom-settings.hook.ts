@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 
-import { DeviceConfiguration, SettingSelection } from '../providers/util';
+import { DeviceConfiguration } from '../providers/util';
 
 type UseCustomSettings = {
     isMirrored: boolean;
