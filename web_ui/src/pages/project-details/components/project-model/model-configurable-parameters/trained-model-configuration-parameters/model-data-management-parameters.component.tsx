@@ -7,7 +7,10 @@ import { isEmpty, noop } from 'lodash-es';
 import { TrainedModelConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
 import { DataAugmentationParametersList } from '../../../project-models/train-model-dialog/advanced-settings/data-management/data-augmentation/data-augmentation-parameters-list.component';
 import { isDataAugmentationEnabled } from '../../../project-models/train-model-dialog/advanced-settings/data-management/data-augmentation/data-augmentation.component';
-import { TilingModeTooltip } from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling-modes.component';
+import {
+    TILING_MODES,
+    TilingModeTooltip,
+} from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling-modes.component';
 import {
     getCustomTilingParameters,
     getTilingMode,
@@ -60,7 +63,9 @@ const TilingParameters = ({ parameters }: TilingParametersProps) => {
             <Accordion.Content>
                 <Flex direction={'column'} gap={'size-300'}>
                     <TilingMode tilingMode={tilingMode} />
-                    <Parameters parameters={customTilingParameters} onChange={noop} isReadOnly />
+                    {tilingMode === TILING_MODES.CUSTOM && (
+                        <Parameters parameters={customTilingParameters} onChange={noop} isReadOnly />
+                    )}
                 </Flex>
             </Accordion.Content>
         </Accordion>
