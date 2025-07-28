@@ -10,6 +10,9 @@ import yaml
 from kubernetes import client
 
 from configuration_models.install_config import InstallationConfig
+from configuration_models.upgrade_config import UpgradeConfig
+from constants.charts import GETI_CONTROLLER_CHART
+from constants.paths import GETI_CONTROLLER_CHART_PATH
 from constants.paths import GETI_CONTROLLER_CHART_PATH, K3S_KUBECONFIG_PATH
 from constants.platform import PLATFORM_NAMESPACE
 from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
@@ -63,7 +66,7 @@ def apply_manifest(manifest: dict, namespace: str = GETI_CONTROLLER_NAMESPACE) -
                 raise
 
 
-def deploy_geti_controller_chart(config: InstallationConfig, template_path: str = GETI_CONTROLLER_CHART_PATH) -> None:
+def deploy_geti_controller_chart(config: InstallationConfig | UpgradeConfig, template_path: str = GETI_CONTROLLER_CHART_PATH) -> None:
     """
     Render the Jinja2 template and deploy using helm controller.
     """
@@ -83,6 +86,7 @@ def deploy_geti_controller_chart(config: InstallationConfig, template_path: str 
             "platform_version": get_target_product_build(),
             "tls_cert_file": "",
             "tls_key_file": "",
+            "repoCA": "",
             "proxy_enabled": bool(http_proxy or https_proxy),
             "https_proxy": https_proxy if https_proxy is not None else "",
             "http_proxy": http_proxy if http_proxy is not None else "",
@@ -95,6 +99,14 @@ def deploy_geti_controller_chart(config: InstallationConfig, template_path: str 
             with open(config.tls_key_file.value, "rb") as key_file:
                 key_content = key_file.read()
                 context["tls_key_file"] = encode_data_b64(key_content)
+        elif config.tls_cert_content.value and config.tls_key_content.value:
+            context["tls_cert_file"] = encode_data_b64(config.tls_cert_content.value.encode("utf-8"))
+            context["tls_key_file"] = encode_data_b64(config.tls_key_content.value.encode("utf-8"))
+
+        if config.repoCA.value:
+            with open(config.repoCA.value, "rb") as ca_file:
+                ca_content = ca_file.read()
+                context["repoCA"] = encode_data_b64(ca_content)
 
         with open(template_path) as f:
             template_content = f.read()

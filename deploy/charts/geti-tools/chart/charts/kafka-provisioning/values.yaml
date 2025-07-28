@@ -231,6 +231,8 @@ provisioning:
       config: []
     - name: media_deletions
       config: []
+    - name: media_preprocessing
+      config: []
     - name: media_uploads
       config: []
     - name: new_annotation_scene
@@ -329,6 +331,11 @@ provisioning:
     - user: resource
       topic: media_uploads
       operations: ["Write"]
+
+    # media_preprocessing
+    - user: resource
+      topic: media_preprocessing
+      operations: ["Read", "Write"]
 
     # new_annotation_scene
     - user: director

@@ -8,17 +8,20 @@ from kubernetes import client
 
 from configuration_models.install_config import InstallationConfig
 from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
+from cli_utils.platform_logs import subprocess_run
+from constants.charts import GETI_CONTROLLER_CHART
+from constants.paths import HELM_BINARY, INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH
 from geti_controller.errors import GetiControllerUninstallationError
 from platform_utils.kube_config_handler import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
 
 
-def uninstall_geti_controller_chart(config: InstallationConfig) -> None:
+def uninstall_geti_controller_chart() -> None:
     """
     Method used to uninstall Geti Controller chart
     """
-    KubernetesConfigHandler(kube_config=config.kube_config.value)
+    KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
     try:
         with client.ApiClient() as api_client:
             custom_api = client.CustomObjectsApi(api_client)
