@@ -551,7 +551,7 @@ wheels = [
 
 [[package]]
 name = "datumaro"
-version = "1.10.0"
+version = "1.11.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
@@ -576,7 +576,6 @@ dependencies = [
     { name = "protobuf" },
     { name = "pyarrow" },
     { name = "pycocotools" },
-    { name = "pyemd" },
     { name = "pyyaml" },
     { name = "requests" },
     { name = "ruamel-yaml" },
@@ -590,11 +589,13 @@ dependencies = [
     { name = "tritonclient", extra = ["all"] },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/50/62/a915845b2d650ec2e2dc9f07716872228f898ff4ee7c45a729304295b3b7/datumaro-1.10.0.tar.gz", hash = "sha256:408a07fb4c74a2d832d4493c9c8001283cc0f40b02fdddc26b9e05ffb6ee8477", size = 567726, upload-time = "2025-03-14T13:59:03.588Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/56/90/9f8fc555e79d49e8797ee9848beaed95f9d7a30d43710c266ef828954ac3/datumaro-1.11.1.tar.gz", hash = "sha256:7c2be154c0b56bac2b3203ab01eb4da018edd7cf13aeb5052bbc3181a01e5922", size = 567269, upload-time = "2025-07-28T12:26:52.964Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/46/62/3bb463635ebac05b2603416e7c79e56ac6af7c401056246ab448dc09c8f8/datumaro-1.10.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1e7cee5d990cf85c246e33b8dfe21a67298fbb2a8886aa5607d97924087a0b97", size = 1167120, upload-time = "2025-03-14T13:58:47.736Z" },
-    { url = "https://files.pythonhosted.org/packages/fc/a1/3aa0975be54a51480f83a6f7315e2d6dc31b1b446847faa4cc34589db2f8/datumaro-1.10.0-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:d2f41647ed54bb09ca306614203ae90f69e65e89e18d7c36ed0f75c69278ee6a", size = 1682767, upload-time = "2025-03-14T13:58:49.528Z" },
-    { url = "https://files.pythonhosted.org/packages/84/46/035835142298a8eacea7bdc19a7b0949a7d5d33a480814666741c39a63ba/datumaro-1.10.0-cp310-cp310-win_amd64.whl", hash = "sha256:2823e930c1e4ca2c75046354d6214401498eff5f3c27c63d7a62d84958be56d5", size = 981121, upload-time = "2025-03-14T13:58:51.032Z" },
+    { url = "https://files.pythonhosted.org/packages/e8/8b/d8f31ffc18e79df49808e3993878e79a1a926e713d7e6af4ffe611885f45/datumaro-1.11.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:fcdab9e921024c9ab700c5e0bcd0ac1c24c8ba898ce0f77ebd751779f36a84a8", size = 1086524, upload-time = "2025-07-28T12:26:08.433Z" },
+    { url = "https://files.pythonhosted.org/packages/a3/04/db51c1c6b685f4ef759f5bb1f4d7544cfa77b3337553f14fe815ed76a88b/datumaro-1.11.1-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:8ef5caa2b9781dd58cde06ab8fcccabc3930087e5c3bb9fede7f959f438f0d3b", size = 1107108, upload-time = "2025-07-28T12:26:10.882Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/2c/ecacb2e0dd41fbc0fa9569f50259d2e6bb729b03fa20f5d24e1bf6bf026b/datumaro-1.11.1-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:38ef8c5d5b7c23b6274a0e6f6ca5f54cda995d682149b394c01417158d125e39", size = 1145056, upload-time = "2025-07-28T12:26:12.617Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/44/6ecd509488bb99a5ee5fc1210fae73828850a82f017bbdadbf23ad10d41f/datumaro-1.11.1-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:01356ac96521def697234271d4acc86ff2c4c3725838db0838612b071b1f0a8a", size = 2172872, upload-time = "2025-07-28T12:26:14.29Z" },
+    { url = "https://files.pythonhosted.org/packages/b9/20/574a34c5926bb3263109d093ecc71420f310aeeb056d7c589ee9303a1f0c/datumaro-1.11.1-cp310-cp310-win_amd64.whl", hash = "sha256:505e749c79188c57c86cc5b17bd0ba966e06aed725156b894843f7bce53b7603", size = 981401, upload-time = "2025-07-28T12:26:15.655Z" },
 ]
 
 [[package]]
@@ -2549,24 +2550,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pyemd"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/1a/d5/91492007e786a7fbcbba8423cd3637ea9311c4844aaf753d8e2ba086e48a/pyemd-1.0.0.tar.gz", hash = "sha256:b42b5ae7b2d15b1d4dee63810ea798a39217e8a76b7b49c0eb63a84e0fd900fe", size = 87190, upload-time = "2023-02-27T04:40:52.913Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/af/30/969c7f3a77a2a4f32654dd7516a7cb3702736208daef7597647ef7038ed3/pyemd-1.0.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:5771bb80b11b8d59bcb3e09ed4aca0d3ee4c1dd23d5bce21360ad539c86fda01", size = 165667, upload-time = "2023-02-27T04:41:15.207Z" },
-    { url = "https://files.pythonhosted.org/packages/b8/22/3294b73e8c639e581b8b1c2eb5c2120c049212b5544e2d74bf20cfc2618e/pyemd-1.0.0-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:3d8d5ba47954a8c67dc22f0a7e129a7dc009a614e4e86d5e8938bfc4fdfa8800", size = 651344, upload-time = "2023-02-27T04:41:17.285Z" },
-    { url = "https://files.pythonhosted.org/packages/e5/f2/fe8a2a9c3ca6accabb89332aa8e89b7e1b408482ae3ab6816aa7bd1f56b0/pyemd-1.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8eb6fb4aba6a8cde4fe32ea29288e367b625685af82ef3a22200e04f7c267993", size = 662580, upload-time = "2023-02-27T04:41:19.392Z" },
-    { url = "https://files.pythonhosted.org/packages/05/e3/fa28b2a3bcc9f6c749d503599544d9df34ce62b0078759220a84f8e3d7b7/pyemd-1.0.0-cp310-cp310-musllinux_1_1_i686.whl", hash = "sha256:dee4e4da82b3e035d23d39e97b2b04d7f20200eaf355cd73d9ccee705638e74d", size = 1233609, upload-time = "2023-02-27T04:41:20.914Z" },
-    { url = "https://files.pythonhosted.org/packages/ca/a0/1f597a3e37fe5883fa3c5341395790dd72ed2d78dba47b3df4ef7004a312/pyemd-1.0.0-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:a7e4d6a841e91f5e4af1c2cca79a926da58b1f4544e3f24617863d494aed4874", size = 1199788, upload-time = "2023-02-27T04:41:23.35Z" },
-    { url = "https://files.pythonhosted.org/packages/b0/13/6de651156fa4c4dde95733091eec915d20efb9f134a7367e4c62f5b59731/pyemd-1.0.0-cp310-cp310-win32.whl", hash = "sha256:6d52b8e133666afc81e2084ebcb06fc52b12a622af2224ab901474725a1ce3e1", size = 143946, upload-time = "2023-02-27T04:41:25.58Z" },
-    { url = "https://files.pythonhosted.org/packages/77/41/9c4665174c1c85af29e0a517df7ec1494b0988f971096867ecdb00270e44/pyemd-1.0.0-cp310-cp310-win_amd64.whl", hash = "sha256:04cc05a25128ac9b516c0251ef9b17d583bf6ec1787eaed6eac0b6716153b113", size = 147938, upload-time = "2023-02-27T04:41:26.981Z" },
-]
-
-[[package]]
 name = "pygments"
 version = "2.19.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2785,18 +2768,19 @@ wheels = [
 
 [[package]]
 name = "pyyaml"
-version = "6.0.1"
+version = "6.0.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz", hash = "sha256:bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43", size = 125201, upload-time = "2023-07-18T00:00:23.308Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz", hash = "sha256:d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e", size = 130631, upload-time = "2024-08-06T20:33:50.674Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/06/4beb652c0fe16834032e54f0956443d4cc797fe645527acee59e7deaa0a2/PyYAML-6.0.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d858aa552c999bc8a8d57426ed01e40bef403cd8ccdd0fc5f6f04a00414cac2a", size = 189447, upload-time = "2023-07-17T23:57:04.325Z" },
-    { url = "https://files.pythonhosted.org/packages/5b/07/10033a403b23405a8fc48975444463d3d10a5c2736b7eb2550b07b367429/PyYAML-6.0.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:fd66fc5d0da6d9815ba2cebeb4205f95818ff4b79c3ebe268e75d961704af52f", size = 169264, upload-time = "2023-07-17T23:57:07.787Z" },
-    { url = "https://files.pythonhosted.org/packages/f1/26/55e4f21db1f72eaef092015d9017c11510e7e6301c62a6cfee91295d13c6/PyYAML-6.0.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:69b023b2b4daa7548bcfbd4aa3da05b3a74b772db9e23b982788168117739938", size = 677003, upload-time = "2023-07-17T23:57:13.144Z" },
-    { url = "https://files.pythonhosted.org/packages/ba/91/090818dfa62e85181f3ae23dd1e8b7ea7f09684864a900cab72d29c57346/PyYAML-6.0.1-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:81e0b275a9ecc9c0c0c07b4b90ba548307583c125f54d5b6946cfee6360c733d", size = 699070, upload-time = "2023-07-17T23:57:19.402Z" },
-    { url = "https://files.pythonhosted.org/packages/29/61/bf33c6c85c55bc45a29eee3195848ff2d518d84735eb0e2d8cb42e0d285e/PyYAML-6.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ba336e390cd8e4d1739f42dfe9bb83a3cc2e80f567d8805e11b46f4a943f5515", size = 705525, upload-time = "2023-07-17T23:57:25.272Z" },
-    { url = "https://files.pythonhosted.org/packages/07/91/45dfd0ef821a7f41d9d0136ea3608bb5b1653e42fd56a7970532cb5c003f/PyYAML-6.0.1-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:326c013efe8048858a6d312ddd31d56e468118ad4cdeda36c719bf5bb6192290", size = 707514, upload-time = "2023-08-28T18:43:20.945Z" },
-    { url = "https://files.pythonhosted.org/packages/b6/a0/b6700da5d49e9fed49dc3243d3771b598dad07abb37cc32e524607f96adc/PyYAML-6.0.1-cp310-cp310-win32.whl", hash = "sha256:bd4af7373a854424dabd882decdc5579653d7868b8fb26dc7d0e99f823aa5924", size = 130488, upload-time = "2023-07-17T23:57:28.144Z" },
-    { url = "https://files.pythonhosted.org/packages/24/97/9b59b43431f98d01806b288532da38099cc6f2fea0f3d712e21e269c0279/PyYAML-6.0.1-cp310-cp310-win_amd64.whl", hash = "sha256:fd1592b3fdf65fff2ad0004b5e363300ef59ced41c2e6b3a99d4089fa8c5435d", size = 145338, upload-time = "2023-07-17T23:57:31.118Z" },
+    { url = "https://files.pythonhosted.org/packages/9b/95/a3fac87cb7158e231b5a6012e438c647e1a87f09f8e0d123acec8ab8bf71/PyYAML-6.0.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:0a9a2848a5b7feac301353437eb7d5957887edbf81d56e903999a75a3d743086", size = 184199, upload-time = "2024-08-06T20:31:40.178Z" },
+    { url = "https://files.pythonhosted.org/packages/c7/7a/68bd47624dab8fd4afbfd3c48e3b79efe09098ae941de5b58abcbadff5cb/PyYAML-6.0.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:29717114e51c84ddfba879543fb232a6ed60086602313ca38cce623c1d62cfbf", size = 171758, upload-time = "2024-08-06T20:31:42.173Z" },
+    { url = "https://files.pythonhosted.org/packages/49/ee/14c54df452143b9ee9f0f29074d7ca5516a36edb0b4cc40c3f280131656f/PyYAML-6.0.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8824b5a04a04a047e72eea5cec3bc266db09e35de6bdfe34c9436ac5ee27d237", size = 718463, upload-time = "2024-08-06T20:31:44.263Z" },
+    { url = "https://files.pythonhosted.org/packages/4d/61/de363a97476e766574650d742205be468921a7b532aa2499fcd886b62530/PyYAML-6.0.2-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:7c36280e6fb8385e520936c3cb3b8042851904eba0e58d277dca80a5cfed590b", size = 719280, upload-time = "2024-08-06T20:31:50.199Z" },
+    { url = "https://files.pythonhosted.org/packages/6b/4e/1523cb902fd98355e2e9ea5e5eb237cbc5f3ad5f3075fa65087aa0ecb669/PyYAML-6.0.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ec031d5d2feb36d1d1a24380e4db6d43695f3748343d99434e6f5f9156aaa2ed", size = 751239, upload-time = "2024-08-06T20:31:52.292Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/33/5504b3a9a4464893c32f118a9cc045190a91637b119a9c881da1cf6b7a72/PyYAML-6.0.2-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:936d68689298c36b53b29f23c6dbb74de12b4ac12ca6cfe0e047bedceea56180", size = 695802, upload-time = "2024-08-06T20:31:53.836Z" },
+    { url = "https://files.pythonhosted.org/packages/5c/20/8347dcabd41ef3a3cdc4f7b7a2aff3d06598c8779faa189cdbf878b626a4/PyYAML-6.0.2-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:23502f431948090f597378482b4812b0caae32c22213aecf3b55325e049a6c68", size = 720527, upload-time = "2024-08-06T20:31:55.565Z" },
+    { url = "https://files.pythonhosted.org/packages/be/aa/5afe99233fb360d0ff37377145a949ae258aaab831bde4792b32650a4378/PyYAML-6.0.2-cp310-cp310-win32.whl", hash = "sha256:2e99c6826ffa974fe6e27cdb5ed0021786b03fc98e5ee3c5bfe1fd5015f42b99", size = 144052, upload-time = "2024-08-06T20:31:56.914Z" },
+    { url = "https://files.pythonhosted.org/packages/b5/84/0fa4b06f6d6c958d207620fc60005e241ecedceee58931bb20138e1e5776/PyYAML-6.0.2-cp310-cp310-win_amd64.whl", hash = "sha256:a4d3091415f010369ae4ed1fc6b79def9416358877534caf6a0fdd2146c87a3e", size = 161774, upload-time = "2024-08-06T20:31:58.304Z" },
 ]
 
 [[package]]
@@ -3405,8 +3389,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "dataclasses-json", specifier = "==0.5.7" },
-    { name = "datumaro", marker = "extra == 'datumaro-conversion'", specifier = "==1.10.0" },
-    { name = "datumaro", marker = "extra == 'shard-dataset'", specifier = "==1.10.0" },
+    { name = "datumaro", marker = "extra == 'datumaro-conversion'", specifier = "~=1.11.1" },
+    { name = "datumaro", marker = "extra == 'shard-dataset'", specifier = "~=1.11.1" },
     { name = "flytekit", specifier = "==1.10.2" },
     { name = "flytekitplugins-pod", specifier = "==1.2.4" },
     { name = "geti-k8s-tools", editable = "../../../libs/k8s_tools" },
