@@ -4,6 +4,7 @@
 import base64
 import logging
 import os
+import time
 from http import HTTPStatus
 
 import jinja2
@@ -116,6 +117,7 @@ def deploy_geti_controller_chart(
         manifest = yaml.safe_load(rendered_str)
         apply_manifest(manifest, namespace=GETI_CONTROLLER_NAMESPACE)
         logger.info("Geti Controller HelmChart deployed successfully.")
+        time.sleep(40)  # wait for the application to be ready
 
     except Exception as ex:
         logger.exception("Failed to deploy Geti Controller HelmChart.")

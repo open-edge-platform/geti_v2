@@ -359,7 +359,8 @@ async def main(job_manager: JobManager) -> None:
             logger.info("Intel device plugin added to the cluster.")
 
         helm_charts = [
-            section for i, section in enumerate(re.split(r"^---$", rendered_manifest, flags=re.MULTILINE))
+            section
+            for i, section in enumerate(re.split(r"^---$", rendered_manifest, flags=re.MULTILINE))
             if i != 0 and section.strip()
         ]  # remove the first (metadata) section
         total_charts = len(helm_charts)
