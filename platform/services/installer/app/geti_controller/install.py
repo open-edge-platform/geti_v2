@@ -1,5 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
 import base64
 import logging
 import os
@@ -11,8 +12,6 @@ from kubernetes import client
 
 from configuration_models.install_config import InstallationConfig
 from configuration_models.upgrade_config import UpgradeConfig
-from constants.charts import GETI_CONTROLLER_CHART
-from constants.paths import GETI_CONTROLLER_CHART_PATH
 from constants.paths import GETI_CONTROLLER_CHART_PATH, K3S_KUBECONFIG_PATH
 from constants.platform import PLATFORM_NAMESPACE
 from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
@@ -66,7 +65,9 @@ def apply_manifest(manifest: dict, namespace: str = GETI_CONTROLLER_NAMESPACE) -
                 raise
 
 
-def deploy_geti_controller_chart(config: InstallationConfig | UpgradeConfig, template_path: str = GETI_CONTROLLER_CHART_PATH) -> None:
+def deploy_geti_controller_chart(
+    config: InstallationConfig | UpgradeConfig, template_path: str = GETI_CONTROLLER_CHART_PATH
+) -> None:
     """
     Render the Jinja2 template and deploy using helm controller.
     """

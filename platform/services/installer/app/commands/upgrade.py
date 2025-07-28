@@ -78,7 +78,6 @@ from platform_utils.errors import (
     UpgradeError,
 )
 from platform_utils.install_system_packages import install_system_packages
-from platform_utils.k8s import decode_string_b64
 from platform_utils.kube_config_handler import KubernetesConfigHandler
 from platform_utils.management.state import InstallationHandlerState
 from texts.install_command import InstallCmdConfirmationTexts, InstallCmdTexts
@@ -177,6 +176,10 @@ def run_initial_checks(config: UpgradeConfig) -> None:
     except CumulativeCheckError:
         click.echo(UpgradeCmdTexts.checks_error_message)
         sys.exit(1)
+
+
+def decode_string_b64(data: str) -> str:  # noqa: D103
+    return base64.b64decode(data).decode("utf-8")
 
 
 def _get_data_folder() -> str:

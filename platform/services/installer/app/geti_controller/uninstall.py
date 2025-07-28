@@ -6,11 +6,8 @@ from http import HTTPStatus
 
 from kubernetes import client
 
-from configuration_models.install_config import InstallationConfig
+from constants.paths import K3S_KUBECONFIG_PATH
 from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
-from cli_utils.platform_logs import subprocess_run
-from constants.charts import GETI_CONTROLLER_CHART
-from constants.paths import HELM_BINARY, INSTALL_LOG_FILE_PATH, K3S_KUBECONFIG_PATH
 from geti_controller.errors import GetiControllerUninstallationError
 from platform_utils.kube_config_handler import KubernetesConfigHandler
 
