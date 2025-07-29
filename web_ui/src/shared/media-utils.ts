@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { overSome } from 'lodash-es';
+
 import { MediaItem } from '../core/media/media.interface';
 import { isVideoFrame } from '../core/media/video.interface';
 import { downloadFile, getFileSize, loadImage } from './utils';
@@ -115,6 +117,12 @@ export const defineMediaType = (file: File): MEDIA_FILE_TYPE | undefined => {
 export const isVideoFile = (file: File): boolean => {
     return defineMediaType(file) == MEDIA_FILE_TYPE.VIDEO;
 };
+
+export const isImgFile = (file: File): boolean => {
+    return defineMediaType(file) == MEDIA_FILE_TYPE.IMAGE;
+};
+
+export const isImgOrVideoFile = overSome([isVideoFile, isImgFile]);
 
 export const isTiffFormat = (file: File): boolean => {
     if (file.type) {

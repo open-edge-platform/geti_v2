@@ -10,6 +10,7 @@ import random
 import re
 import shutil
 from abc import ABC
+from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
 from typing import cast
 from uuid import UUID
@@ -409,27 +410,41 @@ class ExportDataRedactionUseCase(BaseDataRedactionUseCase):
         return doc
 
     @staticmethod
-    def purge_model_docs_if_necessary(doc: dict) -> dict:
+    def purge_all_model_docs(model_ids_to_keep: set[ObjectId]) -> Callable[[dict], dict]:
         """
-        Purge model document metadata by marking it as purged and resetting specific fields.
+        Return a redaction method that purges model docs, except if the model should be included in the export.
 
-        :param doc: A dictionary representing a model document.
-        :return: The modified document after purging.
+        :param model_ids_to_keep: Set of model ids that should be included in the export
+        :return: Callable that takes a model doc and returns it as purged model doc, unless in include_model_ids
         """
-        purge_info = doc.get("purge_info")
-        if purge_info is not None and purge_info["is_purged"]:
+
+        def _purge_model_docs_if_necessary(doc: dict) -> dict:
+            """
+            Purge model document metadata by marking it as purged and resetting specific fields.
+
+            If a model id is in the include_model_ids, then the model doc is returned as is.
+
+            :param doc: A dictionary representing a model document.
+            :return: The modified document after purging.
+            """
+            if doc["_id"] in model_ids_to_keep:
+                return doc
+            purge_info = doc.get("purge_info")
+            if purge_info is not None and purge_info["is_purged"]:
+                return doc
+
+            new_purge_info = {
+                "is_purged": True,
+                "purge_time": now(),
+                "user_uid": "export_project_job",
+            }
+            doc["purge_info"] = new_purge_info
+            doc["size"] = 0
+            doc["exportable_code_path"] = ""
+            doc["weight_paths"] = []
             return doc
 
-        new_purge_info = {
-            "is_purged": True,
-            "purge_time": now(),
-            "user_uid": "export_project_job",
-        }
-        doc["purge_info"] = new_purge_info
-        doc["size"] = 0
-        doc["exportable_code_path"] = ""
-        doc["weight_paths"] = []
-        return doc
+        return _purge_model_docs_if_necessary
 
 
 class ImportDataRedactionUseCase(BaseDataRedactionUseCase):

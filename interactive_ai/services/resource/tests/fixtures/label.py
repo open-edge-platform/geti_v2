@@ -5,8 +5,10 @@ from collections.abc import Sequence
 
 import pytest
 
+from features.feature_flags import FeatureFlag
 from tests.fixtures.values import DummyValues, IDOffsets
 
+from geti_feature_tools import FeatureFlagProvider
 from geti_types import ID
 from iai_core.entities.color import Color
 from iai_core.entities.label import Domain, Label
@@ -201,7 +203,7 @@ def fxt_label(fxt_mongo_id):
 
 @pytest.fixture
 def fxt_label_rest(fxt_label):
-    yield {
+    label_dict = {
         "id": str(fxt_label.id_),
         "name": DummyValues.LABEL_NAME,
         "color": "#ff0000ff",
@@ -210,8 +212,10 @@ def fxt_label_rest(fxt_label):
         "is_empty": False,
         "is_anomalous": False,
         "parent_id": None,
-        "is_background": False,
     }
+    if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+        label_dict["is_background"] = False
+    yield label_dict
 
 
 @pytest.fixture(scope="function")

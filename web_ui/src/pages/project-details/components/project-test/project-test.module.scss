@@ -5,6 +5,7 @@
 
 .testDetailsCardItem {
     font-size: var(--spectrum-global-dimension-font-size-200) !important;
+    word-spacing: normal !important;
 }
 
 .mediaItemsBucket {
@@ -51,4 +52,8 @@
 
 .mediaBucketAbove {
     border: 1px solid var(--brand-moss);
+}
+
+.detailedModelName {
+    word-spacing: var(--spectrum-global-dimension-size-100);
 }

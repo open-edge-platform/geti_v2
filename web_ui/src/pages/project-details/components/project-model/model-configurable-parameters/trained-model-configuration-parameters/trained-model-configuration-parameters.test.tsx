@@ -127,7 +127,7 @@ describe('TrainedModelConfigurationParameters', () => {
                 key: 'adaptive_tiling',
                 type: 'bool',
                 name: 'Adaptive tiling',
-                value: true,
+                value: false,
                 description: 'Whether to use adaptive tiling based on image content',
                 defaultValue: false,
             }),
@@ -165,7 +165,7 @@ describe('TrainedModelConfigurationParameters', () => {
 
         expect(screen.getByRole('tab', { name: 'Data management' })).toBeInTheDocument();
 
-        expect(screen.getByLabelText('Tiling mode')).toHaveTextContent('Automatic');
+        expect(screen.getByLabelText('Tiling mode')).toHaveTextContent('Custom');
 
         tilingParameters.slice(2).forEach((parameter) => {
             expectParameterToHaveValue(parameter.name, parameter.value);
@@ -182,5 +182,64 @@ describe('TrainedModelConfigurationParameters', () => {
         render(<TrainedModelConfigurationParametersList parameters={parameters} />);
 
         expect(screen.queryByRole('tab', { name: 'Data management' })).not.toBeInTheDocument();
+    });
+
+    it('does not display custom tiling parameters when tiling is not custom', () => {
+        const tilingParameters = [
+            getMockedConfigurationParameter({
+                key: 'enable',
+                type: 'bool',
+                name: 'Enable tiling',
+                value: true,
+                description: 'Whether to apply tiling to the image',
+                defaultValue: false,
+            }),
+            getMockedConfigurationParameter({
+                key: 'adaptive_tiling',
+                type: 'bool',
+                name: 'Adaptive tiling',
+                value: true,
+                description: 'Whether to use adaptive tiling based on image content',
+                defaultValue: false,
+            }),
+            getMockedConfigurationParameter({
+                key: 'tile_size',
+                type: 'int',
+                name: 'Tile size',
+                value: 256,
+                description: 'Size of each tile in pixels',
+                defaultValue: 128,
+                maxValue: null,
+                minValue: 0,
+            }),
+            getMockedConfigurationParameter({
+                key: 'tile_overlap',
+                type: 'int',
+                name: 'Tile overlap',
+                value: 64,
+                description: 'Overlap between adjacent tiles in pixels',
+                defaultValue: 64,
+                maxValue: null,
+                minValue: 0,
+            }),
+        ];
+
+        const parameters = getMockedTrainedModelConfigurationParameters({
+            datasetPreparation: {
+                augmentation: {
+                    tiling: tilingParameters,
+                },
+            },
+        });
+
+        render(<TrainedModelConfigurationParametersList parameters={parameters} />);
+
+        expect(screen.queryByRole('tab', { name: 'Data management' })).toBeInTheDocument();
+
+        expect(screen.getByLabelText('Tiling mode')).toHaveTextContent('Automatic');
+
+        tilingParameters.slice(2).forEach((parameter) => {
+            expect(screen.queryByLabelText(parameter.name)).not.toBeInTheDocument();
+        });
     });
 });

@@ -96,8 +96,9 @@ test.describe('Media upload', () => {
 
             await bucket.openDetailsDialog();
 
-            await expect(page.getByText('antelope.png')).toBeVisible();
-            await expect(page.getByText('370.9 KB')).toBeVisible();
+            const dialog = page.getByRole('dialog');
+            await expect(dialog.getByText('antelope.png')).toBeVisible();
+            await expect(dialog.getByText('370.9 KB')).toBeVisible();
         });
 
         test('Upload multiple files one at a time', async ({ mediaPage, page }) => {
@@ -401,8 +402,9 @@ test.describe('Media upload', () => {
 
             await bucket.openDetailsDialog();
 
-            await expect(page.getByText('antelope.png')).toBeVisible();
-            await expect(page.getByText('370.9 KB')).toBeVisible();
+            const dialog = page.getByRole('dialog');
+            await expect(dialog.getByText('antelope.png')).toBeVisible();
+            await expect(dialog.getByText('370.9 KB')).toBeVisible();
         });
 
         test('Upload files on both buckets', async ({ page, mediaPage }) => {
@@ -420,7 +422,8 @@ test.describe('Media upload', () => {
 
             await anomalousBucket.openDetailsDialog();
 
-            await expect(page.getByText('antelope.png')).toHaveCount(4);
+            const dialog = page.getByRole('dialog');
+            await expect(dialog.getByText('antelope.png')).toHaveCount(4);
         });
 
         test('Upload files on both buckets at the same time', async ({

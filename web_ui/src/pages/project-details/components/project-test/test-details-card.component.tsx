@@ -13,7 +13,8 @@ import { formatTestDate, formatTestTime } from '../project-tests/utils';
 import classes from './project-test.module.scss';
 
 interface TestDetailsCardProps {
-    modelName: string;
+    modelTemplateName: string;
+    groupName: string;
     version: number;
     testingSetName: string;
     creationDate: string;
@@ -24,7 +25,8 @@ interface TestDetailsCardProps {
 }
 
 export const TestDetailsCard = ({
-    modelName,
+    modelTemplateName,
+    groupName,
     version,
     testingSetName,
     creationDate,
@@ -42,8 +44,13 @@ export const TestDetailsCard = ({
                         <DomainName domain={taskName} />
                     </TestDetailCardBoldItem>
                     <Text>Model:</Text>
-                    <Text>
-                        <TestDetailCardBoldItem id={'test-details-model-name-id'}>{modelName} </TestDetailCardBoldItem>
+                    <Text UNSAFE_className={classes.detailedModelName}>
+                        <TestDetailCardBoldItem id={'test-details-model-name-id'}>
+                            {modelTemplateName}
+                        </TestDetailCardBoldItem>{' '}
+                        <TestDetailCardBoldItem id={'test-details-model-group-id'}>
+                            ({groupName})
+                        </TestDetailCardBoldItem>{' '}
                         <TestDetailCardItem id={'test-details-model-version-id'}>Version {version}</TestDetailCardItem>
                     </Text>
                     <Text>Testing set:</Text>
