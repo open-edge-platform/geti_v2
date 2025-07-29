@@ -27,3 +27,9 @@ test-integration:
 
 test-unit:
 	@echo "Not applicable"
+
+publish-chart:
+	@echo "Not applicable"
+
+lint-chart:
+	@echo "Not applicable"
