@@ -309,7 +309,10 @@ def load_trained_model_weights(
     """
 
     src_dir = _get_object_name_base() / "inputs"
-    src_fnames = ["openvino.bin", "openvino.xml"] if optimize else ["model.pth"]
+    src_fnames = {"weights": "model.pth"}
+    if optimize:
+        src_fnames["weights"] = "openvino.xml"
+        src_fnames["binaries"] = "openvino.bin"
 
     logger.info(f"Listing artifacts under relative path: {src_dir}")
     file_info_set = []
@@ -318,19 +321,17 @@ def load_trained_model_weights(
 
     logger.info("Received file_info_set=%s", file_info_set)
 
-    if not all(src_fname in file_info_set for src_fname in src_fnames):
+    if not all(src_fname in file_info_set for src_fname in src_fnames.values()):
         logger.info("Found no model checkpoint. Starting from scratch.")
         return None
 
     logger.info("Found model checkpoint: %s. Downloading the checkpoint.", src_fnames)
-    downloaded = []
-    for src_fname in src_fnames:
-        downloaded.append(
-            download_model_artifact(
-                src_path=Path("inputs") / src_fname,
-                dst_dir_path=work_dir,
-                use_presigned_url=False,
-            )
+    downloaded = {}
+    for key, src_fname in src_fnames.items():
+        downloaded[key] = download_model_artifact(
+            src_path=Path("inputs") / src_fname,
+            dst_dir_path=work_dir,
+            use_presigned_url=False,
         )
 
-    return downloaded[1] if optimize else downloaded[0]
+    return downloaded["weights"]
