@@ -333,4 +333,4 @@ def load_trained_model_weights(
             )
         )
 
-    return downloaded[0]
+    return downloaded[1]

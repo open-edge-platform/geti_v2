@@ -46,12 +46,12 @@ def optimize(
     )
     progress_updater.update_progress(0.0)
 
-    checkpoint = load_trained_model_weights(work_dir=work_dir / "otx-workspace", optimize=True)
+    checkpoint = load_trained_model_weights(work_dir=work_dir, optimize=True)
     if checkpoint is None:
         raise RuntimeError("Cannot get checkpoint for optimization.")
     otx_config = config.to_otx2_config()
     datamodule = GetiConfigConverter.instantiate_datamodule(config=otx_config, data_root=str(dataset_dir))
-    ov_engine = OVEngine(model=checkpoint, data=datamodule, work_dir=work_dir)
+    ov_engine = OVEngine(model=checkpoint, data=datamodule, work_dir=str(work_dir / "otx-workspace"))
     logger.debug("Checkpoint is loaded. Starting optimization.")
     optimized_path = ov_engine.optimize()
 
