@@ -3,20 +3,8 @@
 
 import { Key, useState } from 'react';
 
-import {
-    Button,
-    ButtonGroup,
-    Content,
-    Dialog,
-    DialogContainer,
-    Divider,
-    Flex,
-    Heading,
-    Item,
-    Picker,
-    Text,
-} from '@geti/ui';
-import { isEmpty, orderBy } from 'lodash-es';
+import { Button, ButtonGroup, Checkbox, Content, Dialog, DialogContainer, Divider, Flex, Heading } from '@geti/ui';
+import { differenceBy, identity, isEmpty, omit, orderBy } from 'lodash-es';
 
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
@@ -25,11 +13,11 @@ import { MEDIA_CONTENT_BUCKET } from '../../../../../providers/media-upload-prov
 import { DeleteItemButton } from '../../../../../shared/components/delete-item-button/delete-item-button.component';
 import { SelectionCheckbox } from '../../../../../shared/components/media-preview-list/checkbox.component';
 import { MediaPreviewList } from '../../../../../shared/components/media-preview-list/media-preview-list.component';
-import { MediaViewModes } from '../../../../../shared/components/media-view-modes/media-view-modes.component';
-import { INITIAL_VIEW_MODE, ViewModes } from '../../../../../shared/components/media-view-modes/utils';
-import { hasDifferentId } from '../../../../../shared/utils';
+import { INITIAL_VIEW_MODE } from '../../../../../shared/components/media-view-modes/utils';
 import { TaskProvider } from '../../../../annotator/providers/task-provider/task-provider.component';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
+import { PreviewMediaActions } from './preview-media-actions.component';
+import { PreviewMediaToolbar } from './preview-media-toolbar.component';
 import { PreviewFile, SortingOptions } from './utils';
 
 export interface PreviewGalleryDialogProps {
@@ -45,6 +33,9 @@ const updateItem = (id: string, updatedItem: PreviewFile) => (item: PreviewFile)
 
 const getFiles = (items: PreviewFile[] | undefined) => items?.map(({ file }) => file) ?? [];
 const getLabelsIds = (labelsIds: string) => (isEmpty(labelsIds) ? undefined : labelsIds.split(','));
+const getAllItemSelected = (currentFiles: PreviewFile[]) =>
+    currentFiles.reduce((accumulator, currentId) => ({ ...accumulator, [currentId.id]: true }), {});
+
 const getMediaItemFromFile =
     (labelIds: string[]) =>
     (file: File): PreviewFile => ({ id: file.name, file, labelIds });
@@ -61,8 +52,11 @@ export const PreviewGalleryDialog = ({
     const { isSingleDomainProject } = useProject();
     const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC, INITIAL_VIEW_MODE);
     const [currentFiles, setCurrentFiles] = useState(initFiles.map(getMediaItemFromFile(labelIds)));
+    const [selectedFiles, setSelectedFiles] = useState<Record<string, boolean>>({});
 
     const hasLabelSelector = isSingleDomainProject(DOMAIN.CLASSIFICATION) || isSingleDomainProject(isAnomalyDomain);
+    const selectedFilesCount = Object.values(selectedFiles).filter(identity).length;
+    const hasSelectedItems = selectedFilesCount > 0;
 
     const handleUpdateItem = async (id: string, updatedItem: PreviewFile) => {
         setCurrentFiles((currentItems) => currentItems.map(updateItem(id, updatedItem)));
@@ -82,8 +76,25 @@ export const PreviewGalleryDialog = ({
         setCurrentFiles((prevFiles) => orderBy(prevFiles, ['labelName'], order));
     };
 
-    const handleDeleteFile = (id: string) => {
-        setCurrentFiles((prevFiles) => prevFiles.filter(hasDifferentId(id)));
+    const handleDeleteFiles = (ids: string[]) => {
+        const filesToDelete = ids.map((id) => ({ id }));
+
+        setSelectedFiles((prevFiles) => omit(prevFiles, ids));
+        setCurrentFiles((prevFiles) => differenceBy(prevFiles, filesToDelete, 'id'));
+    };
+
+    const handleToggleSelection = (id: string) => {
+        setSelectedFiles((prevSelected) => {
+            const isSelected = prevSelected[id] ?? false;
+
+            return isSelected ? omit(prevSelected, id) : { ...prevSelected, [id]: true };
+        });
+    };
+
+    const handleToggleManyItemSelection = () => {
+        const areAllItemsSelected = selectedFilesCount === currentFiles.length;
+
+        setSelectedFiles(() => (areAllItemsSelected ? {} : getAllItemSelected(currentFiles)));
     };
 
     return (
@@ -95,28 +106,26 @@ export const PreviewGalleryDialog = ({
                         <Divider />
 
                         <Content>
-                            <Flex gap={'size-100'} alignItems={'center'} justifyContent={'space-between'}>
-                                <Flex alignItems={'center'} gap={'size-100'}>
-                                    <Text UNSAFE_style={{ fontWeight: 'bold' }}>Sort by: </Text>
-
-                                    <Picker
-                                        isQuiet
-                                        maxWidth={'size-2000'}
-                                        aria-label='sorting options'
-                                        onSelectionChange={handleSortFiles}
-                                    >
-                                        <Item key={SortingOptions.LABEL_NAME_A_Z}>Label Name (A-Z)</Item>
-                                        <Item key={SortingOptions.LABEL_NAME_Z_A}>Label Name (Z-A)</Item>
-                                    </Picker>
-                                </Flex>
-                                <Flex gap={'size-100'} alignItems={'center'}>
-                                    <Text>{viewMode} </Text>
-                                    <MediaViewModes
-                                        viewMode={viewMode}
-                                        setViewMode={setViewMode}
-                                        items={[ViewModes.LARGE, ViewModes.MEDIUM, ViewModes.SMALL]}
+                            <Flex height={'size-400'}>
+                                <Checkbox
+                                    aria-label={'Select media items'}
+                                    isSelected={hasSelectedItems}
+                                    onChange={handleToggleManyItemSelection}
+                                />
+                                {hasSelectedItems ? (
+                                    <PreviewMediaActions
+                                        selectedFilesCount={selectedFilesCount}
+                                        onDeleteMany={() =>
+                                            handleDeleteFiles(Object.keys(selectedFiles).filter(identity))
+                                        }
                                     />
-                                </Flex>
+                                ) : (
+                                    <PreviewMediaToolbar
+                                        viewMode={viewMode}
+                                        onSortItems={handleSortFiles}
+                                        onViewModeChange={setViewMode}
+                                    />
+                                )}
                             </Flex>
 
                             <MediaPreviewList
@@ -124,15 +133,17 @@ export const PreviewGalleryDialog = ({
                                 height={`calc(100% - ${PREVIEW_GALLERY_HEIGHT_OFFSET})`}
                                 viewMode={viewMode}
                                 hasLabelSelector={hasLabelSelector}
+                                selectedItems={selectedFiles}
                                 onUpdateItem={handleUpdateItem}
-                                topLeftElement={() => (
+                                onPress={handleToggleSelection}
+                                topLeftElement={(id) => (
                                     <SelectionCheckbox
-                                        isSelected={false}
-                                        onToggle={(isSelected) => console.log('isSelected', isSelected)}
+                                        isSelected={selectedFiles[id] ?? false}
+                                        onToggle={() => handleToggleSelection(id)}
                                     />
                                 )}
                                 topRightElement={(id: string) => (
-                                    <DeleteItemButton id={id} onDeleteItem={handleDeleteFile} />
+                                    <DeleteItemButton id={id} onDeleteItem={() => handleDeleteFiles([id])} />
                                 )}
                             />
                         </Content>

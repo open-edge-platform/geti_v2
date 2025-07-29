@@ -6,7 +6,7 @@ import { ReactNode } from 'react';
 import { DimensionValue, Responsive } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
-import { getIds } from '../../utils';
+import { getId, getIds } from '../../utils';
 import { MediaItemsList } from '../media-items-list/media-items-list.component';
 import { ViewModes } from '../media-view-modes/utils';
 import { MediaItem } from './media-item.component';
@@ -15,8 +15,9 @@ import { FileItem } from './util';
 interface MediaPreviewListProps<T> {
     items: T[];
     viewMode: ViewModes;
-    hasLabelSelector?: boolean;
     height?: Responsive<DimensionValue>;
+    selectedItems?: Record<string, boolean>;
+    hasLabelSelector?: boolean;
     onPress?: (id: string) => void;
     onUpdateItem: (id: string, item: T) => Promise<unknown>;
     topLeftElement?: (id: string) => ReactNode;
@@ -27,6 +28,7 @@ export const MediaPreviewList = <T extends FileItem>({
     items,
     height,
     viewMode,
+    selectedItems = {},
     hasLabelSelector = true,
     onPress,
     onUpdateItem,
@@ -38,7 +40,7 @@ export const MediaPreviewList = <T extends FileItem>({
             viewMode={viewMode}
             mediaItems={items}
             height={height}
-            idFormatter={(item) => item.id}
+            idFormatter={getId}
             getTextValue={(item) => item.file.name}
             itemContent={(item) => {
                 const { id, dataUrl, labelIds, file } = item;
@@ -53,6 +55,7 @@ export const MediaPreviewList = <T extends FileItem>({
                         mediaFile={file}
                         labelIds={labelIds}
                         viewMode={viewMode}
+                        isSelected={selectedItems[id] ?? false}
                         hasLabelSelector={hasLabelSelector}
                         topLeftElement={topLeftElement}
                         topRightElement={topRightElement}

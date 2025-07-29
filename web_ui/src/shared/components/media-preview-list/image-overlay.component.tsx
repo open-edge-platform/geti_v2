@@ -89,7 +89,6 @@ export const ImageOverlay = <T extends FileItem>({
                         position={'absolute'}
                         id={currentImage.id}
                         onDeleteItem={() => onDeleteItem(currentImage.id)}
-                        //alertDialogState={alertDialogState}
                         UNSAFE_className={classes.previewButton}
                     />
 

@@ -25,6 +25,7 @@ export interface MediaItemProps {
     url: string | null | undefined;
     labelIds: string[];
     mediaFile: File;
+    isSelected: boolean;
     height?: Responsive<DimensionValue>;
     viewMode?: ViewModes;
     hasLabelSelector: boolean;
@@ -57,6 +58,7 @@ export const MediaItem = ({
     labelIds,
     viewMode,
     mediaFile,
+    isSelected,
     hasLabelSelector,
     onPress,
     onSelectLabel,
@@ -87,7 +89,11 @@ export const MediaItem = ({
     }
 
     return (
-        <View ref={containerRef} UNSAFE_className={classes.container} height={height}>
+        <View
+            ref={containerRef}
+            UNSAFE_className={clsx({ [classes.container]: true, [classes.selected]: isSelected })}
+            height={height}
+        >
             <ImageVideoFactory
                 controls
                 src={url}
@@ -103,13 +109,25 @@ export const MediaItem = ({
             />
 
             {isFunction(topLeftElement) && (
-                <View UNSAFE_className={clsx(classes.floatingContainer, classes.leftTopElement)}>
+                <View
+                    UNSAFE_className={clsx({
+                        [classes.visible]: isSelected,
+                        [classes.leftTopElement]: true,
+                        [classes.floatingContainer]: true,
+                    })}
+                >
                     {topLeftElement(id)}
                 </View>
             )}
 
             {isFunction(topRightElement) && (
-                <View UNSAFE_className={clsx(classes.floatingContainer, classes.rightTopElement)}>
+                <View
+                    UNSAFE_className={clsx({
+                        [classes.visible]: isSelected,
+                        [classes.rightTopElement]: true,
+                        [classes.floatingContainer]: true,
+                    })}
+                >
                     {topRightElement(id)}
                 </View>
             )}
