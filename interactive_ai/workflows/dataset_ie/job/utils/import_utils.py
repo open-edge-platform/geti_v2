@@ -169,14 +169,13 @@ class ImportUtils(BaseImportUtils):
         :param project_identifier: Identifier of the project containing the labels
         :return: The validated labels map which maps the datumaro label name to the project's label
         """
-
         valid_labels_map = {}
         label_repo = LabelRepo(project_identifier)
         for dm_name, sc_label_id in labels_map.items():
             label = label_repo.get_by_id(ID(sc_label_id))
             if isinstance(label, NullLabel):
                 raise InvalidLabelException(f"The provided label ID({sc_label_id}) does not belong to any label.")
-            valid_labels_map[dm_name] = label
+            valid_labels_map[str(dm_name)] = label
 
         return valid_labels_map
 
