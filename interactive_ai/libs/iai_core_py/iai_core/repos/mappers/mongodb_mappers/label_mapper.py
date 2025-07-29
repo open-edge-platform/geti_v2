@@ -20,8 +20,6 @@ from .id_mapper import IDToMongo
 from .primitive_mapper import DatetimeToMongo
 from geti_types import ID, ProjectIdentifier
 
-FEATURE_FLAG_ANNOTATION_HOLE = "FEATURE_FLAG_ANNOTATION_HOLE"
-
 
 class ColorToMongo(IMapperSimple[Color, dict]):
     """MongoDB mapper for `Color` entities"""
@@ -53,8 +51,8 @@ class LabelToMongo(IMapperSimple[Label, dict]):
             "domain": str(instance.domain),
             "creation_date": DatetimeToMongo.forward(instance.creation_date),
             "is_empty": instance.is_empty,
-            "is_background": instance.is_background,
             "is_anomalous": instance.is_anomalous,
+            "is_background": instance.is_background,
         }
 
     @staticmethod
