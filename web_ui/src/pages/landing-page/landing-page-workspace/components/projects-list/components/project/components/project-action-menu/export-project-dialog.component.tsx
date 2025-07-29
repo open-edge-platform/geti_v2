@@ -17,7 +17,8 @@ import {
 } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
-import { AVAILABLE_EXPORT_MODELS, formatToLabel } from './utils';
+import { EXPORT_PROJECT_MODELS_OPTIONS } from '../../../../../../../../../core/projects/project.interface';
+import { formatToLabel } from './utils';
 
 interface ExportProjectDialogProps {
     isOpen: boolean;
@@ -56,15 +57,19 @@ export const ExportProjectDialog = ({ onClose, isOpen, onExportProject }: Export
                                 label={'Select models for export'}
                                 aria-label={'Export models'}
                                 value={selectedModels}
-                                onChange={(option: string) => setSelectedModels(option as AVAILABLE_EXPORT_MODELS)}
+                                onChange={(option: string) =>
+                                    setSelectedModels(option as EXPORT_PROJECT_MODELS_OPTIONS)
+                                }
                             >
-                                {Object.values(AVAILABLE_EXPORT_MODELS).map((model: AVAILABLE_EXPORT_MODELS) => {
-                                    return (
-                                        <Radio value={model} aria-label={model}>
-                                            {formatToLabel(model)}
-                                        </Radio>
-                                    );
-                                })}
+                                {Object.values(EXPORT_PROJECT_MODELS_OPTIONS).map(
+                                    (model: EXPORT_PROJECT_MODELS_OPTIONS) => {
+                                        return (
+                                            <Radio key={model} value={model} aria-label={model}>
+                                                {formatToLabel(model)}
+                                            </Radio>
+                                        );
+                                    }
+                                )}
                             </RadioGroup>
                             <ButtonGroup align={'end'} marginTop={'size-350'}>
                                 <Button variant='secondary' onPress={handleDismiss}>

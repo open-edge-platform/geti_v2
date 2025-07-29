@@ -1,19 +1,15 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-export enum AVAILABLE_EXPORT_MODELS {
-    ALL = 'all',
-    NONE = 'none',
-    LATEST_ACTIVE = 'latest_active',
-}
+import { EXPORT_PROJECT_MODELS_OPTIONS } from '../../../../../../../../../core/projects/project.interface';
 
-export const formatToLabel = (option: AVAILABLE_EXPORT_MODELS): string => {
+export const formatToLabel = (option: EXPORT_PROJECT_MODELS_OPTIONS): string => {
     switch (option) {
-        case AVAILABLE_EXPORT_MODELS.ALL:
+        case EXPORT_PROJECT_MODELS_OPTIONS.ALL:
             return 'All models';
-        case AVAILABLE_EXPORT_MODELS.NONE:
+        case EXPORT_PROJECT_MODELS_OPTIONS.NONE:
             return 'None';
-        case AVAILABLE_EXPORT_MODELS.LATEST_ACTIVE:
+        case EXPORT_PROJECT_MODELS_OPTIONS.LATEST_ACTIVE:
             return 'Latest active model';
         default:
             return option;
