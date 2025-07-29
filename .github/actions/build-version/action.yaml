@@ -104,6 +104,6 @@ runs:
             echo "Generated default version: $VERSION"
             ;;
         esac
-        echo "platform_version="$BASE_VERSION" >> $GITHUB_OUTPUT
+        echo "platform_version=$BASE_VERSION" >> $GITHUB_OUTPUT
         echo "build_version=$VERSION" >> $GITHUB_OUTPUT
         echo "Final build_version: $VERSION"
