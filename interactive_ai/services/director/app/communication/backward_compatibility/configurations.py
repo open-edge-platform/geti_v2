@@ -321,7 +321,7 @@ class ConfigurationsBackwardCompatibility:
                     },
                 }
             }
-            if task_node.task_properties.is_annotation_filtering_supported:
+            if task_node.task_properties.has_annotations_with_area:
                 global_params["dataset_preparation"]["filtering"] = {
                     "min_annotation_pixels": {
                         "enable": min_annotations > 0,

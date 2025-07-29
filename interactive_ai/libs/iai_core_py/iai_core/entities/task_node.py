@@ -52,8 +52,14 @@ class TaskProperties:
         )
 
     @property
-    def is_annotation_filtering_supported(self) -> bool:
-        """Check if annotation filtering is supported for this task type."""
+    def has_annotations_with_area(self) -> bool:
+        """Check if this task type has annotations with area.
+
+        Tasks that don't have annotations with area (such as classification, keypoint detection,
+        or anomaly tasks) do not support filtering on annotations.
+
+        :returns: True if task has annotations with area, False otherwise
+        """
         return self.task_type.domain not in {Domain.CLASSIFICATION, Domain.KEYPOINT_DETECTION, Domain.ANOMALY}
 
 

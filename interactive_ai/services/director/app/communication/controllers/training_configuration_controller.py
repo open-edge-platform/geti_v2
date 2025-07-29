@@ -132,7 +132,7 @@ class TrainingConfigurationRESTController:
         try:
             if (
                 update_configuration.global_parameters.dataset_preparation.filtering
-                and not task.task_properties.is_annotation_filtering_supported
+                and not task.task_properties.has_annotations_with_area
             ):
                 raise NotSupportedConfigurableParameterException(
                     parameter_name="filtering", task_type=task.task_properties.task_type.name

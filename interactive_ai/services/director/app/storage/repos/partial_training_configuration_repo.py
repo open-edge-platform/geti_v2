@@ -116,7 +116,7 @@ class PartialTrainingConfigurationRepo(ProjectBasedSessionRepo[PartialTrainingCo
                 subset_split=SubsetSplit(),
                 filtering=(
                     default_filtering_params
-                    if task.task_properties.is_annotation_filtering_supported
+                    if task.task_properties.has_annotations_with_area
                     else empty_filtering_params
                 ),
             )
