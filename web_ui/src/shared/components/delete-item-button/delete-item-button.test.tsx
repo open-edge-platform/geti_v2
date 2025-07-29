@@ -2,19 +2,13 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { fireEvent, screen } from '@testing-library/react';
-import { useOverlayTriggerState } from 'react-stately';
 
 import { providersRender } from '../../../test-utils/required-providers-render';
 import { DeleteItemButton } from './delete-item-button.component';
 
 describe('DeleteItemButton', () => {
     const renderAp = async ({ id = 'test-id', onDeleteItem = jest.fn() }: { id?: string; onDeleteItem: jest.Mock }) => {
-        const StateDeleteItemButton = () => {
-            const alertDialogState = useOverlayTriggerState({});
-            return <DeleteItemButton id={id} alertDialogState={alertDialogState} onDeleteItem={onDeleteItem} />;
-        };
-
-        providersRender(<StateDeleteItemButton />);
+        providersRender(<DeleteItemButton id={id} onDeleteItem={onDeleteItem} />);
     };
 
     it('calls onDeleteItem', async () => {

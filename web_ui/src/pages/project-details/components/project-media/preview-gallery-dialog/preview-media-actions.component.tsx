@@ -24,7 +24,7 @@ export const PreviewMediaActions = ({ selectedFilesCount, onDeleteMany }: Previe
             <DialogContainer onDismiss={alertDialogState.close}>
                 {alertDialogState.isOpen && (
                     <AlertDialog
-                        title={'Delete photo'}
+                        title={'Delete items'}
                         variant={'destructive'}
                         cancelLabel={'Cancel'}
                         primaryActionLabel={'Delete'}

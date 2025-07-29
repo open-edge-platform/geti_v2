@@ -33,7 +33,7 @@ const updateItem = (id: string, updatedItem: PreviewFile) => (item: PreviewFile)
 
 const getFiles = (items: PreviewFile[] | undefined) => items?.map(({ file }) => file) ?? [];
 const getLabelsIds = (labelsIds: string) => (isEmpty(labelsIds) ? undefined : labelsIds.split(','));
-const getAllItemSelected = (currentFiles: PreviewFile[]) =>
+const selectAllItems = (currentFiles: PreviewFile[]) =>
     currentFiles.reduce((accumulator, currentId) => ({ ...accumulator, [currentId.id]: true }), {});
 
 const getMediaItemFromFile =
@@ -94,7 +94,7 @@ export const PreviewGalleryDialog = ({
     const handleToggleManyItemSelection = () => {
         const areAllItemsSelected = selectedFilesCount === currentFiles.length;
 
-        setSelectedFiles(() => (areAllItemsSelected ? {} : getAllItemSelected(currentFiles)));
+        setSelectedFiles(() => (areAllItemsSelected ? {} : selectAllItems(currentFiles)));
     };
 
     return (
@@ -115,9 +115,7 @@ export const PreviewGalleryDialog = ({
                                 {hasSelectedItems ? (
                                     <PreviewMediaActions
                                         selectedFilesCount={selectedFilesCount}
-                                        onDeleteMany={() =>
-                                            handleDeleteFiles(Object.keys(selectedFiles).filter(identity))
-                                        }
+                                        onDeleteMany={() => handleDeleteFiles(Object.keys(selectedFiles))}
                                     />
                                 ) : (
                                     <PreviewMediaToolbar
