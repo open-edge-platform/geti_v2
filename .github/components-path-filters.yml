@@ -86,6 +86,12 @@ platform/services/install_upgrade:
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
+platform/services/installer:
+  - platform/services/installer/**
+  - libs/k8s_tools/**
+  - Makefile.shared-python
+  - Makefile.shared
+  - .github/workflows/component.yml
 deploy/geti_manifest:
   - deploy/geti_manifest/**
   - Makefile.shared-python

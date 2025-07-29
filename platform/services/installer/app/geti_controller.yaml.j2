@@ -5,31 +5,24 @@ metadata:
 spec:
   insecureSkipTLSVerify: true
   chart: "oci://{{ geti_registry }}/geti/charts/geti-controller"
-{#  version: $VERSION#}
-  version: 2.12.0-manual-8e73cc42
+  version: {{ build_version }}
   targetNamespace: default
-  timeout: 60m
+  timeout: 10m
   backOffLimit: 0
   failurePolicy: abort
-{#  valuesSecrets:#}
-{#    - name: external-registry#}
-{#      ignoreUpdates: true#}
-{#      keys:#}
-{#        - overrideRegistry#}
   valuesContent: |-
     global:
       ingress_enabled: false
       platformVersion: "{{ platform_version }}"
-      registry_address: "{{ geti_registry }}"  # 219678651685.dkr.ecr.us-west-2.amazonaws.com, geti as docker ns
-{#      tag: "$TAG" # TODO temporary solution to get new images, remove when CI will be ready#}
-      tag: 2.12.0-manual-8e73cc42
+      registry_address: "{{ geti_registry }}"
+      tag: "{{ build_version }}"
       login: "{{ username }}"
       passwordHash: "{{ password_hash }}"
       dataFolder: "{{ data_folder }}"
       tlsCert: "{{ tls_cert_file }}"
       tlsKey: "{{ tls_key_file }}"
       repoCA: "{{ repoCA }}"
-      imageRegistry: "{{ image_registry }}"  # like ghcr or docker.io, cache-registry.caas.intel.com/cache
+      imageRegistry: "{{ image_registry }}"
       proxy:
         enabled: "{{ proxy_enabled }}"
         https_proxy: "{{ https_proxy }}"

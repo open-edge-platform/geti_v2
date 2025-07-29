@@ -10,6 +10,10 @@ on:
         description: "Specifies the build version to apply to all binaries produced by this workflow"
         type: string
         required: true
+      platform_version:
+        description: "Specifies the current Geti platform version"
+        type: string
+        required: true
       publish_binaries:
         description: "Enable pushing Docker images and Helm charts"
         type: boolean
@@ -18,7 +22,7 @@ on:
         description: 'The branch, tag or SHA to checkout'
         type: string
         default: ""
-    secrets:
+    secrets:  # TODO maybe add a secret for the bucket name
       AWS_ROLE:
         required: true
       AWS_REGION:
@@ -61,3 +65,31 @@ jobs:
       - name: Publish umbrella charts
         if: ${{ inputs.publish_binaries }}
         run: make publish-umbrella-chart
+
+      - name: Build installer binary
+        if: ${{ inputs.publish_binaries }}
+        working-directory: platform/services/installer
+        run: |
+          printf "product_version: %s\nproduct_build: %s\n" "${{ inputs.platform_version }}" "${{ inputs.build_version }}" > app/version.yaml
+          make build_installer_binary
+
+      - name: Configure AWS Credentials for S3  # TODO check it's actually required
+        if: ${{ inputs.publish_binaries }}
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: Github
+          aws-region: us-east-1
+
+      - name: Publish the installer binary to S3
+        if: ${{ inputs.publish_binaries }}
+        working-directory: platform/services/installer
+        shell: bash
+        env:
+          # Force S3 access through the proxy because this S3 bucket is in a different region than the runners.
+          # It seems that if us-west-2 is in no_proxy list, the CLI will also attempt to directly access us-east-1
+          # even though it is not in the no_proxy list.
+          no_proxy: ""
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME || 'geti-storage-dev' }}  # default bucket if not provided
+        run: |          
+          aws s3 cp platform_installer s3://$S3_BUCKET_NAME/platform_installer-$TAG --debug

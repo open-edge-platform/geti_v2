@@ -17,7 +17,7 @@ from constants.paths import GETI_CONTROLLER_CHART_PATH, K3S_KUBECONFIG_PATH
 from constants.platform import PLATFORM_NAMESPACE
 from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
 from geti_controller.errors import GetiControllerInstallationError
-from platform_configuration.versions import get_target_product_build
+from platform_configuration.versions import get_target_platform_version, get_target_product_build
 from platform_utils.kube_config_handler import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
@@ -85,7 +85,8 @@ def deploy_geti_controller_chart(
             "data_folder": config.data_folder.value,
             "geti_registry": config.geti_image_registry.value,
             "image_registry": config.image_registry.value,
-            "platform_version": get_target_product_build(),
+            "platform_version": get_target_platform_version(),
+            "build_version": get_target_product_build(),
             "tls_cert_file": "",
             "tls_key_file": "",
             "repoCA": "",
