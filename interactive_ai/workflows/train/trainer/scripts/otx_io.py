@@ -333,4 +333,4 @@ def load_trained_model_weights(
             )
         )
 
-    return downloaded[1]
+    return downloaded[1] if optimize else downloaded[0]
