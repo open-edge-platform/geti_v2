@@ -17,6 +17,7 @@ import { useCheckPermission } from '../../../../../../../../../shared/components
 import { OPERATION } from '../../../../../../../../../shared/components/has-permission/has-permission.interface';
 import { DeleteProjectDialog } from './delete-project-dialog.component';
 import { EditProjectNameDialog } from './edit-project-name-dialog.component';
+import { ExportProjectDialog } from './export-project-dialog.component';
 
 interface ActionMenuProps {
     project: ProjectProps;
@@ -55,6 +56,7 @@ export const ProjectActionMenu = ({
 
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const editProjectNameDialogState = useOverlayTriggerState({});
+    const exportProjectNameDialogState = useOverlayTriggerState({});
     const disabledKeys = isExporting ? [ProjectActions.Export] : [];
 
     const items: MenuAction<ProjectActions>[] = useMemo<MenuAction<ProjectActions>[]>(
@@ -79,7 +81,7 @@ export const ProjectActionMenu = ({
                 setIsAlertOpen(true);
                 break;
             case ProjectActions.Export:
-                onExportProject({ organizationId, workspaceId, projectId: project.id });
+                exportProjectNameDialogState.open();
                 break;
             case ProjectActions.Rename:
                 editProjectNameDialogState.open();
@@ -105,6 +107,12 @@ export const ProjectActionMenu = ({
                     />
                 )}
             </DialogContainer>
+
+            <ExportProjectDialog
+                onClose={exportProjectNameDialogState.close}
+                isOpen={exportProjectNameDialogState.isOpen}
+                onExportProject={() => onExportProject({ organizationId, workspaceId, projectId: project.id })}
+            />
 
             {canEditProject && (
                 <EditProjectNameDialog
