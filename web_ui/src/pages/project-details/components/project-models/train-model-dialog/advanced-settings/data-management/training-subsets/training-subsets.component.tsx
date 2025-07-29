@@ -83,12 +83,26 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
 }) => {
     const handleSubsetDistributionChange = (values: number[] | number): void => {
         if (Array.isArray(values)) {
+            const [startRange, endRange] = values;
+
+            // validation subset cannot be empty
+            if (startRange === endRange) {
+                return;
+            }
+
             onSubsetsDistributionChange(values);
         }
     };
 
     const handleSubsetDistributionChangeEnd = (values: number[] | number): void => {
         if (Array.isArray(values)) {
+            const [startRange, endRange] = values;
+
+            // validation subset cannot be empty
+            if (startRange === endRange) {
+                return;
+            }
+
             onSubsetsDistributionChangeEnd(values);
         }
     };

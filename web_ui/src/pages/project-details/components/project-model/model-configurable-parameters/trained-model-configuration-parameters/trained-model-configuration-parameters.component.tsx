@@ -19,7 +19,9 @@ interface TrainedModelConfigurationParametersListProps {
     parameters: TrainedModelConfiguration;
 }
 
-const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelConfigurationParametersListProps) => {
+export const TrainedModelConfigurationParametersList = ({
+    parameters,
+}: TrainedModelConfigurationParametersListProps) => {
     const tabs = [
         {
             name: 'Data management',

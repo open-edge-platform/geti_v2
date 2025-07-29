@@ -214,7 +214,7 @@ _internal_defaults_do_not_set:
       "FEATURE_FLAG_CREDIT_SYSTEM": "false"
       "FEATURE_FLAG_DECORD_VIDEO_DECODER": "false"
       "FEATURE_FLAG_KEYPOINT_DETECTION": "true"
-      "FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE": "false"
+      "FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE": "true"
       "FEATURE_FLAG_MAINTENANCE_BANNER": "false"
       "FEATURE_FLAG_OBJECT_STORAGE_OP": "true"
       "FEATURE_FLAG_OFFLINE_INSTALLATION": "true"
@@ -233,6 +233,7 @@ _internal_defaults_do_not_set:
       "FEATURE_FLAG_REQ_ACCESS": "false"
       "FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS": "false"
       "FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING": "true"
+      "FEATURE_FLAG_ANNOTATION_HOLE": "false"
 
   jwtRules:
     issuer: "https://127.0.0.1/dex"

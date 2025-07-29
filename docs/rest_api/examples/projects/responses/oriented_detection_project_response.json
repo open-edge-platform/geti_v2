@@ -45,6 +45,7 @@
                         "hotkey": "",
                         "id": "62adc3caa4002f5a67575350",
                         "is_empty": false,
+                        "is_background": false,
                         "name": "Boat",
                         "parent_id": null
                     },

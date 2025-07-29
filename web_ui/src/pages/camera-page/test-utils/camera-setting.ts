@@ -10,6 +10,7 @@ export const getUseCameraSettings = ({ stream, ...options }: Partial<SettingsCon
     webcamRef: { current: { stream } } as React.RefObject<Webcam>,
     videoDevices: [],
     deviceConfig: [],
+    setDeviceConfig: jest.fn(),
     selectedDeviceId: '',
     userPermissions: UserCameraPermission.PENDING,
     applySettings: jest.fn(),

@@ -215,6 +215,15 @@ describe('getLabelConflictPredicate', () => {
         const localTwo = getMockedLabel({ behaviour: LABEL_BEHAVIOUR.GLOBAL, group: '1' });
         expect(getLabelConflictPredicate([])(localOne, localTwo)).toBe(true);
     });
+
+    it('background labels', () => {
+        const localOne = getMockedLabel({ behaviour: LABEL_BEHAVIOUR.GLOBAL, group: '1' });
+        const localTwo = getMockedLabel({ behaviour: LABEL_BEHAVIOUR.LOCAL, group: '1' });
+        const backgroundLabel = getMockedLabel({ behaviour: LABEL_BEHAVIOUR.BACKGROUND, group: '2' });
+
+        expect(getLabelConflictPredicate([])(localOne, backgroundLabel)).toBe(true);
+        expect(getLabelConflictPredicate([])(backgroundLabel, localTwo)).toBe(true);
+    });
 });
 
 describe('getGlobalAnnotations', () => {

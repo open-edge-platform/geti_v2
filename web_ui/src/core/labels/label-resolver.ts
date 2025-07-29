@@ -64,7 +64,7 @@ export function recursivelyRemoveLabels(
         ? annotationLabels
         : recursivelyRemoveLabels(annotationLabels, childLabels);
 
-    const labelIds = getIds([...labels]);
+    const labelIds = getIds(labels);
 
     return labelsWithoutChildren.filter(({ id }) => !labelIds.includes(id));
 }

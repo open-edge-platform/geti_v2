@@ -137,7 +137,8 @@ class TestMediaUploadedUseCase:
     @patch("tempfile.NamedTemporaryFile")
     @patch("PIL.Image.open")
     @patch.object(ImageBinaryRepo, "__init__", new=mock_init)
-    def test_on_image_uploaded(self, mock_image_open, mock_temp_file_context) -> None:
+    @pytest.mark.parametrize("thumbnail_image_mode", ["RGBA", "P", "RGB"])
+    def test_on_image_uploaded(self, mock_image_open, mock_temp_file_context, thumbnail_image_mode) -> None:
         # Arrange
         mock_temp_file = MagicMock()
         mock_temp_file.name = "/tmp/file.jpg"
@@ -145,6 +146,11 @@ class TestMediaUploadedUseCase:
         data_stream = MagicMock()
 
         thumbnail_image = MagicMock()
+        thumbnail_image.mode = thumbnail_image_mode
+
+        converted_thumbnail_image = MagicMock()
+        thumbnail_image.convert.return_value = converted_thumbnail_image
+
         pil_image = MagicMock()
         mock_image_open.return_value = pil_image
 
@@ -168,7 +174,11 @@ class TestMediaUploadedUseCase:
         mock_image_open.assert_called_once_with(data_stream)
         mock_temp_file_context.assert_called_once_with(suffix="image_id_thumbnail.jpg")
         mock_crop_to_thumbnail.assert_called_once_with(pil_image=pil_image, target_width=256, target_height=256)
-        thumbnail_image.save.assert_called_once_with("/tmp/file.jpg")
+        if thumbnail_image_mode == "RGB":
+            thumbnail_image.save.assert_called_once_with("/tmp/file.jpg")
+        else:
+            thumbnail_image.convert.assert_called_once_with("RGB")
+            converted_thumbnail_image.save.assert_called_once_with("/tmp/file.jpg")
         mock_save_thumbnail.assert_called_once_with(
             data_source="/tmp/file.jpg",
             dst_file_name="image_id_thumbnail.jpg",

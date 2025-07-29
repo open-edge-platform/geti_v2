@@ -6,6 +6,7 @@
 import logging
 from collections.abc import Callable, Iterable, Iterator
 
+from bson import ObjectId
 from geti_types import ProjectIdentifier, Session
 from iai_core.repos import ProjectRepo
 from iai_core.repos.base import ProjectBasedSessionRepo
@@ -164,3 +165,63 @@ class DocumentRepo(ProjectBasedSessionRepo[None]):  # type: ignore[type-var]
             collection = MongoConnector.get_collection(collection_name=collection_name)
             deletion_result = collection.delete_many(filter=query_filter)
             logger.debug(f"Deleted {deletion_result.deleted_count} documents from collection '{collection_name}'")
+
+    def get_latest_active_model_ids_and_binary_paths(self) -> tuple[set[ObjectId], set[str]]:
+        """
+        Retrieve the latest active model IDs and their associated binary file paths.
+
+        This method queries the active model state to find currently active models,
+        then locates the corresponding base framework models and their optimized variants.
+        For each model found, it collects the model ID and extracts binary file paths
+        from the model's weight_paths.
+
+        :return: A tuple containing:
+            - Set of ObjectIds for all latest active models (base + optimized variants)
+            - Set of binary file paths for all model weights relative to project root
+        """
+        # Get all active model states for this project
+        active_state_query_filter = self.preliminary_query_match_filter(access_mode=QueryAccessMode.READ)
+        active_model_state_collection = MongoConnector.get_collection(collection_name="active_model_state")
+        active_model_state_docs = active_model_state_collection.find(active_state_query_filter)
+
+        model_ids: set[ObjectId] = set()
+        binary_paths: set[str] = set()
+        model_collection = MongoConnector.get_collection(collection_name="model")
+
+        # Process each active model storage
+        for active_model_state_doc in active_model_state_docs:
+            active_model_storage_id = active_model_state_doc["active_model_storage_id"]
+
+            # Find the latest successful base framework model for this active model storage
+            model_query_filter = self.preliminary_query_match_filter(access_mode=QueryAccessMode.READ)
+            model_query_filter["model_storage_id"] = active_model_storage_id
+            model_query_filter["model_format"] = "BASE_FRAMEWORK"
+            model_query_filter["model_status"] = "SUCCESS"
+            base_model_doc = model_collection.find_one(filter=model_query_filter, sort={"version": -1})
+
+            if base_model_doc:
+                # Add base model ID and extract its binary paths
+                model_ids.add(base_model_doc["_id"])
+                self._get_binary_paths_from_model_doc(binary_paths, active_model_storage_id, base_model_doc)
+
+                # Find all optimized variants of this base model
+                optimized_model_query_filter = self.preliminary_query_match_filter(access_mode=QueryAccessMode.READ)
+                optimized_model_query_filter["model_storage_id"] = active_model_storage_id
+                optimized_model_query_filter["model_status"] = "SUCCESS"
+                optimized_model_query_filter["previous_trained_revision_id"] = base_model_doc["_id"]
+                optimized_model_query_filter["version"] = base_model_doc["version"]
+                optimized_model_docs = model_collection.find(optimized_model_query_filter)
+
+                # Add each optimized model ID and extract its binary paths
+                for optimized_model_doc in optimized_model_docs:
+                    model_ids.add(optimized_model_doc["_id"])
+                    self._get_binary_paths_from_model_doc(binary_paths, active_model_storage_id, optimized_model_doc)
+
+        return model_ids, binary_paths
+
+    def _get_binary_paths_from_model_doc(
+        self, binary_paths: set[str], model_storage_id: ObjectId, model_doc: dict
+    ) -> None:
+        for weight_path in model_doc["weight_paths"]:
+            file_name = weight_path[1]
+            binary_paths.add(f"model_storages/{model_storage_id}/{file_name}")
