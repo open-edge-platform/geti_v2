@@ -72,7 +72,8 @@ export const TestDetails = ({ test }: TestDetailsProps): JSX.Element => {
             <TestDetailsCard
                 version={version}
                 creationDate={creationTime}
-                modelName={`${modelTemplateName} (${groupName})`}
+                modeTemplateName={modelTemplateName}
+                groupName={groupName}
                 testingSetName={datasetName}
                 numberOfLabels={numberOfLabels}
                 numberOfImages={numberOfImages}
