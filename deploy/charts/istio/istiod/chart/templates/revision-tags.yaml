@@ -29,7 +29,6 @@ a unique prefix to each. */}}
     apiVersions: ["v1"]
     resources: ["pods"]
   failurePolicy: Fail
-  reinvocationPolicy: "{{ .reinvocationPolicy }}"
   admissionReviewVersions: ["v1"]
 {{- end }}
 {{- range $tagName := $.Values.revisionTags }}

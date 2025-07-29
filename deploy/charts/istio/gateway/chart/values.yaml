@@ -80,8 +80,6 @@ _internal_defaults_do_not_set:
     ipFamilies: []
     ## Whether to automatically allocate NodePorts (only for LoadBalancers).
     # allocateLoadBalancerNodePorts: false
-    ## Set LoadBalancer class (only for LoadBalancers).
-    # loadBalancerClass: ""
 
   resources:
     requests:
@@ -98,7 +96,7 @@ _internal_defaults_do_not_set:
     targetCPUUtilizationPercentage: 80
     targetMemoryUtilizationPercentage: {}
     autoscaleBehavior: {}
-
+    
   tls:
     key_file: ""
     cert_file: ""
@@ -113,13 +111,13 @@ _internal_defaults_do_not_set:
     JWT_TTL_GETI: 60m
     CACHE_TTL: 1m
     UNAUTHORIZED_URLS: /api/v1/profile,/api/v1/logout,/api/v1/onboarding/user,/api/v1/feature_flags
-
+    
   # Deployment Update strategy
   strategy: {}
-  
+
   # Sets the Deployment minReadySeconds value
   minReadySeconds:
-  
+
   # Optionally configure a custom readinessProbe. By default the control plane
   # automatically injects the readinessProbe. If you wish to override that
   # behavior, you may define your own readinessProbe here.

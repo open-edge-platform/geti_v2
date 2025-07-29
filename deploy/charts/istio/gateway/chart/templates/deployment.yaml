@@ -11,8 +11,8 @@ metadata:
     {{- .Values.annotations | toYaml | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  {{- if and (hasKey .Values "replicaCount") (ne .Values.replicaCount nil) }}
-  replicas: {{ .Values.replicaCount }}
+  {{- with .Values.replicaCount }}
+  replicas: {{ . }}
   {{- end }}
   {{- end }}
   {{- with .Values.strategy }}
@@ -41,9 +41,6 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- end }}
-        {{- with .Values.networkGateway }}
-        topology.istio.io/network: "{{.}}"
-        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -59,42 +56,12 @@ spec:
         - name: net.ipv4.ip_unprivileged_port_start
           value: "0"
       {{- end }}
-      {{- if not .Values.auth_proxy.enabled }}
       {{- with .Values.volumes }}
       volumes:
         {{ toYaml . | nindent 8 }}
       {{- end }}
-      initContainers:
-        - name: copy-api-gateway
-          image: "{{ .Values.global.registry_address }}/api-gateway:{{ .Values.global.tag | default .Chart.Version }}"
-          imagePullPolicy: IfNotPresent
-          command:
-            - /bin/sh
-          args:
-            - -ec
-            - |
-              cp /plugin.wasm "{{ .Values.api_gateway.mountPath }}"
-          volumeMounts:
-            - name: plugin-storage
-              mountPath: "{{ .Values.api_gateway.mountPath }}"
-              readOnly: false
-          resources:
-            requests:
-              cpu: 50m
-              memory: 100Mi
-            limits:
-              memory: 100Mi
-          securityContext:
-            readOnlyRootFilesystem: true
-            allowPrivilegeEscalation: false
-            runAsUser: 10001
-            runAsNonRoot: true
-            capabilities:
-              drop:
-                - ALL
-      {{- end }}
       containers:
-        - name: {{ .Values.istioProxy.name }}
+        - name: istio-proxy
           # "auto" will be populated at runtime by the mutating webhook. See https://istio.io/latest/docs/setup/additional-setup/sidecar-injection/#customizing-injection
           image: auto
           {{- with .Values.imagePullPolicy }}
@@ -117,36 +84,6 @@ spec:
             runAsNonRoot: true
           {{- end }}
           env:
-          - name: ISS_INTERNAL
-            valueFrom:
-              configMapKeyRef:
-                name: config-authentication
-                key: admin-issuer
-                optional: true
-          - name: AUD_INTERNAL
-            valueFrom:
-              configMapKeyRef:
-                name: config-authentication
-                key: admin-audience
-                optional: true
-          - name: ISS_EXTERNAL
-            valueFrom:
-              configMapKeyRef:
-                name: config-authentication
-                key: platform-issuer
-                optional: true
-          - name: AUD_EXTERNAL
-            valueFrom:
-              configMapKeyRef:
-                name: config-authentication
-                key: platform-audience
-                optional: true
-          - name: REQUIRED_ROLES
-            valueFrom:
-              configMapKeyRef:
-                name: config-authentication
-                key: required-roles
-                optional: true
           {{- with .Values.networkGateway }}
           - name: ISTIO_META_REQUESTED_NETWORK_VIEW
             value: "{{.}}"
@@ -155,20 +92,15 @@ spec:
           - name: {{ $key }}
             value: {{ $val | quote }}
           {{- end }}
-          envFrom:
-            - configMapRef:
-                name: feature-flags
           ports:
           - containerPort: 15090
             protocol: TCP
             name: http-envoy-prom
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if not .Values.auth_proxy.enabled }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
           {{- end }}
           {{- with .Values.readinessProbe }}
           readinessProbe:

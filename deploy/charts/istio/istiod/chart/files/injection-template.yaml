@@ -25,7 +25,6 @@
   {{- end }}
 {{- end }}
 {{ $nativeSidecar := (or (and (not (isset .ObjectMeta.Annotations `sidecar.istio.io/nativeSidecar`)) (eq (env "ENABLE_NATIVE_SIDECARS" "false") "true")) (eq (index .ObjectMeta.Annotations `sidecar.istio.io/nativeSidecar`) "true")) }}
-{{ $tproxy := (eq (annotation .ObjectMeta `sidecar.istio.io/interceptionMode` .ProxyConfig.InterceptionMode) `TPROXY`) }}
 {{- $containers := list }}
 {{- range $index, $container := .Spec.Containers }}{{ if not (eq $container.Name "istio-proxy") }}{{ $containers = append $containers $container.Name }}{{end}}{{- end}}
 metadata:
@@ -70,12 +69,6 @@ spec:
   {{- $holdProxy := and
       (or .ProxyConfig.HoldApplicationUntilProxyStarts.GetValue .Values.global.proxy.holdApplicationUntilProxyStarts)
       (not $nativeSidecar) }}
-  {{- $noInitContainer := and
-      (eq (annotation .ObjectMeta `sidecar.istio.io/interceptionMode` .ProxyConfig.InterceptionMode) `NONE`)
-      (not $nativeSidecar) }}
-  {{ if $noInitContainer }}
-  initContainers: []
-  {{ else -}}
   initContainers:
   {{ if ne (annotation .ObjectMeta `sidecar.istio.io/interceptionMode` .ProxyConfig.InterceptionMode) `NONE` }}
   {{ if .Values.pilot.cni.enabled -}}
@@ -95,7 +88,7 @@ spec:
     - "-z"
     - {{ .MeshConfig.ProxyInboundListenPort | default "15006" | quote }}
     - "-u"
-    - {{ if $tproxy }} "1337" {{ else }} {{ .ProxyUID | default "1337" | quote }} {{ end }}
+    - {{ .ProxyUID | default "1337" | quote }}
     - "-m"
     - "{{ annotation .ObjectMeta `sidecar.istio.io/interceptionMode` .ProxyConfig.InterceptionMode }}"
     - "-i"
@@ -168,11 +161,10 @@ spec:
       runAsUser: 0
     {{- else }}
       readOnlyRootFilesystem: true
-      runAsGroup: {{ if $tproxy }} 1337 {{ else }} {{ .ProxyGID | default "1337" }} {{ end }}
-      runAsUser: {{ if $tproxy }} 1337 {{ else }} {{ .ProxyUID | default "1337" }} {{ end }}
+      runAsGroup: {{ .ProxyGID | default "1337" }}
+      runAsUser: {{ .ProxyUID | default "1337" }}
       runAsNonRoot: true
     {{- end }}
-  {{ end -}}
   {{ end -}}
   {{ if not $nativeSidecar }}
   containers:
@@ -389,14 +381,13 @@ spec:
         - ALL
       privileged: {{ .Values.global.proxy.privileged }}
       readOnlyRootFilesystem: true
-      {{ if or ($tproxy) (eq (annotation .ObjectMeta `sidecar.istio.io/capNetBindService` .Values.global.proxy.capNetBindService) `true`) -}}
+      runAsGroup: {{ .ProxyGID | default "1337" }}
+      {{ if or (eq (annotation .ObjectMeta `sidecar.istio.io/interceptionMode` .ProxyConfig.InterceptionMode) `TPROXY`) (eq (annotation .ObjectMeta `sidecar.istio.io/capNetBindService` .Values.global.proxy.capNetBindService) `true`) -}}
       runAsNonRoot: false
       runAsUser: 0
-      runAsGroup: 1337
       {{- else -}}
       runAsNonRoot: true
       runAsUser: {{ .ProxyUID | default "1337" }}
-      runAsGroup: {{ .ProxyGID | default "1337" }}
       {{- end }}
       {{- end }}
     resources:
@@ -490,16 +481,8 @@ spec:
           audience: {{ .Values.global.sds.token.aud }}
   {{- if eq .Values.global.pilotCertProvider "istiod" }}
   - name: istiod-ca-cert
-  {{- if eq (.Values.pilot.env).ENABLE_CLUSTER_TRUST_BUNDLE_API true }}
-    projected:
-      sources:
-      - clusterTrustBundle:
-        name: istio.io:istiod-ca:root-cert
-        path: root-cert.pem
-  {{- else }}
     configMap:
       name: istio-ca-root-cert
-  {{- end }}
   {{- end }}
   {{- if .Values.global.mountMtlsCerts }}
   # Use the key and cert mounted to /etc/certs/ for the in-cluster mTLS communications.
