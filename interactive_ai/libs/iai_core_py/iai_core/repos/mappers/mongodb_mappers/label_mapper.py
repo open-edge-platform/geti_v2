@@ -55,7 +55,6 @@ class LabelToMongo(IMapperSimple[Label, dict]):
             "creation_date": DatetimeToMongo.forward(instance.creation_date),
             "is_empty": instance.is_empty,
             "is_anomalous": instance.is_anomalous,
-            "is_background": instance.is_background,
         }
         if FeatureFlagProvider.is_enabled(FEATURE_FLAG_ANNOTATION_HOLE):
             label_dict["is_background"] = instance.is_background
