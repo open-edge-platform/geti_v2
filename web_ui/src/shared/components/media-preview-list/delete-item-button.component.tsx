@@ -36,7 +36,7 @@ export const DeleteItemButton = ({
                             alertDialogState.close();
                         }}
                     >
-                        Are you sure you want to delete this photo?
+                        Are you sure you want to delete this file?
                     </AlertDialog>
                 )}
             </DialogContainer>

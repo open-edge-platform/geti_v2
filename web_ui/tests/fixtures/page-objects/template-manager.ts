@@ -63,6 +63,8 @@ export class TemplateManagerPage {
         await this.page.getByRole('textbox', { name: 'Hex' }).fill(color);
         await this.page.getByRole('textbox', { name: 'Hex' }).press('Tab');
 
+        await this.page.locator('body').click();
+
         await point.click();
     }
 

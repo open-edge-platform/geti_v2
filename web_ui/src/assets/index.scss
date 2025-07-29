@@ -142,3 +142,7 @@ div[class*='spectrum-Tabs-selectionIndicator'] {
         animation: none;
     }
 }
+// Increase the modal’s opaque background when a modal is opened inside another modal.
+[data-testid='underlay'] {
+    z-index: 100000 !important;
+}

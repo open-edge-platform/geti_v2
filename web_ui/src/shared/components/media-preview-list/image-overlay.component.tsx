@@ -16,7 +16,7 @@ import { FileItem } from './util';
 
 import classes from './media-preview-list.module.scss';
 
-interface ImageOverlayProps<T> {
+interface ImageOverlayProps<T extends FileItem> {
     items: T[];
     defaultIndex: number;
     dialogState: OverlayTriggerState;

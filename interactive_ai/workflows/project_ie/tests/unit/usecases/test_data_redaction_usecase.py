@@ -862,8 +862,8 @@ class TestImportDataRedactionUseCase:
                 "user_uid": "previous_user",
             },
         }
-
-        result = data_redaction_use_case.purge_model_docs_if_necessary(doc)
+        purge_model_docs_method = data_redaction_use_case.purge_all_model_docs(model_ids_to_keep=set())
+        result = purge_model_docs_method(doc)
 
         assert result == doc
         assert result["purge_info"]["is_purged"] is True
@@ -886,7 +886,8 @@ class TestImportDataRedactionUseCase:
             "weight_paths": ["item_1"],
         }
 
-        result = data_redaction_use_case.purge_model_docs_if_necessary(doc)
+        purge_model_docs_method = data_redaction_use_case.purge_all_model_docs(model_ids_to_keep=set())
+        result = purge_model_docs_method(doc)
 
         assert result["purge_info"]["is_purged"] is True
         assert result["purge_info"]["purge_time"] == mock_time
@@ -894,3 +895,25 @@ class TestImportDataRedactionUseCase:
         assert result["size"] == 0
         assert result["exportable_code_path"] == ""
         assert result["weight_paths"] == []
+
+    @patch("job.usecases.data_redaction_usecase.now")
+    def test_purge_model_docs_if_necessary_include_model_ids(self, mock_now) -> None:
+        """Test that non-purged documents are properly purged"""
+        mock_time = datetime(2023, 6, 15, 12, 0, 0)
+        mock_now.return_value = mock_time
+
+        data_redaction_use_case = ExportDataRedactionUseCase()
+        id_ = ObjectId("0123456789abcdef01234567")
+        doc = {
+            "_id": id_,
+            "name": "test_model",
+            "size": 1024,
+            "exportable_code_path": "/path/to/code",
+            "purge_info": {"is_purged": False, "purge_time": datetime(2023, 1, 1), "user_uid": "original_user"},
+            "weight_paths": ["item_1"],
+        }
+
+        purge_model_docs_method = data_redaction_use_case.purge_all_model_docs(model_ids_to_keep={id_})
+        result = purge_model_docs_method(doc)
+
+        assert doc == result

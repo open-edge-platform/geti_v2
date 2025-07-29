@@ -11,6 +11,7 @@ import uuid
 from collections.abc import Callable
 from datetime import timezone
 from functools import partial
+from typing import TYPE_CHECKING
 
 from bson.binary import UuidRepresentation
 from bson.json_util import DatetimeRepresentation, JSONOptions, dumps
@@ -31,6 +32,9 @@ from job.usecases.data_redaction_usecase import ExportDataRedactionUseCase
 from job.usecases.signature_usecase import SignatureUseCaseHelper
 from job.utils.file_utils import read_file_in_chunks
 
+if TYPE_CHECKING:
+    from bson import ObjectId
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,6 +45,85 @@ class ProjectExportUseCase:
     COLLECTIONS_FOR_EVALUATION_RESULTS = ["model_test_result", "evaluation_result"]
     COLLECTIONS_WITH_LOCKS = ["project"]
     COLLECTIONS_FOR_MODELS = ["model"]
+
+    @classmethod
+    def _add_collections_and_documents_to_zip(
+        cls,
+        zip_archive: ProjectZipArchive,
+        data_redaction_use_case: ExportDataRedactionUseCase,
+        project_identifier: ProjectIdentifier,
+        include_models: IncludeModels,
+    ) -> set[str]:
+        """
+        Export MongoDB collections and documents to the zip archive with data redaction.
+
+        Fetches all documents from project collections, applies various redaction functions
+        to remove sensitive or unnecessary data, and adds the processed documents to the
+        zip archive. When include_models is LATEST_ACTIVE, only the latest active models
+        and their associated binary paths are included.
+
+        :param zip_archive: The zip archive to add collections and documents to
+        :param data_redaction_use_case: Use case for applying data redaction operations
+        :param project_identifier: Identifier of the project being exported
+        :param include_models: Specifies which models to include in the export
+        :returns: Set of binary paths that should be included in the export (relevant
+            when include_models is LATEST_ACTIVE)
+        """
+        document_repo = DocumentRepo(project_identifier=project_identifier)
+        json_options = JSONOptions(
+            uuid_representation=UuidRepresentation.STANDARD,
+            datetime_representation=DatetimeRepresentation.ISO8601,
+            tz_aware=True,
+            tzinfo=timezone.utc,
+        )
+        include_model_ids: set[ObjectId] = set()
+        include_binary_paths: set[str] = set()
+        if include_models == IncludeModels.LATEST_ACTIVE:
+            include_model_ids, include_binary_paths = document_repo.get_latest_active_model_ids_and_binary_paths()
+
+        collection_names = document_repo.get_collection_names()
+        for collection_name in collection_names:
+            db_raw_documents = document_repo.get_all_documents_from_db_for_collection(collection_name=collection_name)
+            lock_redaction: list[Callable] = (
+                [data_redaction_use_case.remove_lock_in_mongodb_doc]
+                if collection_name in ProjectExportUseCase.COLLECTIONS_WITH_LOCKS
+                else []
+            )
+            media_based_id_redaction: list[Callable] = (
+                [data_redaction_use_case.replace_media_based_objectid_in_mongodb_doc]
+                if collection_name in ProjectExportUseCase.COLLECTIONS_WITH_MEDIA_BASED_ID
+                else []
+            )
+            purge_info_redaction: list[Callable] = (
+                [data_redaction_use_case.purge_all_model_docs(model_ids_to_keep=include_model_ids)]
+                if collection_name in ProjectExportUseCase.COLLECTIONS_FOR_MODELS
+                and include_models in {IncludeModels.NONE, IncludeModels.LATEST_ACTIVE}
+                else []
+            )
+            redacted_docs = multi_map(
+                db_raw_documents,
+                data_redaction_use_case.remove_container_info_in_mongodb_doc,
+                data_redaction_use_case.remove_job_id_in_mongodb_doc,
+                *lock_redaction,
+                *media_based_id_redaction,
+                *purge_info_redaction,
+                partial(dumps, json_options=json_options),
+                data_redaction_use_case.replace_objectid_in_mongodb_doc,
+                data_redaction_use_case.replace_objectid_based_binary_filename_in_mongodb_doc,
+                data_redaction_use_case.mask_user_info_in_mongodb_doc,
+            )
+            # Note: 'db_raw_documents' and 'redacted_docs' are generators, piped and lazily evaluated,
+            # so any error raised while fetching/redacting documents is actually thrown in the next write stage
+            try:
+                zip_archive.add_collection_with_documents(collection_name=collection_name, documents=redacted_docs)
+            except Exception:  # log the collection name before re-raising the exception
+                logger.error(
+                    "Error occurred while exporting collection '%s'",
+                    collection_name,
+                )
+                raise
+
+        return include_binary_paths
 
     @classmethod
     def __export_as_zip(
@@ -60,8 +143,6 @@ class ProjectExportUseCase:
         """
         session: Session = CTX_SESSION_VAR.get()
         project_identifier = ProjectIdentifier(workspace_id=session.workspace_id, project_id=project_id)
-        data_redaction_use_case = ExportDataRedactionUseCase()
-        document_repo = DocumentRepo(project_identifier=project_identifier)
         binary_storage_repo = BinaryStorageRepo(
             organization_id=session.organization_id,
             workspace_id=session.workspace_id,
@@ -71,12 +152,7 @@ class ProjectExportUseCase:
             organization_id=session.organization_id,
             workspace_id=session.workspace_id,
         )
-        json_options = JSONOptions(
-            uuid_representation=UuidRepresentation.STANDARD,
-            datetime_representation=DatetimeRepresentation.ISO8601,
-            tz_aware=True,
-            tzinfo=timezone.utc,
-        )
+        data_redaction_use_case = ExportDataRedactionUseCase()
 
         # Create the zip file in a local temporary folder
         logger.info("Creating zip archive to export project '%s'", project_id)
@@ -88,59 +164,29 @@ class ProjectExportUseCase:
                 project_id,
             )
             progress_callback(25, "Exporting project database")
-            collection_names = document_repo.get_collection_names()
-            for collection_name in collection_names:
-                db_raw_documents = document_repo.get_all_documents_from_db_for_collection(
-                    collection_name=collection_name
-                )
-                lock_redaction: list[Callable] = (
-                    [data_redaction_use_case.remove_lock_in_mongodb_doc]
-                    if collection_name in ProjectExportUseCase.COLLECTIONS_WITH_LOCKS
-                    else []
-                )
-                media_based_id_redaction: list[Callable] = (
-                    [data_redaction_use_case.replace_media_based_objectid_in_mongodb_doc]
-                    if collection_name in ProjectExportUseCase.COLLECTIONS_WITH_MEDIA_BASED_ID
-                    else []
-                )
-                purge_info_redaction: list[Callable] = (
-                    [data_redaction_use_case.purge_model_docs_if_necessary]
-                    if include_models == IncludeModels.NONE
-                    and collection_name in ProjectExportUseCase.COLLECTIONS_FOR_MODELS
-                    else []
-                )
-                redacted_docs = multi_map(
-                    db_raw_documents,
-                    data_redaction_use_case.remove_container_info_in_mongodb_doc,
-                    data_redaction_use_case.remove_job_id_in_mongodb_doc,
-                    *lock_redaction,
-                    *media_based_id_redaction,
-                    *purge_info_redaction,
-                    partial(dumps, json_options=json_options),
-                    data_redaction_use_case.replace_objectid_in_mongodb_doc,
-                    data_redaction_use_case.replace_objectid_based_binary_filename_in_mongodb_doc,
-                    data_redaction_use_case.mask_user_info_in_mongodb_doc,
-                )
-                # Note: 'db_raw_documents' and 'redacted_docs' are generators, piped and lazily evaluated,
-                # so any error raised while fetching/redacting documents is actually thrown in the next write stage
-                try:
-                    zip_archive.add_collection_with_documents(collection_name=collection_name, documents=redacted_docs)
-                except Exception:  # log the collection name before re-raising the exception
-                    logger.error(
-                        "Error occurred while exporting collection '%s'",
-                        collection_name,
-                    )
-                    raise
+            include_model_binary_paths = cls._add_collections_and_documents_to_zip(
+                zip_archive=zip_archive,
+                data_redaction_use_case=data_redaction_use_case,
+                project_identifier=project_identifier,
+                include_models=include_models,
+            )
 
             progress_callback(50, "Exporting project binary files")
             # Fetch binary objects from S3, adjust their paths and finally add them to the zip archive
             logger.info("Exporting binary objects from S3 storage for project '%s'", project_id)
             for object_type in binary_storage_repo.get_object_types():
-                if include_models == "none" and object_type is BinaryObjectType.MODELS:
+                if object_type is BinaryObjectType.MODELS and include_models is IncludeModels.NONE:
                     continue
-                objects_local_and_remote_paths = binary_storage_repo.get_all_objects_by_type(
-                    object_type=object_type, target_folder=tmp_folder
-                )
+                if object_type is BinaryObjectType.MODELS and include_models is IncludeModels.LATEST_ACTIVE:
+                    objects_local_and_remote_paths = binary_storage_repo.get_all_objects_by_type(
+                        object_type=object_type,
+                        target_folder=tmp_folder,
+                        whitelisted_paths=include_model_binary_paths,
+                    )
+                else:
+                    objects_local_and_remote_paths = binary_storage_repo.get_all_objects_by_type(
+                        object_type=object_type, target_folder=tmp_folder
+                    )
                 redacted_objects_paths = (
                     (
                         data_redaction_use_case.replace_objectid_in_file(lp),  # redact the file
