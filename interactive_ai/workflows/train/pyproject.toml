@@ -88,7 +88,6 @@ override-dependencies = [
     "nltk; sys_platform == 'never'",
     "ovmsclient; sys_platform == 'never'",
     "portalocker; sys_platform == 'never'",
-    "scikit-learn; sys_platform == 'never'",
     "tokenizers; sys_platform == 'never'",
     "tritonclient; sys_platform == 'never'",
 ]
