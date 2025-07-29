@@ -14,11 +14,14 @@ from iai_core.repos.mappers.mongodb_mapper_interface import (
     IMapperProjectIdentifierBackward,
     IMapperSimple,
 )
+from iai_core.utils.feature_flags import FeatureFlagProvider
 from iai_core.utils.timed_lru_cache import timed_lru_cache
 
 from .id_mapper import IDToMongo
 from .primitive_mapper import DatetimeToMongo
 from geti_types import ID, ProjectIdentifier
+
+FEATURE_FLAG_ANNOTATION_HOLE = "FEATURE_FLAG_ANNOTATION_HOLE"
 
 
 class ColorToMongo(IMapperSimple[Color, dict]):
@@ -43,7 +46,7 @@ class LabelToMongo(IMapperSimple[Label, dict]):
 
     @staticmethod
     def forward(instance: Label) -> dict:
-        return {
+        label_dict = {
             "_id": IDToMongo.forward(instance.id_),
             "name": instance.name,
             "color": ColorToMongo.forward(instance.color),
@@ -54,6 +57,10 @@ class LabelToMongo(IMapperSimple[Label, dict]):
             "is_anomalous": instance.is_anomalous,
             "is_background": instance.is_background,
         }
+        if FeatureFlagProvider.is_enabled(FEATURE_FLAG_ANNOTATION_HOLE):
+            label_dict["is_background"] = instance.is_background
+
+        return label_dict
 
     @staticmethod
     def backward(instance: dict) -> Label:
