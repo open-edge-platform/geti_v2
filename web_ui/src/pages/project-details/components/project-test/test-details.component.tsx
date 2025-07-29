@@ -72,7 +72,7 @@ export const TestDetails = ({ test }: TestDetailsProps): JSX.Element => {
             <TestDetailsCard
                 version={version}
                 creationDate={creationTime}
-                modeTemplateName={modelTemplateName}
+                modelTemplateName={modelTemplateName}
                 groupName={groupName}
                 testingSetName={datasetName}
                 numberOfLabels={numberOfLabels}
