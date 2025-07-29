@@ -51,8 +51,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   version: $VERSION
   chart: "oci://{{ geti_registry }}/geti/charts/geti-namespaces"
@@ -67,8 +65,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/reloader"
   version: $VERSION
@@ -84,8 +80,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/geti-pv-creation"
   version: $VERSION
@@ -103,8 +97,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/cert-manager"
   version: $VERSION
@@ -120,8 +112,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/cert-manager-addon"
   version: $VERSION
@@ -135,8 +125,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/cert-manager-istio-csr"
   version: $VERSION
@@ -152,8 +140,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/istio-base"
   version: $VERSION
@@ -169,8 +155,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/istio-istiod"
   version: $VERSION
@@ -195,8 +179,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/istio-gateway"
   version: $VERSION
@@ -221,8 +203,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/geti-tools"
   version: $VERSION
@@ -251,8 +231,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/geti-components"
   version: $VERSION
@@ -298,8 +276,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/modelmesh-serving-addon"
   version: $VERSION
@@ -318,8 +294,6 @@ spec:
 {%- if repoCA_dec %}
   repoCA: |
     {{ repoCA_dec | indent(4) }}
-{%- else %}
-  insecureSkipTLSVerify: true
 {%- endif %}
   chart: "oci://{{ geti_registry }}/geti/charts/flyte-core"
   version: $VERSION
