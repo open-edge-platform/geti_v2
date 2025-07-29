@@ -11,7 +11,7 @@ import { usePress } from 'react-aria';
 import { Label } from '../../../core/labels/label.interface';
 import { useTask } from '../../../pages/annotator/providers/task-provider/task-provider.component';
 import { getSingleValidTask } from '../../../pages/camera-page/util';
-import { isVideoFile, loadImageFromFile } from '../../media-utils';
+import { isVideoFile, loadImageFromFile, loadVideoFromFile } from '../../media-utils';
 import { ViewModes } from '../media-view-modes/utils';
 import { CondensedLabelSelector } from './condensed-label-selector.component';
 import { DeleteItemButton } from './delete-item-button.component';
@@ -25,8 +25,10 @@ export interface MediaItemProps {
     url: string | null | undefined;
     labelIds: string[];
     mediaFile: File;
-    viewMode?: ViewModes;
     height?: Responsive<DimensionValue>;
+    viewMode?: ViewModes;
+    hasItemPreview: boolean;
+    hasLabelSelector: boolean;
     onPress: (id: string) => void;
     onDeleteItem: (id: string) => void;
     onSelectLabel: (labels: Label[]) => void;
@@ -36,22 +38,27 @@ interface FileLoadingProps {
     file: File;
     onLoaded: (url: string) => void;
 }
+
 const FileLoading = ({ file, onLoaded }: FileLoadingProps) => {
+    const loadHandler = isVideoFile(file) ? loadVideoFromFile : loadImageFromFile;
+
     useEffect(() => {
-        loadImageFromFile(file).then(({ src }) => onLoaded(src));
+        loadHandler(file).then(({ src }) => onLoaded(src));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [file]);
 
-    return <Loading />;
+    return <Loading size='S' />;
 };
 
 export const MediaItem = ({
     id,
     url: initUrl,
-    labelIds,
-    mediaFile,
-    viewMode,
     height,
+    labelIds,
+    viewMode,
+    mediaFile,
+    hasItemPreview,
+    hasLabelSelector,
     onPress,
     onDeleteItem,
     onSelectLabel,
@@ -82,10 +89,16 @@ export const MediaItem = ({
     return (
         <View ref={containerRef} UNSAFE_className={classes.container} height={height}>
             <ImageVideoFactory
+                controls
                 src={url}
                 isVideoFile={isVideoFile(mediaFile)}
                 alt={`media item ${id}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    cursor: hasItemPreview ? 'pointer' : 'default',
+                }}
                 {...pressProps}
             />
 
@@ -98,18 +111,20 @@ export const MediaItem = ({
                 alertDialogState={alertDialogState}
                 UNSAFE_className={[classes.deleteContainer, alertDialogState.isOpen ? classes.visible : ''].join(' ')}
             />
-            <CondensedLabelSelector
-                name={'Unlabeled'}
-                labelIds={labelIds}
-                right={'size-50'}
-                bottom={'size-50'}
-                viewMode={viewMode}
-                position={'absolute'}
-                isDisabled={isEmpty(taskLabels)}
-                triggerState={labelSelectorState}
-                selectedLabels={taskLabels.filter((label) => labelIds.includes(label.id))}
-                onSelectLabel={onSelectLabel}
-            />
+            {hasLabelSelector && (
+                <CondensedLabelSelector
+                    name={'Unlabeled'}
+                    labelIds={labelIds}
+                    right={'size-50'}
+                    bottom={'size-50'}
+                    viewMode={viewMode}
+                    position={'absolute'}
+                    isDisabled={isEmpty(taskLabels)}
+                    triggerState={labelSelectorState}
+                    selectedLabels={taskLabels.filter((label) => labelIds.includes(label.id))}
+                    onSelectLabel={onSelectLabel}
+                />
+            )}
             <MediaItemContextMenu containerRef={unwrappedContainerRef} options={contextMenuOptions} />
         </View>
     );

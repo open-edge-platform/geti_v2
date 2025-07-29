@@ -9,8 +9,10 @@ from zipfile import ZipFile, ZipInfo
 
 import pytest
 
+from features.feature_flags import FeatureFlag
 from tests.fixtures.values import DummyValues
 
+from geti_feature_tools import FeatureFlagProvider
 from iai_core.adapters.model_adapter import ExportableCodeAdapter
 from iai_core.configuration.elements.hyper_parameters import NullHyperParameters
 from iai_core.entities.active_model_state import ActiveModelState
@@ -459,6 +461,18 @@ def fxt_model_group_rest(fxt_model, fxt_mongo_id):
 
 @pytest.fixture()
 def fxt_model_info_rest(fxt_model, fxt_dataset_counts):
+    label = {
+        "color": "#ff0000ff",
+        "group": "from_label_list",
+        "hotkey": "ctrl+V",
+        "id": "60d31793d5f1fb7e6e3c1a50",
+        "is_empty": False,
+        "is_anomalous": False,
+        "name": "dog",
+        "parent_id": None,
+    }
+    if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+        label["is_background"] = False
     yield {
         "id": fxt_model.id_,
         "name": fxt_model.model_storage.name,
@@ -478,19 +492,7 @@ def fxt_model_info_rest(fxt_model, fxt_dataset_counts):
         "total_disk_size": 1,
         "previous_trained_revision_id": "",
         "previous_revision_id": "",
-        "labels": [
-            {
-                "color": "#ff0000ff",
-                "group": "from_label_list",
-                "hotkey": "ctrl+V",
-                "id": "60d31793d5f1fb7e6e3c1a50",
-                "is_empty": False,
-                "is_anomalous": False,
-                "name": "dog",
-                "parent_id": None,
-                "is_background": False,
-            }
-        ],
+        "labels": [label],
         "training_dataset_info": fxt_dataset_counts,
         "training_framework": {"type": "otx", "version": "2.2.0"},
         "purge_info": {"is_purged": False, "purge_time": None, "user_uid": None},
@@ -501,6 +503,18 @@ def fxt_model_info_rest(fxt_model, fxt_dataset_counts):
 
 @pytest.fixture()
 def fxt_obsolete_model_info_rest(fxt_obsolete_model, fxt_dataset_counts):
+    label = {
+        "color": "#ff0000ff",
+        "group": "from_label_list",
+        "hotkey": "ctrl+V",
+        "id": "60d31793d5f1fb7e6e3c1a50",
+        "is_empty": False,
+        "is_anomalous": False,
+        "name": "dog",
+        "parent_id": None,
+    }
+    if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+        label["is_background"] = False
     yield {
         "id": fxt_obsolete_model.id_,
         "name": fxt_obsolete_model.model_storage.name,
@@ -520,19 +534,7 @@ def fxt_obsolete_model_info_rest(fxt_obsolete_model, fxt_dataset_counts):
         "total_disk_size": 1,
         "previous_trained_revision_id": "",
         "previous_revision_id": "",
-        "labels": [
-            {
-                "color": "#ff0000ff",
-                "group": "from_label_list",
-                "hotkey": "ctrl+V",
-                "id": "60d31793d5f1fb7e6e3c1a50",
-                "is_empty": False,
-                "is_anomalous": False,
-                "name": "dog",
-                "parent_id": None,
-                "is_background": False,
-            }
-        ],
+        "labels": [label],
         "training_dataset_info": fxt_dataset_counts,
         "training_framework": {"type": "otx", "version": "1.6.0"},
         "purge_info": {"is_purged": False, "purge_time": None, "user_uid": None},

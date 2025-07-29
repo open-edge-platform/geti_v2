@@ -231,6 +231,10 @@ class TestProjectExportUseCase:
                 return_value=mocked_signing_use_case,
             ),
         ]
+
+        def mock_inner_purge_model_docs_if_necessary(doc: dict) -> dict:
+            return {"purge_info": {"is_purged": True}}
+
         with (
             contextlib.ExitStack() as stack,
             patch.object(
@@ -244,8 +248,8 @@ class TestProjectExportUseCase:
             patch("job.usecases.project_export_usecase.publish_metadata_update") as mock_metadata_update,
             patch.object(
                 ExportDataRedactionUseCase,
-                "purge_model_docs_if_necessary",
-                return_value={"purge_info": {"is_purged": True}},
+                "purge_all_model_docs",
+                return_value=mock_inner_purge_model_docs_if_necessary,
             ) as mock_purge_model_docs_if_necessary,
             patch.object(
                 BinaryStorageRepo,
