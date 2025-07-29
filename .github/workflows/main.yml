@@ -218,6 +218,7 @@ jobs:
       AWS_ROLE: ${{ secrets.AWS_ROLE }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
       REGISTRY: ${{ secrets.REGISTRY }}
+      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
 
   success:
     name: Required status checks
