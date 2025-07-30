@@ -14,9 +14,8 @@ Feature: project export
     And the job completes successfully within 3 minutes
     And the exported project can be downloaded
 
-    @wip
     Examples:
     | included_models |
-    | all             |
     | none            |
     | latest_active   |
+    | all             |

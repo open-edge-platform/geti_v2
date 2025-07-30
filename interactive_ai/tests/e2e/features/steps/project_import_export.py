@@ -156,8 +156,8 @@ def step_when_user_requests_project_export(context: Context, included_models: st
 
 @then("the exported project can be downloaded")
 def step_then_user_can_download_exported_project(context: Context) -> None:
-    metadata = context.job_info.metadata
-    download_url = metadata["download_url"]
+    metadata = context.job_info.actual_instance.metadata
+    download_url = metadata.download_url
     export_id = download_url.split("/")[-2]
     project_import_export_api = context.project_import_export_api
     project_import_export_api.download_exported_project(
