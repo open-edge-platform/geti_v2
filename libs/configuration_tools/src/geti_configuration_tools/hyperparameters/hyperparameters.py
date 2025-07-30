@@ -1,17 +1,15 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import Field, model_validator
 
 from geti_configuration_tools.utils import partial_model
 
 from .augmentation import AugmentationParameters
+from .base_model_no_extra import BaseModelNoExtra
 
 
-class DatasetPreparationParameters(BaseModel):
+class DatasetPreparationParameters(BaseModelNoExtra):
     """Parameters for dataset preparation before training."""
-
-    model_config = ConfigDict(extra="forbid")
 
     augmentation: AugmentationParameters = Field(
         default_factory=AugmentationParameters,
@@ -20,8 +18,7 @@ class DatasetPreparationParameters(BaseModel):
     )
 
 
-class EarlyStopping(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class EarlyStopping(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable early stopping",
@@ -35,18 +32,17 @@ class EarlyStopping(BaseModel):
     )
 
 
-class TrainingHyperParameters(BaseModel):
+class TrainingHyperParameters(BaseModelNoExtra):
     """Hyperparameters for model training process."""
 
-    model_config = ConfigDict(extra="forbid")
-    max_epochs: int = Field(
-        gt=0, default=1000, title="Maximum epochs", description="Maximum number of training epochs to run"
+    max_epochs: int | None = Field(
+        gt=0, default=None, title="Maximum epochs", description="Maximum number of training epochs to run"
     )
-    early_stopping: EarlyStopping = Field(
-        default_factory=EarlyStopping, title="Early stopping", description="Configuration for early stopping mechanism"
+    early_stopping: EarlyStopping | None = Field(
+        default=None, title="Early stopping", description="Configuration for early stopping mechanism"
     )
-    learning_rate: float = Field(
-        gt=0, lt=1, default=0.001, title="Learning rate", description="Base learning rate for the optimizer"
+    learning_rate: float | None = Field(
+        gt=0, lt=1, default=None, title="Learning rate", description="Base learning rate for the optimizer"
     )
     input_size_width: int | None = Field(
         default=None,
@@ -119,7 +115,7 @@ class TrainingHyperParameters(BaseModel):
         return self
 
 
-class EvaluationParameters(BaseModel):
+class EvaluationParameters(BaseModelNoExtra):
     """Parameters for model evaluation."""
 
     metric: str | None = Field(
@@ -127,10 +123,9 @@ class EvaluationParameters(BaseModel):
     )
 
 
-class Hyperparameters(BaseModel):
+class Hyperparameters(BaseModelNoExtra):
     """Complete set of configurable parameters for model training and evaluation."""
 
-    model_config = ConfigDict(extra="forbid")
     dataset_preparation: DatasetPreparationParameters = Field(
         default_factory=DatasetPreparationParameters,
         title="Dataset preparation",

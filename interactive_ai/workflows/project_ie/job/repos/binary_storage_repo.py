@@ -72,13 +72,16 @@ class BinaryStorageRepo(StorageRepo):
             if object_type not in BinaryStorageRepo.BLACKLISTED_OBJECT_TYPES
         )
 
-    def get_all_objects_by_type(self, object_type: BinaryObjectType, target_folder: str) -> Iterator[tuple[str, str]]:
+    def get_all_objects_by_type(
+        self, object_type: BinaryObjectType, target_folder: str, whitelisted_paths: set[str] | None = None
+    ) -> Iterator[tuple[str, str]]:
         """
         Iterates over objects of a specific project and type. For each object, it downloads it to a temporary local
          folder, yields the local path and the remote path from the project root onward, then removes the local copy.
 
         :param object_type: The type of the binary object to be processed, corresponds to a bucket
         :param target_folder: Folder in the local filesystem where to download the objects from S3
+        :param whitelisted_paths: Set of paths to objects to include in the output
         :return: An iterator yielding tuples of:
             - The local path where the object is downloaded to
             - The remote path from the project root onward where the object was downloaded from
@@ -100,26 +103,27 @@ class BinaryStorageRepo(StorageRepo):
         for s3_object in objects_to_fetch:
             object_name = s3_object.object_name
             object_name_from_project_root = object_name.replace(self.s3_project_root + "/", "")
-            local_path = os.path.join(target_folder, object_name_from_project_root)
-            try:
-                self.minio_client.fget_object(
-                    bucket_name=bucket_name,
-                    file_path=local_path,
-                    object_name=object_name,
-                )
-            except Exception:
-                logger.exception(
-                    "Failed to fetch object from location %s in bucket %s to local temporary path %s.",
-                    object_name,
-                    bucket_name,
-                    local_path,
-                )
-                raise
+            if whitelisted_paths is None or object_name_from_project_root in whitelisted_paths:
+                local_path = os.path.join(target_folder, object_name_from_project_root)
+                try:
+                    self.minio_client.fget_object(
+                        bucket_name=bucket_name,
+                        file_path=local_path,
+                        object_name=object_name,
+                    )
+                except Exception:
+                    logger.exception(
+                        "Failed to fetch object from location %s in bucket %s to local temporary path %s.",
+                        object_name,
+                        bucket_name,
+                        local_path,
+                    )
+                    raise
 
-            yield local_path, object_name_from_project_root
+                yield local_path, object_name_from_project_root
 
-            if os.path.exists(local_path):
-                os.remove(local_path)
+                if os.path.exists(local_path):
+                    os.remove(local_path)
 
     def store_objects_by_type(
         self,

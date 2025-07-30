@@ -9,6 +9,11 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from geti_configuration_tools.training_configuration import TrainingConfiguration
+from geti_feature_tools import FeatureFlagProvider
+
+from entities import FeatureFlag
+
 from geti_types import ID
 from iai_core.entities.dataset_storage import DatasetStorage
 from iai_core.entities.model_storage import ModelStorage
@@ -60,6 +65,7 @@ class TrainTaskJobData:
     workspace_id: ID
     max_training_dataset_size: int | None
     dataset_storage: DatasetStorage
+    training_configuration: TrainingConfiguration | None
     hyper_parameters_id: ID | None
     min_annotation_size: int | None = None
     max_number_of_annotations: int | None = None
@@ -91,7 +97,7 @@ class TrainTaskJobData:
 
         :returns: a dict representing the job payload
         """
-        return {
+        payload = {
             "project_id": str(self.project.id_),
             "task_id": str(self.task_node.id_),
             "from_scratch": self.from_scratch,
@@ -109,6 +115,16 @@ class TrainTaskJobData:
             "reshuffle_subsets": self.reshuffle_subsets,
             "retain_training_artifacts": self.retain_training_artifacts,
         }
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
+            payload["hyperparameters_json"] = (
+                # Use model_dump_json to avoid int casting into floats
+                self.training_configuration.hyperparameters.model_dump_json(
+                    exclude={"training": {"allowed_values_input_size"}}, exclude_none=True
+                )
+                if self.training_configuration
+                else None
+            )
+        return payload
 
     def create_metadata(self) -> dict:
         """

@@ -24,6 +24,10 @@ def parse_manifest(*manifest_sources, relative: bool = True) -> ModelManifest:
     if relative:
         manifest_sources = tuple(str(resources.files(manifests).joinpath(path)) for path in manifest_sources)
     yaml_manifest = hiyapyco.load(
-        *manifest_sources, method=hiyapyco.METHOD_MERGE, interpolate=True, failonmissingfiles=True
+        *manifest_sources,
+        method=hiyapyco.METHOD_MERGE,
+        interpolate=True,
+        failonmissingfiles=True,
+        none_behavior=hiyapyco.NONE_BEHAVIOR_OVERRIDE,
     )
     return ModelManifest(**yaml_manifest)

@@ -22,7 +22,11 @@ from iai_core.repos.base.model_storage_based_repo import ModelStorageBasedSessio
 from iai_core.repos.base.session_repo import QueryAccessMode
 from iai_core.repos.mappers.cursor_iterator import CursorIterator
 from iai_core.repos.mappers.mongodb_mappers.id_mapper import IDToMongo
-from iai_core.repos.mappers.mongodb_mappers.model_mapper import ModelPurgeInfoToMongo, ModelToMongo
+from iai_core.repos.mappers.mongodb_mappers.model_mapper import (
+    ModelConfigurationToMongo,
+    ModelPurgeInfoToMongo,
+    ModelToMongo,
+)
 from iai_core.repos.storage.binary_repos import ModelBinaryRepo
 from iai_core.utils.feature_flags import FeatureFlagProvider
 
@@ -544,6 +548,24 @@ class ModelRepo(ModelStorageBasedSessionRepo[Model]):
         model_filter["_id"] = IDToMongo.forward(model.id_)
         self._collection.update_one(
             filter=model_filter, update={"$set": {"training_job_duration": training_job_duration}}
+        )
+
+    def update_advanced_configuration(self, model: Model, advanced_configuration: dict) -> None:
+        """
+        Updates the advanced configuration for a model in the database.
+
+        Note: both the model instance and the database are updated.
+
+        :param model: the model to update
+        :param advanced_configuration: the new advanced configuration to save in the database
+        """
+        model.configuration.display_only_configuration["advanced_configuration"] = advanced_configuration
+
+        model_filter = self.preliminary_query_match_filter(access_mode=QueryAccessMode.WRITE)
+        model_filter["_id"] = IDToMongo.forward(model.id_)
+        model_configuration_mongo_dict = ModelConfigurationToMongo.forward(model.configuration)
+        self._collection.update_one(
+            filter=model_filter, update={"$set": {"configuration": model_configuration_mongo_dict}}
         )
 
     def delete_by_id(self, id_: ID) -> bool:

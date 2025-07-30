@@ -81,6 +81,7 @@ platform/services/opa_bundle:
 interactive_ai/services/auto_train:
   - interactive_ai/services/auto_train/**
   - interactive_ai/libs/iai_core_py/**
+  - interactive_ai/supported_models/**
   - libs/types/**
   - libs/telemetry_tools/**
   - libs/feature_tools/**
@@ -270,6 +271,7 @@ interactive_ai/workflows/optimize:
   - Makefile.shared
   - .github/workflows/component.yml
 interactive_ai/workflows/train:
+  - interactive_ai/supported_models/**
   - interactive_ai/workflows/train/job/**
   - interactive_ai/workflows/train/tests/**
   - interactive_ai/workflows/common/jobs_common

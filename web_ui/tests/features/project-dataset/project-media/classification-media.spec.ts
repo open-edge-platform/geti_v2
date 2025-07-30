@@ -31,6 +31,8 @@ const classificationLabels = [
         parent_id: null,
     },
 ];
+
+// TODO: add test for MediaPreviewList
 test('Upload media with label', async ({ page, mediaPage, registerApiResponse }) => {
     registerApiResponse('GetProjectInfo', (_, res, ctx) => {
         const classificationProject = cloneDeep(project);

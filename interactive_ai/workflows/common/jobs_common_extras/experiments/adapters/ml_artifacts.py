@@ -11,12 +11,11 @@ from tempfile import TemporaryDirectory
 from typing import Any
 
 import numpy as np
+import yaml
 from geti_telemetry_tools import unified_tracing
 from geti_types import ProjectIdentifier
 from iai_core.adapters.binary_interpreters import RAWBinaryInterpreter
 from iai_core.adapters.model_adapter import DataSource
-from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
-from iai_core.configuration.helper import create
 from iai_core.entities.label_schema import LabelSchema
 from iai_core.entities.metrics import CurveMetric, LineChartInfo, MetricsGroup, Performance, ScoreMetric
 from iai_core.entities.model import Model, ModelFormat, ModelOptimizationType, ModelStatus
@@ -83,7 +82,6 @@ class MLArtifactsAdapter:
         - <root>/inputs
         - <root>/live_metrics
         - <root>/outputs/models
-        - <root>/outputs/exportable_codes
         - <root>/outputs/configurations
         - <root>/outputs/logs
         """
@@ -95,7 +93,7 @@ class MLArtifactsAdapter:
                 with open(os.path.join(prefix, ".placeholder"), "w") as fp:
                     fp.write("")
 
-            for dir in ["models", "exportable_codes", "configurations", "logs"]:
+            for dir in ["models", "configurations", "logs"]:
                 prefix = os.path.join(root, self.dst_path_prefix, "outputs", dir)
                 os.makedirs(prefix)
                 with open(os.path.join(prefix, ".placeholder"), "w") as fp:
@@ -211,28 +209,26 @@ class MLArtifactsAdapter:
     @unified_tracing
     def push_input_configuration(
         self,
-        model_template_id: str,
-        hyper_parameters: dict[str, Any],
+        model_manifest_id: str,
         export_parameters: dict[str, str] | list[dict[str, str]],
-        optimization_type: ModelOptimizationType = ModelOptimizationType.NONE,
+        hyper_parameters: dict[str, Any] | None = None,
         label_schema: LabelSchema | None = None,
     ) -> None:
-        """Push the configuration file to the inputs directory.
+        """Push the configuration file to the input directory.
 
-        :param model_template_id: ID of model template for this job (obtained from CRD)
-        :param hyper_parameters: Hyperparameters for this job (obtained from CRD)
+        :param model_manifest_id: ID of model manifest for this job (obtained from CRD)
         :param export_parameters: Exportparameters for this job (obtained from CRD)
-        :param optimization_type: Model optimization type enum. It is only used for the model optimize job.
-        :param sub_task: Sub task type used to distinguish classification tasks.
-            If `None`, do not add this value to the configuration file.
+        :param hyper_parameters: Hyperparameters for this job (obtained from CRD)
+        :param label_schema: label schema of the project. Used to determined classification subtask if available.
         """
         config_dict: dict[str, Any] = {}
 
         config_dict["job_type"] = self.job_metadata.type
-        config_dict["model_template_id"] = model_template_id
-        config_dict["hyperparameters"] = hyper_parameters
-        config_dict["export_parameters"] = export_parameters
-        config_dict["optimization_type"] = optimization_type.name
+        config_dict["model_manifest_id"] = model_manifest_id
+        config_dict["export_models"] = export_parameters
+
+        if hyper_parameters:
+            config_dict["hyperparameters"] = hyper_parameters
 
         if label_schema:
             config_dict["sub_task_type"] = ClsSubTaskType.create_from_label_schema(label_schema=label_schema).value
@@ -241,8 +237,8 @@ class MLArtifactsAdapter:
             prefix = os.path.join(root, self.dst_path_prefix, "inputs")
             os.makedirs(prefix)
 
-            with open(os.path.join(prefix, "config.json"), "w") as fp:
-                json.dump(obj=config_dict, fp=fp)
+            with open(os.path.join(prefix, "config.yaml"), "w") as fp:
+                yaml.dump(config_dict, fp, default_flow_style=False, sort_keys=False)
 
             # NOTE: This is a workaround to construct
             # jobs/<job-id>/... directory structure in the S3 bucket.
@@ -261,17 +257,22 @@ class MLArtifactsAdapter:
             This function will inplace their data.
         """
         for model in models_to_update:
+            has_xai_head = model.has_xai_head
+            # TODO: remove workaround after https://github.com/open-edge-platform/geti/issues/924
+            # model.has_xai_head is unreliable for keypoint detection
+            is_keypoint = model.model_storage.model_manifest_id.lower().startswith("keypoint_detection")
             precision = next(iter(model.precision)).name.lower()
-            xai_suffix = "xai" if model.has_xai_head else "non-xai"
+            xai_suffix_base = "xai" if has_xai_head else "non-xai"
+            xai_suffix_other = "xai" if has_xai_head and not is_keypoint else "non-xai"
 
             if model.model_format == ModelFormat.BASE_FRAMEWORK:
-                self._update_base_model(model, precision, xai_suffix)
+                self._update_base_model(model, precision, xai_suffix_base)
 
             elif model.model_format == ModelFormat.OPENVINO:
-                self._update_ov_model(model, precision, xai_suffix)
+                self._update_ov_model(model, precision, xai_suffix_other)
 
             elif model.model_format == ModelFormat.ONNX:
-                self._update_onnx_model(model, precision, xai_suffix)
+                self._update_onnx_model(model, precision, xai_suffix_other)
 
     @unified_tracing
     def update_output_model_for_optimize(
@@ -293,20 +294,17 @@ class MLArtifactsAdapter:
         )
 
     @unified_tracing
-    def _update_model(self, model: Model, key: str, filepath: str, is_exportable_code: bool = False) -> None:
+    def _update_model(self, model: Model, key: str, filepath: str) -> None:
         try:
             model_repo = ModelRepo(model.model_storage_identifier)
             binary_filename = self.binary_repo.copy_to(model_binary_repo=model_repo.binary_repo, src_filepath=filepath)
             data_source = DataSource(repository=model_repo.binary_repo, binary_filename=binary_filename)
 
-            if is_exportable_code:
-                model.exportable_code = data_source  # type: ignore[assignment]
-            else:
-                model.set_data(
-                    key=key,
-                    data=data_source,
-                    skip_deletion=False,
-                )
+            model.set_data(
+                key=key,
+                data=data_source,
+                skip_deletion=False,
+            )
             # TODO move out of the loop
             logger.info(
                 "Model with ID '%s' update its weights %s with binary file %s: Model status after the update: %s.",
@@ -339,7 +337,6 @@ class MLArtifactsAdapter:
     @unified_tracing
     def _update_ov_model(self, model: Model, precision: str, xai_suffix: str):
         model_prefix = os.path.join(self.dst_path_prefix, "outputs", "models")
-        exportable_code_prefix = os.path.join(self.dst_path_prefix, "outputs", "exportable_codes")
 
         # Update OpenVINO XML
         self._update_model(
@@ -352,16 +349,6 @@ class MLArtifactsAdapter:
             model=model,
             key=OPENVINO_BIN_KEY,
             filepath=os.path.join(model_prefix, f"model_{precision}_{xai_suffix}.bin"),
-        )
-        # Update Exportable code
-        self._update_model(
-            model=model,
-            key="",
-            filepath=os.path.join(
-                exportable_code_prefix,
-                f"exportable-code_{precision}_{xai_suffix}.whl",
-            ),
-            is_exportable_code=True,
         )
 
         # Update detection model only artifacts
@@ -415,19 +402,20 @@ class MLArtifactsAdapter:
         )
 
     @unified_tracing
-    def pull_output_configuration(self) -> ConfigurableParameters:
-        data = _check_bytes_type(
-            self.binary_repo.get_by_filename(
-                filename=os.path.join(
-                    self.dst_path_prefix,
-                    "outputs",
-                    "configurations",
-                    "optimized-config.json",
-                ),
-                binary_interpreter=RAWBinaryInterpreter(),
+    def pull_output_configuration(self) -> dict | None:
+        # advanced_config.json contains extra configuration used by OTX that were NOT included in the input config.yaml
+        filename = os.path.join(self.dst_path_prefix, "outputs", "configurations", "advanced_config.json")
+        if not self.binary_repo.exists(filename):
+            logger.warning(
+                "Cannot find advanced_config.json file to extract advanced configuration; `%s` is missing.",
+                filename,
             )
+            return None
+
+        data = _check_bytes_type(
+            self.binary_repo.get_by_filename(filename=filename, binary_interpreter=RAWBinaryInterpreter())
         )
-        return create(input_config=json.loads(data))
+        return json.loads(data)
 
     @unified_tracing
     def pull_metrics(self) -> Performance | None:

@@ -41,7 +41,7 @@ def activate_model_storage(model_storage: ModelStorage) -> None:
     if model_storage.id_ != old_model_storage.id_:
         logger.info(
             "Updating active model storage to %s for task (ID %s)",
-            model_storage.model_template.model_template_id,
+            model_storage.model_manifest_id,
             model_storage.task_node_id,
         )
         ModelService.activate_model_storage(model_storage=model_storage)

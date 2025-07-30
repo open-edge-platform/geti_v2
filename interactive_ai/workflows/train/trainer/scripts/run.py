@@ -24,10 +24,10 @@ def execute(work_dir: Path) -> None:
     config_file_path = download_config_file()
     shard_files_dir = download_shard_files()
 
-    config = OTXConfig.from_json_file(config_file_path=config_file_path)
+    config = OTXConfig.from_yaml_file(config_file_path=config_file_path)
 
     job_type = config.job_type
-    download_pretrained_weights(work_dir=work_dir, template_id=config.model_template_id)
+    download_pretrained_weights(work_dir=work_dir, template_id=config.model_manifest_id)
 
     if job_type == JobType.TRAIN:
         logger.debug("Starting training job.")

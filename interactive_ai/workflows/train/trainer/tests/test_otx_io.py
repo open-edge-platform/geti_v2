@@ -11,7 +11,6 @@ from otx_io import (
     load_trained_model_weights,
     save_checkpoint_sync,
     save_exported_model,
-    save_openvino_exported_model,
     save_trained_model_weights,
     upload_error_log,
     upload_full_log,
@@ -86,8 +85,8 @@ def test_download_config_file(
     mock_get_shard_files_dir.assert_called()
     client.download_file.assert_called_once_with(
         bucket_name="bucket",
-        relative_path=Path("object_name_base/inputs/config.json"),
-        file_path=Path("shard_files/config.json"),
+        relative_path=Path("object_name_base/inputs/config.yaml"),
+        file_path=Path("shard_files/config.yaml"),
     )
 
 
@@ -296,35 +295,6 @@ def test_download_model_artifact_not_presigned(
     )
 
 
-@patch("otx_io.save_exported_model")
-@patch("otx_io.unzip_exportable_code")
-def test_save_openvino_exported_model(
-    mock_unzip_exportable_code,
-    mock_save_exported_model,
-) -> None:
-    # Arrange
-    export_param = MagicMock()
-
-    # Act
-    save_openvino_exported_model(
-        work_dir=Path("work_dir"),
-        export_param=export_param,
-        exported_path=Path("exported_path"),
-        export_dir=Path("export_dir"),
-    )
-
-    # Assert
-    mock_unzip_exportable_code.assert_called_once_with(
-        work_dir=Path("work_dir"),
-        exported_path=Path("exported_path"),
-        dst_dir=Path("export_dir"),
-    )
-    mock_save_exported_model.assert_called_once_with(
-        export_dir=Path("export_dir"),
-        export_param=export_param,
-    )
-
-
 @pytest.mark.parametrize("force_non_xai", [True, False])
 @patch("otx_io.upload_model_artifact")
 def test_save_trained_model_weights(
@@ -387,30 +357,26 @@ def test_save_exported_model_openvino(
     save_exported_model(export_dir=Path("export_dir"), export_param=export_param)
 
     # Assert
-    assert mock_upload_model_artifact.call_count == 3
+    assert mock_upload_model_artifact.call_count == 2
+    model_name = "optimized_model" if precision == PrecisionType.INT8 else "exported_model"
     mock_upload_model_artifact.assert_has_calls(
         [
             call(
-                src_filepath=Path("export_dir/exportable_code.zip"),
-                dst_filepath=Path("outputs/exportable_codes") / export_param.to_exportable_code_artifact_fname(),
-            ),
-            call(
-                src_filepath=Path("export_dir/exported_model.bin"),
+                src_filepath=Path(f"export_dir/{model_name}.bin"),
                 dst_filepath=Path("outputs/models") / export_param.to_artifact_fnames()[0],
             ),
             call(
-                src_filepath=Path("export_dir/exported_model.xml"),
+                src_filepath=Path(f"export_dir/{model_name}.xml"),
                 dst_filepath=Path("outputs/models") / export_param.to_artifact_fnames()[1],
             ),
         ]
     )
 
-    assert mock_remove.call_count == 3
+    assert mock_remove.call_count == 2
     mock_remove.assert_has_calls(
         [
-            call(Path("export_dir/exportable_code.zip")),
-            call(Path("export_dir/exported_model.bin")),
-            call(Path("export_dir/exported_model.xml")),
+            call(Path(f"export_dir/{model_name}.bin")),
+            call(Path(f"export_dir/{model_name}.xml")),
         ]
     )
 
@@ -494,12 +460,12 @@ def test_load_trained_model_weights(
         mock_download_model_artifact.assert_has_calls(
             [
                 call(
-                    src_path=Path("inputs/openvino.bin"),
+                    src_path=Path("inputs/openvino.xml"),
                     dst_dir_path=Path("work_dir"),
                     use_presigned_url=False,
                 ),
                 call(
-                    src_path=Path("inputs/openvino.xml"),
+                    src_path=Path("inputs/openvino.bin"),
                     dst_dir_path=Path("work_dir"),
                     use_presigned_url=False,
                 ),

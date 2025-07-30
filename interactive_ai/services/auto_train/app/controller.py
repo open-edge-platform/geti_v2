@@ -6,17 +6,20 @@
 import logging
 from datetime import datetime, timedelta
 
+from geti_configuration_tools import ConfigurationOverlayTools
+from geti_configuration_tools.training_configuration import PartialTrainingConfiguration, TrainingConfiguration
 from geti_feature_tools.feature_flags import FeatureFlagProvider
+from geti_supported_models import NullModelManifest, SupportedModels
 from grpc import RpcError
 
 from entities import AutoTrainActivationRequest, FeatureFlag, NullAutoTrainActivationRequest
-from exceptions import InvalidAutoTrainRequestError, JobSubmissionError
+from exceptions import InvalidAutoTrainRequestError, JobSubmissionError, ModelManifestNotFoundException
 from job_creation_helpers import TRAIN_JOB_PRIORITY, TRAIN_JOB_REQUIRED_GPUS, JobDuplicatePolicy, TrainTaskJobData
 from repos.auto_train_activation_repo import SessionBasedAutoTrainActivationRepo
 from repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_telemetry_tools import unified_tracing
-from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier, session_context
+from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier, ProjectIdentifier, session_context
 from grpc_interfaces.job_submission.client import GRPCJobsClient
 from grpc_interfaces.job_submission.pb.job_service_pb2 import SubmitJobRequest
 from iai_core.configuration.elements.component_parameters import ComponentType
@@ -158,6 +161,7 @@ class AutoTrainController:
                 task_node_id=auto_train_request.task_node_id,
             )
 
+            full_training_configuration: TrainingConfiguration | None = None
             if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
                 config_repo = PartialTrainingConfigurationRepo(project_identifier=auto_train_request.project_identifier)
                 global_parameters = config_repo.get_global_parameters(
@@ -166,13 +170,18 @@ class AutoTrainController:
                 filtering_parameters = global_parameters.dataset_preparation.filtering
                 min_annotation_size = (
                     filtering_parameters.min_annotation_pixels.min_annotation_pixels
-                    if filtering_parameters.min_annotation_pixels
+                    if filtering_parameters and filtering_parameters.min_annotation_pixels
                     else None
                 )
                 max_number_of_annotations = (
                     filtering_parameters.max_annotation_objects.max_annotation_objects
-                    if filtering_parameters.max_annotation_objects.enable
+                    if filtering_parameters and filtering_parameters.max_annotation_objects.enable
                     else None
+                )
+                full_training_configuration = self.get_full_training_configuration(
+                    project_identifier=auto_train_request.project_identifier,
+                    task_id=auto_train_request.task_node_id,
+                    model_manifest_id=model_storage.model_manifest_id,
                 )
             else:
                 config_repo = ConfigurableParametersRepo(project_identifier=auto_train_request.project_identifier)
@@ -201,6 +210,7 @@ class AutoTrainController:
                 task_node=task_node,
                 activate_model_storage=True,
                 from_scratch=False,
+                training_configuration=full_training_configuration,
                 hyper_parameters_id=None,
                 workspace_id=auto_train_request.workspace_id,
                 dataset_storage=project.get_training_dataset_storage(),
@@ -285,3 +295,47 @@ class AutoTrainController:
                 len(expired_tasks),
                 n_remaining,
             )
+
+    @staticmethod
+    def get_full_training_configuration(
+        project_identifier: ProjectIdentifier, task_id: ID, model_manifest_id: str
+    ) -> TrainingConfiguration:
+        """
+        Get the full training configuration for a specific model architecture.
+
+        The full training configuration is obtained by merging the base model manifest hyperparameters
+        of a specific model architecture with the task-level configuration parameters and any
+        model manifest-specific configurable parameters. This merged configuration provides all the
+        necessary settings for training a model for the given task.
+
+        :param project_identifier: Identifier for the project
+        :param task_id: ID of the task for which to get the configuration
+        :param model_manifest_id: ID of the model manifest to use for algorithm-level configuration
+        :return: The combined and validated training configuration
+        """
+        model_manifest = SupportedModels.get_model_manifest_by_id(model_manifest_id)
+        if isinstance(model_manifest, NullModelManifest):
+            raise ModelManifestNotFoundException(
+                f"The requested model manifest could not be found. Model Manifest ID: `{model_manifest_id}`."
+            )
+
+        base_config = PartialTrainingConfiguration.model_validate(
+            {
+                "id_": ID(f"full_training_configuration_{model_manifest_id}"),
+                "model_manifest_id": model_manifest_id,
+                "task_id": str(task_id),
+                "hyperparameters": model_manifest.hyperparameters.model_dump(),
+            }
+        )
+        training_configuration_repo = PartialTrainingConfigurationRepo(project_identifier)
+        task_level_config = training_configuration_repo.get_task_only_configuration(task_id)
+        algo_level_config = (
+            training_configuration_repo.get_by_model_manifest_id(model_manifest_id) if model_manifest_id else None
+        )
+        return ConfigurationOverlayTools.overlay_training_configurations(
+            base_config,
+            task_level_config,
+            algo_level_config,
+            validate_full_config=True,
+            common_hyperparameters_only=True,  # Only parameters present in the model manifest will be updated
+        )

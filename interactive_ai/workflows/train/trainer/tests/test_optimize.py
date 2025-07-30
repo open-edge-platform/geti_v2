@@ -5,22 +5,29 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from otx.algo.classification.vit import VisionTransformerForMulticlassCls
-from otx.core.types.export import OTXExportFormatType
-from otx.core.types.label import LabelInfo
-from scripts.optimize import optimize
-from scripts.utils import OTXConfig
+from optimize import optimize
+from otx.backend.native.models.base import DataInputParams
+from otx.models import VisionTransformer
+from otx.types.export import OTXExportFormatType
+from otx.types.label import LabelInfo
+from utils import OTXConfig
 
 
 @pytest.fixture()
 def fxt_config(fxt_dir_assets):
-    config_file_path = fxt_dir_assets / "pot_config.json"
-    return OTXConfig.from_json_file(config_file_path)
+    config_file_path = fxt_dir_assets / "pot_config.yaml"
+    return OTXConfig.from_yaml_file(config_file_path)
 
 
 @pytest.fixture()
 def fxt_openvino_model(tmpdir):
-    model = VisionTransformerForMulticlassCls(LabelInfo.from_num_classes(3))
+    model = VisionTransformer(
+        label_info=LabelInfo.from_num_classes(3),
+        task="multi_class",
+        data_input_params=DataInputParams(
+            input_size=[224, 224], mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375]
+        ),
+    )
 
     export_dir = Path(tmpdir)
     checkpoint_path = model.export(
@@ -38,7 +45,13 @@ def fxt_openvino_model(tmpdir):
 @pytest.fixture()
 def fxt_exportable_code_side_effect(tmpdir):
     def side_effect(*args, **kwargs):
-        model = VisionTransformerForMulticlassCls(LabelInfo.from_num_classes(3))
+        model = VisionTransformer(
+            label_info=LabelInfo.from_num_classes(3),
+            task="multi_class",
+            data_input_params=DataInputParams(
+                input_size=[224, 224], mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375]
+            ),
+        )
 
         export_dir = Path(tmpdir) / "export"
         checkpoint_path = model.export(
@@ -55,7 +68,7 @@ def fxt_exportable_code_side_effect(tmpdir):
 
 @patch("otx_io.upload_model_artifact")
 @patch("otx.engine.engine.Engine.export")
-@patch("scripts.optimize.load_trained_model_weights")
+@patch("optimize.load_trained_model_weights")
 def test_optimize(
     mock_load_trained_model_weights,
     mock_engine_export,
@@ -85,6 +98,4 @@ def test_optimize(
         # OPENVINO INT8
         "model_int8-pot_non-xai.xml",
         "model_int8-pot_non-xai.bin",
-        # Exportable codes
-        "exportable-code_int8-pot_non-xai.whl",
     }

@@ -78,7 +78,7 @@ paths:
     $ref: "./endpoints/annotations/latest_video_annotation_endpoint.yaml"
 #model endpoints
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/supported_algorithms:
-    $ref: "./endpoints/models/revamp/supported_algorithms_endpoint.yaml"
+    $ref: "./endpoints/models/supported_algorithms_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}:train:
     $ref: "./endpoints/models/train_model_endpoint.yaml"
   /organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}/model_groups:

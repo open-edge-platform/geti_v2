@@ -15,6 +15,8 @@ PYDANTIC_BASE_TYPES_MAPPING = {
 }
 PYDANTIC_ANY_OF = "anyOf"
 
+BasicType = int | float | str | bool
+
 
 class ConfigurableParametersRESTViews:
     """
@@ -25,7 +27,9 @@ class ConfigurableParametersRESTViews:
     """
 
     @staticmethod
-    def _parameter_to_rest(key: str, rest_type: str, value: float | str | bool, json_schema: dict) -> dict[str, Any]:
+    def _parameter_to_rest(
+        key: str, rest_type: str, value: BasicType, json_schema: dict, default_value_override: BasicType | None = None
+    ) -> dict[str, Any]:
         """
         Convert a single parameter to its REST representation.
 
@@ -35,8 +39,8 @@ class ConfigurableParametersRESTViews:
         :param json_schema: The JSON schema for the parameter from the Pydantic model
         :return: Dictionary containing the REST representation of the parameter
         """
-        default = json_schema.get("default")
-        default_value = default if default is not None else json_schema.get("default_value")
+        default = default_value_override if default_value_override is not None else json_schema.get("default_value")
+        default_value = default if default is not None else json_schema.get("default")
         rest_view = {
             "key": key,
             "name": json_schema.get("title"),
@@ -69,7 +73,7 @@ class ConfigurableParametersRESTViews:
 
     @classmethod
     def configurable_parameters_to_rest(
-        cls, configurable_parameters: BaseModel
+        cls, configurable_parameters: BaseModel, default_config: dict[str, Any] | None = None
     ) -> dict[str, Any] | list[dict[str, Any]]:
         """
         Convert a Pydantic model of configurable parameters to its REST representation.
@@ -87,17 +91,21 @@ class ConfigurableParametersRESTViews:
         - If both exist: returns a list containing parameter dictionaries and nested model dictionary
 
         :param configurable_parameters: Pydantic model containing configurable parameters
+        :param default_config: Optional default configuration to use for setting "default_value" in the REST view.
         :return: REST representation as either a dictionary of nested models,
             a list of parameter dictionaries, or a combined list of both
         """
         nested_params: dict[str, Any] = {}
         list_params: list[dict[str, Any]] = []
+        default_config = default_config or {}
 
         json_model = configurable_parameters.model_json_schema()
-        for field_name in configurable_parameters.model_fields:
+        for field_name, field_info in configurable_parameters.model_fields.items():
             field = getattr(configurable_parameters, field_name)
+            default_field = default_config.get(field_name)
 
-            schema = json_model["properties"][field_name]
+            # Update schema with any extra JSON schema information
+            schema = json_model["properties"][field_name] | (field_info.json_schema_extra or {})
             # optional parameter may contain `'anyOf': [{'exclusiveMinimum': 0, 'type': 'integer'}, {'type': 'null'}]`
             type_any_of = schema.get(PYDANTIC_ANY_OF, [{}])[0]
             pydantic_type = schema.get("type", type_any_of.get("type"))
@@ -114,11 +122,14 @@ class ConfigurableParametersRESTViews:
                         rest_type=PYDANTIC_BASE_TYPES_MAPPING[pydantic_type],
                         value=field,
                         json_schema=schema,
+                        default_value_override=default_field,
                     )
                 )
             else:
                 # If the field is a nested Pydantic model, process it recursively
-                nested_params[field_name] = cls.configurable_parameters_to_rest(configurable_parameters=field)
+                nested_params[field_name] = cls.configurable_parameters_to_rest(
+                    configurable_parameters=field, default_config=default_field
+                )
 
         # Return combined or individual results based on content
         if nested_params and list_params:

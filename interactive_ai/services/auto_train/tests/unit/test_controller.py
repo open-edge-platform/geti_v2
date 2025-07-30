@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
 
 import pytest
+from geti_configuration_tools.training_configuration import TrainingConfiguration
 from grpc import RpcError
 
 from controller import AUTO_TRAIN_AUTHOR, AutoTrainController, last_job_submission_time
@@ -14,7 +15,7 @@ from job_creation_helpers import TRAIN_JOB_PRIORITY, TrainTaskJobData
 from repos.auto_train_activation_repo import SessionBasedAutoTrainActivationRepo
 from repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
-from geti_types import Session
+from geti_types import ID, ProjectIdentifier, Session
 from grpc_interfaces.job_submission.client import GRPCJobsClient
 from grpc_interfaces.job_submission.pb.job_service_pb2 import SubmitJobRequest
 from iai_core.configuration.elements.component_parameters import ComponentType
@@ -183,6 +184,7 @@ class TestAutoTrainController:
         fxt_empty_project,
         fxt_model_storage,
         fxt_task_node,
+        fxt_training_configuration_model_manifest_level,
     ) -> None:
         # Arrange
         fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
@@ -211,6 +213,11 @@ class TestAutoTrainController:
                 return_value=dummy_train_job_metadata,
             ),
             patch.object(AutoTrainController, "get_num_dataset_items", return_value=0),
+            patch.object(
+                AutoTrainController,
+                "get_full_training_configuration",
+                return_value=fxt_training_configuration_model_manifest_level,
+            ) as mock_get_full_training_configuration,
         ):
             fxt_auto_train_controller.submit_train_job(fxt_auto_train_activation_request)
 
@@ -234,6 +241,11 @@ class TestAutoTrainController:
             project_id=fxt_auto_train_activation_request.project_id,
             gpu_num_required=1,
             cancellable=True,
+        )
+        mock_get_full_training_configuration.assert_called_once_with(
+            project_identifier=fxt_auto_train_activation_request.project_identifier,
+            task_id=fxt_auto_train_activation_request.task_node_id,
+            model_manifest_id=fxt_model_storage.model_manifest_id,
         )
 
     def test_submit_train_job_project_not_found(
@@ -360,3 +372,67 @@ class TestAutoTrainController:
             fxt_auto_train_controller.remove_request_by_task(task_node_id=task_node_id)
 
         mock_delete_by_task_node_id.assert_called_once_with(task_node_id=task_node_id)
+
+    def test_get_full_training_configuration(
+        self,
+        fxt_training_configuration_task_level,
+        fxt_training_configuration_model_manifest_level,
+    ) -> None:
+        # Arrange
+        project_identifier = ProjectIdentifier(workspace_id=ID("test_workspace"), project_id=ID("test_project"))
+        model_manifest_id = fxt_training_configuration_model_manifest_level.model_manifest_id
+        expected_config = TrainingConfiguration.model_validate(
+            {
+                "id_": ID(f"full_training_configuration_{model_manifest_id}"),
+                "task_id": "task_123",
+                "model_manifest_id": model_manifest_id,
+                "global_parameters": {
+                    "dataset_preparation": {
+                        "filtering": {
+                            "min_annotation_pixels": {
+                                "enable": True,
+                                "min_annotation_pixels": 512,
+                            },
+                            "max_annotation_pixels": {
+                                "enable": False,
+                                "max_annotation_pixels": 1000,
+                            },
+                            "max_annotation_objects": {
+                                "enable": True,
+                                "max_annotation_objects": 100,
+                            },
+                        },
+                        "subset_split": {
+                            "training": 70,
+                            "validation": 20,
+                            "test": 10,
+                        },
+                    },
+                },
+                "hyperparameters": {
+                    "dataset_preparation": {},
+                    "training": None,
+                    "evaluation": {"metric": "accuracy"},
+                },
+            }
+        )
+
+        # Act & Assert
+        with (
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_task_only_configuration",
+                return_value=fxt_training_configuration_task_level,
+            ),
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_by_model_manifest_id",
+                return_value=fxt_training_configuration_model_manifest_level,
+            ),
+        ):
+            full_config = AutoTrainController.get_full_training_configuration(
+                project_identifier=project_identifier,
+                task_id=fxt_training_configuration_task_level.task_id,
+                model_manifest_id=fxt_training_configuration_model_manifest_level.model_manifest_id,
+            )
+            assert full_config.model_dump() == expected_config.model_dump()

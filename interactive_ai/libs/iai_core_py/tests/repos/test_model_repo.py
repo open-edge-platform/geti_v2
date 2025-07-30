@@ -721,3 +721,23 @@ class TestModelRepo:
 
         # Assert
         assert saved_model.configuration.display_only_configuration == config_dict
+
+    def test_update_advanced_configuration(self, request, fxt_empty_project, fxt_model_storage, fxt_model) -> None:
+        # Arrange
+        model_repo = ModelRepo(fxt_model_storage.identifier)
+        request.addfinalizer(lambda: model_repo.delete_all())
+        model_repo.save(fxt_model)
+
+        # Act
+        advanced_configuration = {"param1": "value1", "param2": 42, "nested": {"key": "value"}}
+        model_repo.update_advanced_configuration(model=fxt_model, advanced_configuration=advanced_configuration)
+
+        assert fxt_model.configuration.display_only_configuration["advanced_configuration"] == advanced_configuration
+        with (
+            patch.object(ProjectRepo, "get_by_id", return_value=fxt_empty_project),
+        ):
+            model_reloaded = model_repo.get_by_id(fxt_model.id_)
+
+        # Assert
+        config_dict = model_reloaded.configuration.display_only_configuration
+        assert config_dict["advanced_configuration"] == advanced_configuration

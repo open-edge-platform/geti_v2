@@ -3,7 +3,7 @@
 """This module tests model acceptance utils"""
 
 import copy
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from iai_core.entities.evaluation_result import EvaluationPurpose
@@ -82,11 +82,16 @@ class TestModelAcceptance:
                 return new_model_accuracy
             raise ValueError(f"Unexpected purpose {purpose}")
 
+        mock_new_model_storage = MagicMock()
+        mock_new_model_storage.model_manifest_id = new_model_arch
+        mock_old_model_storage = MagicMock()
+        mock_old_model_storage.model_manifest_id = old_model_arch
+
         new_model = fxt_model
-        new_model.model_storage.model_template.model_template_id = new_model_arch
+        new_model.model_storage = mock_new_model_storage
         if old_model_accuracy is not None:
             old_model = copy.deepcopy(fxt_model)
-            old_model.model_storage.model_template.model_template_id = old_model_arch
+            old_model.model_storage = mock_old_model_storage
         else:
             old_model = NullModel()
         with patch(

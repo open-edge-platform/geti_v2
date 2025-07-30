@@ -4,11 +4,11 @@
 import pytest
 from geti_configuration_tools.hyperparameters import (
     AugmentationParameters,
-    CenterCrop,
     DatasetPreparationParameters,
     EarlyStopping,
     EvaluationParameters,
     Hyperparameters,
+    RandomAffine,
     TrainingHyperParameters,
 )
 from geti_configuration_tools.training_configuration import (
@@ -27,15 +27,15 @@ from geti_configuration_tools.training_configuration import (
 
 @pytest.fixture
 def fxt_active_model_manifest_id():
-    return "Object_Detection_DFine_X"
+    return "Custom_Image_Classification_EfficientNet-B3"
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def ftx_hyperparameters():
     yield Hyperparameters(
         dataset_preparation=DatasetPreparationParameters(
             augmentation=AugmentationParameters(
-                center_crop=CenterCrop(enable=True, ratio=0.6),
+                random_affine=RandomAffine(enable=True),
             )
         ),
         training=TrainingHyperParameters(
@@ -85,24 +85,14 @@ def fxt_training_configuration_task_level_rest_view(fxt_training_configuration_t
         "task_id": str(fxt_training_configuration_task_level.task_id),
         "dataset_preparation": {
             "augmentation": {
-                "center_crop": [
+                "random_affine": [
                     {
                         "default_value": False,
-                        "description": "Whether to apply center cropping to the image",
+                        "description": "Whether to apply random affine transformations to the image",
                         "key": "enable",
-                        "name": "Enable center crop",
+                        "name": "Enable random affine",
                         "type": "bool",
                         "value": True,
-                    },
-                    {
-                        "default_value": 1.0,
-                        "description": "Ratio of original dimensions to keep when cropping",
-                        "key": "ratio",
-                        "max_value": None,
-                        "min_value": 0.0,
-                        "name": "Crop ratio",
-                        "type": "float",
-                        "value": 0.6,
                     },
                 ]
             },
@@ -249,7 +239,7 @@ def fxt_training_configuration_task_level_rest_view(fxt_training_configuration_t
         },
         "training": [
             {
-                "default_value": 1000,
+                "default_value": None,
                 "description": "Maximum number of training epochs to run",
                 "key": "max_epochs",
                 "max_value": None,
@@ -259,7 +249,7 @@ def fxt_training_configuration_task_level_rest_view(fxt_training_configuration_t
                 "value": 100,
             },
             {
-                "default_value": 0.001,
+                "default_value": None,
                 "description": "Base learning rate for the optimizer",
                 "key": "learning_rate",
                 "max_value": 1.0,
@@ -316,24 +306,20 @@ def fxt_partial_training_configuration_manifest_level(fxt_mongo_id, fxt_active_m
         "hyperparameters": {
             "dataset_preparation": {
                 "augmentation": {
+                    "gaussian_blur": {
+                        "enable": True,
+                    },
                     "random_affine": {
                         "enable": True,
-                        "degrees": 15,
-                    },
-                    "tiling": {
-                        "enable": True,
-                        "adaptive_tiling": False,
-                        "tile_size": 256,
-                        "tile_overlap": 0.2,
                     },
                 },
             },
             "training": {
                 "max_epochs": 50,
                 "learning_rate": 0.05,
-                "input_size_width": 32,
-                "input_size_height": 32,
-                "allowed_values_input_size": [32, 64, 128],
+                "input_size_width": 64,
+                "input_size_height": 64,
+                "allowed_values_input_size": [64, 128, 224, 256, 320, 384, 480, 560],
             },
         },
     }
@@ -350,24 +336,46 @@ def fxt_training_configuration_full_rest_view(
         "model_manifest_id": fxt_partial_training_configuration_manifest_level.model_manifest_id,
         "dataset_preparation": {
             "augmentation": {
-                "center_crop": [
+                "color_jitter": [
                     {
                         "default_value": False,
-                        "description": "Whether to apply center cropping to the image",
+                        "description": "Whether to apply random color jitter to the image",
                         "key": "enable",
-                        "name": "Enable center crop",
+                        "name": "Enable color jitter",
+                        "type": "bool",
+                        "value": False,
+                    },
+                ],
+                "gaussian_blur": [
+                    {
+                        "default_value": False,
+                        "description": "Whether to apply Gaussian blur to the image",
+                        "key": "enable",
+                        "name": "Enable Gaussian blur",
                         "type": "bool",
                         "value": True,
                     },
+                ],
+                "random_horizontal_flip": [
                     {
-                        "default_value": 1.0,
-                        "description": "Ratio of original dimensions to keep when cropping",
-                        "key": "ratio",
-                        "max_value": None,
-                        "min_value": 0.0,
-                        "name": "Crop ratio",
-                        "type": "float",
-                        "value": 0.6,
+                        "default_value": True,
+                        "description": "Whether to apply random flip images horizontally along the vertical axis "
+                        "(swap left and right)",
+                        "key": "enable",
+                        "name": "Enable random horizontal flip",
+                        "type": "bool",
+                        "value": True,
+                    },
+                ],
+                "random_vertical_flip": [
+                    {
+                        "default_value": False,
+                        "description": "Whether to apply random flip images vertically along the horizontal axis "
+                        "(swap top and bottom)",
+                        "key": "enable",
+                        "name": "Enable random vertical flip",
+                        "type": "bool",
+                        "value": False,
                     },
                 ],
                 "random_affine": [
@@ -378,85 +386,7 @@ def fxt_training_configuration_full_rest_view(
                         "name": "Enable random affine",
                         "type": "bool",
                         "value": True,
-                    },
-                    {
-                        "default_value": 0.0,
-                        "description": "Maximum rotation angle in degrees",
-                        "key": "degrees",
-                        "max_value": None,
-                        "min_value": 0.0,
-                        "name": "Rotation degrees",
-                        "type": "float",
-                        "value": 15.0,
-                    },
-                    {
-                        "default_value": 0.0,
-                        "description": "Maximum horizontal translation as a fraction of image width",
-                        "key": "translate_x",
-                        "max_value": None,
-                        "min_value": None,
-                        "name": "Horizontal translation",
-                        "type": "float",
-                        "value": 0.0,
-                    },
-                    {
-                        "default_value": 0.0,
-                        "description": "Maximum vertical translation as a fraction of image height",
-                        "key": "translate_y",
-                        "max_value": None,
-                        "min_value": None,
-                        "name": "Vertical translation",
-                        "type": "float",
-                        "value": 0.0,
-                    },
-                    {
-                        "default_value": 1.0,
-                        "description": "Scaling factor for the image during affine transformation",
-                        "key": "scale",
-                        "max_value": None,
-                        "min_value": None,
-                        "name": "Scale factor",
-                        "type": "float",
-                        "value": 1.0,
-                    },
-                ],
-                "tiling": [
-                    {
-                        "default_value": False,
-                        "description": "Whether to apply tiling to the image",
-                        "key": "enable",
-                        "name": "Enable tiling",
-                        "type": "bool",
-                        "value": True,
-                    },
-                    {
-                        "default_value": False,
-                        "description": "Whether to use adaptive tiling based on image content",
-                        "key": "adaptive_tiling",
-                        "name": "Adaptive tiling",
-                        "type": "bool",
-                        "value": False,
-                    },
-                    {
-                        "default_value": 128,
-                        "description": "Size of each tile in pixels",
-                        "key": "tile_size",
-                        "max_value": None,
-                        "min_value": 0,
-                        "name": "Tile size",
-                        "type": "int",
-                        "value": 256,
-                    },
-                    {
-                        "default_value": 0.5,
-                        "description": "Overlap between adjacent tiles as a fraction of tile size",
-                        "key": "tile_overlap",
-                        "max_value": 1.0,
-                        "min_value": 0.0,
-                        "name": "Tile overlap",
-                        "type": "float",
-                        "value": 0.2,
-                    },
+                    }
                 ],
             },
             "filtering": {
@@ -602,7 +532,7 @@ def fxt_training_configuration_full_rest_view(
         },
         "training": [
             {
-                "default_value": 1000,
+                "default_value": 100,
                 "description": "Maximum number of training epochs to run",
                 "key": "max_epochs",
                 "max_value": None,
@@ -612,7 +542,7 @@ def fxt_training_configuration_full_rest_view(
                 "value": 50,
             },
             {
-                "default_value": 0.001,
+                "default_value": 0.0049,
                 "description": "Base learning rate for the optimizer",
                 "key": "learning_rate",
                 "max_value": 1.0,
@@ -627,9 +557,9 @@ def fxt_training_configuration_full_rest_view(
                 "type": "enum",
                 "description": "Width dimension in pixels for model input images. "
                 "Determines the horizontal resolution at which images are processed.",
-                "value": 32,
-                "default_value": 32,
-                "allowed_values": [32, 64, 128],
+                "value": 64,
+                "default_value": 224,
+                "allowed_values": [64, 128, 224, 256, 320, 384, 480, 560],
             },
             {
                 "key": "input_size_height",
@@ -637,14 +567,14 @@ def fxt_training_configuration_full_rest_view(
                 "type": "enum",
                 "description": "Height dimension in pixels for model input images. "
                 "Determines the vertical resolution at which images are processed.",
-                "value": 32,
-                "default_value": 32,
-                "allowed_values": [32, 64, 128],
+                "value": 64,
+                "default_value": 224,
+                "allowed_values": [64, 128, 224, 256, 320, 384, 480, 560],
             },
             {
                 "early_stopping": [
                     {
-                        "default_value": False,
+                        "default_value": True,
                         "description": "Whether to stop training early when performance stops improving",
                         "key": "enable",
                         "name": "Enable early stopping",
@@ -652,7 +582,7 @@ def fxt_training_configuration_full_rest_view(
                         "value": True,
                     },
                     {
-                        "default_value": 1,
+                        "default_value": 7,
                         "description": "Number of epochs with no improvement after which training will be stopped",
                         "key": "patience",
                         "max_value": None,

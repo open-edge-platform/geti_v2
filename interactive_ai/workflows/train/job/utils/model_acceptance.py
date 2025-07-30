@@ -116,9 +116,9 @@ def is_model_acceptable(
         return True
 
     # If the model arch has changed, the new model can be accepted unconditionally
-    new_model_template = new_model.model_storage.model_template.model_template_id
-    old_model_template = old_model.model_storage.model_template.model_template_id
-    if new_model_template != old_model_template:
+    new_model_manifest_id = new_model.model_storage.model_manifest_id
+    old_model_manifest_id = old_model.model_storage.model_manifest_id
+    if new_model_manifest_id != old_model_manifest_id:
         logger.info(
             "Model `%s` is acceptable because the old model has different architecture",
             new_model.id_,

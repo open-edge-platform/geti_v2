@@ -149,7 +149,7 @@ class ModelConverter:
         logger.info(f"Converting model {model.model_id} from task {model.task_id}")
         graph_type = self._get_graph_type(project=project, models=[model])
         logger.info(f"Graph type = {graph_type}")
-        model_path = os.path.join(model_dir, "model", "model.xml")
+        model_path = os.path.join(model_dir, "model.xml")
         exported_model_path = os.path.join(export_dir, model.model_id, "1", "model.xml")
         labels = self._get_labels(model.task_id, project, model_path)
 

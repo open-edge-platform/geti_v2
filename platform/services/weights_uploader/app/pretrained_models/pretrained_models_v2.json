@@ -252,7 +252,8 @@
   {
     "url": "https://download.pytorch.org/models/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth",
     "target": "/home/non-root/.cache/torch/hub/checkpoints/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth",
-    "sha_sum": "73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e"
+    "sha_sum": "73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e",
+    "template_ids": ["Rotated_Detection_MaskRCNN_ResNet50_V2", "Custom_Instance_Segmentation_MaskRCNN_ResNet50_v2"]
   },
   {
     "url": "https://download.pytorch.org/models/resnet50-0676ba61.pth",

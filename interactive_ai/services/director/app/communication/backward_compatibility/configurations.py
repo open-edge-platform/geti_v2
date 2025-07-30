@@ -91,12 +91,12 @@ class ConfigurationsBackwardCompatibility:
         dataset_management_config = DatasetManagementConfig(header="Dataset Management")
         dataset_management_config.minimum_annotation_size = (
             filtering_parameters.min_annotation_pixels.min_annotation_pixels
-            if filtering_parameters.min_annotation_pixels.enable
+            if filtering_parameters and filtering_parameters.min_annotation_pixels.enable
             else -1
         )
         dataset_management_config.maximum_number_of_annotations = (
             filtering_parameters.max_annotation_objects.max_annotation_objects
-            if filtering_parameters.max_annotation_objects.enable
+            if filtering_parameters and filtering_parameters.max_annotation_objects.enable
             else -1
         )
         dataset_config = ComponentParameters(
@@ -319,18 +319,19 @@ class ConfigurationsBackwardCompatibility:
                             legacy_subset_manager.train_validation_remixing if legacy_subset_manager else False
                         ),
                     },
-                    "filtering": {
-                        "min_annotation_pixels": {
-                            "enable": min_annotations > 0,
-                            "min_annotation_pixels": max(min_annotations, 1),
-                        },
-                        "max_annotation_objects": {
-                            "enable": max_annotations > 0,
-                            "max_annotation_objects": max(max_annotations, 1),
-                        },
-                    },
                 }
             }
+            if task_node.task_properties.has_annotations_with_area:
+                global_params["dataset_preparation"]["filtering"] = {
+                    "min_annotation_pixels": {
+                        "enable": min_annotations > 0,
+                        "min_annotation_pixels": max(min_annotations, 1),
+                    },
+                    "max_annotation_objects": {
+                        "enable": max_annotations > 0,
+                        "max_annotation_objects": max(max_annotations, 1),
+                    },
+                }
 
             # 2. Hyperparameters
             hyperparams = cls.forward_hyperparameters(legacy_hyperparams=legacy_hyperparams)
@@ -423,7 +424,7 @@ class ConfigurationsBackwardCompatibility:
     def forward_hyperparameters(  # noqa: C901
         legacy_hyperparams: Hyperparameters | IConfigurableParameterContainer | ConfigurableParameters,
     ) -> Hyperparameters:
-        """ """
+        """Convert legacy hyperparameters to new format"""
         # Create tiling parameters if enabled
         tiling = None
         if legacy_tiling := getattr(legacy_hyperparams, "tiling_parameters", None):

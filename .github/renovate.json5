@@ -16,6 +16,12 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
 
+  // regenerate lock weekly https://docs.renovatebot.com/configuration-options/#lockfilemaintenance
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ["* * * * 0"], // weekly
+  },
+
   extends: ["config:base", ":gitSignOff", "helpers:pinGitHubActionDigests"],
   // https://docs.renovatebot.com/presets-default/#gitsignoff
   // https://docs.renovatebot.com/presets-helpers/#helperspingithubactiondigests
@@ -40,7 +46,7 @@
   // Set limit to 5
   ignorePresets: [":prHourlyLimit2"],
   prHourlyLimit: 5,
-  ignorePaths: [], // to include tests folders as well as `config:base` ignores it
+  ignorePaths: ["interactive_ai/tests/e2e/**"], // to exclude specific test folder
 
   // https://docs.renovatebot.com/golang/
   postUpdateOptions: ["gomodTidy"],
@@ -54,20 +60,35 @@
       pinDigests: true,
       groupName: "Pin dependencies",
       groupSlug: "pin-deps",
+      schedule: ["* * * * 0"], // weekly
     },
 
-    // Disable non-security upgrades for go, python, npm.
+    // Disable non-security upgrades for go and npm.
     // We will enable it in the next phase
     {
       enabled: false,
-      matchManagers: ["gomod", "pep621", "npm"],
+      matchManagers: ["gomod", "npm"],
     },
 
-    // Disable non-security upgrades for playwright and Dockerfile syntax (docker/dockerfile)
+    // Disable non-security upgrades for pypi, except lock file update
+    {
+      enabled: false,
+      matchDatasources: ["pypi"],
+    },
+
+    // Python version in TOML is updated manually
+    {
+      enabled: false,
+      matchDatasources: ["python-version"],
+      matchDepTypes: ["requires-python"],
+      matchDepNames: ["python"],
+    },
+
+    // Disable upgrades for Dockerfile syntax (docker/dockerfile)
     {
       enabled: false,
       matchDatasources: ["docker"],
-      matchDepNames: ["mcr.microsoft.com/playwright", "docker/dockerfile"],
+      matchDepNames: ["docker/dockerfile"],
     },
 
     // Disable python base image upgrades, except digital pinning,
@@ -122,24 +143,14 @@
       matchUpdateTypes: ["major", "minor", "patch"],
     },
 
-    // Group minor/patch/digest GitHub Actions updates
+    // Group GitHub Actions updates
     {
       enabled: true,
+      separateMajorMinor: false,
       groupName: "GitHub Actions",
       matchManagers: ["github-actions"],
       matchPackagePatterns: ["*"],
-      matchUpdateTypes: ["minor", "patch", "digest", "pinDigest"],
-      schedule: ["every 4 weeks on Sunday"],
-    },
-
-    // Group major GitHub Actions updates
-    {
-      enabled: true,
-      groupName: "GitHub Actions major",
-      matchManagers: ["github-actions"],
-      matchPackagePatterns: ["*"],
-      matchUpdateTypes: ["major"],
-      schedule: ["every 4 weeks on Sunday"],
+      schedule: ["* * 1,15 * *"], // twice a month
     },
 
     // Go version used in GitHub Actions is updated manually
@@ -158,6 +169,15 @@
       matchDepTypes: ["uses-with"],
     },
 
+    // Disable mcr.microsoft.com/playwright image upgrades, except digital pinning,
+    {
+      enabled: false,
+      matchManagers: ["github-actions"],
+      matchDepTypes: ["container"],
+      matchDepNames: ["mcr.microsoft.com/playwright"],
+      matchUpdateTypes: ["major", "minor", "patch"],
+    },
+
     // Group Go version upgrades
     {
       enabled: true,
@@ -165,6 +185,7 @@
       allowedVersions: "<1.24",
       groupName: "Go version",
       groupSlug: "go-version",
+      schedule: ["* * * * 0"], // weekly
     },
 
     // Disable upgrades for non production images

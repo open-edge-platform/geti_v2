@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import http
 import io
+import json
 import logging
 import os
 from typing import Any
@@ -11,6 +12,7 @@ from communication.exceptions import ModelStorageNotActivableException, PurgedMo
 from communication.model_registration_utils import ModelMapper, ProjectMapper
 from communication.rest_views.model_rest_views import ModelRestInfo, ModelRESTViews
 from communication.rest_views.statistics_rest_views import StatisticsRESTViews
+from resource_management.deployment_package_manager import DeploymentPackageManager, OVWeightsKey
 from service.label_schema_service import LabelSchemaService
 from usecases.statistics import StatisticsUseCase
 
@@ -370,18 +372,27 @@ class ModelRESTController:
             model_title = MODEL_FORMAT_TO_TITLE[model.model_format]
         except ValueError:
             raise ValueError(f"Exporting in {model.model_format.name} format is not supported")
-        if model.model_format is ModelFormat.OPENVINO and not model_only:
-            output_bytes = io.BytesIO(model.exportable_code)  # type: ignore
-            file_name = f"{model_title}_exportable_code.zip"
-        else:
-            output_bytes = io.BytesIO()
-            with ZipFile(output_bytes, "w") as zf:
-                files_to_export = model.model_adapters.items()
-                for filename, adapter in files_to_export:
-                    info = ZipInfo(filename)
-                    zf.writestr(info, adapter.data)
-            output_bytes.seek(0)
-            file_name = f"{model_title}_model.zip"
+        output_bytes = io.BytesIO()
+        with ZipFile(output_bytes, "w") as zf:
+            files_to_export = model.model_adapters.items()
+            for filename, adapter in files_to_export:
+                _filename = filename
+                match filename:
+                    case OVWeightsKey.OPENVINO_XML.value:
+                        _filename = "model.xml"
+                    case OVWeightsKey.OPENVINO_BIN.value:
+                        _filename = "model.bin"
+                info = ZipInfo(_filename)
+                zf.writestr(info, adapter.data)
+            if not model_only:
+                config = DeploymentPackageManager.extract_config_json_from_xml(
+                    model.model_adapters[OVWeightsKey.OPENVINO_XML.value].data
+                )
+                info = ZipInfo("config.json")
+                zf.writestr(info, json.dumps(config))
+
+        output_bytes.seek(0)
+        file_name = f"{model_title}_model.zip"
 
         if ENABLE_METRICS:
             model_exports_counter.add(

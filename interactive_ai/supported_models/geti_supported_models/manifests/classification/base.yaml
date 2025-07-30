@@ -13,7 +13,7 @@ hyperparameters:
         enable: false
       color_jitter:
         enable: false
-      gaussian_noise:
+      gaussian_blur:
         enable: false
   evaluation:
     metric: accuracy

@@ -87,9 +87,7 @@ model_example_to_schema_map = {
     "models/responses/model_group_list_response.json": "models/responses/model_group_list.yaml",
     "models/responses/model_group_response.json": "models/responses/model_group.yaml",
     "models/responses/model_statistics_response.json": "models/responses/model_statistics.yaml",
-    # TODO ITEP-72105: remove old supported algorithms schema/example
     "models/responses/supported_algorithms.json": "models/responses/supported_algorithm.yaml",
-    "models/responses/revamp/supported_algorithms.json": "models/responses/revamp/supported_algorithm.yaml",
 }
 pipeline_example_to_schema_map = {
     "pipelines/responses/batch_explain_response.json": "pipelines/responses/batch_explanation.yaml",

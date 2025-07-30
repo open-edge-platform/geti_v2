@@ -9,6 +9,7 @@ stats:
     accuracy: 2
     training_time: 2
     inference_speed: 3
+support_status: deprecated
 
 supported_gpus:
   intel: false

@@ -1,21 +1,22 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import io
 import json
 import logging
 import os
 import shutil
 import tempfile
 import zipfile
+from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import cv2
 import numpy
+from defusedxml import ElementTree
 
 from communication.exceptions import (
-    ExportableCodeNotInitializedException,
+    CannotFindModelWeightsException,
     IncompatibleModelFormatException,
     NoMediaInProjectException,
 )
@@ -40,12 +41,22 @@ logger = logging.getLogger(__name__)
 
 DEPLOYMENT_FILENAME_TEMPLATE = "Deployment-%s"
 PATH_TO_DEPLOYMENT_COLLATERALS = os.path.join(os.path.dirname(os.path.dirname(__file__)), "code_deployment")
+REQUIREMENTS_TXT = """openvino==2024.3.0
+openvino-model-api==0.2.5
+numpy==1.26.4"""
+
+
+class OVWeightsKey(Enum):
+    OPENVINO_XML = "openvino.xml"
+    OPENVINO_BIN = "openvino.bin"
+    TILE_CLASSIFIER_XML = "tile_classifier.xml"
+    TILE_CLASSIFIER_BIN = "tile_classifier.bin"
 
 
 class DeploymentPackageManager:
     @staticmethod
     @unified_tracing
-    def prepare_geti_sdk_package(
+    def prepare_geti_sdk_package(  # noqa: C901, PLR0915
         project: Project,
         project_rest_view: dict,
         model_identifiers: list[ModelIdentifier],
@@ -90,11 +101,39 @@ class DeploymentPackageManager:
             if model.model_format != ModelFormat.OPENVINO:
                 raise IncompatibleModelFormatException(model_identifier.model_id)
 
-            exportable_code = model.exportable_code
-            if exportable_code is None:
-                raise ExportableCodeNotInitializedException(model.id_)
-            exp_code = zipfile.ZipFile(io.BytesIO(exportable_code))
-            exp_code.extractall(path=per_model_path)
+            # put model weights to the model directory
+            model_folder = os.path.join(per_model_path, "model")
+            os.makedirs(model_folder, exist_ok=True)
+
+            if {OVWeightsKey.OPENVINO_BIN.value, OVWeightsKey.OPENVINO_XML.value} - model.model_adapters.keys():
+                raise CannotFindModelWeightsException(model_id=model.id_)
+
+            with open(os.path.join(model_folder, "model.bin"), "wb") as f:
+                f.write(model.model_adapters[OVWeightsKey.OPENVINO_BIN.value].data)
+
+            with open(os.path.join(model_folder, "model.xml"), "wb") as f:
+                f.write(model.model_adapters[OVWeightsKey.OPENVINO_XML.value].data)
+
+            if OVWeightsKey.TILE_CLASSIFIER_BIN.value in model.model_adapters:
+                with open(os.path.join(model_folder, OVWeightsKey.TILE_CLASSIFIER_BIN.value), "wb") as f:
+                    f.write(model.model_adapters[OVWeightsKey.TILE_CLASSIFIER_BIN.value].data)
+
+            if OVWeightsKey.TILE_CLASSIFIER_XML.value in model.model_adapters:
+                with open(os.path.join(model_folder, OVWeightsKey.TILE_CLASSIFIER_XML.value), "wb") as f:
+                    f.write(model.model_adapters[OVWeightsKey.TILE_CLASSIFIER_XML.value].data)
+
+            # generate config.json
+            xml_data = model.model_adapters[OVWeightsKey.OPENVINO_XML.value].data
+            config_json = DeploymentPackageManager.extract_config_json_from_xml(xml_data)
+
+            with open(os.path.join(model_folder, "config.json"), "w") as f:
+                json.dump(config_json, f, indent=3)
+
+            # put deployment/<TASK_TYPE>/python/requirements.txt
+            python_folder = os.path.join(per_model_path, "python")
+            os.makedirs(python_folder, exist_ok=True)
+            with open(os.path.join(python_folder, "requirements.txt"), "w") as f:
+                f.write(REQUIREMENTS_TXT)
 
             # put model REST representation to the model directory
             model_performance = StatisticsUseCase.get_model_performance(
@@ -164,3 +203,42 @@ class DeploymentPackageManager:
         )
         raw_image = get_media_numpy(dataset_storage_identifier=dataset_storage.identifier, media=media)
         return cv2.cvtColor(raw_image, cv2.COLOR_RGB2BGR)
+
+    @staticmethod
+    def extract_config_json_from_xml(xml_data: bytes) -> dict:
+        """
+        Extracts the config.json from the OpenVINO XML data.
+
+        :param xml_data: The OpenVINO XML data as bytes.
+        :return: The config.json content as a dictionary.
+        """
+        # Parse the XML data from bytes
+        root = ElementTree.fromstring(xml_data.decode("utf-8"))
+
+        config: dict = {"model_parameters": {}}
+
+        # Find model_info under rt_info
+        model_info = root.find(".//rt_info/model_info")
+
+        # Extract model type
+        model_type_elem = model_info.find("./model_type")
+        if model_type_elem is not None:
+            config["model_type"] = model_type_elem.get("value", "")
+
+        # Extract task type
+        task_type_elem = model_info.find("./task_type")
+        config["task_type"] = task_type_elem.get("value", "")
+
+        # Extract labels
+        labels_elem = model_info.find("./labels")
+        if labels_elem is not None:
+            labels_value = labels_elem.get("value", "")
+            config["model_parameters"]["labels"] = labels_value
+
+        # Extract label_ids
+        label_ids_elem = model_info.find("./label_ids")
+        if label_ids_elem is not None:
+            label_ids_value = label_ids_elem.get("value", "")
+            config["model_parameters"]["label_ids"] = label_ids_value
+
+        return config

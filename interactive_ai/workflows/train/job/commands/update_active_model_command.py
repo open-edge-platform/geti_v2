@@ -37,7 +37,7 @@ class UpdateActiveModelCommand(ICommand):
     def _set_active_model_storage(self, model_storage: ModelStorage):
         logger.info(
             "Updating active model storage to %s for task %s (ID %s)",
-            model_storage.model_template.model_template_id,
+            model_storage.model_manifest_id,
             self.task_node.title,
             self.task_node.id_,
         )

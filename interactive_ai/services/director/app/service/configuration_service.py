@@ -42,6 +42,7 @@ class ConfigurationService:
         base_config = PartialTrainingConfiguration.model_validate(
             {
                 "id_": ID(f"full_training_configuration_{model_manifest_id}"),
+                "model_manifest_id": model_manifest_id,
                 "task_id": str(task_id),
                 "hyperparameters": model_manifest.hyperparameters.model_dump(),
             }
@@ -52,7 +53,11 @@ class ConfigurationService:
             training_configuration_repo.get_by_model_manifest_id(model_manifest_id) if model_manifest_id else None
         )
         return ConfigurationOverlayTools.overlay_training_configurations(
-            base_config, task_level_config, algo_level_config, validate_full_config=True
+            base_config,
+            task_level_config,
+            algo_level_config,
+            validate_full_config=True,
+            common_hyperparameters_only=True,  # Only parameters present in the model manifest will be updated
         )
 
     @staticmethod

@@ -1016,17 +1016,17 @@ class CodeDeploymentNotFoundException(GetiBaseException):
         )
 
 
-class ExportableCodeNotInitializedException(GetiBaseException):
+class CannotFindModelWeightsException(GetiBaseException):
     """
-    Error raised when a model does not have an initialized exportable code.
+    Error raised when a model does not have weights (model.bin, model.xml).
     """
 
     def __init__(self, model_id: ID) -> None:
         super().__init__(
-            message=f"Cannot find exportable code for the requested model. "
+            message=f"Cannot find OpenVINO model weights for the requested model. "
             f"Please trigger a new export request. "
             f"Model ID: `{model_id}`.",
-            error_code="exportable_code_not_found",
+            error_code="openvino_weights_not_found",
             http_status=http.HTTPStatus.NOT_FOUND,
         )
 

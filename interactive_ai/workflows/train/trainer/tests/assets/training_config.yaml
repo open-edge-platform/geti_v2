@@ -1,0 +1,50 @@
+job_type: train
+model_manifest_id: Custom_Image_Classification_EfficinetNet-B0
+hyperparameters:
+  dataset_preparation:
+    augmentation:
+      random_affine:
+        enable: true
+      color_jitter:
+        enable: true
+      gaussian_blur:
+        enable: true
+      random_horizontal_flip:
+        enable: true
+      random_vertical_flip:
+        enable: true
+      gaussian_noise:
+        enable: true
+      tiling:
+        adaptive_tiling: true
+        enable: false
+        tile_overlap: 0.2
+        tile_size: 224
+  training:
+    early_stopping:
+      enable: true
+      patience: 10
+    input_size_height: 64
+    input_size_width: 32
+    learning_rate: 0.001
+    max_epochs: 100
+  evaluation:
+    metric: null # Note: evaluation parameter is not exposed yet
+
+export_models:
+  - format: openvino
+    output_model_id: 67a32c53d8c2d927812b0b3b
+    precision: FP32
+    with_xai: true
+  - format: openvino
+    output_model_id: 67a32c53d8c2d927812b0b3c
+    precision: FP32
+    with_xai: false
+  - format: openvino
+    output_model_id: 67a32c53d8c2d927812b0b3d
+    precision: FP16
+    with_xai: false
+  - format: onnx
+    output_model_id: 67a32c53d8c2d927812b0b3e
+    precision: FP32
+    with_xai: false

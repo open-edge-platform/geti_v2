@@ -9,3 +9,11 @@ stats:
     accuracy: 1
     training_time: 3
     inference_speed: 3
+
+hyperparameters:
+  training: # PADIM does not have use any training parameters
+    max_epochs: null
+    learning_rate: null
+    early_stopping: null
+    input_size_width: null
+    input_size_height: null

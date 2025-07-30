@@ -39,37 +39,37 @@ class DefaultModels:
 
     default_models_by_task: dict[TaskType, dict[DefaultCategory, str | None]] = {
         TaskType.CLASSIFICATION: {
-            DefaultCategory.DEFAULT: "Custom_Image_Classification_EfficientNet-V2-S",
+            DefaultCategory.DEFAULT: "Custom_Image_Classification_EfficinetNet-B0",
             DefaultCategory.ACCURACY: "Custom_Image_Classification_EfficientNet-V2-S",
             DefaultCategory.SPEED: "Custom_Image_Classification_MobileNet-V3-large-1x",
             DefaultCategory.BALANCE: "Custom_Image_Classification_EfficinetNet-B0",
         },
         TaskType.DETECTION: {
-            DefaultCategory.DEFAULT: "Object_Detection_DFine_X",
+            DefaultCategory.DEFAULT: "Custom_Object_Detection_Gen3_ATSS",
             DefaultCategory.ACCURACY: "Object_Detection_DFine_X",
             DefaultCategory.SPEED: "Object_Detection_YOLOX_S",
             DefaultCategory.BALANCE: "Custom_Object_Detection_Gen3_ATSS",
         },
         TaskType.ROTATED_DETECTION: {
-            DefaultCategory.DEFAULT: "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_ResNet50",
-            DefaultCategory.ACCURACY: "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_ResNet50",
+            DefaultCategory.DEFAULT: "Rotated_Detection_MaskRCNN_ResNet50_V2",
+            DefaultCategory.ACCURACY: "Rotated_Detection_MaskRCNN_ResNet50_V2",
             DefaultCategory.SPEED: "Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_EfficientNetB2B",
             DefaultCategory.BALANCE: None,
         },
         TaskType.INSTANCE_SEGMENTATION: {
-            DefaultCategory.DEFAULT: "Custom_Counting_Instance_Segmentation_MaskRCNN_SwinT_FP16",
+            DefaultCategory.DEFAULT: "Custom_Counting_Instance_Segmentation_MaskRCNN_EfficientNetB2B",
             DefaultCategory.ACCURACY: "Custom_Counting_Instance_Segmentation_MaskRCNN_SwinT_FP16",
             DefaultCategory.SPEED: "Custom_Counting_Instance_Segmentation_MaskRCNN_EfficientNetB2B",
             DefaultCategory.BALANCE: "Custom_Instance_Segmentation_MaskRCNN_ResNet50_v2",
         },
         TaskType.SEGMENTATION: {
-            DefaultCategory.DEFAULT: "Custom_Semantic_Segmentation_DINOV2_S",
+            DefaultCategory.DEFAULT: "Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR",
             DefaultCategory.ACCURACY: "Custom_Semantic_Segmentation_DINOV2_S",
             DefaultCategory.SPEED: "Custom_Semantic_Segmentation_Lite-HRNet-s-mod2_OCR",
             DefaultCategory.BALANCE: "Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR",
         },
         TaskType.ANOMALY: {
-            DefaultCategory.DEFAULT: "ote_anomaly_uflow",
+            DefaultCategory.DEFAULT: "ote_anomaly_padim",
             DefaultCategory.ACCURACY: "ote_anomaly_uflow",
             DefaultCategory.SPEED: "ote_anomaly_padim",
             DefaultCategory.BALANCE: None,

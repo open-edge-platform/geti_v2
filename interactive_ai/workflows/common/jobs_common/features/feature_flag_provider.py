@@ -23,6 +23,7 @@ class FeatureFlag(Enum):
     FEATURE_FLAG_OTX_VERSION_SELECTION = auto()
     FEATURE_FLAG_KEYPOINT_DETECTION = auto()
     FEATURE_FLAG_FP16_INFERENCE = auto()
+    FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS = auto()
 
 
 class FeatureFlagProvider:

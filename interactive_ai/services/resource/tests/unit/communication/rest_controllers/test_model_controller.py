@@ -7,6 +7,7 @@ from testfixtures import compare
 
 from communication.model_registration_utils import ModelMapper, ProjectMapper
 from communication.rest_controllers import ModelRESTController
+from resource_management.deployment_package_manager import DeploymentPackageManager
 from tests.fixtures.job import do_nothing
 from usecases.statistics import StatisticsUseCase
 
@@ -62,9 +63,14 @@ class TestModelRESTController:
         project_id = fxt_project.id_
         model_storage_id = fxt_model.model_storage.id_
         model_id = fxt_model.id_
+        config_json = {"dummy_key": "dummy_value"}
+
         with (
             patch.object(ProjectRepo, "get_by_id", return_value=fxt_project) as mock_get_project,
             patch.object(ModelRepo, "get_by_id", return_value=fxt_model) as mock_get_model,
+            patch.object(
+                DeploymentPackageManager, "extract_config_json_from_xml", return_value=config_json
+            ) as mock_extract_config_json,
         ):
             result_file, result_file_name = ModelRESTController.export_model(
                 project_id=project_id,
@@ -75,16 +81,13 @@ class TestModelRESTController:
 
             mock_get_project.assert_called_once()
             mock_get_model.assert_called_once()
-            compare(result_file.read(), fxt_zip_file_data.read(), ignore_eq=True)
             compare(result_file_name, "ONNX_model.zip", ignore_eq=True)
+            if model_only:
+                compare(result_file.read(), fxt_zip_file_data.read(), ignore_eq=True)
+            else:
+                mock_extract_config_json.assert_called_once()
 
-    @pytest.mark.parametrize(
-        "model_only, file_name, file_bytes",
-        [
-            (True, "OpenVINO_model.zip", "model_data"),
-            (False, "OpenVINO_exportable_code.zip", "export_data"),
-        ],
-    )
+    @pytest.mark.parametrize("model_only", [True, False])
     def test_export_optimized_model(
         self,
         fxt_model_storage,
@@ -92,9 +95,9 @@ class TestModelRESTController:
         fxt_optimized_openvino_model,
         fxt_zip_file_data,
         model_only,
-        file_name,
-        file_bytes,
     ) -> None:
+        config_json = {"dummy_key": "dummy_value"}
+
         with (
             patch.object(ProjectRepo, "get_by_id", return_value=fxt_project) as mock_get_project,
             patch.object(
@@ -102,6 +105,9 @@ class TestModelRESTController:
                 "get_by_id",
                 return_value=fxt_optimized_openvino_model,
             ) as mock_get_model,
+            patch.object(
+                DeploymentPackageManager, "extract_config_json_from_xml", return_value=config_json
+            ) as mock_extract_config_json,
         ):
             result_file, result_file_name = ModelRESTController.export_model(
                 project_id=fxt_project.id_,
@@ -112,12 +118,11 @@ class TestModelRESTController:
 
             mock_get_project.assert_called_once()
             mock_get_model.assert_called_once()
-            if file_bytes == "model_data":
-                file_bytes = fxt_zip_file_data.read()
+            compare(result_file_name, "OpenVINO_model.zip", ignore_eq=True)
+            if model_only:
+                compare(result_file.read(), fxt_zip_file_data.read(), ignore_eq=True)
             else:
-                file_bytes = b"DUMMY_EXPORTABLE_CODE_DATA"
-            compare(result_file.read(), file_bytes, ignore_eq=True)
-            compare(result_file_name, file_name, ignore_eq=True)
+                mock_extract_config_json.assert_called_once()
 
     def test_get_model_detail(
         self,

@@ -53,10 +53,6 @@ class ExportController:
         :return: submitted job id
         :raises FailedJobSubmissionException: if the export job cannot be submitted to the scheduler
         """
-        if include_models not in [IncludeModelsType.ALL, IncludeModelsType.NONE]:
-            raise NotImplementedError(
-                f"Exporting projects including models of type '{include_models.value}' is not supported yet."
-            )
 
         project_to_export = ProjectRepo().get_by_id(project_identifier.project_id)
         if isinstance(project_to_export, NullProject):
