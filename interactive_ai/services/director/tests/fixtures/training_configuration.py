@@ -542,7 +542,7 @@ def fxt_training_configuration_full_rest_view(
                 "value": 50,
             },
             {
-                "default_value": 0.0049,
+                "default_value": 0.01,
                 "description": "Base learning rate for the optimizer",
                 "key": "learning_rate",
                 "max_value": 1.0,
