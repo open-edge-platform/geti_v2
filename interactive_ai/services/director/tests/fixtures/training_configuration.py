@@ -532,7 +532,7 @@ def fxt_training_configuration_full_rest_view(
         },
         "training": [
             {
-                "default_value": 100,
+                "default_value": 90,
                 "description": "Maximum number of training epochs to run",
                 "key": "max_epochs",
                 "max_value": None,
