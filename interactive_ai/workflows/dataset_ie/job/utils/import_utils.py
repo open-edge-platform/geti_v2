@@ -176,7 +176,7 @@ class ImportUtils(BaseImportUtils):
             if isinstance(label, NullLabel):
                 raise InvalidLabelException(f"The provided label ID({sc_label_id}) does not belong to any label.")
             valid_labels_map[str(dm_name)] = label
-
+        logger.info(f"Valid labels map {valid_labels_map}")
         return valid_labels_map
 
     @staticmethod
@@ -444,7 +444,9 @@ class PopulationManager:
                                   to update the progress of the operation.
         """
         total = len(self._dm_dataset)
+        logger.info(f"Populating dataset with {total} items")
         for i, dm_item in enumerate(self._dm_dataset):
+            logger.info(f"Processing item {dm_item.annotations} {i}/{total}")
             if progress_callback:
                 progress_callback(i, total)
             try:
