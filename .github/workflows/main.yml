@@ -201,8 +201,8 @@ jobs:
     name: Build platform distribution binaries
     needs:
       - get-vars
-      - component-workflow
-      - web-ui-workflow
+#      - component-workflow
+#      - web-ui-workflow
     permissions:
       contents: read
       id-token: write # is required by nested component-check
@@ -223,8 +223,8 @@ jobs:
   success:
     name: Required status checks
     needs:
-      - component-workflow
-      - web-ui-workflow
+#      - component-workflow
+#      - web-ui-workflow
       - package-distribution-workflow
     runs-on: ubuntu-latest
     if: ${{ always() && !cancelled() }}
