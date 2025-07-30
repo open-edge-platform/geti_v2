@@ -707,7 +707,9 @@ class ConvertUtils:
             try:
                 if dm_points:
                     logger.info(f"dm_points: {dm_points.items[0].labels}")
-                    dm_label_name = dm_points.items[0].labels[dm_label_id]
+                    for category in dm_points.items.values():
+                        dm_label_name = category.labels[dm_label_id]
+                        break
                 else:
                     dm_label_name = dm_labels[dm_label_id].name if isinstance(dm_label_id, int) else dm_label_id
                 return labels_map[dm_label_name]
