@@ -86,4 +86,4 @@ jobs:
 #          no_proxy: ""
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
         run: |          
-          aws s3 cp platform_installer s3://$S3_BUCKET_NAME/v$TAG/
+          aws s3 cp platform_installer s3://$S3_BUCKET_NAME/v$TAG/ --content-type application/octet-stream
