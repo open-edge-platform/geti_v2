@@ -61,12 +61,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
 
-#      - name: Build umbrella charts
-#        run: make build-umbrella-chart
-#
-#      - name: Publish umbrella charts
-#        if: ${{ inputs.publish_binaries }}
-#        run: make publish-umbrella-chart
+      - name: Build umbrella charts
+        run: make build-umbrella-chart
+
+      - name: Publish umbrella charts
+        if: ${{ inputs.publish_binaries }}
+        run: make publish-umbrella-chart
 
       - name: Build installer binary
         if: ${{ inputs.publish_binaries }}
@@ -80,10 +80,7 @@ jobs:
         working-directory: platform/services/installer
         shell: bash
         env:
-          # Force S3 access through the proxy because this S3 bucket is in a different region than the runners.
-          # It seems that if us-west-2 is in no_proxy list, the CLI will also attempt to directly access us-east-1
-          # even though it is not in the no_proxy list.
-#          no_proxy: ""
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
         run: |          
-          aws s3 cp platform_installer s3://$S3_BUCKET_NAME/v$TAG/ --content-type application/octet-stream
+          tar -czf platform_installer.tar.gz platform_installer
+          aws s3 cp platform_installer.tar.gz s3://$S3_BUCKET_NAME/v$TAG/

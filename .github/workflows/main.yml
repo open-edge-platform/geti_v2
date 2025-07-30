@@ -11,7 +11,7 @@ on:
     branches:
       - main
       - release**
-      - feature/installer-v2-new  # TODO remove once the installer is ready
+      - feature/installer-v2-new  # TODO remove once the installer feature branch is ready
   push:
     branches:
       - main
@@ -138,71 +138,71 @@ jobs:
         env:
           CHANGES: ${{ steps.components-list.outputs.paths_list }}
 
-#  lib_test_workflow:
-#    name: Lib test workflow
-#    needs: get-vars
-#    permissions:
-#      contents: read
-#    uses: ./.github/workflows/libs_test.yml
-#    if: ${{ !contains(needs.get-vars.outputs.libs-list, '[]') }}
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        component: ${{ fromJSON(needs.get-vars.outputs.libs-list) }}
-#    with:
-#      component-dir: ${{ matrix.component }}
-#      ref: ${{ needs.get-vars.outputs.checkout_ref }}
-#
-#  component-workflow:
-#    name: Component workflow
-#    needs: get-vars
-#    permissions:
-#      contents: read
-#      id-token: write # is required by nested component-check
-#    secrets:
-#      AWS_ROLE: ${{ secrets.AWS_ROLE }}
-#      AWS_REGION: ${{ secrets.AWS_REGION }}
-#      REGISTRY: ${{ secrets.REGISTRY }}
-#      MANIFEST_REGISTRY: ${{ secrets.MANIFEST_REGISTRY }}
-#    uses: ./.github/workflows/component.yml
-#    if: ${{ !contains(needs.get-vars.outputs.filtered-components-list, '[]') }}
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        # The web-ui-workflow will call component-workflow after it succeeds,
-#        # therefore we filter out the web_ui component here
-#        component: ${{ fromJSON(needs.get-vars.outputs.filtered-components-list) }}
-#    with:
-#      build_version: ${{ needs.get-vars.outputs.build_version }}
-#      component_dir: ${{ matrix.component }}
-#      publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
-#      ref: ${{ needs.get-vars.outputs.checkout_ref }}
-#      manifest_registry: ${{ github.event.inputs.manifest_registry }}
-#
-#  web-ui-workflow:
-#    name: Web UI workflow
-#    needs: get-vars
-#    permissions:
-#      contents: read
-#      id-token: write # is required by nested component-check
-#    secrets:
-#      AWS_ROLE: ${{ secrets.AWS_ROLE }}
-#      AWS_REGION: ${{ secrets.AWS_REGION }}
-#      REGISTRY: ${{ secrets.REGISTRY }}
-#      MANIFEST_REGISTRY: ${{ secrets.MANIFEST_REGISTRY }}
-#    uses: ./.github/workflows/web-ui.yml
-#    if: ${{ contains(needs.get-vars.outputs.components-list, 'web_ui') }}
-#    with:
-#      build_version: ${{ needs.get-vars.outputs.build_version }}
-#      publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
-#      ref: ${{ needs.get-vars.outputs.checkout_ref }}
+  lib_test_workflow:
+    name: Lib test workflow
+    needs: get-vars
+    permissions:
+      contents: read
+    uses: ./.github/workflows/libs_test.yml
+    if: ${{ !contains(needs.get-vars.outputs.libs-list, '[]') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        component: ${{ fromJSON(needs.get-vars.outputs.libs-list) }}
+    with:
+      component-dir: ${{ matrix.component }}
+      ref: ${{ needs.get-vars.outputs.checkout_ref }}
+
+  component-workflow:
+    name: Component workflow
+    needs: get-vars
+    permissions:
+      contents: read
+      id-token: write # is required by nested component-check
+    secrets:
+      AWS_ROLE: ${{ secrets.AWS_ROLE }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      REGISTRY: ${{ secrets.REGISTRY }}
+      MANIFEST_REGISTRY: ${{ secrets.MANIFEST_REGISTRY }}
+    uses: ./.github/workflows/component.yml
+    if: ${{ !contains(needs.get-vars.outputs.filtered-components-list, '[]') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # The web-ui-workflow will call component-workflow after it succeeds,
+        # therefore we filter out the web_ui component here
+        component: ${{ fromJSON(needs.get-vars.outputs.filtered-components-list) }}
+    with:
+      build_version: ${{ needs.get-vars.outputs.build_version }}
+      component_dir: ${{ matrix.component }}
+      publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
+      ref: ${{ needs.get-vars.outputs.checkout_ref }}
+      manifest_registry: ${{ github.event.inputs.manifest_registry }}
+
+  web-ui-workflow:
+    name: Web UI workflow
+    needs: get-vars
+    permissions:
+      contents: read
+      id-token: write # is required by nested component-check
+    secrets:
+      AWS_ROLE: ${{ secrets.AWS_ROLE }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      REGISTRY: ${{ secrets.REGISTRY }}
+      MANIFEST_REGISTRY: ${{ secrets.MANIFEST_REGISTRY }}
+    uses: ./.github/workflows/web-ui.yml
+    if: ${{ contains(needs.get-vars.outputs.components-list, 'web_ui') }}
+    with:
+      build_version: ${{ needs.get-vars.outputs.build_version }}
+      publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
+      ref: ${{ needs.get-vars.outputs.checkout_ref }}
 
   package-distribution-workflow:
     name: Build platform distribution binaries
     needs:
       - get-vars
-#      - component-workflow
-#      - web-ui-workflow
+      - component-workflow
+      - web-ui-workflow
     permissions:
       contents: read
       id-token: write # is required by nested component-check
@@ -223,8 +223,8 @@ jobs:
   success:
     name: Required status checks
     needs:
-#      - component-workflow
-#      - web-ui-workflow
+      - component-workflow
+      - web-ui-workflow
       - package-distribution-workflow
     runs-on: ubuntu-latest
     if: ${{ always() && !cancelled() }}
