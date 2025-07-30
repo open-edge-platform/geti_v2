@@ -706,7 +706,7 @@ class ConvertUtils:
             logger.info(f"dm_labels: {dm_labels}, dm_points: {dm_points}, dm_label_id: {dm_label_id}")
             try:
                 if dm_points:
-                    logger.info(f"dm_points: {dm_points.items[0].labels}")
+                    logger.info(f"dm_points: {dm_points.items}")
                     for category in dm_points.items.values():
                         dm_label_name = category.labels[dm_label_id]
                         break
