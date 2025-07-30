@@ -14,3 +14,4 @@ support_status: deprecated
 hyperparameters:
   training:
     learning_rate: 0.01
+    max_epochs: 90

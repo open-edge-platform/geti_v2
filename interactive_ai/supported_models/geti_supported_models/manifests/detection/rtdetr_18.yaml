@@ -11,9 +11,6 @@ stats:
     inference_speed: 3
 support_status: deprecated
 
-supported_gpus:
-  intel: false
-
 hyperparameters:
   training:
     learning_rate: 0.0001
