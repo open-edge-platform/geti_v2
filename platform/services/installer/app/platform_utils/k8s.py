@@ -48,7 +48,7 @@ def is_service_ready(service_name: str, namespace: str) -> bool:
     KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
     core_v1_api = client.CoreV1Api()
 
-    for attempt in range(10):
+    for attempt in range(30):
         try:
             logger.debug(
                 f"Checking readiness of service '{service_name}' in namespace '{namespace}' (attempt {attempt})"
