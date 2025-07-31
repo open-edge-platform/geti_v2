@@ -92,7 +92,7 @@ test.describe('export project', () => {
         await expect(page.getByText('Exporting project: Preparing project for export')).toBeHidden();
     });
 
-    test.only('error export', async ({ registerApiResponse, page }) => {
+    test('error export', async ({ registerApiResponse, page }) => {
         registerApiResponse('GetAllProjectsInAWorkspace', (_, res, ctx) => res(ctx.json(projects)));
         registerApiResponse('TriggerProjectExport', (_, res, ctx) => res(ctx.json({ job_id: exportProjectId })));
 
