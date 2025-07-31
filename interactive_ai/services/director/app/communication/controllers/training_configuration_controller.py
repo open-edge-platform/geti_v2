@@ -1,5 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from typing import Any
 
 from geti_configuration_tools import ConfigurationOverlayTools
@@ -20,6 +21,8 @@ from geti_types import ID, ProjectIdentifier
 from iai_core.entities.annotation_scene_state import AnnotationState
 from iai_core.entities.task_node import NullTaskNode
 from iai_core.repos import AnnotationSceneStateRepo, DatasetStorageRepo, ModelRepo, TaskNodeRepo
+
+logger = logging.getLogger(__name__)
 
 
 class TrainingConfigurationRESTController:
@@ -45,13 +48,14 @@ class TrainingConfigurationRESTController:
         :raises TaskNotFoundException: If the task does not exist
         """
         # task_id can be None if the project is single-task
+        task_node_repo = TaskNodeRepo(project_identifier)
         if task_id is None:
-            task_ids = list(TaskNodeRepo(project_identifier).get_trainable_task_ids())
+            task_ids = list(task_node_repo.get_trainable_task_ids())
             if len(task_ids) != 1:
                 raise MissingTaskIDException
             task_id = task_ids[0]
 
-        if not TaskNodeRepo(project_identifier).exists(task_id):
+        if not task_node_repo.exists(task_id):
             raise TaskNodeNotFoundException(task_node_id=task_id)
 
         if model_id is not None:
@@ -79,13 +83,23 @@ class TrainingConfigurationRESTController:
                 rest_view["advanced_configuration"] = advanced_model_configuration
             return rest_view
 
+        training_configuration_repo = PartialTrainingConfigurationRepo(project_identifier)
+        task_level_config = training_configuration_repo.get_task_only_configuration(task_id)
+        # create default configuration in case the task exists but has no training configuration yet
+        if isinstance(task_level_config, NullTrainingConfiguration):
+            logger.warning(
+                f"Task training configuration for project `{project_identifier.project_id}` and task `{task_id}` "
+                f"not found, creating default training configuration."
+            )
+            task = task_node_repo.get_by_id(task_id)
+            training_configuration_repo.create_default_task_only_configuration(task)
+            task_level_config = training_configuration_repo.get_task_only_configuration(task_id)
+
         dataset_size = cls._get_dataset_size(
             project_identifier=project_identifier,
             task_id=task_id,
         )
         if model_manifest_id is None:
-            training_configuration_repo = PartialTrainingConfigurationRepo(project_identifier)
-            task_level_config = training_configuration_repo.get_task_only_configuration(task_id)
             task_level_config.global_parameters.dataset_preparation.subset_split.dataset_size = dataset_size
             # Only task level configuration can be retrieved
             return TrainingConfigurationRESTViews.training_configuration_to_rest(

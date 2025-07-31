@@ -1,5 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from typing import Any
 
 from geti_configuration_tools import ConfigurationOverlayTools
@@ -15,6 +16,9 @@ from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, ProjectIdentifier
+from iai_core.repos import ProjectRepo, TaskNodeRepo
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectConfigurationRESTController:
@@ -29,9 +33,20 @@ class ProjectConfigurationRESTController:
         :param project_identifier: Identifier for the project (containing organization_id, workspace_id, and project_id)
         :return: Dictionary representation of the project configuration
         """
-        project_config = ProjectConfigurationRepo(project_identifier).get_project_configuration()
+        project_config_repo = ProjectConfigurationRepo(project_identifier)
+        project_config = project_config_repo.get_project_configuration()
         if isinstance(project_config, NullProjectConfiguration):
-            raise ProjectConfigurationNotFoundException(project_identifier.project_id)
+            # create default configuration in case the project exists but has no configuration
+            if ProjectRepo().exists(project_identifier.project_id):
+                logger.warning(
+                    f"Project configuration for project {project_identifier.project_id} not found, "
+                    f"creating default configuration."
+                )
+                task_ids = list(TaskNodeRepo(project_identifier).get_trainable_task_ids())
+                project_config_repo.create_default_configuration(task_ids=task_ids)
+                project_config = project_config_repo.get_project_configuration()
+            else:
+                raise ProjectConfigurationNotFoundException(project_identifier.project_id)
         return ProjectConfigurationRESTViews.project_configuration_to_rest(project_config)
 
     @staticmethod
