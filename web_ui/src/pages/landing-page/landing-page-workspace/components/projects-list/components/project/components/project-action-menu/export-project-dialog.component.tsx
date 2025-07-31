@@ -78,7 +78,7 @@ export const ExportProjectDialog = ({
                                 <Button variant='secondary' onPress={handleDismiss}>
                                     Cancel
                                 </Button>
-                                <Button type='submit' variant='accent' isDisabled={isSaveButtonDisabled}>
+                                <Button type='submit' variant='accent'>
                                     Export
                                 </Button>
                             </ButtonGroup>
