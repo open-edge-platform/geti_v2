@@ -17,18 +17,27 @@ import {
 } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
+import { ProjectIdentifier } from '../../../../../../../../../core/projects/core.interface';
 import { EXPORT_PROJECT_MODELS_OPTIONS } from '../../../../../../../../../core/projects/project.interface';
+import { useWorkspaceIdentifier } from '../../../../../../../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { formatToLabel } from './utils';
 
 interface ExportProjectDialogProps {
     isOpen: boolean;
+    projectId: string;
     onClose: () => void;
-    onExportProject: () => void;
+    onExportProject: (projectIdentifier: ProjectIdentifier, selectedModels: EXPORT_PROJECT_MODELS_OPTIONS) => void;
 }
 
-export const ExportProjectDialog = ({ onClose, isOpen, onExportProject }: ExportProjectDialogProps): JSX.Element => {
+export const ExportProjectDialog = ({
+    onClose,
+    isOpen,
+    onExportProject,
+    projectId,
+}: ExportProjectDialogProps): JSX.Element => {
     const [selectedModels, setSelectedModels] = useState(EXPORT_PROJECT_MODELS_OPTIONS.ALL);
     const isSaveButtonDisabled = isEmpty(selectedModels);
+    const { organizationId, workspaceId } = useWorkspaceIdentifier();
 
     const handleExportProject = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -37,7 +46,7 @@ export const ExportProjectDialog = ({ onClose, isOpen, onExportProject }: Export
             return;
         }
 
-        onExportProject();
+        onExportProject({ organizationId, workspaceId, projectId }, selectedModels);
         onClose();
     };
 

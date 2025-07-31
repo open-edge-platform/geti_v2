@@ -13,7 +13,7 @@ import { getNonEmptyLabelsFromProject } from '../../../../../../../core/labels/u
 import { DOMAIN, ProjectIdentifier } from '../../../../../../../core/projects/core.interface';
 import { useExportProject } from '../../../../../../../core/projects/hooks/use-export-project.hook';
 import { useProjectActions } from '../../../../../../../core/projects/hooks/use-project-actions.hook';
-import { ProjectProps } from '../../../../../../../core/projects/project.interface';
+import { EXPORT_PROJECT_MODELS_OPTIONS, ProjectProps } from '../../../../../../../core/projects/project.interface';
 import { useWorkspaceIdentifier } from '../../../../../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { CustomWellClickable } from '../../../../../../../shared/components/custom-well/custom-well-clickable.component';
 import { DomainName } from '../../../../../../../shared/components/domain-name/domain-name.component';
@@ -49,12 +49,15 @@ export const Project = ({
     const labels = getNonEmptyLabelsFromProject(tasks);
     const filteredDomains = domains.filter(isNotCropDomain);
 
-    const exportProject = (projectIdentifier: ProjectIdentifier) => {
-        exportProjectMutation.mutate(projectIdentifier, {
-            onSuccess: () => {
-                setIsExporting(true);
-            },
-        });
+    const exportProject = (projectIdentifier: ProjectIdentifier, selectedModels: EXPORT_PROJECT_MODELS_OPTIONS) => {
+        exportProjectMutation.mutate(
+            { projectIdentifier, selectedModels },
+            {
+                onSuccess: () => {
+                    setIsExporting(true);
+                },
+            }
+        );
     };
 
     const deleteProject = (projectIdentifier: ProjectIdentifier, onSuccess: () => void) => {
@@ -166,7 +169,7 @@ export const Project = ({
                     setIsExporting={setIsExporting}
                     workspaceIdentifier={{ organizationId, workspaceId }}
                     exportProjectMutationIdentifier={{
-                        ...exportProjectMutation.variables,
+                        ...exportProjectMutation.variables?.projectIdentifier,
                         exportProjectId: exportProjectMutation.data?.exportProjectId,
                     }}
                     onResetProjectExport={exportProjectMutation.reset}

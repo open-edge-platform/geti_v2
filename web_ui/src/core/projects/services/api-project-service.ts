@@ -162,10 +162,13 @@ export const createApiProjectService: CreateApiService<ProjectService> = (
         };
     };
 
-    const exportProject = async (
-        projectIdentifier: ProjectIdentifier,
-        selectedModels?: EXPORT_PROJECT_MODELS_OPTIONS
-    ): Promise<ProjectExport> => {
+    const exportProject = async ({
+        projectIdentifier,
+        selectedModels,
+    }: {
+        projectIdentifier: ProjectIdentifier;
+        selectedModels?: EXPORT_PROJECT_MODELS_OPTIONS;
+    }): Promise<ProjectExport> => {
         const { data } = await instance.post<ProjectExportDTO>(
             router.EXPORT_PROJECT(projectIdentifier, selectedModels)
         );

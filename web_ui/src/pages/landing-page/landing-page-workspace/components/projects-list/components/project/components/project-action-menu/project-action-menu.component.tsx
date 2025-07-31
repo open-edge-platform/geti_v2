@@ -9,7 +9,10 @@ import { isEmpty } from 'lodash-es';
 import { useOverlayTriggerState } from 'react-stately';
 
 import { ProjectIdentifier } from '../../../../../../../../../core/projects/core.interface';
-import { ProjectProps } from '../../../../../../../../../core/projects/project.interface';
+import {
+    EXPORT_PROJECT_MODELS_OPTIONS,
+    ProjectProps,
+} from '../../../../../../../../../core/projects/project.interface';
 import { useWorkspaceIdentifier } from '../../../../../../../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { ActionMenu } from '../../../../../../../../../shared/components/action-menu/action-menu.component';
 import { MenuAction } from '../../../../../../../../../shared/components/action-menu/menu-action.interface';
@@ -22,7 +25,7 @@ import { ExportProjectDialog } from './export-project-dialog.component';
 interface ActionMenuProps {
     project: ProjectProps;
     isExporting: boolean;
-    onExportProject: (projectIdentifier: ProjectIdentifier) => void;
+    onExportProject: (projectIdentifier: ProjectIdentifier, selectedModels: EXPORT_PROJECT_MODELS_OPTIONS) => void;
     onDeleteProject: (projectIdentifier: ProjectIdentifier, onSuccess: () => void) => void;
 }
 
@@ -111,7 +114,8 @@ export const ProjectActionMenu = ({
             <ExportProjectDialog
                 onClose={exportProjectNameDialogState.close}
                 isOpen={exportProjectNameDialogState.isOpen}
-                onExportProject={() => onExportProject({ organizationId, workspaceId, projectId: project.id })}
+                onExportProject={onExportProject}
+                projectId={project.id}
             />
 
             {canEditProject && (
