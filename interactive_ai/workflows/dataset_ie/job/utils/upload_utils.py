@@ -500,9 +500,6 @@ class AnnotationUploadManager(UploadManager):
             sc_label_to_all_parents=self._sc_label_to_all_parents,
             sc_label_to_group_id=self._sc_label_to_group_id,
         )
-        logger.info(
-            f"Populating with annotation scene {annotation_scene}, and annotations {annotation_scene.annotations}"
-        )
         # since CVS-98893, Geti does no longer require empty annotations to represent unannotated media in the database
         if annotation_scene.annotations:
             self._ann_scene_repo.save(annotation_scene)

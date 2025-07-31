@@ -508,7 +508,6 @@ class ConvertUtils:
 
         dm_anns = []
         for group, dm_annotations in dm_anns_group_by.items():
-            logger.info(f"Group {group}, and annotations {dm_annotations}")
             # all annotations with 'group == NO_GROUP' annotates the independent labeling object.
             if group == NO_GROUP:
                 dm_anns += dm_annotations
@@ -527,8 +526,6 @@ class ConvertUtils:
                 for bbox_ann in bbox_anns:
                     dm_annotations.remove(bbox_ann)
             dm_anns += dm_annotations
-
-        logger.info(f"Found {dm_anns} dm annotations")
 
         # Multi-label is only allowed in classification task now,
         # thus, we change multi-label item to single-label by selecting lowest label
@@ -551,7 +548,6 @@ class ConvertUtils:
                 get_sc_label=get_sc_label,
             )
             for dm_ann in dm_anns:
-                logger.info(f"Converting dm_ann {dm_ann}")
                 sc_anns.extend(converter.convert(dm_ann))
         except TypeError:
             logger.warning(
