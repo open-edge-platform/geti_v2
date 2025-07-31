@@ -28,7 +28,8 @@ class TestExportController:
             "project": {
                 "id": str(fxt_project.id_),
                 "name": str(fxt_project.name),
-            }
+            },
+            "include_models": include_models.value,
         }
         with (
             patch.object(GRPCJobsClient, "submit", return_value=submitted_job_id) as mock_grpc_client_submit,
