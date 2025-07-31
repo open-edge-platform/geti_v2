@@ -23,6 +23,7 @@ import {
 import { ProjectStatus } from '../project-status.interface';
 import {
     CreateProjectProps,
+    EXPORT_PROJECT_MODELS_OPTIONS,
     ProjectExport,
     ProjectExportIdentifier,
     ProjectImport,
@@ -33,6 +34,8 @@ import {
 } from '../project.interface';
 import { PerformanceType, TaskMetadata } from '../task.interface';
 import { ImportOptions, ProjectService } from './project-service.interface';
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 const inMemoryDatasets = [
     {
@@ -375,7 +378,13 @@ export const createInMemoryProjectService = (): ProjectService => {
         };
     };
 
-    const exportProject = async (_datasetIdentifier: DatasetIdentifier): Promise<ProjectExport> => {
+    const exportProject = async ({
+        projectIdentifier,
+        selectedModels,
+    }: {
+        projectIdentifier: ProjectIdentifier;
+        selectedModels?: EXPORT_PROJECT_MODELS_OPTIONS;
+    }): Promise<ProjectExport> => {
         return {
             exportProjectId: '62ea1a69f00a19754326589c',
         };
