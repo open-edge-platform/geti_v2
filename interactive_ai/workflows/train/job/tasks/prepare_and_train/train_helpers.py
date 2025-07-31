@@ -3,9 +3,10 @@
 
 """This module contains the FlyteTaskTrainCommands"""
 
+import json
 import logging
 
-import iai_core.configuration.helper as otx_config_helper
+from geti_supported_models import SupportedModels
 from geti_telemetry_tools import unified_tracing
 from iai_core.configuration.elements.hyper_parameters import HyperParameters
 from iai_core.entities.datasets import Dataset
@@ -28,6 +29,7 @@ from jobs_common.exceptions import CommandInitializationFailedException, Trainin
 from jobs_common.features.feature_flag_provider import FeatureFlag, FeatureFlagProvider
 from jobs_common.tasks.utils.secrets import JobMetadata
 from jobs_common_extras.experiments.adapters.ml_artifacts import MLArtifactsAdapter
+from jobs_common_extras.experiments.utils.legacy_configuration_converter import forward_legacy_hyperparameters
 from jobs_common_extras.experiments.utils.train_output_models import TrainOutputModelIds, TrainOutputModels
 
 from job.utils.train_workflow_data import TrainWorkflowData
@@ -136,11 +138,10 @@ class _ModelBuilder:
 def _prepare_s3_bucket(
     project: Project,
     label_schema: LabelSchema,
-    model_template_id: str,
+    model_manifest_id: str,
     input_model: Model | None,
     hyper_parameters: dict,
     export_parameters: dict[str, str | bool] | list[dict[str, str | bool]],
-    optimization_type: ModelOptimizationType = ModelOptimizationType.NONE,
 ) -> None:
     """Prepare files required for model training, optimize.
 
@@ -150,19 +151,17 @@ def _prepare_s3_bucket(
     This is a list of files which is created by this function:
 
     - <root>: metadata.json, project.json
-    - <root>/inputs: .placeholder, config.json, model.pth
+    - <root>/inputs: .placeholder, config.yaml, model.pth
     - <root>/live_metrics: .placeholder
     - <root>/outputs/models: .placeholder
-    - <root>/outputs/exportable-codes: .placeholder
     - <root>/outputs/configurations: .placeholder
 
     :param project: Project owning this job
-    :param model_template_id: ID of model template for this job (obtained from CRD)
+    :param model_manifest_id: ID of model template for this job (obtained from CRD)
     :param input_model: Model to use as a checkpoint to reload weights for training.
         If None, training will be from scratch
     :param hyper_parameters: Hyperparameters for this job (obtained from CRD)
     :param export_parameters: Exportparameters for this job (obtained from CRD)
-    :param optimization_type: Model optimization type enum. It is only used for the model optimize job.
     :param label_schema: If not `None`, it is used to create `ClsSubTaskType`
         used to distinguish classification tasks.
         Otherwise, do not add `ClsSubTaskType` value to the configuration file.
@@ -171,10 +170,9 @@ def _prepare_s3_bucket(
     adapter.push_placeholders()
     adapter.push_metadata()
     adapter.push_input_configuration(
-        model_template_id=model_template_id,
+        model_manifest_id=model_manifest_id,
         hyper_parameters=hyper_parameters,
         export_parameters=export_parameters,
-        optimization_type=optimization_type,
         label_schema=label_schema,
     )
     if input_model:
@@ -183,9 +181,11 @@ def _prepare_s3_bucket(
 
 @unified_tracing
 def _get_export_parameters(
-    train_output_models: TrainOutputModels,
+    train_output_models: TrainOutputModels, model_manifest_id: str
 ) -> list[dict[str, str | bool]]:
     export_parameters: list[dict[str, str | bool]] = []
+    # TODO https://github.com/open-edge-platform/geti/issues/924: remove dependency to TrainOutputModels.mo_with_xai
+    model_manifest = SupportedModels.get_model_manifest_by_id(model_manifest_id)
     for model in train_output_models.get_all_models():
         if model.optimization_type in {
             ModelOptimizationType.MO,
@@ -193,10 +193,10 @@ def _get_export_parameters(
         }:
             export_parameters.append(
                 {
-                    "type": model.model_format.name.lower(),
+                    "format": model.model_format.name.lower(),
                     "output_model_id": str(model.id_),
                     "precision": model.precision[0].name if model.precision else "null",
-                    "with_xai": model.has_xai_head,
+                    "with_xai": model.has_xai_head and model_manifest.capabilities.xai,
                 }
             )
     return export_parameters
@@ -220,19 +220,20 @@ def prepare_train(train_data: TrainWorkflowData, dataset: Dataset) -> TrainOutpu
     label_schema = train_data.get_label_schema()
     model_storage = train_data.get_model_storage()
     input_model = train_data.get_input_model()
-    hyper_parameters = train_data.get_hyper_parameters()
+    legacy_hyper_parameters = train_data.get_hyper_parameters()
 
     model_repo = ModelRepo(model_storage.identifier)
     model_version = model_repo.get_latest_successful_version() + 1
+    revamped_hyperparameters = json.loads(train_data.hyperparameters_json) if train_data.hyperparameters_json else None
     model_builder = _ModelBuilder(
         model_repo=model_repo,
         project=project,
         model_storage=model_storage,
         dataset=dataset,
         label_schema=label_schema,
-        hyper_parameters=hyper_parameters,
+        hyper_parameters=legacy_hyper_parameters,
         model_version=model_version,
-        revamped_hyperparameters=train_data.hyperparameters,
+        revamped_hyperparameters=revamped_hyperparameters,
     )
 
     output_base_model = model_builder.create_model(
@@ -242,32 +243,42 @@ def prepare_train(train_data: TrainWorkflowData, dataset: Dataset) -> TrainOutpu
         previous_trained_revision=input_model,
     )
     use_fp16 = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_FP16_INFERENCE)
-    output_models = TrainOutputModels(
-        base=output_base_model,
-        mo_with_xai=model_builder.create_model(
-            model_format=ModelFormat.OPENVINO,
-            has_xai_head=True,
-            precision=[ModelPrecision.FP16 if use_fp16 else ModelPrecision.FP32],
-            model_optimization_type=ModelOptimizationType.MO,
-            previous_revision=output_base_model,
-            previous_trained_revision=output_base_model,
-        ),
-        mo_fp32_without_xai=model_builder.create_model(
+
+    # TODO https://github.com/open-edge-platform/geti/issues/924: remove dependency to TrainOutputModels.mo_with_xai
+    model_manifest = SupportedModels.get_model_manifest_by_id(model_storage.model_manifest_id)
+    mo_base_model = model_builder.create_model(
+        model_format=ModelFormat.OPENVINO,
+        has_xai_head=True,
+        precision=[ModelPrecision.FP16 if use_fp16 else ModelPrecision.FP32],
+        model_optimization_type=ModelOptimizationType.MO,
+        previous_revision=output_base_model,
+        previous_trained_revision=output_base_model,
+    )
+    mo_fp32_without_xai = None
+    if model_manifest.capabilities.xai or ModelPrecision.FP32 not in mo_base_model.precision:
+        mo_fp32_without_xai = model_builder.create_model(
             model_format=ModelFormat.OPENVINO,
             has_xai_head=False,
             precision=[ModelPrecision.FP32],
             model_optimization_type=ModelOptimizationType.MO,
             previous_revision=output_base_model,
             previous_trained_revision=output_base_model,
-        ),
-        mo_fp16_without_xai=model_builder.create_model(
+        )
+    mo_fp16_without_xai = None
+    if model_manifest.capabilities.xai or ModelPrecision.FP16 not in mo_base_model.precision:
+        mo_fp16_without_xai = model_builder.create_model(
             model_format=ModelFormat.OPENVINO,
             has_xai_head=False,
             precision=[ModelPrecision.FP16],
             model_optimization_type=ModelOptimizationType.MO,
             previous_revision=output_base_model,
             previous_trained_revision=output_base_model,
-        ),
+        )
+    output_models = TrainOutputModels(
+        base=output_base_model,
+        mo_with_xai=mo_base_model,
+        mo_fp32_without_xai=mo_fp32_without_xai,
+        mo_fp16_without_xai=mo_fp16_without_xai,
         onnx=model_builder.create_model(
             model_format=ModelFormat.ONNX,
             model_optimization_type=ModelOptimizationType.ONNX,
@@ -277,25 +288,26 @@ def prepare_train(train_data: TrainWorkflowData, dataset: Dataset) -> TrainOutpu
         ),
     )
 
-    model_configuration = ModelConfiguration(
-        configurable_parameters=hyper_parameters.data,
-        label_schema=label_schema,
-    )
-
-    hyper_parameter_dict = otx_config_helper.convert(
-        model_configuration.configurable_parameters,
-        target=dict,
-        enum_to_str=True,
-        id_to_str=True,
-    )
+    ff_enabled = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS)
+    model_configuration = output_base_model.configuration
+    revamped_hyperparameters = model_configuration.display_only_configuration
+    if ff_enabled and revamped_hyperparameters:
+        # Remove advanced_model_configuration if it exists
+        revamped_hyperparameters.pop("advanced_model_configuration", None)
+        hyper_parameter_dict = revamped_hyperparameters
+    else:
+        hyperparameters = forward_legacy_hyperparameters(legacy_hyper_parameters)
+        hyper_parameter_dict = hyperparameters.model_dump(exclude_none=True)
 
     _prepare_s3_bucket(
         project=project,
         label_schema=label_schema,
-        model_template_id=model_storage.model_template.model_template_id,
+        model_manifest_id=model_storage.model_manifest_id,
         input_model=input_model,
         hyper_parameters=hyper_parameter_dict,
-        export_parameters=_get_export_parameters(train_output_models=output_models),
+        export_parameters=_get_export_parameters(
+            train_output_models=output_models, model_manifest_id=model_storage.model_manifest_id
+        ),
     )
 
     return output_models
@@ -339,7 +351,11 @@ def finalize_train(
             job_metadata=JobMetadata.from_env_vars(),
         )
 
-        # If succeeded, clean the directory under the mlflowexperiments bucket
+        advanced_model_configuration = adapter.pull_output_configuration()
+        if advanced_model_configuration:
+            train_output_models.set_advanced_configuration(advanced_model_configuration)
+
+        # If succeeded, clean the directory under the  mlflowexperiments bucket
         if retain_training_artifacts:
             logger.warning(
                 "Parameter `retain_training_artifacts` is set to true, so the bucket will not be cleaned up. "

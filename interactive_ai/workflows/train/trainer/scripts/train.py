@@ -7,13 +7,8 @@ import logging
 from pathlib import Path
 
 from metrics import OTXMetricsLogger
-from otx.tools.converter import ConfigConverter
-from otx_io import (
-    load_trained_model_weights,
-    save_exported_model,
-    save_openvino_exported_model,
-    save_trained_model_weights,
-)
+from otx.tools.converter import GetiConfigConverter
+from otx_io import load_trained_model_weights, save_exported_model, save_trained_model_weights
 from progress_updater import ProgressUpdater, ProgressUpdaterCallback, TrainingStage
 from utils import ExportFormat, OTXConfig, logging_elapsed_time
 
@@ -28,8 +23,8 @@ def train(
     resume: bool = False,
 ) -> None:
     """Execute OTX model training."""
-    otx2_config = config.to_otx2_config(work_dir=work_dir)
-    engine, train_kwargs = ConfigConverter.instantiate(
+    otx2_config = config.to_otx2_config()
+    engine, train_kwargs = GetiConfigConverter.instantiate(
         config=otx2_config,
         work_dir=str(work_dir / "otx-workspace"),
         data_root=str(dataset_dir),
@@ -71,15 +66,12 @@ def train(
                 export_format=export_param.to_otx2_export_format(),
                 export_precision=export_param.to_otx2_precision(),
                 explain=export_param.with_xai,
-                export_demo_package=True,
             )
             export_dir = exported_path.parent
 
-            save_openvino_exported_model(
-                work_dir=work_dir,
-                export_param=export_param,
-                exported_path=exported_path,
+            save_exported_model(
                 export_dir=export_dir,
+                export_param=export_param,
             )
             logger.debug("OpenVINO model is saved.")
         elif export_param.export_format == ExportFormat.ONNX:

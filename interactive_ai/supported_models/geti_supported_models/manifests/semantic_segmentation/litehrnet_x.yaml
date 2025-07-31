@@ -9,6 +9,7 @@ stats:
     accuracy: 2
     training_time: 1
     inference_speed: 1
+support_status: deprecated
 
 hyperparameters:
   training:

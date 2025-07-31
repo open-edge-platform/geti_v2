@@ -7,7 +7,7 @@ import pytest
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration
 
 from communication.controllers.training_configuration_controller import TrainingConfigurationRESTController
-from communication.exceptions import NotConfigurableParameterException
+from communication.exceptions import NotConfigurableParameterException, NotSupportedConfigurableParameterException
 from communication.views.training_configuration_rest_views import TrainingConfigurationRESTViews
 from service.configuration_service import ConfigurationService
 from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
@@ -179,6 +179,16 @@ class TestTrainingConfigurationController:
         expected_rest_view = TrainingConfigurationRESTViews.training_configuration_to_rest(
             fxt_partial_training_configuration_manifest_level
         )
+        advanced_model_configs = [
+            {
+                "key": "optimum_confidence_threshold",
+                "name": "Optimum confidence threshold",
+                "description": "The confidence threshold for ideal predictions",
+                "value": 0.65,
+            }
+        ]
+        expected_rest_view["advanced_configuration"] = advanced_model_configs
+        model_hyperparams_dict["advanced_model_configuration"] = advanced_model_configs
 
         # Act
         with patch.object(
@@ -200,13 +210,13 @@ class TestTrainingConfigurationController:
         )
         assert config_rest == expected_rest_view
 
-    @patch.object(TaskNodeRepo, "exists", return_value=True)
     def test_update_configuration(
         self,
         request,
         fxt_project_identifier,
         fxt_training_configuration_task_level,
         fxt_partial_training_configuration_manifest_level,
+        fxt_detection_task,
     ) -> None:
         # Arrange
         repo = PartialTrainingConfigurationRepo(fxt_project_identifier)
@@ -232,10 +242,11 @@ class TestTrainingConfigurationController:
         update_config = PartialTrainingConfiguration.model_validate(update_config_dict)
 
         # Act
-        TrainingConfigurationRESTController.update_configuration(
-            project_identifier=fxt_project_identifier,
-            update_configuration=update_config,
-        )
+        with patch.object(TaskNodeRepo, "get_by_id", return_value=fxt_detection_task):
+            TrainingConfigurationRESTController.update_configuration(
+                project_identifier=fxt_project_identifier,
+                update_configuration=update_config,
+            )
 
         # Assert
         updated_config = repo.get_task_only_configuration(
@@ -247,13 +258,13 @@ class TestTrainingConfigurationController:
         assert updated_config.global_parameters.dataset_preparation.subset_split.validation == 30
         assert updated_config.global_parameters.dataset_preparation.subset_split.test == 10
 
-    @patch.object(TaskNodeRepo, "exists", return_value=True)
     def test_update_configuration_with_input_size(
         self,
         request,
         fxt_project_identifier,
         fxt_training_configuration_task_level,
         fxt_partial_training_configuration_manifest_level,
+        fxt_detection_task,
     ) -> None:
         # Arrange
         repo = PartialTrainingConfigurationRepo(fxt_project_identifier)
@@ -290,10 +301,11 @@ class TestTrainingConfigurationController:
         update_config = TrainingConfigurationRESTViews.training_configuration_from_rest(update_config_rest)
 
         # Act & Assert
-        TrainingConfigurationRESTController.update_configuration(
-            project_identifier=fxt_project_identifier,
-            update_configuration=update_config,
-        )
+        with patch.object(TaskNodeRepo, "get_by_id", return_value=fxt_detection_task):
+            TrainingConfigurationRESTController.update_configuration(
+                project_identifier=fxt_project_identifier,
+                update_configuration=update_config,
+            )
         updated_config = ConfigurationService.get_full_training_configuration(
             project_identifier=fxt_project_identifier,
             task_id=fxt_training_configuration_task_level.task_id,
@@ -352,6 +364,31 @@ class TestTrainingConfigurationController:
             )
 
             assert dataset_size == 2  # 1 annotated image + 1 partially annotated video frame
+
+    def test_not_supported_configurable_parameter(self, fxt_project_identifier, fxt_classification_task) -> None:
+        # Arrange
+        update_config_rest = {
+            "task_id": fxt_classification_task.id_,
+            "global_parameters": {
+                "dataset_preparation": {
+                    "filtering": {
+                        "min_annotation_pixels": {"enable": True},
+                        "max_annotation_pixels": {"enable": True},
+                    }
+                }
+            },
+        }
+        update_config = PartialTrainingConfiguration.model_validate(update_config_rest)
+
+        # Act & Assert
+        with (
+            patch.object(TaskNodeRepo, "get_by_id", return_value=fxt_classification_task),
+            pytest.raises(NotSupportedConfigurableParameterException),
+        ):
+            TrainingConfigurationRESTController.update_configuration(
+                project_identifier=fxt_project_identifier,
+                update_configuration=update_config,
+            )
 
     @patch.object(TaskNodeRepo, "exists", return_value=True)
     def test_get_legacy_model_configuration(

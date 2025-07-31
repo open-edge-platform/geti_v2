@@ -8,8 +8,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, call, patch
 
 import pytest
+import yaml
 from iai_core.adapters.model_adapter import DataSource
-from iai_core.configuration.helper import convert
 from iai_core.entities.metrics import CurveMetric, LineChartInfo, LineMetricsGroup, Performance, ScoreMetric
 from iai_core.entities.model import Model, ModelFormat, ModelOptimizationType, ModelPrecision, ModelStatus
 from iai_core.repos.model_repo import ModelRepo
@@ -61,13 +61,6 @@ class TestMLArtifactsAdapter:
             os.path.join("jobs", fxt_job_metadata.id, "inputs", ".placeholder"),
             os.path.join("jobs", fxt_job_metadata.id, "live_metrics", ".placeholder"),
             os.path.join("jobs", fxt_job_metadata.id, "outputs", "models", ".placeholder"),
-            os.path.join(
-                "jobs",
-                fxt_job_metadata.id,
-                "outputs",
-                "exportable_codes",
-                ".placeholder",
-            ),
             os.path.join("jobs", fxt_job_metadata.id, "outputs", "configurations", ".placeholder"),
             os.path.join("jobs", fxt_job_metadata.id, "outputs", "logs", ".placeholder"),
         }
@@ -232,7 +225,7 @@ class TestMLArtifactsAdapter:
         # Act
         adapter = MLArtifactsAdapter(project_identifier=fxt_project_identifier, job_metadata=fxt_job_metadata)
         adapter.push_input_configuration(
-            model_template_id="dummy_id",
+            model_manifest_id="dummy_id",
             hyper_parameters={"dummy": {"params": 1}},
             export_parameters={"export": [{"a": "b"}]},
             label_schema=fxt_label_schema,
@@ -240,12 +233,12 @@ class TestMLArtifactsAdapter:
 
         # Assert
         mock_repo.return_value.save_group.assert_called_once_with(source_directory=str(tmp_path))
-        saved_file_names = set(tmp_path.glob("**/*.json"))
-        expected_path = Path(tmp_path) / "jobs" / fxt_job_metadata.id / "inputs" / "config.json"
+        saved_file_names = set(tmp_path.glob("**/*.yaml"))
+        expected_path = Path(tmp_path) / "jobs" / fxt_job_metadata.id / "inputs" / "config.yaml"
         assert saved_file_names == {expected_path}
 
         with expected_path.open("r") as fp:
-            config_dict = json.load(fp)
+            config_dict = yaml.safe_load(fp)
 
         assert config_dict["sub_task_type"] == ClsSubTaskType.MULTI_CLASS_CLS
 
@@ -285,6 +278,7 @@ class TestMLArtifactsAdapter:
         assert saved_file_names == {os.path.join("jobs", fxt_job_metadata.id, "inputs", fname)}
 
     @pytest.mark.parametrize("has_additional_model_artifacts", [True, False])
+    @pytest.mark.parametrize("model_manifest_id", ["Keypoint_Detection_RTMPose_Tiny", "ote_anomaly_padim"])
     @patch("jobs_common_extras.experiments.adapters.ml_artifacts.ModelRepo")
     @patch("jobs_common_extras.experiments.adapters.ml_artifacts.ProjectRepo")
     @patch("jobs_common_extras.experiments.adapters.ml_artifacts.ExperimentsBinaryRepo")
@@ -297,6 +291,7 @@ class TestMLArtifactsAdapter:
         fxt_project_identifier,
         fxt_job_metadata,
         fxt_organization_id,
+        model_manifest_id,
         has_additional_model_artifacts: bool,
     ) -> None:
         # Arrange
@@ -311,6 +306,8 @@ class TestMLArtifactsAdapter:
         def _return_as_is(model_binary_repo, src_filepath) -> str:
             return os.path.basename(src_filepath)
 
+        mock_model_storage = MagicMock()
+        mock_model_storage.model_manifest_id = model_manifest_id
         mock_repo.return_value.copy_to.side_effect = _return_as_is
 
         mock_model_repo.return_value = MagicMock(spec=ModelRepo)
@@ -320,18 +317,21 @@ class TestMLArtifactsAdapter:
         mock_base_model.model_format = ModelFormat.BASE_FRAMEWORK
         mock_base_model.precision = [ModelPrecision.FP32]
         mock_base_model.has_xai_head = True
+        mock_base_model.model_storage = mock_model_storage
 
         mock_ov_model = MagicMock(spec=Model)
         mock_ov_model.model_status = ModelStatus.NOT_READY
         mock_ov_model.model_format = ModelFormat.OPENVINO
         mock_ov_model.precision = [ModelPrecision.FP16]
         mock_ov_model.has_xai_head = False
+        mock_ov_model.model_storage = mock_model_storage
 
         mock_onnx_model = MagicMock(spec=Model)
         mock_onnx_model.model_status = ModelStatus.NOT_READY
         mock_onnx_model.model_format = ModelFormat.ONNX
         mock_onnx_model.precision = [ModelPrecision.FP32]
         mock_onnx_model.has_xai_head = False
+        mock_onnx_model.model_storage = mock_model_storage
 
         models_to_update = [
             mock_base_model,
@@ -364,7 +364,6 @@ class TestMLArtifactsAdapter:
             )
         else:
             assert expected_set_data_keys == called_set_data_keys
-        assert "exportable-code" in mock_ov_model.exportable_code.binary_filename
 
         assert mock_base_model.model_status == ModelStatus.SUCCESS
         assert mock_ov_model.model_status == ModelStatus.SUCCESS
@@ -378,7 +377,6 @@ class TestMLArtifactsAdapter:
             "model_fp32_xai.pth",
             "model_fp16_non-xai.xml",
             "model_fp16_non-xai.bin",
-            "exportable-code_fp16_non-xai.whl",
             "model_fp32_non-xai.onnx",
         }
 
@@ -406,26 +404,26 @@ class TestMLArtifactsAdapter:
         fxt_project_identifier,
         fxt_job_metadata,
         fxt_organization_id,
-        fxt_configurable_parameters_1,
     ) -> None:
         # Arrange
+        dummy_advanced_configuration = [
+            {
+                "key": "optimum_confidence_threshold",
+                "name": "Optimum confidence threshold",
+                "description": "The confidence threshold for ideal predictions",
+                "value": 0.65,
+            }
+        ]
         mock_project_repo.return_value.get_by_id.return_value = fxt_project
         mock_repo.return_value.organization_id = fxt_organization_id
-        mock_repo.return_value.get_by_filename.return_value = json.dumps(
-            convert(
-                config=fxt_configurable_parameters_1,
-                target=dict,
-                enum_to_str=True,
-                id_to_str=True,
-            )
-        ).encode()
+        mock_repo.return_value.get_by_filename.return_value = json.dumps(dummy_advanced_configuration).encode()
 
         # Act
         adapter = MLArtifactsAdapter(project_identifier=fxt_project_identifier, job_metadata=fxt_job_metadata)
-        configuration = adapter.pull_output_configuration()
+        advanced_configuration = adapter.pull_output_configuration()
 
         # Assert
-        assert configuration == fxt_configurable_parameters_1
+        assert advanced_configuration == dummy_advanced_configuration
 
     @patch("jobs_common_extras.experiments.adapters.ml_artifacts.ProjectRepo")
     @patch("jobs_common_extras.experiments.adapters.ml_artifacts.ExperimentsBinaryRepo")

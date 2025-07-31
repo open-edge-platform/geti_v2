@@ -637,6 +637,30 @@ class NotConfigurableParameterException(GetiBaseException):
         )
 
 
+class NotSupportedConfigurableParameterException(GetiBaseException):
+    """
+    Exception raised when trying to set a configurable parameter that is not supported
+    in the current context or by the current task implementation.
+
+    :param parameter_name: The name of the parameter that is not supported
+    :param task_type: Optional task type that doesn't support this parameter
+    :param model_manifest_id: Optional model manifest ID that doesn't support this parameter
+    """
+
+    def __init__(self, parameter_name: str, task_type: str | None = None, model_manifest_id: str | None = None) -> None:
+        message = f"The parameter '{parameter_name}' is not supported"
+        if task_type:
+            message += f" by task type '{task_type}'"
+        if model_manifest_id:
+            message += f" by model manifest '{model_manifest_id}'"
+
+        super().__init__(
+            message=message,
+            error_code="not_supported_configurable_parameter",
+            http_status=http.HTTPStatus.BAD_REQUEST,
+        )
+
+
 class ModelManifestNotFoundException(GetiBaseException):
     """
     Exception raised when a model manifest could not be found in the database.

@@ -188,6 +188,108 @@ class TestBinaryStorageRepo:
                 object_name=object_name,
             )
 
+    def test_get_all_objects_by_type_with_include_binary_paths(
+        self,
+        request: FixtureRequest,
+        fxt_mongo_id,
+    ):
+        """
+        Test the get_all_objects_by_type method.
+
+        1. Arrange all variables such as IDs, paths and filenames in the manner that they would be on export
+        2. Set environment variables for the repo to be instantiated
+        3. Mock all s3-related methods.
+         - The initialization of the minio client will be mocked
+         - The bucket_exists method of minio will be mocked to always be true
+         - The list_objects method returns a single mock object.
+         - The fget_object method is mocked in such a way that it creates a single file with the name of the object
+            that was requested.
+        4. Call the method with an include_binary_paths containing only one object_name_from_project_root
+        5. Assert that all the mocks were called
+        6. Assert only one object is returned
+        """
+        # Arrange
+        organization_id = ID(fxt_mongo_id(0))
+        workspace_id = ID(fxt_mongo_id(1))
+        project_id = ID(fxt_mongo_id(2))
+        model_storage_id = ID(fxt_mongo_id(3))
+
+        object_type = BinaryObjectType.MODELS
+        object_basenames = [f"dummy.name{i}" for i in range(3)]
+        object_names_from_project_root = [
+            os.path.join("model_storages", str(model_storage_id), object_basename)
+            for object_basename in object_basenames
+        ]
+        project_root = os.path.join(
+            "organizations",
+            str(organization_id),
+            "workspaces",
+            str(workspace_id),
+            "projects",
+            str(project_id),
+        )
+        object_names = [
+            os.path.join(project_root, object_name_from_project_root)
+            for object_name_from_project_root in object_names_from_project_root
+        ]
+
+        temp_folder = "/tmp/dummy"
+        local_paths = [
+            os.path.join(temp_folder, object_name_from_project_root)
+            for object_name_from_project_root in object_names_from_project_root
+        ]
+
+        self.__set_env_variables(request=request)
+
+        mock_objects = [MagicMock() for _ in object_names]
+        for mock_object, object_name in zip(mock_objects, object_names):
+            mock_object.object_name = object_name
+
+        include_binary_paths = {f"model_storages/{model_storage_id}/dummy.name1"}
+        with (
+            patch("boto3.client", return_value=None),
+            patch("tempfile.mkdtemp"),
+            patch.object(Minio, "list_objects", return_value=mock_objects) as mock_list_objects,
+            patch.object(Minio, "bucket_exists", return_value=True) as mock_bucket_exists,
+            patch.object(Minio, "fget_object", return_value=None) as mock_fget_object,
+        ):
+            # Create the effect of creating a file when fget_object is called, as it would behave on S3 call.
+            mock_fget_object.side_effect = (
+                lambda bucket_name, file_path, object_name: TestBinaryStorageRepo.__create_temporary_file(
+                    request=request, filename=os.path.basename(object_name)
+                )
+            )
+
+            # Act
+            storage_repo = BinaryStorageRepo(
+                organization_id=organization_id,
+                workspace_id=workspace_id,
+                project_id=project_id,
+            )
+            for (
+                local_path_iter,
+                object_name_iter,
+            ) in storage_repo.get_all_objects_by_type(
+                object_type=BinaryObjectType.MODELS,
+                target_folder=temp_folder,
+                whitelisted_paths=include_binary_paths,
+            ):
+                assert local_path_iter == local_paths[1]
+                assert object_name_iter == object_names_from_project_root[1]
+
+            # Assert
+            mock_list_objects.assert_called_once_with(
+                bucket_name=object_type.bucket_name(),
+                prefix=project_root + "/",
+                recursive=True,
+            )
+            mock_bucket_exists.assert_called_once_with(bucket_name=object_type.bucket_name())
+            mock_fget_object.assert_called_once_with(
+                bucket_name=object_type.bucket_name(),
+                file_path=local_paths[1],
+                object_name=object_names[1],
+            )
+
     def test_store_objects_by_type(
         self,
         request: FixtureRequest,

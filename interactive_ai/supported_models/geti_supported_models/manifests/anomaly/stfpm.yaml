@@ -9,3 +9,10 @@ stats:
     accuracy: 2
     training_time: 2
     inference_speed: 2
+
+hyperparameters:
+  training:
+    allowed_values_input_size:
+      - 256
+    input_size_width: 256
+    input_size_height: 256

@@ -13,3 +13,10 @@ class InvalidAutoTrainRequestError(ValueError):
 
 class JobSubmissionError(RuntimeError):
     """Exception raised when a problem occurs while submitting a job to the jobs client"""
+
+
+class ModelManifestNotFoundException(ValueError):
+    """
+    Exception raised when the requested model manifest cannot be found.
+    The caller should not retry to process such a request because most likely it would fail again.
+    """

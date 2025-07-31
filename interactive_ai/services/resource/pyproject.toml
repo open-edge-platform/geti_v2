@@ -10,6 +10,7 @@ dependencies = [
     "python-multipart~=0.0.18",
     "uvicorn~=0.27",
     "pillow==11.1.0",
+    "defusedxml~=0.7.1",
     "geti-feature-tools",
     "geti-fastapi-tools",
     "geti-kafka-tools",
@@ -18,7 +19,7 @@ dependencies = [
     "geti-types",
     "iai_core",
     "media_utils",
-    "grpc_interfaces"
+    "grpc_interfaces",
 ]
 
 [tool.uv.sources]

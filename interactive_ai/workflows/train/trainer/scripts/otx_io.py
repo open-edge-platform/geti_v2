@@ -7,9 +7,7 @@ import json
 import logging
 import os
 import re
-import shutil
 import traceback
-import zipfile
 from functools import partial, wraps
 from pathlib import Path
 from queue import Queue
@@ -20,7 +18,7 @@ from typing import TYPE_CHECKING, ClassVar
 import requests
 from s3_client import S3ClientSingleton
 from tqdm import tqdm
-from utils import BASE_MODEL_FILENAME, ExportFormat, ExportParameter, logging_elapsed_time
+from utils import BASE_MODEL_FILENAME, ExportFormat, ExportParameter, PrecisionType, logging_elapsed_time
 
 if TYPE_CHECKING:
     import io
@@ -130,10 +128,10 @@ def download_shard_files() -> Path:
 @logging_elapsed_time(logger=logger, log_level=logging.INFO)
 def download_config_file() -> Path:
     """Download the configuration file."""
-    file_path = _get_shard_files_dir() / "config.json"
+    file_path = _get_shard_files_dir() / "config.yaml"
     S3ClientSingleton.instance().download_file(
         bucket_name=_get_bucket_name(),
-        relative_path=_get_object_name_base() / "inputs/config.json",
+        relative_path=_get_object_name_base() / "inputs/config.yaml",
         file_path=file_path,
     )
     return file_path
@@ -242,59 +240,6 @@ def download_model_artifact(
     return Path(file_path)
 
 
-def unzip_exportable_code(
-    work_dir: Path,
-    exported_path: Path,
-    dst_dir: Path,
-) -> None:
-    """Unzip exportable code
-
-    We export the model only exportable code format currently.
-    It is due to preventing a duplication model exportation between exportable code and OpenVINO IR format.
-    """
-    # TODO: This function should be deprecated and it should be improved
-    # in upstream to export OPENVINO IR and EXPORTABLE_CODE at the same time
-    # This time, we don't have that interface, thus it is inevitable to export as EXPORTABLE_CODE format.
-    # Then, unzip the zip file to obtain OPENVINO IR files in it.
-    # For example, if we excute `exported_path = engine.export(..., exportable_code=True)`, then
-    # exported_path => {exported_model.bin, exported_model.xml, exportable_code.zip}
-
-    with zipfile.ZipFile(exported_path, mode="r") as zfp, TemporaryDirectory(prefix=str(work_dir)) as tmpdir:
-        zfp.extractall(tmpdir)
-        dirpath = Path(tmpdir)
-
-        shutil.move(dirpath / "model" / "model.xml", dst_dir / "exported_model.xml")
-        shutil.move(dirpath / "model" / "model.bin", dst_dir / "exported_model.bin")
-
-    shutil.move(exported_path, dst_dir / exported_path.name)
-
-
-def save_openvino_exported_model(
-    work_dir: Path,
-    export_param: ExportParameter,
-    exported_path: Path,
-    export_dir: Path,
-) -> None:
-    """Save OpenVINO exported model and exportable code at the same time."""
-    # TODO: This function should be deprecated and it should be improved
-    # in upstream to export OPENVINO IR and EXPORTABLE_CODE at the same time
-    # This time, we don't have that interface, thus it is inevitable to export as EXPORTABLE_CODE format.
-    # Then, unzip the zip file to obtain OPENVINO IR files in it.
-    # For example, if we excute `exported_path = engine.export(..., exportable_code=True)`, then
-    # exported_path => {exported_model.bin, exported_model.xml, exportable_code.zip}
-
-    unzip_exportable_code(
-        work_dir=work_dir,
-        exported_path=exported_path,
-        dst_dir=export_dir,
-    )
-
-    save_exported_model(
-        export_dir=export_dir,
-        export_param=export_param,
-    )
-
-
 def save_trained_model_weights(
     best_checkpoint: Path,
     force_non_xai: bool = False,
@@ -311,15 +256,14 @@ def save_trained_model_weights(
 def save_exported_model(export_dir: Path, export_param: ExportParameter) -> None:
     """Utility function to save exported format according to `ExportParameter`."""
     if export_param.export_format == ExportFormat.OPENVINO:
-        src_filepath = export_dir / "exportable_code.zip"
-        upload_model_artifact(
-            src_filepath=src_filepath,
-            dst_filepath=Path("outputs/exportable_codes") / export_param.to_exportable_code_artifact_fname(),
+        target_names = (
+            ["optimized_model.bin", "optimized_model.xml"]
+            if export_param.precision == PrecisionType.INT8
+            else ["exported_model.bin", "exported_model.xml"]
         )
-        os.remove(src_filepath)
 
         for src_filename, dst_filename in zip(
-            ["exported_model.bin", "exported_model.xml"],
+            target_names,
             export_param.to_artifact_fnames(),
         ):
             src_filepath = export_dir / src_filename
@@ -365,7 +309,10 @@ def load_trained_model_weights(
     """
 
     src_dir = _get_object_name_base() / "inputs"
-    src_fnames = ["openvino.bin", "openvino.xml"] if optimize else ["model.pth"]
+    src_fnames = {"weights": "model.pth"}
+    if optimize:
+        src_fnames["weights"] = "openvino.xml"
+        src_fnames["binaries"] = "openvino.bin"
 
     logger.info(f"Listing artifacts under relative path: {src_dir}")
     file_info_set = []
@@ -374,31 +321,17 @@ def load_trained_model_weights(
 
     logger.info("Received file_info_set=%s", file_info_set)
 
-    if not all(src_fname in file_info_set for src_fname in src_fnames):
+    if not all(src_fname in file_info_set for src_fname in src_fnames.values()):
         logger.info("Found no model checkpoint. Starting from scratch.")
         return None
 
     logger.info("Found model checkpoint: %s. Downloading the checkpoint.", src_fnames)
-    downloaded = []
-    for src_fname in src_fnames:
-        downloaded.append(
-            download_model_artifact(
-                src_path=Path("inputs") / src_fname,
-                dst_dir_path=work_dir,
-                use_presigned_url=False,
-            )
+    downloaded = {}
+    for key, src_fname in src_fnames.items():
+        downloaded[key] = download_model_artifact(
+            src_path=Path("inputs") / src_fname,
+            dst_dir_path=work_dir,
+            use_presigned_url=False,
         )
 
-    return downloaded[0]
-
-
-def _update_configurable_parameters(cur_hp: dict, optimized_hp: dict) -> dict:
-    for param_key, param_val in optimized_hp.items():
-        splited_param_key = param_key.split(".")
-
-        target = cur_hp
-        for val in splited_param_key[:-1]:
-            target = target[val]
-        target[splited_param_key[-1]] = param_val
-
-    return cur_hp
+    return downloaded["weights"]

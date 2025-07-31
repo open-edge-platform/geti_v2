@@ -1,9 +1,9 @@
-FROM python:3.10-slim-bookworm@sha256:d651b5260ef4266b8c83fd679f4f4087da352f35b9f0c57a57987c673900b04e AS base
+FROM python:3.10-slim-bookworm@sha256:81f1cdb3770d54ecfdbddcc52c2125fce674c14a1d976dfd8f65dc0734f9c3c5 AS base
 
 FROM base AS build
 
 # Install Git and clone the OTX at the specified tag
-ARG OTX_RELEASE_TAG=2.4.6
+ARG OTX_RELEASE_TAG=release/2.5
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -21,6 +21,7 @@ COPY --link --from=common . interactive_ai/workflows/common
 COPY --link --from=libs . libs
 COPY --link --from=iai_core . interactive_ai/libs/iai_core_py
 COPY --link --from=media_utils . interactive_ai/libs/media_utils
+COPY --link --from=supported_models . interactive_ai/supported_models
 
 WORKDIR /interactive_ai/workflows/workflow
 
@@ -49,14 +50,6 @@ RUN apt-get update && \
 # Copy the application from the builder
 COPY --link --from=build --chown=10001 /interactive_ai/workflows/workflow /interactive_ai/workflows/workflow
 COPY --link --from=build --chown=10001 /training_extensions/src/otx/tools/templates /model_templates
-
-# Update anomaly classification templates to anomaly, needed for anomaly reduction process
-RUN cp -r /model_templates/anomaly/classification/* /model_templates/anomaly/ && \
-    rm -rf /model_templates/anomaly/classification && \
-    rm -rf /model_templates/anomaly/detection && \
-    rm -rf /model_templates/anomaly/segmentation && \
-    find /model_templates/anomaly -type f -name "template.yaml" -exec sed -i 's/model_template_id: ote_anomaly_classification_\([^/]*\)/model_template_id: ote_anomaly_\1/g' {} + && \
-    find /model_templates/anomaly -type f -name "template.yaml" -exec sed -i 's/task_type: ANOMALY_CLASSIFICATION/task_type: ANOMALY/g' {} +
 
 ENV MODEL_TEMPLATES_DIR=/model_templates
 

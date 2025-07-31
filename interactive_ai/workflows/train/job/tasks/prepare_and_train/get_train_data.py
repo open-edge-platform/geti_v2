@@ -35,7 +35,7 @@ def get_train_data(  # noqa: PLR0913
     min_annotation_size: int | None = None,
     max_number_of_annotations: int | None = None,
     reshuffle_subsets: bool = False,
-    hyperparameters: dict[str, str] | None = None,
+    hyperparameters_json: str | None = None,
 ) -> TrainWorkflowData:
     """
     Create and return a TrainWorkflowData object containing data needed for training
@@ -53,7 +53,7 @@ def get_train_data(  # noqa: PLR0913
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
         annotation scene will be ignored during training.
     :param reshuffle_subsets: Whether to reassign/shuffle all the items to subsets including Test set from scratch
-    :param hyperparameters: Dictionary of model hyperparameters
+    :param hyperparameters_json: JSON string containing the hyperparameters to be used for training.
     :return: TrainWorkflowData object containing the data needed for training
     """
     # Validate task is in project
@@ -106,5 +106,5 @@ def get_train_data(  # noqa: PLR0913
         min_annotation_size=min_annotation_size,
         max_number_of_annotations=max_number_of_annotations,
         reshuffle_subsets=reshuffle_subsets,
-        hyperparameters=hyperparameters,
+        hyperparameters_json=hyperparameters_json,
     )

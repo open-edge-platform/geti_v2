@@ -4,6 +4,7 @@ import json
 from http import HTTPStatus
 from unittest.mock import patch
 
+import pytest
 from testfixtures import compare
 
 from communication.controllers.configuration_controller import ConfigurationRESTController
@@ -220,3 +221,79 @@ class TestConfigurationRESTEndpoint:
         )
         assert result.status_code == HTTPStatus.OK
         compare(json.loads(result.content), DUMMY_DATA, ignore_eq=True)
+
+    @pytest.mark.parametrize(
+        "endpoint, method, mock_function",
+        [
+            # Full configuration endpoints
+            (
+                API_CONFIGURATION_PATTERN,
+                "get",
+                "get_full_configuration",
+            ),
+            (
+                API_CONFIGURATION_PATTERN,
+                "post",
+                "set_full_configuration",
+            ),
+            # Global configuration endpoints
+            (
+                f"{API_CONFIGURATION_PATTERN}/global",
+                "get",
+                "get_global_configuration",
+            ),
+            (
+                f"{API_CONFIGURATION_PATTERN}/global",
+                "post",
+                "validate_and_set_global_configuration",
+            ),
+            # Task chain configuration endpoints
+            (
+                f"{API_CONFIGURATION_PATTERN}/task_chain",
+                "get",
+                "get_task_chain_configuration",
+            ),
+            (
+                f"{API_CONFIGURATION_PATTERN}/task_chain",
+                "post",
+                "validate_and_set_task_chain_configuration",
+            ),
+            # Task configuration endpoints
+            (
+                f"{API_CONFIGURATION_PATTERN}/task_chain/{DUMMY_TASK_ID}",
+                "get",
+                "get_task_or_model_configuration",
+            ),
+            (
+                f"{API_CONFIGURATION_PATTERN}/task_chain/{DUMMY_TASK_ID}",
+                "post",
+                "set_task_configuration",
+            ),
+        ],
+    )
+    def test_sunset_headers_are_present(self, fxt_director_app, endpoint, method, mock_function) -> None:
+        """Test that sunset headers are present on all deprecated endpoints."""
+        # Arrange
+        request_data = {"dummy_response": "data"}
+
+        # Act
+        with patch.object(
+            ConfigurationRESTController,
+            mock_function,
+            return_value=DUMMY_DATA,
+        ):
+            if method == "get":
+                result = fxt_director_app.get(endpoint)
+            else:  # post
+                result = fxt_director_app.post(endpoint, json=request_data)
+
+        # Assert
+        assert result.status_code == HTTPStatus.OK, f"Failed for {method.upper()} {endpoint}"
+        assert "Sunset" in result.headers, f"Missing Sunset header for {method.upper()} {endpoint}"
+        assert "Deprecation" in result.headers, f"Missing Deprecation header for {method.upper()} {endpoint}"
+        assert "Link" in result.headers, f"Missing Link header for {method.upper()} {endpoint}"
+
+        # Check header values
+        assert result.headers["Sunset"] == "Fri, 31 Oct 2025 23:59:59 GMT"
+        assert result.headers["Deprecation"] == "1754006400"  # unix timestamp
+        assert 'rel="deprecation-info"' in result.headers["Link"]

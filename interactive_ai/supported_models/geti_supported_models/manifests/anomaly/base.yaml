@@ -2,9 +2,4 @@ task: anomaly
 
 hyperparameters:
   evaluation:
-    metric: f_measure
-  training:
-    allowed_values_input_size:
-      - 256
-    input_size_width: 256
-    input_size_height: 256
+    metric: accuracy

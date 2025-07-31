@@ -9,6 +9,8 @@ dependencies = [
     "geti-types~=1.0.2",
     "geti-k8s-tools==1.0.0",
     "workflows_common[evaluation, shard-dataset]",
+    "pyyaml~=6.0",
+    "geti-supported-models",
 ]
 
 [tool.uv.sources]
@@ -16,6 +18,7 @@ geti-telemetry-tools = { path = "../../../libs/telemetry_tools", editable = true
 geti-types = { path = "../../../libs/types", editable = true }
 geti-k8s-tools = { path = "../../../libs/k8s_tools", editable = true }
 workflows_common = { path = "../common", editable = true }
+geti-supported-models = { path = "../../supported_models", editable = true }
 
 [dependency-groups]
 dev = [

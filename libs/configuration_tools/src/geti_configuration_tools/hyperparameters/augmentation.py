@@ -1,59 +1,82 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-from pydantic import BaseModel, Field
+from pydantic import Field
+
+from .base_model_no_extra import BaseModelNoExtra
 
 
-class CenterCrop(BaseModel):
+class CenterCrop(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable center crop",
         description="Whether to apply center cropping to the image",
     )
-    ratio: float = Field(
-        gt=0.0, default=1.0, title="Crop ratio", description="Ratio of original dimensions to keep when cropping"
+    # Exclude fields as they are supported yet by OTX
+    ratio: float | None = Field(
+        gt=0.0,
+        default=None,
+        title="Crop ratio",
+        description="Ratio of original dimensions to keep when cropping",
+        exclude=True,
     )
 
 
-class RandomResizeCrop(BaseModel):
+class RandomResizeCrop(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable random resize crop",
         description="Whether to apply random resize and crop to the image",
     )
-    ratio: float = Field(
+    # Exclude fields as they are supported yet by OTX
+    ratio: float | None = Field(
         gt=0.0,
-        default=1.0,
+        default=None,
         title="Crop resize ratio",
         description="Ratio of original dimensions to apply during resize crop operation",
+        exclude=True,
     )
 
 
-class RandomAffine(BaseModel):
+class RandomAffine(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable random affine",
         description="Whether to apply random affine transformations to the image",
     )
-    degrees: float = Field(
-        ge=0.0, default=0.0, title="Rotation degrees", description="Maximum rotation angle in degrees"
+    # Exclude fields as they are supported yet by OTX
+    degrees: float | None = Field(
+        ge=0.0,
+        default=None,
+        title="Rotation degrees",
+        description="Maximum rotation angle in degrees",
+        exclude=True,
     )
-    translate_x: float = Field(
-        default=0.0,
+    translate_x: float | None = Field(
+        default=None,
+        ge=0.0,
+        lt=1.0,
         title="Horizontal translation",
         description="Maximum horizontal translation as a fraction of image width",
+        exclude=True,
     )
-    translate_y: float = Field(
-        default=0.0,
+    translate_y: float | None = Field(
+        default=None,
+        ge=0.0,
+        lt=1.0,
         title="Vertical translation",
         description="Maximum vertical translation as a fraction of image height",
+        exclude=True,
     )
-    scale: float = Field(
-        default=1.0, title="Scale factor", description="Scaling factor for the image during affine transformation"
+    scale: float | None = Field(
+        default=None,
+        title="Scale factor",
+        description="Scaling factor for the image during affine transformation",
+        exclude=True,
     )
 
 
-class RandomHorizontalFlip(BaseModel):
+class RandomHorizontalFlip(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable random horizontal flip",
@@ -61,7 +84,7 @@ class RandomHorizontalFlip(BaseModel):
     )
 
 
-class RandomVerticalFlip(BaseModel):
+class RandomVerticalFlip(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable random vertical flip",
@@ -69,7 +92,7 @@ class RandomVerticalFlip(BaseModel):
     )
 
 
-class RandomIOUCrop(BaseModel):
+class RandomIOUCrop(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable random IoU crop",
@@ -77,7 +100,7 @@ class RandomIOUCrop(BaseModel):
     )
 
 
-class ColorJitter(BaseModel):
+class ColorJitter(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable color jitter",
@@ -85,16 +108,23 @@ class ColorJitter(BaseModel):
     )
 
 
-class GaussianBlur(BaseModel):
+class GaussianBlur(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable Gaussian blur",
         description="Whether to apply Gaussian blur to the image",
     )
-    kernel_size: int = Field(gt=0, default=3, title="Kernel size", description="Size of the Gaussian kernel")
+    # Exclude fields as they are supported yet by OTX
+    kernel_size: int | None = Field(
+        gt=0,
+        default=None,
+        title="Kernel size",
+        description="Size of the Gaussian kernel",
+        exclude=True,
+    )
 
 
-class Tiling(BaseModel):
+class Tiling(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable tiling",
@@ -113,7 +143,7 @@ class Tiling(BaseModel):
     )
 
 
-class AugmentationParameters(BaseModel):
+class AugmentationParameters(BaseModelNoExtra):
     """Configuration parameters for data augmentation during training."""
 
     center_crop: CenterCrop | None = Field(

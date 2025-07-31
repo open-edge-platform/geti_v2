@@ -2,7 +2,7 @@
 # --device /dev/dri          # Intel GPU access
 # -v /dev/dri/by-path:/dev/dri/by-path  # Device path mapping
 
-FROM python:3.10-slim-bookworm@sha256:d651b5260ef4266b8c83fd679f4f4087da352f35b9f0c57a57987c673900b04e AS base
+FROM python:3.10-slim-bookworm@sha256:81f1cdb3770d54ecfdbddcc52c2125fce674c14a1d976dfd8f65dc0734f9c3c5 AS base
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
@@ -27,7 +27,7 @@ RUN wget -qO /tmp/intel-graphics.key https://repositories.intel.com/gpu/intel-gr
 RUN echo "deb [arch=amd64,i386 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy unified" | tee /etc/apt/sources.list.d/intel-gpu-jammy.list
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-    libze-intel-gpu1 libze1 intel-opencl-icd clinfo libze-dev intel-ocloc
+    git libze-intel-gpu1 libze1 intel-opencl-icd clinfo libze-dev intel-ocloc
 # Remove unnecessary packages and files to reduce the final image size
 RUN apt-get purge -y --auto-remove gpg wget && \
     rm -rf /root/.cache \

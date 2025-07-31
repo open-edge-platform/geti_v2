@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm@sha256:d651b5260ef4266b8c83fd679f4f4087da352f35b9f0c57a57987c673900b04e AS base
+FROM python:3.10-slim-bookworm@sha256:81f1cdb3770d54ecfdbddcc52c2125fce674c14a1d976dfd8f65dc0734f9c3c5 AS base
 
 # step 1: get cuda dependencies
 FROM base AS cuda
@@ -51,6 +51,11 @@ COPY --link --from=ghcr.io/astral-sh/uv:0.6.12@sha256:515b886e8eb99bcf9278776d8e
 COPY --link scripts/ scripts
 COPY --link run run
 COPY --link download_pretrained_weights.py download_pretrained_weights.py
+
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    git
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \

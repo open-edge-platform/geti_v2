@@ -226,12 +226,11 @@ class S3Client:
                 # NOTE: The following logic is to extract depth-1 children
                 # For example, if prefix has this tree file structure,
                 # ├── configurations
-                # ├── exportable_codes
                 # ├── logs
                 # │   ├── error.json
                 # │   └── otx-full.log
                 # └── models
-                # The return list will be [prefix/configurations, prefix/exportable_codes, prefix/logs, prefix/models]
+                # The return list will be [prefix/configurations, prefix/logs, prefix/models]
                 objects = self.client.list_objects(bucket_name=bucket_name, prefix=str(relative_path), recursive=True)
                 rel_paths = {Path(obj.object_name).relative_to(Path(relative_path)): obj for obj in objects}
 

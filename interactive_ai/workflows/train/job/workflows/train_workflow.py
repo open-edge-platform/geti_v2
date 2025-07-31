@@ -33,11 +33,10 @@ def train_workflow(  # noqa: PLR0913
     # Training command
     command: list[str] = ["bash", "-c", "run"],
     retain_training_artifacts: bool = False,
-    hyperparameters: Optional[dict] = None,  # noqa: UP007,
+    hyperparameters_json: Optional[str] = None,  # noqa: UP007,
 ) -> None:
     """
     Task node train workflow
-    :param workspace_id: Workspace ID
     :param project_id: Project ID
     :param task_id: Task ID
     :param from_scratch: Whether to train the task from scratch.
@@ -59,7 +58,7 @@ def train_workflow(  # noqa: PLR0913
     :param command: Command to be executed on the primary container, e.g., OTX2 trainer pod.
     :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
-    :param hyperparameters: Dict containing the hyperparameters to be used for training.
+    :param hyperparameters_json: JSON string containing the hyperparameters to be used for training.
     """
     # Prepare training data, model entities, and bucket directory
     train_data = prepare_training_data_model_and_start_training(
@@ -79,7 +78,7 @@ def train_workflow(  # noqa: PLR0913
         min_annotation_size=min_annotation_size,
         max_number_of_annotations=max_number_of_annotations,
         reshuffle_subsets=reshuffle_subsets,
-        hyperparameters=hyperparameters,
+        hyperparameters_json=hyperparameters_json,
     )
 
     evaluate_and_infer(

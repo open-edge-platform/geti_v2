@@ -9,7 +9,9 @@ stats:
     accuracy: 1
     training_time: 3
     inference_speed: 3
+support_status: deprecated
 
 hyperparameters:
   training:
-    learning_rate: 0.0058
+    learning_rate: 0.01
+    max_epochs: 90

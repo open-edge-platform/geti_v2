@@ -286,7 +286,6 @@ class SemanticSegmentationToAnnotationConverter(IPredictionToAnnotationConverter
         :return: list of annotations object containing the contour polygon obtained from the segmentation
         """
         # index=0 is reserved for the background label
-        label_map = {label.name: label for label in self.labels}
         contours = self.model.get_contours(predictions)
         empty_label = (self.empty_label and self.empty_label.name) or "Empty"
 
@@ -297,7 +296,7 @@ class SemanticSegmentationToAnnotationConverter(IPredictionToAnnotationConverter
                 approx_curve = cv2.approxPolyDP(contour.shape, 1.0, True)
                 if len(approx_curve) > 2:
                     points = [Point(x=p[0][0] / (width - 1), y=p[0][1] / (height - 1)) for p in contour.shape]
-                    label = label_map[contour.label]
+                    label = self.get_label_by_name(contour.label)
                     annotations.append(
                         Annotation(
                             shape=Polygon(points=points),

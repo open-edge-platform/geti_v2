@@ -4,7 +4,6 @@
 import logging
 from typing import Optional
 
-import iai_core.configuration.helper as otx_config_helper
 from geti_telemetry_tools.tracing.common import unified_tracing
 from geti_types import ID, ProjectIdentifier
 from iai_core.entities.model import (
@@ -34,9 +33,6 @@ def _prepare_s3_bucket(
     optimization_cfg: OptimizationConfig,
 ) -> None:
     input_model = optimization_cfg.input_model
-    model_template = input_model.model_storage.model_template
-    hyper_parameters = input_model.get_previous_trained_revision().configuration.configurable_parameters
-    hyper_parameter_dict = otx_config_helper.convert(hyper_parameters, target=dict, enum_to_str=True, id_to_str=True)
 
     adapter = MLArtifactsAdapter(
         project_identifier=project_identifier,
@@ -45,17 +41,15 @@ def _prepare_s3_bucket(
     adapter.push_placeholders()
     adapter.push_metadata()
     adapter.push_input_configuration(
-        model_template_id=model_template.model_template_id,
-        hyper_parameters=hyper_parameter_dict,
+        model_manifest_id=input_model.model_storage.model_manifest_id,
         export_parameters=[
             {
-                "type": "openvino",
-                "output_model_id": input_model.id_,
+                "format": "openvino",
+                "output_model_id": str(input_model.id_),
                 "precision": ModelPrecision.INT8.name,
                 "with_xai": False,
             },
         ],
-        optimization_type=optimization_cfg.model_to_optimize.optimization_type,
         label_schema=optimization_cfg.input_model.get_label_schema(),
     )
     adapter.push_input_model(model=optimization_cfg.input_model)

@@ -6,8 +6,9 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from otx.tools.converter import ConfigConverter
-from otx_io import load_trained_model_weights, save_openvino_exported_model
+from otx.backend.openvino.engine import OVEngine
+from otx.tools.converter import GetiConfigConverter
+from otx_io import load_trained_model_weights, save_exported_model
 from progress_updater import ProgressUpdater, TrainingStage
 from utils import OptimizationType, OTXConfig, PrecisionType, logging_elapsed_time
 
@@ -45,29 +46,19 @@ def optimize(
     )
     progress_updater.update_progress(0.0)
 
-    otx2_config = config.to_otx2_config(work_dir=work_dir)
-    engine, _ = ConfigConverter.instantiate(
-        config=otx2_config,
-        work_dir=str(work_dir / "otx-workspace"),
-        data_root=str(dataset_dir),
-    )
-
     checkpoint = load_trained_model_weights(work_dir=work_dir, optimize=True)
     if checkpoint is None:
         raise RuntimeError("Cannot get checkpoint for optimization.")
-
+    otx_config = config.to_otx2_config()
+    datamodule = GetiConfigConverter.instantiate_datamodule(config=otx_config, data_root=str(dataset_dir))
+    ov_engine = OVEngine(model=checkpoint, data=datamodule, work_dir=str(work_dir / "otx-workspace"))
     logger.debug("Checkpoint is loaded. Starting optimization.")
-    optimized_path = engine.optimize(
-        checkpoint=work_dir / "openvino.xml",
-        export_demo_package=True,
-    )
+    optimized_path = ov_engine.optimize()
 
     logger.debug("Optimization is completed. Saving optimized models.")
-    save_openvino_exported_model(
-        work_dir=work_dir,
-        export_param=export_param,
-        exported_path=optimized_path,
+    save_exported_model(
         export_dir=optimized_path.parent,
+        export_param=export_param,
     )
 
     logger.debug("Optimized model is saved.")

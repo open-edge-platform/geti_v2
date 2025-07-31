@@ -234,6 +234,7 @@ class TestHyperparameters:
         # Verify that specified fields are set correctly
         assert partial_hyperparams.training
         assert partial_hyperparams.training.learning_rate == 0.005
+        assert partial_hyperparams.training.early_stopping
         assert partial_hyperparams.training.early_stopping.enable is True
 
         # Verify that unspecified fields are None

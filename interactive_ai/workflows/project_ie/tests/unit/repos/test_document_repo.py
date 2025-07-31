@@ -132,3 +132,81 @@ class TestDocumentRepo:
         )
 
         assert collection.count_documents({}) == len(docs)
+
+    def test_get_latest_active_model_ids_and_binary_paths(
+        self,
+        request,
+        fxt_ote_id,
+        fxt_organization_id,
+        fxt_workspace_id,
+        fxt_project_identifier,
+    ) -> None:
+        document_repo = DocumentRepo(fxt_project_identifier)
+        org_id = IDToMongo.forward(fxt_organization_id)
+        ws_id = IDToMongo.forward(fxt_workspace_id)
+        proj_id = IDToMongo.forward(fxt_project_identifier.project_id)
+
+        # Setup test data
+        model_storage_id = IDToMongo.forward(fxt_ote_id(1))
+        base_model_id = IDToMongo.forward(fxt_ote_id(2))
+        optimized_model_id = IDToMongo.forward(fxt_ote_id(3))
+
+        # Insert active model state
+        active_model_state_collection = MongoConnector.get_collection(collection_name="active_model_state")
+        active_state_doc = {
+            "organization_id": org_id,
+            "workspace_id": ws_id,
+            "project_id": proj_id,
+            "active_model_storage_id": model_storage_id,
+        }
+        request.addfinalizer(lambda: active_model_state_collection.delete_many({"organization_id": org_id}))
+        active_model_state_collection.insert_one(active_state_doc)
+
+        # Insert base framework model
+        model_collection = MongoConnector.get_collection(collection_name="model")
+        base_model_doc = {
+            "_id": base_model_id,
+            "organization_id": org_id,
+            "workspace_id": ws_id,
+            "project_id": proj_id,
+            "model_storage_id": model_storage_id,
+            "model_format": "BASE_FRAMEWORK",
+            "model_status": "SUCCESS",
+            "version": 1,
+            "weight_paths": [
+                ["binary", "models/base_model/weights.bin"],
+                ["metadata", "models/base_model/config.json"],
+            ],
+        }
+
+        # Insert optimized model
+        optimized_model_doc = {
+            "_id": optimized_model_id,
+            "organization_id": org_id,
+            "workspace_id": ws_id,
+            "project_id": proj_id,
+            "model_storage_id": model_storage_id,
+            "model_format": "OPTIMIZED",
+            "model_status": "SUCCESS",
+            "version": 1,
+            "previous_trained_revision_id": base_model_id,
+            "weight_paths": [["binary", "models/optimized_model/weights.bin"]],
+        }
+
+        request.addfinalizer(lambda: model_collection.delete_many({"organization_id": org_id}))
+        model_collection.insert_many([base_model_doc, optimized_model_doc])
+
+        # Execute the method
+        model_ids, binary_paths = document_repo.get_latest_active_model_ids_and_binary_paths()
+
+        # Assert results
+        assert len(model_ids) == 2
+        assert base_model_id in model_ids
+        assert optimized_model_id in model_ids
+
+        expected_binary_paths = {
+            f"model_storages/{model_storage_id}/models/base_model/weights.bin",
+            f"model_storages/{model_storage_id}/models/base_model/config.json",
+            f"model_storages/{model_storage_id}/models/optimized_model/weights.bin",
+        }
+        assert binary_paths == expected_binary_paths

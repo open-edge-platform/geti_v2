@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import logging
 import pathlib
+import shutil
 from enum import Enum
 from http import HTTPStatus
 from typing import Annotated
@@ -32,9 +33,14 @@ class DeploymentPackageType(Enum):
 
 
 def _cleanup_deployment_package_from_temp(package_path: pathlib.Path) -> None:
-    package_path.unlink(missing_ok=True)
     try:
-        package_path.parent.rmdir()
+        # First try to remove just the file
+        package_path.unlink(missing_ok=True)
+
+        # Then check if parent directory exists and is a directory before removing
+        parent_dir = package_path.parent
+        if parent_dir.exists() and parent_dir.is_dir():
+            shutil.rmtree(parent_dir, ignore_errors=True)
     except Exception:
         logger.exception(f"Failed to cleanup deployment package temporary directory {package_path}")
 

@@ -2,6 +2,7 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 from geti_configuration_tools import ConfigurationOverlayTools
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration, TrainingConfiguration
+from geti_supported_models import SupportedModels
 
 from service.configuration_service import ConfigurationService
 from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
@@ -104,8 +105,15 @@ class TestConfigurationService:
         repo.save(fxt_training_configuration_task_level)
         repo.save(fxt_partial_training_configuration_manifest_level)
 
+        model_manifest = SupportedModels.get_model_manifest_by_id(
+            fxt_partial_training_configuration_manifest_level.model_manifest_id
+        )
         overlay_config = ConfigurationOverlayTools.merge_deep_dict(
-            fxt_training_configuration_task_level.model_dump(),
+            {"hyperparameters": model_manifest.hyperparameters.model_dump()},
+            ConfigurationOverlayTools.delete_none_from_dict(fxt_training_configuration_task_level.model_dump()),
+        )
+        overlay_config = ConfigurationOverlayTools.merge_deep_dict(
+            overlay_config,
             ConfigurationOverlayTools.delete_none_from_dict(
                 fxt_partial_training_configuration_manifest_level.model_dump()
             ),
@@ -113,8 +121,6 @@ class TestConfigurationService:
         overlay_config["id_"] = ID(
             f"full_training_configuration_{fxt_partial_training_configuration_manifest_level.model_manifest_id}"
         )
-        overlay_config["hyperparameters"]["evaluation"] = {"metric": "f_measure"}
-
         expected_config = TrainingConfiguration.model_validate(overlay_config)
 
         # Act & Assert

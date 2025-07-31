@@ -23,6 +23,7 @@ from geti_fastapi_tools.dependencies import (
     get_video_id,
     get_workspace_id,
 )
+from geti_fastapi_tools.deprecation import RestApiDeprecation
 from geti_fastapi_tools.exceptions import InvalidIDException
 
 VALID_OBJECTID = "012345678901234567891234"
@@ -141,3 +142,27 @@ class TestDependencies:
 
         assert get_skiptoken(skiptoken=VALID_OBJECTID) == EXPECTED_OBJECTID
         assert get_skiptoken() == ID(ObjectId.from_datetime(datetime.datetime(1970, 1, 1)))
+
+    def test_deprecation_headers_dependency(self) -> None:
+        """Test that the sunset headers dependency correctly adds headers to the response."""
+        docs_url = "https://example.com/docs/deprecation"
+        deprecation = RestApiDeprecation(
+            deprecation_date="2024-12-31",
+            sunset_date="2025-01-01",
+            additional_info=docs_url,
+        )
+
+        # Create a mock response
+        class MockResponse:
+            def __init__(self):
+                self.headers = {}
+
+        response_true = MockResponse()
+
+        # Run the dependency
+        deprecation.add_headers(response_true)  # type: ignore[arg-type]
+
+        # Check headers are set correctly
+        assert response_true.headers["Sunset"] == "Wed, 01 Jan 2025 23:59:59 GMT"
+        assert response_true.headers["Deprecation"] == "1735603200"
+        assert response_true.headers["Link"] == f'<{docs_url}>; rel="deprecation-info"'

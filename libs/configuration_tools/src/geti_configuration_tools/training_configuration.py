@@ -1,5 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import math
 from typing import Any
 
 from geti_types import ID, PersistentEntity
@@ -41,6 +42,13 @@ class SubsetSplit(BaseModel):
     def validate_subsets(self) -> "SubsetSplit":
         if (self.training + self.validation + self.test) != 100:
             raise ValueError("Sum of subsets should be equal to 100")
+        # check that all subsets have at least one item if dataset_size is provided
+        if self.dataset_size is not None:
+            validation_size = math.floor(self.dataset_size * self.validation / 100)
+            test_size = math.floor(self.dataset_size * self.test / 100)
+            train_size = self.dataset_size - validation_size - test_size
+            if train_size < 1 or validation_size < 1 or test_size < 1:
+                raise ValueError("Each subset must be at least contain one item")
         return self
 
 
@@ -109,17 +117,17 @@ class MaxAnnotationObjects(BaseModel):
 class Filtering(BaseModel):
     """Parameters for filtering annotations in the dataset."""
 
-    min_annotation_pixels: MinAnnotationPixels = Field(
-        title="Minimum annotation pixels", description="Minimum number of pixels in an annotation"
+    min_annotation_pixels: MinAnnotationPixels | None = Field(
+        default=None, title="Minimum annotation pixels", description="Minimum number of pixels in an annotation"
     )
-    max_annotation_pixels: MaxAnnotationPixels = Field(
-        title="Maximum annotation pixels", description="Maximum number of pixels in an annotation"
+    max_annotation_pixels: MaxAnnotationPixels | None = Field(
+        default=None, title="Maximum annotation pixels", description="Maximum number of pixels in an annotation"
     )
-    min_annotation_objects: MinAnnotationObjects = Field(
-        title="Minimum annotation objects", description="Minimum number of objects in an annotation"
+    min_annotation_objects: MinAnnotationObjects | None = Field(
+        default=None, title="Minimum annotation objects", description="Minimum number of objects in an annotation"
     )
-    max_annotation_objects: MaxAnnotationObjects = Field(
-        title="Maximum annotation objects", description="Maximum number of objects in an annotation"
+    max_annotation_objects: MaxAnnotationObjects | None = Field(
+        default=None, title="Maximum annotation objects", description="Maximum number of objects in an annotation"
     )
 
 
@@ -130,7 +138,9 @@ class GlobalDatasetPreparationParameters(BaseModel):
     """
 
     subset_split: SubsetSplit = Field(title="Subset split", description="Configuration for splitting data into subsets")
-    filtering: Filtering = Field(title="Filtering", description="Configuration for filtering annotations")
+    filtering: Filtering = Field(
+        default_factory=Filtering, title="Filtering", description="Configuration for filtering annotations"
+    )
 
 
 class GlobalParameters(BaseModel):

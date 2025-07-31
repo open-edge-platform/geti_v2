@@ -16,6 +16,7 @@ dependencies = [
     "geti-types",
     "grpc_interfaces",
     "iai-core",
+    "geti-configuration-tools",
 ]
 
 [project.optional-dependencies]
@@ -44,6 +45,7 @@ geti-types = { path = "../../../libs/types", editable = true }
 iai-core = { path = "../../libs/iai_core_py", editable = true }
 media-utils = { path = "../../libs/media_utils", editable = true }
 grpc_interfaces = { path = "../../../libs/grpc_interfaces", editable = true }
+geti-configuration-tools = { path = "../../../libs/configuration_tools", editable = true }
 
 [dependency-groups]
 dev = [
