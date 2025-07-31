@@ -1873,7 +1873,7 @@ wheels = [
 [[package]]
 name = "otx"
 version = "2.5.0"
-source = { git = "https://github.com/open-edge-platform/training_extensions.git?branch=release%2F2.5#acb572b3f28fbe63445944a97916aab01c62def5" }
+source = { git = "https://github.com/open-edge-platform/training_extensions.git?branch=release%2F2.5#9ee2e33e9e34037aef09f09fff4d71c7d58e459a" }
 dependencies = [
     { name = "anomalib", extra = ["core"] },
     { name = "datumaro" },

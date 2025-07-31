@@ -10,7 +10,7 @@ import { useOverlay } from 'react-aria';
 import { OverlayTriggerState, useOverlayTriggerState } from 'react-stately';
 
 import { isVideoFile } from '../../../shared/media-utils';
-import { DeleteItemButton } from './delete-item-button.component';
+import { DeleteItemButton } from '../delete-item-button/delete-item-button.component';
 import { ImageVideoFactory } from './image-video-factory.component';
 import { FileItem } from './util';
 
@@ -89,7 +89,6 @@ export const ImageOverlay = <T extends FileItem>({
                         position={'absolute'}
                         id={currentImage.id}
                         onDeleteItem={() => onDeleteItem(currentImage.id)}
-                        alertDialogState={alertDialogState}
                         UNSAFE_className={classes.previewButton}
                     />
 

@@ -433,3 +433,27 @@ class TestTrainingConfigurationController:
             model_id=model_id,
         )
         assert config_rest == fxt_legacy_model_configuration_rest_view
+
+    @patch.object(TaskNodeRepo, "exists", return_value=True)
+    def test_get_task_only_configuration_not_found(self, request, fxt_project_identifier, fxt_task) -> None:
+        # Arrange
+        repo = PartialTrainingConfigurationRepo(fxt_project_identifier)
+        request.addfinalizer(lambda: repo.delete_all())
+
+        # Act & Assert
+        # check that only task level configuration is present
+        with (
+            patch.object(AnnotationSceneStateRepo, "count_images_state_for_task", return_value=128),
+            patch.object(AnnotationSceneStateRepo, "count_video_frames_state_for_task", return_value=128),
+            patch.object(TaskNodeRepo, "get_by_id", return_value=fxt_task),
+        ):
+            config_rest = TrainingConfigurationRESTController.get_configuration(
+                project_identifier=fxt_project_identifier,
+                task_id=fxt_task.id_,
+            )
+
+        # Check that the configuration is created with default values
+        assert config_rest["task_id"] == fxt_task.id_
+        assert config_rest["dataset_preparation"]["filtering"]
+        assert config_rest["dataset_preparation"]["subset_split"]
+        assert config_rest["training"] == []

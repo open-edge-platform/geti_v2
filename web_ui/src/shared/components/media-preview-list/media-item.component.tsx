@@ -1,11 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Loading, useUnwrapDOMRef, View, type DimensionValue, type Responsive } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
-import { isEmpty, isNil } from 'lodash-es';
+import clsx from 'clsx';
+import { isEmpty, isFunction, isNil } from 'lodash-es';
 import { usePress } from 'react-aria';
 
 import { Label } from '../../../core/labels/label.interface';
@@ -14,7 +15,6 @@ import { getSingleValidTask } from '../../../pages/camera-page/util';
 import { isVideoFile, loadImageFromFile, loadVideoFromFile } from '../../media-utils';
 import { ViewModes } from '../media-view-modes/utils';
 import { CondensedLabelSelector } from './condensed-label-selector.component';
-import { DeleteItemButton } from './delete-item-button.component';
 import { ImageVideoFactory } from './image-video-factory.component';
 import { MediaItemContextMenu } from './media-item-context-menu.component';
 
@@ -25,13 +25,14 @@ export interface MediaItemProps {
     url: string | null | undefined;
     labelIds: string[];
     mediaFile: File;
+    isSelected: boolean;
     height?: Responsive<DimensionValue>;
     viewMode?: ViewModes;
-    hasItemPreview: boolean;
     hasLabelSelector: boolean;
-    onPress: (id: string) => void;
-    onDeleteItem: (id: string) => void;
+    onPress?: (id: string) => void;
     onSelectLabel: (labels: Label[]) => void;
+    topLeftElement?: (id: string) => ReactNode;
+    topRightElement?: (id: string) => ReactNode;
 }
 
 interface FileLoadingProps {
@@ -57,11 +58,12 @@ export const MediaItem = ({
     labelIds,
     viewMode,
     mediaFile,
-    hasItemPreview,
+    isSelected,
     hasLabelSelector,
     onPress,
-    onDeleteItem,
     onSelectLabel,
+    topLeftElement,
+    topRightElement,
 }: MediaItemProps): JSX.Element => {
     const { tasks } = useTask();
     const containerRef = useRef(null);
@@ -70,7 +72,7 @@ export const MediaItem = ({
     const alertDialogState = useOverlayTriggerState({});
     const labelSelectorState = useOverlayTriggerState({});
     const unwrappedContainerRef = useUnwrapDOMRef(containerRef);
-    const { pressProps } = usePress({ onPress: () => onPress(id) });
+    const { pressProps } = usePress({ onPress: () => isFunction(onPress) && onPress(id) });
 
     const filteredTasks = getSingleValidTask(tasks);
     const taskLabels = filteredTasks.flatMap(({ labels }) => labels);
@@ -87,7 +89,11 @@ export const MediaItem = ({
     }
 
     return (
-        <View ref={containerRef} UNSAFE_className={classes.container} height={height}>
+        <View
+            ref={containerRef}
+            UNSAFE_className={clsx({ [classes.container]: true, [classes.selected]: isSelected })}
+            height={height}
+        >
             <ImageVideoFactory
                 controls
                 src={url}
@@ -97,20 +103,35 @@ export const MediaItem = ({
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    cursor: hasItemPreview ? 'pointer' : 'default',
+                    cursor: 'pointer',
                 }}
                 {...pressProps}
             />
 
-            <DeleteItemButton
-                id={id}
-                top={'size-50'}
-                right={'size-50'}
-                position={'absolute'}
-                onDeleteItem={onDeleteItem}
-                alertDialogState={alertDialogState}
-                UNSAFE_className={[classes.deleteContainer, alertDialogState.isOpen ? classes.visible : ''].join(' ')}
-            />
+            {isFunction(topLeftElement) && (
+                <View
+                    UNSAFE_className={clsx({
+                        [classes.visible]: isSelected,
+                        [classes.leftTopElement]: true,
+                        [classes.floatingContainer]: true,
+                    })}
+                >
+                    {topLeftElement(id)}
+                </View>
+            )}
+
+            {isFunction(topRightElement) && (
+                <View
+                    UNSAFE_className={clsx({
+                        [classes.visible]: isSelected,
+                        [classes.rightTopElement]: true,
+                        [classes.floatingContainer]: true,
+                    })}
+                >
+                    {topRightElement(id)}
+                </View>
+            )}
+
             {hasLabelSelector && (
                 <CondensedLabelSelector
                     name={'Unlabeled'}

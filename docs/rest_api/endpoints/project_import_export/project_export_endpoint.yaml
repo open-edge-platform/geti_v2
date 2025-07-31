@@ -21,10 +21,12 @@ post:
       description: Success
       content:
         application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/jobs/responses/job_id.yaml"
           examples:
             Export job submitted successfully:
               value:
-                $ref: '../../examples/jobs/responses/single_job_id_response.json'
+                $ref: "../../examples/jobs/responses/single_job_id_response.json"
     '404':
       description: Object not found
       content:

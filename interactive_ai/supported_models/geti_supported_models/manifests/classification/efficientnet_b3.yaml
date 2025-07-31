@@ -12,4 +12,5 @@ stats:
 
 hyperparameters:
   training:
-    learning_rate: 0.0049
+    learning_rate: 0.01
+    max_epochs: 90

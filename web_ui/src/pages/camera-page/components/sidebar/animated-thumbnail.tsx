@@ -6,7 +6,7 @@ import { useOverlayTriggerState } from 'react-stately';
 
 import { MEDIA_ANNOTATION_STATUS } from '../../../../core/media/base.interface';
 import { AnnotationStateIndicator } from '../../../../shared/components/annotation-indicator/annotation-state-indicator.component';
-import { DeleteItemButton } from '../../../../shared/components/media-preview-list/delete-item-button.component';
+import { DeleteItemButton } from '../../../../shared/components/delete-item-button/delete-item-button.component';
 import { ImageVideoFactory } from '../../../../shared/components/media-preview-list/image-video-factory.component';
 import { isNonEmptyArray } from '../../../../shared/utils';
 
@@ -51,7 +51,6 @@ export const AnimatedThumbnail = ({
                     right={'size-50'}
                     position={'absolute'}
                     onDeleteItem={onDeleteItem}
-                    alertDialogState={alertDialogState}
                     UNSAFE_className={[classes.deleteContainer, alertDialogState.isOpen ? classes.visible : ''].join(
                         ' '
                     )}

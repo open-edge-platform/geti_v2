@@ -6,3 +6,8 @@ export interface PreviewFile {
     file: File;
     labelIds: string[];
 }
+
+export enum SortingOptions {
+    LABEL_NAME_A_Z = 'labelNameAtoZ',
+    LABEL_NAME_Z_A = 'labelNameZtoA',
+}

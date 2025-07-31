@@ -698,9 +698,15 @@ class ConvertUtils:
         dm_points: dm.PointsCategories | None = dm_categories.get(dm.AnnotationType.points, None)
 
         def _get_sc_label(dm_label_id: int | str) -> Label | None:
+            # An ID can be either directly the label name (str), or the index of the label in dm_labels (int), depending
+            # on the type of the label and the export format.
             try:
                 if dm_points:
-                    dm_label_name = dm_points.items[0].labels[dm_label_id]
+                    # dm_points.items is a dictionary of a single key: value pair. The value contains the label names
+                    # as strings in the form of a list, and label names are retrieved by the integer: dm_label_id.
+                    for category in dm_points.items.values():
+                        dm_label_name = category.labels[dm_label_id]
+                        break  # it is safe to break here since we assume only one item in dm_points.items
                 else:
                     dm_label_name = dm_labels[dm_label_id].name if isinstance(dm_label_id, int) else dm_label_id
                 return labels_map[dm_label_name]

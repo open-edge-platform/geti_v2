@@ -63,14 +63,10 @@ class TestModelRESTController:
         project_id = fxt_project.id_
         model_storage_id = fxt_model.model_storage.id_
         model_id = fxt_model.id_
-        config_json = {"dummy_key": "dummy_value"}
 
         with (
             patch.object(ProjectRepo, "get_by_id", return_value=fxt_project) as mock_get_project,
             patch.object(ModelRepo, "get_by_id", return_value=fxt_model) as mock_get_model,
-            patch.object(
-                DeploymentPackageManager, "extract_config_json_from_xml", return_value=config_json
-            ) as mock_extract_config_json,
         ):
             result_file, result_file_name = ModelRESTController.export_model(
                 project_id=project_id,
@@ -82,10 +78,7 @@ class TestModelRESTController:
             mock_get_project.assert_called_once()
             mock_get_model.assert_called_once()
             compare(result_file_name, "ONNX_model.zip", ignore_eq=True)
-            if model_only:
-                compare(result_file.read(), fxt_zip_file_data.read(), ignore_eq=True)
-            else:
-                mock_extract_config_json.assert_called_once()
+            compare(result_file.read(), fxt_zip_file_data.read(), ignore_eq=True)
 
     @pytest.mark.parametrize("model_only", [True, False])
     def test_export_optimized_model(

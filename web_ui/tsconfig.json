@@ -5,5 +5,8 @@
     "tests",
     "rsbuild.config.ts",
     "dev-proxy.ts"
-  ]
+  ],
+  "compilerOptions": {
+    "types": ["jest"]
+  }
 }

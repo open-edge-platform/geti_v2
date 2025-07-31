@@ -384,7 +384,7 @@ class ModelRESTController:
                         _filename = "model.bin"
                 info = ZipInfo(_filename)
                 zf.writestr(info, adapter.data)
-            if not model_only:
+            if not model_only and model.model_format is ModelFormat.OPENVINO:
                 config = DeploymentPackageManager.extract_config_json_from_xml(
                     model.model_adapters[OVWeightsKey.OPENVINO_XML.value].data
                 )
