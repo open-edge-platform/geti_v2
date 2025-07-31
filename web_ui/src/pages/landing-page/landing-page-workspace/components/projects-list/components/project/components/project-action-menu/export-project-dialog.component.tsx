@@ -27,7 +27,7 @@ interface ExportProjectDialogProps {
 }
 
 export const ExportProjectDialog = ({ onClose, isOpen, onExportProject }: ExportProjectDialogProps): JSX.Element => {
-    const [selectedModels, setSelectedModels] = useState('');
+    const [selectedModels, setSelectedModels] = useState(EXPORT_PROJECT_MODELS_OPTIONS.ALL);
     const isSaveButtonDisabled = isEmpty(selectedModels);
 
     const handleExportProject = async (event: FormEvent<HTMLFormElement>) => {
