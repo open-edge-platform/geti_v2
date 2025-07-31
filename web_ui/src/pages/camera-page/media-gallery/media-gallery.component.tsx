@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 
 import { paths } from '@geti/core';
-import { Flex, Heading, Text, View } from '@geti/ui';
+import { Flex, Heading, Selection, Text, View } from '@geti/ui';
 import { isEmpty, isNil } from 'lodash-es';
 import { useNavigate } from 'react-router-dom';
 import { useOverlayTriggerState } from 'react-stately';
@@ -31,6 +31,7 @@ export const MediaGallery = (): JSX.Element => {
     const navigate = useNavigate();
     const dialogState = useOverlayTriggerState({});
     const [previewIndex, setPreviewIndex] = useState<null | number>(0);
+    const [selectedKeys] = useState(new Set(['']));
     const [sortingOption, setSortingOption] = useState(SortingOptions.MOST_RECENT);
 
     const { savedFilesQuery, deleteMany, updateMany } = useCameraStorage();
@@ -54,6 +55,12 @@ export const MediaGallery = (): JSX.Element => {
 
     const handleUpdateItem = (id: string, item: Partial<Screenshot>) => {
         return updateMany([id], item);
+    };
+
+    const handleOpenPreview = (keys: Selection) => {
+        const id = String(Array.from(keys).at(-1));
+        setPreviewIndex(screenshots.findIndex(hasEqualId(id)));
+        dialogState.open();
     };
 
     return (
@@ -92,13 +99,11 @@ export const MediaGallery = (): JSX.Element => {
                 <MediaPreviewList
                     items={screenshots}
                     viewMode={viewMode}
-                    onPress={(id: string) => {
-                        setPreviewIndex(screenshots.findIndex(hasEqualId(id)));
-                        dialogState.open();
-                    }}
+                    selectedKeys={selectedKeys}
                     height={`calc(100% - size-550)`}
                     onUpdateItem={handleUpdateItem}
                     topRightElement={(id: string) => <DeleteItemButton id={id} onDeleteItem={handleDeleteItem} />}
+                    onSelectionChange={handleOpenPreview}
                 />
             </View>
 

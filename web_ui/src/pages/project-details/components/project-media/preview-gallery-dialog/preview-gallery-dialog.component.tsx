@@ -3,8 +3,19 @@
 
 import { Key, useState } from 'react';
 
-import { Button, ButtonGroup, Checkbox, Content, Dialog, DialogContainer, Divider, Flex, Heading } from '@geti/ui';
-import { differenceBy, identity, isEmpty, omit, orderBy } from 'lodash-es';
+import {
+    Button,
+    ButtonGroup,
+    Checkbox,
+    Content,
+    Dialog,
+    DialogContainer,
+    Divider,
+    Flex,
+    Heading,
+    Selection,
+} from '@geti/ui';
+import { differenceBy, isEmpty, orderBy } from 'lodash-es';
 
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
@@ -14,6 +25,7 @@ import { DeleteItemButton } from '../../../../../shared/components/delete-item-b
 import { SelectionCheckbox } from '../../../../../shared/components/media-preview-list/checkbox.component';
 import { MediaPreviewList } from '../../../../../shared/components/media-preview-list/media-preview-list.component';
 import { INITIAL_VIEW_MODE } from '../../../../../shared/components/media-view-modes/utils';
+import { getIds } from '../../../../../shared/utils';
 import { TaskProvider } from '../../../../annotator/providers/task-provider/task-provider.component';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { PreviewMediaActions } from './preview-media-actions.component';
@@ -33,8 +45,6 @@ const updateItem = (id: string, updatedItem: PreviewFile) => (item: PreviewFile)
 
 const getFiles = (items: PreviewFile[] | undefined) => items?.map(({ file }) => file) ?? [];
 const getLabelsIds = (labelsIds: string) => (isEmpty(labelsIds) ? undefined : labelsIds.split(','));
-const selectAllItems = (currentFiles: PreviewFile[]) =>
-    currentFiles.reduce((accumulator, currentId) => ({ ...accumulator, [currentId.id]: true }), {});
 
 const getMediaItemFromFile =
     (labelIds: string[]) =>
@@ -52,11 +62,12 @@ export const PreviewGalleryDialog = ({
     const { isSingleDomainProject } = useProject();
     const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC, INITIAL_VIEW_MODE);
     const [currentFiles, setCurrentFiles] = useState(initFiles.map(getMediaItemFromFile(labelIds)));
-    const [selectedFiles, setSelectedFiles] = useState<Record<string, boolean>>({});
+    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+    const areAllItemsSelected = selectedKeys === 'all';
 
     const hasLabelSelector = isSingleDomainProject(DOMAIN.CLASSIFICATION) || isSingleDomainProject(isAnomalyDomain);
-    const selectedFilesCount = Object.values(selectedFiles).filter(identity).length;
-    const hasSelectedItems = selectedFilesCount > 0;
+    const selectedFilesCount = areAllItemsSelected ? currentFiles.length : selectedKeys.size;
+    const hasSelectedItems = areAllItemsSelected || selectedKeys.size > 0;
 
     const handleUpdateItem = async (id: string, updatedItem: PreviewFile) => {
         setCurrentFiles((currentItems) => currentItems.map(updateItem(id, updatedItem)));
@@ -76,25 +87,42 @@ export const PreviewGalleryDialog = ({
         setCurrentFiles((prevFiles) => orderBy(prevFiles, ['labelName'], order));
     };
 
-    const handleDeleteFiles = (ids: string[]) => {
+    const handleDeleteFiles = (ids: Key[]) => {
         const filesToDelete = ids.map((id) => ({ id }));
 
-        setSelectedFiles((prevFiles) => omit(prevFiles, ids));
+        setSelectedKeys((prevValues) => {
+            if (prevValues !== 'all') {
+                ids.forEach((id) => prevValues.delete(String(id)));
+            }
+            return new Set([...prevValues]);
+        });
+
         setCurrentFiles((prevFiles) => differenceBy(prevFiles, filesToDelete, 'id'));
     };
 
     const handleToggleSelection = (id: string) => {
-        setSelectedFiles((prevSelected) => {
-            const isSelected = prevSelected[id] ?? false;
-
-            return isSelected ? omit(prevSelected, id) : { ...prevSelected, [id]: true };
+        setSelectedKeys((prevValues) => {
+            if (prevValues !== 'all') {
+                prevValues.has(id) ? prevValues.delete(id) : prevValues.add(id);
+            }
+            return new Set([...prevValues]);
         });
     };
 
     const handleToggleManyItemSelection = () => {
-        const areAllItemsSelected = selectedFilesCount === currentFiles.length;
+        setSelectedKeys((prevValue: Selection) => {
+            if (prevValue === 'all') {
+                return new Set();
+            }
+            const allItemsSelected = prevValue.size === currentFiles.length;
+            const someItemsSelected = prevValue.size > 0 && !allItemsSelected;
 
-        setSelectedFiles(() => (areAllItemsSelected ? {} : selectAllItems(currentFiles)));
+            if (prevValue.size === 0 || someItemsSelected) {
+                return new Set(getIds(currentFiles));
+            }
+
+            return new Set();
+        });
     };
 
     return (
@@ -115,7 +143,11 @@ export const PreviewGalleryDialog = ({
                                 {hasSelectedItems ? (
                                     <PreviewMediaActions
                                         selectedFilesCount={selectedFilesCount}
-                                        onDeleteMany={() => handleDeleteFiles(Object.keys(selectedFiles))}
+                                        onDeleteMany={() =>
+                                            handleDeleteFiles(
+                                                selectedKeys == 'all' ? [] : selectedKeys.values().toArray()
+                                            )
+                                        }
                                     />
                                 ) : (
                                     <PreviewMediaToolbar
@@ -131,12 +163,12 @@ export const PreviewGalleryDialog = ({
                                 height={`calc(100% - ${PREVIEW_GALLERY_HEIGHT_OFFSET})`}
                                 viewMode={viewMode}
                                 hasLabelSelector={hasLabelSelector}
-                                selectedItems={selectedFiles}
                                 onUpdateItem={handleUpdateItem}
-                                onPress={handleToggleSelection}
+                                selectedKeys={selectedKeys}
+                                onSelectionChange={setSelectedKeys}
                                 topLeftElement={(id) => (
                                     <SelectionCheckbox
-                                        isSelected={selectedFiles[id] ?? false}
+                                        isSelected={selectedKeys instanceof Set && selectedKeys.has(id)}
                                         onToggle={() => handleToggleSelection(id)}
                                     />
                                 )}
