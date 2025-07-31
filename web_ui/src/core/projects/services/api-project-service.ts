@@ -37,6 +37,7 @@ import { ProjectExportDTO, ProjectImportDTO } from '../dtos/task.interface';
 import { ProjectStatus } from '../project-status.interface';
 import {
     CreateProjectProps,
+    EXPORT_PROJECT_MODELS_OPTIONS,
     ProjectExport,
     ProjectExportIdentifier,
     ProjectImport,
@@ -161,8 +162,13 @@ export const createApiProjectService: CreateApiService<ProjectService> = (
         };
     };
 
-    const exportProject = async (projectIdentifier: ProjectIdentifier): Promise<ProjectExport> => {
-        const { data } = await instance.post<ProjectExportDTO>(router.EXPORT_PROJECT(projectIdentifier));
+    const exportProject = async (
+        projectIdentifier: ProjectIdentifier,
+        selectedModels?: EXPORT_PROJECT_MODELS_OPTIONS
+    ): Promise<ProjectExport> => {
+        const { data } = await instance.post<ProjectExportDTO>(
+            router.EXPORT_PROJECT(projectIdentifier, selectedModels)
+        );
 
         return {
             exportProjectId: data.job_id,
