@@ -15,7 +15,6 @@ import {
     Radio,
     RadioGroup,
 } from '@geti/ui';
-import { isEmpty } from 'lodash-es';
 
 import { ProjectIdentifier } from '../../../../../../../../../core/projects/core.interface';
 import { EXPORT_PROJECT_MODELS_OPTIONS } from '../../../../../../../../../core/projects/project.interface';
@@ -36,15 +35,10 @@ export const ExportProjectDialog = ({
     projectId,
 }: ExportProjectDialogProps): JSX.Element => {
     const [selectedModels, setSelectedModels] = useState(EXPORT_PROJECT_MODELS_OPTIONS.ALL);
-    const isSaveButtonDisabled = isEmpty(selectedModels);
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
 
     const handleExportProject = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        if (isSaveButtonDisabled) {
-            return;
-        }
 
         onExportProject({ organizationId, workspaceId, projectId }, selectedModels);
         onClose();
