@@ -18,7 +18,7 @@ interface MediaPreviewListProps<T> {
     height?: Responsive<DimensionValue>;
     selectedKeys?: Selection;
     hasLabelSelector?: boolean;
-    onUpdateItem: (id: string, item: T) => Promise<unknown>;
+    onUpdateItem: (id: string, item: T) => void;
     topLeftElement?: (id: string) => ReactNode;
     topRightElement?: (id: string) => ReactNode;
     onSelectionChange?: (keys: Selection) => void;

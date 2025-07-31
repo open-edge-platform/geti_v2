@@ -13,9 +13,8 @@ import { recursivelyAddLabel, recursivelyRemoveLabels } from '../../../core/labe
 import { Label } from '../../../core/labels/label.interface';
 import { isAnomalyDomain } from '../../../core/projects/domains';
 import { useTask } from '../../../pages/annotator/providers/task-provider/task-provider.component';
-import { isClassificationOrAnomaly } from '../../../pages/camera-page/util';
 import { useProject } from '../../../pages/project-details/providers/project-provider/project-provider.component';
-import { getForegroundColor, hexaToRGBA } from '../../../pages/utils';
+import { getForegroundColor, hexaToRGBA, isClassificationOrAnomaly } from '../../../pages/utils';
 import { ViewModes } from '../../../shared/components/media-view-modes/utils';
 import { TaskLabelTreeSearch } from '../../../shared/components/task-label-tree-search/task-label-tree-search.component';
 import { hasEqualId } from '../../../shared/utils';
@@ -23,22 +22,22 @@ import { hasEqualId } from '../../../shared/utils';
 import classes from './media-preview-list.module.scss';
 
 interface LabelSelectorProps extends Omit<ActionButtonProps, 'isQuiet'> {
-    name: string;
+    title: string;
     labelIds: string[];
-    selectedLabels: Label[];
     viewMode?: ViewModes;
+    hideLabelsName?: boolean;
     triggerState?: OverlayTriggerState;
     onSelectLabel: (data: Label[]) => void;
 }
 
 export const CondensedLabelSelector = ({
-    name,
+    title,
     labelIds,
     isDisabled,
     viewMode,
     triggerState,
+    hideLabelsName = false,
     onSelectLabel,
-    selectedLabels,
     ...buttonStyles
 }: LabelSelectorProps): JSX.Element => {
     const triggerRef = useRef(null);
@@ -51,7 +50,11 @@ export const CondensedLabelSelector = ({
 
     const [selectedTask] = tasks.filter(isClassificationOrAnomaly);
     const labelSelectorState = triggerState ?? localState;
-    const selectedLabel = selectedTask?.labels?.find(hasEqualId(labelIds.at(-1)));
+    const taskLabels = selectedTask?.labels ?? [];
+
+    const selectedLabel = taskLabels.find(hasEqualId(labelIds.at(-1)));
+    const selectedLabels = taskLabels.filter((label) => labelIds.includes(label.id));
+    const showTitle = isEmpty(selectedLabels) || !selectedLabel || hideLabelsName;
 
     const VIEW_MODE_TO_CLASSNAME: Record<ViewModes, string> = {
         [ViewModes.DETAILS]: classes.small,
@@ -92,7 +95,7 @@ export const CondensedLabelSelector = ({
     return (
         <>
             <Flex>
-                {isEmpty(selectedLabels) || !selectedLabel ? (
+                {showTitle ? (
                     <ActionButton
                         isQuiet
                         ref={triggerRef}
@@ -102,12 +105,12 @@ export const CondensedLabelSelector = ({
                         isDisabled={isEmpty(selectedTask?.labels) || isDisabled}
                         UNSAFE_className={clsx(classes.labelSelectorButton, buttonStyles.UNSAFE_className)}
                         UNSAFE_style={{
-                            ...buttonStyles.UNSAFE_style,
                             color: 'var(--spectrum-actionbutton-quiet-text-color)',
                             background: 'var(--spectrum-global-color-gray-50)',
+                            ...buttonStyles.UNSAFE_style,
                         }}
                     >
-                        {name}
+                        {title}
                     </ActionButton>
                 ) : (
                     <ActionButton

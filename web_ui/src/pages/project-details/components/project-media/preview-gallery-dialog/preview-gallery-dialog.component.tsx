@@ -17,6 +17,7 @@ import {
 } from '@geti/ui';
 import { differenceBy, isEmpty, orderBy } from 'lodash-es';
 
+import { Label } from '../../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
 import { useViewMode } from '../../../../../hooks/use-view-mode/use-view-mode.hook';
@@ -30,7 +31,7 @@ import { TaskProvider } from '../../../../annotator/providers/task-provider/task
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { PreviewMediaActions } from './preview-media-actions.component';
 import { PreviewMediaToolbar } from './preview-media-toolbar.component';
-import { PreviewFile, SortingOptions } from './utils';
+import { getSelectedLabelIds, PreviewFile, SortingOptions, toggleSelection, updateLabels } from './utils';
 
 export interface PreviewGalleryDialogProps {
     files: File[];
@@ -68,12 +69,13 @@ export const PreviewGalleryDialog = ({
     const hasLabelSelector = isSingleDomainProject(DOMAIN.CLASSIFICATION) || isSingleDomainProject(isAnomalyDomain);
     const selectedFilesCount = areAllItemsSelected ? currentFiles.length : selectedKeys.size;
     const hasSelectedItems = areAllItemsSelected || selectedKeys.size > 0;
+    const selectedLabelIds = selectedKeys === 'all' ? [] : getSelectedLabelIds(currentFiles, selectedKeys);
 
-    const handleUpdateItem = async (id: string, updatedItem: PreviewFile) => {
+    const handleUpdateItem = (id: string, updatedItem: PreviewFile) => {
         setCurrentFiles((currentItems) => currentItems.map(updateItem(id, updatedItem)));
     };
 
-    const handleUpload = async () => {
+    const handleUpload = () => {
         const groupedByLabel = Object.groupBy(currentFiles, (file) => String(file.labelIds));
 
         Object.entries(groupedByLabel).forEach(([ids, items]) => onUpload(getFiles(items), getLabelsIds(ids)));
@@ -110,19 +112,13 @@ export const PreviewGalleryDialog = ({
     };
 
     const handleToggleManyItemSelection = () => {
-        setSelectedKeys((prevValue: Selection) => {
-            if (prevValue === 'all') {
-                return new Set();
-            }
-            const allItemsSelected = prevValue.size === currentFiles.length;
-            const someItemsSelected = prevValue.size > 0 && !allItemsSelected;
+        setSelectedKeys(toggleSelection(currentFiles));
+    };
 
-            if (prevValue.size === 0 || someItemsSelected) {
-                return new Set(getIds(currentFiles));
-            }
+    const handleLabelMany = (newLabels: Label[]) => {
+        const newLabelIds = getIds(newLabels);
 
-            return new Set();
-        });
+        setCurrentFiles((currentItems) => currentItems.map(updateLabels(selectedKeys, newLabelIds)));
     };
 
     return (
@@ -134,7 +130,7 @@ export const PreviewGalleryDialog = ({
                         <Divider />
 
                         <Content>
-                            <Flex height={'size-400'}>
+                            <Flex height={'size-400'} marginBottom={'size-100'} gap={'size-100'}>
                                 <Checkbox
                                     aria-label={'Select media items'}
                                     isSelected={hasSelectedItems}
@@ -142,7 +138,10 @@ export const PreviewGalleryDialog = ({
                                 />
                                 {hasSelectedItems ? (
                                     <PreviewMediaActions
+                                        viewMode={viewMode}
+                                        labelIds={selectedLabelIds}
                                         selectedFilesCount={selectedFilesCount}
+                                        onSelectLabel={handleLabelMany}
                                         onDeleteMany={() =>
                                             handleDeleteFiles(
                                                 selectedKeys == 'all' ? [] : selectedKeys.values().toArray()
@@ -162,9 +161,9 @@ export const PreviewGalleryDialog = ({
                                 items={currentFiles}
                                 height={`calc(100% - ${PREVIEW_GALLERY_HEIGHT_OFFSET})`}
                                 viewMode={viewMode}
+                                selectedKeys={selectedKeys}
                                 hasLabelSelector={hasLabelSelector}
                                 onUpdateItem={handleUpdateItem}
-                                selectedKeys={selectedKeys}
                                 onSelectionChange={setSelectedKeys}
                                 topLeftElement={(id) => (
                                     <SelectionCheckbox

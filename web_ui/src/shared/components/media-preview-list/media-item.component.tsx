@@ -10,7 +10,7 @@ import { isEmpty, isFunction, isNil } from 'lodash-es';
 
 import { Label } from '../../../core/labels/label.interface';
 import { useTask } from '../../../pages/annotator/providers/task-provider/task-provider.component';
-import { getSingleValidTask } from '../../../pages/camera-page/util';
+import { getSingleValidTask } from '../../../pages/utils';
 import { isVideoFile, loadImageFromFile, loadVideoFromFile } from '../../media-utils';
 import { ViewModes } from '../media-view-modes/utils';
 import { CondensedLabelSelector } from './condensed-label-selector.component';
@@ -111,7 +111,7 @@ export const MediaItem = ({
 
             {hasLabelSelector && (
                 <CondensedLabelSelector
-                    name={'Unlabeled'}
+                    title={'Unlabeled'}
                     labelIds={labelIds}
                     right={'size-50'}
                     bottom={'size-50'}
@@ -119,7 +119,6 @@ export const MediaItem = ({
                     position={'absolute'}
                     isDisabled={isEmpty(taskLabels)}
                     triggerState={labelSelectorState}
-                    selectedLabels={taskLabels.filter((label) => labelIds.includes(label.id))}
                     onSelectLabel={onSelectLabel}
                 />
             )}
