@@ -9,7 +9,7 @@ from kubernetes import client
 from constants.paths import K3S_KUBECONFIG_PATH
 from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
 from geti_controller.errors import GetiControllerUninstallationError
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
 

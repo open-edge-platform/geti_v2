@@ -7,7 +7,7 @@ A module responsible for detecting if kubernetes is running on k3s environment.
 
 from kubernetes import client
 
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 
 
 def is_kubernetes_running_on_k3s(kubeconfig_path: str) -> bool:

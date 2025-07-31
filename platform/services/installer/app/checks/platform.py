@@ -14,7 +14,7 @@ from kubernetes import client
 
 from checks.errors import CheckError, CheckSkipped
 from constants.platform import PLATFORM_CONFIGURATION_CM_NAME, PLATFORM_NAMESPACE, PLATFORM_VERSION_CM_KEY
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 from texts.checks import PlatformCheckTexts
 
 if TYPE_CHECKING:

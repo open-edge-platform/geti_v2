@@ -8,7 +8,7 @@ from kubernetes.client.rest import ApiException
 
 from constants.paths import VERSION_YAML_PATH
 from constants.platform import PLATFORM_BUILD_VERSION, PLATFORM_NAMESPACE
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 
 
 def get_current_platform_version(kubeconfig_path: str) -> str:

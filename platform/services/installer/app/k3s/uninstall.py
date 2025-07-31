@@ -17,7 +17,7 @@ from urllib3.exceptions import HTTPError, MaxRetryError
 from cli_utils.platform_logs import subprocess_run
 from constants.paths import K3S_KUBECONFIG_PATH, K3S_UNINSTALL_LOG_FILE_PATH, K3S_UNINSTALL_SCRIPT_PATH
 from constants.platform import DATA_DIRS_REMOVAL_REQUIRED, DATA_STORAGE_VOLUME_NAME
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 from texts.uninstall_command import UninstallCmdTexts
 
 logger = logging.getLogger(__name__)

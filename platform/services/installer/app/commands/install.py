@@ -49,9 +49,10 @@ from constants.platform import DEFAULT_USERNAME
 from geti_controller.communication import (
     OperationStatus,
     call_install_endpoint,
-    get_installation_status,
+    establish_port_forwarding,
+    get_installation_status_via_existing_port_forward,
 )
-from geti_controller.errors import GetiControllerError
+from geti_controller.errors import GetiControllerCommunicationError, GetiControllerError
 from geti_controller.install import deploy_geti_controller_chart
 from geti_controller.uninstall import uninstall_geti_controller_chart
 from k3s.detect_ip import get_first_public_ip, get_master_node_ip_address
@@ -184,32 +185,49 @@ def monitor_installation_progress() -> tuple[str, str]:
     """
     total_progress = 100  # progress is reported as a percentage
     previous_progress = 0
-    status, message = "", ""
 
-    while True:
-        installation_status = get_installation_status(kube_config=K3S_KUBECONFIG_PATH)
+    process = establish_port_forwarding(kube_config=K3S_KUBECONFIG_PATH)
+    try:
+        while True:
+            for _ in range(5):  # retry for transient errors
+                try:
+                    installation_status = get_installation_status_via_existing_port_forward()
+                    break
+                except GetiControllerCommunicationError:
+                    time.sleep(2)
+            else:
+                raise GetiControllerError("Failed to fetch installation status after retries.")
 
-        if installation_status.status == OperationStatus.NOT_RUNNING:
-            # waiting for installation to start
-            time.sleep(1)
-            continue
+            if installation_status.status == OperationStatus.NOT_RUNNING:
+                time.sleep(1)
+                continue
 
-        if installation_status.status == OperationStatus.RUNNING:
-            with click.progressbar(
-                length=total_progress, label=InstallCmdTexts.installation_start, show_eta=False
-            ) as progress_bar:
-                while installation_status.status == OperationStatus.RUNNING:
-                    installation_status = get_installation_status(kube_config=K3S_KUBECONFIG_PATH)
-                    progress_bar.update(installation_status.progress - previous_progress)
-                    previous_progress = installation_status.progress
-                    if installation_status.progress == total_progress:
-                        break
-                    time.sleep(1)
+            if installation_status.status == OperationStatus.RUNNING:
+                with click.progressbar(
+                    length=total_progress, label=InstallCmdTexts.installation_start, show_eta=False
+                ) as progress_bar:
+                    while installation_status.status == OperationStatus.RUNNING:
+                        for _ in range(5):
+                            try:
+                                installation_status = get_installation_status_via_existing_port_forward()
+                                break
+                            except GetiControllerCommunicationError:
+                                time.sleep(2)
+                        else:
+                            raise GetiControllerError("Failed to fetch installation status after retries.")
 
-        status, message = installation_status.status, installation_status.message
-        break
+                        progress_bar.update(installation_status.progress - previous_progress)
+                        previous_progress = installation_status.progress
+                        if installation_status.progress == total_progress:
+                            break
+                        time.sleep(1)
 
-    return status, message
+            process.terminate()
+            process.wait()
+            return installation_status.status, installation_status.message
+    finally:
+        process.terminate()
+        process.wait()
 
 
 def run_geti_controller_installation(config: InstallationConfig | UpgradeConfig) -> None:

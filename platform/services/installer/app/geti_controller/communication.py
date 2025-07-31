@@ -1,6 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import logging
 import subprocess
 import time
 from dataclasses import dataclass
@@ -17,6 +18,9 @@ from constants.platform import (
 from geti_controller.constants import GETI_CONTROLLER_NAMESPACE, LOCAL_PORT, SERVICE_NAME, SERVICE_PORT
 from geti_controller.errors import GetiControllerCommunicationError
 from platform_configuration.versions import get_target_product_build
+from platform_utils.k8s import is_service_ready
+
+logger = logging.getLogger(__name__)
 
 
 class OperationStatus(str, Enum):
@@ -38,6 +42,10 @@ def establish_port_forwarding(kube_config: str) -> subprocess.Popen:
     """
     Establishes port-forwarding to the Geti Controller service.
     """
+    if not is_service_ready(service_name=SERVICE_NAME, namespace=GETI_CONTROLLER_NAMESPACE):
+        logger.error(f"{SERVICE_NAME} service is not ready for port-forwarding.")
+        raise GetiControllerCommunicationError("Service is not ready for port-forwarding.")
+
     port_forward_cmd = [
         "kubectl",
         "--kubeconfig",
@@ -90,15 +98,13 @@ def call_install_endpoint(kube_config: str, render_gid: int, gpu_provider: str |
         process.wait()
 
 
-def get_installation_status(kube_config: str) -> InstallationStatus:
+def get_installation_status_via_existing_port_forward() -> InstallationStatus:
     """
     Fetch the installation progress and status from the Geti Controller endpoint.
 
     Returns:
         InstallationStatus: An object containing progress percentage, status, and message.
     """
-    process = establish_port_forwarding(kube_config)
-
     try:
         url = f"http://localhost:{LOCAL_PORT}/api/v1/platform/check_installation_upgrade_progress"
         response = requests.get(url, timeout=10)
@@ -110,6 +116,3 @@ def get_installation_status(kube_config: str) -> InstallationStatus:
         )
     except requests.RequestException as e:
         raise GetiControllerCommunicationError(f"Failed to fetch installation status: {e}")
-    finally:
-        process.terminate()
-        process.wait()

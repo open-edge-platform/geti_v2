@@ -4,7 +4,6 @@
 import base64
 import logging
 import os
-import time
 from http import HTTPStatus
 
 import jinja2
@@ -18,7 +17,7 @@ from constants.platform import PLATFORM_NAMESPACE
 from geti_controller.constants import GETI_CONTROLLER_CHART_NAME, GETI_CONTROLLER_NAMESPACE
 from geti_controller.errors import GetiControllerInstallationError
 from platform_configuration.versions import get_target_platform_version, get_target_product_build
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
 
@@ -91,9 +90,9 @@ def deploy_geti_controller_chart(
             "tls_key_file": "",
             "repoCA": "",
             "proxy_enabled": bool(http_proxy or https_proxy),
-            "https_proxy": https_proxy if https_proxy is not None else "",
-            "http_proxy": http_proxy if http_proxy is not None else "",
-            "no_proxy": no_proxy if no_proxy is not None else "",
+            "https_proxy": https_proxy or "",
+            "http_proxy": http_proxy or "",
+            "no_proxy": no_proxy,
         }
         if config.tls_cert_file and config.tls_key_file and config.tls_cert_file.value and config.tls_key_file.value:
             with open(config.tls_cert_file.value, "rb") as cert_file:
@@ -118,7 +117,6 @@ def deploy_geti_controller_chart(
         manifest = yaml.safe_load(rendered_str)
         apply_manifest(manifest, namespace=GETI_CONTROLLER_NAMESPACE)
         logger.info("Geti Controller HelmChart deployed successfully.")
-        time.sleep(40)  # wait for the application to be ready
 
     except Exception as ex:
         logger.exception("Failed to deploy Geti Controller HelmChart.")

@@ -43,7 +43,7 @@ from k3s.config import k3s_configuration
 from k3s.detect_ip import get_first_public_ip
 from k3s.detect_selinux import is_selinux_installed
 from platform_utils.install_system_packages import install_packages_with_dnf
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
 

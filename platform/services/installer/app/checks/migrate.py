@@ -14,7 +14,7 @@ from constants.platform import (
     PLATFORM_NAMESPACE,
     PLATFORM_VERSION_CM_KEY,
 )
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 
 if TYPE_CHECKING:
     from kubernetes.client import V1ConfigMap

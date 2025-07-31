@@ -37,7 +37,7 @@ from constants.platform import (
     GPU_PROVIDER_INTEL_MAX,
     GPU_PROVIDER_NVIDIA,
 )
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 from texts.checks import K8SChecksTexts
 
 NUMBER_OF_RETRIES = 10

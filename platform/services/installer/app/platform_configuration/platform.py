@@ -11,7 +11,7 @@ from urllib3.exceptions import HTTPError
 
 from constants.platform import DATA_STORAGE_VOLUME_NAME, PLATFORM_NAMESPACE
 from platform_configuration.errors import ConfigurationError
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 
 if TYPE_CHECKING:
     from kubernetes.client import V1DeploymentList

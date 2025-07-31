@@ -11,7 +11,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fi
 
 from configuration_models.upgrade_config import UpgradeConfig
 from constants.platform import PLATFORM_NAMESPACE
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 
 logger = logging.getLogger(__name__)
 

@@ -78,7 +78,7 @@ from platform_utils.errors import (
     UpgradeError,
 )
 from platform_utils.install_system_packages import install_system_packages
-from platform_utils.kube_config_handler import KubernetesConfigHandler
+from platform_utils.k8s import KubernetesConfigHandler
 from platform_utils.management.state import InstallationHandlerState
 from texts.install_command import InstallCmdConfirmationTexts, InstallCmdTexts
 from texts.upgrade_command import UpgradeCmdTexts
