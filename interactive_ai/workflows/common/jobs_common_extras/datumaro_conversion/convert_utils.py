@@ -157,7 +157,6 @@ class ConvertUtils:
             points = dm_ann.get_points()
             for idx in range(len(points)):
                 scored_label = self._get_scored_label(idx)
-                logger.info(f"Scored label: {scored_label}")
                 if scored_label is None:
                     continue
                 try:
@@ -703,10 +702,8 @@ class ConvertUtils:
         dm_points: dm.PointsCategories | None = dm_categories.get(dm.AnnotationType.points, None)
 
         def _get_sc_label(dm_label_id: int | str) -> Label | None:
-            logger.info(f"dm_labels: {dm_labels}, dm_points: {dm_points}, dm_label_id: {dm_label_id}")
             try:
                 if dm_points:
-                    logger.info(f"dm_points: {dm_points.items[0].labels}")
                     for category in dm_points.items.values():
                         dm_label_name = category.labels[dm_label_id]
                         break

@@ -175,7 +175,7 @@ class ImportUtils(BaseImportUtils):
             label = label_repo.get_by_id(ID(sc_label_id))
             if isinstance(label, NullLabel):
                 raise InvalidLabelException(f"The provided label ID({sc_label_id}) does not belong to any label.")
-            valid_labels_map[dm_name] = label
+            valid_labels_map[str(dm_name)] = label
         logger.info(f"Valid labels map {valid_labels_map}")
         return valid_labels_map
 
