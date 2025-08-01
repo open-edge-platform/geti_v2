@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 
 import { useLastWorkspace } from '../../hooks/use-last-workspace/use-last-workspace.hook';
 import { useOrganizationIdentifier } from '../../hooks/use-organization-identifier/use-organization-identifier.hook';
+import { useWorkspaces } from './workspaces-provider.component';
 
 export const useWorkspaceIdentifier = (): WorkspaceIdentifier => {
     // Use an empty string so that our unit tests won't fail due to react router not being
@@ -16,6 +17,7 @@ export const useWorkspaceIdentifier = (): WorkspaceIdentifier => {
     const { organizationId } = useOrganizationIdentifier();
     const { workspaceId = '' } = useParams<Pick<WorkspaceIdentifier, 'workspaceId'>>();
     const { lastWorkspaceId, setLastWorkspaceId } = useLastWorkspace(organizationId, workspaceId);
+    const { workspaces } = useWorkspaces();
 
     useEffect(() => {
         if (workspaceId && !isEqual(lastWorkspaceId, workspaceId)) {
@@ -23,12 +25,12 @@ export const useWorkspaceIdentifier = (): WorkspaceIdentifier => {
         }
     }, [workspaceId, setLastWorkspaceId, lastWorkspaceId]);
 
-    // For urls lacking workspaceId (workspaceId is empty)we use the lastWorkspaceId if it exists
+    // For urls lacking workspaceId (workspaceId is empty) we use the lastWorkspaceId if it exists, and if not, we default to the first workspace in the list
     const resolvedWorkspaceId = !isEmpty(workspaceId)
         ? workspaceId
         : !isEmpty(lastWorkspaceId) && lastWorkspaceId !== undefined
           ? lastWorkspaceId
-          : '';
+          : workspaces[0].id;
 
     return useMemo(() => ({ workspaceId: resolvedWorkspaceId, organizationId }), [resolvedWorkspaceId, organizationId]);
 };
