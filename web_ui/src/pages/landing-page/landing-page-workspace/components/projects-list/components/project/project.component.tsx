@@ -49,9 +49,12 @@ export const Project = ({
     const labels = getNonEmptyLabelsFromProject(tasks);
     const filteredDomains = domains.filter(isNotCropDomain);
 
-    const exportProject = (projectIdentifier: ProjectIdentifier, selectedModels: EXPORT_PROJECT_MODELS_OPTIONS) => {
+    const exportProject = (
+        projectIdentifier: ProjectIdentifier,
+        selectedModelExportOption: EXPORT_PROJECT_MODELS_OPTIONS
+    ) => {
         exportProjectMutation.mutate(
-            { projectIdentifier, selectedModels },
+            { projectIdentifier, selectedModelExportOption },
             {
                 onSuccess: () => {
                     setIsExporting(true);

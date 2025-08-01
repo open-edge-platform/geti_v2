@@ -25,7 +25,10 @@ interface ExportProjectDialogProps {
     isOpen: boolean;
     projectId: string;
     onClose: () => void;
-    onExportProject: (projectIdentifier: ProjectIdentifier, selectedModels: EXPORT_PROJECT_MODELS_OPTIONS) => void;
+    onExportProject: (
+        projectIdentifier: ProjectIdentifier,
+        selectedModelExportOption: EXPORT_PROJECT_MODELS_OPTIONS
+    ) => void;
 }
 
 export const ExportProjectDialog = ({
@@ -34,13 +37,13 @@ export const ExportProjectDialog = ({
     onExportProject,
     projectId,
 }: ExportProjectDialogProps): JSX.Element => {
-    const [selectedModels, setSelectedModels] = useState(EXPORT_PROJECT_MODELS_OPTIONS.ALL);
+    const [selectedModelExportOption, setSelectedModelExportOption] = useState(EXPORT_PROJECT_MODELS_OPTIONS.ALL);
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
 
     const handleExportProject = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        onExportProject({ organizationId, workspaceId, projectId }, selectedModels);
+        onExportProject({ organizationId, workspaceId, projectId }, selectedModelExportOption);
         onClose();
     };
 
@@ -59,9 +62,9 @@ export const ExportProjectDialog = ({
                             <RadioGroup
                                 label={'Select models for export'}
                                 aria-label={'Export models'}
-                                value={selectedModels}
+                                value={selectedModelExportOption}
                                 onChange={(option: string) =>
-                                    setSelectedModels(option as EXPORT_PROJECT_MODELS_OPTIONS)
+                                    setSelectedModelExportOption(option as EXPORT_PROJECT_MODELS_OPTIONS)
                                 }
                             >
                                 {Object.values(EXPORT_PROJECT_MODELS_OPTIONS).map(

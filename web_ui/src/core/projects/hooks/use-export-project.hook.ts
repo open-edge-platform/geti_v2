@@ -17,7 +17,7 @@ interface UseExportProject {
 
 interface ExportProjectMutationVariables {
     projectIdentifier: ProjectIdentifier;
-    selectedModels?: EXPORT_PROJECT_MODELS_OPTIONS;
+    selectedModelExportOption?: EXPORT_PROJECT_MODELS_OPTIONS;
 }
 
 export const DOWNLOAD_STATUS_ERROR = 'Project was not downloaded due to an error.';

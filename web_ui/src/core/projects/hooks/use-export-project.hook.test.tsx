@@ -33,7 +33,7 @@ const projectService = createInMemoryProjectService();
 describe('useExportProject', () => {
     const mockData = {
         projectIdentifier: getMockedProjectExportIdentifier({ workspaceId: '1', projectId: '4', exportProjectId: '2' }),
-        selectedModels: EXPORT_PROJECT_MODELS_OPTIONS.ALL,
+        selectedModelExportOption: EXPORT_PROJECT_MODELS_OPTIONS.ALL,
     };
 
     beforeEach(() => {

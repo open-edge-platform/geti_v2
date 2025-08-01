@@ -25,7 +25,10 @@ import { ExportProjectDialog } from './export-project-dialog.component';
 interface ActionMenuProps {
     project: ProjectProps;
     isExporting: boolean;
-    onExportProject: (projectIdentifier: ProjectIdentifier, selectedModels: EXPORT_PROJECT_MODELS_OPTIONS) => void;
+    onExportProject: (
+        projectIdentifier: ProjectIdentifier,
+        selectedModelExportOption: EXPORT_PROJECT_MODELS_OPTIONS
+    ) => void;
     onDeleteProject: (projectIdentifier: ProjectIdentifier, onSuccess: () => void) => void;
 }
 

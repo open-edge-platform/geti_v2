@@ -132,10 +132,10 @@ const PROJECT_NAMES = (workspaceIdentifier: WorkspaceIdentifier) => `${WORKSPACE
 
 const EXPORT_PROJECT = (
     projectIdentifier: ProjectIdentifier,
-    selectedModels?: EXPORT_PROJECT_MODELS_OPTIONS
+    selectedModelExportOption?: EXPORT_PROJECT_MODELS_OPTIONS
 ): string => {
     const baseUrl = `${PROJECT(projectIdentifier)}:export`;
-    return selectedModels ? `${baseUrl}?include_models=${selectedModels}` : baseUrl;
+    return selectedModelExportOption ? `${baseUrl}?include_models=${selectedModelExportOption}` : baseUrl;
 };
 
 // TODO Remove

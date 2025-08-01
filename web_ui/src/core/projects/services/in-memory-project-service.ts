@@ -380,10 +380,10 @@ export const createInMemoryProjectService = (): ProjectService => {
 
     const exportProject = async ({
         projectIdentifier,
-        selectedModels,
+        selectedModelExportOption,
     }: {
         projectIdentifier: ProjectIdentifier;
-        selectedModels?: EXPORT_PROJECT_MODELS_OPTIONS;
+        selectedModelExportOption?: EXPORT_PROJECT_MODELS_OPTIONS;
     }): Promise<ProjectExport> => {
         return {
             exportProjectId: '62ea1a69f00a19754326589c',

@@ -71,10 +71,10 @@ export interface ProjectService {
     ): Promise<CreateProjectProps>;
     exportProject({
         projectIdentifier,
-        selectedModels,
+        selectedModelExportOption,
     }: {
         projectIdentifier: ProjectIdentifier;
-        selectedModels?: EXPORT_PROJECT_MODELS_OPTIONS;
+        selectedModelExportOption?: EXPORT_PROJECT_MODELS_OPTIONS;
     }): Promise<ProjectExport>;
     exportProjectStatus(projectIdentifier: ProjectExportIdentifier): Promise<JobProjectExportStatus>;
     importProject(projectImportFileIdentifier: ProjectImportIdentifier, options: ImportOptions): Promise<ProjectImport>;
