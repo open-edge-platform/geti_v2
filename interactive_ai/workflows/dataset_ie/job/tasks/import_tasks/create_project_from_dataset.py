@@ -116,6 +116,12 @@ def create_project_from_dataset(
                 "mapping the labels from the dataset to the keypoint detection project."
             )
 
+    background_label_removed = False
+    if project_type == GetiProjectType.SEGMENTATION and "Background" in label_names:
+        # Remove background label from the list of labels to import as it is auto generated in segmentation projects
+        label_names.remove("Background")
+        background_label_removed = True
+
     # Create project
     parser_kwargs = {
         "project_name": name,
@@ -132,6 +138,9 @@ def create_project_from_dataset(
         parser_class=DatumaroProjectParser,
         parser_kwargs=parser_kwargs,
     )
+    if background_label_removed:
+        # We need to add it back to the label names so that its annotations are created
+        label_names.append("Background")
     logger.info(
         "Created project with id %s; domain %s; labels %s",
         str(project.id_),
