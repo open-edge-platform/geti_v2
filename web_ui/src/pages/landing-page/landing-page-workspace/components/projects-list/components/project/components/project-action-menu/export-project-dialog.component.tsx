@@ -47,12 +47,8 @@ export const ExportProjectDialog = ({
         onClose();
     };
 
-    const handleDismiss = () => {
-        onClose();
-    };
-
     return (
-        <DialogContainer onDismiss={handleDismiss}>
+        <DialogContainer onDismiss={onClose}>
             {isOpen && (
                 <Dialog>
                     <Heading>Export project</Heading>
@@ -78,7 +74,7 @@ export const ExportProjectDialog = ({
                                 )}
                             </RadioGroup>
                             <ButtonGroup align={'end'} marginTop={'size-350'}>
-                                <Button variant='secondary' onPress={handleDismiss}>
+                                <Button variant='secondary' onPress={onClose}>
                                     Cancel
                                 </Button>
                                 <Button type='submit' variant='accent'>
