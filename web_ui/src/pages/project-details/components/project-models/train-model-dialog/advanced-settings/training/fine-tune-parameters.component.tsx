@@ -66,9 +66,25 @@ export const FineTuneParameters: FC<FineTuneParametersProps> = ({
                     </Radio>
                     <Flex alignItems={'center'}>
                         <Radio value={TRAINING_WEIGHTS.PRE_TRAINED_WEIGHTS} marginEnd={'size-65'}>
-                            Pre-trained weights - fine-tune the
+                            Pre-trained weights - fine-tune the original model
                         </Radio>
-                        <LinkNewTab url={originalModelUrl} text='original model' className={styles.originalModelLink} />
+                        <InfoTooltip
+                            tooltipText={
+                                // eslint-disable-next-line max-len
+                                <>
+                                    <span>
+                                        The original model is a base version with pre-trained weights, already trained
+                                        on a large, general-purpose dataset. It provides a strong foundation for
+                                        adapting to new, specific tasks.
+                                    </span>{' '}
+                                    <LinkNewTab
+                                        url={originalModelUrl}
+                                        text='Learn more.'
+                                        className={styles.originalModelLink}
+                                    />
+                                </>
+                            }
+                        />
                     </Flex>
                 </RadioGroup>
 
