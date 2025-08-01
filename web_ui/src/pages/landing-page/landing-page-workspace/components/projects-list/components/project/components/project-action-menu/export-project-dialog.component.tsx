@@ -10,6 +10,7 @@ import {
     Dialog,
     DialogContainer,
     Divider,
+    Flex,
     Form,
     Heading,
     Radio,
@@ -19,6 +20,7 @@ import {
 import { ProjectIdentifier } from '../../../../../../../../../core/projects/core.interface';
 import { EXPORT_PROJECT_MODELS_OPTIONS } from '../../../../../../../../../core/projects/project.interface';
 import { useWorkspaceIdentifier } from '../../../../../../../../../providers/workspaces-provider/use-workspace-identifier.hook';
+import { InfoTooltip } from '../../../../../../../../../shared/components/info-tooltip/info-tooltip.component';
 import { formatToLabel } from './utils';
 
 interface ExportProjectDialogProps {
@@ -56,7 +58,16 @@ export const ExportProjectDialog = ({
                     <Content>
                         <Form onSubmit={handleExportProject}>
                             <RadioGroup
-                                label={'Select models for export'}
+                                label={
+                                    <Flex gap={'size-50'} alignItems={'center'}>
+                                        <span>Select models for export</span>
+                                        <InfoTooltip
+                                            tooltipText={
+                                                'Each model will be exported along with all of its optimized variants.'
+                                            }
+                                        />
+                                    </Flex>
+                                }
                                 aria-label={'Export models'}
                                 value={selectedModelExportOption}
                                 onChange={(option: string) =>
