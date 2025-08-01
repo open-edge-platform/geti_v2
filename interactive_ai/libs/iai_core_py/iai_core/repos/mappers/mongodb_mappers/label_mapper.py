@@ -233,6 +233,10 @@ class ScoredLabelToMongo(
             label = ScoredLabelToMongo.get_label_by_id(label_id=label_id, project_identifier=project_identifier)
             is_empty = label.is_empty
 
+        if is_background is None:
+            label = ScoredLabelToMongo.get_label_by_id(label_id=label_id, project_identifier=project_identifier)
+            is_background = label.is_background
+
         label_source_dict = instance.get("label_source")
         label_source = (
             LabelSourceToMongo.backward(label_source_dict) if label_source_dict is not None else LabelSource()
