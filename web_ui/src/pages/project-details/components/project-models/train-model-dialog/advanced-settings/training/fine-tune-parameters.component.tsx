@@ -70,7 +70,6 @@ export const FineTuneParameters: FC<FineTuneParametersProps> = ({
                         </Radio>
                         <InfoTooltip
                             tooltipText={
-                                // eslint-disable-next-line max-len
                                 <>
                                     <span>
                                         The original model is a base version with pre-trained weights, already trained
