@@ -545,11 +545,12 @@ class AnnotationRESTViews:
         shape = AnnotationRESTViews.shape_from_rest(data[SHAPE], media_height, media_width, modification_date)
 
         labels_data = data.get(LABELS)
-
+        logger.info(labels_data)
         labels = [
             ScoredLabelRESTViews.scored_label_from_rest(scored_label_data=data, label=label_per_id[ID(data[ID_])])
             for data in labels_data  # type: ignore
         ]
+        logger.info(labels)
 
         return Annotation(shape=shape, labels=labels, id_=annotation_id)  # type: ignore[arg-type]
 
@@ -719,6 +720,7 @@ class AnnotationRESTViews:
         annotation_revisit_state = AnnotationRevisitState(labels_to_revisit_full_scene=labels_to_revisit_full_scene)
         annotations: list[Annotation] = []
         for shape in annotation_dict[ANNOTATIONS]:
+            logger.info(f"{label_per_id}")
             annotation = AnnotationRESTViews.annotation_from_rest(shape, label_per_id, media_height, media_width)
             labels_to_revisit_for_annotation = shape.get(LABELS_TO_REVISIT, [])
             if labels_to_revisit_for_annotation:
