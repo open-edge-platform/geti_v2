@@ -7,11 +7,26 @@ import { Selection } from '@geti/ui';
 
 import { getIds } from '../../../../../shared/utils';
 import { mockFile } from '../../../../../test-utils/mockFile';
-import { getSelectedLabelIds, PreviewFile, toggleSelection, updateLabels } from './utils';
+import {
+    getSelectedLabelIds,
+    PreviewFile,
+    removeMultipleSelections,
+    toggleItemSelection,
+    toggleMultipleSelection,
+    updateLabels,
+} from './utils';
 
 const fileA = { id: '1', file: mockFile({}), labelIds: ['label1', 'label2'] };
 const fileB = { ...fileA, id: '2', labelIds: ['label3'] };
 const fileC = { ...fileA, id: '3', labelIds: [] };
+
+const expectSetToEqual = (result: Selection, assertions: (set: Set<Key>) => void) => {
+    if (result instanceof Set) {
+        assertions(result);
+    } else {
+        fail('Expected result to be a Set');
+    }
+};
 
 describe('getSelectedLabelIds', () => {
     it('labelIds for selected files', () => {
@@ -82,36 +97,129 @@ describe('updateLabels', () => {
         expect(updated).toEqual(fileA);
     });
 });
-describe('toggleSelection', () => {
+
+describe('toggleMultipleSelection', () => {
     const files = [fileA, fileB, fileC];
 
     it('returns empty set if selectedItems is "all"', () => {
         const selectedItems = 'all';
-        expect(toggleSelection(files)(selectedItems)).toEqual(new Set());
+        expect(toggleMultipleSelection(files)(selectedItems)).toEqual(new Set());
     });
 
     it('selects all items if none are selected', () => {
         const selectedItems: Selection = new Set();
-        expect(toggleSelection(files)(selectedItems)).toEqual(new Set(getIds(files)));
+        expect(toggleMultipleSelection(files)(selectedItems)).toEqual(new Set(getIds(files)));
     });
 
     it('selects all items if some are selected', () => {
         const selectedItems = new Set([fileA.id]);
-        expect(toggleSelection(files)(selectedItems)).toEqual(new Set(getIds(files)));
+        expect(toggleMultipleSelection(files)(selectedItems)).toEqual(new Set(getIds(files)));
     });
 
     it('deselects all items if all are selected', () => {
         const selectedItems = new Set(getIds(files));
-        expect(toggleSelection(files)(selectedItems)).toEqual(new Set());
+        expect(toggleMultipleSelection(files)(selectedItems)).toEqual(new Set());
     });
 
     it('selects all items if selectedItems is a subset', () => {
         const selectedItems = new Set([fileB.id]);
-        expect(toggleSelection(files)(selectedItems)).toEqual(new Set(getIds(files)));
+        expect(toggleMultipleSelection(files)(selectedItems)).toEqual(new Set(getIds(files)));
     });
 
     it('returns empty set if currentFiles is empty', () => {
         const selectedItems = new Set([fileA.id]);
-        expect(toggleSelection([])(selectedItems)).toEqual(new Set());
+        expect(toggleMultipleSelection([])(selectedItems)).toEqual(new Set());
+    });
+});
+
+describe('toggleItemSelection', () => {
+    it('adds id to empty selection', () => {
+        const prevValues = new Set() as Selection;
+
+        expectSetToEqual(toggleItemSelection(fileA.id)(prevValues), (result) => {
+            expect(result.has(fileA.id)).toBe(true);
+            expect(result.size).toBe(1);
+        });
+    });
+
+    it('removes id if already selected', () => {
+        const prevValues = new Set([fileA.id]);
+
+        expectSetToEqual(toggleItemSelection(fileA.id)(prevValues), (result) => {
+            expect(result.has(fileA.id)).toBe(false);
+            expect(result.size).toBe(0);
+        });
+    });
+
+    it('adds id if not present in non-empty selection', () => {
+        const prevValues = new Set([fileA.id, fileB.id]);
+
+        expectSetToEqual(toggleItemSelection(fileC.id)(prevValues), (result) => {
+            expect(result.has(fileC.id)).toBe(true);
+            expect(result.size).toBe(3);
+        });
+    });
+
+    it('removes id and keeps others', () => {
+        const prevValues = new Set([fileA.id, fileB.id, fileC.id]);
+
+        expectSetToEqual(toggleItemSelection(fileB.id)(prevValues), (result) => {
+            expect(result.has(fileB.id)).toBe(false);
+            expect(result.has(fileA.id)).toBe(true);
+            expect(result.has(fileC.id)).toBe(true);
+            expect(result.size).toBe(2);
+        });
+    });
+
+    it('returns "all" if prevValues is "all"', () => {
+        const prevValues = 'all';
+
+        expect(toggleItemSelection(fileA.id)(prevValues)).toBe('all');
+    });
+});
+
+describe('removeMultipleSelections', () => {
+    it('removes multiple ids from selection', () => {
+        const prevValues = new Set([fileA.id, fileB.id, fileC.id]);
+
+        expectSetToEqual(removeMultipleSelections([fileA.id, fileC.id])(prevValues), (result) => {
+            expect(result.has(fileA.id)).toBe(false);
+            expect(result.has(fileC.id)).toBe(false);
+            expect(result.has(fileB.id)).toBe(true);
+            expect(result.size).toBe(1);
+        });
+    });
+
+    it('removes ids that are not present without error', () => {
+        const prevValues = new Set([fileA.id]);
+
+        expectSetToEqual(removeMultipleSelections(['nonexistent'])(prevValues), (result) => {
+            expect(result.has(fileA.id)).toBe(true);
+            expect(result.size).toBe(1);
+        });
+    });
+
+    it('returns original selection if prevValues is "all"', () => {
+        const prevValues = 'all';
+
+        expect(removeMultipleSelections([fileA.id, fileB.id])(prevValues)).toBe('all');
+    });
+
+    it('removes nothing if ids array is empty', () => {
+        const prevValues = new Set([fileA.id, fileB.id]);
+
+        expectSetToEqual(removeMultipleSelections([])(prevValues), (result) => {
+            expect(result.has(fileA.id)).toBe(true);
+            expect(result.has(fileB.id)).toBe(true);
+            expect(result.size).toBe(2);
+        });
+    });
+
+    it('removes all if all ids are present', () => {
+        const prevValues = new Set([fileA.id, fileB.id]);
+
+        expectSetToEqual(removeMultipleSelections([fileA.id, fileB.id])(prevValues), (result) => {
+            expect(result.size).toBe(0);
+        });
     });
 });

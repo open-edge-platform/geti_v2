@@ -38,7 +38,7 @@ export const updateLabels = (selectedKeys: Selection, newLabelIds: string[]) => 
     return item;
 };
 
-export const toggleSelection =
+export const toggleMultipleSelection =
     (currentFiles: PreviewFile[]) =>
     (selectedItems: Selection): Selection => {
         if (selectedItems === 'all') {
@@ -53,4 +53,26 @@ export const toggleSelection =
         }
 
         return new Set();
+    };
+
+export const toggleItemSelection =
+    (id: string) =>
+    (prevValues: Selection): Selection => {
+        if (prevValues === 'all') {
+            return prevValues;
+        }
+
+        prevValues.has(id) ? prevValues.delete(id) : prevValues.add(id);
+        return new Set([...prevValues]);
+    };
+
+export const removeMultipleSelections =
+    (ids: Key[]) =>
+    (prevValues: Selection): Selection => {
+        if (prevValues === 'all') {
+            return prevValues;
+        }
+
+        ids.forEach((id) => prevValues.delete(String(id)));
+        return new Set([...prevValues]);
     };

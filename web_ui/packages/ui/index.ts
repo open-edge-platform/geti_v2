@@ -116,6 +116,7 @@ export {
     type LoadingState,
     type KeyboardEvent,
     type FocusableRef,
+    type SelectionMode,
 } from '@react-types/shared';
 
 export { Popover, Overlay } from '@react-spectrum/overlays';

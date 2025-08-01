@@ -42,6 +42,7 @@ export const MediaPreviewList = <T extends FileItem>({
             mediaItems={items}
             selectedKeys={selectedKeys}
             idFormatter={getId}
+            selectionMode='multiple'
             onSelectionChange={onSelectionChange}
             getTextValue={(item) => item.file.name}
             itemContent={(item) => {

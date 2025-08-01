@@ -9,6 +9,7 @@ import {
     ListBoxItem,
     ListLayout,
     Selection,
+    SelectionMode,
     Size,
     View,
     Virtualizer,
@@ -32,6 +33,7 @@ interface MediaItemsListProps<T> {
     selectedKeys?: Selection;
     scrollToIndex?: number;
     viewModeSettings?: ViewModeSettings;
+    selectionMode?: SelectionMode;
     endReached?: () => void;
     itemContent: (item: T) => ReactNode;
     idFormatter: (item: T) => string;
@@ -46,6 +48,7 @@ export const MediaItemsList = <T extends object>({
     mediaItems,
     selectedKeys,
     scrollToIndex,
+    selectionMode,
     ariaLabel = 'media items list',
     viewModeSettings = VIEW_MODE_SETTINGS,
     itemContent,
@@ -92,7 +95,7 @@ export const MediaItemsList = <T extends object>({
                     layout={layout}
                     items={mediaItems}
                     aria-label={ariaLabel}
-                    selectionMode='multiple'
+                    selectionMode={selectionMode}
                     selectedKeys={selectedKeys}
                     className={classes.container}
                     onSelectionChange={onSelectionChange}

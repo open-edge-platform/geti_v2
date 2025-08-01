@@ -31,7 +31,15 @@ import { TaskProvider } from '../../../../annotator/providers/task-provider/task
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { PreviewMediaActions } from './preview-media-actions.component';
 import { PreviewMediaToolbar } from './preview-media-toolbar.component';
-import { getSelectedLabelIds, PreviewFile, SortingOptions, toggleSelection, updateLabels } from './utils';
+import {
+    getSelectedLabelIds,
+    PreviewFile,
+    removeMultipleSelections,
+    SortingOptions,
+    toggleItemSelection,
+    toggleMultipleSelection,
+    updateLabels,
+} from './utils';
 
 export interface PreviewGalleryDialogProps {
     files: File[];
@@ -92,33 +100,27 @@ export const PreviewGalleryDialog = ({
     const handleDeleteFiles = (ids: Key[]) => {
         const filesToDelete = ids.map((id) => ({ id }));
 
-        setSelectedKeys((prevValues) => {
-            if (prevValues !== 'all') {
-                ids.forEach((id) => prevValues.delete(String(id)));
-            }
-            return new Set([...prevValues]);
-        });
+        setSelectedKeys(removeMultipleSelections(ids));
 
         setCurrentFiles((prevFiles) => differenceBy(prevFiles, filesToDelete, 'id'));
     };
 
     const handleToggleSelection = (id: string) => {
-        setSelectedKeys((prevValues) => {
-            if (prevValues !== 'all') {
-                prevValues.has(id) ? prevValues.delete(id) : prevValues.add(id);
-            }
-            return new Set([...prevValues]);
-        });
+        setSelectedKeys(toggleItemSelection(id));
     };
 
     const handleToggleManyItemSelection = () => {
-        setSelectedKeys(toggleSelection(currentFiles));
+        setSelectedKeys(toggleMultipleSelection(currentFiles));
     };
 
-    const handleLabelMany = (newLabels: Label[]) => {
+    const handleManyLabels = (newLabels: Label[]) => {
         const newLabelIds = getIds(newLabels);
 
         setCurrentFiles((currentItems) => currentItems.map(updateLabels(selectedKeys, newLabelIds)));
+    };
+
+    const handleDeleteManyFiles = () => {
+        handleDeleteFiles(selectedKeys === 'all' ? getIds(currentFiles) : selectedKeys.values().toArray());
     };
 
     return (
@@ -141,12 +143,8 @@ export const PreviewGalleryDialog = ({
                                         viewMode={viewMode}
                                         labelIds={selectedLabelIds}
                                         selectedFilesCount={selectedFilesCount}
-                                        onSelectLabel={handleLabelMany}
-                                        onDeleteMany={() =>
-                                            handleDeleteFiles(
-                                                selectedKeys == 'all' ? [] : selectedKeys.values().toArray()
-                                            )
-                                        }
+                                        onDeleteMany={handleDeleteManyFiles}
+                                        onSelectLabel={handleManyLabels}
                                     />
                                 ) : (
                                     <PreviewMediaToolbar
