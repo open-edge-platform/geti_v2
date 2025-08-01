@@ -115,6 +115,6 @@ export interface ProjectImportStatus {
 
 export enum EXPORT_PROJECT_MODELS_OPTIONS {
     ALL = 'all',
-    NONE = 'none',
     LATEST_ACTIVE = 'latest_active',
+    NONE = 'none',
 }
