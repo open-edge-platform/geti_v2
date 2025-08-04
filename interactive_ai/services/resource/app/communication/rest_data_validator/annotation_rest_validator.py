@@ -581,6 +581,7 @@ class AnnotationRestValidator(RestApiValidator):
         """
         Validates that an annotation for a global task is valid. Checks the following rules:
         - No annotation is allowed to have both empty and non-empty annotations for the same task
+        - No annotation is allowed to have only a background label
         - If the task is the first task, global annotations must be a full box.
         - If the task is not the first task, the annotation must also contain labels for the previous task.
 
@@ -610,6 +611,12 @@ class AnnotationRestValidator(RestApiValidator):
                 f"{next(iter(empty_labels_in_annotation)).id_} and non-empty label with ID "
                 f"{next(iter(non_empty_labels_in_annotation)).id_} for task {task.id_}"
             )
+
+        # Validate that a background label is not the only label in the annotation
+        background_labels = {label for label in annotation_labels_current_task if label.is_background}
+        non_background_labels = {label for label in annotation_labels_current_task if not label.is_background}
+        if bool(background_labels) and not bool(non_background_labels):
+            raise BadRequestException("It is not allowed to create an annotation with only a background labels.")
 
         # Validate that global annotations for the first task use a full box shape
         if previous_task is None and annotation_rest[SHAPE] != AnnotationRESTViews.generate_full_box_rest(
