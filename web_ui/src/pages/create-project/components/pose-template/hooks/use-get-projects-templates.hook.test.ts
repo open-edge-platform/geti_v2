@@ -4,6 +4,7 @@
 import { waitFor } from '@testing-library/react';
 
 import { createInMemoryProjectService } from '../../../../../core/projects/services/in-memory-project-service';
+import { getMockedWorkspaceIdentifier } from '../../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedKeypointNode } from '../../../../../test-utils/mocked-items-factory/mocked-keypoint';
 import { getMockedLabel } from '../../../../../test-utils/mocked-items-factory/mocked-labels';
 import { getMockedProject } from '../../../../../test-utils/mocked-items-factory/mocked-project';
@@ -11,6 +12,12 @@ import { getMockedKeypointTask } from '../../../../../test-utils/mocked-items-fa
 import { renderHookWithProviders } from '../../../../../test-utils/render-hook-with-providers';
 import { PROJECT_TEMPLATE_SUFFIX } from '../templates/utils';
 import { useGetProjectsTemplates } from './use-get-projects-templates.hook';
+
+const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier();
+jest.mock('../../../../../providers/workspaces-provider/use-workspace-identifier.hook', () => ({
+    ...jest.requireActual('../../../../../providers/workspaces-provider/use-workspace-identifier.hook'),
+    useWorkspaceIdentifier: jest.fn(() => mockedWorkspaceIdentifier),
+}));
 
 describe('useGetProjectsTemplates', () => {
     it('returns an empty result when there are no keypoint projects', () => {

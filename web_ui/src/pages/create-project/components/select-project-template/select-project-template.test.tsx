@@ -5,6 +5,7 @@ import { screen } from '@testing-library/react';
 
 import { LabelsRelationType } from '../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
+import { getMockedWorkspaceIdentifier } from '../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { projectListRender as render } from '../../../../test-utils/projects-list-providers-render';
 import { getById } from '../../../../test-utils/utils';
 import {
@@ -13,6 +14,12 @@ import {
     STEPS,
 } from '../../new-project-dialog-provider/new-project-dialog-provider.interface';
 import { SelectProjectTemplate } from './select-project-template.component';
+
+const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier();
+jest.mock('../../../../providers/workspaces-provider/use-workspace-identifier.hook', () => ({
+    ...jest.requireActual('../../../../providers/workspaces-provider/use-workspace-identifier.hook'),
+    useWorkspaceIdentifier: jest.fn(() => mockedWorkspaceIdentifier),
+}));
 
 describe('Select project template step', () => {
     const animationDirection = -1;

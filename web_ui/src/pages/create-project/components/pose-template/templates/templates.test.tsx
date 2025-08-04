@@ -4,6 +4,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { createInMemoryProjectService } from '../../../../../core/projects/services/in-memory-project-service';
+import { getMockedWorkspaceIdentifier } from '../../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedKeypointNode } from '../../../../../test-utils/mocked-items-factory/mocked-keypoint';
 import { getMockedLabel } from '../../../../../test-utils/mocked-items-factory/mocked-labels';
 import { getMockedProject } from '../../../../../test-utils/mocked-items-factory/mocked-project';
@@ -11,6 +12,12 @@ import { getMockedKeypointTask } from '../../../../../test-utils/mocked-items-fa
 import { RequiredProviders } from '../../../../../test-utils/required-providers-render';
 import { Templates } from './templates.component';
 import { formatTemplate, TemplatePose } from './utils';
+
+const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier();
+jest.mock('../../../../../providers/workspaces-provider/use-workspace-identifier.hook', () => ({
+    ...jest.requireActual('../../../../../providers/workspaces-provider/use-workspace-identifier.hook'),
+    useWorkspaceIdentifier: jest.fn(() => mockedWorkspaceIdentifier),
+}));
 
 jest.mock('./utils', () => ({
     ...jest.requireActual('./utils'),

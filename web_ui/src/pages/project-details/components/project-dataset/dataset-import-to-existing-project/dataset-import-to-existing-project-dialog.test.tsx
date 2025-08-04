@@ -7,6 +7,7 @@ import { DATASET_IMPORT_STATUSES } from '../../../../../core/datasets/dataset.en
 import { DatasetImportToExistingProjectItem } from '../../../../../core/datasets/dataset.interface';
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { useDatasetImportToExistingProject } from '../../../../../providers/dataset-import-to-existing-project-provider/dataset-import-to-existing-project-provider.component';
+import { getMockedWorkspaceIdentifier } from '../../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedLabel } from '../../../../../test-utils/mocked-items-factory/mocked-labels';
 import {
     getMockedProject,
@@ -80,6 +81,12 @@ jest.mock(
         })),
     })
 );
+
+const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier();
+jest.mock('../../../../../providers/workspaces-provider/use-workspace-identifier.hook', () => ({
+    ...jest.requireActual('../../../../../providers/workspaces-provider/use-workspace-identifier.hook'),
+    useWorkspaceIdentifier: jest.fn(() => mockedWorkspaceIdentifier),
+}));
 
 const renderMockedComponent = async (options?: Parameters<typeof projectListRender>[1]) => {
     return projectListRender(
