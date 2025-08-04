@@ -196,7 +196,7 @@ describe('TrainingSubsets', () => {
         });
     });
 
-    it('updates subsets sizes in a way that none of the subsets cannot be empty', () => {
+    it('ensures that all subsets remain non-empty when updating subset sizes', () => {
         const iterationCount = Number(validationSubset.value);
 
         render(<App subsetParameters={subsetsParameters} />);
