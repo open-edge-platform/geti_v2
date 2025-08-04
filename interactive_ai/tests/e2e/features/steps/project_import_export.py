@@ -154,9 +154,11 @@ def step_when_user_requests_project_export(context: Context, included_models: st
     context.job_id = project_export_response.job_id
 
 
-@then("the exported project can be downloaded")
-def step_then_user_can_download_exported_project(context: Context) -> None:
+@then("the exported project can be downloaded and is {exported_project_size} MB")
+def step_then_user_can_download_exported_project(context: Context, exported_project_size: int) -> None:
     metadata = context.job_info.actual_instance.metadata
+    expected_size = int(exported_project_size) * 1000000
+    assert expected_size <= int(metadata.size) < expected_size + 1000000
     download_url = metadata.download_url
     export_id = download_url.split("/")[-2]
     project_import_export_api = context.project_import_export_api

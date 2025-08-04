@@ -12,10 +12,11 @@ Feature: project export
    When the user requests to export the project with '<included_models>'
     Then a job of type 'export_project' is scheduled
     And the job completes successfully within 3 minutes
-    And the exported project can be downloaded
+    And the exported project can be downloaded and is <exported_project_size> MB
 
+    @wip
     Examples:
-    | included_models |
-    | none            |
-    | latest_active   |
-    | all             |
+    | included_models | exported_project_size |
+    | none            | 8                     |
+    | latest_active   | 49                    |
+    | all             | 69                    |   
