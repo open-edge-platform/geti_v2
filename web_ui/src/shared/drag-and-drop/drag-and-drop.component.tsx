@@ -2,54 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { DropZone as SpectrumDropZone, type SpectrumDropZoneProps as DropZoneProps } from '@geti/ui';
+import { getFilesFromDropEvent } from '@geti/ui/utils';
 import clsx from 'clsx';
 
-import { GetElementType } from '../../types-utils/types';
-
 import classes from './drag-and-drop.module.scss';
-
-type DropItem = GetElementType<DropEvent['items']>;
-type DropEvent = Parameters<NonNullable<DropZoneProps['onDrop']>>[0];
-
-const toArray = async <T,>(asyncIterator: AsyncIterable<T>) => {
-    const arr = [];
-    for await (const i of asyncIterator) arr.push(i);
-    return arr;
-};
-
-async function flattenDropItemToFiles(item: DropItem): Promise<File[]> {
-    if (item.kind === 'file') {
-        const file = await item.getFile();
-
-        return [file];
-    }
-
-    if (item.kind === 'text') {
-        return [];
-    }
-
-    const entries = await toArray(item.getEntries());
-
-    const filesFromDirectory = [];
-    for await (const entry of entries) {
-        if (entry.kind === 'directory') {
-            filesFromDirectory.push(...(await flattenDropItemToFiles(entry)));
-        } else {
-            filesFromDirectory.push(await entry.getFile());
-        }
-    }
-
-    return filesFromDirectory;
-}
-
-async function getFilesFromDropEvent(e: DropEvent): Promise<File[]> {
-    const files: File[] = [];
-    for await (const item of e.items) {
-        files.push(...(await flattenDropItemToFiles(item)));
-    }
-
-    return files;
-}
 
 export const onDropFiles = (handleFiles: (files: File[]) => void): DropZoneProps['onDrop'] => {
     return async (event) => {

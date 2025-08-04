@@ -1,0 +1,5 @@
+// Copyright (C) 2022-2025 Intel Corporation
+// LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type GetElementType<T extends any[]> = T extends (infer U)[] ? U : never;
