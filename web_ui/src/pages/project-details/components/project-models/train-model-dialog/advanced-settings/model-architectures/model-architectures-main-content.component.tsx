@@ -43,7 +43,7 @@ export const ModelArchitecturesMainContent: FC<ModelArchitecturesMainContentProp
     }
 
     const [sortedOtherAlgorithms, sortedRecommendedAlgorithms] = moveActiveArchitectureToBeRightAfterRecommended(
-        recommendedAlgorithms,
+        recommendedAlgorithms.reverse(),
         otherAlgorithms,
         activeModelTemplateId
     );

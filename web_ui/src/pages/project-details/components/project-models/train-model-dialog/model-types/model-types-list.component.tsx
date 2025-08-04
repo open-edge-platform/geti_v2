@@ -26,7 +26,7 @@ const getBaseAlgorithms = (
     const speed = algorithms.find((algorithm) => algorithm.performanceCategory === PerformanceCategory.SPEED);
     const balance = algorithms.find((algorithm) => algorithm.performanceCategory === PerformanceCategory.BALANCE);
 
-    const baseAlgorithms = [accuracy, speed, balance].filter(Boolean) as SupportedAlgorithm[];
+    const baseAlgorithms = [balance, accuracy, speed].filter(Boolean) as SupportedAlgorithm[];
 
     const activeModelInBaseAlgorithms = baseAlgorithms.find(
         (algorithm) => algorithm.modelTemplateId === activeModelTemplateId
