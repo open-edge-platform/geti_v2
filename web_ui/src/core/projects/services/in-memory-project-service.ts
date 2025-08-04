@@ -35,8 +35,6 @@ import {
 import { PerformanceType, TaskMetadata } from '../task.interface';
 import { ImportOptions, ProjectService } from './project-service.interface';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 const inMemoryDatasets = [
     {
         id: 'in-memory-dataset',
@@ -378,10 +376,7 @@ export const createInMemoryProjectService = (): ProjectService => {
         };
     };
 
-    const exportProject = async ({
-        projectIdentifier,
-        selectedModelExportOption,
-    }: {
+    const exportProject = async (_: {
         projectIdentifier: ProjectIdentifier;
         selectedModelExportOption?: EXPORT_PROJECT_MODELS_OPTIONS;
     }): Promise<ProjectExport> => {
