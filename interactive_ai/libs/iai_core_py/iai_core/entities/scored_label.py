@@ -60,7 +60,7 @@ class ScoredLabel:
         """String representation of the label."""
         return (
             f"ScoredLabel(label_id={self.label_id}, is_empty={self.is_empty}, is_background={self.is_background}, "
-            f" probability={self.probability}, label_source={self.label_source})"
+            f"probability={self.probability}, label_source={self.label_source})"
         )
 
     def __eq__(self, other: object) -> bool:
