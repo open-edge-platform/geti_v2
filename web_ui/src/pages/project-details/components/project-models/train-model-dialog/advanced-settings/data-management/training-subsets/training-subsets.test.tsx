@@ -98,9 +98,9 @@ describe('TrainingSubsets', () => {
             key: 'dataset_size',
             type: 'int',
             name: 'Dataset size',
-            value: 101,
+            value: 99,
             description: 'Total size of the dataset (read-only parameter, not configurable by users)',
-            defaultValue: 101,
+            defaultValue: 99,
             maxValue: null,
             minValue: 0,
         }),
@@ -196,18 +196,23 @@ describe('TrainingSubsets', () => {
         });
     });
 
-    it('updates subsets sizes in a way that validation subset cannot be empty', () => {
+    it('updates subsets sizes in a way that none of the subsets cannot be empty', () => {
         const iterationCount = Number(validationSubset.value);
+
         render(<App subsetParameters={subsetsParameters} />);
 
         for (let i = 0; i < iterationCount; i++) {
             fireEvent.keyDown(screen.getByLabelText('End range'), { key: 'Left' });
         }
 
-        expectTrainingSubsetsDistribution({
-            trainingSubset: Number(trainingSubset.value),
-            validationSubset: Number(validationSubset.value) - iterationCount + 1,
-            testSubset: Number(testSubset.value) + iterationCount - 1,
+        const updatedValidationSubsetSize = Math.floor(datasetSize * 0.02);
+        const updatedTestSubsetSize = Math.floor(datasetSize * 0.28);
+        const updatedTrainingSubsetSize = datasetSize - updatedValidationSubsetSize - updatedTestSubsetSize;
+
+        expectSubsetSizes({
+            trainingSize: updatedTrainingSubsetSize,
+            validationSize: updatedValidationSubsetSize,
+            testSize: updatedTestSubsetSize,
         });
     });
 });

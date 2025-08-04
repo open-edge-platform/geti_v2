@@ -70,6 +70,7 @@ interface SubsetsDistributionProps {
     onSubsetsDistributionChange: (values: number[]) => void;
     onSubsetsDistributionChangeEnd: (values: number[]) => void;
     onSubsetsDistributionReset: () => void;
+    subsetParameters: SubsetsParameters;
 }
 
 const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
@@ -80,13 +81,21 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
     onSubsetsDistributionChange,
     onSubsetsDistributionChangeEnd,
     onSubsetsDistributionReset,
+    subsetParameters,
 }) => {
     const handleSubsetDistributionChange = (values: number[] | number): void => {
         if (Array.isArray(values)) {
             const [startRange, endRange] = values;
 
-            // validation subset cannot be empty
-            if (startRange === endRange) {
+            const newSubsetSizes = getSubsetsSizes(subsetParameters, endRange - startRange, MAX_RATIO_VALUE - endRange);
+
+            if (
+                [
+                    newSubsetSizes.trainingSubsetSize,
+                    newSubsetSizes.validationSubsetSize,
+                    newSubsetSizes.testSubsetSize,
+                ].some((size) => size === 0)
+            ) {
                 return;
             }
 
@@ -98,8 +107,15 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
         if (Array.isArray(values)) {
             const [startRange, endRange] = values;
 
-            // validation subset cannot be empty
-            if (startRange === endRange) {
+            const newSubsetSizes = getSubsetsSizes(subsetParameters, endRange - startRange, MAX_RATIO_VALUE - endRange);
+
+            if (
+                [
+                    newSubsetSizes.trainingSubsetSize,
+                    newSubsetSizes.validationSubsetSize,
+                    newSubsetSizes.testSubsetSize,
+                ].some((size) => size === 0)
+            ) {
                 return;
             }
 
@@ -258,6 +274,7 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
                 </Accordion.Description>
                 <Accordion.Divider marginY={'size-250'} />
                 <SubsetsDistribution
+                    subsetParameters={subsetsParameters}
                     subsetsDistribution={subsetsDistribution}
                     onSubsetsDistributionChange={setSubsetsDistribution}
                     testSubsetSize={testSubsetSize}
