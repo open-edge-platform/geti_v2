@@ -128,7 +128,7 @@ describe('TrainingSubsets', () => {
 
         return (
             <TrainingSubsets
-                subsetsConfiguration={trainingConfiguration?.datasetPreparation.subsetSplit ?? props.subsetParameters}
+                subsetsParameters={trainingConfiguration?.datasetPreparation.subsetSplit ?? props.subsetParameters}
                 onUpdateTrainingConfiguration={handleUpdateTrainingConfiguration}
             />
         );

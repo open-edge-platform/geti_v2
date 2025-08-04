@@ -59,7 +59,7 @@ const DistributionTooltip: FC = () => {
 
 interface SubsetsDistributionSliderProps {
     label: string;
-    onChangeEnd?: (values: number[] | number) => void;
+    onChangeEnd: (values: number[] | number) => void;
     value: number | number[];
     defaultValue?: number | number[];
     onChange: (values: number[] | number) => void;

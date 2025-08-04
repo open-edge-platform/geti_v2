@@ -172,7 +172,7 @@ export const useTrainModelState = () => {
         const trainingConfigurationMutation = useTrainingConfigurationMutation();
 
         const { useTrainModelMutation } = useModels();
-        const trainModel = useTrainModelMutation();
+        const trainModelMutation = useTrainModelMutation();
 
         const handleTrainModel = (onSuccess?: () => void) => {
             // 1. If we are in basic mode, we can directly train the model, without updating the training configuration.
@@ -184,7 +184,7 @@ export const useTrainModelState = () => {
             // 3.2. If train model succeeds, we call the onSuccess callback if provided.
 
             if (isBasicMode) {
-                trainModel.mutate(
+                trainModelMutation.mutate(
                     {
                         projectIdentifier,
                         body: constructTrainingBodyDTO(),
@@ -211,7 +211,7 @@ export const useTrainModelState = () => {
                 },
                 {
                     onSuccess: () => {
-                        trainModel.mutate(
+                        trainModelMutation.mutate(
                             { projectIdentifier, body: constructTrainingBodyDTO() },
                             {
                                 onSuccess,
@@ -234,8 +234,8 @@ export const useTrainModelState = () => {
 
         return {
             mutate: handleTrainModel,
-            isPending: trainModel.isPending || trainingConfigurationMutation.isPending,
-            error: trainModel.error?.message || trainingConfigurationMutation.error?.message,
+            isPending: trainModelMutation.isPending || trainingConfigurationMutation.isPending,
+            error: trainModelMutation.error?.message || trainingConfigurationMutation.error?.message,
         };
     };
 

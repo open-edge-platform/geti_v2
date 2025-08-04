@@ -158,10 +158,10 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
 
 const MAX_RATIO_VALUE = 100;
 
-type SubsetsConfiguration = TrainingConfiguration['datasetPreparation']['subsetSplit'];
+type SubsetsParameters = TrainingConfiguration['datasetPreparation']['subsetSplit'];
 
 interface TrainingSubsetsProps {
-    subsetsConfiguration: SubsetsConfiguration;
+    subsetsParameters: SubsetsParameters;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
@@ -171,11 +171,11 @@ const TEST_SUBSET_KEY = 'test';
 const VALIDATION_SUBSET_KEY = 'validation';
 const TRAINING_SUBSET_KEY = 'training';
 
-const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
-    const validationSubset = subsetsConfiguration.find(
+const getSubsets = (subsetsParameters: SubsetsParameters) => {
+    const validationSubset = subsetsParameters.find(
         (parameter) => parameter.key === VALIDATION_SUBSET_KEY
     ) as NumberParameter;
-    const trainingSubset = subsetsConfiguration.find(
+    const trainingSubset = subsetsParameters.find(
         (parameter) => parameter.key === TRAINING_SUBSET_KEY
     ) as NumberParameter;
 
@@ -185,8 +185,8 @@ const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
     };
 };
 
-export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration, onUpdateTrainingConfiguration }) => {
-    const { trainingSubset, validationSubset } = getSubsets(subsetsConfiguration);
+export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsParameters, onUpdateTrainingConfiguration }) => {
+    const { trainingSubset, validationSubset } = getSubsets(subsetsParameters);
 
     const [subsetsDistribution, setSubsetsDistribution] = useState<number[]>([
         trainingSubset.value,
@@ -219,6 +219,7 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
                         value: KEY_VALUE_MAP[parameter.key],
                     } as ConfigurationParameter;
                 }
+
                 return parameter;
             });
 
@@ -253,7 +254,7 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
     };
 
     const { trainingSubsetSize, validationSubsetSize, testSubsetSize } = getSubsetsSizes(
-        subsetsConfiguration,
+        subsetsParameters,
         validationSubsetRatio,
         testSubsetRatio
     );
