@@ -3,8 +3,18 @@ type: object
 description: Information about the project export operation
 properties:
   project:
-    description: Information about the project being export
+    description: Information about the project being exported
     $ref: 'project.yaml'
+  include_models:
+    description: Enum indicating which models are included in the exported zip
+    type: string
+    enum:
+      - all
+      - none
+      - latest_active
   download_url:
     type: string
     description: URL to download the exported project archive
+  size:
+    type: integer
+    description: Size of the exported project zip file
