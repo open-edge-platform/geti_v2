@@ -77,7 +77,7 @@ export const PreviewGalleryDialog = ({
     const hasLabelSelector = isSingleDomainProject(DOMAIN.CLASSIFICATION) || isSingleDomainProject(isAnomalyDomain);
     const selectedFilesCount = areAllItemsSelected ? currentFiles.length : selectedKeys.size;
     const hasSelectedItems = areAllItemsSelected || selectedKeys.size > 0;
-    const selectedLabelIds = selectedKeys === 'all' ? [] : getSelectedLabelIds(currentFiles, selectedKeys);
+    const selectedLabelIds = areAllItemsSelected ? [] : getSelectedLabelIds(currentFiles, selectedKeys);
 
     const handleUpdateItem = (id: string, updatedItem: PreviewFile) => {
         setCurrentFiles((currentItems) => currentItems.map(updateItem(id, updatedItem)));

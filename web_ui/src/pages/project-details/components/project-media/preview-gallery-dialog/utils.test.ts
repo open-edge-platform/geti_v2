@@ -68,13 +68,6 @@ describe('updateLabels', () => {
         expect(updated.labelIds).toEqual(newLabelIds);
     });
 
-    it('replaces labelIds if newLabelIds is shorter or equal in length', () => {
-        const selectedKeys = new Set([fileA.id]);
-        const newLabelIds = ['label5'];
-        const updated = updateLabels(selectedKeys, newLabelIds)(fileA);
-        expect(updated.labelIds).toEqual(newLabelIds);
-    });
-
     it('does not update file if not selected', () => {
         const selectedKeys = new Set([fileB.id]);
         const newLabelIds = ['label7'];
@@ -88,13 +81,6 @@ describe('updateLabels', () => {
         const updatedA = updateLabels(selectedKeys, newLabelIds)(fileA);
 
         expect(updatedA.labelIds).toEqual(newLabelIds);
-    });
-
-    it('returns original item if not selected and selectedKeys is not "all"', () => {
-        const selectedKeys = new Set(['nonexistent']);
-        const newLabelIds = ['label9'];
-        const updated = updateLabels(selectedKeys, newLabelIds)(fileA);
-        expect(updated).toEqual(fileA);
     });
 });
 

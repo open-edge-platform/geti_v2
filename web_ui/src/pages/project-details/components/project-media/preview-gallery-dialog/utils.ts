@@ -4,7 +4,6 @@
 import { Key } from 'react';
 
 import { Selection } from '@geti/ui';
-import { uniq } from 'lodash-es';
 
 import { getIds } from '../../../../../shared/utils';
 
@@ -29,11 +28,8 @@ export const getSelectedLabelIds = (currentFiles: PreviewFile[], selectedKeys: S
 };
 
 export const updateLabels = (selectedKeys: Selection, newLabelIds: string[]) => (item: PreviewFile) => {
-    const finalLabelIds =
-        newLabelIds.length <= item.labelIds.length ? newLabelIds : uniq([...item.labelIds, ...newLabelIds]);
-
     if (selectedKeys === 'all' || selectedKeys.has(item.id)) {
-        return { ...item, labelIds: finalLabelIds };
+        return { ...item, labelIds: newLabelIds };
     }
     return item;
 };
