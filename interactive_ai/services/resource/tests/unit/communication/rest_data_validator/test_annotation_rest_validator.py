@@ -1034,7 +1034,7 @@ class TestAnnotationRestValidator:
         )
         with pytest.raises(
             BadRequestException,
-            match="It is not allowed to create an annotation with only a background labels.",
+            match="It is not allowed to create an annotation with only background labels.",
         ):
             AnnotationRestValidator().validate_annotation_scene(
                 annotation_scene_rest=fxt_annotation_scene_background_label,

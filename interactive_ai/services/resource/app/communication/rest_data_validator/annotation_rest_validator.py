@@ -666,7 +666,7 @@ class AnnotationRestValidator(RestApiValidator):
         background_labels = {label for label in annotation_labels_current_task if label.is_background}
         non_background_labels = {label for label in annotation_labels_current_task if not label.is_background}
         if bool(background_labels) and not bool(non_background_labels):
-            raise BadRequestException("It is not allowed to create an annotation with only a background labels.")
+            raise BadRequestException("It is not allowed to create an annotation with only background labels.")
 
         # Validate that if the task is a local anomaly task, it contains only one of the labels (it's not allowed to
         # have both the normal and the anomalous label).
