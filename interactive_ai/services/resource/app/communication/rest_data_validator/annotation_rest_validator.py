@@ -629,7 +629,7 @@ class AnnotationRestValidator(RestApiValidator):
             raise BadRequestException("Annotation for a global task is missing a label for the preceding task.")
 
     @staticmethod
-    def __validate_local_annotation(  # noqa: C901, PLR0913
+    def __validate_local_annotation(  # noqa: C901, PLR0912, PLR0913
         annotation_rest: dict,
         task: TaskNode,
         previous_task: TaskNode | None,
@@ -662,10 +662,15 @@ class AnnotationRestValidator(RestApiValidator):
             # If the annotation contains no labels for this task, return without doing validation for this task
             return
 
-        # Validate that a background label is not the only label in the annotation
-        background_labels = {label for label in annotation_labels_current_task if label.is_background}
-        non_background_labels = {label for label in annotation_labels_current_task if not label.is_background}
-        if bool(background_labels) and not bool(non_background_labels):
+        # Validate that a background label is not the only label in the annotation scene
+        background_label_ids = {label.id_ for label in task_labels if label.is_background}
+        only_background_labels = True
+        for annotation in annotation_scene_rest[ANNOTATIONS]:
+            label_ids = {ID(label_rest[ID_]) for label_rest in annotation[LABELS]}
+            if background_label_ids != label_ids:
+                only_background_labels = False
+                break
+        if only_background_labels:
             raise BadRequestException("It is not allowed to create an annotation with only background labels.")
 
         # Validate that if the task is a local anomaly task, it contains only one of the labels (it's not allowed to
