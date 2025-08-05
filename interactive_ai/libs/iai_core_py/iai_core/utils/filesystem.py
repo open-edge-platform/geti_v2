@@ -112,10 +112,11 @@ def compute_project_size(project: Project) -> ProjectStorageInfo:
         active_model = ModelService.get_base_active_model(
             project_identifier=project.identifier, task_node_id=task_node.id_
         )
-        active_model_size = ModelService.get_model_size(
-            model=active_model, model_storage_identifier=active_model.model_storage_identifier
-        )
-        project_storage_info.active_models_size += active_model_size
+        if active_model is not None:
+            active_model_size = ModelService.get_model_size(
+                model=active_model, model_storage_identifier=active_model.model_storage_identifier
+            )
+            project_storage_info.active_models_size += active_model_size
 
     # Add the size of extra project files
     project_storage_info.total_code_deployment_size += CodeDeploymentBinaryRepo(
