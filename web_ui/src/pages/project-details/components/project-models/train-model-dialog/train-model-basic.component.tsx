@@ -39,7 +39,7 @@ export const TrainModelBasic: FC<TrainModelBasicProps> = ({
                 <TaskSelection tasks={tasks} onTaskChange={onTaskChange} selectedTask={selectedTask} />
             )}
 
-            <View padding={'size-250'} backgroundColor={'gray-50'} flex={1} minHeight={0}>
+            <View padding={'size-250'} backgroundColor={'gray-50'} flex={1} minHeight={0} overflow={'hidden auto'}>
                 <Text UNSAFE_className={classes.title} marginBottom={'size-100'}>
                     Model type
                 </Text>
