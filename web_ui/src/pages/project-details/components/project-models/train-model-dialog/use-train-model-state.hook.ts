@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-import { isEmpty, isNumber } from 'lodash-es';
+import { isNumber } from 'lodash-es';
 
 import {
     useTrainingConfigurationMutation,
@@ -36,14 +36,15 @@ const getActiveModelTemplateId = (
     algorithms: SupportedAlgorithm[],
     taskId: string
 ): string | null => {
-    if (isEmpty(modelsGroups)) {
-        return algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId ?? null;
+    const activeModelTemplateId = modelsGroups?.find(
+        (modelGroup) => modelGroup.taskId === taskId && modelGroup.modelVersions.some(isActiveModel)
+    )?.modelTemplateId;
+
+    if (activeModelTemplateId !== undefined) {
+        return activeModelTemplateId;
     }
 
-    return (
-        modelsGroups?.find((modelGroup) => modelGroup.taskId === taskId && modelGroup.modelVersions.some(isActiveModel))
-            ?.modelTemplateId ?? null
-    );
+    return algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId ?? null;
 };
 
 const useTrainingConfiguration = ({

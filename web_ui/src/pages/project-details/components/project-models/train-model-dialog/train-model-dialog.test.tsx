@@ -267,6 +267,31 @@ describe('Train model dialog', () => {
         );
     });
 
+    it('model type with default algorithm should be selected by default if there is no active model', async () => {
+        const modelsService = createInMemoryModelsService();
+
+        modelsService.getModels = jest.fn(async () => [
+            getMockedModelsGroup({
+                taskId: mockedSingleProject.tasks[0].id,
+                modelTemplateId: mockedSupportedAlgorithms[1].modelTemplateId,
+                modelVersions: [getMockedModelVersion({ isActiveModel: false })],
+            }),
+        ]);
+
+        await renderTrainModelDialog({
+            services: {
+                modelsService,
+            },
+        });
+
+        const defaultModelTemplate = getDefaultModelTemplate(DOMAIN.DETECTION);
+
+        expect(screen.getByLabelText('Selected card')).toHaveAttribute(
+            'data-testid',
+            idMatchingFormat(`${defaultModelTemplate?.name}-id`)
+        );
+    });
+
     it('model type which has active model should be selected by default when there are models', async () => {
         await renderTrainModelDialog();
 
