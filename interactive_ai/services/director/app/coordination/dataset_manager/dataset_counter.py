@@ -227,13 +227,11 @@ class DatasetCounterUseCase:
         new_unassigned_dataset_items = []
         new_items_per_label_count: dict[ID, int] = {}
         for new_dataset_item in new_dataset_items:
-            # Do not count dataset items with the empty or background label
-            roi_labels = new_dataset_item.roi.get_labels(include_empty=True)
-            for label in roi_labels:
-                if label.is_empty:
-                    continue
-                if label.is_background:
-                    continue
+            # Do not count dataset items with the empty label
+            if len(new_dataset_item.get_roi_label_ids(include_empty=True)) - len(
+                new_dataset_item.get_roi_label_ids(include_empty=False)
+            ):
+                continue
             # Increment the total and unassigned count by 1 for every new item
             new_dataset_items_count += 1
             if new_dataset_item.subset not in ASSIGNED_SUBSETS:
