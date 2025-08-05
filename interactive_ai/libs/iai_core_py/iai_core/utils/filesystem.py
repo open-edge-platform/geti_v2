@@ -96,8 +96,8 @@ def compute_project_size(project: Project) -> ProjectStorageInfo:
             dataset_storage_identifier
         ).get_object_storage_size()
 
-    # Add the size of all the model storage directories
     for training_task_node in project.get_trainable_task_nodes():
+        # Add the size of all the model storage directories
         model_storages = ModelStorageRepo(project.identifier).get_by_task_node_id(training_task_node.id_)
         for model_storage in model_storages:
             model_storage_identifier = ModelStorageIdentifier(
@@ -107,10 +107,9 @@ def compute_project_size(project: Project) -> ProjectStorageInfo:
                 model_storage_identifier
             ).get_object_storage_size()
 
-    # Add the size of all active models
-    for task_node in project.get_trainable_task_nodes():
+        # Add the size of the active model
         active_model = ModelService.get_base_active_model(
-            project_identifier=project.identifier, task_node_id=task_node.id_
+            project_identifier=project.identifier, task_node_id=training_task_node.id_
         )
         if active_model is not None:
             active_model_size = ModelService.get_model_size(
