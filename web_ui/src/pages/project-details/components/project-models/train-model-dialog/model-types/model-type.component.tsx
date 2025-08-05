@@ -3,7 +3,7 @@
 
 import { FC, ReactNode } from 'react';
 
-import { Divider, Flex, Grid, Heading, Radio, RadioGroup, repeat, Tooltip, TooltipTrigger } from '@geti/ui';
+import { Divider, Flex, Grid, Heading, Radio, RadioGroup, repeat, Tooltip, TooltipTrigger, View } from '@geti/ui';
 import clsx from 'clsx';
 import { isFunction } from 'lodash-es';
 
@@ -118,39 +118,43 @@ export const ModelType: FC<ModelTypeProps> = ({
             text={name}
             headerContent={
                 <>
-                    <Flex alignItems={'center'} marginBottom={'size-50'}>
+                    <View marginBottom={'size-50'}>
                         <RadioGroup
                             isEmphasized
                             aria-label={`Select ${name}`}
                             onChange={handlePress}
                             value={selectedModelTemplateId}
+                            minWidth={0}
+                            UNSAFE_className={classes.radioGroup}
                         >
-                            <TooltipTrigger placement={'bottom'}>
-                                <Radio
-                                    value={modelTemplateId}
-                                    aria-label={name}
-                                    UNSAFE_className={classes.radioTrainTemplateName}
-                                >
-                                    <Heading
-                                        UNSAFE_className={clsx(classes.trainTemplateName, {
-                                            [classes.selected]: isSelected,
-                                        })}
-                                    >
-                                        {name}
-                                    </Heading>
-                                </Radio>
-                                <Tooltip>{name}</Tooltip>
-                            </TooltipTrigger>
+                            <Flex alignItems={'center'} gap={'size-50'}>
+                                <View minWidth={0}>
+                                    <TooltipTrigger placement={'bottom'}>
+                                        <Radio value={modelTemplateId} aria-label={name}>
+                                            <Heading
+                                                UNSAFE_className={clsx(classes.trainTemplateName, {
+                                                    [classes.selected]: isSelected,
+                                                })}
+                                            >
+                                                {name}
+                                            </Heading>
+                                        </Radio>
+                                        <Tooltip>{name}</Tooltip>
+                                    </TooltipTrigger>
+                                </View>
+                                <InfoTooltip
+                                    id={`${name.toLocaleLowerCase()}-summary-id`}
+                                    tooltipText={
+                                        <ModelArchitectureTooltipText
+                                            description={description}
+                                            isDeprecated={isDeprecated}
+                                        />
+                                    }
+                                    iconColor={isSelected ? 'var(--energy-blue)' : undefined}
+                                />
+                            </Flex>
                         </RadioGroup>
-                        <InfoTooltip
-                            id={`${name.toLocaleLowerCase()}-summary-id`}
-                            tooltipText={
-                                <ModelArchitectureTooltipText description={description} isDeprecated={isDeprecated} />
-                            }
-                            iconColor={isSelected ? 'var(--energy-blue)' : undefined}
-                            className={classes.infoTooltip}
-                        />
-                    </Flex>
+                    </View>
                     <Flex alignItems={'center'} gap={'size-100'}>
                         {shouldShowActiveTag && <ActiveModelTag id={name} />}
                         {isFunction(renderTag) && renderTag()}
