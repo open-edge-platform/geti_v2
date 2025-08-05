@@ -70,6 +70,7 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
         trainingConfiguration,
         updateTrainingConfiguration,
         trainModel,
+        openBasicMode,
     } = useTrainModelState();
 
     const { canTrainModel, numberOfRequiredAnnotations } = isAllowedToTrainModel(selectedTask);
@@ -138,6 +139,11 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
                 {isBasicMode && (
                     <Button variant={'secondary'} onPress={openAdvancedSettingsMode}>
                         Advanced settings
+                    </Button>
+                )}
+                {!isBasicMode && (
+                    <Button variant={'secondary'} onPress={openBasicMode}>
+                        Back
                     </Button>
                 )}
                 <ButtonCreditsToConsume

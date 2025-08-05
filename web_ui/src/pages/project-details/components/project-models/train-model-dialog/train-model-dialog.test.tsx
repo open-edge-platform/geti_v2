@@ -9,6 +9,7 @@ import { createInMemoryModelsService } from '../../../../../core/models/services
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { ProjectProps } from '../../../../../core/projects/project.interface';
 import { createInMemoryProjectService } from '../../../../../core/projects/services/in-memory-project-service';
+import { PerformanceCategory } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { createInMemorySupportedAlgorithmsService } from '../../../../../core/supported-algorithms/services/in-memory-supported-algorithms-service';
 import { idMatchingFormat } from '../../../../../test-utils/id-utils';
 import {
@@ -62,6 +63,7 @@ const mockedSupportedAlgorithms = [
         gigaflops: 1.3,
         description: 'YOLO architecture for detection',
         isDefaultAlgorithm: true,
+        performanceCategory: PerformanceCategory.ACCURACY,
     }),
     getMockedSupportedAlgorithm({
         name: 'SSD detection',
@@ -70,6 +72,7 @@ const mockedSupportedAlgorithms = [
         gigaflops: 5.4,
         description: 'SSD architecture for detection',
         isDefaultAlgorithm: false,
+        performanceCategory: PerformanceCategory.SPEED,
     }),
     getMockedSupportedAlgorithm({
         name: 'ATTS detection',
@@ -78,31 +81,53 @@ const mockedSupportedAlgorithms = [
         gigaflops: 3,
         description: 'ATTS architecture for detection',
         isDefaultAlgorithm: false,
+        performanceCategory: PerformanceCategory.BALANCE,
+    }),
+    getMockedSupportedAlgorithm({
+        name: 'ATTS2 detection',
+        domain: DOMAIN.DETECTION,
+        modelTemplateId: 'detection_atts2_detection',
+        gigaflops: 3,
+        description: 'ATTS2 architecture for detection',
+        isDefaultAlgorithm: false,
+        performanceCategory: PerformanceCategory.OTHER,
     }),
 
     getMockedSupportedAlgorithm({
         name: 'YOLO classification',
         domain: DOMAIN.CLASSIFICATION,
-        modelTemplateId: 'detection_yolo_classification',
+        modelTemplateId: 'classification_yolo_classification',
         gigaflops: 1.3,
         description: 'YOLO architecture for classification',
         isDefaultAlgorithm: false,
+        performanceCategory: PerformanceCategory.ACCURACY,
     }),
     getMockedSupportedAlgorithm({
         name: 'SSD classification',
         domain: DOMAIN.CLASSIFICATION,
-        modelTemplateId: 'detection_ssd_classification',
+        modelTemplateId: 'classification_ssd_classification',
         gigaflops: 5.4,
         description: 'SSD architecture for classification',
         isDefaultAlgorithm: true,
+        performanceCategory: PerformanceCategory.BALANCE,
     }),
     getMockedSupportedAlgorithm({
         name: 'ATTS classification',
         domain: DOMAIN.CLASSIFICATION,
-        modelTemplateId: 'detection_atts_classification',
+        modelTemplateId: 'classification_atts_classification',
         gigaflops: 3,
         description: 'ATTS architecture for classification',
         isDefaultAlgorithm: false,
+        performanceCategory: PerformanceCategory.SPEED,
+    }),
+    getMockedSupportedAlgorithm({
+        name: 'ATTS2 classification',
+        domain: DOMAIN.CLASSIFICATION,
+        modelTemplateId: 'classification_atts2_classification',
+        gigaflops: 3,
+        description: 'ATTS2 architecture for classification',
+        isDefaultAlgorithm: false,
+        performanceCategory: PerformanceCategory.OTHER,
     }),
 ];
 
@@ -238,7 +263,7 @@ describe('Train model dialog', () => {
 
         expect(screen.getByLabelText('Selected card')).toHaveAttribute(
             'data-testid',
-            idMatchingFormat(`${defaultModelTemplate?.name}-id`)
+            idMatchingFormat(`${defaultModelTemplate?.performanceCategory.toLocaleLowerCase()}-id`)
         );
     });
 
@@ -249,7 +274,7 @@ describe('Train model dialog', () => {
 
         expect(screen.getByLabelText('Selected card')).toHaveAttribute(
             'data-testid',
-            idMatchingFormat(`${defaultModelTemplate?.name}-id`)
+            idMatchingFormat(`${defaultModelTemplate?.performanceCategory.toLocaleLowerCase()}-id`)
         );
     });
 
@@ -265,7 +290,7 @@ describe('Train model dialog', () => {
 
         expect(screen.getByLabelText('Selected card')).toHaveAttribute(
             'data-testid',
-            idMatchingFormat(`${defaultModelTemplateDetection?.name}-id`)
+            idMatchingFormat(`${defaultModelTemplateDetection?.performanceCategory.toLocaleLowerCase()}-id`)
         );
 
         fireEvent.click(screen.getByRole('button', { name: /select domain/i }));
@@ -273,7 +298,7 @@ describe('Train model dialog', () => {
 
         expect(screen.getByLabelText('Selected card')).toHaveAttribute(
             'data-testid',
-            idMatchingFormat(`${defaultModelTemplateClassification?.name}-id`)
+            idMatchingFormat(`${defaultModelTemplateClassification?.performanceCategory.toLocaleLowerCase()}-id`)
         );
     });
 
@@ -491,5 +516,84 @@ describe('Train model dialog', () => {
                 })
             );
         });
+    });
+
+    it('back button is visible in advanced mode', async () => {
+        await renderTrainModelDialog();
+
+        fireEvent.click(screen.getByRole('button', { name: /advanced settings/i }));
+
+        expect(screen.getByRole('button', { name: /back/i })).toBeInTheDocument();
+    });
+
+    it('back button resets model type to recommended one when neither recommended nor active algorithm is selected', async () => {
+        await renderTrainModelDialog();
+
+        const defaultModelTemplate = getDefaultModelTemplate(DOMAIN.DETECTION);
+
+        expect(screen.getByLabelText('Selected card')).toHaveAttribute(
+            'data-testid',
+            idMatchingFormat(`${defaultModelTemplate?.performanceCategory.toLocaleLowerCase()}-id`)
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /advanced settings/i }));
+
+        const otherModelType = mockedSupportedAlgorithms.find(
+            (algorithm) =>
+                algorithm.performanceCategory === PerformanceCategory.OTHER && algorithm.domain === DOMAIN.DETECTION
+        );
+
+        fireEvent.click(screen.getByText(otherModelType?.name ?? ''));
+
+        expect(screen.getByLabelText('Selected card')).toHaveAttribute(
+            'data-testid',
+            idMatchingFormat(`${otherModelType?.name}-id`)
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /back/i }));
+
+        expect(screen.getByLabelText('Selected card')).toHaveAttribute(
+            'data-testid',
+            idMatchingFormat(`${defaultModelTemplate?.performanceCategory.toLocaleLowerCase()}-id`)
+        );
+    });
+
+    it('back button resets to selected algorithm to default one when there are no models and neither recommended nor active is selected', async () => {
+        const modelsService = createInMemoryModelsService();
+        modelsService.getModels = jest.fn(async () => []);
+
+        await renderTrainModelDialog({
+            services: {
+                modelsService,
+            },
+        });
+
+        const defaultModelTemplate = getDefaultModelTemplate(DOMAIN.DETECTION);
+
+        expect(screen.getByLabelText('Selected card')).toHaveAttribute(
+            'data-testid',
+            idMatchingFormat(`${defaultModelTemplate?.performanceCategory.toLocaleLowerCase()}-id`)
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /advanced settings/i }));
+
+        const otherModelType = mockedSupportedAlgorithms.find(
+            (algorithm) =>
+                algorithm.performanceCategory === PerformanceCategory.OTHER && algorithm.domain === DOMAIN.DETECTION
+        );
+
+        fireEvent.click(screen.getByText(otherModelType?.name ?? ''));
+
+        expect(screen.getByLabelText('Selected card')).toHaveAttribute(
+            'data-testid',
+            idMatchingFormat(`${otherModelType?.name}-id`)
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /back/i }));
+
+        expect(screen.getByLabelText('Selected card')).toHaveAttribute(
+            'data-testid',
+            idMatchingFormat(`${defaultModelTemplate?.performanceCategory.toLocaleLowerCase()}-id`)
+        );
     });
 });
