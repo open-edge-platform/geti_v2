@@ -612,12 +612,6 @@ class AnnotationRestValidator(RestApiValidator):
                 f"{next(iter(non_empty_labels_in_annotation)).id_} for task {task.id_}"
             )
 
-        # Validate that a background label is not the only label in the annotation
-        background_labels = {label for label in annotation_labels_current_task if label.is_background}
-        non_background_labels = {label for label in annotation_labels_current_task if not label.is_background}
-        if bool(background_labels) and not bool(non_background_labels):
-            raise BadRequestException("It is not allowed to create an annotation with only a background labels.")
-
         # Validate that global annotations for the first task use a full box shape
         if previous_task is None and annotation_rest[SHAPE] != AnnotationRESTViews.generate_full_box_rest(
             media_height=media_height, media_width=media_width
@@ -667,6 +661,12 @@ class AnnotationRestValidator(RestApiValidator):
         if len(annotation_labels_current_task) == 0:
             # If the annotation contains no labels for this task, return without doing validation for this task
             return
+
+        # Validate that a background label is not the only label in the annotation
+        background_labels = {label for label in annotation_labels_current_task if label.is_background}
+        non_background_labels = {label for label in annotation_labels_current_task if not label.is_background}
+        if bool(background_labels) and not bool(non_background_labels):
+            raise BadRequestException("It is not allowed to create an annotation with only a background labels.")
 
         # Validate that if the task is a local anomaly task, it contains only one of the labels (it's not allowed to
         # have both the normal and the anomalous label).
