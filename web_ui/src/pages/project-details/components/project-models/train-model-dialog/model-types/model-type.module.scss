@@ -7,6 +7,16 @@
     text-overflow: ellipsis;
 }
 
+.radioGroup {
+    & label {
+        margin: 0;
+
+        & span[class*='spectrum-Radio-label'] {
+            min-width: 0;
+        }
+    }
+}
+
 .infoTooltip {
     margin-left: calc(var(--spectrum-global-dimension-size-175) * -1);
 }
