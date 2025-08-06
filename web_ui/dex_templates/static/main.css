@@ -258,12 +258,6 @@ input:-webkit-autofill {
     border: 0 !important;
 }
 
-.loginBox__footer {
-    text-align: center;
-    font-size: 1.4rem;
-    margin-bottom: 2.5rem;
-}
-
 .loginBox__label {
     font-family: intelOne;
     font-size: 1.2rem;
