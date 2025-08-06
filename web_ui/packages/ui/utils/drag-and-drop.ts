@@ -30,7 +30,7 @@ const flattenDropItemToFiles = async (item: DropItem): Promise<File[]> => {
     for await (const entry of entries) {
         if (entry.kind === 'directory') {
             filesFromDirectory.push(...(await flattenDropItemToFiles(entry)));
-        } else if (entry.kind === 'file') {
+        } else {
             filesFromDirectory.push(await entry.getFile());
         }
     }
