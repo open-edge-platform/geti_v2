@@ -31,6 +31,5 @@ export const BoundingBoxTool: ToolProps = {
         DOMAIN.SEGMENTATION,
         DOMAIN.SEGMENTATION_INSTANCE,
         DOMAIN.ANOMALY_DETECTION,
-        DOMAIN.ANOMALY_SEGMENTATION,
     ],
 };

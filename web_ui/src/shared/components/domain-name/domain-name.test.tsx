@@ -8,7 +8,7 @@ import { providersRender as render } from '../../../test-utils/required-provider
 import { DomainName } from './domain-name.component';
 
 describe('DomainName', () => {
-    const anomalyDomains = [DOMAIN.ANOMALY_DETECTION, DOMAIN.ANOMALY_CLASSIFICATION, DOMAIN.ANOMALY_SEGMENTATION];
+    const anomalyDomains = [DOMAIN.ANOMALY_DETECTION, DOMAIN.ANOMALY_CLASSIFICATION];
     it.each(anomalyDomains)(`should render Anomaly detection domain`, (domain) => {
         render(<DomainName domain={domain} />);
 

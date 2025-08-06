@@ -18,12 +18,7 @@ export const RITMTool: ToolProps = {
     Icon: () => <MagicWandIcon />,
     Tool,
     SecondaryToolbar,
-    supportedDomains: [
-        DOMAIN.SEGMENTATION,
-        DOMAIN.SEGMENTATION_INSTANCE,
-        DOMAIN.ANOMALY_SEGMENTATION,
-        DOMAIN.DETECTION_ROTATED_BOUNDING_BOX,
-    ],
+    supportedDomains: [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE, DOMAIN.DETECTION_ROTATED_BOUNDING_BOX],
     tooltip: {
         img: RITMImg,
         url: 'docs/user-guide/geti-fundamentals/annotations/annotation-tools#interactive-segmentation-tool',

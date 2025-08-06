@@ -124,7 +124,6 @@ describe('Primary toolbar', (): void => {
 
             [DOMAIN.ANOMALY_CLASSIFICATION, []],
             [DOMAIN.ANOMALY_DETECTION, []],
-            [DOMAIN.ANOMALY_SEGMENTATION, []],
         ];
 
         test.each(toolsAndSupportedDomains)('renders correct tools for %o', async (domain, domainTools) => {
