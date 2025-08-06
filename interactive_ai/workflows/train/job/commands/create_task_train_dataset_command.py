@@ -5,6 +5,7 @@
 
 import logging
 
+from geti_configuration_tools.training_configuration import TrainingConfiguration
 from geti_telemetry_tools import unified_tracing
 from iai_core.entities.dataset_storage import DatasetStorage
 from iai_core.entities.datasets import Dataset, NullDataset
@@ -25,6 +26,7 @@ class CreateTaskTrainDatasetCommand(CreateDatasetCommand):
     :param project: project containing dataset storage
     :param dataset_storage: dataset storage containing media and annotations
     :param task_node: Task containing the command
+    :param training_configuration: training configuration for the task
     :param max_training_dataset_size: maximum training dataset size
     :param reshuffle_subsets: Whether to reassign/shuffle all the items to subsets including Test set from scratch
     """
@@ -34,6 +36,7 @@ class CreateTaskTrainDatasetCommand(CreateDatasetCommand):
         project: Project,
         dataset_storage: DatasetStorage,
         task_node: TaskNode,
+        training_configuration: TrainingConfiguration,
         max_training_dataset_size: int | None = None,
         reshuffle_subsets: bool = False,
     ) -> None:
@@ -42,6 +45,7 @@ class CreateTaskTrainDatasetCommand(CreateDatasetCommand):
         self.dataset: Dataset = NullDataset()
         self.max_training_dataset_size = max_training_dataset_size
         self.reshuffle_subsets = reshuffle_subsets
+        self.training_configuration = training_configuration
 
     @unified_tracing
     def execute(self) -> None:
@@ -63,6 +67,7 @@ class CreateTaskTrainDatasetCommand(CreateDatasetCommand):
                 project_id=self.project.id_,
                 task_node=self.task_node,
                 dataset_storage=self.dataset_storage,
+                training_configuration=self.training_configuration,
                 max_training_dataset_size=self.max_training_dataset_size,
                 reshuffle_subsets=self.reshuffle_subsets,
             )

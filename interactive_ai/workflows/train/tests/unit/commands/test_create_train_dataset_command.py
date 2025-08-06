@@ -18,7 +18,7 @@ def raise_exception(*args, **kwargs):
 
 class TestCreateDatasetCommand:
     def test_create_train_dataset_command(
-        self, fxt_project, fxt_dataset_storage, fxt_detection_node, fxt_dataset
+        self, fxt_project, fxt_dataset_storage, fxt_detection_node, fxt_dataset, fxt_training_configuration
     ) -> None:
         # Arrange
         mock_pipeline_dataset = MagicMock()
@@ -44,6 +44,7 @@ class TestCreateDatasetCommand:
                 task_node=fxt_detection_node,
                 max_training_dataset_size=100,
                 reshuffle_subsets=False,
+                training_configuration=fxt_training_configuration,
             )
             command.execute()
 
@@ -56,10 +57,11 @@ class TestCreateDatasetCommand:
                 task_node=fxt_detection_node,
                 max_training_dataset_size=100,
                 reshuffle_subsets=False,
+                training_configuration=fxt_training_configuration,
             )
 
     def test_create_train_dataset_command_error(
-        self, fxt_project, fxt_dataset_storage, fxt_detection_node, fxt_dataset
+        self, fxt_project, fxt_dataset_storage, fxt_detection_node, fxt_dataset, fxt_training_configuration
     ) -> None:
         # Arrange
         mock_pipeline_dataset = MagicMock()
@@ -86,6 +88,7 @@ class TestCreateDatasetCommand:
                 task_node=fxt_detection_node,
                 max_training_dataset_size=100,
                 reshuffle_subsets=False,
+                training_configuration=fxt_training_configuration,
             )
             with pytest.raises(DatasetCreationFailedException):
                 command.execute()
