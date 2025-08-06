@@ -786,7 +786,7 @@ In this version, the `image` block is defined once and is used in the different 
 ```yaml
 image:
   registry: docker.io
-  repository: bitnami/kafka
+  repository: bitnamilegacy/kafka
   tag: 2.8.0
 ```
 
@@ -795,13 +795,13 @@ VS
 ```yaml
 image:
   registry: docker.io
-  repository: bitnami/kafka
+  repository: bitnamilegacy/kafka
   tag: 2.8.0
 ...
 provisioning:
   image:
     registry: docker.io
-    repository: bitnami/kafka
+    repository: bitnamilegacy/kafka
     tag: 2.8.0
 ```
 
