@@ -8,7 +8,7 @@ import { GetElementType } from './types';
 type DropItem = GetElementType<DropEvent['items']>;
 type DropEvent = Parameters<NonNullable<DropZoneProps['onDrop']>>[0];
 
-const toArray = async <T,>(asyncIterator: AsyncIterable<T>): Promise<T[]> => {
+const toArray = async <T>(asyncIterator: AsyncIterable<T>): Promise<T[]> => {
     const arr: T[] = [];
     for await (const i of asyncIterator) arr.push(i);
     return arr;

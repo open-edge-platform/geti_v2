@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { type LoadingState, type KeyboardEvent as ReactKeyboardEvent } from '@geti/ui';
+import { GetElementType } from '@geti/ui/utils';
 import { CalendarDate, CalendarDateTime, DateValue } from '@internationalized/date';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
@@ -14,7 +15,6 @@ import { RegionOfInterest } from '../core/annotations/annotation.interface';
 import { Point } from '../core/annotations/shapes.interface';
 import { DOMAIN } from '../core/projects/core.interface';
 import { Task } from '../core/projects/task.interface';
-import { GetElementType } from '../types-utils/types';
 import { KeyMap } from './keyboard-events/keyboard.interface';
 import { LOCAL_STORAGE_KEYS } from './local-storage-keys';
 
