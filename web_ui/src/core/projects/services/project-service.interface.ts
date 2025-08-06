@@ -19,6 +19,7 @@ import { ProjectStatus } from '../project-status.interface';
 import {
     CreateProjectProps,
     EditProjectProps,
+    EXPORT_PROJECT_MODELS_OPTIONS,
     ProjectExport,
     ProjectExportIdentifier,
     ProjectImport,
@@ -68,7 +69,13 @@ export interface ProjectService {
         domains: DOMAIN[],
         projectTypeMetadata: TaskMetadata[]
     ): Promise<CreateProjectProps>;
-    exportProject(projectIdentifier: ProjectIdentifier): Promise<ProjectExport>;
+    exportProject({
+        projectIdentifier,
+        selectedModelExportOption,
+    }: {
+        projectIdentifier: ProjectIdentifier;
+        selectedModelExportOption?: EXPORT_PROJECT_MODELS_OPTIONS;
+    }): Promise<ProjectExport>;
     exportProjectStatus(projectIdentifier: ProjectExportIdentifier): Promise<JobProjectExportStatus>;
     importProject(projectImportFileIdentifier: ProjectImportIdentifier, options: ImportOptions): Promise<ProjectImport>;
     getImportProjectStatus(projectImportIdentifier: ProjectImportIdentifier): Promise<ProjectImportStatus>;

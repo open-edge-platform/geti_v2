@@ -112,3 +112,9 @@ export interface ProjectImportStatus {
     state: ExportStatusStateDTO;
     message?: string | null;
 }
+
+export enum EXPORT_PROJECT_MODELS_OPTIONS {
+    ALL = 'all',
+    LATEST_ACTIVE = 'latest_active',
+    NONE = 'none',
+}

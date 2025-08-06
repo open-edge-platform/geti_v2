@@ -61,8 +61,8 @@ test.describe('export project', () => {
 
         await page.goto('/');
         await page.getByLabel('action menu').click();
-
         await page.getByText(/export/i).click();
+        await page.getByRole('button', { name: 'Export' }).click();
 
         await expect(page.getByRole('button', { name: 'Download exported project' })).toBeVisible();
 
@@ -83,6 +83,7 @@ test.describe('export project', () => {
         await page.goto('/');
         await page.getByLabel('action menu').click();
         await page.getByText(/export/i).click();
+        await page.getByRole('button', { name: 'Export' }).click();
 
         await expect(page.getByText('Exporting project: Preparing project for export')).toBeVisible();
 
@@ -106,6 +107,7 @@ test.describe('export project', () => {
         await page.goto('/');
         await page.getByLabel('action menu').click();
         await page.getByText(/export/i).click();
+        await page.getByRole('button', { name: 'Export' }).click();
 
         await expect(page.getByText(/Project was not downloaded due to an error./i)).toBeVisible();
     });
