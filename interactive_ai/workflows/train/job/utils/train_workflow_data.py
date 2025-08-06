@@ -163,7 +163,10 @@ class TrainWorkflowData:
         :return TrainingConfiguration: Return TrainingConfiguration entity from given training_configuration_json
         """
         if self.training_configuration_json is None:
-            raise ValueError("Training configuration JSON is not set.")
+            raise ValueError(
+                "Training configuration JSON is not set. Please ensure that 'training_configuration_json' is provided "
+                "when initializing TrainWorkflowData, or set it before accessing the 'training_configuration' property."
+            )
         training_config_dict: dict = {
             "id_": ID("training_configuration"),  # ID value does not matter but the field is required for validation
             **json.loads(self.training_configuration_json),
