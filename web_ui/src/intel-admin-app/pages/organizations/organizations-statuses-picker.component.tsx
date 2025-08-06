@@ -46,7 +46,7 @@ export const OrganizationsStatusesPicker: FC<OrganizationStatusesPickerProps> = 
             items={STATUSES.filter(
                 (status) => FEATURE_FLAG_REQ_ACCESS || status.name !== AccountStatus.REQUESTED_ACCESS
             )}
-            onSelectionChange={handleChangedSelectedOrgStatus}
+            onSelectionChange={(key) => key !== null && handleChangedSelectedOrgStatus(key)}
             aria-label={'Organizations status'}
             id={'organizations-filter-status-picker'}
         >

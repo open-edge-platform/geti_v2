@@ -166,7 +166,7 @@ export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSele
                     width={'100%'}
                     placeholder={'Select model'}
                     selectedKey={selectedModelVersion?.groupId}
-                    onSelectionChange={handleChangeArchitecture}
+                    onSelectionChange={(key) => key !== null && handleChangeArchitecture(key)}
                 >
                     {(item) => {
                         const algorithm = supportedAlgorithms?.find(
@@ -190,7 +190,7 @@ export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSele
                     id={'select-version-id'}
                     items={validModelVersions || []}
                     selectedKey={selectedVersionId}
-                    onSelectionChange={handleChangeModelVersion}
+                    onSelectionChange={(key) => key !== null && handleChangeModelVersion(key)}
                     isDisabled={!Boolean(selectedModelVersion)}
                 >
                     {(item) => (

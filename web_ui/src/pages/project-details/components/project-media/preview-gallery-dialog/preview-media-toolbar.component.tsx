@@ -21,7 +21,12 @@ export const PreviewMediaToolbar = ({ viewMode, onSortItems, onViewModeChange }:
             <Flex alignItems={'center'} gap={'size-100'}>
                 <Text UNSAFE_style={{ fontWeight: 'bold' }}>Sort by: </Text>
 
-                <Picker isQuiet maxWidth={'size-2000'} aria-label='sorting options' onSelectionChange={onSortItems}>
+                <Picker
+                    isQuiet
+                    maxWidth={'size-2000'}
+                    aria-label='sorting options'
+                    onSelectionChange={(key) => key !== null && onSortItems(key)}
+                >
                     <Item key={SortingOptions.LABEL_NAME_A_Z}>Label Name (A-Z)</Item>
                     <Item key={SortingOptions.LABEL_NAME_Z_A}>Label Name (Z-A)</Item>
                 </Picker>

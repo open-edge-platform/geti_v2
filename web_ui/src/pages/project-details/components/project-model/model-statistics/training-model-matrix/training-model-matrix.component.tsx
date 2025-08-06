@@ -36,7 +36,7 @@ export const TrainingModelMatrix = ({
             aria-label='Select a confusion matrix'
             items={matrixData}
             selectedKey={selectedConfusionMatrixKey}
-            onSelectionChange={onSelectionConfusionMatrix}
+            onSelectionChange={(key) => key !== null && onSelectionConfusionMatrix(key)}
         >
             {(item) => (
                 <Item key={item.key} textValue={item.header}>
