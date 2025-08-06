@@ -1,6 +1,6 @@
 image: 
   registry: docker.io
-  repository: bitnami
+  repository: bitnamilegacy
   name: openldap:2.6.3-debian-11-r63
 imagePullPolicy: IfNotPresent
 
