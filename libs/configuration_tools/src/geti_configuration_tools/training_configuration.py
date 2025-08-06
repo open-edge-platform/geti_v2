@@ -26,7 +26,7 @@ class SubsetSplit(BaseModel):
         ge=1, le=100, default=10, title="Test percentage", description="Percentage of data to use for testing"
     )
     auto_selection: bool = Field(
-        default=True, title="Auto selection", description="Whether to automatically select data for each subset"
+        default=False, title="Auto selection", description="Whether to automatically select data for each subset"
     )
     remixing: bool = Field(default=False, title="Remixing", description="Whether to remix data between subsets")
     dataset_size: int | None = Field(

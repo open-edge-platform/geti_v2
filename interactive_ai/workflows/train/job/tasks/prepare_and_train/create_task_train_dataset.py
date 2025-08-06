@@ -33,6 +33,7 @@ def create_task_train_dataset(
         project=project,
         dataset_storage=dataset_storage,
         task_node=task_node,
+        training_configuration=train_data.training_configuration,
         max_training_dataset_size=max_training_dataset_size,
         reshuffle_subsets=train_data.reshuffle_subsets,
     )

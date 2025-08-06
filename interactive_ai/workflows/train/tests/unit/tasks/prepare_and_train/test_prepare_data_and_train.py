@@ -86,7 +86,7 @@ class TestPrepareTrainingDataTask:
         # Arrange
         train_data = fxt_train_data(workspace_id=WORKSPACE_ID, project_id=PROJECT_ID, task_id=TASK_ID)
         train_data.get_compiled_dataset_shards = MagicMock()
-        hyperparameters = {"learning_rate": 0.01, "batch_size": 32}
+        training_configuration = {"hyperparameters": {"learning_rate": 0.01, "batch_size": 32}}
 
         mocked_get_train_data.return_value = train_data
         dataset = Dataset(ID(DATASET_ID))
@@ -96,7 +96,7 @@ class TestPrepareTrainingDataTask:
         mocked_train_task = MagicMock()
         mocked_create_flyte_container_task.return_value = mocked_train_task
         mocked_asyncio_run.return_value = ({"requests": {}, "limits": {}}, "cpu")
-        hyperparameters_json = json.dumps(hyperparameters)
+        training_configuration_json = json.dumps(training_configuration)
 
         # Act
         prepare_training_data_model_and_start_training(
@@ -114,7 +114,7 @@ class TestPrepareTrainingDataTask:
             max_training_dataset_size=100,
             command=["bash", "-c", "run"],
             reshuffle_subsets=reshuffle_subsets,
-            hyperparameters_json=hyperparameters_json,
+            training_configuration_json=training_configuration_json,
         )
 
         # Assert
@@ -130,7 +130,7 @@ class TestPrepareTrainingDataTask:
             max_number_of_annotations=None,
             min_annotation_size=None,
             reshuffle_subsets=reshuffle_subsets,
-            hyperparameters_json=hyperparameters_json,
+            training_configuration_json=training_configuration_json,
         )
         mocked_create_task_train_dataset.assert_called_once_with(train_data=train_data, max_training_dataset_size=100)
 

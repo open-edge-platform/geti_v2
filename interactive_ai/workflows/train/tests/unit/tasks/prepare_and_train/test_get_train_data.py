@@ -55,6 +55,7 @@ class TestGetTrainDataTask:
         fxt_project,
         fxt_train_data,
         obsolete_model,
+        fxt_training_configuration,
     ) -> None:
         # Arrange
         mocked_get_project.return_value = fxt_project
@@ -91,6 +92,7 @@ class TestGetTrainDataTask:
             infer_on_pipeline=infer_on_pipeline,
             model_storage_id=self.model_storage_id,
             hyper_parameters_id=self.hyperparameters_id,
+            training_configuration_json=fxt_training_configuration.model_dump_json(),
         )
 
         # Assert
