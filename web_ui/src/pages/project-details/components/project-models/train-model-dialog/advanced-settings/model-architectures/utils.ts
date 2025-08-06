@@ -36,7 +36,7 @@ export const orderRecommendedAlgorithms = (recommendedAlgorithms: SupportedAlgor
     return [balance, speed, accuracy].filter(Boolean) as SupportedAlgorithm[];
 };
 
-const orderOtherAlgorithms = (algorithms: SupportedAlgorithm[]) => {
+export const orderOtherAlgorithms = (algorithms: SupportedAlgorithm[]) => {
     const activeAlgorithms = algorithms.filter((algorithm) => algorithm.lifecycleStage === LifecycleStage.ACTIVE);
     const obsoleteAlgorithms = algorithms.filter((algorithm) => algorithm.lifecycleStage === LifecycleStage.OBSOLETE);
     const deprecatedAlgorithms = algorithms.filter(
