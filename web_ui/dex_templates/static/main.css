@@ -220,7 +220,7 @@ input:-webkit-autofill {
 
 .loginBox {
     width: 48rem;
-    min-height: 55rem;
+    min-height: 50rem;
 }
 
 .loginBox__content {
