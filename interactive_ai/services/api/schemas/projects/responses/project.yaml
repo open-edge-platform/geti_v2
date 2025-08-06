@@ -30,6 +30,12 @@ properties:
       size:
         title: Project size in bytes
         type: integer
+      size_excluding_models:
+        title: Project size without any models in bytes
+        type: integer
+      size_excluding_non_active_models:
+        title: Project size with only active models in bytes
+        type: integer
 required:
   - pipeline
   - datasets
