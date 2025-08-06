@@ -16,7 +16,6 @@ const toArray = async <T>(asyncIterator: AsyncIterable<T>): Promise<T[]> => {
 
 const flattenDropItemToFiles = async (item: DropItem): Promise<File[]> => {
     if (item.kind === 'file') {
-        const file = await item.getFile();
         return [file];
     }
 
@@ -30,7 +29,7 @@ const flattenDropItemToFiles = async (item: DropItem): Promise<File[]> => {
     for await (const entry of entries) {
         if (entry.kind === 'directory') {
             filesFromDirectory.push(...(await flattenDropItemToFiles(entry)));
-        } else {
+        } else if (entry.kind === 'file') {
             filesFromDirectory.push(await entry.getFile());
         }
     }
