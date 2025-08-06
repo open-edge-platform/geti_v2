@@ -320,7 +320,7 @@ class _SubsetHelper:
         """
         if self.subset_split_config.auto_selection:
             # Determine fractions automatically
-            logger.info(f"Determine fractions automatically: {self.subset_split_config.auto_selection}")
+            logger.debug(f"Determine fractions automatically: {self.subset_split_config.auto_selection}")
             if self.number_of_annotations < SplitTargetSize.SMALL:
                 ratios = TARGET_SMALL
             elif self.number_of_annotations < SplitTargetSize.MEDIUM:
