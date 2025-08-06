@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-import { isNumber } from 'lodash-es';
+import { isEmpty, isNumber } from 'lodash-es';
 
 import {
     useTrainingConfigurationMutation,

@@ -288,7 +288,7 @@ describe('Train model dialog', () => {
 
         expect(screen.getByLabelText('Selected card')).toHaveAttribute(
             'data-testid',
-            idMatchingFormat(`${defaultModelTemplate?.name}-id`)
+            idMatchingFormat(`${defaultModelTemplate?.performanceCategory.toLocaleLowerCase()}-id`)
         );
     });
 
