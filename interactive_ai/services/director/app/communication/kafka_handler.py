@@ -134,11 +134,20 @@ class JobKafkaHandler(BaseKafkaHandler, metaclass=Singleton):
 
         total = n_training + n_validation + n_test
 
-        # Calculate percentages (0-100 range)
-        validation_percent = int(100 * n_validation / total)
-        test_percent = int(100 * n_test / total)
-        # Ensure percentages sum to exactly 100
-        training_percent = 100 - validation_percent - test_percent
+        if total == 0:
+            logger.warning(
+                f"Cannot update subset split configuration for project {project_identifier}: "
+                "total number of samples is zero. Setting all split percentages to zero."
+            )
+            training_percent = 0
+            validation_percent = 0
+            test_percent = 0
+        else:
+            # Calculate percentages (0-100 range)
+            validation_percent = int(100 * n_validation / total)
+            test_percent = int(100 * n_test / total)
+            # Ensure percentages sum to exactly 100
+            training_percent = 100 - validation_percent - test_percent
 
         # Update the configuration with percentages
         training_config.global_parameters.dataset_preparation.subset_split.training = training_percent
