@@ -4,7 +4,6 @@ export enum DATASET_IMPORT_TASK_TYPE_DTO {
     ANOMALY = 'anomaly',
     ANOMALY_CLASSIFICATION = 'anomaly_classification',
     ANOMALY_DETECTION = 'anomaly_detection',
-    ANOMALY_SEGMENTATION = 'anomaly_segmentation',
     CLASSIFICATION = 'classification',
     CROP = 'crop',
     DETECTION = 'detection',

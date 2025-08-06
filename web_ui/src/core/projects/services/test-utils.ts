@@ -451,31 +451,6 @@ export const PROJECT_ANOMALY_DETECTION = {
     },
 };
 
-export const PROJECT_ANOMALY_SEGMENTATION = {
-    ...PROJECT_ANOMALY,
-    pipeline: {
-        ...PROJECT_ANOMALY.pipeline,
-        connections: [
-            {
-                from: 'Dataset',
-                to: 'Anomaly segmentation',
-            },
-        ],
-        tasks: [
-            {
-                id: 'task1',
-                task_type: TASK_TYPE.DATASET,
-                title: 'Dataset',
-            },
-            {
-                id: 'task2',
-                task_type: TASK_TYPE.ANOMALY_SEGMENTATION,
-                title: 'Anomaly',
-            },
-        ],
-    },
-};
-
 export const PROJECT_DETECTION_CLASSIFICATION: ProjectDTO = {
     id: 'project-detection-classification',
     creation_time: new Date().toISOString(),

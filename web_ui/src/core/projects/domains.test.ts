@@ -11,7 +11,6 @@ describe('domains', () => {
         [DOMAIN.DETECTION, false],
         [DOMAIN.ANOMALY_DETECTION, false],
         [DOMAIN.SEGMENTATION, false],
-        [DOMAIN.ANOMALY_SEGMENTATION, false],
     ])('isClassificationDomain(%o) is %o', (domain, result) => {
         expect(isClassificationDomain(domain)).toBe(result);
     });
@@ -22,7 +21,6 @@ describe('domains', () => {
         [DOMAIN.DETECTION, true],
         [DOMAIN.ANOMALY_DETECTION, true],
         [DOMAIN.SEGMENTATION, false],
-        [DOMAIN.ANOMALY_SEGMENTATION, false],
     ])('isDetectionDomain(%o) is %o', (domain, result) => {
         expect(isDetectionDomain(domain)).toBe(result);
     });
@@ -33,7 +31,6 @@ describe('domains', () => {
         [DOMAIN.DETECTION, false],
         [DOMAIN.ANOMALY_DETECTION, false],
         [DOMAIN.SEGMENTATION, true],
-        [DOMAIN.ANOMALY_SEGMENTATION, true],
     ])('isSegmentationDomain(%o) is %o', (domain, result) => {
         expect(isSegmentationDomain(domain)).toBe(result);
     });
@@ -44,7 +41,6 @@ describe('domains', () => {
         [DOMAIN.DETECTION, false],
         [DOMAIN.ANOMALY_DETECTION, true],
         [DOMAIN.SEGMENTATION, false],
-        [DOMAIN.ANOMALY_SEGMENTATION, true],
     ])('isAnomalyDomain(%o) is %o', (domain, result) => {
         expect(isAnomalyDomain(domain)).toBe(result);
     });

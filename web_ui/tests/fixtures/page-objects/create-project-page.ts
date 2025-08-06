@@ -285,16 +285,6 @@ export class CreateProjectPage {
         return await this.create();
     }
 
-    async anomalySegmentation(name: string) {
-        await this.enterProjectName(name);
-        await this.nextStep();
-
-        await this.page.getByRole('tab', { name: /anomaly/i }).click();
-        await this.page.getByRole('heading', { name: /anomaly segmentation/i }).click();
-
-        return await this.create();
-    }
-
     async changeColorInEdition(color: string) {
         const colorInput = this.page.getByTestId('popover').getByRole('textbox');
         await colorInput.click();

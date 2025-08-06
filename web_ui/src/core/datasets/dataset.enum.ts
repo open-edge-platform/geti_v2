@@ -48,7 +48,6 @@ export enum DATASET_IMPORT_TO_NEW_PROJECT_STEP {
 export enum DATASET_IMPORT_TASK_TYPE {
     ANOMALY_CLASSIFICATION = 'anomaly_classification',
     ANOMALY_DETECTION = 'anomaly_detection',
-    ANOMALY_SEGMENTATION = 'anomaly_segmentation',
     CLASSIFICATION = 'classification',
     CROP = 'crop',
     DETECTION = 'detection',
@@ -65,7 +64,6 @@ export enum DATASET_IMPORT_TASK_TYPE {
 export enum DATASET_IMPORT_DOMAIN {
     ANOMALY_CLASSIFICATION = 'Anomaly classification',
     ANOMALY_DETECTION = 'Anomaly detection',
-    ANOMALY_SEGMENTATION = 'Anomaly segmentation',
     CLASSIFICATION = 'Classification',
     CROP = 'Crop',
     DETECTION = 'Detection',

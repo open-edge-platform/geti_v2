@@ -112,7 +112,7 @@ describe('Label behaviour based on task type', () => {
         );
     });
 
-    it.each([DOMAIN.ANOMALY_CLASSIFICATION, DOMAIN.ANOMALY_DETECTION, DOMAIN.ANOMALY_SEGMENTATION])(
+    it.each([DOMAIN.ANOMALY_CLASSIFICATION, DOMAIN.ANOMALY_DETECTION])(
         'gives anomalous behaviour to anomalous labels for %o domain',
         (domain) => {
             const behaviour = getBehaviourFromDTO({ ...labelDTO, name: 'Anomalous', is_anomalous: true }, domain);
