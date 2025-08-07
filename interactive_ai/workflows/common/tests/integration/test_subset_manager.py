@@ -5,7 +5,7 @@ import random
 from unittest.mock import patch
 
 import numpy as np
-from geti_configuration_tools.training_configuration import SubsetSplit
+from geti_configuration_tools.training_configuration import Filtering, SubsetSplit
 from geti_types import DatasetStorageIdentifier, ImageIdentifier
 from iai_core.entities.annotation import Annotation, AnnotationScene, AnnotationSceneKind
 from iai_core.entities.dataset_entities import TaskDataset
@@ -1130,6 +1130,7 @@ class TestSubsetManager:
         initial_dataset = Dataset(items=dataset_items, id=DatasetRepo.generate_id())
 
         fxt_training_configuration.global_parameters.dataset_preparation.subset_split.remixing = True
+        fxt_training_configuration.global_parameters.dataset_preparation.filtering = Filtering()
 
         with patch.object(TaskDataset, "get_dataset", return_value=initial_dataset):
             un_shuffled_dataset = DatasetHelpers.construct_and_save_train_dataset_for_task(
