@@ -298,8 +298,8 @@ class DatasetHelpers:
             else None
         )
         max_annotation_size = (
-            filtering_params.max_annotation_size.max_annotation_size
-            if filtering_params.max_annotation_size and filtering_params.max_annotation_size.enable
+            filtering_params.max_annotation_pixels.max_annotation_pixels
+            if filtering_params.max_annotation_pixels and filtering_params.max_annotation_pixels.enable
             else None
         )
         min_annotation_objects = (

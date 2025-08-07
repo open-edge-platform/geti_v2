@@ -79,5 +79,7 @@ def optimize_workflow_pot(  # noqa: PLR0913
         model_id=model_id,
         retain_training_artifacts=retain_training_artifacts,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
         max_number_of_annotations=max_number_of_annotations,
     )
