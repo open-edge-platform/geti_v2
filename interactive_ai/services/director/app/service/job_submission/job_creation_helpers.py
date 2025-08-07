@@ -14,6 +14,7 @@ from geti_feature_tools import FeatureFlagProvider
 
 from communication.exceptions import JobCreationFailedException
 from features.feature_flag import FeatureFlag
+from service.configuration_service import ConfigurationService
 
 from geti_types import ID, ProjectIdentifier
 from iai_core.entities.dataset_storage import DatasetStorage
@@ -49,6 +50,56 @@ class JobName(str, Enum):
     TRAIN = "Training"
     OPTIMIZE = "Optimization"
     MODEL_TEST = "Model testing"
+
+
+@dataclass
+class FilteringParameters:
+    """
+    Helper class to hold filtering parameters for optimize/test jobs.
+    """
+
+    min_annotation_size: int | None
+    max_annotation_size: int | None
+    min_number_of_annotations: int | None
+    max_number_of_annotations: int | None
+
+
+def _get_filtering_parameters(project: Project, model: Model) -> FilteringParameters:
+    """
+    Returns filtering parameters for training jobs based on the project and model.
+
+    :param project: Project containing the task node
+    :param model: Model to be trained
+    :return: FilteringParameters instance with the filtering parameters
+    """
+    training_config = ConfigurationService.get_full_training_configuration(
+        project_identifier=project.identifier,
+        task_id=model.model_storage.task_node_id,
+        model_manifest_id=model.model_storage.model_manifest_id,
+    )
+    filtering_params = training_config.global_parameters.dataset_preparation.filtering
+    return FilteringParameters(
+        min_annotation_size=(
+            filtering_params.min_annotation_pixels.min_annotation_pixels
+            if filtering_params.min_annotation_pixels and filtering_params.min_annotation_pixels.enable
+            else None
+        ),
+        max_annotation_size=(
+            filtering_params.max_annotation_pixels.max_annotation_pixels
+            if filtering_params.max_annotation_pixels and filtering_params.max_annotation_pixels.enable
+            else None
+        ),
+        min_number_of_annotations=(
+            filtering_params.min_annotation_objects.min_annotation_objects
+            if filtering_params.min_annotation_objects and filtering_params.min_annotation_objects.enable
+            else None
+        ),
+        max_number_of_annotations=(
+            filtering_params.max_annotation_objects.max_annotation_objects
+            if filtering_params.max_annotation_objects and filtering_params.max_annotation_objects.enable
+            else None
+        ),
+    )
 
 
 def get_model_storage_for_task(
@@ -239,11 +290,14 @@ class ModelTestJobData:
 
         :returns: a dict representing the job payload
         """
+        filter_parameters = _get_filtering_parameters(project=self.project, model=self.model)
         return {
             "project_id": self.project.id_,
             "model_test_result_id": self.model_test_result.id_,
-            "min_annotation_size": self.min_annotation_size,
-            "max_number_of_annotations": self.max_number_of_annotations,
+            "min_annotation_size": filter_parameters.min_annotation_size,
+            "max_annotation_size": filter_parameters.max_annotation_size,
+            "min_number_of_annotations": filter_parameters.min_number_of_annotations,
+            "max_number_of_annotations": filter_parameters.max_number_of_annotations,
         }
 
     def create_metadata(self) -> dict:
@@ -285,9 +339,6 @@ class OptimizationJobData:
     training_dataset_storage: DatasetStorage
     model: Model
     optimization_type: ModelOptimizationType
-    optimization_parameters: dict
-    min_annotation_size: int | None = None
-    max_number_of_annotations: int | None = None
 
     @property
     def job_type(self) -> str:
@@ -308,7 +359,6 @@ class OptimizationJobData:
             "dataset_storage_id": self.training_dataset_storage.id_,
             "model_storage_id": self.model.model_storage.id_,
             "type": self.job_type,
-            "optimization_parameters": self.optimization_parameters,
         }
         return _serialize_job_key(job_key)
 
@@ -318,6 +368,7 @@ class OptimizationJobData:
 
         :return: dict with the job's metadata
         """
+        filter_parameters = _get_filtering_parameters(project=self.project, model=self.model)
         return {
             "project_id": self.project.id_,
             "dataset_storage_id": self.training_dataset_storage.id_,
@@ -327,8 +378,10 @@ class OptimizationJobData:
             # However, leaving this flag itself can make it easier to debug the future problem (e.g., CVS-142877).
             # You can still launch the job with `enable_optimize_from_dataset_shard=False` from Flyte console.
             "enable_optimize_from_dataset_shard": True,
-            "min_annotation_size": self.min_annotation_size,
-            "max_number_of_annotations": self.max_number_of_annotations,
+            "min_annotation_size": filter_parameters.min_annotation_size,
+            "max_annotation_size": filter_parameters.max_annotation_size,
+            "min_number_of_annotations": filter_parameters.min_number_of_annotations,
+            "max_number_of_annotations": filter_parameters.max_number_of_annotations,
         }
 
     def create_metadata(self) -> dict:
