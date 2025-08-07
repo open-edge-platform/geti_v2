@@ -7,11 +7,10 @@ import { Loading, useUnwrapDOMRef, View, type DimensionValue, type Responsive } 
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import clsx from 'clsx';
 import { isEmpty, isFunction, isNil } from 'lodash-es';
-import { usePress } from 'react-aria';
 
 import { Label } from '../../../core/labels/label.interface';
 import { useTask } from '../../../pages/annotator/providers/task-provider/task-provider.component';
-import { getSingleValidTask } from '../../../pages/camera-page/util';
+import { getSingleValidTask } from '../../../pages/utils';
 import { isVideoFile, loadImageFromFile, loadVideoFromFile } from '../../media-utils';
 import { ViewModes } from '../media-view-modes/utils';
 import { CondensedLabelSelector } from './condensed-label-selector.component';
@@ -25,11 +24,9 @@ export interface MediaItemProps {
     url: string | null | undefined;
     labelIds: string[];
     mediaFile: File;
-    isSelected: boolean;
     height?: Responsive<DimensionValue>;
     viewMode?: ViewModes;
     hasLabelSelector: boolean;
-    onPress?: (id: string) => void;
     onSelectLabel: (labels: Label[]) => void;
     topLeftElement?: (id: string) => ReactNode;
     topRightElement?: (id: string) => ReactNode;
@@ -58,9 +55,7 @@ export const MediaItem = ({
     labelIds,
     viewMode,
     mediaFile,
-    isSelected,
     hasLabelSelector,
-    onPress,
     onSelectLabel,
     topLeftElement,
     topRightElement,
@@ -72,7 +67,6 @@ export const MediaItem = ({
     const alertDialogState = useOverlayTriggerState({});
     const labelSelectorState = useOverlayTriggerState({});
     const unwrappedContainerRef = useUnwrapDOMRef(containerRef);
-    const { pressProps } = usePress({ onPress: () => isFunction(onPress) && onPress(id) });
 
     const filteredTasks = getSingleValidTask(tasks);
     const taskLabels = filteredTasks.flatMap(({ labels }) => labels);
@@ -89,11 +83,7 @@ export const MediaItem = ({
     }
 
     return (
-        <View
-            ref={containerRef}
-            UNSAFE_className={clsx({ [classes.container]: true, [classes.selected]: isSelected })}
-            height={height}
-        >
+        <View ref={containerRef} UNSAFE_className={classes.container} height={height}>
             <ImageVideoFactory
                 controls
                 src={url}
@@ -105,36 +95,23 @@ export const MediaItem = ({
                     objectFit: 'cover',
                     cursor: 'pointer',
                 }}
-                {...pressProps}
             />
 
             {isFunction(topLeftElement) && (
-                <View
-                    UNSAFE_className={clsx({
-                        [classes.visible]: isSelected,
-                        [classes.leftTopElement]: true,
-                        [classes.floatingContainer]: true,
-                    })}
-                >
+                <View UNSAFE_className={clsx(classes.leftTopElement, classes.floatingContainer)}>
                     {topLeftElement(id)}
                 </View>
             )}
 
             {isFunction(topRightElement) && (
-                <View
-                    UNSAFE_className={clsx({
-                        [classes.visible]: isSelected,
-                        [classes.rightTopElement]: true,
-                        [classes.floatingContainer]: true,
-                    })}
-                >
+                <View UNSAFE_className={clsx(classes.rightTopElement, classes.floatingContainer)}>
                     {topRightElement(id)}
                 </View>
             )}
 
             {hasLabelSelector && (
                 <CondensedLabelSelector
-                    name={'Unlabeled'}
+                    title={'Unlabeled'}
                     labelIds={labelIds}
                     right={'size-50'}
                     bottom={'size-50'}
@@ -142,7 +119,6 @@ export const MediaItem = ({
                     position={'absolute'}
                     isDisabled={isEmpty(taskLabels)}
                     triggerState={labelSelectorState}
-                    selectedLabels={taskLabels.filter((label) => labelIds.includes(label.id))}
                     onSelectLabel={onSelectLabel}
                 />
             )}

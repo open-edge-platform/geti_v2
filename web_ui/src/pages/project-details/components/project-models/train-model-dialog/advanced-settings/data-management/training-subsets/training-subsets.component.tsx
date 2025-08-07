@@ -70,6 +70,7 @@ interface SubsetsDistributionProps {
     onSubsetsDistributionChange: (values: number[]) => void;
     onSubsetsDistributionChangeEnd: (values: number[]) => void;
     onSubsetsDistributionReset: () => void;
+    subsetParameters: SubsetsParameters;
 }
 
 const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
@@ -80,13 +81,21 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
     onSubsetsDistributionChange,
     onSubsetsDistributionChangeEnd,
     onSubsetsDistributionReset,
+    subsetParameters,
 }) => {
     const handleSubsetDistributionChange = (values: number[] | number): void => {
         if (Array.isArray(values)) {
             const [startRange, endRange] = values;
 
-            // validation subset cannot be empty
-            if (startRange === endRange) {
+            const newSubsetSizes = getSubsetsSizes(subsetParameters, endRange - startRange, MAX_RATIO_VALUE - endRange);
+
+            if (
+                [
+                    newSubsetSizes.trainingSubsetSize,
+                    newSubsetSizes.validationSubsetSize,
+                    newSubsetSizes.testSubsetSize,
+                ].some((size) => size === 0)
+            ) {
                 return;
             }
 
@@ -98,8 +107,15 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
         if (Array.isArray(values)) {
             const [startRange, endRange] = values;
 
-            // validation subset cannot be empty
-            if (startRange === endRange) {
+            const newSubsetSizes = getSubsetsSizes(subsetParameters, endRange - startRange, MAX_RATIO_VALUE - endRange);
+
+            if (
+                [
+                    newSubsetSizes.trainingSubsetSize,
+                    newSubsetSizes.validationSubsetSize,
+                    newSubsetSizes.testSubsetSize,
+                ].some((size) => size === 0)
+            ) {
                 return;
             }
 
@@ -142,10 +158,10 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
 
 const MAX_RATIO_VALUE = 100;
 
-type SubsetsConfiguration = TrainingConfiguration['datasetPreparation']['subsetSplit'];
+type SubsetsParameters = TrainingConfiguration['datasetPreparation']['subsetSplit'];
 
 interface TrainingSubsetsProps {
-    subsetsConfiguration: SubsetsConfiguration;
+    subsetsParameters: SubsetsParameters;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
@@ -155,11 +171,11 @@ const TEST_SUBSET_KEY = 'test';
 const VALIDATION_SUBSET_KEY = 'validation';
 const TRAINING_SUBSET_KEY = 'training';
 
-const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
-    const validationSubset = subsetsConfiguration.find(
+const getSubsets = (subsetsParameters: SubsetsParameters) => {
+    const validationSubset = subsetsParameters.find(
         (parameter) => parameter.key === VALIDATION_SUBSET_KEY
     ) as NumberParameter;
-    const trainingSubset = subsetsConfiguration.find(
+    const trainingSubset = subsetsParameters.find(
         (parameter) => parameter.key === TRAINING_SUBSET_KEY
     ) as NumberParameter;
 
@@ -169,8 +185,8 @@ const getSubsets = (subsetsConfiguration: SubsetsConfiguration) => {
     };
 };
 
-export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration, onUpdateTrainingConfiguration }) => {
-    const { trainingSubset, validationSubset } = getSubsets(subsetsConfiguration);
+export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsParameters, onUpdateTrainingConfiguration }) => {
+    const { trainingSubset, validationSubset } = getSubsets(subsetsParameters);
 
     const [subsetsDistribution, setSubsetsDistribution] = useState<number[]>([
         trainingSubset.value,
@@ -203,6 +219,7 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
                         value: KEY_VALUE_MAP[parameter.key],
                     } as ConfigurationParameter;
                 }
+
                 return parameter;
             });
 
@@ -237,7 +254,7 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
     };
 
     const { trainingSubsetSize, validationSubsetSize, testSubsetSize } = getSubsetsSizes(
-        subsetsConfiguration,
+        subsetsParameters,
         validationSubsetRatio,
         testSubsetRatio
     );
@@ -258,6 +275,7 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsConfiguration
                 </Accordion.Description>
                 <Accordion.Divider marginY={'size-250'} />
                 <SubsetsDistribution
+                    subsetParameters={subsetsParameters}
                     subsetsDistribution={subsetsDistribution}
                     onSubsetsDistributionChange={setSubsetsDistribution}
                     testSubsetSize={testSubsetSize}

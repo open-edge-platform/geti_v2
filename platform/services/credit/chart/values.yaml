@@ -6,7 +6,7 @@ global:
   docker_namespace: geti
   debian:
     registry: docker.io
-    repository: bitnami
+    repository: bitnamilegacy
     name: os-shell:12-debian-12-r47
   busybox:
     registry: quay.io
@@ -14,7 +14,7 @@ global:
     name: busybox:glibc
   kubectl:
     registry: docker.io
-    repository: bitnami
+    repository: bitnamilegacy
     name: kubectl:1.31.0
   security_headers: ""
   stripped_headers: ""

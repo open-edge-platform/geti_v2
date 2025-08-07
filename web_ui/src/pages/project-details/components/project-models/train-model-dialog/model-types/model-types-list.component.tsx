@@ -8,6 +8,7 @@ import { capitalize } from 'lodash-es';
 
 import { PerformanceCategory } from '../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { SupportedAlgorithm } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { orderRecommendedAlgorithms } from '../advanced-settings/model-architectures/utils';
 import { TemplateNameTag } from '../template-name-tag.component';
 import { ModelType } from './model-type.component';
 
@@ -22,11 +23,7 @@ const getBaseAlgorithms = (
     algorithms: SupportedAlgorithm[],
     activeModelTemplateId: string | null
 ): SupportedAlgorithm[] => {
-    const accuracy = algorithms.find((algorithm) => algorithm.performanceCategory === PerformanceCategory.ACCURACY);
-    const speed = algorithms.find((algorithm) => algorithm.performanceCategory === PerformanceCategory.SPEED);
-    const balance = algorithms.find((algorithm) => algorithm.performanceCategory === PerformanceCategory.BALANCE);
-
-    const baseAlgorithms = [accuracy, speed, balance].filter(Boolean) as SupportedAlgorithm[];
+    const baseAlgorithms = orderRecommendedAlgorithms(algorithms);
 
     const activeModelInBaseAlgorithms = baseAlgorithms.find(
         (algorithm) => algorithm.modelTemplateId === activeModelTemplateId

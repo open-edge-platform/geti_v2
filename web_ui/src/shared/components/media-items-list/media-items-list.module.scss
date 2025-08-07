@@ -4,6 +4,10 @@
     position: relative;
     container-type: inline-size;
     container-name: gridList;
+
+    [data-selected] {
+        outline: thin solid var(--energy-blue);
+    }
 }
 
 .container {

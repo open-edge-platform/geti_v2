@@ -7,6 +7,10 @@
     }
 }
 
+[data-selected] .floatingContainer {
+    opacity: 1;
+}
+
 .deleteContainer {
     background: var(--spectrum-global-color-gray-50) !important;
     border-radius: var(--spectrum-global-dimension-size-50) !important;
@@ -35,8 +39,4 @@
 .rightTopElement {
     top: var(--spectrum-global-dimension-size-50);
     right: var(--spectrum-global-dimension-size-50);
-}
-
-.selected {
-    outline: thin solid var(--energy-blue);
 }

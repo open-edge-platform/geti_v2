@@ -10,7 +10,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Annotation, RegionOfInterest } from '../core/annotations/annotation.interface';
 import { KeypointNode, Point } from '../core/annotations/shapes.interface';
 import { isEmptyLabel } from '../core/labels/utils';
-import { KeypointStructure } from '../core/projects/task.interface';
+import { isAnomalyDomain, isClassificationDomain } from '../core/projects/domains';
+import { KeypointStructure, Task } from '../core/projects/task.interface';
 import { VALID_IMAGE_TYPES_SINGLE_UPLOAD } from '../shared/media-utils';
 import { formatToFileArray, isNonEmptyArray, runWhen } from '../shared/utils';
 import { PointerType } from './annotator/tools/tools.interface';
@@ -184,3 +185,10 @@ export const getMaxMinPoint = <T extends Point>(points: T[], pointAxis: PointAxi
 
     return [minAxisValue, maxAxisValue];
 };
+
+export const isClassificationOrAnomaly = ({ domain }: Task) =>
+    isClassificationDomain(domain) || isAnomalyDomain(domain);
+
+// Task-chain and task different to anomaly and classification are not for labeling
+export const getSingleValidTask = (tasks: Task[]) =>
+    tasks.length === 1 ? tasks.filter(isClassificationOrAnomaly) : [];
