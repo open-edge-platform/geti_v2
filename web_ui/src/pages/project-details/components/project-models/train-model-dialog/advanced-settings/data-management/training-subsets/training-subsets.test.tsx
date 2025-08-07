@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 
 import { TrainingConfiguration } from '../../../../../../../../core/configurable-parameters/services/configuration.interface';
 import {
@@ -109,11 +109,17 @@ describe('TrainingSubsets', () => {
     const [trainingSubset, validationSubset, testSubset] = subsetsParameters;
     const datasetSize = Number(subsetsParameters.at(-1)?.value);
 
-    const App = (props: { subsetParameters: SubsetsParameters }) => {
+    const App = ({
+        subsetParameters,
+        hasModels = false,
+    }: {
+        subsetParameters: SubsetsParameters;
+        hasModels?: boolean;
+    }) => {
         const [trainingConfiguration, setTrainingConfiguration] = useState<TrainingConfiguration | undefined>(() =>
             getMockedTrainingConfiguration({
                 datasetPreparation: {
-                    subsetSplit: [...props.subsetParameters],
+                    subsetSplit: [...subsetParameters],
                     filtering: {},
                     augmentation: {},
                 },
@@ -128,14 +134,15 @@ describe('TrainingSubsets', () => {
 
         return (
             <TrainingSubsets
-                subsetsParameters={trainingConfiguration?.datasetPreparation.subsetSplit ?? props.subsetParameters}
+                hasModels={hasModels}
+                subsetsParameters={trainingConfiguration?.datasetPreparation.subsetSplit ?? subsetParameters}
                 onUpdateTrainingConfiguration={handleUpdateTrainingConfiguration}
             />
         );
     };
 
     it('displays subsets distribution properly', () => {
-        render(<App subsetParameters={subsetsParameters} />);
+        render(<App subsetParameters={subsetsParameters} hasModels />);
 
         expectTrainingSubsetsDistribution({
             validationSubset: Number(validationSubset.value),
@@ -214,5 +221,100 @@ describe('TrainingSubsets', () => {
             validationSize: updatedValidationSubsetSize,
             testSize: updatedTestSubsetSize,
         });
+    });
+
+    it('shows warning that training subsets is unavailable when there are not enough media items', () => {
+        const mockedSubsetsParameters = [
+            getMockedConfigurationParameter({
+                key: 'training',
+                type: 'int',
+                name: 'Training percentage',
+                value: 70,
+                description: 'Percentage of data to use for training',
+                defaultValue: 70,
+                maxValue: 100,
+                minValue: 1,
+            }),
+            getMockedConfigurationParameter({
+                key: 'validation',
+                type: 'int',
+                name: 'Validation percentage',
+                value: 20,
+                description: 'Percentage of data to use for validation',
+                defaultValue: 20,
+                maxValue: 100,
+                minValue: 1,
+            }),
+            getMockedConfigurationParameter({
+                key: 'test',
+                type: 'int',
+                name: 'Test percentage',
+                value: 10,
+                description: 'Percentage of data to use for testing',
+                defaultValue: 10,
+                maxValue: 100,
+                minValue: 1,
+            }),
+            getMockedConfigurationParameter({
+                key: 'auto_selection',
+                type: 'bool',
+                name: 'Auto selection',
+                value: true,
+                description: 'Whether to automatically select data for each subset',
+                defaultValue: true,
+            }),
+            getMockedConfigurationParameter({
+                key: 'remixing',
+                type: 'bool',
+                name: 'Remixing',
+                value: false,
+                description: 'Whether to remix data between subsets',
+                defaultValue: false,
+            }),
+            getMockedConfigurationParameter({
+                key: 'dataset_size',
+                type: 'int',
+                name: 'Dataset size',
+                value: 6,
+                description: 'Total size of the dataset (read-only parameter, not configurable by users)',
+                defaultValue: 6,
+                maxValue: null,
+                minValue: 0,
+            }),
+        ];
+        const [_, mockedValidationSubset, mockedTestSubset] = mockedSubsetsParameters;
+        const mockedDatasetSize = Number(mockedSubsetsParameters.at(-1)?.value);
+
+        render(<App subsetParameters={mockedSubsetsParameters} />);
+
+        const alert = screen.getByRole('alert');
+
+        expect(alert).toBeInTheDocument();
+        expect(within(alert).getByRole('heading')).toHaveTextContent('Training subsets configuration unavailable');
+
+        const validationSize = Math.floor(mockedDatasetSize * (Number(mockedValidationSubset.value) / 100));
+        const testSize = Math.floor(mockedDatasetSize * (Number(mockedTestSubset.value) / 100));
+        const trainingSize = mockedDatasetSize - validationSize - testSize;
+
+        expectSubsetSizes({
+            trainingSize,
+            validationSize,
+            testSize,
+        });
+    });
+
+    it('shows warning when updated subset distribution requires enabling reshuffle and training from scratch', () => {
+        render(<App subsetParameters={subsetsParameters} hasModels />);
+
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+
+        fireEvent.keyDown(screen.getByLabelText('End range'), { key: 'Left' });
+
+        const alert = screen.getByRole('alert');
+
+        expect(alert).toBeInTheDocument();
+        expect(within(alert).getByRole('heading')).toHaveTextContent(
+            'Additional configuration change required to apply new training subsets distribution'
+        );
     });
 });

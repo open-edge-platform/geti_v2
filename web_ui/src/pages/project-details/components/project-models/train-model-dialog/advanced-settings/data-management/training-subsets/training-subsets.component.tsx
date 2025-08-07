@@ -1,9 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 
-import { Content, ContextualHelp, Flex, Grid, Heading, InlineAlert, minmax, Text, View } from '@geti/ui';
+import { Content, Flex, Grid, Heading, InlineAlert, minmax, Text, View } from '@geti/ui';
+import { isEqual } from 'lodash-es';
 
 import {
     ConfigurationParameter,
@@ -13,7 +14,7 @@ import {
 import { Accordion } from '../../ui/accordion/accordion.component';
 import { ResetButton } from '../../ui/reset-button.component';
 import { SubsetsDistributionSlider } from './subsets-distribution-slider/subsets-distribution-slider.component';
-import { getSubsetsSizes } from './utils';
+import { areSubsetsSizesValid, getSubsetsSizes, MAX_RATIO_VALUE } from './utils';
 
 import styles from './training-subsets.module.scss';
 
@@ -73,18 +74,6 @@ interface SubsetsDistributionProps {
     subsetParameters: SubsetsParameters;
 }
 
-const areSubsetsSizesValid = (subsetParameters: SubsetsParameters, subsetsDistribution: number[]): boolean => {
-    const [startRange, endRange] = subsetsDistribution;
-
-    const newSubsetSizes = getSubsetsSizes(subsetParameters, endRange - startRange, MAX_RATIO_VALUE - endRange);
-
-    return ![
-        newSubsetSizes.trainingSubsetSize,
-        newSubsetSizes.validationSubsetSize,
-        newSubsetSizes.testSubsetSize,
-    ].some((size) => size === 0);
-};
-
 const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
     subsetsDistribution,
     trainingSubsetSize,
@@ -97,9 +86,7 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
 }) => {
     const handleSubsetDistributionChange = (values: number[] | number): void => {
         if (Array.isArray(values)) {
-            const subsetsSizesValid = areSubsetsSizesValid(subsetParameters, values);
-
-            if (!subsetsSizesValid) {
+            if (!areSubsetsSizesValid(subsetParameters, values)) {
                 return;
             }
 
@@ -109,9 +96,7 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
 
     const handleSubsetDistributionChangeEnd = (values: number[] | number): void => {
         if (Array.isArray(values)) {
-            const subsetsSizesValid = areSubsetsSizesValid(subsetParameters, values);
-
-            if (!subsetsSizesValid) {
+            if (!areSubsetsSizesValid(subsetParameters, values)) {
                 return;
             }
 
@@ -119,16 +104,13 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
         }
     };
 
-    const subsetsSizesValid = areSubsetsSizesValid(subsetParameters, subsetsDistribution);
-
     return (
-        <Flex direction={'column'} UNSAFE_className={styles.trainingSubsets} gap={'size-200'}>
+        <View UNSAFE_className={styles.trainingSubsets}>
             <Grid
                 areas={['label slider reset', '. counts .']}
                 columns={['max-content', minmax('size-3400', '1fr'), 'max-content']}
                 alignItems={'center'}
                 columnGap={'size-250'}
-                UNSAFE_className={subsetsSizesValid ? undefined : styles.disabled}
             >
                 <SubsetsDistributionSlider
                     aria-label={'Distribute samples'}
@@ -151,27 +133,14 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
                     validationSize={validationSubsetSize}
                 />
             </Grid>
-            {!subsetsSizesValid && (
-                <InlineAlert variant={'notice'}>
-                    <Heading>Training subsets configuration unavailable</Heading>
-                    <Content>
-                        The training, validation, and testing subsets are currently disabled because the project does
-                        not contain enough media items to support a proper split.
-                        <br />
-                        To enable subset configuration, please add more media items so that each subset contains at
-                        least one item.
-                    </Content>
-                </InlineAlert>
-            )}
-        </Flex>
+        </View>
     );
 };
-
-const MAX_RATIO_VALUE = 100;
 
 type SubsetsParameters = TrainingConfiguration['datasetPreparation']['subsetSplit'];
 
 interface TrainingSubsetsProps {
+    hasModels: boolean;
     subsetsParameters: SubsetsParameters;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
@@ -196,8 +165,43 @@ const getSubsets = (subsetsParameters: SubsetsParameters) => {
     };
 };
 
-export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsParameters, onUpdateTrainingConfiguration }) => {
+const TrainingSubsetsUnavailable = () => {
+    return (
+        <InlineAlert variant={'notice'}>
+            <Heading>Training subsets configuration unavailable</Heading>
+            <Content>
+                The training, validation, and testing subsets are currently unavailable because the project does not
+                contain enough media items to support a proper split.
+                <br />
+                To enable subset configuration, please add more media items so that each subset contains at least one
+                item.
+            </Content>
+        </InlineAlert>
+    );
+};
+
+const TrainingSubsetsChangedDistributionWarning = () => {
+    return (
+        <InlineAlert variant={'notice'}>
+            <Heading>Additional configuration change required to apply new training subsets distribution</Heading>
+            <Content>
+                To apply the updated distribution of training, validation, and testing subsets, please go to{' '}
+                {'"Training"'} tab, choose {'"Pre-trained weights"'}, and enable {'"Reshuffle subsets"'}.
+                <br />
+                This will reset your data splits and begin a new training process, replacing the current model.
+            </Content>
+        </InlineAlert>
+    );
+};
+
+export const TrainingSubsets: FC<TrainingSubsetsProps> = ({
+    hasModels,
+    subsetsParameters,
+    onUpdateTrainingConfiguration,
+}) => {
     const { trainingSubset, validationSubset } = getSubsets(subsetsParameters);
+
+    const prevSubsetParameters = useRef(subsetsParameters);
 
     const [subsetsDistribution, setSubsetsDistribution] = useState<number[]>([
         trainingSubset.value,
@@ -270,6 +274,9 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsParameters, o
         testSubsetRatio
     );
 
+    const subsetsSizesValid = areSubsetsSizesValid(subsetsParameters, subsetsDistribution);
+    const isChangedDistributionWarningVisible = hasModels && !isEqual(prevSubsetParameters.current, subsetsParameters);
+
     return (
         <Accordion>
             <Accordion.Title>
@@ -287,16 +294,23 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsParameters, o
                     Each subset must have at least one media item.
                 </Accordion.Description>
                 <Accordion.Divider marginY={'size-250'} />
-                <SubsetsDistribution
-                    subsetParameters={subsetsParameters}
-                    subsetsDistribution={subsetsDistribution}
-                    onSubsetsDistributionChange={setSubsetsDistribution}
-                    testSubsetSize={testSubsetSize}
-                    trainingSubsetSize={trainingSubsetSize}
-                    validationSubsetSize={validationSubsetSize}
-                    onSubsetsDistributionChangeEnd={handleUpdateSubsetsConfiguration}
-                    onSubsetsDistributionReset={handleSubsetsConfigurationReset}
-                />
+                <View UNSAFE_className={subsetsSizesValid ? undefined : styles.disabled}>
+                    <SubsetsDistribution
+                        subsetParameters={subsetsParameters}
+                        subsetsDistribution={subsetsDistribution}
+                        onSubsetsDistributionChange={setSubsetsDistribution}
+                        testSubsetSize={testSubsetSize}
+                        trainingSubsetSize={trainingSubsetSize}
+                        validationSubsetSize={validationSubsetSize}
+                        onSubsetsDistributionChangeEnd={handleUpdateSubsetsConfiguration}
+                        onSubsetsDistributionReset={handleSubsetsConfigurationReset}
+                    />
+                </View>
+
+                <Flex direction={'column'} gap={'size-200'} marginTop={'size-200'}>
+                    {!subsetsSizesValid && <TrainingSubsetsUnavailable />}
+                    {isChangedDistributionWarningVisible && <TrainingSubsetsChangedDistributionWarning />}
+                </Flex>
             </Accordion.Content>
         </Accordion>
     );

@@ -97,6 +97,8 @@ const useSelectedModelTemplateId = ({
     return [selectedModelTemplateId, setSelectedModelTemplateId, activeModelTemplateId] as const;
 };
 
+const SAM_MODEL_TEMPLATE_ID = 'visual_prompting_model';
+
 export const useTrainModelState = () => {
     const [mode, setMode] = useState<TrainModelMode>(TrainModelMode.BASIC);
 
@@ -120,6 +122,11 @@ export const useTrainModelState = () => {
     });
 
     const isBasicMode = mode === TrainModelMode.BASIC;
+    const hasModels =
+        (models ?? []).filter(
+            (modelGroup) =>
+                modelGroup.taskId === selectedTask.id && modelGroup.modelTemplateId !== SAM_MODEL_TEMPLATE_ID
+        ).length > 0;
 
     const [trainingConfiguration, setTrainingConfiguration, defaultTrainingConfiguration] = useTrainingConfiguration({
         projectIdentifier,
@@ -299,5 +306,6 @@ export const useTrainModelState = () => {
         updateTrainingConfiguration: setTrainingConfiguration,
         trainModel: useTrainModel(),
         openBasicMode,
+        hasModels,
     } as const;
 };
