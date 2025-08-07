@@ -3,6 +3,7 @@
 
 """Create project and populate it with import dataset task module"""
 
+import copy
 import logging
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING, cast
@@ -115,6 +116,11 @@ def create_project_from_dataset(
                 "Geti. Please first create a keypoint detection project in Geti, then import your dataset into it by "
                 "mapping the labels from the dataset to the keypoint detection project."
             )
+    labels_to_create = copy.copy(label_names)
+    labels_to_import = copy.copy(label_names)
+    if project_type == GetiProjectType.SEGMENTATION and "Background" in labels_to_create:
+        # Remove background label from the list of labels to create as it is auto generated in segmentation projects
+        labels_to_create.remove("Background")
 
     # Create project
     parser_kwargs = {
@@ -123,7 +129,7 @@ def create_project_from_dataset(
         "dm_infos": dm_dataset.infos(),
         "dm_categories": dm_dataset.categories(),
         "label_to_ann_types": label_to_ann_types,
-        "selected_labels": label_names,
+        "selected_labels": labels_to_create,
         "color_by_label": color_by_label if color_by_label else None,
         "keypoint_structure_positions": keypoint_structure_positions,
     }
@@ -136,7 +142,7 @@ def create_project_from_dataset(
         "Created project with id %s; domain %s; labels %s",
         str(project.id_),
         ImportUtils.project_type_to_rest_api_string(project_type),
-        str(label_names),
+        str(labels_to_create),
     )
     progress_reporter.finish_step()
 
@@ -151,12 +157,12 @@ def create_project_from_dataset(
         ConvertUtils.filter_dataset(
             dm_dataset,
             label_domain,
-            label_names if project_type != GetiProjectType.KEYPOINT_DETECTION else None,
+            labels_to_import if project_type != GetiProjectType.KEYPOINT_DETECTION else None,
         )
         logger.info(
             "Filtered datumaro dataset with id %s to only keep labels %s",
             str(import_id_),
-            str(label_names),
+            str(labels_to_import),
         )
     project_labels = cast("list[Label]", label_schema.get_labels(include_empty=False))
 

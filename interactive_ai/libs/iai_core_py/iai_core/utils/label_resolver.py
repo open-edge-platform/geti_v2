@@ -60,6 +60,7 @@ class LabelResolver:
                 ScoredLabel(
                     label_id=label.id_,
                     is_empty=label.is_empty,
+                    is_background=label.is_background,
                     probability=label_id_to_probability.get(label.id_, 1.0),
                     label_source=label_id_to_label_source.get(label.id_, LabelSource()),
                 )

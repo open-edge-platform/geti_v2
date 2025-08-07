@@ -17,6 +17,7 @@ import { ModelsGroups } from '../../../../../core/models/models.interface';
 import { isActiveModel } from '../../../../../core/models/utils';
 import { ProjectIdentifier } from '../../../../../core/projects/core.interface';
 import { Task } from '../../../../../core/projects/task.interface';
+import { PerformanceCategory } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { useTasksWithSupportedAlgorithms } from '../../../../../core/supported-algorithms/hooks/use-tasks-with-supported-algorithms';
 import { SupportedAlgorithm } from '../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
@@ -35,14 +36,15 @@ const getActiveModelTemplateId = (
     algorithms: SupportedAlgorithm[],
     taskId: string
 ): string | null => {
-    if (isEmpty(modelsGroups)) {
-        return algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId ?? null;
+    const activeModelTemplateId = modelsGroups?.find(
+        (modelGroup) => modelGroup.taskId === taskId && modelGroup.modelVersions.some(isActiveModel)
+    )?.modelTemplateId;
+
+    if (activeModelTemplateId !== undefined) {
+        return activeModelTemplateId;
     }
 
-    return (
-        modelsGroups?.find((modelGroup) => modelGroup.taskId === taskId && modelGroup.modelVersions.some(isActiveModel))
-            ?.modelTemplateId ?? null
-    );
+    return algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId ?? null;
 };
 
 const useTrainingConfiguration = ({
@@ -130,6 +132,45 @@ export const useTrainModelState = () => {
 
     const openAdvancedSettingsMode = (): void => {
         setMode(TrainModelMode.ADVANCED_SETTINGS);
+    };
+
+    const openBasicMode = (): void => {
+        setMode(TrainModelMode.BASIC);
+
+        const recommendedAlgorithms = algorithms.filter((algorithm) =>
+            [PerformanceCategory.BALANCE, PerformanceCategory.SPEED, PerformanceCategory.ACCURACY].includes(
+                algorithm.performanceCategory
+            )
+        );
+
+        const isSelectedOneOfRecommendedAlgorithms = recommendedAlgorithms.some(
+            (algorithm) => algorithm.modelTemplateId === selectedModelTemplateId
+        );
+
+        if (isSelectedOneOfRecommendedAlgorithms) {
+            return;
+        }
+
+        const isDefaultAlgorithmSelected =
+            isEmpty(models) &&
+            algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId === selectedModelTemplateId;
+
+        if (isDefaultAlgorithmSelected) {
+            return;
+        }
+
+        const isSelectedActiveAlgorithm =
+            models?.find((modelsGroup) => {
+                return modelsGroup.taskId === selectedTask.id && modelsGroup.modelVersions.some(isActiveModel);
+            })?.modelTemplateId === selectedModelTemplateId;
+
+        if (isSelectedActiveAlgorithm) {
+            return;
+        }
+
+        const newActiveModelTemplateId = getActiveModelTemplateId(models, algorithms, selectedTask.id);
+
+        changeSelectedModelTemplateId(newActiveModelTemplateId);
     };
 
     const constructTrainingBodyDTO = (): TrainingBodyDTO => {
@@ -257,5 +298,6 @@ export const useTrainModelState = () => {
         trainingConfiguration,
         updateTrainingConfiguration: setTrainingConfiguration,
         trainModel: useTrainModel(),
+        openBasicMode,
     } as const;
 };

@@ -23,6 +23,7 @@ import {
 import { ProjectStatus } from '../project-status.interface';
 import {
     CreateProjectProps,
+    EXPORT_PROJECT_MODELS_OPTIONS,
     ProjectExport,
     ProjectExportIdentifier,
     ProjectImport,
@@ -375,7 +376,10 @@ export const createInMemoryProjectService = (): ProjectService => {
         };
     };
 
-    const exportProject = async (_datasetIdentifier: DatasetIdentifier): Promise<ProjectExport> => {
+    const exportProject = async (_: {
+        projectIdentifier: ProjectIdentifier;
+        selectedModelExportOption?: EXPORT_PROJECT_MODELS_OPTIONS;
+    }): Promise<ProjectExport> => {
         return {
             exportProjectId: '62ea1a69f00a19754326589c',
         };
