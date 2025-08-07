@@ -36,27 +36,11 @@ const AboutPage = (): JSX.Element => {
                     labor-intensive tasks, enables collaborative model development, and speeds up model creation.
                 </Text>
                 <Flex direction={'column'} UNSAFE_className={classes.legalInformation}>
-                    <Heading level={3}>©{new Date().getFullYear()} Intel Corporation</Heading>
-                    <SpectrumLink UNSAFE_className={classes.link}>
-                        <Link to={TERMS_OF_USE_INTEL} target={'_blank'} rel={'noopener noreferrer'}>
-                            Terms of use
-                        </Link>
-                    </SpectrumLink>
-                    <SpectrumLink UNSAFE_className={classes.link}>
-                        <Link to={COOKIES_NOTICE} target={'_blank'} rel={'noopener noreferrer'}>
-                            Cookies
-                        </Link>
-                    </SpectrumLink>
-                    <SpectrumLink UNSAFE_className={classes.link}>
-                        <Link to={PRIVACY_NOTICE} target={'_blank'} rel={'noopener noreferrer'}>
-                            Privacy
-                        </Link>
-                    </SpectrumLink>
-
+                    <Heading level={3} marginBottom={'size-100'}>
+                        ©{new Date().getFullYear()} Intel Corporation
+                    </Heading>
                     <>
-                        <Heading level={3} UNSAFE_className={classes.heading}>
-                            Geti
-                        </Heading>
+                        <Heading level={3}>Geti</Heading>
                         {isSaasEnvironment ? (
                             <SpectrumLink UNSAFE_className={classes.link}>
                                 <a href={TERMS_OF_USE_GETI} target={'_blank'} rel={'noopener noreferrer'}>
