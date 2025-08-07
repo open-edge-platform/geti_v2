@@ -10,9 +10,6 @@ stats:
     training_time: 1
     inference_speed: 1
 
-supported_gpus:
-  intel: false
-
 hyperparameters:
   training:
     learning_rate: 0.0001
