@@ -98,8 +98,12 @@ export class CreateProjectPage {
         }
     }
 
+    get createButton() {
+        return this.page.getByRole('button', { name: 'Create', exact: true });
+    }
+
     private async create() {
-        await this.page.getByRole('button', { name: 'Create', exact: true }).click();
+        await this.createButton.click();
         return new ProjectPage(this.page);
     }
 

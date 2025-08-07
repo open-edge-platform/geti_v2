@@ -56,10 +56,9 @@ test.describe('Keypoint detection', () => {
     test('validate keypoints and enable creation of other projects', async ({ page, createProjectPage }) => {
         await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');
 
-        const createButton = page.getByRole('button', { name: 'Create' });
-        await expect(createButton).toBeDisabled();
+        await expect(createProjectPage.createButton).toBeDisabled();
         // eslint-disable-next-line playwright/no-force-option
-        await createButton.hover({ force: true });
+        await createProjectPage.createButton.hover({ force: true });
         await expect(page.getByText(MIN_POINTS_MESSAGE)).toBeVisible();
 
         await page.getByRole('button', { name: 'Back' }).click();
@@ -98,18 +97,17 @@ test.describe('Keypoint detection', () => {
         });
 
         test('disables project creation when no points are present', async ({
-            page,
             createProjectPage,
             templateManagerPage,
         }) => {
             await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');
 
-            await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
+            await expect(createProjectPage.createButton).toBeDisabled();
 
             await templateManagerPage.addPoint({ x: 100, y: 100 });
             await templateManagerPage.addPoint({ x: 200, y: 200 });
 
-            await expect(page.getByRole('button', { name: 'Create' })).toBeEnabled();
+            await expect(createProjectPage.createButton).toBeEnabled();
         });
 
         test('adds new connected points while holding shift key', async ({
@@ -258,7 +256,7 @@ test.describe('Keypoint detection', () => {
                 await expect(page.getByLabel(`hidden padded edge 1 - 2`)).toBeInViewport();
 
                 await templateManagerPage.openEdgeMenu('hidden padded edge 1 - 2');
-                await page.getByLabel('delete edge 1 - 2').click();
+                await page.getByRole('button', { name: 'delete edge 1 - 2' }).click();
 
                 await expect(page.getByLabel(`hidden padded edge 1 - 2`)).not.toBeInViewport();
             });
@@ -294,7 +292,7 @@ test.describe('Keypoint detection', () => {
             test('move point position', async ({ page, createProjectPage, templateManagerPage }) => {
                 await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');
 
-                await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
+                await expect(createProjectPage.createButton).toBeDisabled();
 
                 await templateManagerPage.addMultipleConnectedPoints([
                     { x: 100, y: 100 },
@@ -329,7 +327,7 @@ test.describe('Keypoint detection', () => {
             }) => {
                 await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');
 
-                await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
+                await expect(createProjectPage.createButton).toBeDisabled();
 
                 await templateManagerPage.addMultipleConnectedPoints([
                     { x: 100, y: 100 },
@@ -355,7 +353,7 @@ test.describe('Keypoint detection', () => {
             test('change color', async ({ page, createProjectPage, templateManagerPage }) => {
                 await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');
 
-                await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
+                await expect(createProjectPage.createButton).toBeDisabled();
 
                 await templateManagerPage.addMultipleConnectedPoints([
                     { x: 400, y: 100 },
@@ -382,7 +380,7 @@ test.describe('Keypoint detection', () => {
             test('update name', async ({ page, createProjectPage, templateManagerPage }) => {
                 await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');
 
-                await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
+                await expect(createProjectPage.createButton).toBeDisabled();
 
                 await templateManagerPage.addMultipleConnectedPoints([
                     { x: 400, y: 100 },
@@ -401,7 +399,7 @@ test.describe('Keypoint detection', () => {
             }) => {
                 await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');
 
-                await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
+                await expect(createProjectPage.createButton).toBeDisabled();
 
                 await templateManagerPage.addMultipleConnectedPoints([
                     { x: 400, y: 100 },
@@ -409,11 +407,11 @@ test.describe('Keypoint detection', () => {
                 ]);
 
                 await page.getByLabel('keypoint 1 anchor').click();
-                await expect(page.getByRole('button', { name: 'Create' })).toBeEnabled();
+                await expect(createProjectPage.createButton).toBeEnabled();
 
                 await page.getByLabel('label name input').clear();
 
-                await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
+                await expect(createProjectPage.createButton).toBeDisabled();
                 await expect(page.getByText(EMPTY_LABEL_MESSAGE)).toBeVisible();
             });
 
@@ -424,7 +422,7 @@ test.describe('Keypoint detection', () => {
             }) => {
                 await createProjectPage.keypointDetectionTemplate('Playwright keypoint detection');
 
-                await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
+                await expect(createProjectPage.createButton).toBeDisabled();
 
                 await templateManagerPage.addPoint({ x: 400, y: 100 });
 

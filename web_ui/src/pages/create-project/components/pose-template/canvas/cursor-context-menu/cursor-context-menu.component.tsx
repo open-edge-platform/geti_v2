@@ -63,3 +63,99 @@ export const CursorContextMenu = ({
         </OverlayContainer>
     );
 };
+
+/*return (
+    <Popover
+        isNonModal
+        isOpen={state.isOpen}
+        triggerRef={triggerRef}
+        placement={'top'}
+        onOpenChange={state.setOpen}
+    >
+        <ThemeProvider>
+            <View
+                /!*ref={containerRef}
+                position={'absolute'}
+                top={cursorPosition.y}
+                left={cursorPosition.x + X_PADDING}*!/
+                zIndex={100001}
+                backgroundColor={'gray-200'}
+                data-testid='position container'
+            >
+                {children}
+            </View>
+        </ThemeProvider>
+    </Popover>
+);
+
+if (triggerRef.current === null) {
+    return null;
+}
+
+return (
+    <CustomPopover state={state} ref={triggerRef} placement={'top'}>
+        <View
+            ref={containerRef}
+            position={'absolute'}
+            top={cursorPosition.y}
+            left={cursorPosition.x + X_PADDING}
+            zIndex={100001}
+            backgroundColor={'gray-200'}
+            data-testid='position container'
+        >
+            {children}
+        </View>
+    </CustomPopover>
+);
+
+const { overlayProps: positionProps } = useOverlayPosition({
+    targetRef: triggerRef,
+    overlayRef,
+    placement: 'top',
+    offset: 5,
+    isOpen: state.isOpen,
+});
+
+if (state.isOpen === false) {
+    return null;
+}
+
+return (
+    <OverlayContainer>
+        <Popover {...positionProps} ref={overlayRef} isNonModal state={state} triggerRef={triggerRef} hideArrow>
+            <ThemeProvider>
+                <View
+                    ref={containerRef}
+                    position={'absolute'}
+                    top={cursorPosition.y}
+                    left={cursorPosition.x + X_PADDING}
+                    zIndex={100001}
+                    backgroundColor={'gray-200'}
+                    data-testid='position container'
+                >
+                    {children}
+                </View>
+            </ThemeProvider>
+        </Popover>
+    </OverlayContainer>
+);
+
+return (
+    <Overlay isOpen={isOpen} ref={overlayRef} nodeRef={nodeRef as unknown as MutableRefObject<HTMLElement>}>
+        {isOpen && (
+            <ThemeProvider>
+                <View
+                    ref={containerRef}
+                    position={'absolute'}
+                    top={cursorPosition.y}
+                    left={cursorPosition.x + X_PADDING}
+                    zIndex={100001}
+                    backgroundColor={'gray-200'}
+                    data-testid='position container'
+                >
+                    {children}
+                </View>
+            </ThemeProvider>
+        )}
+    </Overlay>
+);*/
