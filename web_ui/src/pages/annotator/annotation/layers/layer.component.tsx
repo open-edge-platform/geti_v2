@@ -64,7 +64,7 @@ export const Layer = ({
                                     annotation={annotation}
                                     selectedTask={selectedTask}
                                     isPredictionMode={isPredictionMode}
-                                    maskId={`url(#${maskId})`}
+                                    maskId={isNonEmptyArray(savedMasks) ? `url(#${maskId})` : undefined}
                                 />
                             </svg>
                         )}
