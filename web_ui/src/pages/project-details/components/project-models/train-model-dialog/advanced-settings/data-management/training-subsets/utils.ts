@@ -33,3 +33,20 @@ export const getSubsetsSizes = (
         testSubsetSize,
     };
 };
+
+export const MAX_RATIO_VALUE = 100;
+
+export const areSubsetsSizesValid = (
+    subsetParameters: SubsetSplitParameters,
+    subsetsDistribution: number[]
+): boolean => {
+    const [startRange, endRange] = subsetsDistribution;
+
+    const newSubsetSizes = getSubsetsSizes(subsetParameters, endRange - startRange, MAX_RATIO_VALUE - endRange);
+
+    return ![
+        newSubsetSizes.trainingSubsetSize,
+        newSubsetSizes.validationSubsetSize,
+        newSubsetSizes.testSubsetSize,
+    ].some((size) => size === 0);
+};

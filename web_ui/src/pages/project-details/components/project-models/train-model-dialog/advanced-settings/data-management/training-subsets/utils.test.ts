@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { getMockedConfigurationParameter } from '../../../../../../../../test-utils/mocked-items-factory/mocked-configuration-parameters';
-import { getSubsetsSizes } from './utils';
+import { areSubsetsSizesValid, getSubsetsSizes } from './utils';
 
 describe('getSubsetsSizes', () => {
     const datasetSizeParameter = [
@@ -85,5 +85,33 @@ describe('getSubsetsSizes', () => {
         expect(result.trainingSubsetSize).toBe(0);
         expect(result.validationSubsetSize).toBe(0);
         expect(result.testSubsetSize).toBe(0);
+    });
+});
+
+describe('areSubsetsSizesValid', () => {
+    it('returns true for valid non-zero subset sizes', () => {
+        const params = [
+            getMockedConfigurationParameter({
+                type: 'int',
+                value: 100,
+                key: 'dataset_size',
+            }),
+        ];
+        expect(areSubsetsSizesValid(params, [20, 50])).toBe(true);
+    });
+
+    it('returns false if dataset size is zero', () => {
+        const params = [
+            getMockedConfigurationParameter({
+                type: 'int',
+                value: 0,
+                key: 'dataset_size',
+            }),
+        ];
+        expect(areSubsetsSizesValid(params, [20, 50])).toBe(false);
+    });
+
+    it('returns false if dataset size parameter is missing', () => {
+        expect(areSubsetsSizesValid([], [20, 50])).toBe(false);
     });
 });
