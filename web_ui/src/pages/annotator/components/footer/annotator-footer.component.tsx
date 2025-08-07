@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { Flex, Footer as FooterView, View, type FooterProps } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { MediaItem } from '../../../../core/media/media.interface';
 import { isVideo, isVideoFrame } from '../../../../core/media/video.interface';

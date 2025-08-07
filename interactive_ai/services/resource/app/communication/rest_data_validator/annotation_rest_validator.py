@@ -611,6 +611,14 @@ class AnnotationRestValidator(RestApiValidator):
                 f"{next(iter(non_empty_labels_in_annotation)).id_} for task {task.id_}"
             )
 
+        # Validate that if a background annotation is present, it is not the only annotation in the scene
+        background_labels_in_annotation = {label for label in annotation_labels_current_task if label.is_background}
+        if len(background_labels_in_annotation) > 0 and len(non_empty_labels_in_annotation) == 0:
+            raise BadRequestException(
+                f"Cannot create annotation that has a background label with ID "
+                f"{next(iter(background_labels_in_annotation)).id_} without any other labels for task {task.id_}"
+            )
+
         # Validate that global annotations for the first task use a full box shape
         if previous_task is None and annotation_rest[SHAPE] != AnnotationRESTViews.generate_full_box_rest(
             media_height=media_height, media_width=media_width

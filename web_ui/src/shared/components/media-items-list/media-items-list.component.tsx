@@ -8,6 +8,8 @@ import {
     GridLayout,
     ListBoxItem,
     ListLayout,
+    Selection,
+    SelectionMode,
     Size,
     View,
     Virtualizer,
@@ -28,12 +30,15 @@ interface MediaItemsListProps<T> {
     viewMode: ViewModes;
     mediaItems: T[];
     height?: Responsive<DimensionValue>;
+    selectedKeys?: Selection;
     scrollToIndex?: number;
     viewModeSettings?: ViewModeSettings;
+    selectionMode?: SelectionMode;
     endReached?: () => void;
     itemContent: (item: T) => ReactNode;
     idFormatter: (item: T) => string;
     getTextValue: (item: T) => string;
+    onSelectionChange?: (keys: Selection) => void;
 }
 
 export const MediaItemsList = <T extends object>({
@@ -41,13 +46,16 @@ export const MediaItemsList = <T extends object>({
     height,
     viewMode,
     mediaItems,
+    selectedKeys,
     scrollToIndex,
+    selectionMode,
     ariaLabel = 'media items list',
     viewModeSettings = VIEW_MODE_SETTINGS,
     itemContent,
     endReached,
     idFormatter,
     getTextValue,
+    onSelectionChange,
 }: MediaItemsListProps<T>): JSX.Element => {
     const config = viewModeSettings[viewMode];
     const isDetails = viewMode === ViewModes.DETAILS;
@@ -85,8 +93,12 @@ export const MediaItemsList = <T extends object>({
                     ref={ref}
                     key={layout}
                     layout={layout}
+                    items={mediaItems}
                     aria-label={ariaLabel}
+                    selectionMode={selectionMode}
+                    selectedKeys={selectedKeys}
                     className={classes.container}
+                    onSelectionChange={onSelectionChange}
                 >
                     {mediaItems.map((item) => {
                         return (

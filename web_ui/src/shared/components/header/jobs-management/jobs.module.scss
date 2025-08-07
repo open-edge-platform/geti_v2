@@ -97,3 +97,7 @@
     padding: var(--spectrum-global-dimension-size-275) var(--spectrum-global-dimension-size-175);
     background: var(--brand-daisy);
 }
+
+.failedJobErrorMessage {
+    user-select: text;
+}

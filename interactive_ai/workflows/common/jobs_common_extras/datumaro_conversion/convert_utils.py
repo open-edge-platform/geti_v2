@@ -86,6 +86,7 @@ class ConvertUtils:
             return ScoredLabel(
                 label_id=sc_label.id_,
                 is_empty=sc_label.is_empty,
+                is_background=sc_label.is_background,
                 probability=1,
                 label_source=self._label_source,
             )

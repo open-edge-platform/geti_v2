@@ -1,40 +1,14 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { DOMAIN } from '../../core/projects/core.interface';
 import { getMockedScreenshot } from '../../test-utils/mocked-items-factory/mocked-camera';
-import { getMockedTask } from '../../test-utils/mocked-items-factory/mocked-tasks';
 import { UserCameraPermission } from '../camera-support/camera.interface';
-import {
-    getSingleValidTask,
-    getSortingHandler,
-    hasPermissionsDenied,
-    isClassificationOrAnomaly,
-    SortingOptions,
-} from './util';
+import { getSortingHandler, hasPermissionsDenied, SortingOptions } from './util';
 
 describe('camera-page utils', () => {
     it('hasPermissionsDenied', () => {
         expect(hasPermissionsDenied(UserCameraPermission.ERRORED)).toBe(true);
         expect(hasPermissionsDenied(UserCameraPermission.DENIED)).toBe(true);
-    });
-
-    it('isClassificationOrAnomaly', () => {
-        expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.CLASSIFICATION }))).toBe(true);
-        expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.ANOMALY_DETECTION }))).toBe(true);
-        expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.ANOMALY_SEGMENTATION }))).toBe(true);
-        expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.ANOMALY_CLASSIFICATION }))).toBe(true);
-    });
-
-    it('getSingleValidTask', () => {
-        expect(getSingleValidTask([getMockedTask({ domain: DOMAIN.DETECTION })])).toEqual([]);
-        expect(getSingleValidTask([getMockedTask({ domain: DOMAIN.SEGMENTATION })])).toEqual([]);
-        expect(
-            getSingleValidTask([
-                getMockedTask({ domain: DOMAIN.DETECTION }),
-                getMockedTask({ domain: DOMAIN.CLASSIFICATION }),
-            ])
-        ).toEqual([]);
     });
 
     describe('getSortingHandler', () => {

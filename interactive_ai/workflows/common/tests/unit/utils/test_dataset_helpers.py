@@ -20,6 +20,7 @@ class TestDatasetHelpers:
         fxt_video_factory,
         fxt_video_frame_entity_factory,
         fxt_annotation_scene,
+        fxt_training_configuration,
     ) -> None:
         project: Project = fxt_detection_project
         task_node = project.get_trainable_task_nodes()[0]
@@ -53,6 +54,7 @@ class TestDatasetHelpers:
                 project_id=project.id_,
                 task_node=task_node,
                 dataset_storage=dataset_storage,
+                training_configuration=fxt_training_configuration,
                 max_training_dataset_size=1000,
                 reshuffle_subsets=True,
             )

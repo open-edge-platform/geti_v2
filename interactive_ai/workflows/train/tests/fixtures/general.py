@@ -40,7 +40,7 @@ def fxt_ote_id(fxt_mongo_id):
 
 
 @pytest.fixture
-def fxt_train_data():
+def fxt_train_data(fxt_training_configuration):
     """
     Get a train data creator with default values
     """
@@ -59,6 +59,7 @@ def fxt_train_data():
         input_model_id: str = "input_model_id",
         compiled_dataset_shards_id: str | None = None,
         reshuffle_subsets: bool = False,
+        training_configuration_json: str = fxt_training_configuration.model_dump_json(),
     ) -> TrainWorkflowData:
         return TrainWorkflowData(
             workspace_id=workspace_id,
@@ -76,6 +77,7 @@ def fxt_train_data():
             min_annotation_size=None,
             max_number_of_annotations=None,
             reshuffle_subsets=reshuffle_subsets,
+            training_configuration_json=training_configuration_json,
         )
 
     yield _build_train_data

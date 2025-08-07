@@ -210,7 +210,7 @@ def fxt_training_configuration_task_level_rest_view(fxt_training_configuration_t
                     "value": 10,
                 },
                 {
-                    "default_value": True,
+                    "default_value": False,
                     "description": "Whether to automatically select data for each subset",
                     "key": "auto_selection",
                     "name": "Auto selection",
@@ -503,7 +503,7 @@ def fxt_training_configuration_full_rest_view(
                     "value": 10,
                 },
                 {
-                    "default_value": True,
+                    "default_value": False,
                     "description": "Whether to automatically select data for each subset",
                     "key": "auto_selection",
                     "name": "Auto selection",

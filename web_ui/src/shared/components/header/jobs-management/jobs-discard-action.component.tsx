@@ -8,7 +8,7 @@ import { ActionButton, Loading, Text } from '@geti/ui';
 import { Delete } from '@geti/ui/icons';
 import { UseMutationResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { Job } from '../../../../core/jobs/jobs.interface';
 import { isJobTrain } from '../../../../core/jobs/utils';

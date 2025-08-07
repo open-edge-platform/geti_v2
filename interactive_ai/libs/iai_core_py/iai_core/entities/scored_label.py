@@ -35,13 +35,19 @@ class ScoredLabel:
     """
 
     def __init__(
-        self, label_id: ID, is_empty: bool = False, probability: float = 0.0, label_source: LabelSource | None = None
+        self,
+        label_id: ID,
+        is_empty: bool = False,
+        is_background: bool = False,
+        probability: float = 0.0,
+        label_source: LabelSource | None = None,
     ):
         if math.isnan(probability) or (not 0 <= probability <= 1.0):
             raise ValueError(f"Probability should be in range [0, 1], {probability} is given")
 
         self.label_id = label_id
         self.is_empty = is_empty
+        self.is_background = is_background
         self.probability = probability
         self.label_source = label_source if label_source is not None else LabelSource()
 
@@ -53,8 +59,8 @@ class ScoredLabel:
     def __repr__(self):
         """String representation of the label."""
         return (
-            f"ScoredLabel(label_id={self.label_id}, is_empty={self.is_empty}, probability={self.probability}, "
-            f"label_source={self.label_source})"
+            f"ScoredLabel(label_id={self.label_id}, is_empty={self.is_empty}, is_background={self.is_background}, "
+            f"probability={self.probability}, label_source={self.label_source})"
         )
 
     def __eq__(self, other: object) -> bool:
@@ -63,6 +69,7 @@ class ScoredLabel:
             return (
                 self.label_id == other.label_id
                 and self.is_empty == other.is_empty
+                and self.is_background == other.is_background
                 and self.probability == other.probability
                 and self.label_source == other.label_source
             )

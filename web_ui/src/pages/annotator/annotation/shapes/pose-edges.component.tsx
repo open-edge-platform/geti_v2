@@ -4,7 +4,7 @@
 import { Fragment } from 'react';
 
 import { BoundingBox, getBoundingBox } from '@geti/smart-tools/utils';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isEmpty, isNil } from 'lodash-es';
 
 import { isKeypointTask } from '../../../../core/projects/utils';

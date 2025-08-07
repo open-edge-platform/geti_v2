@@ -16,8 +16,7 @@ import { TaskLabelTreeSearch } from '../../../shared/components/task-label-tree-
 import { hasEqualId } from '../../../shared/utils';
 import { useTask } from '../../annotator/providers/task-provider/task-provider.component';
 import { useProject } from '../../project-details/providers/project-provider/project-provider.component';
-import { getForegroundColor, hexaToRGBA } from '../../utils';
-import { isClassificationOrAnomaly } from '../util';
+import { getForegroundColor, hexaToRGBA, isClassificationOrAnomaly } from '../../utils';
 
 import classes from './camera-page.module.scss';
 

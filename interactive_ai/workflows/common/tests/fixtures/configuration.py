@@ -3,6 +3,27 @@
 
 import pytest
 from attr import attrs
+from geti_configuration_tools.hyperparameters import (
+    AugmentationParameters,
+    CenterCrop,
+    DatasetPreparationParameters,
+    EarlyStopping,
+    EvaluationParameters,
+    Hyperparameters,
+    TrainingHyperParameters,
+)
+from geti_configuration_tools.training_configuration import (
+    Filtering,
+    GlobalDatasetPreparationParameters,
+    GlobalParameters,
+    MaxAnnotationObjects,
+    MaxAnnotationPixels,
+    MinAnnotationObjects,
+    MinAnnotationPixels,
+    SubsetSplit,
+    TrainingConfiguration,
+)
+from geti_types import ID
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
 from iai_core.configuration.elements.default_model_parameters import DefaultModelParameters
 from iai_core.configuration.elements.hyper_parameters import HyperParameters
@@ -68,4 +89,52 @@ def fxt_hyper_parameters_with_groups(fxt_model_storage, fxt_mongo_id):
         model_storage_id=fxt_model_storage.id_,
         data=DummyHyperParameters(),
         id_=fxt_mongo_id(2),
+    )
+
+
+@pytest.fixture
+def ftx_hyperparameters():
+    yield Hyperparameters(
+        dataset_preparation=DatasetPreparationParameters(
+            augmentation=AugmentationParameters(
+                center_crop=CenterCrop(enable=True, ratio=0.6),
+            )
+        ),
+        training=TrainingHyperParameters(
+            max_epochs=100,
+            early_stopping=EarlyStopping(enable=True, patience=10),
+            learning_rate=0.001,
+        ),
+        evaluation=EvaluationParameters(),
+    )
+
+
+@pytest.fixture
+def fxt_global_parameters():
+    yield GlobalParameters(
+        dataset_preparation=GlobalDatasetPreparationParameters(
+            subset_split=SubsetSplit(
+                training=70,
+                validation=20,
+                test=10,
+                auto_selection=True,
+                remixing=False,
+            ),
+            filtering=Filtering(
+                min_annotation_pixels=MinAnnotationPixels(enable=True, min_annotation_pixels=10),
+                max_annotation_pixels=MaxAnnotationPixels(enable=True, max_annotation_pixels=1000),
+                min_annotation_objects=MinAnnotationObjects(enable=True, min_annotation_objects=5),
+                max_annotation_objects=MaxAnnotationObjects(enable=True, max_annotation_objects=100),
+            ),
+        )
+    )
+
+
+@pytest.fixture
+def fxt_training_configuration(fxt_global_parameters, ftx_hyperparameters):
+    yield TrainingConfiguration(
+        id_=ID("training_config_id"),
+        task_id="task_123",
+        global_parameters=fxt_global_parameters,
+        hyperparameters=ftx_hyperparameters,
     )

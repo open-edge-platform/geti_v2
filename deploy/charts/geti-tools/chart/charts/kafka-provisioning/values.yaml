@@ -18,7 +18,7 @@ global:
   kafka_topic_prefix: ""
   kubectl:
     registry: docker.io
-    repository: bitnami
+    repository: bitnamilegacy
     name: kubectl:1.31.0
 
 ## @section Common parameters
@@ -73,7 +73,7 @@ diagnosticMode:
 ##
 image:
   registry: docker.io
-  repository: bitnami
+  repository: bitnamilegacy
   name: kafka:3.7.0-debian-12-r2
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'

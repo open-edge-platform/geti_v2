@@ -68,9 +68,9 @@ global:
     name: busybox:glibc
   debian:
     registry: docker.io
-    repository: bitnami
+    repository: bitnamilegacy
     name: os-shell:12-debian-12-r47
   kubectl:
     registry: docker.io
-    repository: bitnami
+    repository: bitnamilegacy
     name: kubectl:1.31.0

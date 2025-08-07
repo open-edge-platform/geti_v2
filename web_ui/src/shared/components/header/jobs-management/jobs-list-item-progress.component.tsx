@@ -134,7 +134,7 @@ const JobListItemFailedSkippedMessage: FC<{ idPrefix: string; step: JobStep }> =
             paddingY={'size-50'}
             UNSAFE_className={`${classes.stepMessage} ${classes[step.state.toLowerCase()]}`}
         >
-            <Text>{step.message}</Text>
+            <Text UNSAFE_className={classes.failedJobErrorMessage}>{step.message}</Text>
         </View>
     ) : (
         <></>

@@ -5,10 +5,12 @@
 Defines train workflow data and getter utils
 """
 
+import json
 import typing
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
+from geti_configuration_tools.training_configuration import TrainingConfiguration
 from geti_types import ID, DatasetStorageIdentifier, ProjectIdentifier
 from iai_core.configuration.elements.hyper_parameters import HyperParameters
 from iai_core.entities.compiled_dataset_shards import CompiledDatasetShards, NullCompiledDatasetShards
@@ -45,7 +47,7 @@ class TrainWorkflowData:
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
     annotation scene will be ignored during training.
     :param reshuffle_subsets: Whether to reassign/shuffle all the items to subsets including Test set from scratch
-    :param hyperparameters: JSON string containing the hyperparameters to be used for training.
+    :param training_configuration_json: JSON string containing the training configuration, including hyperparameters.
     """
 
     workspace_id: str
@@ -63,7 +65,7 @@ class TrainWorkflowData:
     min_annotation_size: typing.Optional[int] = None  # noqa: UP007
     max_number_of_annotations: typing.Optional[int] = None  # noqa: UP007
     reshuffle_subsets: bool = False
-    hyperparameters_json: typing.Optional[str] = None  # noqa: UP007
+    training_configuration_json: typing.Optional[str] = None  # noqa: UP007
 
     def get_common_entities(self) -> tuple[Project, TaskNode]:
         """
@@ -145,7 +147,7 @@ class TrainWorkflowData:
         repo = CompiledDatasetShardsRepo(dataset_storage_identifier=dataset_storage_identifier)
         return repo.get_by_id(id_=ID(self.compiled_dataset_shards_id))
 
-    def get_hyper_parameters(self) -> HyperParameters:
+    def get_legacy_hyper_parameters(self) -> HyperParameters:
         """Get the HyperParameters entity.
 
         :return HyperParameters: Return HyperParameters entity from given hyperparameters_id and project_id
@@ -153,6 +155,23 @@ class TrainWorkflowData:
         project = ProjectRepo().get_by_id(ID(self.project_id))
         config_params_repo = ConfigurableParametersRepo(project.identifier)
         return typing.cast("HyperParameters", config_params_repo.get_by_id(ID(self.hyperparameters_id)))
+
+    @property
+    def training_configuration(self) -> TrainingConfiguration:
+        """Get the TrainingConfiguration entity.
+
+        :return TrainingConfiguration: Return TrainingConfiguration entity from given training_configuration_json
+        """
+        if self.training_configuration_json is None:
+            raise ValueError(
+                "Training configuration JSON is not set. Please ensure that 'training_configuration_json' is provided "
+                "when initializing TrainWorkflowData, or set it before accessing the 'training_configuration' property."
+            )
+        training_config_dict: dict = {
+            "id_": ID("training_configuration"),  # ID value does not matter but the field is required for validation
+            **json.loads(self.training_configuration_json),
+        }
+        return TrainingConfiguration.model_validate(training_config_dict)
 
 
 @dataclass_json

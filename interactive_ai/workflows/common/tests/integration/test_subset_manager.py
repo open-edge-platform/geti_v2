@@ -5,8 +5,8 @@ import random
 from unittest.mock import patch
 
 import numpy as np
+from geti_configuration_tools.training_configuration import SubsetSplit
 from geti_types import DatasetStorageIdentifier, ImageIdentifier
-from iai_core.configuration.elements.component_parameters import ComponentParameters, ComponentType
 from iai_core.entities.annotation import Annotation, AnnotationScene, AnnotationSceneKind
 from iai_core.entities.dataset_entities import TaskDataset
 from iai_core.entities.dataset_item import DatasetItem
@@ -18,15 +18,7 @@ from iai_core.entities.project import Project
 from iai_core.entities.scored_label import ScoredLabel
 from iai_core.entities.shapes import Rectangle
 from iai_core.entities.subset import Subset
-from iai_core.entities.task_node import TaskNode
-from iai_core.repos import (
-    AnnotationSceneRepo,
-    AnnotationSceneStateRepo,
-    ConfigurableParametersRepo,
-    DatasetRepo,
-    ImageRepo,
-    LabelSchemaRepo,
-)
+from iai_core.repos import AnnotationSceneRepo, AnnotationSceneStateRepo, DatasetRepo, ImageRepo, LabelSchemaRepo
 from iai_core.repos.dataset_entity_repo import PipelineDatasetRepo
 from iai_core.utils.dataset_helper import DatasetHelper
 from iai_core.utils.project_factory import ProjectFactory
@@ -39,7 +31,6 @@ from jobs_common.utils.subset_management.subset_manager import (
     TaskSubsetManager,
     _SubsetHelper,
 )
-from jobs_common.utils.subset_management.subset_manager_config import SubsetManagerConfig
 from tests.test_helpers import generate_random_annotated_project, register_model_template
 
 
@@ -193,31 +184,6 @@ class TestSubsetManager:
         )
 
     @staticmethod
-    def set_config(
-        project: Project,
-        task_node: TaskNode,
-        auto_subset_fractions: bool = True,
-        train_proportion: float = 0.5,
-        validation_proportion: float = 0.2,
-        test_proportion: float = 0.3,
-    ):
-        new_config = SubsetManagerConfig()  # type: ignore
-
-        new_config.auto_subset_fractions = auto_subset_fractions
-        new_config.subset_parameters.train_proportion = train_proportion
-        new_config.subset_parameters.test_proportion = validation_proportion
-        new_config.subset_parameters.validation_proportion = test_proportion
-        new_conf_params = ComponentParameters(
-            workspace_id=project.workspace_id,
-            project_id=project.id_,
-            component=ComponentType.SUBSET_MANAGER,
-            id_=ConfigurableParametersRepo.generate_id(),
-            task_id=task_node.id_,
-            data=new_config,
-        )
-        ConfigurableParametersRepo(project.identifier).save(new_conf_params)
-
-    @staticmethod
     def assert_equal_ratios(dataset: Dataset, expected_subsets: np.ndarray):
         actual_ratios = np.zeros(len(SUBSETS))
         for item in dataset:
@@ -226,7 +192,7 @@ class TestSubsetManager:
             "Subset distribution is not equal to the expected distribution"
         )
 
-    def test_subset_manager_detection_task_split(self, request):
+    def test_subset_manager_detection_task_split(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests detection task subset split with 12 images
@@ -265,8 +231,13 @@ class TestSubsetManager:
         assert len(dataset) == number_of_items, f"Expected all {number_of_items} items"
 
         # Subset Split
-        self.set_config(project=project, task_node=task_node, auto_subset_fractions=True)
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
+        fxt_training_configuration.global_parameters.dataset_preparation.subset_split.auto_selection = True
+        TaskSubsetManager.split(
+            dataset_items=dataset,
+            task_node=task_node,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
+        )
 
         # Check the result
         assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
@@ -276,7 +247,7 @@ class TestSubsetManager:
             dataset=dataset,
         )
 
-    def test_subset_manager_detection_task_split_with_batch(self, request):
+    def test_subset_manager_detection_task_split_with_batch(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests detection task subset split with 27 images,
@@ -317,8 +288,13 @@ class TestSubsetManager:
         assert len(dataset) == number_of_items, f"Expected all {number_of_items} items"
 
         # Subset Split
-        self.set_config(project=project, task_node=task_node, auto_subset_fractions=True)
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
+        fxt_training_configuration.global_parameters.dataset_preparation.subset_split.auto_selection = True
+        TaskSubsetManager.split(
+            dataset_items=dataset,
+            task_node=task_node,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
+        )
 
         # Check the result
         assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
@@ -328,7 +304,7 @@ class TestSubsetManager:
             dataset=dataset,
         )
 
-    def test_subset_manager_classification_task_split(self, request):
+    def test_subset_manager_classification_task_split(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests classification task subset split with 12 images
@@ -368,7 +344,12 @@ class TestSubsetManager:
         assert len(dataset) == number_of_items, f"Expected all {number_of_items} items"
 
         # Subset Split
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
+        TaskSubsetManager.split(
+            dataset_items=dataset,
+            task_node=task_node,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
+        )
 
         # Check the result
         assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
@@ -378,7 +359,7 @@ class TestSubsetManager:
             dataset=dataset,
         )
 
-    def test_subset_manager_classification_task_with_batch(self, request):
+    def test_subset_manager_classification_task_with_batch(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests batch subset split in classification task with 27 images,
@@ -419,7 +400,12 @@ class TestSubsetManager:
         assert len(dataset) == number_of_items, f"Expected all {number_of_items} items"
 
         # Split into subsets
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
+        TaskSubsetManager.split(
+            dataset_items=dataset,
+            task_node=task_node,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
+        )
 
         # Check the result
         assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
@@ -429,7 +415,7 @@ class TestSubsetManager:
             dataset=dataset,
         )
 
-    def test_subset_manager_segmentation_task_split(self, request):
+    def test_subset_manager_segmentation_task_split(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests segmentation task subset split with 12 images
@@ -469,7 +455,12 @@ class TestSubsetManager:
         assert len(dataset) == number_of_items, f"Expected all {number_of_items} items"
 
         # Subset Split
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
+        TaskSubsetManager.split(
+            dataset_items=dataset,
+            task_node=task_node,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
+        )
 
         # Check the result
         assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
@@ -479,7 +470,7 @@ class TestSubsetManager:
             dataset=dataset,
         )
 
-    def test_subset_manager_segmentation_task_split_with_batch(self, request):
+    def test_subset_manager_segmentation_task_split_with_batch(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests batch subset split in segmentation task with 27 images,
@@ -520,7 +511,12 @@ class TestSubsetManager:
         assert len(dataset) == number_of_items, f"Expected all {number_of_items} items in the training dataset"
 
         # Subset Split
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
+        TaskSubsetManager.split(
+            dataset_items=dataset,
+            task_node=task_node,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
+        )
 
         # Check the result
         assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
@@ -530,7 +526,7 @@ class TestSubsetManager:
             dataset=dataset,
         )
 
-    def test_subset_manager_with_cache(self, request):
+    def test_subset_manager_with_cache(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests whether the cached data maintains the original split status
@@ -565,7 +561,12 @@ class TestSubsetManager:
         assert len(dataset) == number_of_items, f"Expected all {number_of_items} items"
 
         # Split into subsets
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
+        TaskSubsetManager.split(
+            dataset_items=dataset,
+            task_node=task_node,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
+        )
 
         # Check the result
         assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
@@ -578,7 +579,12 @@ class TestSubsetManager:
         assert len(new_dataset) == 2 * number_of_items, f"Expected all {number_of_items} items"
 
         # Split into subsets
-        TaskSubsetManager.split(dataset_items=new_dataset, task_node=task_node)
+        TaskSubsetManager.split(
+            dataset_items=new_dataset,
+            task_node=task_node,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
+        )
 
         # Check the result
         expected = np.array([12.0, 7.0, 5.0])
@@ -614,75 +620,26 @@ class TestSubsetManager:
         dataset = self.create_dataset(project=project, image_config=data_config)
         assert len(dataset) == number_of_items, f"Expected all {number_of_items} items"
 
-        # Update configuration
-        self.set_config(
-            project=project,
-            task_node=task_node,
-            auto_subset_fractions=False,
-            train_proportion=0.7,
-            validation_proportion=0.2,
-            test_proportion=0.1,
+        subset_split = SubsetSplit(
+            training=70,
+            validation=20,
+            test=10,
+            auto_selection=False,
         )
 
         # Split into subsets
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
-
-        # Check the result
-        expected_subsets = np.array([17, 5, 5])
-        self.assert_equal_ratios(dataset=dataset, expected_subsets=expected_subsets)
-        assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
-
-    def test_subset_manager_manual_target_ratios_out_of_range(self, request):
-        """
-        <b>Description:</b>
-        Tests whether ratios with out of range handled
-        when the sum of the target split ratio for subsets exceeds or is less than 1
-        if proportion < 0.0 or > 1.0, ValueError
-        when the sum of the target split ratio is out of range, then Rescale to sum 1
-
-        <b>Input data:</b>
-        Out of range ratio Examples
-
-        <b>Steps:</b>
-        1. Create Project and Dataset (27 items/Subset.NONE)
-        2. Check number of datasetitem
-        3. Config manual target ratio (ratios sum != 1)
-        3. Split dataset
-        4. Compare Output with expected result
-        """
-        labels, data_config, _ = self.get_split_test_dataset_configuration(test_type="batch")
-        number_of_items = 27
-        project = ProjectFactory.create_project_single_task(
-            name="test_subset_manager_manual_target_ratios_out_of_range",
-            description="",
-            creator_id="",
-            labels=labels,
-            model_template_id="detection",
-        )
-        task_node = project.tasks[-1]
-
-        dataset = self.create_dataset(project=project, image_config=data_config)
-        assert len(dataset) == number_of_items, f"Expected all {number_of_items} items"
-
-        # Update the configuration to set manual ratios
-        self.set_config(
-            project=project,
+        TaskSubsetManager.split(
+            dataset_items=dataset,
             task_node=task_node,
-            auto_subset_fractions=False,
-            train_proportion=0.1,
-            validation_proportion=0.1,
-            test_proportion=0.1,
+            subset_split_config=subset_split,
         )
 
-        # Split into subsets
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
-
         # Check the result
-        assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
-        expected_subsets = np.array([9, 8, 10])
+        expected_subsets = np.array([17, 6, 4])
         self.assert_equal_ratios(dataset=dataset, expected_subsets=expected_subsets)
+        assert [item for item in dataset if item.subset not in SUBSETS] == [], "Some of the items were not split"
 
-    def test_subset_manager_edge_split_3_images(self, request):
+    def test_subset_manager_edge_split_3_images(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests whether data is assigned one for each subset regardless of subset split
@@ -722,24 +679,25 @@ class TestSubsetManager:
         dataset = self.create_dataset(project=project, image_config=data_config)
         assert len(dataset) == number_of_items, f"Expected all {number_of_items} items in the training dataset"
 
-        # Set manual ratios in the configuration
-        self.set_config(
-            project=project,
-            task_node=task_node,
-            auto_subset_fractions=False,
-            train_proportion=0.8,
-            test_proportion=0.1,
-            validation_proportion=0.1,
+        subset_split = SubsetSplit(
+            training=80,
+            validation=10,
+            test=10,
+            auto_selection=False,
         )
 
         # Split into subsets
-        TaskSubsetManager.split(dataset_items=dataset, task_node=task_node)
+        TaskSubsetManager.split(
+            dataset_items=dataset,
+            task_node=task_node,
+            subset_split_config=subset_split,
+        )
 
         # Check the result
         expected_subsets = np.array([1.0, 1.0, 1.0])
         self.assert_equal_ratios(dataset=dataset, expected_subsets=expected_subsets)
 
-    def test_subset_manager_remix_train_validation_subsets(self, request):
+    def test_subset_manager_remix_train_validation_subsets(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests whether the subset manager can remix the train and validation subsets while keeping the test subset
@@ -778,16 +736,11 @@ class TestSubsetManager:
             .get_latest_view_by_task(task_node_id=task_node.id_)
             .get_labels(include_empty=True)
         )
-        config = ConfigurableParametersRepo(project.identifier).get_or_create_component_parameters(
-            data_instance_of=SubsetManagerConfig,
-            component=ComponentType.SUBSET_MANAGER,
-            task_id=task_node.id_,
-        )
-        config.train_validation_remixing = True
+        fxt_training_configuration.global_parameters.dataset_preparation.subset_split.remixing = True
         subset_helper = _SubsetHelper(
             task_node=task_node,
-            config=config,
             task_labels=task_labels,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
         )
 
         subset_helper.split(items, subsets_to_reset=(Subset.TRAINING, Subset.VALIDATION))
@@ -808,7 +761,7 @@ class TestSubsetManager:
         )
         assert set(test_split) == set(test_split_after), "The test split is different after the second split"
 
-    def test_subset_manager_reorder_by_priority(self, request):
+    def test_subset_manager_reorder_by_priority(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests whether _reorder_by_priority function works as designed
@@ -841,15 +794,11 @@ class TestSubsetManager:
             .get_latest_view_by_task(task_node_id=task_node.id_)
             .get_labels(include_empty=True)
         )
-        config = ConfigurableParametersRepo(project.identifier).get_or_create_component_parameters(
-            data_instance_of=SubsetManagerConfig,
-            component=ComponentType.SUBSET_MANAGER,
-            task_id=task_node.id_,
-        )
         subset_helper = _SubsetHelper(
             task_node=task_node,
-            config=config,
             task_labels=task_labels,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
         reordered_items = subset_helper.reorder_by_priority(
             items,
@@ -873,7 +822,7 @@ class TestSubsetManager:
         ]
         compare(result, expected)
 
-    def test_subset_manager_group_by_labels(self, request):
+    def test_subset_manager_group_by_labels(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests whether _group_by_labels function works as designed
@@ -916,15 +865,11 @@ class TestSubsetManager:
             .get_latest_view_by_task(task_node_id=task_node.id_)
             .get_labels(include_empty=True)
         )
-        config = ConfigurableParametersRepo(project.identifier).get_or_create_component_parameters(
-            data_instance_of=SubsetManagerConfig,
-            component=ComponentType.SUBSET_MANAGER,
-            task_id=task_node.id_,
-        )
         subset_helper = _SubsetHelper(
             task_node=task_node,
-            config=config,
             task_labels=task_labels,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
         items = list(dataset)
         groups = subset_helper.group_by_labels(
@@ -943,7 +888,7 @@ class TestSubsetManager:
         expected = [[0]]
         compare(groups, expected)
 
-    def test_subset_manager_compute_batch_priority(self, request, fxt_empty_dataset):
+    def test_subset_manager_compute_batch_priority(self, request, fxt_empty_dataset, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests whether _compute_batch_priority function works as designed
@@ -973,15 +918,11 @@ class TestSubsetManager:
             .get_latest_view_by_task(task_node_id=task_node.id_)
             .get_labels(include_empty=True)
         )
-        config = ConfigurableParametersRepo(project.identifier).get_or_create_component_parameters(
-            data_instance_of=SubsetManagerConfig,
-            component=ComponentType.SUBSET_MANAGER,
-            task_id=task_node.id_,
-        )
         subset_helper = _SubsetHelper(
             task_node=task_node,
-            config=config,
             task_labels=task_labels,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
         # Case 1 : empty group_indices
         test_group = []
@@ -1007,7 +948,7 @@ class TestSubsetManager:
         expected = np.array([0.6, 0.45, 0.45, 0.35, 0.1, 0.1, 0.5, 0.1, 0.25, 0.1])
         assert np.array_equal(priority, expected)
 
-    def test_subset_manager_compute_actual_ratios(self, request, fxt_empty_dataset):
+    def test_subset_manager_compute_actual_ratios(self, request, fxt_empty_dataset, fxt_training_configuration):
         """
         <b>Description:</b>
         Tests whether _compute_actual_ratios function works as designed
@@ -1040,15 +981,11 @@ class TestSubsetManager:
             .get_latest_view_by_task(task_node_id=task_node.id_)
             .get_labels(include_empty=True)
         )
-        config = ConfigurableParametersRepo(project.identifier).get_or_create_component_parameters(
-            data_instance_of=SubsetManagerConfig,
-            component=ComponentType.SUBSET_MANAGER,
-            task_id=task_node.id_,
-        )
         subset_helper = _SubsetHelper(
             task_node=task_node,
-            config=config,
             task_labels=task_labels,
+            subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Case 1: normal 3x3 case
@@ -1092,28 +1029,21 @@ class TestSubsetManager:
         )
         task_node = project.tasks[-1]
 
-        self.set_config(
-            project=project,
-            task_node=task_node,
-            auto_subset_fractions=False,
-            train_proportion=0.5,
-            validation_proportion=0.25,
-            test_proportion=0.25,
+        subset_split = SubsetSplit(
+            training=50,
+            validation=25,
+            test=25,
+            auto_selection=False,
         )
         task_labels = (
             LabelSchemaRepo(project.identifier)
             .get_latest_view_by_task(task_node_id=task_node.id_)
             .get_labels(include_empty=True)
         )
-        config = ConfigurableParametersRepo(project.identifier).get_or_create_component_parameters(
-            data_instance_of=SubsetManagerConfig,
-            component=ComponentType.SUBSET_MANAGER,
-            task_id=task_node.id_,
-        )
         subset_helper = _SubsetHelper(
             task_node=task_node,
-            config=config,
             task_labels=task_labels,
+            subset_split_config=subset_split,
         )
 
         # Case 1: Normal Case
@@ -1130,7 +1060,7 @@ class TestSubsetManager:
         expected = np.array([[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]])
         assert np.array_equal(deficiencies, expected), "actual_ratios is different from expectations"
 
-    def test_reshuffling_subsets(self, request):
+    def test_reshuffling_subsets(self, request, fxt_training_configuration):
         """
         <b>Description:</b>
         Test if the subsets' items are reshuffled when the reshuffle_subsets param is set to true
@@ -1211,12 +1141,15 @@ class TestSubsetManager:
 
         initial_dataset = Dataset(items=dataset_items, id=DatasetRepo.generate_id())
 
+        fxt_training_configuration.global_parameters.dataset_preparation.subset_split.remixing = True
+
         with patch.object(TaskDataset, "get_dataset", return_value=initial_dataset):
             un_shuffled_dataset = DatasetHelpers.construct_and_save_train_dataset_for_task(
                 task_dataset_entity=pipeline_dataset_entity.task_datasets[task_node.id_],
                 project_id=project.id_,
                 task_node=task_node,
                 dataset_storage=dataset_storage,
+                training_configuration=fxt_training_configuration,
                 reshuffle_subsets=False,
             )
 
@@ -1241,6 +1174,7 @@ class TestSubsetManager:
                 project_id=project.id_,
                 task_node=task_node,
                 dataset_storage=dataset_storage,
+                training_configuration=fxt_training_configuration,
                 reshuffle_subsets=True,
             )
 

@@ -3,6 +3,10 @@
 
 import { partition } from 'lodash-es';
 
+import {
+    LifecycleStage,
+    PerformanceCategory,
+} from '../../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { SupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
 
 export enum SortingOptions {
@@ -18,23 +22,50 @@ export enum SortingOptions {
     ACCURACY_DESC = 'accuracy-desc',
 }
 
+export const orderRecommendedAlgorithms = (recommendedAlgorithms: SupportedAlgorithm[]) => {
+    const accuracy = recommendedAlgorithms.find(
+        (algorithm) => algorithm.performanceCategory === PerformanceCategory.ACCURACY
+    );
+    const speed = recommendedAlgorithms.find(
+        (algorithm) => algorithm.performanceCategory === PerformanceCategory.SPEED
+    );
+    const balance = recommendedAlgorithms.find(
+        (algorithm) => algorithm.performanceCategory === PerformanceCategory.BALANCE
+    );
+
+    return [balance, speed, accuracy].filter(Boolean) as SupportedAlgorithm[];
+};
+
+export const orderOtherAlgorithms = (algorithms: SupportedAlgorithm[]) => {
+    const activeAlgorithms = algorithms.filter((algorithm) => algorithm.lifecycleStage === LifecycleStage.ACTIVE);
+    const obsoleteAlgorithms = algorithms.filter((algorithm) => algorithm.lifecycleStage === LifecycleStage.OBSOLETE);
+    const deprecatedAlgorithms = algorithms.filter(
+        (algorithm) => algorithm.lifecycleStage === LifecycleStage.DEPRECATED
+    );
+
+    return [...activeAlgorithms, ...obsoleteAlgorithms, ...deprecatedAlgorithms];
+};
+
 export const moveActiveArchitectureToBeRightAfterRecommended = (
     recommendedAlgorithms: SupportedAlgorithm[],
     otherAlgorithms: SupportedAlgorithm[],
     activeModelTemplateId: string | null
 ): [SupportedAlgorithm[], SupportedAlgorithm[]] => {
+    const orderedRecommendedAlgorithms = orderRecommendedAlgorithms(recommendedAlgorithms);
+    const orderedOtherAlgorithms = orderOtherAlgorithms(otherAlgorithms);
+
     if (activeModelTemplateId === null) {
-        return [otherAlgorithms, recommendedAlgorithms];
+        return [orderedOtherAlgorithms, orderedRecommendedAlgorithms];
     }
 
-    if (recommendedAlgorithms.some((algorithm) => algorithm.modelTemplateId === activeModelTemplateId)) {
-        return [otherAlgorithms, recommendedAlgorithms];
+    if (orderedRecommendedAlgorithms.some((algorithm) => algorithm.modelTemplateId === activeModelTemplateId)) {
+        return [orderedOtherAlgorithms, orderedRecommendedAlgorithms];
     }
 
     const [activeAlgorithm, rest] = partition(
-        otherAlgorithms,
+        orderedOtherAlgorithms,
         (algorithm) => algorithm.modelTemplateId === activeModelTemplateId
     );
 
-    return [activeAlgorithm.concat(...rest), recommendedAlgorithms];
+    return [activeAlgorithm.concat(...rest), orderedRecommendedAlgorithms];
 };

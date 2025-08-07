@@ -360,12 +360,16 @@ class ScExtractor(dm_DatasetBase):
         width = sc_item.width
         sc_annotations = sc_item.get_annotations(include_empty=True)
 
-        # check if sc_item has empty label
+        # check if sc_item has empty label or background label
         has_empty_label = False
+        has_background_label = False
         for sc_ann in sc_annotations:
-            empty_labels = [label for label in sc_ann.get_labels(include_empty=True) if label.is_empty]
-            if len(empty_labels) > 0:
-                has_empty_label = True
+            for label in sc_ann.get_labels(include_empty=True):
+                if label.is_empty:
+                    has_empty_label = True
+                if label.is_background:
+                    has_background_label = True
+            if has_empty_label and has_background_label:
                 break
 
         dm_anns = self._convert_annotations(annotations=sc_annotations, width=width, height=height)
@@ -390,7 +394,10 @@ class ScExtractor(dm_DatasetBase):
             subset=sc_item.subset.name if self._use_subset else DEFAULT_SUBSET_NAME,
             media=dm_media,
             annotations=dm_anns,
-            attributes={"has_empty_label": has_empty_label},
+            attributes={
+                "has_empty_label": has_empty_label,
+                "has_background_label": has_background_label,
+            },
         )
 
     def _save_video(self, video: Video, video_root: str) -> str:

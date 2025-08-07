@@ -11,18 +11,15 @@ import random
 from collections.abc import Iterable, Iterator, Sequence
 
 import numpy as np
+from geti_configuration_tools.training_configuration import Filtering, SubsetSplit
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier
-from iai_core.configuration.elements.component_parameters import ComponentParameters, ComponentType
 from iai_core.entities.dataset_item import DatasetItem
 from iai_core.entities.label import Label
 from iai_core.entities.subset import Subset
 from iai_core.entities.task_node import TaskNode
-from iai_core.repos import ConfigurableParametersRepo
 from iai_core.utils.dataset_helper import DatasetHelper
 from iai_core.utils.type_helpers import SequenceOrSet
-
-from .subset_manager_config import SubsetManagerConfig
 
 logger = logging.getLogger(__name__)
 
@@ -75,13 +72,15 @@ class _SubsetHelper:
         self,
         task_node: TaskNode,
         task_labels: list[Label],
-        config: ComponentParameters[SubsetManagerConfig],
+        subset_split_config: SubsetSplit,
+        filtering_config: Filtering | None = None,
     ) -> None:
         self.task = task_node
         self.latest_task_labels = task_labels
         self.latest_task_label_ids = [label.id_ for label in task_labels]
         self.latest_task_label_map = {label.id_: label for label in task_labels}
-        self.config = config
+        self.subset_split_config = subset_split_config
+        self.filtering_config = filtering_config
 
         self.subset_counter = np.zeros(len(SUBSETS))
         self.subset_label_counter = np.zeros((len(SUBSETS), len(self.latest_task_labels)))
@@ -319,8 +318,9 @@ class _SubsetHelper:
 
         :return: Dictionary where: ratios[subset] = ratio for subset
         """
-        if self.config.auto_subset_fractions:
+        if self.subset_split_config.auto_selection:
             # Determine fractions automatically
+            logger.debug(f"Determine fractions automatically: {self.subset_split_config.auto_selection}")
             if self.number_of_annotations < SplitTargetSize.SMALL:
                 ratios = TARGET_SMALL
             elif self.number_of_annotations < SplitTargetSize.MEDIUM:
@@ -331,9 +331,9 @@ class _SubsetHelper:
             # In case manual definition is required, use values from the configuration
             ratios = np.array(
                 [
-                    self.config.subset_parameters.train_proportion,
-                    self.config.subset_parameters.validation_proportion,
-                    self.config.subset_parameters.test_proportion,
+                    self.subset_split_config.training / 100,
+                    self.subset_split_config.validation / 100,
+                    self.subset_split_config.test / 100,
                 ]
             )
             if not math.isclose(a=np.sum(ratios), b=1.0, rel_tol=1e-6):
@@ -472,8 +472,8 @@ class _AnomalySubsetHelper(_SubsetHelper):
         """
         normal_ratios = super().compute_target_ratios()
 
-        val_proportion = self.config.subset_parameters.validation_proportion / (
-            self.config.subset_parameters.test_proportion + self.config.subset_parameters.validation_proportion
+        val_proportion = self.subset_split_config.validation / (
+            self.subset_split_config.test + self.subset_split_config.validation
         )
         test_proportion = 1 - val_proportion
         anomaly_ratios = [[0], [val_proportion], [test_proportion]]
@@ -518,6 +518,8 @@ class TaskSubsetManager(ITaskSubsetManager):
     def split(
         dataset_items: Iterator[DatasetItem],
         task_node: TaskNode,
+        subset_split_config: SubsetSplit,
+        filtering_config: Filtering | None = None,
         subsets_to_reset: tuple[Subset, ...] | None = None,
     ) -> None:
         """
@@ -525,6 +527,7 @@ class TaskSubsetManager(ITaskSubsetManager):
 
         :param dataset_items: Dataset items to split
         :param task_node: TaskNode for which to split the dataset
+        :param subset_split_config: Configuration for the subset split
         :param subsets_to_reset: Tuple of subsets to reset. The dataset items assigned to these subsets will be
             unassigned before getting split into subsets. If None, no subsets will be reset.
         """
@@ -535,26 +538,23 @@ class TaskSubsetManager(ITaskSubsetManager):
             task_node_id=task_node.id_,
             include_empty=True,
         )
-        config_param_repo = ConfigurableParametersRepo(project_identifier)
-        config = config_param_repo.get_or_create_component_parameters(
-            data_instance_of=SubsetManagerConfig,
-            component=ComponentType.SUBSET_MANAGER,
-            task_id=task_node.id_,
-        )
         subset_helper_type = _AnomalySubsetHelper if task_node.task_properties.is_anomaly else _SubsetHelper
         subset_helper = subset_helper_type(
             task_node=task_node,
             task_labels=task_labels,
-            config=config,
+            subset_split_config=subset_split_config,
+            filtering_config=filtering_config,
         )
 
         # Determine subsets for resetting based on task type and configuration
-        if not task_node.task_properties.is_anomaly and config.train_validation_remixing:
+        if not task_node.task_properties.is_anomaly and subset_split_config.remixing:
             # if train_validation_remixing is enabled, we need to reset the training and validation subsets
             # if subsets_to_reset is not empty, then we take a union of the subsets to reset
             subsets_to_reset = tuple(set(subsets_to_reset or []) | {Subset.TRAINING, Subset.VALIDATION})
 
         logger.info(f"Splitting dataset for task {task_node.id_} into subsets. Subsets to reset: {subsets_to_reset}")
+        logger.info(f"Subset split config: {subset_split_config}")
+        logger.info(f"Filtering config: {filtering_config}")
 
         subset_helper.split(
             dataset_items=dataset_items,

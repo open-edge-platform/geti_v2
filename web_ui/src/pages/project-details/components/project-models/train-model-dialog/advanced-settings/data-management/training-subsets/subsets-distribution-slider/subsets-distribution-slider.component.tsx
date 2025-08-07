@@ -4,7 +4,7 @@
 import { FC, RefObject, useRef } from 'react';
 
 import { Flex, Text, View, VisuallyHidden } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { mergeProps, useFocusRing, useNumberFormatter, useSlider, useSliderThumb } from 'react-aria';
 import { SliderState, useSliderState } from 'react-stately';
 
@@ -59,7 +59,7 @@ const DistributionTooltip: FC = () => {
 
 interface SubsetsDistributionSliderProps {
     label: string;
-    onChangeEnd?: (values: number[] | number) => void;
+    onChangeEnd: (values: number[] | number) => void;
     value: number | number[];
     defaultValue?: number | number[];
     onChange: (values: number[] | number) => void;

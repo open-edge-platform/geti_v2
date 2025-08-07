@@ -38,7 +38,7 @@ export const DataManagement: FC<DataManagementProps> = ({ trainingConfiguration,
             {/* Not supported in v1 of training flow revamp <BalanceLabelsDistribution /> */}
             {!isEmpty(subsetSplitParameters) && (
                 <TrainingSubsets
-                    subsetsConfiguration={trainingConfiguration.datasetPreparation.subsetSplit}
+                    subsetsParameters={trainingConfiguration.datasetPreparation.subsetSplit}
                     onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />
             )}

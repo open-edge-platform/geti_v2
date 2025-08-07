@@ -21,6 +21,7 @@ import { ModelGroupIdentifier, ModelIdentifier } from '../../../../src/core/mode
 import { OrganizationIdentifier } from '../../../../src/core/organizations/organizations.interface';
 import { ProjectIdentifier } from '../../../../src/core/projects/core.interface';
 import { DatasetIdentifier } from '../../../../src/core/projects/dataset.interface';
+import { EXPORT_PROJECT_MODELS_OPTIONS } from '../../../../src/core/projects/project.interface';
 import { ProjectsQueryOptions } from '../../../../src/core/projects/services/project-service.interface';
 import { SortDirection } from '../../../../src/core/shared/query-parameters';
 import { TaskIdentifier } from '../../../../src/core/statistics/dtos/dataset-statistics.interface';
@@ -129,7 +130,13 @@ const PROJECT = (projectIdentifier: ProjectIdentifier): string =>
 
 const PROJECT_NAMES = (workspaceIdentifier: WorkspaceIdentifier) => `${WORKSPACE(workspaceIdentifier)}/projects_names`;
 
-const EXPORT_PROJECT = (projectIdentifier: ProjectIdentifier): string => `${PROJECT(projectIdentifier)}:export`;
+const EXPORT_PROJECT = (
+    projectIdentifier: ProjectIdentifier,
+    selectedModelExportOption?: EXPORT_PROJECT_MODELS_OPTIONS
+): string => {
+    const baseUrl = `${PROJECT(projectIdentifier)}:export`;
+    return selectedModelExportOption ? `${baseUrl}?include_models=${selectedModelExportOption}` : baseUrl;
+};
 
 // TODO Remove
 const EXPORT_PROJECT_STATUS = (projectIdentifier: ProjectIdentifier, exportProjectId: string): string =>

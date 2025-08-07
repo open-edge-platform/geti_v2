@@ -5,6 +5,7 @@
 import copy
 import os
 
+from geti_configuration_tools.training_configuration import TrainingConfiguration
 from geti_kafka_tools import publish_event
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier, ProjectIdentifier
@@ -211,6 +212,7 @@ class DatasetHelpers:
         project_id: ID,
         task_node: TaskNode,
         dataset_storage: DatasetStorage,
+        training_configuration: TrainingConfiguration,
         max_training_dataset_size: int | None = None,
         reshuffle_subsets: bool = False,
     ) -> Dataset:
@@ -225,6 +227,7 @@ class DatasetHelpers:
         :param project_id: ID of the project
         :param task_node: Task node for which the dataset is fetched
         :param dataset_storage: DatasetStorage containing the dataset items
+        :param training_configuration: Training configuration containing dataset preparation parameters
         :param max_training_dataset_size: maximum training dataset size
         :param reshuffle_subsets: Whether to reassign/shuffle all the items to subsets including Test set from scratch
         :return: A copy of the current dataset, split into subsets.
@@ -253,6 +256,8 @@ class DatasetHelpers:
         TaskSubsetManager.split(
             dataset_items=iter(training_dataset_items),
             task_node=task_node,
+            subset_split_config=training_configuration.global_parameters.dataset_preparation.subset_split,
+            filtering_config=training_configuration.global_parameters.dataset_preparation.filtering,
             subsets_to_reset=subsets_to_reset,
         )
         task_dataset_entity.save_subsets(dataset=dataset, dataset_storage_identifier=dataset_storage.identifier)

@@ -53,7 +53,7 @@ diagnosticMode:
 
 image:
   registry: docker.io
-  repository: bitnami
+  repository: bitnamilegacy
   name: etcd:3.5.16-debian-12-r2
   ## @param image.pullPolicy etcd image pull policy
   ## Specify a imagePullPolicy
@@ -663,7 +663,7 @@ volumePermissions:
   ##
   image:
     registry: docker.io
-    repository: bitnami
+    repository: bitnamilegacy
     name: os-shell:12-debian-12-r47
     ## @param volumePermissions.image.pullPolicy Init container volume-permissions image pull policy
     ##

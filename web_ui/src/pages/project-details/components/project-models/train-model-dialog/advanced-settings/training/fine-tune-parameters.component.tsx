@@ -4,10 +4,10 @@
 import { FC } from 'react';
 
 import { Checkbox, Flex, Radio, RadioGroup } from '@geti/ui';
-import { Link } from 'react-router-dom';
 
 import { useDocsUrl } from '../../../../../../../hooks/use-docs-url/use-docs-url.hook';
 import { InfoTooltip } from '../../../../../../../shared/components/info-tooltip/info-tooltip.component';
+import { LinkNewTab } from '../../../../../../../shared/components/link-new-tab/link-new-tab.component';
 import { Accordion } from '../ui/accordion/accordion.component';
 
 import styles from './fine-tune-parameters.module.scss';
@@ -66,11 +66,24 @@ export const FineTuneParameters: FC<FineTuneParametersProps> = ({
                     </Radio>
                     <Flex alignItems={'center'}>
                         <Radio value={TRAINING_WEIGHTS.PRE_TRAINED_WEIGHTS} marginEnd={'size-65'}>
-                            Pre-trained weights - fine-tune the
+                            Pre-trained weights - fine-tune the original model
                         </Radio>
-                        <Link to={originalModelUrl} className={styles.originalModelLink}>
-                            original model
-                        </Link>
+                        <InfoTooltip
+                            tooltipText={
+                                <>
+                                    <span>
+                                        The original model is a base version with pre-trained weights, already trained
+                                        on a large, general-purpose dataset. It provides a strong foundation for
+                                        adapting to new, specific tasks.
+                                    </span>{' '}
+                                    <LinkNewTab
+                                        url={originalModelUrl}
+                                        text='Learn more.'
+                                        className={styles.originalModelLink}
+                                    />
+                                </>
+                            }
+                        />
                     </Flex>
                 </RadioGroup>
 

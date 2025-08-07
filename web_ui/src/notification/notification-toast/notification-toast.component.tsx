@@ -5,7 +5,7 @@ import { ReactElement } from 'react';
 
 import { ActionButton, Flex, Heading, Text } from '@geti/ui';
 import { CloseSmall } from '@geti/ui/icons';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isEmpty } from 'lodash-es';
 
 import { NOTIFICATION_TYPE } from './notification-type.enum';

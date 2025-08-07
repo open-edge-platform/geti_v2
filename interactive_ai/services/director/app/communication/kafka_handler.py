@@ -9,7 +9,6 @@ handling incoming Kafka events in the director MS.
 import logging
 import os
 from datetime import datetime
-from typing import TYPE_CHECKING
 
 from communication.exceptions import MissingJobPayloadAttribute
 from metrics.instruments import (
@@ -19,19 +18,26 @@ from metrics.instruments import (
 )
 from service.job_submission.job_creation_helpers import JobType
 from service.project_service import ProjectService
+from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_kafka_tools import BaseKafkaHandler, KafkaRawMessage, TopicSubscription
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier, Singleton
+from iai_core.entities.model import Model
 from iai_core.entities.model_storage import ModelStorageIdentifier
 from iai_core.entities.model_test_result import TestState
-from iai_core.repos import ModelRepo, ModelStorageRepo, ModelTestResultRepo, TaskNodeRepo
+from iai_core.entities.subset import Subset
+from iai_core.repos import (
+    DatasetRepo,
+    DatasetStorageRepo,
+    ModelRepo,
+    ModelStorageRepo,
+    ModelTestResultRepo,
+    TaskNodeRepo,
+)
 from iai_core.session.session_propagation import setup_session_kafka
 from iai_core.utils.deletion_helpers import DeletionHelpers
 from iai_core.utils.type_helpers import str2bool
-
-if TYPE_CHECKING:
-    from iai_core.entities.model import Model
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +105,57 @@ class JobKafkaHandler(BaseKafkaHandler, metaclass=Singleton):
                 end_time=end_time,
                 job_status=TrainingDurationCounterJobStatus.SUCCEEDED,
             )
+
+            # update training subset proportions with values used in the training job
+            project_identifier = ProjectIdentifier(
+                workspace_id=workspace_id,
+                project_id=project_id,
+            )
+            self._update_subset_split_configuration(project_identifier=project_identifier, model=base_model)
+
+    @staticmethod
+    def _update_subset_split_configuration(project_identifier: ProjectIdentifier, model: Model) -> None:
+        """
+        Update the subset split configuration with actual values used after model training job.
+
+        :param project_identifier: The identifier of the project
+        :param model: The model containing the dataset information to update splits from
+        """
+        dataset_storage = DatasetStorageRepo(project_identifier).get_one(extra_filter={"use_for_training": True})
+        dataset_repo = DatasetRepo(dataset_storage.identifier)
+        subsets_count = dataset_repo.count_per_subset(dataset_id=model.train_dataset_id)
+        training_config_repo = PartialTrainingConfigurationRepo(project_identifier)
+        training_config = training_config_repo.get_by_model_manifest_id(
+            model_manifest_id=model.model_storage.model_manifest_id
+        )
+        n_training = subsets_count.get(Subset.TRAINING.name, 0)
+        n_validation = subsets_count.get(Subset.VALIDATION.name, 0)
+        n_test = subsets_count.get(Subset.TESTING.name, 0)
+
+        total = n_training + n_validation + n_test
+
+        if total == 0:
+            logger.warning(
+                f"Cannot update subset split configuration for project {project_identifier}: "
+                "total number of samples is zero. Setting all split percentages to zero."
+            )
+            training_percent = 0
+            validation_percent = 0
+            test_percent = 0
+        else:
+            # Calculate percentages (0-100 range)
+            validation_percent = int(100 * n_validation / total)
+            test_percent = int(100 * n_test / total)
+            # Ensure percentages sum to exactly 100
+            training_percent = 100 - validation_percent - test_percent
+
+        # Update the configuration with percentages
+        training_config.global_parameters.dataset_preparation.subset_split.training = training_percent
+        training_config.global_parameters.dataset_preparation.subset_split.validation = validation_percent
+        training_config.global_parameters.dataset_preparation.subset_split.test = test_percent
+
+        # Save the updated configuration
+        training_config_repo.save(training_config)
 
     @setup_session_kafka
     @unified_tracing
