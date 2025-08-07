@@ -109,14 +109,14 @@ class TestModelService:
         model_storage = ModelService.get_or_create_model_storage(
             project_identifier=fxt_empty_project_persisted.identifier,
             task_node=fxt_detection_task,
-            model_template_id=fxt_model_template_detection.model_template_id,
+            model_manifest_id=fxt_model_template_detection.model_template_id,
         )
         request.addfinalizer(lambda: model_storage_repo.delete_by_id(model_storage.id_))
         # Test case 2: Model storage retrieval
         model_storage_exists = ModelService.get_or_create_model_storage(
             project_identifier=fxt_empty_project_persisted.identifier,
             task_node=fxt_detection_task,
-            model_template_id=fxt_model_template_detection.model_template_id,
+            model_manifest_id=fxt_model_template_detection.model_template_id,
         )
         # Test case 3: Raise error for invalid model template id
         invalid_template_id = "non existing model template id"
@@ -124,14 +124,14 @@ class TestModelService:
             ModelService.get_or_create_model_storage(
                 project_identifier=fxt_empty_project_persisted.identifier,
                 task_node=fxt_detection_task,
-                model_template_id=invalid_template_id,
+                model_manifest_id=invalid_template_id,
             )
         # Test case 4: Raise error for model template with non-matching task type
         with pytest.raises(ValueError) as exc_non_matching:
             ModelService.get_or_create_model_storage(
                 project_identifier=fxt_empty_project_persisted.identifier,
                 task_node=fxt_detection_task,
-                model_template_id=fxt_model_template_classification.model_template_id,
+                model_manifest_id=fxt_model_template_classification.model_template_id,
             )
 
         # Assert

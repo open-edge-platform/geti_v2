@@ -4,6 +4,8 @@
 
 import logging
 
+from geti_supported_models.default_models import DefaultModels
+
 from coordination.dataset_manager.dynamic_required_num_annotations import DynamicRequiredAnnotations
 from environment import get_gpu_provider
 
@@ -11,7 +13,6 @@ from .auto_train_use_case import AutoTrainUseCase
 from geti_kafka_tools import BaseKafkaHandler, KafkaRawMessage, TopicSubscription
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, ProjectIdentifier, Singleton
-from iai_core.algorithms import ModelTemplateList
 from iai_core.repos import ProjectRepo
 from iai_core.services import ModelService
 from iai_core.session.session_propagation import setup_session_kafka
@@ -61,23 +62,19 @@ class AutoTrainingKafkaHandler(BaseKafkaHandler, metaclass=Singleton):
         for task_node in project.get_trainable_task_nodes():
             task_type = task_node.task_properties.task_type
             try:
-                default_model_template_id = next(
-                    model_template.model_template_id
-                    for model_template in ModelTemplateList().get_all()
-                    if model_template.task_type == task_type and model_template.is_default_for_task
-                )
-            except StopIteration:
-                logger.error("Could not resolve default model template for task type %s", task_type)
+                default_model_manifest_id = DefaultModels.get_default_model(task_type.name)
+            except ValueError:
+                logger.error("Could not resolve default model manifest for task type %s", task_type)
                 return
             logger.info(
                 "[WORKAROUND] Switching active model storage to '%s' for task '%s'",
-                default_model_template_id,
+                default_model_manifest_id,
                 task_node,
             )
             model_storage = ModelService.get_or_create_model_storage(
                 project_identifier=project_identifier,
                 task_node=task_node,
-                model_template_id=default_model_template_id,
+                model_manifest_id=default_model_manifest_id,
             )
             ModelService.activate_model_storage(model_storage)
 

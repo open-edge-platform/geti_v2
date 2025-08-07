@@ -180,7 +180,7 @@ class TrainingController:
         model_storage = ModelService.get_or_create_model_storage(
             project_identifier=project.identifier,
             task_node=task_node,
-            model_template_id=task_training_config.model_template_id,
+            model_manifest_id=task_training_config.model_template_id,
         )
 
         logger.info("Submitting train job for task with ID `%s`", task_node.id_)
