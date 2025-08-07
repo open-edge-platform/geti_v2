@@ -119,7 +119,7 @@ describe('TrainingSubsets', () => {
         const [trainingConfiguration, setTrainingConfiguration] = useState<TrainingConfiguration | undefined>(() =>
             getMockedTrainingConfiguration({
                 datasetPreparation: {
-                    subsetSplit: [...subsetParameters],
+                    subsetSplit: subsetParameters,
                     filtering: {},
                     augmentation: {},
                 },
