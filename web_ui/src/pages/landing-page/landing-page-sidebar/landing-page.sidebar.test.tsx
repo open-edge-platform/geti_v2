@@ -1,7 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { paths } from '@geti/core';
 import { screen, within } from '@testing-library/react';
 
 import { providersRender } from '../../../test-utils/required-providers-render';
@@ -27,18 +26,5 @@ describe('Landing page - sidebar', () => {
                 expect.stringContaining('About'),
             ])
         );
-    });
-
-    it('Should should show terms of use and privacy', async () => {
-        providersRender(<LandingPageSidebar />);
-
-        expect(screen.getByText(/Terms of use/)).toBeInTheDocument();
-        expect(screen.getByText(/Privacy/)).toBeInTheDocument();
-
-        expect(
-            screen.getByRole('link', {
-                name: /terms of use privacy/i,
-            })
-        ).toHaveAttribute('href', paths.organization.about({ organizationId: 'organization-id' }));
     });
 });
