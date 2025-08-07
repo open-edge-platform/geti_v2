@@ -79,29 +79,9 @@ export const LandingPageSidebar = (): JSX.Element => {
                     <OrganizationsPicker isLargeSize={isLargeSize} />
                     <SidebarMenu options={options} id={'landing-page'} />
                 </View>
-                <Flex direction={'column'} width={'100%'} gap={isLargeSize ? 'size-150' : 'size-100'}>
+                <View marginBottom={'size-600'}>
                     <ShowForOnPrem>{FEATURE_FLAG_STORAGE_SIZE_COMPUTATION && <StorageUsage />}</ShowForOnPrem>
-                    <Divider size='S' UNSAFE_className={classes.sidebarDivider} />
-                    {isLargeSize ? (
-                        <Flex UNSAFE_className={classes.sidebarFooter}>
-                            <SpectrumLink UNSAFE_className={classes.footerLink}>
-                                <Link to={paths.organization.about({ organizationId })} viewTransition>
-                                    Terms of use <Divider size={'S'} orientation={'vertical'} /> Privacy
-                                </Link>
-                            </SpectrumLink>
-                        </Flex>
-                    ) : (
-                        <Flex UNSAFE_className={`${classes.sidebarFooter} ${classes.mobile}`}>
-                            <Link
-                                to={paths.organization.about({ organizationId })}
-                                viewTransition
-                                className={classes.footerLink}
-                            >
-                                <Policy width={18} height={18} aria-label='Terms of use' />
-                            </Link>
-                        </Flex>
-                    )}
-                </Flex>
+                </View>
             </Flex>
         </Flex>
     );
