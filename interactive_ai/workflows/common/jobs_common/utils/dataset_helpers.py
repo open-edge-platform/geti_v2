@@ -25,9 +25,9 @@ from iai_core.utils.dataset_helper import DatasetHelper
 from iai_core.utils.flow_control import FlowControl
 from iai_core.utils.iteration import grouper
 from iai_core.utils.media_factory import Media2DFactory
-from interactive_ai.workflows.common.jobs_common.utils.annotation_filter import AnnotationFilter
 
 from jobs_common.tasks.utils.progress import report_progress
+from jobs_common.utils.annotation_filter import AnnotationFilter
 from jobs_common.utils.subset_management.subset_manager import TaskSubsetManager
 
 # Maximum recommended size for unannotated datasets
