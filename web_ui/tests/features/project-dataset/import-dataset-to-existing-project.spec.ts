@@ -26,11 +26,17 @@ const PROJECT_ID = '61012cdb1d38a5e71ef3baf9';
 const PROJECT_URL = `/organizations/${ORGANIZATION_ID}/workspaces/${WORKSPACE_ID}/projects/${PROJECT_ID}`;
 
 const clickUpload = async (page: Page) => {
-    return page.getByRole('button', { name: /upload/i }).click();
+    return page
+        .getByTestId('modal')
+        .getByRole('button', { name: /upload/i })
+        .click();
 };
 
 const clickImport = async (page: Page) => {
-    return page.getByRole('button', { name: /import/i }).click();
+    return page
+        .getByTestId('modal')
+        .getByRole('button', { name: /import/i })
+        .click();
 };
 
 const hideImportModal = async (page: Page) => {

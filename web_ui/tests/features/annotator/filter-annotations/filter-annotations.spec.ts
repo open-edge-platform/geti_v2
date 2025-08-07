@@ -44,7 +44,7 @@ test('Setting annotations filter', async ({ page, annotationListPage }) => {
         .getByRole('checkbox')
         .click();
 
-    await page.getByRole('listitem', { name: /8/i }).getByRole('checkbox').click();
+    await page.getByRole('checkbox', { name: 'Select label filter for 8' }).click();
 
     // Dismiss dialog
     await page.mouse.click(0, 0);

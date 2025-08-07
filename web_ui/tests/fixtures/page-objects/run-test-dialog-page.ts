@@ -86,7 +86,7 @@ export class RunTestDialogPage {
     }
 
     getRunTestButton() {
-        return this.page.getByRole('button', { name: /run test/i });
+        return this.page.getByTestId('modal').getByRole('button', { name: /run test/i });
     }
 
     async runTest() {
