@@ -5,7 +5,6 @@ import { Key, useState } from 'react';
 
 import { ActionButton, Flex, Item, Menu, MenuTrigger, Text } from '@geti/ui';
 import { Delete, Edit, Invisible, Lock, MoreMenu, Unlock, Visible } from '@geti/ui/icons';
-import { clsx } from 'clsx';
 
 import classes from './annotation-list-item.module.scss';
 
@@ -81,9 +80,6 @@ export const AnnotationListItemMenu = ({
                 aria-label='Show actions'
                 id={`annotation-list-item-${id}-menu`}
                 isDisabled={isDisabled}
-                UNSAFE_className={clsx(classes.annotationMenu, {
-                    [classes.annotationMenuVisible]: isOpen,
-                })}
             >
                 <MoreMenu className={isHidden ? classes.hiddenAnnotation : ''} />
             </ActionButton>

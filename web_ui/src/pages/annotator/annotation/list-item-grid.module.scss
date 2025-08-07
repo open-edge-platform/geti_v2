@@ -19,7 +19,12 @@
 }
 
 .listItemGrid {
-    &:hover button[class*='annotationMenu'] {
+    &:not(:hover) button[aria-label='Show actions'] {
+        visibility: hidden;
+    }
+
+    &:hover button[aria-label='Show actions'],
+    button[aria-label='Show actions'][aria-expanded='true'] {
         visibility: visible;
     }
 }
