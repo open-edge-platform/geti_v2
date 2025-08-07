@@ -581,7 +581,6 @@ class AnnotationRestValidator(RestApiValidator):
         """
         Validates that an annotation for a global task is valid. Checks the following rules:
         - No annotation is allowed to have both empty and non-empty annotations for the same task
-        - No annotation is allowed to have only a background label
         - If the task is the first task, global annotations must be a full box.
         - If the task is not the first task, the annotation must also contain labels for the previous task.
 
@@ -610,14 +609,6 @@ class AnnotationRestValidator(RestApiValidator):
                 f"Cannot create annotation that has both empty label with ID "
                 f"{next(iter(empty_labels_in_annotation)).id_} and non-empty label with ID "
                 f"{next(iter(non_empty_labels_in_annotation)).id_} for task {task.id_}"
-            )
-
-        # Validate that if a background annotation is present, it is not the only annotation in the scene
-        background_labels_in_annotation = {label for label in annotation_labels_current_task if label.is_background}
-        if len(background_labels_in_annotation) > 0 and len(non_empty_labels_in_annotation) == 0:
-            raise BadRequestException(
-                f"Cannot create annotation that has a background label with ID "
-                f"{next(iter(background_labels_in_annotation)).id_} without any other labels for task {task.id_}"
             )
 
         # Validate that global annotations for the first task use a full box shape
@@ -654,6 +645,7 @@ class AnnotationRestValidator(RestApiValidator):
           be present
         - If the annotation contains an empty label, no other annotation for this task may intersect with the empty
           label.
+        - If the annotation contains a background label, it must also contain a label for the current task
         - If the task is (rotated) detection, shape must be (rotated) rectangle
 
         :param annotation_rest: REST view of the annotation
