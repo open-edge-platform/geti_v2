@@ -3,7 +3,7 @@
 
 import { FC, useState } from 'react';
 
-import { Flex, Grid, minmax, Text, View } from '@geti/ui';
+import { Content, ContextualHelp, Flex, Grid, Heading, InlineAlert, minmax, Text, View } from '@geti/ui';
 
 import {
     ConfigurationParameter,
@@ -73,6 +73,18 @@ interface SubsetsDistributionProps {
     subsetParameters: SubsetsParameters;
 }
 
+const areSubsetsSizesValid = (subsetParameters: SubsetsParameters, subsetsDistribution: number[]): boolean => {
+    const [startRange, endRange] = subsetsDistribution;
+
+    const newSubsetSizes = getSubsetsSizes(subsetParameters, endRange - startRange, MAX_RATIO_VALUE - endRange);
+
+    return ![
+        newSubsetSizes.trainingSubsetSize,
+        newSubsetSizes.validationSubsetSize,
+        newSubsetSizes.testSubsetSize,
+    ].some((size) => size === 0);
+};
+
 const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
     subsetsDistribution,
     trainingSubsetSize,
@@ -85,17 +97,9 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
 }) => {
     const handleSubsetDistributionChange = (values: number[] | number): void => {
         if (Array.isArray(values)) {
-            const [startRange, endRange] = values;
+            const subsetsSizesValid = areSubsetsSizesValid(subsetParameters, values);
 
-            const newSubsetSizes = getSubsetsSizes(subsetParameters, endRange - startRange, MAX_RATIO_VALUE - endRange);
-
-            if (
-                [
-                    newSubsetSizes.trainingSubsetSize,
-                    newSubsetSizes.validationSubsetSize,
-                    newSubsetSizes.testSubsetSize,
-                ].some((size) => size === 0)
-            ) {
+            if (!subsetsSizesValid) {
                 return;
             }
 
@@ -105,17 +109,9 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
 
     const handleSubsetDistributionChangeEnd = (values: number[] | number): void => {
         if (Array.isArray(values)) {
-            const [startRange, endRange] = values;
+            const subsetsSizesValid = areSubsetsSizesValid(subsetParameters, values);
 
-            const newSubsetSizes = getSubsetsSizes(subsetParameters, endRange - startRange, MAX_RATIO_VALUE - endRange);
-
-            if (
-                [
-                    newSubsetSizes.trainingSubsetSize,
-                    newSubsetSizes.validationSubsetSize,
-                    newSubsetSizes.testSubsetSize,
-                ].some((size) => size === 0)
-            ) {
+            if (!subsetsSizesValid) {
                 return;
             }
 
@@ -123,13 +119,16 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
         }
     };
 
+    const subsetsSizesValid = areSubsetsSizesValid(subsetParameters, subsetsDistribution);
+
     return (
-        <View UNSAFE_className={styles.trainingSubsets}>
+        <Flex direction={'column'} UNSAFE_className={styles.trainingSubsets} gap={'size-200'}>
             <Grid
                 areas={['label slider reset', '. counts .']}
                 columns={['max-content', minmax('size-3400', '1fr'), 'max-content']}
                 alignItems={'center'}
                 columnGap={'size-250'}
+                UNSAFE_className={subsetsSizesValid ? undefined : styles.disabled}
             >
                 <SubsetsDistributionSlider
                     aria-label={'Distribute samples'}
@@ -152,7 +151,19 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
                     validationSize={validationSubsetSize}
                 />
             </Grid>
-        </View>
+            {!subsetsSizesValid && (
+                <InlineAlert variant={'notice'}>
+                    <Heading>Training subsets configuration unavailable</Heading>
+                    <Content>
+                        The training, validation, and testing subsets are currently disabled because the project does
+                        not contain enough media items to support a proper split.
+                        <br />
+                        To enable subset configuration, please add more media items so that each subset contains at
+                        least one item.
+                    </Content>
+                </InlineAlert>
+            )}
+        </Flex>
     );
 };
 
@@ -269,9 +280,11 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({ subsetsParameters, o
             </Accordion.Title>
             <Accordion.Content>
                 <Accordion.Description>
-                    Specify the distribution of annotated samples over the training, validation and test subsets. Note:
-                    items that have already been used for training will stay in the same subset even if these parameters
-                    are changed.
+                    Specify the distribution of annotated samples over the training, validation and test subsets. <br />
+                    Note: items that have already been used for training will stay in the same subset even if these
+                    parameters are changed.
+                    <br />
+                    Each subset must have at least one media item.
                 </Accordion.Description>
                 <Accordion.Divider marginY={'size-250'} />
                 <SubsetsDistribution
