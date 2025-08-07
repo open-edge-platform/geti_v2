@@ -1,10 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key } from 'react';
+import { Key, useState } from 'react';
 
 import { ActionButton, Flex, Item, Menu, MenuTrigger, Text } from '@geti/ui';
 import { Delete, Edit, Invisible, Lock, MoreMenu, Unlock, Visible } from '@geti/ui/icons';
+import { clsx } from 'clsx';
 
 import classes from './annotation-list-item.module.scss';
 
@@ -40,6 +41,8 @@ export const AnnotationListItemMenu = ({
     remove,
     editLabels,
 }: AnnotationListItemMenuProps): JSX.Element => {
+    const [isOpen, setIsOpen] = useState(false);
+
     const onAction = (key: Key) => {
         switch (key) {
             case MENU_ACTIONS.HIDE: {
@@ -72,12 +75,15 @@ export const AnnotationListItemMenu = ({
     const disabledKeys = isLocked ? [MENU_ACTIONS.REMOVE] : [];
 
     return (
-        <MenuTrigger>
+        <MenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
             <ActionButton
                 isQuiet
                 aria-label='Show actions'
                 id={`annotation-list-item-${id}-menu`}
                 isDisabled={isDisabled}
+                UNSAFE_className={clsx(classes.annotationMenu, {
+                    [classes.annotationMenuVisible]: isOpen,
+                })}
             >
                 <MoreMenu className={isHidden ? classes.hiddenAnnotation : ''} />
             </ActionButton>
