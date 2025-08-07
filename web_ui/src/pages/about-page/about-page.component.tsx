@@ -38,24 +38,22 @@ const AboutPage = (): JSX.Element => {
                     <Heading level={3} marginBottom={'size-100'}>
                         ©{new Date().getFullYear()} Intel Corporation
                     </Heading>
-                    <>
-                        <Heading level={3}>Geti</Heading>
-                        {isSaasEnvironment ? (
-                            <SpectrumLink UNSAFE_className={classes.link}>
-                                <a href={TERMS_OF_USE_GETI} target={'_blank'} rel={'noopener noreferrer'}>
-                                    Terms of use & Privacy
-                                </a>
-                            </SpectrumLink>
-                        ) : (
-                            <ActionButton
-                                isQuiet
-                                UNSAFE_className={classes.licenceButton}
-                                onPress={() => setForceOpenLicenseModal(true)}
-                            >
-                                License
-                            </ActionButton>
-                        )}
-                    </>
+
+                    {isSaasEnvironment ? (
+                        <SpectrumLink UNSAFE_className={classes.link}>
+                            <a href={TERMS_OF_USE_GETI} target={'_blank'} rel={'noopener noreferrer'}>
+                                Terms of use & Privacy
+                            </a>
+                        </SpectrumLink>
+                    ) : (
+                        <ActionButton
+                            isQuiet
+                            UNSAFE_className={classes.licenceButton}
+                            onPress={() => setForceOpenLicenseModal(true)}
+                        >
+                            Geti License
+                        </ActionButton>
+                    )}
 
                     {!isSaasEnvironment && data?.buildVersion && (
                         <Text marginTop={'size-400'} id={'build-version-id'}>
