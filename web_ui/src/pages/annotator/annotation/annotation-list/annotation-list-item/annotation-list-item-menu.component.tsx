@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key, useState } from 'react';
+import { Key } from 'react';
 
 import { ActionButton, Flex, Item, Menu, MenuTrigger, Text } from '@geti/ui';
 import { Delete, Edit, Invisible, Lock, MoreMenu, Unlock, Visible } from '@geti/ui/icons';
@@ -40,8 +40,6 @@ export const AnnotationListItemMenu = ({
     remove,
     editLabels,
 }: AnnotationListItemMenuProps): JSX.Element => {
-    const [isOpen, setIsOpen] = useState(false);
-
     const onAction = (key: Key) => {
         switch (key) {
             case MENU_ACTIONS.HIDE: {
@@ -74,7 +72,7 @@ export const AnnotationListItemMenu = ({
     const disabledKeys = isLocked ? [MENU_ACTIONS.REMOVE] : [];
 
     return (
-        <MenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+        <MenuTrigger>
             <ActionButton
                 isQuiet
                 aria-label='Show actions'
