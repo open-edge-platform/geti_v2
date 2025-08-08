@@ -89,7 +89,7 @@ export class TrainModelDialogPage {
     }
 
     async previousStep() {
-        await this.page.getByRole('button', { name: /Back/i }).click();
+        await this.page.getByTestId('modal').getByRole('button', { name: /Back/i }).click();
     }
 
     async train() {

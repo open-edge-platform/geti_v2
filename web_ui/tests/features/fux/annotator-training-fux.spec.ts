@@ -698,6 +698,8 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
                     page.getByTestId('popover').filter({ hasText: autoTrainingCreditSystemNotificationRegex })
                 ).toBeVisible();
 
+                await page.mouse.click(0, 0);
+
                 await page.getByTestId('annotatorActiveSet-more-btn-id').click();
                 await page.getByRole('menuitem', { name: 'Dismiss all' }).click();
                 await page.reload();
@@ -969,6 +971,8 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
             await expect(
                 page.getByTestId('popover').filter({ hasText: autoTrainingCreditSystemNotificationRegex })
             ).toBeVisible();
+
+            await page.mouse.click(0, 0);
 
             await page.getByTestId('annotatorActiveSet-more-btn-id').click();
             await page.getByRole('menuitem', { name: 'Dismiss all' }).click();
