@@ -46,7 +46,6 @@ class TestSubsetHelper:
                 task_node=fxt_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
 
             subset_helper.split(dataset_items=fxt_dataset)
@@ -84,7 +83,6 @@ class TestSubsetHelper:
                 task_node=fxt_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
 
             subset_helper.split(dataset_items=dataset)
@@ -105,7 +103,6 @@ class TestSubsetHelper:
                 task_node=fxt_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
 
             subset_helper.update_deficiencies(subset_label_counter=np.zeros(2))
@@ -133,7 +130,6 @@ class TestSubsetHelper:
                 task_node=fxt_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
 
             result = subset_helper.compute_actual_ratios(subset_counter=param_fxt_subset_counter)
@@ -163,7 +159,6 @@ class TestSubsetHelper:
                 task_node=fxt_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.target_ratios = np.array([0.5, 0.25, 0.25])
 
@@ -185,7 +180,6 @@ class TestSubsetHelper:
                 task_node=fxt_classification_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.task = fxt_classification_task
 
@@ -206,7 +200,6 @@ class TestSubsetHelper:
                 task_node=fxt_detection_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.task = fxt_detection_task
 
@@ -226,7 +219,6 @@ class TestSubsetHelper:
                 task_node=fxt_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.task = fxt_task
             subset_helper.subset_counter = np.array([0, 1, 1])
@@ -252,7 +244,6 @@ class TestSubsetHelper:
                 task_node=fxt_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.task = fxt_task
             subset_helper.subset_counter = np.array([10, 1, 10])
@@ -284,7 +275,6 @@ class TestSubsetHelper:
                 task_node=fxt_detection_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.task = fxt_detection_task
             subset_helper.subset_label_counter = np.array([[0, 0, 0]])
@@ -312,7 +302,6 @@ class TestSubsetHelper:
                 task_node=fxt_detection_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.subset_label_counter = np.array([[7, 1, 1]])
             subset_helper.labels_to_index = {fxt_label.id_: 0}
@@ -350,7 +339,6 @@ class TestSubsetHelper:
                 task_node=fxt_detection_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             fxt_training_configuration.global_parameters.dataset_preparation.subset_split.training = 100
             fxt_training_configuration.global_parameters.dataset_preparation.subset_split.validation = 0
@@ -361,7 +349,6 @@ class TestSubsetHelper:
             subset_helper.subset_split_config = (
                 fxt_training_configuration.global_parameters.dataset_preparation.subset_split
             )
-            subset_helper.filtering_config = fxt_training_configuration.global_parameters.dataset_preparation.filtering
             subset_helper.number_of_annotations = param_fxt_n_annotations
 
             result = subset_helper.compute_target_ratios()
@@ -384,7 +371,6 @@ class TestSubsetHelper:
                 task_node=fxt_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.task = fxt_task
             subset_helper.subset_counter = np.array([0, 1, 1])
@@ -419,7 +405,6 @@ class TestSubsetHelper:
                 task_node=fxt_detection_task,
                 task_labels=[fxt_label, fxt_label_2],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.labels_to_index = {fxt_label.id_: 0, fxt_label_2.id_: 1}
             subset_helper.latest_task_labels = [fxt_label, fxt_label_2]
@@ -467,7 +452,6 @@ class TestAnomalySubsetHelper:
                 task_node=fxt_anomaly_task,
                 task_labels=[fxt_label, fxt_anomalous_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.task = fxt_anomaly_task
             subset_helper.subset_label_counter = np.array([[0, 0, 0], [0, 0, 0]])
@@ -508,7 +492,6 @@ class TestAnomalySubsetHelper:
                 task_node=fxt_anomaly_task,
                 task_labels=[fxt_label, fxt_anomalous_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.task = fxt_anomaly_task
             subset_helper.subset_label_counter = np.array([[0, 0, 0], [0, 0, 0]])
@@ -554,7 +537,6 @@ class TestAnomalySubsetHelper:
                 task_node=fxt_task,
                 task_labels=[fxt_label, fxt_anomalous_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             subset_helper.task = fxt_task
             subset_helper.subset_label_counter = np.array([[10, 2, 10], [10, 2, 10]])
@@ -583,7 +565,6 @@ class TestAnomalySubsetHelper:
                 task_node=fxt_detection_task,
                 task_labels=[fxt_label],
                 subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-                filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
             )
             fxt_training_configuration.global_parameters.dataset_preparation.subset_split.training = 80
             fxt_training_configuration.global_parameters.dataset_preparation.subset_split.validation = 10
@@ -592,7 +573,6 @@ class TestAnomalySubsetHelper:
             subset_helper.subset_split_config = (
                 fxt_training_configuration.global_parameters.dataset_preparation.subset_split
             )
-            subset_helper.filtering_config = fxt_training_configuration.global_parameters.dataset_preparation.filtering
 
             result = subset_helper._compute_target_ratios()
 

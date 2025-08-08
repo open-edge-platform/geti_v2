@@ -11,7 +11,7 @@ import random
 from collections.abc import Iterable, Iterator, Sequence
 
 import numpy as np
-from geti_configuration_tools.training_configuration import Filtering, SubsetSplit
+from geti_configuration_tools.training_configuration import SubsetSplit
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier
 from iai_core.entities.dataset_item import DatasetItem
@@ -73,14 +73,12 @@ class _SubsetHelper:
         task_node: TaskNode,
         task_labels: list[Label],
         subset_split_config: SubsetSplit,
-        filtering_config: Filtering | None = None,
     ) -> None:
         self.task = task_node
         self.latest_task_labels = task_labels
         self.latest_task_label_ids = [label.id_ for label in task_labels]
         self.latest_task_label_map = {label.id_: label for label in task_labels}
         self.subset_split_config = subset_split_config
-        self.filtering_config = filtering_config
 
         self.subset_counter = np.zeros(len(SUBSETS))
         self.subset_label_counter = np.zeros((len(SUBSETS), len(self.latest_task_labels)))
@@ -519,7 +517,6 @@ class TaskSubsetManager(ITaskSubsetManager):
         dataset_items: Iterator[DatasetItem],
         task_node: TaskNode,
         subset_split_config: SubsetSplit,
-        filtering_config: Filtering | None = None,
         subsets_to_reset: tuple[Subset, ...] | None = None,
     ) -> None:
         """
@@ -543,7 +540,6 @@ class TaskSubsetManager(ITaskSubsetManager):
             task_node=task_node,
             task_labels=task_labels,
             subset_split_config=subset_split_config,
-            filtering_config=filtering_config,
         )
 
         # Determine subsets for resetting based on task type and configuration
@@ -554,7 +550,6 @@ class TaskSubsetManager(ITaskSubsetManager):
 
         logger.info(f"Splitting dataset for task {task_node.id_} into subsets. Subsets to reset: {subsets_to_reset}")
         logger.info(f"Subset split config: {subset_split_config}")
-        logger.info(f"Filtering config: {filtering_config}")
 
         subset_helper.split(
             dataset_items=dataset_items,

@@ -71,7 +71,7 @@ def shard_dataset(  # noqa: PLR0913
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
         ignored during training
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
-    annotation scene will be ignored during training.
+    annotation scene will be ignored
     :return: ID of CompiledDatasetShards entity
     """
     progress_callback(0, "Preparing dataset")

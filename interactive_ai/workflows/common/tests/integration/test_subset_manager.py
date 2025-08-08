@@ -5,7 +5,7 @@ import random
 from unittest.mock import patch
 
 import numpy as np
-from geti_configuration_tools.training_configuration import SubsetSplit
+from geti_configuration_tools.training_configuration import Filtering, SubsetSplit
 from geti_types import DatasetStorageIdentifier, ImageIdentifier
 from iai_core.entities.annotation import Annotation, AnnotationScene, AnnotationSceneKind
 from iai_core.entities.dataset_entities import TaskDataset
@@ -236,7 +236,6 @@ class TestSubsetManager:
             dataset_items=dataset,
             task_node=task_node,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Check the result
@@ -293,7 +292,6 @@ class TestSubsetManager:
             dataset_items=dataset,
             task_node=task_node,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Check the result
@@ -348,7 +346,6 @@ class TestSubsetManager:
             dataset_items=dataset,
             task_node=task_node,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Check the result
@@ -404,7 +401,6 @@ class TestSubsetManager:
             dataset_items=dataset,
             task_node=task_node,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Check the result
@@ -459,7 +455,6 @@ class TestSubsetManager:
             dataset_items=dataset,
             task_node=task_node,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Check the result
@@ -515,7 +510,6 @@ class TestSubsetManager:
             dataset_items=dataset,
             task_node=task_node,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Check the result
@@ -565,7 +559,6 @@ class TestSubsetManager:
             dataset_items=dataset,
             task_node=task_node,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Check the result
@@ -583,7 +576,6 @@ class TestSubsetManager:
             dataset_items=new_dataset,
             task_node=task_node,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Check the result
@@ -798,7 +790,6 @@ class TestSubsetManager:
             task_node=task_node,
             task_labels=task_labels,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
         reordered_items = subset_helper.reorder_by_priority(
             items,
@@ -869,7 +860,6 @@ class TestSubsetManager:
             task_node=task_node,
             task_labels=task_labels,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
         items = list(dataset)
         groups = subset_helper.group_by_labels(
@@ -922,7 +912,6 @@ class TestSubsetManager:
             task_node=task_node,
             task_labels=task_labels,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
         # Case 1 : empty group_indices
         test_group = []
@@ -985,7 +974,6 @@ class TestSubsetManager:
             task_node=task_node,
             task_labels=task_labels,
             subset_split_config=fxt_training_configuration.global_parameters.dataset_preparation.subset_split,
-            filtering_config=fxt_training_configuration.global_parameters.dataset_preparation.filtering,
         )
 
         # Case 1: normal 3x3 case
@@ -1142,6 +1130,7 @@ class TestSubsetManager:
         initial_dataset = Dataset(items=dataset_items, id=DatasetRepo.generate_id())
 
         fxt_training_configuration.global_parameters.dataset_preparation.subset_split.remixing = True
+        fxt_training_configuration.global_parameters.dataset_preparation.filtering = Filtering()
 
         with patch.object(TaskDataset, "get_dataset", return_value=initial_dataset):
             un_shuffled_dataset = DatasetHelpers.construct_and_save_train_dataset_for_task(

@@ -15,8 +15,10 @@ class AnnotationFilter:
     @unified_tracing
     def apply_annotation_filters(
         dataset: Dataset,
-        max_number_of_annotations: float | None = None,
+        min_number_of_annotations: int | None = None,
+        max_number_of_annotations: int | None = None,
         min_annotation_size: int | None = None,
+        max_annotation_size: int | None = None,
     ) -> Dataset:
         """
         WARNING: This replaces the annotations referenced in the dataset. Using this with methods such as
@@ -26,26 +28,43 @@ class AnnotationFilter:
          an annotations scene.
 
         :param dataset: Dataset to apply filter to.
+        :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene.
+            If not None, any annotation scene with fewer annotations than this value will be ignored
         :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
-        ignored during training
+            ignored
         :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
-        annotation scene will be ignored during training.
+            annotation scene will be ignored
+        :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
+            ignored
         :return: Filtered dataset
         """
-        if max_number_of_annotations is None and min_annotation_size is None:
+        if (
+            max_number_of_annotations is None
+            and min_annotation_size is None
+            and min_number_of_annotations is None
+            and max_annotation_size is None
+        ):
             return dataset
         logger.info(
-            f"Applying annotation filter with minimum size: {min_annotation_size} and maximum number of "
-            f"annotations: {max_number_of_annotations}"
+            f"Applying annotation filter with minimum size: {min_annotation_size}, "
+            f"maximum size: {max_annotation_size}, "
+            f"minimum number of annotations: {min_number_of_annotations}, "
+            f"and maximum number of annotations: {max_number_of_annotations}"
         )
-        max_number_of_annotations = float("inf") if max_number_of_annotations is None else max_number_of_annotations
+        min_number_of_annotations = 0 if min_number_of_annotations is None else min_number_of_annotations
         for item in list(dataset):
-            AnnotationFilter.filter_annotation_size(item, min_annotation_size)
+            AnnotationFilter.filter_annotation_size(item, min_annotation_size, max_annotation_size)
             num_annotations = len(item.annotation_scene.annotations)
             if num_annotations == 0:
                 dataset.remove(item)
                 logger.info(f"Filtering out item with id '{item.id_}' because it has no annotations")
-            elif num_annotations > max_number_of_annotations:
+            elif num_annotations < min_number_of_annotations:
+                dataset.remove(item)
+                logger.info(
+                    f"Filtering out item with id '{item.id_}' because it has too few annotations (found "
+                    f"{num_annotations}, min {min_number_of_annotations})"
+                )
+            elif max_number_of_annotations and num_annotations > max_number_of_annotations:
                 dataset.remove(item)
                 logger.info(
                     f"Filtering out item with id '{item.id_}' because it has too many annotations (found "
@@ -54,11 +73,14 @@ class AnnotationFilter:
         return dataset
 
     @staticmethod
-    def filter_annotation_size(item: DatasetItem, min_annotation_size: int | None = None) -> None:
+    def filter_annotation_size(
+        item: DatasetItem, min_annotation_size: int | None = None, max_annotation_size: int | None = None
+    ) -> None:
         """
-        Filter out annotations from the dataset item that are smaller than the minimum annotation size.
+        Filter out annotations from the dataset item that are smaller than the minimum annotation size
+        or larger than the maximum annotation size.
         """
-        if min_annotation_size is None:
+        if min_annotation_size is None and max_annotation_size is None:
             return
 
         annotations = item.annotation_scene.annotations
@@ -66,10 +88,16 @@ class AnnotationFilter:
             annotation_size = int(
                 annotation.shape.get_area() * item.annotation_scene.media_width * item.annotation_scene.media_height
             )
-            if annotation_size < min_annotation_size:
+            if min_annotation_size is not None and annotation_size < min_annotation_size:
                 logger.debug(
-                    f"Removing annotation with size: {annotation_size} from annotation scene as it smaller "
+                    f"Removing annotation with size: {annotation_size} from annotation scene as it is smaller "
                     f"than the minimum annotation size: {min_annotation_size}."
+                )
+                annotations.remove(annotation)
+            elif max_annotation_size is not None and annotation_size > max_annotation_size:
+                logger.debug(
+                    f"Removing annotation with size: {annotation_size} from annotation scene as it is larger "
+                    f"than the maximum annotation size: {max_annotation_size}."
                 )
                 annotations.remove(annotation)
         item.annotation_scene.annotations = annotations

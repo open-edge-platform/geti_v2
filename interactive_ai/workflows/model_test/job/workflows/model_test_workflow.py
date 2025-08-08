@@ -16,6 +16,8 @@ def model_test_workflow(
     project_id: str,
     model_test_result_id: str,
     min_annotation_size: Optional[int] = None,  # noqa: UP007
+    max_annotation_size: Optional[int] = None,  # noqa: UP007
+    min_number_of_annotations: Optional[int] = None,  # noqa: UP007
     max_number_of_annotations: Optional[int] = None,  # noqa: UP007
 ) -> None:
     """
@@ -25,6 +27,10 @@ def model_test_workflow(
     :param model_test_result_id: ID of the model test result
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
      ignored during evaluation
+    :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
+     ignored during evaluation
+    :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene.
+        If not None, annotation scenes with fewer than this number of annotations will be ignored during evaluation.
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
      annotation scene will be ignored during evaluation.
     """
@@ -32,5 +38,7 @@ def model_test_workflow(
         project_id=project_id,
         model_test_result_id=model_test_result_id,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
         max_number_of_annotations=max_number_of_annotations,
     )

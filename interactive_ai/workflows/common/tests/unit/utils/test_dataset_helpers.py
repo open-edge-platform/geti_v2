@@ -8,6 +8,7 @@ from iai_core.entities.datasets import Dataset, DatasetPurpose
 from iai_core.entities.project import Project
 from iai_core.repos import DatasetRepo, LabelSchemaRepo
 
+from jobs_common.utils.annotation_filter import AnnotationFilter
 from jobs_common.utils.dataset_helpers import DatasetHelpers
 from jobs_common.utils.subset_management.subset_manager import TaskSubsetManager
 
@@ -44,6 +45,7 @@ class TestDatasetHelpers:
             patch.object(TaskDataset, "save_subsets") as mock_save_subsets,
             patch("jobs_common.utils.dataset_helpers.publish_event") as mock_publish_event,
             patch.object(DatasetRepo, "save_deep") as mock_save_deep,
+            patch.object(AnnotationFilter, "apply_annotation_filters") as mock_apply_annotation_filters,
         ):
             train_dataset = DatasetHelpers.construct_and_save_train_dataset_for_task(
                 task_dataset_entity=TaskDataset(
@@ -59,6 +61,14 @@ class TestDatasetHelpers:
                 reshuffle_subsets=True,
             )
 
+        filter_params = fxt_training_configuration.global_parameters.dataset_preparation.filtering
+        mock_apply_annotation_filters.assert_called_once_with(
+            dataset=ANY,
+            min_number_of_annotations=filter_params.min_annotation_objects.min_annotation_objects,
+            max_number_of_annotations=filter_params.max_annotation_objects.max_annotation_objects,
+            min_annotation_size=filter_params.min_annotation_pixels.min_annotation_pixels,
+            max_annotation_size=filter_params.max_annotation_pixels.max_annotation_pixels,
+        )
         mock_get_label_schema.assert_called_once_with(task_node_id=task_node.id_)
         mock_get_dataset.assert_called_once_with(dataset_storage=project.get_training_dataset_storage())
         mock_split.assert_called_once()

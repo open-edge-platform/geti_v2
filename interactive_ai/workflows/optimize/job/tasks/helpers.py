@@ -56,12 +56,14 @@ def _prepare_s3_bucket(
 
 
 @unified_tracing
-def prepare_optimize(
+def prepare_optimize(  # noqa: PLR0913
     project_id: str,
     model_storage_id: str,
     model_id: str,
     compiled_dataset_shards_id: str,
     min_annotation_size: Optional[int] = None,  # noqa: UP007
+    max_annotation_size: Optional[int] = None,  # noqa: UP007
+    min_number_of_annotations: Optional[int] = None,  # noqa: UP007
     max_number_of_annotations: Optional[int] = None,  # noqa: UP007
 ) -> OptimizationTrainerContext:
     """Function should be called in prior to model optimization task.
@@ -76,6 +78,9 @@ def prepare_optimize(
         If it is NULL_COMPILED_DATASET_SHARDS_ID, do not use dataset shard files for the model optimization.
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
     ignored
+    :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
+     ignored during evaluation
+    :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene. If not None,
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
     annotation scene will be ignored
     """
@@ -103,8 +108,10 @@ def prepare_optimize(
     train_dataset = model.get_train_dataset()
     filtered_train_dataset = AnnotationFilter.apply_annotation_filters(
         dataset=train_dataset,
-        max_number_of_annotations=max_number_of_annotations,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
+        max_number_of_annotations=max_number_of_annotations,
     )
     label_schema = model.get_label_schema()
     compiled_dataset_shards = CompiledDatasetShardsRepo(
