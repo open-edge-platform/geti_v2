@@ -89,8 +89,10 @@ def shard_dataset_prepare_models_and_start_optimization(  # noqa: PLR0913
         train_dataset = model.get_train_dataset()
         filtered_train_dataset = AnnotationFilter.apply_annotation_filters(
             dataset=train_dataset,
+            min_number_of_annotations=min_number_of_annotations,
             max_number_of_annotations=max_number_of_annotations,
             min_annotation_size=min_annotation_size,
+            max_annotation_size=max_annotation_size,
         )
         label_schema = model.get_label_schema()
 
