@@ -50,6 +50,7 @@ def optimize_workflow_pot(  # noqa: PLR0913
     :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
      ignored during evaluation
     :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene. If not None,
+        annotation scenes with fewer than this number of annotations will be ignored during evaluation.
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
      annotation scene will be ignored during evaluation.
     :param command: Command to be executed on the primary container, e.g., OTX2 trainer pod.
