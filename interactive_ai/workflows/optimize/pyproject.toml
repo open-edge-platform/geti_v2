@@ -82,5 +82,11 @@ show_error_codes = true
 
 [tool.uv]
 override-dependencies = [
-    "cuda-bindings; sys_platform == 'never'", # Unnecessary datumaro dependency
+    # Exclude unnecessary subdependencies from datumaro
+    "cuda-bindings; sys_platform == 'never'",
+    "nltk; sys_platform == 'never'",
+    "ovmsclient; sys_platform == 'never'",
+    "portalocker; sys_platform == 'never'",
+    "tokenizers; sys_platform == 'never'",
+    "tritonclient; sys_platform == 'never'",
 ]

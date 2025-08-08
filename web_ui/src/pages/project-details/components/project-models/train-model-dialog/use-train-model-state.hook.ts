@@ -17,6 +17,7 @@ import { ModelsGroups } from '../../../../../core/models/models.interface';
 import { isActiveModel } from '../../../../../core/models/utils';
 import { ProjectIdentifier } from '../../../../../core/projects/core.interface';
 import { Task } from '../../../../../core/projects/task.interface';
+import { PerformanceCategory } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { useTasksWithSupportedAlgorithms } from '../../../../../core/supported-algorithms/hooks/use-tasks-with-supported-algorithms';
 import { SupportedAlgorithm } from '../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
@@ -35,14 +36,15 @@ const getActiveModelTemplateId = (
     algorithms: SupportedAlgorithm[],
     taskId: string
 ): string | null => {
-    if (isEmpty(modelsGroups)) {
-        return algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId ?? null;
+    const activeModelTemplateId = modelsGroups?.find(
+        (modelGroup) => modelGroup.taskId === taskId && modelGroup.modelVersions.some(isActiveModel)
+    )?.modelTemplateId;
+
+    if (activeModelTemplateId !== undefined) {
+        return activeModelTemplateId;
     }
 
-    return (
-        modelsGroups?.find((modelGroup) => modelGroup.taskId === taskId && modelGroup.modelVersions.some(isActiveModel))
-            ?.modelTemplateId ?? null
-    );
+    return algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId ?? null;
 };
 
 const useTrainingConfiguration = ({
@@ -95,6 +97,8 @@ const useSelectedModelTemplateId = ({
     return [selectedModelTemplateId, setSelectedModelTemplateId, activeModelTemplateId] as const;
 };
 
+const SAM_MODEL_TEMPLATE_ID = 'visual_prompting_model';
+
 export const useTrainModelState = () => {
     const [mode, setMode] = useState<TrainModelMode>(TrainModelMode.BASIC);
 
@@ -118,6 +122,11 @@ export const useTrainModelState = () => {
     });
 
     const isBasicMode = mode === TrainModelMode.BASIC;
+    const hasSupportedModels =
+        (models ?? []).filter(
+            (modelGroup) =>
+                modelGroup.taskId === selectedTask.id && modelGroup.modelTemplateId !== SAM_MODEL_TEMPLATE_ID
+        ).length > 0;
 
     const [trainingConfiguration, setTrainingConfiguration, defaultTrainingConfiguration] = useTrainingConfiguration({
         projectIdentifier,
@@ -130,6 +139,45 @@ export const useTrainModelState = () => {
 
     const openAdvancedSettingsMode = (): void => {
         setMode(TrainModelMode.ADVANCED_SETTINGS);
+    };
+
+    const openBasicMode = (): void => {
+        setMode(TrainModelMode.BASIC);
+
+        const recommendedAlgorithms = algorithms.filter((algorithm) =>
+            [PerformanceCategory.BALANCE, PerformanceCategory.SPEED, PerformanceCategory.ACCURACY].includes(
+                algorithm.performanceCategory
+            )
+        );
+
+        const isSelectedOneOfRecommendedAlgorithms = recommendedAlgorithms.some(
+            (algorithm) => algorithm.modelTemplateId === selectedModelTemplateId
+        );
+
+        if (isSelectedOneOfRecommendedAlgorithms) {
+            return;
+        }
+
+        const isDefaultAlgorithmSelected =
+            isEmpty(models) &&
+            algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId === selectedModelTemplateId;
+
+        if (isDefaultAlgorithmSelected) {
+            return;
+        }
+
+        const isSelectedActiveAlgorithm =
+            models?.find((modelsGroup) => {
+                return modelsGroup.taskId === selectedTask.id && modelsGroup.modelVersions.some(isActiveModel);
+            })?.modelTemplateId === selectedModelTemplateId;
+
+        if (isSelectedActiveAlgorithm) {
+            return;
+        }
+
+        const newActiveModelTemplateId = getActiveModelTemplateId(models, algorithms, selectedTask.id);
+
+        changeSelectedModelTemplateId(newActiveModelTemplateId);
     };
 
     const constructTrainingBodyDTO = (): TrainingBodyDTO => {
@@ -172,7 +220,7 @@ export const useTrainModelState = () => {
         const trainingConfigurationMutation = useTrainingConfigurationMutation();
 
         const { useTrainModelMutation } = useModels();
-        const trainModel = useTrainModelMutation();
+        const trainModelMutation = useTrainModelMutation();
 
         const handleTrainModel = (onSuccess?: () => void) => {
             // 1. If we are in basic mode, we can directly train the model, without updating the training configuration.
@@ -184,7 +232,7 @@ export const useTrainModelState = () => {
             // 3.2. If train model succeeds, we call the onSuccess callback if provided.
 
             if (isBasicMode) {
-                trainModel.mutate(
+                trainModelMutation.mutate(
                     {
                         projectIdentifier,
                         body: constructTrainingBodyDTO(),
@@ -211,7 +259,7 @@ export const useTrainModelState = () => {
                 },
                 {
                     onSuccess: () => {
-                        trainModel.mutate(
+                        trainModelMutation.mutate(
                             { projectIdentifier, body: constructTrainingBodyDTO() },
                             {
                                 onSuccess,
@@ -234,8 +282,8 @@ export const useTrainModelState = () => {
 
         return {
             mutate: handleTrainModel,
-            isPending: trainModel.isPending || trainingConfigurationMutation.isPending,
-            error: trainModel.error?.message || trainingConfigurationMutation.error?.message,
+            isPending: trainModelMutation.isPending || trainingConfigurationMutation.isPending,
+            error: trainModelMutation.error?.message || trainingConfigurationMutation.error?.message,
         };
     };
 
@@ -257,5 +305,7 @@ export const useTrainModelState = () => {
         trainingConfiguration,
         updateTrainingConfiguration: setTrainingConfiguration,
         trainModel: useTrainModel(),
+        openBasicMode,
+        hasSupportedModels,
     } as const;
 };

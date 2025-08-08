@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { ActionButton, Tooltip, TooltipTrigger, useNumberFormatter } from '@geti/ui';
 import { Add, Remove } from '@geti/ui/icons';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { useControls } from 'react-zoom-pan-pinch';
 
 import { useEventListener } from '../../../../../hooks/event-listener/event-listener.hook';

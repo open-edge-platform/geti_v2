@@ -53,6 +53,7 @@ class ScoredLabelRESTViews:
         return ScoredLabel(
             label_id=label.id_,
             is_empty=label.is_empty,
+            is_background=label.is_background,
             probability=probability,
             label_source=label_source,
         )

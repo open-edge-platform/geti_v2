@@ -9,7 +9,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 
 import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { getMockedProjectExportIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
-import { ProjectExport } from '../project.interface';
+import { EXPORT_PROJECT_MODELS_OPTIONS, ProjectExport } from '../project.interface';
 import { createInMemoryProjectService } from '../services/in-memory-project-service';
 import { ProjectService } from '../services/project-service.interface';
 import { useExportProject } from './use-export-project.hook';
@@ -31,7 +31,10 @@ const wrapper = ({ children, projectService }: { children?: ReactNode; projectSe
 
 const projectService = createInMemoryProjectService();
 describe('useExportProject', () => {
-    const mockData = getMockedProjectExportIdentifier({ workspaceId: '1', projectId: '4', exportProjectId: '2' });
+    const mockData = {
+        projectIdentifier: getMockedProjectExportIdentifier({ workspaceId: '1', projectId: '4', exportProjectId: '2' }),
+        selectedModelExportOption: EXPORT_PROJECT_MODELS_OPTIONS.ALL,
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();

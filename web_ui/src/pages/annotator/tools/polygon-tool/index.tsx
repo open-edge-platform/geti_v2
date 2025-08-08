@@ -24,6 +24,6 @@ export const PolygonTool: ToolProps = {
         title: toolTypeToLabelMapping[ToolType.PolygonTool],
         description: `The polygon tool allows for free form drawing around shapes.`,
     },
-    supportedDomains: [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE, DOMAIN.ANOMALY_SEGMENTATION],
+    supportedDomains: [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE],
     StateProvider: PolygonStateProvider,
 };

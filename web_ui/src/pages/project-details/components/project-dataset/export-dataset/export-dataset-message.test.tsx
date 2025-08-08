@@ -169,21 +169,6 @@ describe('ExportDatasetMessage', () => {
         expect(screen.getByText(EXPORT_VIDEO_NOT_SUPPORTED_MESSAGE)).toBeVisible();
     });
 
-    it('anomaly segmentation & "datumaro" format', async () => {
-        await renderApp({
-            project: getMockedProject([DOMAIN.ANOMALY_SEGMENTATION]),
-            exportFormat: ExportFormats.DATUMARO,
-        });
-
-        expect(screen.getByText('Converted formats')).toBeVisible();
-
-        expect(screen.queryByText(CLASSIFICATION_MESSAGE)).not.toBeInTheDocument();
-        expect(screen.queryByText(ROTATED_BOUNDING_MESSAGE)).not.toBeInTheDocument();
-        expect(screen.queryByText(TASK_CHAIN_MESSAGE)).not.toBeInTheDocument();
-
-        expect(screen.getByText(EXPORT_VIDEO_NOT_SUPPORTED_MESSAGE)).toBeVisible();
-    });
-
     it('task chain & "datumaro" format', async () => {
         await renderApp({
             project: getMockedProject([DOMAIN.SEGMENTATION]),

@@ -234,7 +234,6 @@ describe('ExplanationSecondaryToolbar', () => {
         [DOMAIN.SEGMENTATION_INSTANCE, 'Explanation'],
         [DOMAIN.ANOMALY_CLASSIFICATION, 'Explanation'],
         [DOMAIN.ANOMALY_DETECTION, 'Explanation'],
-        [DOMAIN.ANOMALY_SEGMENTATION, 'Explanation'],
     ])('%o shows %o', async (domain: DOMAIN, explanationName: string) => {
         const task = getMockedTask({ domain });
 

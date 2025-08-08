@@ -27,6 +27,7 @@
       "id": "66042c987b4bd079335e9f8e",
       "name": "MyProject"
     },
+    "include_models": "latest_active",
     "download_url": "api/v1/organizations/421867ab-c380-48d0-b3ca-5cdb605f3c60/workspaces/6c029d4a-b93f-4114-93bd-78e534b98f04/projects/66042c987b4bd079335e9f8e/exports/6604445ad378a62f4bac6c84/download",
     "size": 123456789
   }

@@ -5,7 +5,7 @@ import { createContext, ReactNode, RefObject, useContext, useRef, useState } fro
 
 import { Flex, Grid, useUnwrapDOMRef, type FlexProps } from '@geti/ui';
 import { useInteractOutside } from '@react-aria/interactions';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import classes from './list-item-grid.module.scss';
 

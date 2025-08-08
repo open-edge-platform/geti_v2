@@ -77,7 +77,7 @@ initResources:
 ##
 image:
   registry: docker.io
-  repository: bitnami
+  repository: bitnamilegacy
   name: kafka:3.7.0-debian-12-r2
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -677,7 +677,7 @@ externalAccess:
     ##
     image:
       registry: docker.io
-      repository: bitnami/kubectl
+      repository: bitnamilegacy/kubectl
       tag: 1.23.4-debian-10-r7
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -879,7 +879,7 @@ volumePermissions:
   ##
   image:
     registry: docker.io
-    repository: bitnami
+    repository: bitnamilegacy
     name: os-shell:12-debian-12-r47
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.

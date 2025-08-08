@@ -26,6 +26,7 @@ const ContentWrapper: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 interface AdvancedSettingsProps {
+    hasSupportedModels: boolean;
     algorithms: SupportedAlgorithm[];
     selectedModelTemplateId: string | null;
     onChangeSelectedTemplateId: (modelTemplateId: string | null) => void;
@@ -46,6 +47,7 @@ interface TabProps {
 }
 
 export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
+    hasSupportedModels,
     algorithms,
     selectedModelTemplateId,
     onChangeSelectedTemplateId,
@@ -73,6 +75,7 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
             name: 'Data management',
             children: (
                 <DataManagement
+                    hasSupportedModels={hasSupportedModels}
                     trainingConfiguration={trainingConfiguration}
                     onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />

@@ -4,7 +4,7 @@
 import { PointerEvent, useRef, useState } from 'react';
 
 import { usePress } from '@react-aria/interactions';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { KeypointNode, Point } from '../../../../../core/annotations/shapes.interface';
 import { getMockedKeypointNode } from '../../../../../test-utils/mocked-items-factory/mocked-keypoint';

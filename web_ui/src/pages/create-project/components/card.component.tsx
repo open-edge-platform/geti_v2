@@ -4,7 +4,7 @@
 import { FC, SVGProps } from 'react';
 
 import { dimensionValue, Heading, Image, Radio, RadioGroup, Text, View } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isString } from 'lodash-es';
 import { usePress } from 'react-aria';
 

@@ -3,7 +3,7 @@
 
 import { DropZone as SpectrumDropZone, type SpectrumDropZoneProps as DropZoneProps } from '@geti/ui';
 import { getFilesFromDropEvent } from '@geti/ui/utils';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import classes from './drag-and-drop.module.scss';
 

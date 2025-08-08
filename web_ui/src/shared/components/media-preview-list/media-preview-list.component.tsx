@@ -3,7 +3,7 @@
 
 import { ReactNode } from 'react';
 
-import { DimensionValue, Responsive } from '@geti/ui';
+import { DimensionValue, Responsive, Selection } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
 import { getId, getIds } from '../../utils';
@@ -16,31 +16,34 @@ interface MediaPreviewListProps<T> {
     items: T[];
     viewMode: ViewModes;
     height?: Responsive<DimensionValue>;
-    selectedItems?: Record<string, boolean>;
+    selectedKeys?: Selection;
     hasLabelSelector?: boolean;
-    onPress?: (id: string) => void;
-    onUpdateItem: (id: string, item: T) => Promise<unknown>;
+    onUpdateItem: (id: string, item: T) => void;
     topLeftElement?: (id: string) => ReactNode;
     topRightElement?: (id: string) => ReactNode;
+    onSelectionChange?: (keys: Selection) => void;
 }
 
 export const MediaPreviewList = <T extends FileItem>({
     items,
     height,
     viewMode,
-    selectedItems = {},
+    selectedKeys,
     hasLabelSelector = true,
-    onPress,
     onUpdateItem,
     topLeftElement,
     topRightElement,
+    onSelectionChange,
 }: MediaPreviewListProps<T>): JSX.Element => {
     return (
         <MediaItemsList
+            height={height}
             viewMode={viewMode}
             mediaItems={items}
-            height={height}
+            selectedKeys={selectedKeys}
             idFormatter={getId}
+            selectionMode='multiple'
+            onSelectionChange={onSelectionChange}
             getTextValue={(item) => item.file.name}
             itemContent={(item) => {
                 const { id, dataUrl, labelIds, file } = item;
@@ -49,13 +52,11 @@ export const MediaPreviewList = <T extends FileItem>({
                     <MediaItem
                         id={id}
                         key={id}
-                        onPress={onPress}
                         height={'100%'}
                         url={dataUrl}
                         mediaFile={file}
                         labelIds={labelIds}
                         viewMode={viewMode}
-                        isSelected={selectedItems[id] ?? false}
                         hasLabelSelector={hasLabelSelector}
                         topLeftElement={topLeftElement}
                         topRightElement={topRightElement}

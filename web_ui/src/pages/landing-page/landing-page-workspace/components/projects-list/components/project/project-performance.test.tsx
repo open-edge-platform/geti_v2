@@ -9,7 +9,7 @@ import { providersRender as render } from '../../../../../../../test-utils/requi
 import { ProjectPerformance } from './project-performance.component';
 
 describe('ProjectPerformance', () => {
-    it('should display performance for single (not anomaly detection, anomaly segmentation) task', () => {
+    it('should display performance for single (not anomaly detection) task', () => {
         render(
             <ProjectPerformance
                 performance={{

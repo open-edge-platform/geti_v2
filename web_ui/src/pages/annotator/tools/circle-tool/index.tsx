@@ -25,5 +25,5 @@ export const CircleTool: ToolProps = {
         description: `Its purpose is to simplify annotation of circular objects.`,
     },
     StateProvider: CircleStateProvider,
-    supportedDomains: [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE, DOMAIN.ANOMALY_SEGMENTATION],
+    supportedDomains: [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE],
 };

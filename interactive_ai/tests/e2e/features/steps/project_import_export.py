@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from behave import given, when
+from behave import given, then, when
 from behave.runner import Context
 from file_management import download_file_from_remote_archive
 from static_definitions import ProjectType, TrainerType
@@ -140,3 +140,31 @@ def step_when_user_uploads_project_to_new_project(context: Context) -> None:
         import_project_request={"file_id": file_id},
     )
     context.job_id = import_response.job_id
+
+
+@when("the user requests to export the project with '{included_models}'")
+def step_when_user_requests_project_export(context: Context, included_models: str) -> None:
+    project_ie_api: ProjectImportExportApi = context.project_import_export_api
+    project_export_response = project_ie_api.trigger_project_export(
+        organization_id=context.organization_id,
+        workspace_id=context.workspace_id,
+        project_id=context.project_id,
+        include_models=included_models,
+    )
+    context.job_id = project_export_response.job_id
+
+
+@then("the exported project can be downloaded and is {exported_project_size} MB")
+def step_then_user_can_download_exported_project(context: Context, exported_project_size: int) -> None:
+    metadata = context.job_info.actual_instance.metadata
+    expected_size = int(exported_project_size) * 1000000
+    assert expected_size <= int(metadata.size) < expected_size + 1000000
+    download_url = metadata.download_url
+    export_id = download_url.split("/")[-2]
+    project_import_export_api = context.project_import_export_api
+    project_import_export_api.download_exported_project(
+        organization_id=context.organization_id,
+        workspace_id=context.workspace_id,
+        project_id=context.project_id,
+        export_operation_id=export_id,
+    )
