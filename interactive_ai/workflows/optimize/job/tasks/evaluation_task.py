@@ -63,9 +63,9 @@ def evaluate_optimized_model_pot(  # noqa: PLR0913
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
         ignored
     :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
-        ignored during training
+        ignored during
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
-    annotation scene will be ignored during training.
+    annotation scene will be ignored
     :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
     """

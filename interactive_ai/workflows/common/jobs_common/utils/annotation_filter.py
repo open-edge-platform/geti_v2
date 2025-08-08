@@ -28,13 +28,14 @@ class AnnotationFilter:
          an annotations scene.
 
         :param dataset: Dataset to apply filter to.
-        :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene. If not None, any annotation scene with fewer annotations than this value will be ignored during training (i.e., removed from the dataset).
+        :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene.
+            If not None, any annotation scene with fewer annotations than this value will be ignored
         :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
-            ignored during training
+            ignored
         :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
-            annotation scene will be ignored during training.
+            annotation scene will be ignored
         :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
-            ignored during training.
+            ignored
         :return: Filtered dataset
         """
         if (
