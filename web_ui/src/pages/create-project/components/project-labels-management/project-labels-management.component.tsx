@@ -95,7 +95,7 @@ export const ProjectLabelsManagement = ({
     return (
         <SliderAnimation
             animationDirection={animationDirection}
-            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+            style={{ height: '52vh', display: 'flex', flexDirection: 'column' }}
         >
             {tutorialCardKey && <TutorialCardBuilder cardKey={tutorialCardKey} />}
 
