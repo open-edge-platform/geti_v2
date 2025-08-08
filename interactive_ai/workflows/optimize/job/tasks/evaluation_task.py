@@ -111,8 +111,6 @@ def _evaluate_optimized_model(  # noqa: PLR0913
     :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
         ignored during training
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
-    annotation scene will be ignored during training.
-    :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
     annotation scene will be ignored
     """
     project = ProjectRepo().get_by_id(ID(project_id))
