@@ -254,7 +254,7 @@ class TestTrainingConfiguration:
                             "training": 50,
                             "validation": 49,
                             "test": 1,
-                            "dataset_size": 10,
+                            "dataset_size": 2,
                         }
                     }
                 }
