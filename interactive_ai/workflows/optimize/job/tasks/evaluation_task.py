@@ -62,7 +62,7 @@ def evaluate_optimized_model_pot(  # noqa: PLR0913
     :param model_id: base model ID
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
         ignored
-    :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
+    :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
         ignored during training
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
     annotation scene will be ignored during training.
