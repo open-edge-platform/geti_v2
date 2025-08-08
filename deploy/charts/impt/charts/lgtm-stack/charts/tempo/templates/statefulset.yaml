@@ -1,0 +1,214 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "tempo.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "tempo.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tempo.selectorLabels" . | nindent 6 }}
+  serviceName: {{ template "tempo.fullname" . }}-headless
+  template:
+    metadata:
+      labels:
+        {{- include "tempo.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-tempo.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "tempo.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- if .Values.global.enable_local_image_pull_secret }}
+      imagePullSecrets:
+        - name: regcred
+      {{- end }}
+      initContainers:
+        - name: volume-permissions
+          image: "{{ .Values.global.busybox.registry }}/{{ if .Values.global.busybox.repository }}{{ .Values.global.busybox.repository }}/{{ end }}{{ .Values.global.busybox.name }}"
+          imagePullPolicy: {{ .Values.init.imagePullPolicy }}
+          securityContext:
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_READ_SEARCH
+          command:
+            - sh
+            - -c
+            - >-
+              find /data -type d -exec chown -v {{ .Values.tempo.securityContext.runAsUser }} {} +
+          volumeMounts:
+            - mountPath: /data
+              name: storage
+              subPath: tempo
+        # [mTLS STRICT] The kubectl-wait init container is used to wait for the init job that is related to this specific component.
+        # This is a workaround to address the issue that arises when using Istio mTLS strict mode and init containers
+        # that do not have the Istio proxy sidecar
+        - name: "kubectl-wait"
+          image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
+          command: [ "/bin/bash", "-c" ]
+          args:
+            - >-
+              kubectl wait jobs
+              --timeout=1200s 
+              --for=condition=complete 
+              --namespace {{ .Release.Namespace }}
+              init-job-{{ .Chart.Name }}
+          securityContext:
+            {{ toYaml .Values.init.securityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.initResources | nindent 12 }}  
+      containers:
+      - args:
+        - -config.file=/conf/tempo.yaml
+        - -mem-ballast-size-mbs={{ .Values.tempo.memBallastSizeMbs }}
+        {{- range $key, $value := .Values.tempo.extraArgs }}
+        - "-{{ $key }}{{ if $value }}={{ $value }}{{ end }}"
+        {{- end }}
+        image: {{ .Values.tempo.image }}
+        imagePullPolicy: {{ .Values.tempo.pullPolicy }}
+        name: tempo
+        ports:
+        - containerPort: 3100
+          name: prom-metrics
+        - containerPort: 6831
+          name: jaeger-thrift-c
+          protocol: UDP
+        - containerPort: 6832
+          name: jaeger-thrift-b
+          protocol: UDP
+        - containerPort: 14268
+          name: jaeger-thrift-h
+        - containerPort: 14250
+          name: jaeger-grpc
+        - containerPort: 9411
+          name: zipkin
+        - containerPort: 55680
+          name: otlp-legacy
+        - containerPort: 4317
+          name: otlp-grpc
+        - containerPort: 55681
+          name: otlp-http
+        - containerPort: 55678
+          name: opencensus
+        resources:
+          {{- toYaml .Values.tempo.resources | nindent 10 }}
+        {{- with .Values.tempo.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        env:
+          {{- with .Values.tempo.extraEnv }}
+            {{- tpl (toYaml .) $ | nindent 10 }}
+          {{- end }}
+        {{- with .Values.tempo.extraEnvFrom }}
+        envFrom:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        {{- with .Values.tempo.extraVolumeMounts -}}
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        - mountPath: /conf
+          name: tempo-conf
+        {{- if .Values.persistence.enabled }}
+        - mountPath: {{ .Values.persistence.mountPath }}
+          name: storage
+          readOnly: false
+          subPath: tempo
+        {{- end }}
+        {{- if .Values.tempo.metricsGenerator.enabled }}
+        - mountPath: /tmp
+          name: tmp
+        {{- end }}
+      {{- if .Values.tempoQuery.enabled }}
+      - args:
+        - --query.base-path=/
+        - --grpc-storage-plugin.configuration-file=/conf/tempo-query.yaml
+        {{- range $key, $value := .Values.tempoQuery.extraArgs }}
+        - "-{{ $key }}{{ if $value }}={{ $value }}{{ end }}"
+        {{- end }}
+        image: {{ .Values.tempoQuery.repository }}:{{ .Values.tempoQuery.tag }}
+        imagePullPolicy: {{ .Values.tempoQuery.pullPolicy }}
+        name: tempo-query
+        ports:
+        - containerPort: 16686
+          name: jaeger-ui
+        - containerPort: 16687
+          name: jaeger-metrics
+        env:
+          {{- if .Values.tempoQuery.extraEnv }}
+            {{- toYaml .Values.tempoQuery.extraEnv | nindent 12 }}
+          {{- end }}
+        resources:
+          {{- toYaml .Values.tempoQuery.resources | nindent 10 }}
+        {{- with .Values.tempoQuery.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        {{- if .Values.tempoQuery.extraVolumeMounts -}}
+          {{ toYaml .Values.tempoQuery.extraVolumeMounts | nindent 8 }}
+        {{- end }}
+        - mountPath: /conf
+          name: tempo-query-conf
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{- if .Values.extraVolumes -}}
+        {{ toYaml .Values.extraVolumes | nindent 6 }}
+      {{- end }}
+      {{- if .Values.tempoQuery.enabled }}
+      - configMap:
+          name: {{ template "tempo.name" . }}-query
+        name: tempo-query-conf
+      {{- end }}
+      - configMap:
+          name: {{ template "tempo.name" . }}
+        name: tempo-conf
+      {{- if .Values.tempo.metricsGenerator.enabled }}
+      - name: tmp
+        emptyDir: {}
+      {{- end }}
+      {{- if .Values.persistence.enabled }}
+      - name: storage
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.existing_claim }}
+      {{- end }}
+  updateStrategy:
+    type: {{- toYaml .Values.tempo.updateStrategy | nindent 6 }}

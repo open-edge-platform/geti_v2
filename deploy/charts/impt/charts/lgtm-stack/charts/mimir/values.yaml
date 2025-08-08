@@ -1,0 +1,273 @@
+init:
+  imagePullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      memory: 100Mi
+  securityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 10001
+    capabilities:
+      drop:
+        - ALL
+
+initResources:
+  requests:
+    cpu: 50m
+    memory: 100Mi
+  limits:
+    memory: 100Mi
+
+# -- Overrides the chart's name
+nameOverride: ""
+
+# -- Overrides the chart's computed fullname
+fullnameOverride: ""
+
+# -- Define the amount of instances
+replicas: 1
+
+# -- Annotations for the StatefulSet
+annotations: {}
+
+global:
+  telemetry_retention_geti: 'default'
+  s3_endpoint: 'default'
+  kubectl:
+    registry: docker.io
+    repository: bitnamilegacy
+    name: kubectl:1.31.0
+  busybox:
+    registry: quay.io
+    repository: prometheus
+    name: busybox:glibc
+
+mimir:
+  image: docker.io/grafana/mimir:2.11.0@sha256:5758a0c571db4fd01990277ec58daecfd2cc299875486687d72843a21a80a345
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - myRegistryKeySecretName
+
+  updateStrategy: RollingUpdate
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 4Gi
+
+  # Global overrides
+  global_overrides:
+    per_tenant_override_config: /conf/overrides.yaml
+  overrides: {}
+
+  # Runtime config
+  runtimeConfig: {}
+
+  # SecurityContext for Mimir application containers
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsGroup: 10001
+    runAsNonRoot: true
+    runAsUser: 10001
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  ## Additional container arguments
+  extraArgs:
+    config.expand-env: true
+  # -- Environment variables to add
+  extraEnv:
+    - name: S3_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Release.Namespace }}-seaweed-fs"
+          key: "mimir_access_key"
+    - name: S3_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Release.Namespace }}-seaweed-fs"
+          key: "mimir_secret_key"
+    - name: GETI_TELEMETRY_RETENTION_DAYS
+      valueFrom:
+        configMapKeyRef:
+          name: "{{ .Release.Namespace }}-logging-config"
+          key: retention
+  # -- Environment variables from secrets or configmaps to add to the ingester pods
+  extraEnvFrom: []
+  # -- Volume mounts to add
+  extraVolumeMounts: []
+  # - name: extra-volume
+  #   mountPath: /mnt/volume
+  #   readOnly: true
+  #   existingClaim: volume-claim
+  httpListenPort: 9009
+
+  s3:
+    bucketNameTsdb: "mimir-tsdb"
+
+# -- Mimir configuration file contents
+# @default -- Dynamically generated mimir configmap
+config: |
+    multitenancy_enabled: false
+  
+    activity_tracker:
+      filepath: {{ .Values.persistence.mountPath }}/metrics-activity.log
+  
+    usage_stats:
+      enabled: false
+  
+    # This configures how the store-gateway synchronizes blocks stored in the bucket.
+    blocks_storage:
+      backend: s3
+      bucket_store:
+        sync_dir: {{ .Values.persistence.mountPath }}/tsdb-sync
+        # Scan the storage bucket frequently
+        sync_interval: 5m
+        metadata_cache:
+          # Set low bucket scanning cache TTL
+          bucket_index_content_ttl: 1m
+          tenant_blocks_list_ttl: 1m
+          metafile_doesnt_exist_ttl: 1m
+      s3:
+        bucket_name: {{ .Values.mimir.s3.bucketNameTsdb }}
+        endpoint: {{ .Values.global.s3_endpoint }}
+        insecure: true
+        access_key_id: "${S3_ACCESS_KEY}"
+        secret_access_key: "${S3_SECRET_KEY}"
+      tsdb:
+        dir: {{ .Values.persistence.mountPath }}/tsdb
+        # Force flush pending blocks to storage on shutdown.
+        flush_blocks_on_shutdown: true
+
+    compactor:
+      data_dir: {{ .Values.persistence.mountPath }}/compactor
+      sharding_ring:
+        kvstore:
+          store: memberlist
+      cleanup_interval: 5m
+    
+    distributor:
+      remote_timeout: 30s # Increase if "context deadline exceeded" errors occur on push requests to ingester.
+      ring:
+        instance_addr: 127.0.0.1
+        kvstore:
+          store: memberlist
+
+    ingester:
+      ring:
+        tokens_file_path: {{ .Values.persistence.mountPath }}/tokens
+        instance_addr: 127.0.0.1
+        kvstore:
+          store: memberlist
+        replication_factor: 1
+
+    ingester_client:
+      grpc_client_config:
+        max_recv_msg_size: 104857600
+        max_send_msg_size: 104857600
+
+    limits:
+      # Adjust max query parallelism to 16x sharding, without sharding we can run 14d queries fully in parallel.
+      # With sharding we can further shard each day another 16 times. 14 days * 16 shards = 224 subqueries.
+      max_query_parallelism: 224
+      # Retention in days
+      compactor_blocks_retention_period: "${GETI_TELEMETRY_RETENTION_DAYS}d"
+
+    querier:
+      # With query sharding we run more but smaller queries. We must strike a balance
+      # which allows us to process more sharded queries in parallel when requested, but not overload
+      # queriers during non-sharded queries.
+      max_concurrent: 16
+    
+    query_scheduler:
+      max_outstanding_requests_per_tenant: 10000
+  
+    ruler:
+      rule_path: {{ .Values.persistence.mountPath }}{{ .Values.persistence.mountPath }}-ruler
+
+    ruler_storage:
+      backend: filesystem
+      filesystem:
+        dir: {{ .Values.persistence.mountPath }}/rules
+
+    runtime_config:
+      file: /var/{{ include "mimir.name" . }}/runtime.yaml
+
+    server:
+      http_listen_port: {{ .Values.mimir.httpListenPort }}
+      log_level: error
+  
+      grpc_server_max_concurrent_streams: 1000
+      grpc_server_max_connection_age: 2m
+      grpc_server_max_connection_age_grace: 5m
+      grpc_server_max_connection_idle: 1m
+
+    store_gateway:
+      sharding_ring:
+        tokens_file_path: {{ .Values.persistence.mountPath }}/tokens
+        replication_factor: 1
+
+# -- securityContext for container
+securityContext: {}
+  # runAsUser: 65532
+  # runAsGroup: 65532
+  # fsGroup: 65532
+  # runAsNonRoot: true
+
+serviceAccount:
+  # -- Specifies whether a ServiceAccount should be created
+  create: true
+  # -- The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: null
+  # -- Image pull secrets for the service account
+  imagePullSecrets: []
+  # -- Annotations for the service account
+  annotations: {}
+  # -- Labels for the service account
+  labels: {}
+  automountServiceAccountToken: true
+
+service:
+  type: ClusterIP
+  annotations: {}
+  labels: {}
+
+persistence:
+  enabled: true
+  existing_claim: data-storage-volume-claim
+  mountPath: /data
+
+# -- Pod Annotations
+podAnnotations:
+  proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+  rollme: "{{ randAlphaNum 5 | quote }}" # Restart to sync S3 credential changes
+
+# -- Pod (extra) Labels
+podLabels: {}
+
+# -- Volumes to add
+extraVolumes: []
+
+# -- Node labels for pod assignment. See: https://kubernetes.io/docs/user-guide/node-selection/
+nodeSelector: {}
+
+# -- Tolerations for pod assignment. See: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []
+
+# -- Affinity for pod assignment. See: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+affinity: {}
+
+# -- The name of the PriorityClass
+priorityClassName: null
+

@@ -3,7 +3,7 @@
 
 .PHONY: build list-image list-umbrella-chart clean push static-code-analysis tests test-unit test-integration test-component
 .DEFAULT_GOAL := build
-PROJECTS = interactive_ai platform web_ui
+PROJECTS = interactive_ai platform web_ui deploy
 DISTRIB_CHARTS := deploy/charts
 
 

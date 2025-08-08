@@ -1,0 +1,223 @@
+---
+enabled:
+  auto-train-controller: true
+  cert-manager: false
+  dataset-ie: true
+  etcd: true
+  gateway: false
+  impt-configuration: true
+  inference-gateway: true
+  istio-csr: false
+  jobs-execution-namespace: true
+  jobs: true
+  kafka-provisioning: true
+  kafka-proxy: true
+  kafka: true
+  license: true
+  lgtm-stack: false
+  media-ms: true
+  modelmesh-serving: true
+  modelregistration: true
+  mongodb: true
+  oidc-stack: true
+  opa-bundle: true
+  opa: false
+  opentelemetry-collector: true
+  platform-cleaner: true
+  postgresql: true
+  project-ie: true
+  resource: true
+  seaweed-fs: false
+  secrets: true
+  spice-db: true
+  telemetry-compression: true
+  visual-prompt: true
+  web: true
+
+global:
+  istio_ambient_mesh: false
+  istio_gateway_name: "istio-gateway"
+  istio_ingress_namespace: "istio-system"
+  logging_config_dir: "/mnt/logging_config"
+  logs_dir: "/mnt/logs"
+  ldap_service_user_secret_name: "impt-ldap-service-user"
+  waypoint:
+    name: istio-waypoint
+    namespace: impt
+  security_headers: |
+    X-Frame-Options: "DENY"
+    Content-Security-Policy: "frame-ancestors 'none'; default-src 'self'; media-src 'self' https://docs.geti.intel.com/on-prem/2.6/; connect-src 'self' data: https://consumerdev.intel.com/ https://login.microsoftonline.com/; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' blob:; img-src 'self' data:; frame-src 'none'; object-src 'none'; form-action 'self'; worker-src 'self' blob:"
+    cross-origin-embedder-policy: require-corp
+    cross-origin-opener-policy: same-origin
+    X-Content-Type-Options: "nosniff"
+  stripped_headers: |
+    - "X-Envoy-Decorator-Operation"
+  enable_local_image_pull_secret: false
+  enable_object_storage: true
+  s3_endpoint: impt-seaweed-fs.impt:8333
+  docker_namespace: impp
+  forceNamespace:
+    flyte: flyte
+  debian: 
+    registry: docker.io
+    repository: bitnamilegacy
+    name: os-shell:12-debian-12-r47
+  kubectl: 
+    registry: docker.io
+    repository: bitnamilegacy
+    name: kubectl:1.31.0
+  credit_system_enabled: false
+  seaweed_fs_enabled: true
+  busybox:
+    registry: quay.io
+    repository: prometheus
+    name: busybox:glibc
+  telemetry_retention_geti: 30
+  telemetry_retention_k8s: 10
+  enable_mongodb_credentials: true
+  cors_policy:
+    enabled: true
+    allowed_origins:
+      - exact: "https://docs.geti.intel.com"
+    allowed_headers:
+      - Authorization
+      - Content-Type
+      - tus-resumable
+      - upload-length
+      - upload-length
+      - x-geti-csrf-protection
+      - cookie
+      - x-api-key
+    allowed_methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+    max_age: 86400s
+    allow_credentials: true
+
+gateway:
+  dex_name: "impt-dex"
+  configuration_cm_name: "impt-configuration"
+
+opentelemetry-collector:
+  config:
+    receivers:
+      k8s_events:
+        namespaces:
+        - "impt"
+        - "opa-istio"
+        - "istio-system"
+
+jobs-execution-namespace:
+  feature_flags_data:
+    "FEATURE_FLAG_ALLOW_EXTERNAL_KEY_PROJECT_IMPORT": "true"
+    "FEATURE_FLAG_AMBIENT_MESH": "false"
+    "FEATURE_FLAG_ANALYTICS_WORKFLOW_ID": "true"
+    "FEATURE_FLAG_ANOMALY_REDUCTION": "true"
+    "FEATURE_FLAG_CAMERA_VIDEO_UPLOAD": "false"
+    "FEATURE_FLAG_CLASSIFICATION_RANGES": "true"
+    "FEATURE_FLAG_CREDIT_SYSTEM": "false"
+    "FEATURE_FLAG_DECORD_VIDEO_DECODER": "false"
+    "FEATURE_FLAG_KEYPOINT_DETECTION": "true"
+    "FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE": "true"
+    "FEATURE_FLAG_MAINTENANCE_BANNER": "false"
+    "FEATURE_FLAG_OBJECT_STORAGE_OP": "true"
+    "FEATURE_FLAG_OFFLINE_INSTALLATION": "true"
+    "FEATURE_FLAG_OIDC_CIDAAS": "false"
+    "FEATURE_FLAG_ORG_QUOTAS": "false"
+    "FEATURE_FLAG_OTX_VERSION_SELECTION": "true"
+    "FEATURE_FLAG_SAAS_REQUIRE_INVITATION_LINK": "true"
+    "FEATURE_FLAG_MANAGE_USERS": "false"
+    "FEATURE_FLAG_MANAGE_USERS_ROLES": "true"
+    "FEATURE_FLAG_ACC_SVC_MOD": "false"
+    "FEATURE_FLAG_STORAGE_SIZE_COMPUTATION": "true"
+    "FEATURE_FLAG_SUPPORT_CORS": "false"
+    "FEATURE_FLAG_USER_ONBOARDING": "false"
+    "FEATURE_FLAG_VISUAL_PROMPT_SERVICE": "true"
+    "FEATURE_FLAG_WORKSPACE_ACTIONS": "false"
+    "FEATURE_FLAG_REQ_ACCESS": "false"
+    "FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS": "false"
+    "FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING": "true"
+    "FEATURE_FLAG_LABELS_REORDERING": "true"
+    "FEATURE_FLAG_ANNOTATION_HOLE": "false"
+
+impt-configuration:
+  feature_flags_data:
+    "FEATURE_FLAG_ALLOW_EXTERNAL_KEY_PROJECT_IMPORT": "true"
+    "FEATURE_FLAG_AMBIENT_MESH": "false"
+    "FEATURE_FLAG_ANALYTICS_WORKFLOW_ID": "true"
+    "FEATURE_FLAG_ANOMALY_REDUCTION": "true"
+    "FEATURE_FLAG_CAMERA_VIDEO_UPLOAD": "false"
+    "FEATURE_FLAG_CLASSIFICATION_RANGES": "true"
+    "FEATURE_FLAG_CREDIT_SYSTEM": "false"
+    "FEATURE_FLAG_DECORD_VIDEO_DECODER": "false"
+    "FEATURE_FLAG_KEYPOINT_DETECTION": "true"
+    "FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE": "true"
+    "FEATURE_FLAG_MAINTENANCE_BANNER": "false"
+    "FEATURE_FLAG_OBJECT_STORAGE_OP": "true"
+    "FEATURE_FLAG_OFFLINE_INSTALLATION": "true"
+    "FEATURE_FLAG_OIDC_CIDAAS": "false"
+    "FEATURE_FLAG_ORG_QUOTAS": "false"
+    "FEATURE_FLAG_OTX_VERSION_SELECTION": "true"
+    "FEATURE_FLAG_SAAS_REQUIRE_INVITATION_LINK": "true"
+    "FEATURE_FLAG_MANAGE_USERS": "false"
+    "FEATURE_FLAG_MANAGE_USERS_ROLES": "true"
+    "FEATURE_FLAG_ACC_SVC_MOD": "false"
+    "FEATURE_FLAG_STORAGE_SIZE_COMPUTATION": "true"
+    "FEATURE_FLAG_SUPPORT_CORS": "false"
+    "FEATURE_FLAG_USER_ONBOARDING": "false"
+    "FEATURE_FLAG_VISUAL_PROMPT_SERVICE": "true"
+    "FEATURE_FLAG_WORKSPACE_ACTIONS": "false"
+    "FEATURE_FLAG_REQ_ACCESS": "false"
+    "FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS": "false"
+    "FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING": "true"
+    "FEATURE_FLAG_LABELS_REORDERING": "true"
+    "FEATURE_FLAG_ANNOTATION_HOLE": "false"
+
+secrets:
+  smtp:
+    smtp_enabled: false
+
+oidc-stack:
+  openldap:
+    config:
+      impt_ldif: |-
+        # Group definitions.
+        dn: ou=Groups,dc=example,dc=org
+        objectClass: organizationalUnit
+        ou: Groups
+
+        dn: cn=Admins,ou=Groups,dc=example,dc=org
+        cn: Admins
+        gidnumber: 500
+        objectclass: posixGroup
+        objectclass: top
+
+        dn: cn=Users,ou=Groups,dc=example,dc=org
+        cn: Users
+        gidnumber: 501
+        objectclass: posixGroup
+        objectclass: top
+
+        dn: cn=ServiceAccounts,ou=Groups,dc=example,dc=org
+        cn: ServiceAccounts
+        gidnumber: 502
+        objectclass: posixGroup
+        objectclass: top
+
+  dex:
+    isSMTPDefined: false
+
+flyte-core:
+  flyteadmin:
+    initialProjects:
+      - impt-jobs
+  forceNamespace: flyte
+  storage:
+    s3:
+      endpoint: http://impt-seaweed-fs.impt:8333
+
+modelmesh-serving:
+  s3_endpoint_url: "http://impt-seaweed-fs.impt.svc.cluster.local:8333"

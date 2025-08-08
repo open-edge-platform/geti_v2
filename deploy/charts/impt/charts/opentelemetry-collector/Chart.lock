@@ -1,0 +1,6 @@
+dependencies:
+- name: geti-common
+  repository: file://../geti-common
+  version: 0.0.1
+digest: sha256:be9944396e137fce75b58ace1bda9bc461759de2dd1e3b72a60210742f98e13e
+generated: "2025-05-19T14:36:34.006041529+02:00"

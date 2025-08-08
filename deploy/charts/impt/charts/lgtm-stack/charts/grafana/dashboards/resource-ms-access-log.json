@@ -1,0 +1,5112 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 3,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 37,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 1
+          },
+          "id": 38,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/product_info` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get product info (GET /api/v1/product_info)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Product info",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 10,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 2
+          },
+          "id": 11,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/user_settings` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get user settings (GET /api/v1/user_settings)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 2
+          },
+          "id": 13,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/user_settings` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Store user settings (POST /api/v1/user_settings)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "User",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 4,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 2
+          },
+          "id": 1,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get all workspaces (GET /api/v1/workspaces)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Workspaces",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 3,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 12
+          },
+          "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "code",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get all projects (GET /api/v1/workspaces/.*/projects)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 12
+          },
+          "id": 5,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Create project (POST /api/v1/workspaces/.*/projects)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 12
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get project (GET /api/v1/workspaces/.*/projects/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 12
+          },
+          "id": 6,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `PUT` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Update project (PUT /api/v1/workspaces/.*/projects/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 21
+          },
+          "id": 9,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/thumbnail` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get project thumbnail (GET /api/v1/workspaces/.*/projects/.*/thumbnail)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 21
+          },
+          "id": 7,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `DELETE` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Delete project (DELETE /api/v1/workspaces/.*/projects/.*)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Projects",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 18,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 5
+          },
+          "id": 19,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get datasets (GET /api/v1/workspaces/.*/projects/.*/datasets)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 5
+          },
+          "id": 20,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Create dataset (POST /api/v1/workspaces/.*/projects/.*/datasets)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 5
+          },
+          "id": 21,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get dataset (POST /api/v1/workspaces/.*/projects/.*/datasets/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 5
+          },
+          "id": 22,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `PUT` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Update dataset (PUT /api/v1/workspaces/.*/projects/.*/datasets/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 14
+          },
+          "id": 23,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `DELETE` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Delete dataset (DELETE /api/v1/workspaces/.*/projects/.*/datasets/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 14
+          },
+          "id": 24,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/statistics` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get dataset statistics (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/statistics)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 14
+          },
+          "id": 34,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/training_revisions/.*` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get dataset (training revision) (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/training_revisions/.*)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Datasets",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 14,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 14
+          },
+          "id": 15,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get media (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 14
+          },
+          "id": 27,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method =~ `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media%3Aquery` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Query media (POST /api/v1/workspaces/.*/projects/.*/datasets/.*/media:query)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 23
+          },
+          "id": 35,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method =~ `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/training_revisions/.{24}/media` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get training revision media (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/training_revisions/.*/media)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 23
+          },
+          "id": 36,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method =~ `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/training_revisions/.{24}/media%3Aquery` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Query training revision media (POST /api/v1/workspaces/.*/projects/.*/datasets/.*/training_revisions/.*/media:query)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Media",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 25,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 7
+          },
+          "id": 16,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/images` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get images (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/images)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 7
+          },
+          "id": 28,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/images` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Upload image (POST /api/v1/workspaces/.*/projects/.*/datasets/.*/media/images)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 7
+          },
+          "id": 29,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/images/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get image (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/images/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 7
+          },
+          "id": 30,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `DELETE` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/images/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Delete image (DELETE /api/v1/workspaces/.*/projects/.*/datasets/.*/media/images/.*)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Images",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 26,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 8
+          },
+          "id": 17,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get videos (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 8
+          },
+          "id": 31,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Upload video (POST /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 8
+          },
+          "id": 32,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get video (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 8
+          },
+          "id": 33,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `DELETE` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Delete video (DELETE /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 17
+          },
+          "id": 39,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}/display/.*` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get video (display type) (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*/display/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 17
+          },
+          "id": 40,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}/frames/.*/display/.*` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get video frame (display type) (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*/frames/.*/display/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 17
+          },
+          "id": 41,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}%3Aquery` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Query video (POST /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*:query)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 17
+          },
+          "id": 42,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/training_revisions/.{24}/media/videos/.{24}%3Aquery` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Query video (training revision) (POST /api/v1/workspaces/.*/projects/.*/datasets/.*/training_revisions/.*/media/videos/.*:query)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Videos",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 43,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 9
+          },
+          "id": 44,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}_score/tests/.{24}/results%3Aquery` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Query media score (POST /api/v1/workspaces/.*/projects/.*/datasets/.*_score/tests/.*/results:query)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Media score",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 45,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 28
+          },
+          "id": 46,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/code_deployments:prepare` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Prepare code deployment (POST /api/v1/workspaces/.*/projects/.*/code_deployments:prepare)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 28
+          },
+          "id": 47,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/code_deployments/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get code deployment status (GET /api/v1/workspaces/.*/projects/.*/code_deployments/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 28
+          },
+          "id": 48,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/code_deployments/.{24}/download` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Download code deployment (GET /api/v1/workspaces/.*/projects/.*/code_deployments/.*/download)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Code deployment",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 49,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 11
+          },
+          "id": 50,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/images/.{24}/annotations` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Create image annotation (POST /api/v1/workspaces/.*/projects/.*/datasets/.*/media/images/.*/annotations)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 11
+          },
+          "id": 51,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/images/.{24}/annotations/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get image annotation (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/images/.*/annotations/.*)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Image annotations",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 52,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 12
+          },
+          "id": 53,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}/frames/.*/annotations` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Create video frame annotation (POST /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*/frames/.*/annotations)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 12
+          },
+          "id": 54,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}/frames/.*/annotations/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get video frame annotation (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*/frames/.*/annotations/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 12
+          },
+          "id": 55,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}/annotations/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get video annotation (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*/annotations/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 21
+          },
+          "id": 57,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}/range_annotation` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Submit video range annotations (POST /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*/range_annotation)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 21
+          },
+          "id": 58,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/datasets/.{24}/media/videos/.{24}/range_annotation` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get video range annotations (GET /api/v1/workspaces/.*/projects/.*/datasets/.*/media/videos/.*/range_annotation)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Video annotations",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 59,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 13
+          },
+          "id": 60,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/model_groups` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get model groups (GET /api/v1/workspaces/.*/projects/.*/model_groups)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 13
+          },
+          "id": 61,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/model_groups/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get model group (GET /api/v1/workspaces/.*/projects/.*/model_groups/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 13
+          },
+          "id": 62,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `POST` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/model_groups/.{24}%3Aactivate` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Activate model group (POST /api/v1/workspaces/.*/projects/.*/model_groups/.*:activate)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 13
+          },
+          "id": 64,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/model_groups/.{24}/models/.{24}` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get model (GET /api/v1/workspaces/.*/projects/.*/model_groups/.*/models/.*)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 22
+          },
+          "id": 65,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/model_groups/.{24}/models/.{24}/statistics` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Get model statistics (GET /api/v1/workspaces/.*/projects/.*/model_groups/.*/models/.*/statistics)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 6,
+            "y": 22
+          },
+          "id": 66,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/model_groups/.{24}/models/.{24}/export` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Export model (GET /api/v1/workspaces/.*/projects/.*/model_groups/.*/models/.*/export)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 51,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 22
+          },
+          "id": 67,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "builder",
+              "expr": "sum by(k8s_pod_name, response_code) (count_over_time({exporter=~\".+\", k8s_container_name=\"resource\", k8s_pod_name=~\"$pod_name\"} |= `uvicorn.access` | json | line_format `{{.body}}` | regexp `.{27} \\[.*\\] \\[.*\\]\\: .*? \\- \\\"(?P<method>.*?) (?P<path>.*?) HTTP\\/1.1\\\" (?P<response_code>\\d{3})` | method = `GET` | path =~ `/api/v1/workspaces/.{24}/projects/.{24}/model_groups/.{24}/models/.{24}/optimized_models/.{24}/export` [1m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Export optimized model (GET /api/v1/workspaces/.*/projects/.*/model_groups/.*/models/.*/optimized_models/.*/export)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Model",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Pod name",
+        "multi": true,
+        "name": "pod_name",
+        "options": [],
+        "query": {
+          "label": "k8s_pod_name",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "{k8s_container_name=\"resource\"}",
+          "type": 1
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Access log - Resource microservice",
+  "uid": "cf99995b-c038-4191-9f36-4919294dc7ca",
+  "version": 12,
+  "weekStart": ""
+}

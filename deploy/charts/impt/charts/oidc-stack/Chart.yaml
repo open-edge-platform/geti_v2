@@ -1,0 +1,11 @@
+apiVersion: v2
+name: oidc-stack
+description: A Helm chart for OpenID Connect
+type: application
+version: 0.0.2
+
+dependencies:
+  - name: dex
+    version: 0.0.10
+  - name: openldap
+    version: 0.0.3
