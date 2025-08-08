@@ -63,6 +63,7 @@ def run_model_test(
     :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
      ignored during evaluation
     :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene. If not None,
+     annotation scenes with fewer annotations than this value will be ignored during evaluation.
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
      annotation scene will be ignored during evaluation.
     """
