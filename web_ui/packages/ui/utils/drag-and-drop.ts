@@ -16,6 +16,7 @@ const toArray = async <T>(asyncIterator: AsyncIterable<T>): Promise<T[]> => {
 
 const flattenDropItemToFiles = async (item: DropItem): Promise<File[]> => {
     if (item.kind === 'file') {
+        const file = await item.getFile();
         return [file];
     }
 
