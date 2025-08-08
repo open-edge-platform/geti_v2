@@ -13,7 +13,7 @@ import { Tiling } from './tiling/tiling.component';
 import { TrainingSubsets } from './training-subsets/training-subsets.component';
 
 interface DataManagementProps {
-    hasModels: boolean;
+    hasSupportedModels: boolean;
     trainingConfiguration: TrainingConfiguration;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
@@ -29,7 +29,7 @@ const getAugmentationParameters = (configuration: TrainingConfiguration) => {
 };
 
 export const DataManagement: FC<DataManagementProps> = ({
-    hasModels,
+    hasSupportedModels,
     trainingConfiguration,
     onUpdateTrainingConfiguration,
 }) => {
@@ -43,7 +43,7 @@ export const DataManagement: FC<DataManagementProps> = ({
             {/* Not supported in v1 of training flow revamp <BalanceLabelsDistribution /> */}
             {!isEmpty(subsetSplitParameters) && (
                 <TrainingSubsets
-                    hasModels={hasModels}
+                    hasSupportedModels={hasSupportedModels}
                     subsetsParameters={trainingConfiguration.datasetPreparation.subsetSplit}
                     onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />

@@ -122,7 +122,7 @@ export const useTrainModelState = () => {
     });
 
     const isBasicMode = mode === TrainModelMode.BASIC;
-    const hasModels =
+    const hasSupportedModels =
         (models ?? []).filter(
             (modelGroup) =>
                 modelGroup.taskId === selectedTask.id && modelGroup.modelTemplateId !== SAM_MODEL_TEMPLATE_ID
@@ -306,6 +306,6 @@ export const useTrainModelState = () => {
         updateTrainingConfiguration: setTrainingConfiguration,
         trainModel: useTrainModel(),
         openBasicMode,
-        hasModels,
+        hasSupportedModels,
     } as const;
 };

@@ -140,7 +140,7 @@ const SubsetsDistribution: FC<SubsetsDistributionProps> = ({
 type SubsetsParameters = TrainingConfiguration['datasetPreparation']['subsetSplit'];
 
 interface TrainingSubsetsProps {
-    hasModels: boolean;
+    hasSupportedModels: boolean;
     subsetsParameters: SubsetsParameters;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
@@ -195,7 +195,7 @@ const TrainingSubsetsChangedDistributionWarning = () => {
 };
 
 export const TrainingSubsets: FC<TrainingSubsetsProps> = ({
-    hasModels,
+    hasSupportedModels,
     subsetsParameters,
     onUpdateTrainingConfiguration,
 }) => {
@@ -275,7 +275,8 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({
     );
 
     const subsetsSizesValid = areSubsetsSizesValid(subsetsParameters, subsetsDistribution);
-    const isChangedDistributionWarningVisible = hasModels && !isEqual(prevSubsetParameters.current, subsetsParameters);
+    const isChangedDistributionWarningVisible =
+        hasSupportedModels && !isEqual(prevSubsetParameters.current, subsetsParameters);
 
     return (
         <Accordion>
