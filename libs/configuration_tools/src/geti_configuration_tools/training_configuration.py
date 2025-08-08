@@ -43,7 +43,7 @@ class SubsetSplit(BaseModel):
             raise ValueError("Sum of subsets should be equal to 100")
         # check that all subsets can have at least one item
         if self.dataset_size is not None and self.dataset_size < 3:
-            raise ValueError("Each subset must be at least contain one item")
+            raise ValueError("The dataset is too small to assign at least one item to each subset")
         return self
 
 
