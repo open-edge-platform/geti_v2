@@ -20,7 +20,7 @@
   },
   "type": "module",
   "scripts": {
-    "test:unit": "npm run test:unit:ui --workspace=root --config jest.config.js --watchAll=false",
+    "test:unit": "npm run test:unit --workspace=root --config jest.config.js --watchAll=false",
     "type-check": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint \"src/**/*.ts*\" --max-warnings 0",
     "lint:fix": "eslint --fix \"./src/**/*.ts*\""
