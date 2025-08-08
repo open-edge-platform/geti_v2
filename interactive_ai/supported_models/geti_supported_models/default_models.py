@@ -146,3 +146,12 @@ class DefaultModels:
         :raises ValueError: If the task_type is not supported
         """
         return cls.get_model_by_type(task_type, DefaultCategory.BALANCE)
+
+    @classmethod
+    def get_default_models_per_task(cls) -> dict[str, str | None]:
+        """
+        Gets the default model for each task type.
+
+        :return: A dictionary mapping task types to their default model names
+        """
+        return {task_type.name.lower(): cls.get_default_model(task_type.name.lower()) for task_type in TaskType}

@@ -17,6 +17,7 @@ dependencies = [
     "geti-types",
     "geti-k8s-tools",
     "workflows_common[datumaro-conversion]",
+    "geti-supported-models",
 ]
 
 [tool.uv.sources]
@@ -26,6 +27,7 @@ geti-telemetry-tools = { path = "../../../libs/telemetry_tools", editable = true
 geti-types = { path = "../../../libs/types", editable = true }
 geti-k8s-tools = { path = "../../../libs/k8s_tools", editable = true }
 workflows_common = { path = "../common", editable = true }
+geti-supported-models = { path = "../../supported_models", editable = true }
 
 [dependency-groups]
 dev = [

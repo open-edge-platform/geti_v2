@@ -431,13 +431,13 @@ def fxt_model_empty_dataset(
 @pytest.fixture
 def fxt_model_group_rest(fxt_model, fxt_mongo_id):
     yield {
-        "id": fxt_mongo_id(0),
-        "name": "Sample Detection Template",
-        "task_id": fxt_mongo_id(1),
-        "model_template_id": "test_template_detection",
+        "id": str(fxt_mongo_id(0)),
+        "name": fxt_model.model_storage.name,
+        "task_id": str(fxt_mongo_id(1)),
+        "model_template_id": fxt_model.model_storage.model_template_id,
         "models": [
             {
-                "id": fxt_model.id_,
+                "id": str(fxt_model.id_),
                 "name": fxt_model.model_storage.name,
                 "creation_date": "2020-01-01T00:00:00+00:00",
                 "performance": {"score": get_performance_score(fxt_model.performance)},
