@@ -37,6 +37,7 @@
     "exports": {
         ".": "./index.ts",
         "./icons": "./icons/index.ts",
-        "./theme": "./theme/index.tsx"
+        "./theme": "./theme/index.tsx",
+        "./utils": "./utils/index.ts"
     }
 }
