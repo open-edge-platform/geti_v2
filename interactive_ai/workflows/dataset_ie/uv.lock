@@ -567,6 +567,7 @@ dependencies = [
     { name = "geti-k8s-tools" },
     { name = "geti-kafka-tools" },
     { name = "geti-spicedb-tools" },
+    { name = "geti-supported-models" },
     { name = "geti-telemetry-tools", extra = ["grpc", "kafka", "logger", "telemetry"] },
     { name = "geti-types" },
     { name = "jsonschema" },
@@ -597,6 +598,7 @@ requires-dist = [
     { name = "geti-k8s-tools", editable = "../../../libs/k8s_tools" },
     { name = "geti-kafka-tools", editable = "../../../libs/kafka_tools" },
     { name = "geti-spicedb-tools", editable = "../../../libs/spicedb_tools" },
+    { name = "geti-supported-models", editable = "../../supported_models" },
     { name = "geti-telemetry-tools", extras = ["telemetry", "grpc", "kafka", "logger"], editable = "../../../libs/telemetry_tools" },
     { name = "geti-types", editable = "../../../libs/types" },
     { name = "jsonschema", specifier = "==4.17.3" },
@@ -1029,6 +1031,35 @@ dev = [
 ]
 
 [[package]]
+name = "geti-supported-models"
+version = "1.0.0"
+source = { editable = "../../supported_models" }
+dependencies = [
+    { name = "geti-configuration-tools" },
+    { name = "hiyapyco" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "bson", marker = "extra == 'bson'", specifier = "~=0.5" },
+    { name = "geti-configuration-tools", editable = "../../../libs/configuration_tools" },
+    { name = "hiyapyco", specifier = "==0.7.0" },
+]
+provides-extras = ["bson"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "geti-supported-models", extras = ["bson"] },
+    { name = "mypy", specifier = "~=1.15" },
+    { name = "pre-commit", specifier = "~=4.1" },
+    { name = "pytest", specifier = "~=8.3" },
+    { name = "ruff", specifier = "~=0.11" },
+    { name = "testfixtures", specifier = "~=7.2" },
+    { name = "types-cachetools" },
+    { name = "types-pyyaml" },
+]
+
+[[package]]
 name = "geti-telemetry-tools"
 version = "1.0.3"
 source = { editable = "../../../libs/telemetry_tools" }
@@ -1309,6 +1340,20 @@ name = "hf-xet"
 version = "1.1.5"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ed/d4/7685999e85945ed0d7f0762b686ae7015035390de1161dcea9d5276c134c/hf_xet-1.1.5.tar.gz", hash = "sha256:69ebbcfd9ec44fdc2af73441619eeb06b94ee34511bbcf57cd423820090f5694", size = 495969, upload-time = "2025-06-20T21:48:38.007Z" }
+
+[[package]]
+name = "hiyapyco"
+version = "0.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jinja2" },
+    { name = "markupsafe" },
+    { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4a/4c/48999f3383f99a4bb49723983147b2b4ef62f29fdeca81ec87cb0cc70d8c/HiYaPyCo-0.7.0.tar.gz", hash = "sha256:83387c217e109956af61a23884cf8cc9ba5f19241b3ac68141e3ad1153fc4597", size = 33358, upload-time = "2024-10-20T04:14:00.309Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/03/3d/3f847839e28e354873c81ebc3d3322d6e73d0d386971e84c178b45e82ff4/HiYaPyCo-0.7.0-py2.py3-none-any.whl", hash = "sha256:d56ae0f746506955c6b0072f7338f1cd50661bfd07c7ee9b49175a085fcbaf41", size = 24720, upload-time = "2024-10-20T04:13:57.817Z" },
+]
 
 [[package]]
 name = "huggingface-hub"

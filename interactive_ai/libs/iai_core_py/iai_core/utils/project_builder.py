@@ -64,24 +64,23 @@ class ProjectBuilder:
     """
 
     @staticmethod
-    def get_default_model_template_by_task_type(task_type: TaskType) -> ModelTemplate:
+    def get_default_model_template_by_task_type(
+        task_type: TaskType, default_models_per_task: dict[str, str]
+    ) -> ModelTemplate:
         """
         Get the default ModelTemplate which belongs to the task type.
 
         :param task_type: the task type which requires a model template
+        :param default_models_per_task: a dictionary mapping task type names to default model template IDs
         :return: the ModelTemplate associated with the task type
         """
-        if task_type in [TaskType.DATASET, TaskType.CROP]:
-            default_model_template = ModelTemplateList().get_by_id(task_type.name.lower())
-        else:
-            default_model_template = next(
-                (
-                    model_template
-                    for model_template in ModelTemplateList().get_all()
-                    if model_template.task_type == task_type and model_template.is_default_for_task
-                ),
-                NullModelTemplate(),
-            )
+        task_type_name = task_type.name.lower()
+        model_template_id = (
+            task_type_name
+            if task_type in [TaskType.DATASET, TaskType.CROP]
+            else default_models_per_task[task_type_name]
+        )
+        default_model_template = ModelTemplateList().get_by_id(model_template_id)
 
         if isinstance(default_model_template, NullModelTemplate):
             raise ModelTemplateError("A NullModelTemplate was created.")
@@ -565,6 +564,7 @@ class ProjectBuilder:
         creator_id: str,
         parser_class: type[ProjectParser],
         parser_kwargs: dict,
+        default_models_per_task: dict[str, str],
     ) -> tuple[Project, LabelSchema, dict[str, LabelSchemaView]]:
         """
         This does NOT save anything to the database.
@@ -583,6 +583,7 @@ class ProjectBuilder:
         :param creator_id: the ID of who created the project
         :param parser_class: a parser which will be used to get relevant information from the REST response
         :param parser_kwargs: arguments to pass to the parser for initialization
+        :param default_models_per_task: a dictionary mapping task type names to default model template IDs
         :return: the project, the label schema, and a mapping of task to label schema view
         """
         is_keypoint_detection_enabled = FeatureFlagProvider.is_enabled(FEATURE_FLAG_KEYPOINT_DETECTION)
@@ -608,7 +609,9 @@ class ProjectBuilder:
             custom_labels_names = parser.get_custom_labels_names_by_task(
                 task_name=task_name,
             )
-            model_template = cls.get_default_model_template_by_task_type(task_type=task_type)
+            model_template = cls.get_default_model_template_by_task_type(
+                task_type=task_type, default_models_per_task=default_models_per_task
+            )
             task_node = cls._build_task_node(
                 project_id=project_id,
                 task_name=task_name,
@@ -1060,7 +1063,11 @@ class PersistedProjectBuilder(ProjectBuilder):
 
     @classmethod
     def build_full_project(
-        cls, creator_id: str, parser_class: type[ProjectParser], parser_kwargs: dict
+        cls,
+        creator_id: str,
+        parser_class: type[ProjectParser],
+        parser_kwargs: dict,
+        default_models_per_task: dict[str, str],
     ) -> tuple[Project, LabelSchema, dict[str, LabelSchemaView]]:
         """
         Overrides the method from the super ProjectBuilder
@@ -1070,13 +1077,19 @@ class PersistedProjectBuilder(ProjectBuilder):
         :param creator_id: the ID of who created the project
         :param parser_class: a parser which will be used to get relevant information from the REST response
         :param parser_kwargs: arguments to pass to the parser for initialization
+        :param default_models_per_task: a dictionary mapping task type names to default model template IDs
         :return: the project, the label schema, and a mapping of task to label schema view
         """
         (
             project,
             label_schema,
             task_to_label_schema_view,
-        ) = super().build_full_project(creator_id=creator_id, parser_class=parser_class, parser_kwargs=parser_kwargs)
+        ) = super().build_full_project(
+            creator_id=creator_id,
+            parser_class=parser_class,
+            parser_kwargs=parser_kwargs,
+            default_models_per_task=default_models_per_task,
+        )
         return project, label_schema, task_to_label_schema_view
 
     @classmethod

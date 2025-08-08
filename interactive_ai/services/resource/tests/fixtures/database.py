@@ -13,6 +13,7 @@ from unittest.mock import patch
 import cv2
 import numpy as np
 import pytest
+from geti_supported_models.default_models import DefaultModels
 
 from communication.rest_parsers import RestProjectParser
 from service.label_schema_service import LabelSchemaService
@@ -446,6 +447,7 @@ class DBProjectService:
                 creator_id="",
                 parser_class=RestProjectParser,
                 parser_kwargs=parser_kwargs,
+                default_models_per_task=DefaultModels.get_default_models_per_task(),
             )
 
         return self._project

@@ -7,6 +7,7 @@ import cv2
 import pytest
 from _pytest.fixtures import FixtureRequest
 from geti_spicedb_tools import SpiceDB
+from geti_supported_models.default_models import DefaultModels
 from tests.utils.custom_project_parser import CustomTestProjectParser
 
 from communication.rest_parsers import RestProjectParser, RestProjectUpdateParser
@@ -408,6 +409,7 @@ class TestResourceManagers:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=project_type,
+                default_models_per_task=DefaultModels.get_default_models_per_task(),
             )
         label_repo = LabelRepo(project.identifier)
         label_schema_per_task: dict[ID, LabelSchemaView | NullLabelSchema] = {
@@ -526,6 +528,7 @@ class TestResourceManagers:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=project_type,
+                default_models_per_task=DefaultModels.get_default_models_per_task(),
             )
         label_schema_per_task: dict[ID, LabelSchemaView | NullLabelSchema] = {
             task_node.id_: (
