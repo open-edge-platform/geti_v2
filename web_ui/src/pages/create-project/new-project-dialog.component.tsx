@@ -100,11 +100,7 @@ const NewProjectDialogInner: FC<NewProjectDialogInnerProps> = ({ onCloseDialog }
     const numberOfSteps = getTotalSteps(metadata);
 
     return (
-        <Dialog
-            minHeight={'52vh'}
-            minWidth={{ base: 'auto', L: '90rem' }}
-            UNSAFE_style={isLargeSize ? paddingStyle : tabletPaddingStyle}
-        >
+        <Dialog minWidth={{ base: 'auto', L: '90rem' }} UNSAFE_style={isLargeSize ? paddingStyle : tabletPaddingStyle}>
             <Heading id={`${currentStep}-title-id`}>
                 <Flex direction={'column'} marginBottom={'size-250'}>
                     <Text>{stepInfo.title}</Text>
