@@ -111,10 +111,10 @@ describe('TrainingSubsets', () => {
 
     const App = ({
         subsetParameters,
-        hasModels = false,
+        hasSupportedModels = false,
     }: {
         subsetParameters: SubsetsParameters;
-        hasModels?: boolean;
+        hasSupportedModels?: boolean;
     }) => {
         const [trainingConfiguration, setTrainingConfiguration] = useState<TrainingConfiguration | undefined>(() =>
             getMockedTrainingConfiguration({
@@ -134,7 +134,7 @@ describe('TrainingSubsets', () => {
 
         return (
             <TrainingSubsets
-                hasModels={hasModels}
+                hasSupportedModels={hasSupportedModels}
                 subsetsParameters={trainingConfiguration?.datasetPreparation.subsetSplit ?? subsetParameters}
                 onUpdateTrainingConfiguration={handleUpdateTrainingConfiguration}
             />
@@ -142,7 +142,7 @@ describe('TrainingSubsets', () => {
     };
 
     it('displays subsets distribution properly', () => {
-        render(<App subsetParameters={subsetsParameters} hasModels />);
+        render(<App subsetParameters={subsetsParameters} hasSupportedModels />);
 
         expectTrainingSubsetsDistribution({
             validationSubset: Number(validationSubset.value),
@@ -304,7 +304,7 @@ describe('TrainingSubsets', () => {
     });
 
     it('shows warning when updated subset distribution requires enabling reshuffle and training from scratch', () => {
-        render(<App subsetParameters={subsetsParameters} hasModels />);
+        render(<App subsetParameters={subsetsParameters} hasSupportedModels />);
 
         expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 
