@@ -108,7 +108,7 @@ export const SelectProjectTemplate = ({
     ];
 
     return (
-        <SliderAnimation animationDirection={animationDirection} style={{ height: '52vh' }}>
+        <SliderAnimation animationDirection={animationDirection} style={{ height: '100%' }}>
             <Tabs
                 items={ITEMS}
                 aria-label='Templates types'
