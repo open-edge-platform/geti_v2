@@ -136,6 +136,7 @@ describe('TrainingSubsets', () => {
             <TrainingSubsets
                 hasSupportedModels={hasSupportedModels}
                 subsetsParameters={trainingConfiguration?.datasetPreparation.subsetSplit ?? subsetParameters}
+                defaultSubsetParameters={subsetParameters}
                 onUpdateTrainingConfiguration={handleUpdateTrainingConfiguration}
             />
         );

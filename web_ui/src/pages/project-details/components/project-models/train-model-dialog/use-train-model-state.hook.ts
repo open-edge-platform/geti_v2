@@ -326,5 +326,6 @@ export const useTrainModelState = () => {
         openBasicMode,
         hasSupportedModels,
         isStartTrainingButtonDisabled: isStartTrainingButtonDisabled(),
+        defaultTrainingConfiguration,
     } as const;
 };

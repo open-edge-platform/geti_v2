@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { FC, useRef, useState } from 'react';
+import { FC, useState } from 'react';
 
 import { Content, Flex, Grid, Heading, InlineAlert, minmax, Text, View } from '@geti/ui';
 import { isEqual } from 'lodash-es';
@@ -138,6 +138,9 @@ type SubsetsParameters = TrainingConfiguration['datasetPreparation']['subsetSpli
 
 interface TrainingSubsetsProps {
     hasSupportedModels: boolean;
+
+    defaultSubsetParameters: SubsetsParameters;
+
     subsetsParameters: SubsetsParameters;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
@@ -174,12 +177,13 @@ const TrainingSubsetsChangedDistributionWarning = () => {
 
 export const TrainingSubsets: FC<TrainingSubsetsProps> = ({
     hasSupportedModels,
+    defaultSubsetParameters,
     subsetsParameters,
     onUpdateTrainingConfiguration,
 }) => {
     const { trainingSubset, validationSubset } = getSubsets(subsetsParameters);
 
-    const prevSubsetParameters = useRef(subsetsParameters);
+    const areTrainingSubsetParametersChanged = !isEqual(defaultSubsetParameters, subsetsParameters);
 
     const [subsetsDistribution, setSubsetsDistribution] = useState<number[]>([
         trainingSubset.value,
@@ -252,10 +256,8 @@ export const TrainingSubsets: FC<TrainingSubsetsProps> = ({
         testSubsetRatio
     );
 
-    const subsetsSizesInvalid =
-        !isEqual(prevSubsetParameters.current, subsetsParameters) && !areSubsetsSizesValid(subsetsParameters);
-    const isChangedDistributionWarningVisible =
-        hasSupportedModels && !isEqual(prevSubsetParameters.current, subsetsParameters);
+    const subsetsSizesInvalid = areTrainingSubsetParametersChanged && !areSubsetsSizesValid(subsetsParameters);
+    const isChangedDistributionWarningVisible = hasSupportedModels && areTrainingSubsetParametersChanged;
 
     return (
         <Accordion>

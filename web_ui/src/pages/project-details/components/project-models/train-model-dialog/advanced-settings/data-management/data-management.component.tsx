@@ -14,6 +14,9 @@ import { TrainingSubsets } from './training-subsets/training-subsets.component';
 
 interface DataManagementProps {
     hasSupportedModels: boolean;
+
+    defaultTrainingConfiguration: TrainingConfiguration;
+
     trainingConfiguration: TrainingConfiguration;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
@@ -32,6 +35,7 @@ export const DataManagement: FC<DataManagementProps> = ({
     hasSupportedModels,
     trainingConfiguration,
     onUpdateTrainingConfiguration,
+    defaultTrainingConfiguration,
 }) => {
     const augmentationParameters = getAugmentationParameters(trainingConfiguration);
     const subsetSplitParameters = trainingConfiguration.datasetPreparation.subsetSplit;
@@ -44,6 +48,7 @@ export const DataManagement: FC<DataManagementProps> = ({
             {!isEmpty(subsetSplitParameters) && (
                 <TrainingSubsets
                     hasSupportedModels={hasSupportedModels}
+                    defaultSubsetParameters={defaultTrainingConfiguration.datasetPreparation.subsetSplit}
                     subsetsParameters={trainingConfiguration.datasetPreparation.subsetSplit}
                     onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />
