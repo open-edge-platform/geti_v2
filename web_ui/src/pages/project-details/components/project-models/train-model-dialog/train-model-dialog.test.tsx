@@ -661,6 +661,92 @@ describe('Train model dialog', () => {
         );
     });
 
+    it('shows correct and updated status when training configuration data was updated', async () => {
+        const configParametersService = createApiModelConfigParametersService();
+
+        configParametersService.getTrainingConfiguration = jest.fn(async () =>
+            getMockedTrainingConfiguration({
+                datasetPreparation: {
+                    subsetSplit: [
+                        getMockedConfigurationParameter({
+                            key: 'training',
+                            type: 'int',
+                            name: 'Training percentage',
+                            value: 70,
+                            description: 'Percentage of data to use for training',
+                            defaultValue: 70,
+                            maxValue: 70,
+                            minValue: 1,
+                        }),
+                        getMockedConfigurationParameter({
+                            key: 'validation',
+                            type: 'int',
+                            name: 'Validation percentage',
+                            value: 20,
+                            description: 'Percentage of data to use for validation',
+                            defaultValue: 20,
+                            maxValue: 100,
+                            minValue: 1,
+                        }),
+                        getMockedConfigurationParameter({
+                            key: 'test',
+                            type: 'int',
+                            name: 'Test percentage',
+                            value: 10,
+                            description: 'Percentage of data to use for testing',
+                            defaultValue: 10,
+                            maxValue: 100,
+                            minValue: 1,
+                        }),
+                        getMockedConfigurationParameter({
+                            type: 'int',
+                            value: 6,
+                            key: 'dataset_size',
+                        }),
+                    ],
+                    augmentation: {},
+                    filtering: {},
+                },
+            })
+        );
+
+        await renderTrainModelDialog({
+            services: {
+                configParametersService,
+            },
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: /advanced settings/i }));
+
+        expect(screen.getByRole('tablist', { name: /advanced settings tabs/i })).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('tab', { name: /data management/i }));
+
+        fireEvent.keyDown(screen.getByLabelText('Start range'), { key: 'Left' });
+
+        expect(screen.getByRole('alert')).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('tab', { name: 'Training' }));
+
+        expect(screen.getByLabelText('Learning parameters tag')).toHaveTextContent('Default');
+
+        fireEvent.click(screen.getByRole('button', { name: 'Increase Change Maximum epochs' }));
+
+        expect(screen.getByLabelText('Learning parameters tag')).toHaveTextContent('Modified');
+
+        fireEvent.click(screen.getByRole('button', { name: /back/i }));
+
+        fireEvent.click(screen.getByRole('button', { name: /advanced settings/i }));
+
+        fireEvent.click(screen.getByRole('tab', { name: /data management/i }));
+
+        expect(screen.getByRole('alert')).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('tab', { name: 'Training' }));
+
+        expect(screen.getByLabelText('Learning parameters tag')).toHaveTextContent('Modified');
+    });
+
     it('disables train button when any training subset size is zero and user is in advanced settings mode', async () => {
         const configParametersService = createApiModelConfigParametersService();
 

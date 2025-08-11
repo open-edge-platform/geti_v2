@@ -73,7 +73,50 @@ export const getMockedProjectConfiguration = (config: Partial<ProjectConfigurati
 });
 
 export const getMockedTrainingConfiguration = (config: Partial<TrainingConfiguration> = {}): TrainingConfiguration => ({
-    training: [],
+    training: [
+        getMockedConfigurationParameter({
+            key: 'max_epochs',
+            type: 'int',
+            name: 'Maximum epochs',
+            value: 200,
+            description: 'Maximum number of training epochs to run',
+            defaultValue: 500,
+            maxValue: null,
+            minValue: 0,
+        }),
+        getMockedConfigurationParameter({
+            key: 'learning_rate',
+            type: 'float',
+            name: 'Learning rate',
+            value: 0.004,
+            description: 'Base learning rate for the optimizer',
+            defaultValue: 0.001,
+            maxValue: 1,
+            minValue: 0,
+        }),
+        {
+            early_stopping: [
+                getMockedConfigurationParameter({
+                    key: 'enable',
+                    type: 'bool',
+                    name: 'Enable early stopping',
+                    value: true,
+                    description: 'Whether to stop training early when performance stops improving',
+                    defaultValue: true,
+                }),
+                getMockedConfigurationParameter({
+                    key: 'patience',
+                    type: 'int',
+                    name: 'Patience',
+                    value: 10,
+                    description: 'Number of epochs with no improvement after which training will be stopped',
+                    defaultValue: 1,
+                    maxValue: null,
+                    minValue: 0,
+                }),
+            ],
+        },
+    ],
     datasetPreparation: {
         subsetSplit: [
             getMockedConfigurationParameter({
