@@ -1,2 +1,2 @@
-product_version: "2.11.0"
-product_build: "2.11.0"
+product_version: ${TAG}
+product_build: ${TAG}
