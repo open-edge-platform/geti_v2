@@ -73,6 +73,7 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
         openBasicMode,
         hasSupportedModels,
         isStartTrainingButtonDisabled,
+        defaultTrainingConfiguration,
     } = useTrainModelState();
 
     const { canTrainModel, numberOfRequiredAnnotations } = isAllowedToTrainModel(selectedTask);
@@ -103,7 +104,9 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
             <Content UNSAFE_className={styles.dialogContent}>
                 <Flex direction={'column'} height={'100%'} gap={'size-100'}>
                     <View flex={1} minHeight={0}>
-                        {isBasicMode || trainingConfiguration === undefined ? (
+                        {isBasicMode ||
+                        trainingConfiguration === undefined ||
+                        defaultTrainingConfiguration === undefined ? (
                             <TrainModelBasic
                                 selectedTask={selectedTask}
                                 tasks={tasks}
@@ -127,6 +130,7 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
                                 onReshufflingSubsetsEnabledChange={changeReshufflingSubsetsEnabled}
                                 trainFromScratch={trainFromScratch}
                                 onTrainFromScratchChange={changeTrainFromScratch}
+                                defaultTrainingConfiguration={defaultTrainingConfiguration}
                             />
                         )}
                     </View>
