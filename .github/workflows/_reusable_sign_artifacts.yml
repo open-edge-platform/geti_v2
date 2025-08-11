@@ -1,0 +1,78 @@
+# Artifact Signing Workflow
+#
+# This reusable workflow handled container images and helm charts signing using Cosign.
+#
+# Key Features:
+# - Signs container images and helm charts using GitHub OIDC Token (keyless signing).
+# - Verifies the signatures against a specified certificate identity.
+#
+# Process Stages:
+# 1. Install Cosign.
+# 2. Login to ghcr.io using GitHub secrets.
+# 3. Sign the images and helm charts with GitHub OIDC Token.
+# 4. Verify the signature using the specified certificate identity.
+#
+# Inputs:
+# - `image_tag`: The container image to sign.
+# - `image_digest`: The container image digest to sign.
+# 
+# Example usage:
+# jobs:
+#   sign-container:
+#     uses: ./.github/workflows/_reusable_sign_artifacts.yml
+#     with:
+#       image_tag: "219678651685.dkr.ecr.us-west-2.amazonaws.com/base-images/base-python:pr-625-e49aabe21b4d74cbbf2b7f64c3485f1e7cab559bb"
+#       image_digest: "sha256:748b167fb94aa80c173846ba7647cc4ea76a5dc03d7c9f3ae71a383a56c5de5e"
+#     secrets: inherit
+#
+
+name: Sign Container Images and Helm Charts
+
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'Container image to sign'
+        required: true
+        type: string
+      image_digest:
+        description: 'Container image digest to sign'
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  sign-images:
+    name: Sign Container Images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2, cosign: v2.5.3
+
+      - name: Login to ghcr.io
+        run: |
+          echo ${{ secrets.GETI_GHCR_TOKEN }} |  docker login ghcr.io -u ${{ secrets.GETI_USER }} --password-stdin
+
+      - name: Sign the images with GitHub OIDC Token (keyless mode)
+        env:
+          DIGEST: ${{ inputs.image_digest }}
+          TAG: ${{ inputs.image_tag }}
+        run: |
+          echo "Signing ${TAG}@${DIGEST}"
+          cosign sign --yes "${TAG}@${DIGEST}"
+
+      - name: Verify the signature
+        env:
+          DIGEST: ${{ inputs.image_digest }}
+          TAG: ${{ inputs.image_tag }}
+        run: |
+          echo "Verifying signature for ${TAG}@${DIGEST}"
+          echo "Using certificate identity: https://github.com/intel-innersource/applications.ai.geti.geti-release/.github/workflows/_reusable_sign_artifacts.yml"
+          echo "OIDC Issuer: https://token.actions.githubusercontent.com"
+          cosign verify \
+          --certificate-identity-regexp=https://github.com/intel-innersource/applications.ai.geti.geti-release/.github/workflows/_reusable_sign_artifacts.yml \
+          --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+          "${TAG}@${DIGEST}"
