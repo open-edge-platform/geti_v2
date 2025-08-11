@@ -72,6 +72,7 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
         trainModel,
         openBasicMode,
         hasSupportedModels,
+        isStartTrainingButtonDisabled,
     } = useTrainModelState();
 
     const { canTrainModel, numberOfRequiredAnnotations } = isAllowedToTrainModel(selectedTask);
@@ -156,7 +157,7 @@ const TrainModelDialog: FC<TrainModelDialogProps> = ({ onClose, onSuccess, isAll
                         `Annotated dataset for this project contains ${totalMedias} images/frames that will be used for training`
                     }
                     isLoading={trainModel.isPending}
-                    isDisabled={trainModel.isPending}
+                    isDisabled={trainModel.isPending || isStartTrainingButtonDisabled}
                     id={'start-button-id'}
                     onPress={handleSubmit}
                 />

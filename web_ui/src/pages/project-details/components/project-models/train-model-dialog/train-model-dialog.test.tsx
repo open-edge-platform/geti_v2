@@ -352,7 +352,45 @@ describe('Train model dialog', () => {
         });
     });
 
-    it('calls training configuration and train endpoints when starting training in advanced mode', async () => {
+    it('calls training configuration and train endpoints when starting training in advanced mode and training configuration was changed', async () => {
+        const modelsService = createInMemoryModelsService();
+
+        const mockedTrainedModel = jest.fn();
+        modelsService.trainModel = mockedTrainedModel;
+
+        const configParametersService = createApiModelConfigParametersService();
+        const mockedUpdateTrainingConfiguration = jest.fn();
+        configParametersService.updateTrainingConfiguration = mockedUpdateTrainingConfiguration;
+        configParametersService.getTrainingConfiguration = jest.fn(async () => getMockedTrainingConfiguration());
+
+        await renderTrainModelDialog({
+            services: {
+                modelsService,
+                configParametersService,
+            },
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: /advanced settings/i }));
+
+        expect(screen.getByRole('tablist', { name: /advanced settings tabs/i })).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('tab', { name: /data management/i }));
+
+        fireEvent.keyDown(screen.getByLabelText('Start range'), { key: 'Left' });
+
+        fireEvent.click(screen.getByRole('button', { name: /start/i }));
+
+        await waitFor(() => {
+            expect(mockedTrainedModel).toHaveBeenCalled();
+            expect(mockedUpdateTrainingConfiguration).toHaveBeenCalled();
+        });
+
+        expect(mockedUpdateTrainingConfiguration.mock.invocationCallOrder[0]).toBeLessThan(
+            mockedTrainedModel.mock.invocationCallOrder[0]
+        );
+    });
+
+    it('does not call training configuration endpoint when training configuration was not changed', async () => {
         const modelsService = createInMemoryModelsService();
 
         const mockedTrainedModel = jest.fn();
@@ -377,13 +415,9 @@ describe('Train model dialog', () => {
         fireEvent.click(screen.getByRole('button', { name: /start/i }));
 
         await waitFor(() => {
+            expect(mockedUpdateTrainingConfiguration).not.toHaveBeenCalled();
             expect(mockedTrainedModel).toHaveBeenCalled();
-            expect(mockedUpdateTrainingConfiguration).toHaveBeenCalled();
         });
-
-        expect(mockedUpdateTrainingConfiguration.mock.invocationCallOrder[0]).toBeLessThan(
-            mockedTrainedModel.mock.invocationCallOrder[0]
-        );
     });
 
     it('does not call train endpoint when training configuration fails', async () => {
@@ -410,6 +444,10 @@ describe('Train model dialog', () => {
         fireEvent.click(screen.getByRole('button', { name: /advanced settings/i }));
 
         expect(screen.getByRole('tablist', { name: /advanced settings tabs/i })).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('tab', { name: /data management/i }));
+
+        fireEvent.keyDown(screen.getByLabelText('Start range'), { key: 'Left' });
 
         fireEvent.click(screen.getByRole('button', { name: /start/i }));
 
@@ -456,10 +494,11 @@ describe('Train model dialog', () => {
             ],
         };
 
+        const defaultMockedConfiguration = getMockedTrainingConfiguration();
+
         const trainingConfiguration = getMockedTrainingConfiguration({
             datasetPreparation: {
-                subsetSplit: [],
-                augmentation: {},
+                ...defaultMockedConfiguration.datasetPreparation,
                 filtering: filterParameter,
             },
         });
@@ -620,5 +659,79 @@ describe('Train model dialog', () => {
             'data-testid',
             idMatchingFormat(`${defaultModelTemplate?.performanceCategory.toLocaleLowerCase()}-id`)
         );
+    });
+
+    it('disables train button when any training subset size is zero and user is in advanced settings mode', async () => {
+        const configParametersService = createApiModelConfigParametersService();
+
+        configParametersService.getTrainingConfiguration = jest.fn(async () =>
+            getMockedTrainingConfiguration({
+                datasetPreparation: {
+                    subsetSplit: [
+                        getMockedConfigurationParameter({
+                            key: 'training',
+                            type: 'int',
+                            name: 'Training percentage',
+                            value: 70,
+                            description: 'Percentage of data to use for training',
+                            defaultValue: 70,
+                            maxValue: 70,
+                            minValue: 1,
+                        }),
+                        getMockedConfigurationParameter({
+                            key: 'validation',
+                            type: 'int',
+                            name: 'Validation percentage',
+                            value: 20,
+                            description: 'Percentage of data to use for validation',
+                            defaultValue: 20,
+                            maxValue: 100,
+                            minValue: 1,
+                        }),
+                        getMockedConfigurationParameter({
+                            key: 'test',
+                            type: 'int',
+                            name: 'Test percentage',
+                            value: 10,
+                            description: 'Percentage of data to use for testing',
+                            defaultValue: 10,
+                            maxValue: 100,
+                            minValue: 1,
+                        }),
+                        getMockedConfigurationParameter({
+                            type: 'int',
+                            value: 6,
+                            key: 'dataset_size',
+                        }),
+                    ],
+                    augmentation: {},
+                    filtering: {},
+                },
+            })
+        );
+
+        await renderTrainModelDialog({
+            services: {
+                configParametersService,
+            },
+        });
+
+        expect(screen.getByRole('button', { name: /start/i })).toBeEnabled();
+
+        fireEvent.click(screen.getByRole('button', { name: /advanced settings/i }));
+
+        expect(screen.getByRole('tablist', { name: /advanced settings tabs/i })).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('tab', { name: /data management/i }));
+
+        expect(screen.getByRole('heading', { name: /Training subsets/ })).toBeInTheDocument();
+
+        fireEvent.keyDown(screen.getByLabelText('Start range'), { key: 'Left' });
+
+        expect(screen.getByRole('button', { name: /start/i })).toBeDisabled();
+
+        fireEvent.click(screen.getByRole('button', { name: /back/i }));
+
+        expect(screen.getByRole('button', { name: /start/i })).toBeEnabled();
     });
 });
