@@ -6,6 +6,7 @@ import pytest
 
 from communication.controllers.optimization_controller import OptimizationController
 from communication.exceptions import NotReadyForOptimizationException
+from service.configuration_service import ConfigurationService
 
 from geti_types import ID
 from grpc_interfaces.job_submission.client import GRPCJobsClient
@@ -16,7 +17,14 @@ from iai_core.repos import DatasetRepo, ModelRepo
 
 
 class TestOptimizationController:
-    def test_start_pot_job(self, fxt_db_project_service, fxt_pot_hyperparameters, fxt_mock_jobs_client) -> None:
+    def test_start_pot_job(
+        self,
+        fxt_db_project_service,
+        fxt_pot_hyperparameters,
+        fxt_mock_jobs_client,
+        fxt_training_configuration_task_level,
+        fxt_global_parameters,
+    ) -> None:
         """
         <b>Description:</b>
         Test POT optimization job creation
@@ -50,8 +58,17 @@ class TestOptimizationController:
         model.model_storage.model_template.entrypoints = EntryPoints(base="Base interface", nncf="NNCF interface")
         model_repo = ModelRepo(model.model_storage_identifier)
         model_repo.save(model)
+        filtering_params = fxt_global_parameters.dataset_preparation.filtering
+
         # Act
-        with patch.object(GRPCJobsClient, "submit", return_value=None):
+        with (
+            patch.object(GRPCJobsClient, "submit", return_value=None),
+            patch.object(
+                ConfigurationService,
+                "get_full_training_configuration",
+                return_value=fxt_training_configuration_task_level,
+            ) as mock_get_full_training_configuration,
+        ):
             result = OptimizationController().start_optimization(
                 project_id=project.id_,
                 model_storage_id=model.model_storage.id_,
@@ -60,13 +77,17 @@ class TestOptimizationController:
             )
 
         # Assert
+        mock_get_full_training_configuration.assert_called_once_with(
+            project_identifier=project.identifier,
+            task_id=model.model_storage.task_node_id,
+            model_manifest_id=model.model_storage.model_manifest_id,
+        )
         fxt_mock_jobs_client._jobs_client.submit.assert_called_once_with(
             priority=1,
             job_name="Optimization",
             job_type="optimize_pot",
             key=f'{{"dataset_storage_id": "{dataset_storage.id_}",'
             f' "model_storage_id": "{model.model_storage.id_}",'
-            f' "optimization_parameters": {{"stat_subset_size": 300}},'
             f' "project_id": "{project.id_}",'
             f' "type": "optimize_pot",'
             f' "workspace_id": "{project.workspace_id}"}}',
@@ -76,8 +97,10 @@ class TestOptimizationController:
                 "model_storage_id": model.model_storage.id_,
                 "project_id": project.id_,
                 "enable_optimize_from_dataset_shard": True,
-                "max_number_of_annotations": None,
-                "min_annotation_size": None,
+                "max_number_of_annotations": filtering_params.max_annotation_objects.max_annotation_objects,
+                "min_number_of_annotations": filtering_params.min_annotation_objects.min_annotation_objects,
+                "min_annotation_size": filtering_params.min_annotation_pixels.min_annotation_pixels,
+                "max_annotation_size": filtering_params.max_annotation_pixels.max_annotation_pixels,
             },
             metadata={
                 "base_model_id": model.id_,

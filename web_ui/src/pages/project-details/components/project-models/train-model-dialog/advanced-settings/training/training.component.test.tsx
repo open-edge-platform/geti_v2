@@ -35,6 +35,7 @@ describe('Training component', () => {
             <Training
                 trainFromScratch={false}
                 onTrainFromScratchChange={jest.fn()}
+                defaultTrainingConfiguration={baseConfig}
                 trainingConfiguration={baseConfig}
                 onUpdateTrainingConfiguration={jest.fn()}
                 isReshufflingSubsetsEnabled={true}
@@ -51,6 +52,7 @@ describe('Training component', () => {
                 trainFromScratch={false}
                 onTrainFromScratchChange={jest.fn()}
                 trainingConfiguration={{ ...baseConfig, training: [] }}
+                defaultTrainingConfiguration={{ ...baseConfig, training: [] }}
                 onUpdateTrainingConfiguration={jest.fn()}
                 isReshufflingSubsetsEnabled={true}
                 onReshufflingSubsetsEnabledChange={jest.fn()}

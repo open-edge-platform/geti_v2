@@ -299,6 +299,31 @@ def fxt_annotation_scene_empty_non_empty_label_coincide(fxt_detection_label, fxt
 
 
 @pytest.fixture
+def fxt_annotation_scene_background_label(fxt_background_segmentation_label):
+    yield {
+        "annotations": [
+            {
+                "shape": {
+                    "type": "RECTANGLE",
+                    "x": 0.1 * DummyValues.MEDIA_WIDTH,
+                    "y": 0.1 * DummyValues.MEDIA_HEIGHT,
+                    "width": 0.2 * DummyValues.MEDIA_WIDTH,
+                    "height": 0.2 * DummyValues.MEDIA_HEIGHT,
+                },
+                "labels": [
+                    {
+                        "id": str(fxt_background_segmentation_label.id_),
+                        "name": DummyValues.LABEL_NAME,
+                        "probability": DummyValues.LABEL_PROBABILITY,
+                        "color": "#ff0000ff",
+                    }
+                ],
+            },
+        ]
+    }
+
+
+@pytest.fixture
 def fxt_annotation_scene_empty_detection_not_full_box(fxt_empty_detection_label):
     yield {
         "annotations": [
@@ -986,6 +1011,34 @@ class TestAnnotationRestValidator:
             AnnotationRestValidator().validate_annotation_scene(
                 annotation_scene_rest=fxt_annotation_scene_empty_non_empty_label_coincide,
                 project=fxt_project_with_detection_task,
+                media_identifier=fxt_image_identifier_1,
+                media_width=DummyValues.MEDIA_WIDTH,
+                media_height=DummyValues.MEDIA_HEIGHT,
+                label_schema_by_task=label_schema_by_task,
+            )
+
+    def test_validate_annotation_scene_background_label(
+        self,
+        fxt_project_with_segmentation_task,
+        fxt_segmentation_label_schema_with_background,
+        fxt_annotation_scene_background_label,
+        fxt_image_identifier_1,
+    ) -> None:
+        """
+        Test validate_annotation_scene on a detection project that contains two
+        annotations, one of which is the empty one.
+        """
+        label_schema: LabelSchema = fxt_segmentation_label_schema_with_background
+        label_schema_by_task = label_schema_by_task_for_single_task_project(
+            fxt_project_with_segmentation_task, label_schema
+        )
+        with pytest.raises(
+            BadRequestException,
+            match="It is not allowed to create an annotation with only background labels.",
+        ):
+            AnnotationRestValidator().validate_annotation_scene(
+                annotation_scene_rest=fxt_annotation_scene_background_label,
+                project=fxt_project_with_segmentation_task,
                 media_identifier=fxt_image_identifier_1,
                 media_width=DummyValues.MEDIA_WIDTH,
                 media_height=DummyValues.MEDIA_HEIGHT,

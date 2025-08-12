@@ -319,7 +319,6 @@ describe('Annotator canvas', (): void => {
             DOMAIN.SEGMENTATION,
             DOMAIN.ANOMALY_CLASSIFICATION,
             DOMAIN.ANOMALY_DETECTION,
-            DOMAIN.ANOMALY_SEGMENTATION,
         ];
 
         it.each(domains)('does not show a mask for single %o task projects', async (domain) => {

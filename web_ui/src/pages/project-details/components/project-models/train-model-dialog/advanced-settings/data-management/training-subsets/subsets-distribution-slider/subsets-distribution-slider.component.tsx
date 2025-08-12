@@ -4,7 +4,7 @@
 import { FC, RefObject, useRef } from 'react';
 
 import { Flex, Text, View, VisuallyHidden } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { mergeProps, useFocusRing, useNumberFormatter, useSlider, useSliderThumb } from 'react-aria';
 import { SliderState, useSliderState } from 'react-stately';
 

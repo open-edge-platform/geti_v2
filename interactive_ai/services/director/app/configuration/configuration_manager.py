@@ -275,7 +275,7 @@ class ConfigurationManager:
             model_storage = ModelService.get_or_create_model_storage(
                 project_identifier=project.identifier,
                 task_node=trainable_task,
-                model_template_id=algorithm_name,
+                model_manifest_id=algorithm_name,
             )
         except ValueError as error:
             raise AlgorithmNotFoundException(message=str(error))

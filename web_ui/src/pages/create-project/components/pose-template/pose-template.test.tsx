@@ -3,8 +3,6 @@
 
 import { act, screen } from '@testing-library/react';
 
-import '@testing-library/jest-dom/extend-expect';
-
 import { annotatorRender } from '../../../annotator/test-utils/annotator-render';
 import { MIN_POINTS_MESSAGE } from '../../utils';
 import { EMPTY_POINT_MESSAGE } from './empty-point-message.component';

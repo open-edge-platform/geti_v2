@@ -389,12 +389,11 @@ class MediaManager:
         video = VideoRepo(dataset_storage_identifier).get_by_id(video_id)
         if frame_index is None:
             frame_index = video.total_frames // 2
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING):
-            if not video.preprocessing.status.is_finished():
-                raise MediaNotPreprocessedException(media_id=video_id)
-            return MediaManager.get_single_thumbnail_frame_numpy(
-                video=video, dataset_storage_identifier=dataset_storage_identifier, frame_index=frame_index
-            )
+        if (
+            FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING)
+            and not video.preprocessing.status.is_finished()
+        ):
+            raise MediaNotPreprocessedException(media_id=video_id)
 
         video_binary_repo = VideoBinaryRepo(dataset_storage_identifier)
         try:

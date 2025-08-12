@@ -78,9 +78,6 @@ describe('Select project template step', () => {
 
         expect(screen.queryByText('Anomaly classification')).not.toBeInTheDocument();
         expect(screen.queryByText('Detect and categorize an object as normal or anomalous.')).not.toBeInTheDocument();
-
-        expect(screen.queryByText('Anomaly segmentation')).not.toBeInTheDocument();
-        expect(screen.queryByText('Segment and categorize an object as normal or anomalous.')).not.toBeInTheDocument();
     });
 
     describe('FEATURE_FLAG_KEYPOINT_DETECTION', () => {

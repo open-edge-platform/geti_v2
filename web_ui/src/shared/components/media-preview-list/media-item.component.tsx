@@ -5,7 +5,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Loading, useUnwrapDOMRef, View, type DimensionValue, type Responsive } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isEmpty, isFunction, isNil } from 'lodash-es';
 
 import { Label } from '../../../core/labels/label.interface';

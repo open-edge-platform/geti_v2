@@ -33,12 +33,16 @@ class CreateTaskTestingDatasetCommand(CreateDatasetCommand):
         dataset_storage: DatasetStorage,
         task_node_id: ID,
         min_annotation_size: int | None = None,
+        max_annotation_size: int | None = None,
+        min_number_of_annotations: int | None = None,
         max_number_of_annotations: int | None = None,
     ) -> None:
         super().__init__(project, dataset_storage)
         self.task_node_id = task_node_id
         self.dataset: Dataset = NullDataset()
         self.min_annotation_size = min_annotation_size
+        self.max_annotation_size = max_annotation_size
+        self.min_number_of_annotations = min_number_of_annotations
         self.max_number_of_annotations = max_number_of_annotations
 
     def execute(self) -> None:
@@ -54,8 +58,10 @@ class CreateTaskTestingDatasetCommand(CreateDatasetCommand):
 
             AnnotationFilter.apply_annotation_filters(
                 dataset=self.dataset,
-                max_number_of_annotations=self.max_number_of_annotations,
                 min_annotation_size=self.min_annotation_size,
+                max_annotation_size=self.max_annotation_size,
+                min_number_of_annotations=self.min_number_of_annotations,
+                max_number_of_annotations=self.max_number_of_annotations,
             )
             dataset_repo = DatasetRepo(self.dataset_storage.identifier)
             dataset_repo.save_deep(self.dataset)

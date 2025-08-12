@@ -3,7 +3,7 @@ UI:
     - any-glob-to-any-file:
       - 'web_ui/**/*'
 
-IAI:
+Backend:
   - all:
     - changed-files:
       - any-glob-to-any-file:

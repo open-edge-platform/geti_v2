@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import { useDateFormatter, View } from '@geti/ui';
 import { AriaCalendarCellProps, useCalendarCell } from '@react-aria/calendar';
 import { CalendarState } from '@react-stately/calendar';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import styles from './month-picker.module.scss';
 

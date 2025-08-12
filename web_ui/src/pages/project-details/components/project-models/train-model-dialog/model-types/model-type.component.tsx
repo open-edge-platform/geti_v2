@@ -4,7 +4,7 @@
 import { FC, ReactNode } from 'react';
 
 import { Divider, Flex, Grid, Heading, Radio, RadioGroup, repeat, Tooltip, TooltipTrigger, View } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isFunction } from 'lodash-es';
 
 import { SupportedAlgorithm } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';

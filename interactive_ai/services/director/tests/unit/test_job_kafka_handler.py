@@ -5,17 +5,20 @@ from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
+from geti_configuration_tools.training_configuration import GlobalParameters, TrainingConfiguration
 from tests.unit.mocked_method_helpers import return_none
 
 from communication.kafka_handler import JobKafkaHandler
 from service.job_submission.job_creation_helpers import JobType
 from service.project_service import ProjectService
+from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_kafka_tools import KafkaRawMessage
 from geti_types import ID, ProjectIdentifier
 from iai_core.entities.model import Model
 from iai_core.entities.model_storage import ModelStorage
-from iai_core.repos import AnnotationSceneRepo, ModelRepo, ModelTestResultRepo
+from iai_core.entities.subset import Subset
+from iai_core.repos import AnnotationSceneRepo, DatasetRepo, ModelRepo, ModelTestResultRepo
 from iai_core.utils.deletion_helpers import DeletionHelpers
 
 WORKSPACE_ID = "63b183d00000000000000001"
@@ -81,6 +84,10 @@ class TestJobKafkaHandler:
         model_storage_id = ID("model_storage_id")
         model_id = ID("model_id")
         mocked_get_model_by_id.return_value = fxt_model
+        project_identifier = ProjectIdentifier(
+            workspace_id=ID(WORKSPACE_ID),
+            project_id=project_id,
+        )
 
         MagicMock(spec=ModelStorage)
         mock_base_model = MagicMock(spec=Model)
@@ -90,12 +97,15 @@ class TestJobKafkaHandler:
         mocked_get_optimized_models.return_value = mock_optimized_models
 
         # Act
-        with patch.object(ProjectService, "unlock") as mock_unlock_project:
+        with (
+            patch.object(ProjectService, "unlock") as mock_unlock_project,
+            patch.object(JobKafkaHandler, "_update_subset_split_configuration") as mock_config_update,
+        ):
             fxt_job_kafka_handler.on_job_finished(
                 fxt_consumer_record_maker(
                     {
                         "job_type": job_type,
-                        "workspace_id": ID("workspace_id"),
+                        "workspace_id": project_identifier.workspace_id,
                         "job_payload": {
                             "project_id": project_id,
                             "task_id": task_id,
@@ -120,6 +130,10 @@ class TestJobKafkaHandler:
         mocked_update_job_duration.assert_any_call(
             model=mock_base_model,
             training_job_duration=(end_time - start_time).total_seconds(),
+        )
+        mock_config_update.assert_called_once_with(
+            project_identifier=project_identifier,
+            model=mock_base_model,
         )
 
     @patch.object(DeletionHelpers, "delete_models_by_base_model_id")
@@ -449,3 +463,64 @@ class TestJobKafkaHandler:
         # Assert
         mock_unlock_project(job_type=job_type, project_id=project_id)
         mock_delete.assert_called_once_with(mock_model.id_)
+
+    def test_update_subset_split_configuration(self) -> None:
+        # Arrange
+        project_identifier = ProjectIdentifier(
+            workspace_id=ID(WORKSPACE_ID),
+            project_id=ID("project_id"),
+        )
+
+        # Mock model
+        mock_model = MagicMock(spec=Model)
+        mock_model.train_dataset_id = ID("dataset_id")
+        mock_model.model_storage = MagicMock()
+        mock_model.model_storage.model_manifest_id = "YOLOX"
+
+        mock_training_config = MagicMock(spec=TrainingConfiguration)
+        mock_training_config.global_parameters = MagicMock(spec=GlobalParameters)
+        mock_training_config.global_parameters.dataset_preparation = MagicMock()
+        mock_training_config.global_parameters.dataset_preparation.subset_split = MagicMock()
+        mock_training_config.global_parameters.dataset_preparation.subset_split.training = 70
+        mock_training_config.global_parameters.dataset_preparation.subset_split.validation = 20
+        mock_training_config.global_parameters.dataset_preparation.subset_split.test = 10
+
+        # Set up mock data with imbalanced distribution that won't sum to 100 naturally
+        subset_counts = {
+            Subset.TRAINING.name: 155,
+            Subset.VALIDATION.name: 37,
+            Subset.TESTING.name: 18,
+        }
+
+        # Act
+        with (
+            patch.object(DatasetRepo, "count_per_subset", return_value=subset_counts),
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_by_model_manifest_id",
+                return_value=mock_training_config,
+            ) as mock_get_by_model_manifest_id,
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "save",
+            ) as mock_save_config,
+        ):
+            JobKafkaHandler._update_subset_split_configuration(project_identifier=project_identifier, model=mock_model)
+
+        # Assert
+        # Verify repositories were called correctly
+        mock_get_by_model_manifest_id.assert_called_once_with(
+            model_manifest_id=mock_model.model_storage.model_manifest_id
+        )
+
+        # Calculate expected values based on mock data
+        expected_validation = 17
+        expected_test = 8
+        expected_training = 75
+
+        subset_split = mock_training_config.global_parameters.dataset_preparation.subset_split
+        assert subset_split.training == expected_training
+        assert subset_split.validation == expected_validation
+        assert subset_split.test == expected_test
+
+        mock_save_config.assert_called_once_with(mock_training_config)

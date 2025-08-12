@@ -57,7 +57,7 @@ def mock_train_data(
     """
     train_data = MagicMock(spec=TrainWorkflowData)
     train_data.get_common_entities.return_value = (fxt_project, fxt_detection_node)
-    train_data.get_hyper_parameters.return_value = fxt_configuration_1
+    train_data.get_legacy_hyper_parameters.return_value = fxt_configuration_1
     train_data.get_compiled_dataset_shards.return_value = fxt_norm_compiled_dataset_shards
     train_data.hyperparameters_id = "dummy_id"
     return train_data

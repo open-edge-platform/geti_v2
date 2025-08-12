@@ -125,11 +125,11 @@ export const checkCommonElements = async (page: Page, domain: DOMAIN) => {
     await expect(page.getByRole('button', { name: 'Canvas adjustments' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Show dialog with hotkeys' })).toBeVisible();
 
-    if (![DOMAIN.ANOMALY_DETECTION, DOMAIN.ANOMALY_CLASSIFICATION, DOMAIN.ANOMALY_SEGMENTATION].includes(domain)) {
+    if (![DOMAIN.ANOMALY_DETECTION, DOMAIN.ANOMALY_CLASSIFICATION].includes(domain)) {
         await expect(page.getByTestId('required-annotations-value')).toBeVisible();
     }
 
-    if ([DOMAIN.ANOMALY_DETECTION, DOMAIN.ANOMALY_SEGMENTATION].includes(domain)) {
+    if (domain === DOMAIN.ANOMALY_DETECTION) {
         await page.getByRole('button', { name: 'project performance' }).click();
 
         await expect(page.getByText('Project performance')).toBeVisible();

@@ -22,8 +22,8 @@ export const DeviceSettingsCategory = ({ name, configuration }: DeviceSettingsCa
     const { deviceConfig, setDeviceConfig } = useDeviceSettings();
 
     const updateDeviceConfig = (configName: string, value: string | number) => {
-        setDeviceConfig([
-            ...deviceConfig.map((currentConfig) => {
+        setDeviceConfig(
+            deviceConfig.map((currentConfig) => {
                 if (isEqual(configName, currentConfig.name)) {
                     return {
                         ...currentConfig,
@@ -32,14 +32,14 @@ export const DeviceSettingsCategory = ({ name, configuration }: DeviceSettingsCa
                 } else {
                     return currentConfig;
                 }
-            }),
-        ]);
+            })
+        );
     };
 
     return (
         <Disclosure isHidden={!configuration.length}>
             <DisclosureTitle UNSAFE_className={classes.sectionHeader}>{name}</DisclosureTitle>
-            <DisclosurePanel>
+            <DisclosurePanel UNSAFE_style={{ background: 'var(--spectrum-global-color-gray-75)' }}>
                 {configuration.map((currentOption) => {
                     const shouldDisplay = isSettingVisible(currentOption, deviceConfig, dependencies);
                     const { name: optionName, config, onChange } = currentOption;

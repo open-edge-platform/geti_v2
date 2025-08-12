@@ -3,7 +3,7 @@
 
 import { radiansToDegrees, Vec2 } from '@geti/smart-tools/utils';
 import { Rotation } from '@geti/ui/icons';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { Point } from '../../../../../core/annotations/shapes.interface';
 import { Anchor } from '../anchor.component';

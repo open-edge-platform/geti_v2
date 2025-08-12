@@ -220,11 +220,15 @@ def prepare_train(train_data: TrainWorkflowData, dataset: Dataset) -> TrainOutpu
     label_schema = train_data.get_label_schema()
     model_storage = train_data.get_model_storage()
     input_model = train_data.get_input_model()
-    legacy_hyper_parameters = train_data.get_hyper_parameters()
+    legacy_hyper_parameters = train_data.get_legacy_hyper_parameters()
 
     model_repo = ModelRepo(model_storage.identifier)
     model_version = model_repo.get_latest_successful_version() + 1
-    revamped_hyperparameters = json.loads(train_data.hyperparameters_json) if train_data.hyperparameters_json else None
+    revamped_hyperparameters = (
+        json.loads(train_data.training_configuration_json).get("hyperparameters")
+        if train_data.training_configuration_json
+        else None
+    )
     model_builder = _ModelBuilder(
         model_repo=model_repo,
         project=project,

@@ -4,11 +4,8 @@ from service.job_submission.base import JobParams, ModelJobSubmitter
 from service.job_submission.job_creation_helpers import MODEL_TEST_JOB_PRIORITY, JobDuplicatePolicy, ModelTestJobData
 
 from geti_types import ID
-from iai_core.configuration.elements.component_parameters import ComponentType
-from iai_core.configuration.elements.dataset_manager_parameters import DatasetManagementConfig
 from iai_core.entities.model_test_result import ModelTestResult
 from iai_core.entities.project import Project
-from iai_core.repos import ConfigurableParametersRepo
 
 
 class ModelTestingJobSubmitter(ModelJobSubmitter):
@@ -24,21 +21,6 @@ class ModelTestingJobSubmitter(ModelJobSubmitter):
         :return: ID of the model test job that has been submitted to the jobs client
         """
         model = model_test_result.get_model()
-        config_repo = ConfigurableParametersRepo(project.identifier)
-        dataset_manager_config = config_repo.get_or_create_component_parameters(
-            data_instance_of=DatasetManagementConfig,
-            component=ComponentType.PIPELINE_DATASET_MANAGER,
-        )
-        min_annotation_size = (
-            None
-            if dataset_manager_config.minimum_annotation_size == -1
-            else dataset_manager_config.minimum_annotation_size
-        )
-        max_number_of_annotations = (
-            None
-            if dataset_manager_config.maximum_number_of_annotations == -1
-            else dataset_manager_config.maximum_number_of_annotations
-        )
         model_testing_job_data = ModelTestJobData(
             model_test_result=model_test_result,
             model=model,
@@ -49,8 +31,6 @@ class ModelTestingJobSubmitter(ModelJobSubmitter):
             task_node=next(
                 task for task in project.get_trainable_task_nodes() if task.id_ == model.model_storage.task_node_id
             ),
-            min_annotation_size=min_annotation_size,
-            max_number_of_annotations=max_number_of_annotations,
         )
 
         return JobParams(

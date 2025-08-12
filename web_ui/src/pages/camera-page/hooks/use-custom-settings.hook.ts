@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 
-import { DeviceConfiguration, SettingSelection } from '../providers/util';
+import { DeviceConfiguration } from '../providers/util';
 
 type UseCustomSettings = {
     isMirrored: boolean;
@@ -20,11 +20,11 @@ export const useCustomSettings = (): UseCustomSettings => {
             options: ['Off', 'On'],
             value: isMirrored ? 'On' : 'Off',
             defaultValue: 'Off',
-        } as SettingSelection,
+        },
         onChange: (value: number | string) => {
             setIsMirrored(value === 'On');
         },
-    };
+    } satisfies DeviceConfiguration;
 
     return {
         isMirrored,

@@ -541,8 +541,8 @@ describe('useSubmitAnnotations', () => {
         });
 
         const selectedTask = getMockedTask({
-            id: 'anomaly-segmentation',
-            domain: DOMAIN.ANOMALY_SEGMENTATION,
+            id: 'anomaly-detection',
+            domain: DOMAIN.ANOMALY_DETECTION,
             labels: [normalLabel, anomalousLabel],
         });
 

@@ -67,6 +67,7 @@ class ExportController:
                 "id": str(project_to_export.id_),
                 "name": str(project_to_export.name),
             },
+            "include_models": include_models.value,
         }
         job_key = serialize_job_key(
             {

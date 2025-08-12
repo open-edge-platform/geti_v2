@@ -9,7 +9,10 @@ import { isEmpty } from 'lodash-es';
 import { useOverlayTriggerState } from 'react-stately';
 
 import { ProjectIdentifier } from '../../../../../../../../../core/projects/core.interface';
-import { ProjectProps } from '../../../../../../../../../core/projects/project.interface';
+import {
+    EXPORT_PROJECT_MODELS_OPTIONS,
+    ProjectProps,
+} from '../../../../../../../../../core/projects/project.interface';
 import { useWorkspaceIdentifier } from '../../../../../../../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { ActionMenu } from '../../../../../../../../../shared/components/action-menu/action-menu.component';
 import { MenuAction } from '../../../../../../../../../shared/components/action-menu/menu-action.interface';
@@ -17,11 +20,15 @@ import { useCheckPermission } from '../../../../../../../../../shared/components
 import { OPERATION } from '../../../../../../../../../shared/components/has-permission/has-permission.interface';
 import { DeleteProjectDialog } from './delete-project-dialog.component';
 import { EditProjectNameDialog } from './edit-project-name-dialog.component';
+import { ExportProjectDialog } from './export-project-dialog.component';
 
 interface ActionMenuProps {
     project: ProjectProps;
     isExporting: boolean;
-    onExportProject: (projectIdentifier: ProjectIdentifier) => void;
+    onExportProject: (
+        projectIdentifier: ProjectIdentifier,
+        selectedModelExportOption: EXPORT_PROJECT_MODELS_OPTIONS
+    ) => void;
     onDeleteProject: (projectIdentifier: ProjectIdentifier, onSuccess: () => void) => void;
 }
 
@@ -55,6 +62,7 @@ export const ProjectActionMenu = ({
 
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const editProjectNameDialogState = useOverlayTriggerState({});
+    const exportProjectNameDialogState = useOverlayTriggerState({});
     const disabledKeys = isExporting ? [ProjectActions.Export] : [];
 
     const items: MenuAction<ProjectActions>[] = useMemo<MenuAction<ProjectActions>[]>(
@@ -79,7 +87,7 @@ export const ProjectActionMenu = ({
                 setIsAlertOpen(true);
                 break;
             case ProjectActions.Export:
-                onExportProject({ organizationId, workspaceId, projectId: project.id });
+                exportProjectNameDialogState.open();
                 break;
             case ProjectActions.Rename:
                 editProjectNameDialogState.open();
@@ -105,6 +113,13 @@ export const ProjectActionMenu = ({
                     />
                 )}
             </DialogContainer>
+
+            <ExportProjectDialog
+                onClose={exportProjectNameDialogState.close}
+                isOpen={exportProjectNameDialogState.isOpen}
+                onExportProject={onExportProject}
+                projectId={project.id}
+            />
 
             {canEditProject && (
                 <EditProjectNameDialog

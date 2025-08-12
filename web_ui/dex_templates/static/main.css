@@ -220,7 +220,7 @@ input:-webkit-autofill {
 
 .loginBox {
     width: 48rem;
-    min-height: 55rem;
+    min-height: 50rem;
 }
 
 .loginBox__content {
@@ -256,12 +256,6 @@ input:-webkit-autofill {
     padding: 1.2rem;
     outline: none !important;
     border: 0 !important;
-}
-
-.loginBox__footer {
-    text-align: center;
-    font-size: 1.4rem;
-    margin-bottom: 2.5rem;
 }
 
 .loginBox__label {

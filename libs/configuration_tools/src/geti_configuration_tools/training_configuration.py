@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-import math
 from typing import Any
 
 from geti_types import ID, PersistentEntity
@@ -26,7 +25,7 @@ class SubsetSplit(BaseModel):
         ge=1, le=100, default=10, title="Test percentage", description="Percentage of data to use for testing"
     )
     auto_selection: bool = Field(
-        default=True, title="Auto selection", description="Whether to automatically select data for each subset"
+        default=False, title="Auto selection", description="Whether to automatically select data for each subset"
     )
     remixing: bool = Field(default=False, title="Remixing", description="Whether to remix data between subsets")
     dataset_size: int | None = Field(
@@ -42,13 +41,9 @@ class SubsetSplit(BaseModel):
     def validate_subsets(self) -> "SubsetSplit":
         if (self.training + self.validation + self.test) != 100:
             raise ValueError("Sum of subsets should be equal to 100")
-        # check that all subsets have at least one item if dataset_size is provided
-        if self.dataset_size is not None:
-            validation_size = math.floor(self.dataset_size * self.validation / 100)
-            test_size = math.floor(self.dataset_size * self.test / 100)
-            train_size = self.dataset_size - validation_size - test_size
-            if train_size < 1 or validation_size < 1 or test_size < 1:
-                raise ValueError("Each subset must be at least contain one item")
+        # check that all subsets can have at least one item
+        if self.dataset_size is not None and self.dataset_size < 3:
+            raise ValueError("The dataset is too small to assign at least one item to each subset")
         return self
 
 
