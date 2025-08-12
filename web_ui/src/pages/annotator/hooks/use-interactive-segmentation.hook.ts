@@ -59,12 +59,6 @@ export const useInteractiveSegmentation = ({
         if (worker) {
             loadWorker();
         }
-
-        return () => {
-            if (ritmInstance && ritmInstance.current) {
-                ritmInstance.current.cleanMemory();
-            }
-        };
     }, [worker]);
 
     useEffect(() => {
