@@ -68,8 +68,12 @@ jobs:
         run: |
           DIGEST=$(skopeo inspect --raw "${IMAGE}" | jq -r .config.digest)
           echo "Digest for ${IMAGE} is ${DIGEST}"
-           echo "DIGEST=$(echo "${DIGEST}" | tr -d '\n')" >> $GITHUB_ENV
-
+          # Only allow digests matching the expected format (https://github.com/opencontainers/image-spec/blob/main/descriptor.md#sha-256)
+          if ! echo "${DIGEST}" | grep -Eq '^sha256:[a-f0-9]{64}$'; then
+            echo "Invalid digest format: ${DIGEST}" >&2
+            exit 1
+          fi
+          echo "DIGEST=${DIGEST}" >> $GITHUB_ENV
 
       - name: Sign the images with GitHub OIDC Token (keyless mode)
         env:
