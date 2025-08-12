@@ -109,7 +109,7 @@ export const TrainedModelConfigurationParameters = ({ taskId }: TrainedModelConf
         return (
             <NotFound
                 heading={'No training parameters'}
-                content={<Text>The model does not have any training parameters</Text>}
+                content={<Text>The model does not have any configurable training parameters.</Text>}
             />
         );
     }
