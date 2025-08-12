@@ -105,5 +105,14 @@ export const TrainedModelConfigurationParameters = ({ taskId }: TrainedModelConf
         );
     }
 
+    if (isEmpty(data.training) && isEmpty(data.datasetPreparation.augmentation)) {
+        return (
+            <NotFound
+                heading={'No training parameters'}
+                content={<Text>The model does not have any configurable training parameters.</Text>}
+            />
+        );
+    }
+
     return <TrainedModelConfigurationParametersList parameters={data} />;
 };

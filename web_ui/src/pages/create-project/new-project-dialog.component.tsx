@@ -101,8 +101,7 @@ const NewProjectDialogInner: FC<NewProjectDialogInnerProps> = ({ onCloseDialog }
 
     return (
         <Dialog
-            minHeight={'52vh'}
-            minWidth={{ base: 'auto', L: '90rem' }}
+            minWidth={{ base: 'auto', L: '90rem', minHeight: currentStep === STEPS.NAME_PROJECT ? undefined : '52vh' }}
             UNSAFE_style={isLargeSize ? paddingStyle : tabletPaddingStyle}
         >
             <Heading id={`${currentStep}-title-id`}>
