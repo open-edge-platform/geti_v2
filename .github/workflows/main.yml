@@ -237,6 +237,7 @@ jobs:
   success:
     name: Required status checks
     needs:
+      - get-vars
       - component-workflow
       - web-ui-workflow
       - package-distribution-workflow
@@ -255,7 +256,7 @@ jobs:
               exit 1
             fi
           done
-      - name: Create Step Summary with build version
+      - name: Create Summary with build version
         if: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }}
         run: |
           echo "## Required status checks passed" >> $GITHUB_STEP_SUMMARY
