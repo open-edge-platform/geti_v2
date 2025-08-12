@@ -14,7 +14,6 @@
 #
 # Inputs:
 # - `image_tag`: The container image to sign.
-# - `image_digest`: The container image digest to sign.
 # 
 # Example usage:
 # jobs:
@@ -22,8 +21,9 @@
 #     uses: ./.github/workflows/_reusable_sign_artifacts.yml
 #     with:
 #       image_tag: "219678651685.dkr.ecr.us-west-2.amazonaws.com/base-images/base-python:pr-625-e49aabe21b4d74cbbf2b7f64c3485f1e7cab559bb"
-#       image_digest: "sha256:748b167fb94aa80c173846ba7647cc4ea76a5dc03d7c9f3ae71a383a56c5de5e"
-#     secrets: inherit
+#     secrets: 
+#       GETI_USER: ${{ secrets.LOGIN_TO_GHCR }}
+#       GETI_GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN or secrets.GHCR_PASSWORD }}
 #
 
 name: Sign Container Images and Helm Charts
@@ -33,10 +33,6 @@ on:
     inputs:
       image_tag:
         description: 'Container image to sign'
-        required: true
-        type: string
-      image_digest:
-        description: 'Container image digest to sign'
         required: true
         type: string
 
@@ -50,15 +46,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Cosign
-        uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2, cosign: v2.5.3
+        uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2
+        with:
+          cosign-release: v2.5.3
+
+      - name: Install Skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
 
       - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GETI_USER }}
+          password: ${{ secrets.GETI_GHCR_TOKEN }}
+
+      - name: Get image digest
         run: |
-          echo ${{ secrets.GETI_GHCR_TOKEN }} |  docker login ghcr.io -u ${{ secrets.GETI_USER }} --password-stdin
+          IMAGE=${{ inputs.image_tag }}
+          DIGEST=$(skopeo inspect --raw "${IMAGE}" | jq -r .config.digest)
+          echo "Digest for ${IMAGE} is ${DIGEST}"
+          echo "DIGEST=${DIGEST}" >> $GITHUB_ENV
 
       - name: Sign the images with GitHub OIDC Token (keyless mode)
         env:
-          DIGEST: ${{ inputs.image_digest }}
+          DIGEST: ${{ env.DIGEST }}
           TAG: ${{ inputs.image_tag }}
         run: |
           echo "Signing ${TAG}@${DIGEST}"
@@ -70,9 +83,9 @@ jobs:
           TAG: ${{ inputs.image_tag }}
         run: |
           echo "Verifying signature for ${TAG}@${DIGEST}"
-          echo "Using certificate identity: https://github.com/intel-innersource/applications.ai.geti.geti-release/.github/workflows/_reusable_sign_artifacts.yml"
+          echo "Using certificate identity: https://github.com/open-edge-platform/geti/.github/workflows/_reusable_sign_artifacts.yml"
           echo "OIDC Issuer: https://token.actions.githubusercontent.com"
           cosign verify \
-          --certificate-identity-regexp=https://github.com/intel-innersource/applications.ai.geti.geti-release/.github/workflows/_reusable_sign_artifacts.yml \
+          --certificate-identity-regexp=https://github.com/open-edge-platform/geti/.github/workflows/_reusable_sign_artifacts.yml \
           --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
           "${TAG}@${DIGEST}"
