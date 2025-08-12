@@ -1,6 +1,6 @@
 # Artifact Signing Workflow
 #
-# This reusable workflow handled container images and helm charts signing using Cosign.
+# This reusable workflow handles container images and helm charts signing using Cosign.
 #
 # Key Features:
 # - Signs container images and helm charts using GitHub OIDC Token (keyless signing).
@@ -68,7 +68,8 @@ jobs:
         run: |
           DIGEST=$(skopeo inspect --raw "${IMAGE}" | jq -r .config.digest)
           echo "Digest for ${IMAGE} is ${DIGEST}"
-          echo "DIGEST=${DIGEST}" >> $GITHUB_ENV
+           echo "DIGEST=$(echo "${DIGEST}" | tr -d '\n')" >> $GITHUB_ENV
+
 
       - name: Sign the images with GitHub OIDC Token (keyless mode)
         env:
