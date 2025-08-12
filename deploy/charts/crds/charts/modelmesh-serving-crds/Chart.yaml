@@ -1,7 +1,0 @@
----
-apiVersion: v2
-description: A Helm chart containing modelmesh-serving CRDs.
-name: modelmesh-serving-crds
-version: 1.0.0
-sources:
-  - https://github.com/kserve/modelmesh-serving
