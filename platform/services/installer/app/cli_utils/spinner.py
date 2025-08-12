@@ -11,7 +11,6 @@ import click_spinner
 def init_spin(self):  # noqa: ANN001, ANN201
     """
     This method overwrite fixes https://github.com/click-contrib/click-spinner/pull/37
-    https://jira.devtools.intel.com/browse/CVS-92230
     """
     while not self.stop_running.is_set():
         self.stream.write(next(self.spinner_cycle, "\b"))

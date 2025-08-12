@@ -1,9 +1,9 @@
-include ../../Makefile.shared-python
+include ../../../Makefile.shared-python
 
 COMPONENT_NAME := platform-installer
 IMAGE_TAG ?= "$(COMPONENT_NAME):latest"
 
-DOCKER_BUILD_CONTEXT := --build-context libs=../../libs
+DOCKER_BUILD_CONTEXT := --build-context libs=../../../libs
 
 publish-chart:
 	@echo "Not applicable"

@@ -96,7 +96,6 @@ def scale_chart_resources(  # noqa: C901, PLR0912
     """
     total_allocatable_memory = k8s_memory_to_mibibytes(available_master_resources["memory"]) / 1024
     # Some resources might need conditional resource allocation (like resource below)
-    # See CVS-67452 for more details.
     logger.debug("Starting resource scaling")
     whitelisted_charts: list[Any] = []
     whitelisted_chart_names = list(map(lambda resource: resource["name"], whitelisted_charts))  # noqa: C417
@@ -137,7 +136,7 @@ def scale_chart_resources(  # noqa: C901, PLR0912
             for resource_spec_type, memory in [("requests", memory_request), ("limits", memory_limit)]:
                 if memory:
                     scaled_memory = None
-                    if chart_name in whitelisted_chart_names:  # CVS-67452
+                    if chart_name in whitelisted_chart_names:
                         for whitelisted_resource in whitelisted_charts:
                             if (
                                 chart_name == whitelisted_resource["name"]
