@@ -56,15 +56,16 @@ jobs:
           sudo apt-get install -y skopeo
 
       - name: Login to ghcr.io
-        uses: docker/login-action@v3
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1  # v3.5.0
         with:
           registry: ghcr.io
           username: ${{ secrets.GETI_USER }}
           password: ${{ secrets.GETI_GHCR_TOKEN }}
 
       - name: Get image digest
+        env:
+          IMAGE: ${{ inputs.image_tag }}
         run: |
-          IMAGE=${{ inputs.image_tag }}
           DIGEST=$(skopeo inspect --raw "${IMAGE}" | jq -r .config.digest)
           echo "Digest for ${IMAGE} is ${DIGEST}"
           echo "DIGEST=${DIGEST}" >> $GITHUB_ENV
