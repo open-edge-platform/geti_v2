@@ -47,6 +47,12 @@ def train(
     train_kwargs["logger"] = [OTXMetricsLogger(file_path=work_dir / "metrics.json")]
     logger.debug("Added metrics logger and progress reporter.")
 
+    if "adaptive_bs" not in train_kwargs and train_kwargs["adaptive_bs"] != "Safe":
+        raise ValueError(
+            "Adaptive batch size is not set to 'Safe'. "
+            "Please set 'adaptive_bs' to 'Safe' in the training configuration."
+        )
+    
     engine.train(**train_kwargs)
     logger.debug("Training completed.")
 
