@@ -790,7 +790,46 @@ describe('Train model dialog', () => {
                             key: 'dataset_size',
                         }),
                     ],
-                    augmentation: {},
+                    augmentation: {
+                        tiling: [
+                            getMockedConfigurationParameter({
+                                key: 'enable',
+                                type: 'bool',
+                                name: 'Enable tiling',
+                                value: false,
+                                description: 'Whether to apply tiling to the image',
+                                defaultValue: false,
+                            }),
+                            getMockedConfigurationParameter({
+                                key: 'adaptive_tiling',
+                                type: 'bool',
+                                name: 'Adaptive tiling',
+                                value: true,
+                                description: 'Whether to use adaptive tiling based on image content',
+                                defaultValue: true,
+                            }),
+                            getMockedConfigurationParameter({
+                                key: 'tile_size',
+                                type: 'int',
+                                name: 'Tile size',
+                                value: 400,
+                                description: 'Size of each tile in pixels',
+                                defaultValue: 400,
+                                maxValue: null,
+                                minValue: 0,
+                            }),
+                            getMockedConfigurationParameter({
+                                key: 'tile_overlap',
+                                type: 'float',
+                                name: 'Tile overlap',
+                                value: 0.2,
+                                description: 'Overlap between adjacent tiles as a fraction of tile size',
+                                defaultValue: 0.2,
+                                maxValue: 1,
+                                minValue: 0,
+                            }),
+                        ],
+                    },
                     filtering: {},
                 },
             })
@@ -809,6 +848,13 @@ describe('Train model dialog', () => {
         expect(screen.getByRole('tablist', { name: /advanced settings tabs/i })).toBeInTheDocument();
 
         fireEvent.click(screen.getByRole('tab', { name: /data management/i }));
+
+        expect(screen.getByRole('heading', { name: /Tiling/ })).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Off' }));
+
+        expect(screen.getByRole('button', { name: 'Off' })).toHaveAttribute('aria-pressed', 'true');
+        expect(screen.getByRole('button', { name: /start/i })).toBeEnabled();
 
         expect(screen.getByRole('heading', { name: /Training subsets/ })).toBeInTheDocument();
 

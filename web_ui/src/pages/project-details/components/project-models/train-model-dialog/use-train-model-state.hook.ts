@@ -302,7 +302,16 @@ export const useTrainModelState = () => {
             return false;
         }
 
-        return !areSubsetsSizesValid(trainingConfiguration.datasetPreparation.subsetSplit);
+        if (
+            !isEqual(
+                trainingConfiguration.datasetPreparation.subsetSplit,
+                defaultTrainingConfiguration.datasetPreparation.subsetSplit
+            )
+        ) {
+            return !areSubsetsSizesValid(trainingConfiguration.datasetPreparation.subsetSplit);
+        }
+
+        return false;
     };
 
     return {
