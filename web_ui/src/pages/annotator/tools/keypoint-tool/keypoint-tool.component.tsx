@@ -8,7 +8,6 @@ import { Point } from '../../../../core/annotations/shapes.interface';
 import { labelFromUser } from '../../../../core/annotations/utils';
 import { PoseEdges } from '../../annotation/shapes/pose-edges.component';
 import { PoseKeypoints } from '../../annotation/shapes/pose-keypoints.component';
-import { useVisibleAnnotations } from '../../hooks/use-visible-annotations.hook';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useZoom } from '../../zoom/zoom-provider.component';
 import { ResizeAnchor } from '../edit-tool/resize-anchor.component';
@@ -29,7 +28,6 @@ import {
 export const KeypointTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
     const { zoomState } = useZoom();
     const { image, roi } = useROI();
-    const visibleAnnotations = useVisibleAnnotations();
     const { templateLabels, templatePoints, currentBoundingBox, setCurrentBoundingBox, setCursorDirection } =
         useKeypointState();
 

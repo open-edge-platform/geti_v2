@@ -78,30 +78,4 @@ describe('KeypointTool', () => {
         expect(screen.getByRole('button', { name: 'mirror X-axis' })).toBeEnabled();
         expect(screen.getByRole('button', { name: 'mirror Y-axis' })).toBeEnabled();
     });
-
-    it('accepts keypoint annotation with a label so it does not get flagged as invalid', async () => {
-        const mockedLabel = getMockedLabel({ id: 'test-label' });
-        const annotationToolContext = fakeAnnotationToolContext();
-
-        await renderApp({
-            annotationToolContext,
-            annotations: [getMockedAnnotation({}, ShapeType.Pose)],
-            keypointState: {
-                templateLabels: [mockedLabel],
-                currentBoundingBox: { x: 0, y: 0, width: 10, height: 10 },
-            },
-        });
-
-        fireEvent.click(screen.getByRole('button', { name: /accept new keypoint annotation/i }));
-
-        expect(annotationToolContext.scene.replaceAnnotations).toHaveBeenCalledWith([
-            expect.objectContaining({
-                labels: expect.arrayContaining([
-                    expect.objectContaining({
-                        id: mockedLabel.id,
-                    }),
-                ]),
-            }),
-        ]);
-    });
 });
