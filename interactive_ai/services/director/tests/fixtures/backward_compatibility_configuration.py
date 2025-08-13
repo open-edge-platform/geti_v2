@@ -4620,7 +4620,10 @@ def fxt_legacy_model_configuration_rest_view():
                         "key": "tile_size",
                         "name": "Tile size",
                         "type": "int",
-                        "description": "Size of each tile in pixels",
+                        "description": "Size of each tile in pixels. "
+                        "The tile must be large enough to capture the entire object and its surrounding context, "
+                        "so choose a value larger than the size of most annotations. "
+                        "Note however that larger tiles also require more computational resources.",
                         "value": 400,
                         "default_value": 128,
                         "min_value": 0,
