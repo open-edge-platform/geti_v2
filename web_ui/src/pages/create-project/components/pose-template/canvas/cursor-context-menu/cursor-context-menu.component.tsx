@@ -1,33 +1,27 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ReactNode, RefObject, useState } from 'react';
+import { ReactNode, RefObject, useRef, useState } from 'react';
 
-import { View, type DOMRefValue } from '@geti/ui';
-import { ThemeProvider } from '@geti/ui/theme';
-import { OverlayContainer } from 'react-aria';
+import { View } from '@geti/ui';
+import { useOverlay } from 'react-aria';
+import { createPortal } from 'react-dom';
+import { OverlayTriggerState } from 'react-stately';
 
 import { useEventListener } from '../../../../../../hooks/event-listener/event-listener.hook';
 import { MouseEvents } from '../../../../../../shared/mouse-events';
 
 export interface CursorContextMenuProps {
-    isOpen: boolean;
+    state: OverlayTriggerState;
     children: ReactNode;
     onOpen: () => void;
     isValidTrigger: (element: Element) => boolean;
     triggerRef: RefObject<Element>;
-    containerRef?: RefObject<DOMRefValue<HTMLElement>>;
 }
 
 export const X_PADDING = 10;
-export const CursorContextMenu = ({
-    isOpen,
-    children,
-    containerRef,
-    triggerRef,
-    onOpen,
-    isValidTrigger,
-}: CursorContextMenuProps) => {
+export const CursorContextMenu = ({ state, children, triggerRef, onOpen, isValidTrigger }: CursorContextMenuProps) => {
+    const ref = useRef<HTMLDivElement>(null);
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
     useEventListener(
@@ -36,126 +30,45 @@ export const CursorContextMenu = ({
             event.preventDefault();
 
             if (isValidTrigger(event.target as Element)) {
+                const modal = document.querySelector('[data-testid="modal"]');
+
+                if (modal === null) return;
+
+                const modalBox = modal.getBoundingClientRect();
+
                 onOpen();
-                setCursorPosition({ x: event.clientX, y: event.clientY });
+                setCursorPosition({ x: event.clientX - modalBox.x + X_PADDING, y: event.clientY - modalBox.y });
             }
         },
         triggerRef
     );
 
-    return (
-        <OverlayContainer>
-            {isOpen && (
-                <ThemeProvider>
-                    <View
-                        ref={containerRef}
-                        position={'absolute'}
-                        top={cursorPosition.y}
-                        left={cursorPosition.x + X_PADDING}
-                        zIndex={100001}
-                        backgroundColor={'gray-200'}
-                        data-testid='position container'
-                    >
-                        {children}
-                    </View>
-                </ThemeProvider>
-            )}
-        </OverlayContainer>
+    const { overlayProps } = useOverlay(
+        {
+            isOpen: state.isOpen,
+            isDismissable: true,
+            shouldCloseOnBlur: false,
+            onClose: state.close,
+        },
+        ref
     );
-};
 
-/*return (
-    <Popover
-        isNonModal
-        isOpen={state.isOpen}
-        triggerRef={triggerRef}
-        placement={'top'}
-        onOpenChange={state.setOpen}
-    >
-        <ThemeProvider>
+    if (!state.isOpen) return null;
+
+    return createPortal(
+        <div ref={ref} {...overlayProps}>
             <View
-                /!*ref={containerRef}
                 position={'absolute'}
                 top={cursorPosition.y}
-                left={cursorPosition.x + X_PADDING}*!/
+                left={cursorPosition.x}
                 zIndex={100001}
                 backgroundColor={'gray-200'}
                 data-testid='position container'
+                {...overlayProps}
             >
                 {children}
             </View>
-        </ThemeProvider>
-    </Popover>
-);
-
-if (triggerRef.current === null) {
-    return null;
-}
-
-return (
-    <CustomPopover state={state} ref={triggerRef} placement={'top'}>
-        <View
-            ref={containerRef}
-            position={'absolute'}
-            top={cursorPosition.y}
-            left={cursorPosition.x + X_PADDING}
-            zIndex={100001}
-            backgroundColor={'gray-200'}
-            data-testid='position container'
-        >
-            {children}
-        </View>
-    </CustomPopover>
-);
-
-const { overlayProps: positionProps } = useOverlayPosition({
-    targetRef: triggerRef,
-    overlayRef,
-    placement: 'top',
-    offset: 5,
-    isOpen: state.isOpen,
-});
-
-if (state.isOpen === false) {
-    return null;
-}
-
-return (
-    <OverlayContainer>
-        <Popover {...positionProps} ref={overlayRef} isNonModal state={state} triggerRef={triggerRef} hideArrow>
-            <ThemeProvider>
-                <View
-                    ref={containerRef}
-                    position={'absolute'}
-                    top={cursorPosition.y}
-                    left={cursorPosition.x + X_PADDING}
-                    zIndex={100001}
-                    backgroundColor={'gray-200'}
-                    data-testid='position container'
-                >
-                    {children}
-                </View>
-            </ThemeProvider>
-        </Popover>
-    </OverlayContainer>
-);
-
-return (
-    <Overlay isOpen={isOpen} ref={overlayRef} nodeRef={nodeRef as unknown as MutableRefObject<HTMLElement>}>
-        {isOpen && (
-            <ThemeProvider>
-                <View
-                    ref={containerRef}
-                    position={'absolute'}
-                    top={cursorPosition.y}
-                    left={cursorPosition.x + X_PADDING}
-                    zIndex={100001}
-                    backgroundColor={'gray-200'}
-                    data-testid='position container'
-                >
-                    {children}
-                </View>
-            </ThemeProvider>
-        )}
-    </Overlay>
-);*/
+        </div>,
+        document.querySelector('[data-testid="modal"]') as HTMLElement
+    );
+};

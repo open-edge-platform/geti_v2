@@ -13,6 +13,8 @@ import { testWithOpenApi as test } from './fixtures';
 
 test.use({ featureFlags: { FEATURE_FLAG_KEYPOINT_DETECTION: true } });
 
+const X_PADDING = 10;
+
 const addAndVerifyPointPosition = async ({
     templateManagerPage,
     selector,
@@ -255,7 +257,32 @@ test.describe('Keypoint detection', () => {
 
                 await expect(page.getByLabel(`hidden padded edge 1 - 2`)).toBeInViewport();
 
+                const hiddenEdgeBox = await page.getByLabel('hidden padded edge 1 - 2').boundingBox();
+                if (!hiddenEdgeBox) {
+                    throw new Error('Hidden edge bounding box not found');
+                }
+
                 await templateManagerPage.openEdgeMenu('hidden padded edge 1 - 2');
+
+                const deleteEdgeButtonBox = await page.getByRole('button', { name: 'delete edge 1 - 2' }).boundingBox();
+
+                if (!deleteEdgeButtonBox) {
+                    throw new Error('Delete edge bounding box not found');
+                }
+
+                const deleteEdgeX = deleteEdgeButtonBox.x - X_PADDING;
+                const deleteEdgeY = deleteEdgeButtonBox.y;
+
+                const edgeX1 = hiddenEdgeBox.x;
+                const edgeY1 = hiddenEdgeBox.y;
+                const edgeX2 = hiddenEdgeBox.x + hiddenEdgeBox.width;
+                const edgeY2 = hiddenEdgeBox.y + hiddenEdgeBox.height;
+
+                expect(deleteEdgeX).toBeGreaterThanOrEqual(edgeX1);
+                expect(deleteEdgeX).toBeLessThanOrEqual(edgeX2);
+                expect(deleteEdgeY).toBeGreaterThanOrEqual(edgeY1);
+                expect(deleteEdgeY).toBeLessThanOrEqual(edgeY2);
+
                 await page.getByRole('button', { name: 'delete edge 1 - 2' }).click();
 
                 await expect(page.getByLabel(`hidden padded edge 1 - 2`)).not.toBeInViewport();
