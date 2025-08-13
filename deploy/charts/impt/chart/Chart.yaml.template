@@ -29,9 +29,10 @@ dependencies:
     version: ${TAG}
     repository: "file://../../../../../web_ui/.build/chart"
     condition: enabled.web
-  - name: impt-configuration
-    version: 0.0.9
-    condition: enabled.impt-configuration
+  - name: configuration
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/config/.build/chart"
+    condition: enabled.configuration
   - name: geti-common
     version: 0.0.1
   - name: geti-common-labels
@@ -134,5 +135,6 @@ dependencies:
     version: v0.13.0
     condition: enabled.istio-csr
   - name: opa-bundle
-    version: 0.0.1
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/opa_bundle/.build/chart"
     condition: enabled.opa-bundle

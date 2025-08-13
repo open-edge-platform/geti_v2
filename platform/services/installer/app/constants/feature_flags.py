@@ -2,9 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 """Module containing dict containing supported FEATURE_FLAGS for the platform"""
 
-# IMPORTANT
-# Adding, enabling or removing feature flags, please remember to make the same changes
-# in the Application Stack repository! https://github.com/intel-innersource/applications.ai.geti.application-stack
 FEATURE_FLAGS = {
     "FEATURE_FLAG_ACC_SVC_MOD": "false",
     "FEATURE_FLAG_ALLOW_EXTERNAL_KEY_PROJECT_IMPORT": "true",

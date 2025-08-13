@@ -1,5 +1,0 @@
-apiVersion: v1
-name: impt-configuration
-description: system configuration
-version: 0.0.9
-appVersion: v0.0.1
