@@ -1,13 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { fakeAnnotationToolContext } from '../../../../test-utils/fake-annotator-context';
 import { getMockedAnnotation } from '../../../../test-utils/mocked-items-factory/mocked-annotations';
-import { getMockedLabel } from '../../../../test-utils/mocked-items-factory/mocked-labels';
 import { AnnotationToolContext } from '../../core/annotation-tool-context.interface';
 import { useVisibleAnnotations } from '../../hooks/use-visible-annotations.hook';
 import { annotatorRender } from '../../test-utils/annotator-render';
