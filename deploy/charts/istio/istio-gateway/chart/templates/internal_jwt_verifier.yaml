@@ -1,0 +1,22 @@
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: "internal-jwt-verifier"
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  jwtRules:
+  - forwardOriginalToken: true
+    fromHeaders:
+    - name: x-auth-request-access-token
+    issuer: Intel Geti
+    {{- if not .Values.auth_proxy.enabled }}
+    jwksUri: http://gateway.impt.svc.cluster.local:9000/api/v1/keys/
+    {{- else }}
+    jwksUri: http://auth-proxy.impt.svc.cluster.local:7002/api/v1/keys/
+    {{- end}}
+    outputClaimToHeaders:
+    - claim: sub
+      header: x-auth-request-preferred-username

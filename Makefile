@@ -6,7 +6,6 @@
 PROJECTS = interactive_ai platform web_ui
 DISTRIB_CHARTS := deploy/charts
 
-
 build-image:
 	echo "Building images for all projects..."
 	@for dir in $(PROJECTS); do \

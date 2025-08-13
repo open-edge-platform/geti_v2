@@ -71,18 +71,6 @@ class RITM {
         }
     }
 
-    cleanMemory() {
-        if (this.image) {
-            this.image.delete();
-            this.image = null;
-        }
-
-        if (this.mask) {
-            this.mask.delete();
-            this.mask = null;
-        }
-    }
-
     async execute(
         imageArea: RegionOfInterest,
         points: RITMPoint[],

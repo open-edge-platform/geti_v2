@@ -1,0 +1,21 @@
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: add-strict-transport-security-header
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  configPatches:
+  - applyTo: ROUTE_CONFIGURATION
+    match:
+      context: GATEWAY
+    patch:
+      operation: MERGE
+      value:
+        response_headers_to_add:
+          - header:
+              key: 'strict-transport-security'
+              value: 'max-age=15724800; includeSubDomains'
+            append: false

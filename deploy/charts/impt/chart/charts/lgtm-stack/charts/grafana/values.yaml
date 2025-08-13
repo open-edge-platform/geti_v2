@@ -1,0 +1,402 @@
+rbac:
+  create: true
+  pspEnabled: false
+  pspUseAppArmor: true
+  namespaced: false
+  extraRoleRules: []
+  extraClusterRoleRules: []
+serviceAccount:
+  create: true
+  name:
+  nameTest:
+  labels: {}
+  autoMount: true
+replicas: 1
+headlessService: false
+autoscaling:
+  enabled: false
+podDisruptionBudget: {}
+deploymentStrategy:
+  type: RollingUpdate
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 60
+  timeoutSeconds: 30
+  failureThreshold: 10
+image: docker.io/grafana/grafana:10.4.1@sha256:753bbb971071480d6630d3aa0d55345188c02f39456664f67c1ea443593638d0
+imagePullPolicy: IfNotPresent
+securityContext:
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - "ALL"
+createConfigmap: true
+extraConfigmapMounts: []
+extraEmptyDirMounts: []
+extraLabels: {}
+downloadDashboards:
+  env: {}
+  envFromSecret: ""
+  resources: {}
+  securityContext: {}
+podAnnotations: {sidecar.opa-istio.io/inject: enabled}
+podLabels: {opa_envoy_filter: enabled}
+podPortName: grafana
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+  annotations: {}
+  labels: {}
+  portName: service
+  appProtocol: ""
+serviceMonitor:
+  enabled: false
+  path: /metrics
+  labels: {}
+  interval: 1m
+  scheme: http
+  tlsConfig: {}
+  scrapeTimeout: 30s
+  relabelings: []
+extraExposePorts: []
+hostAliases: []
+ingress:
+  labels:
+    ip_change_applicable: "true"
+  path: "/api/v[^/]*/grafana/?(.*)"
+  pathType: "ImplementationSpecific"
+  hosts: [""]
+  extraPaths: []
+  tls: []
+  istioIngressResponseHeaders: |
+    Cache-Control: "no-cache, no-store, max-age=0, must-revalidate"
+    X-Frame-Options: "DENY"
+    Content-Security-Policy: "frame-ancestors 'none'; default-src 'self'; connect-src 'self' data:https://grafana.com; worker-src 'self' blob: ;style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' https://grafana.com data:; frame-src 'none'; object-src 'none'; form-action 'self'"
+    X-Content-Type-Options: "nosniff"
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+topologySpreadConstraints: []
+extraInitContainers: []
+extraContainers: ""
+extraContainerVolumes: []
+persistence:
+  type: pvc
+  enabled: true
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  finalizers:
+    - kubernetes.io/pvc-protection
+  extraPvcLabels: {}
+  existingClaim: data-storage-volume-claim
+  subPath: "grafana"
+  inMemory:
+    enabled: false
+initChownData:
+  enabled: true
+  image:
+    repository: quay.io/prometheus/busybox
+    tag: glibc
+    pullPolicy: IfNotPresent
+  resources: {}
+  securityContext:
+    runAsNonRoot: false
+    runAsUser: 0
+admin:
+  existingSecret: ""
+  userKey: admin-user
+  passwordKey: admin-password
+env: {}
+envValueFrom: {}
+envFromSecret: ""
+envRenderSecret: {}
+envFromSecrets: []
+envFromConfigMaps: []
+enableServiceLinks: true
+extraSecretMounts: []
+extraVolumeMounts: []
+lifecycleHooks: {}
+plugins: []
+datasources:
+  loki.yaml:
+    apiVersion: 1
+    deleteDatasources: []
+    datasources:
+    - name: Loki
+      type: loki
+      uid: loki
+      access: proxy
+      url: "http://loki.{{ .Release.Namespace }}:3100"
+      editable: false
+      jsonData:
+        derivedFields:
+          - name: "trace_id"
+            datasourceUid: tempo
+            matcherRegex: "trace_id=(\\w+)"
+            url: "$${__value.raw}"
+          - name: "span_id"
+            matcherRegex: "span_id=(\\w+)"
+        httpMethod: "POST"
+  mimir.yaml:
+    apiVersion: 1
+    deleteDatasources: []
+    datasources:
+      - name: Mimir
+        type: prometheus
+        uid: mimir
+        access: proxy
+        url: "http://{{ .Release.Namespace }}-mimir.{{ .Release.Namespace }}:9009/prometheus"
+        editable: false
+        jsonData:
+          prometheusType: Mimir
+          prometheusVersion: 2.4.0
+  tempo.yaml:
+    apiVersion: 1
+    deleteDatasources: []
+    datasources:
+      - name: Tempo
+        type: tempo
+        uid: tempo
+        access: proxy
+        url: "http://{{ .Release.Namespace }}-tempo.{{ .Release.Namespace }}:3100"
+        editable: false
+        jsonData:
+          httpMethod: GET
+          lokiSearch:
+            datasourceUid: loki
+          nodeGraph:
+            enabled: true
+          search:
+            hide: false
+          serviceMap:
+            datasourceUid: mimir
+          spanBar:
+            type: Duration
+          traceQuery:
+            timeShiftEnabled: false
+          tracesToLogs:
+            datasourceUid: loki
+            filterByTraceID: true
+            mapTagNamesEnabled: true
+            mappedTags:
+              - key: k8s.deployment.name
+                value: k8s_deployment_name
+              - key: k8s.container.name
+                value: k8s_container_name
+            spanEndTimeShift: "5m"
+            spanStartTimeShift: "-5m"
+          tracesToMetrics:
+            datasourceUid: mimir
+            spanEndTimeShift: "5m"
+            spanStartTimeShift: "-5m"
+            tags:
+              - key: k8s.deployment.name
+                value: k8s_deployment_name
+              - key: k8s.container.name
+                value: k8s_container_name
+            queries:
+              - name: "Container CPU Utilization"
+                query: "container_cpu_utilization{$$__tags}"
+              - name: "Container Memory Usage"
+                query: "container_memory_usage{$$__tags}"
+
+alerting: {}
+notifiers: {}
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: 'cluster'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: false
+        options:
+          path: /var/lib/grafana/dashboards/cluster
+dashboards: {}
+dashboardsConfigMaps:
+  cluster: grafana-cluster-dashboard
+grafana.ini:
+  paths:
+    data: /var/lib/grafana/
+    logs: /var/log/grafana
+    plugins: /var/lib/grafana/plugins
+    provisioning: /etc/grafana/provisioning
+  analytics:
+    check_for_updates: false
+    reporting_enabled: false
+  log:
+    mode: console
+  server:
+    root_url: http://localhost:3000/api/v1/grafana
+    serve_from_sub_path: true
+  security:
+    allow_embedding: false
+    x_content_type_options: true
+    content_security_policy: true
+  auth.proxy:
+    enabled: true
+    header_name: x-auth-request-preferred-username
+    header_property: username
+    auto_sign_up: true
+  auth.basic:
+    enabled: true
+  auth:
+    disable_login_form: true
+    disable_signout_menu: true
+  users:
+    allow_sign_up: false
+    auto_assign_org: true
+    auto_assign_org_role: Editor
+  alerting:
+    enabled: false
+  unified_alerting:
+    enabled: false
+  feature_toggles:
+    enable: tempoApmTable traceToMetrics traceqlEditor
+ldap:
+  enabled: false
+  existingSecret: ""
+  config: ""
+smtp:
+  existingSecret: ""
+  userKey: "user"
+  passwordKey: "password"
+sidecar:
+  image:
+    repository: quay.io/kiwigrid/k8s-sidecar
+  imagePullPolicy: IfNotPresent
+  resources: {}
+  securityContext: {}
+  enableUniqueFilenames: false
+  readinessProbe: {}
+  livenessProbe: {}
+  alerts:
+    enabled: false
+    env: {}
+    label: grafana_alert
+    labelValue: ""
+    searchNamespace: null
+    watchMethod: WATCH
+    resource: both
+    reloadURL: "http://localhost:3000/api/admin/provisioning/alerting/reload"
+    script: null
+    skipReload: false
+    sizeLimit: {}
+  dashboards:
+    enabled: false
+    env: {}
+    SCProvider: true
+    label: grafana_dashboard
+    labelValue: ""
+    folder: /tmp/dashboards
+    defaultFolderName: null
+    searchNamespace: null
+    watchMethod: WATCH
+    resource: both
+    folderAnnotation: null
+    script: null
+    provider:
+      name: sidecarProvider
+      orgid: 1
+      folder: ''
+      type: file
+      disableDelete: false
+      allowUiUpdates: false
+      foldersFromFilesStructure: false
+    extraMounts: []
+    sizeLimit: {}
+  datasources:
+    enabled: false
+    env: {}
+    label: grafana_datasource
+    labelValue: ""
+    searchNamespace: null
+    watchMethod: WATCH
+    resource: both
+    reloadURL: "http://localhost:3000/api/admin/provisioning/datasources/reload"
+    script: null
+    skipReload: false
+    initDatasources: false
+    sizeLimit: {}
+  plugins:
+    enabled: false
+    env: {}
+    label: grafana_plugin
+    labelValue: ""
+    searchNamespace: null
+    watchMethod: WATCH
+    resource: both
+    reloadURL: "http://localhost:3000/api/admin/provisioning/plugins/reload"
+    script: null
+    skipReload: false
+    initPlugins: false
+    sizeLimit: {}
+  notifiers:
+    enabled: false
+    env: {}
+    label: grafana_notifier
+    labelValue: ""
+    searchNamespace: null
+    watchMethod: WATCH
+    resource: both
+    reloadURL: "http://localhost:3000/api/admin/provisioning/notifications/reload"
+    script: null
+    skipReload: false
+    initNotifiers: false
+    sizeLimit: {}
+namespaceOverride: ""
+revisionHistoryLimit: 10
+networkPolicy:
+  enabled: false
+  ingress: true
+  allowExternal: true
+  explicitNamespacesSelector: {}
+  egress:
+    enabled: false
+    ports: []
+enableKubeBackwardCompatibility: false
+useStatefulSet: false
+extraObjects: []
+
+global:
+  app_name_lgtm_stack: "lgtm-stack"
+  storage_volume_claim_name_grafana: "data-storage-volume-claim"
+  stripped_headers: ""
+  dcgm_dashboard: false
+  xpum_dashboard: false
+  cors_policy:
+    enabled: false
+    allowed_origins: []
+    allowed_headers: []
+    allowed_methods: []
+    max_age: 86400s
+    allow_credentials: false
+
+initResources:
+  requests:
+    cpu: 50m
+    memory: 100Mi
+  limits:
+    memory: 100Mi
+
+grafanaTmpMountPath: "/grafana"

@@ -1,6 +1,0 @@
-apiVersion: v2
-name: ${COMPONENT_NAME}
-type: application
-version: ${TAG}
-appVersion: ${TAG}
-description: A Helm chart for geti namespaces

@@ -277,7 +277,6 @@ allow if {
 }
 
 # Restrict access to POST /api/<api_ver>/organizations/<org_id>/invitations endpoint to organization_admin
-# will be active after merging the https://github.com/intel-innersource/applications.ai.geti.application-stack/pull/7665 PR
 allow if {
 	["api", api_ver, "organizations", org_id, "invitations"] = parsed_path
 	http_request.method == "POST"

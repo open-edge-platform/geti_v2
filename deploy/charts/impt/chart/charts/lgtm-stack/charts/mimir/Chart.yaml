@@ -1,0 +1,11 @@
+apiVersion: v2
+name: mimir
+description: Grafana Mimir Single Binary Mode
+type: application
+version: 1.0.2
+appVersion: 2.9.0
+engine: gotpl
+home: https://grafana.net
+icon: https://raw.githubusercontent.com/grafana/mimir/master/docs/mimir/website/logo_and_name.png
+sources:
+  - https://github.com/grafana/mimir

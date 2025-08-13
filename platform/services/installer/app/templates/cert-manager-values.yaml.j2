@@ -1,0 +1,27 @@
+---
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+{% if registry %}
+image:
+  registry: {{ registry }}
+  repository: third-party
+  name: cert-manager-controller:v1.13.2
+
+webhook:
+  image:
+    registry: {{ registry }}
+    repository: third-party
+    name: cert-manager-webhook:v1.13.3
+
+cainjector:
+  image:
+    registry: {{ registry }}
+    repository: third-party
+    name: cert-manager-cainjector:v1.13.2
+
+global:
+  enable_local_image_pull_secret: true
+  imagePullSecrets:
+    - name: regcred
+{% endif %}

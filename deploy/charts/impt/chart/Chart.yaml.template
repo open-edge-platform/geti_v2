@@ -1,0 +1,140 @@
+name: impt
+apiVersion: v2
+description: platform chart
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: ${TAG}
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: ${TAG}
+
+dependencies:
+  - name: opa
+    version: 0.0.5
+    condition: enabled.opa
+  - name: lgtm-stack
+    version: 0.0.3
+    condition: enabled.lgtm-stack
+  - name: oidc-stack
+    version: 0.0.2
+    condition: enabled.oidc-stack
+  - name: flyte-core
+    version: v0.0.1
+    condition: enabled.flyte-core
+  - name: web
+    version: ${TAG}
+    repository: "file://../../../../../web_ui/.build/chart"
+    condition: enabled.web
+  - name: configuration
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/config/.build/chart"
+    condition: enabled.configuration
+  - name: geti-common
+    version: 0.0.1
+  - name: geti-common-labels
+    version: 0.0.1
+  - name: bitnami-common
+    version: 1.11.2
+  - name: kafka
+    version: 15.3.6
+    condition: enabled.kafka
+  - name: kafka-provisioning
+    version: 15.3.6
+    condition: enabled.kafka-provisioning
+  - name: kafka-proxy
+    version: v0.1.13
+    condition: enabled.kafka-proxy
+  - name: mongodb
+    version: 6.0.7
+    condition: enabled.mongodb
+  - name: resource
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/resource/.build/chart"
+    condition: enabled.resource
+  - name: director
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/director/.build/chart"
+    condition: enabled.director
+  - name: dataset-ie
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/dataset_ie/.build/chart"
+    condition: enabled.dataset-ie
+  - name: media-ms
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/media/.build/chart"
+    condition: enabled.media-ms
+  - name: auto-train-controller
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/auto_train/.build/chart"
+    condition: enabled.auto-train-controller
+  - name: inference-gateway
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/inference_gateway/.build/chart"
+    condition: enabled.inference-gateway
+  - name: jobs-execution-namespace
+    version: v0.1.15
+    condition: enabled.jobs-execution-namespace
+  - name: jobs
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/jobs/.build/chart"
+    condition: enabled.jobs
+  - name: project-ie
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/project_ie/.build/chart"
+    condition: enabled.project-ie
+  - name: visual-prompt
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/visual_prompt/.build/chart"
+    condition: enabled.visual-prompt
+  - name: platform-cleaner
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/platform_cleaner/.build/chart"
+    condition: enabled.platform-cleaner
+  - name: telemetry-compression
+    version: 0.0.1
+    condition: enabled.telemetry-compression
+  - name: spice-db
+    version: 0.0.5
+    condition: enabled.spice-db
+  - name: postgresql
+    version: 0.0.3
+    condition: enabled.postgresql
+  - name: seaweed-fs
+    version: 0.0.11
+    condition: enabled.seaweed-fs
+  - name: opentelemetry-collector
+    version: 0.0.4
+    condition: enabled.opentelemetry-collector
+  - name: secrets
+    version: 0.0.5
+    condition: enabled.secrets
+  - name: dcgm-exporter
+    version: 3.4.1
+    condition: enabled.dcgm-exporter
+  - name: xpu-manager
+    version: 0.0.1
+    condition: enabled.xpu-manager
+  - name: etcd
+    version: 9.5.0
+    condition: enabled.etcd
+  - name: cert-manager
+    version: 0.1.1
+    condition: enabled.cert-manager
+  - name: modelmesh-serving
+    version: 0.1.0
+    condition: enabled.modelmesh-serving
+  - name: modelregistration
+    version: ${TAG}
+    repository: "file://../../../../../interactive_ai/services/model_registration/.build/chart"
+    condition: enabled.modelregistration
+  - name: cert-manager-istio-csr
+    version: v0.13.0
+    condition: enabled.istio-csr
+  - name: opa-bundle
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/opa_bundle/.build/chart"
+    condition: enabled.opa-bundle

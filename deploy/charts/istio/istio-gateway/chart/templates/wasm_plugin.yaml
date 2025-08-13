@@ -1,0 +1,47 @@
+---
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+{{- if not .Values.auth_proxy.enabled }}
+apiVersion: extensions.istio.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: api-gateway
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  selector:
+    matchLabels:
+      istio: gateway
+  url: "file://{{ .Values.api_gateway.mountPath }}/plugin.wasm"
+  imagePullPolicy: Always
+  vmConfig:
+    env:
+      - name: CLUSTER_NAME_ACCOUNT_SERVICE
+        valueFrom: HOST
+      - name: ROUTE_GET_USER_BY_EXT_ID
+        valueFrom: HOST
+      - name: ROUTE_GET_PAT_BY_HASH
+        valueFrom: HOST
+      - name: JWT_SIGNING_KEY_GETI
+        valueFrom: HOST
+      - name: JWT_VERIFICATION_KEY_GETI
+        valueFrom: HOST
+      - name: JWT_TTL_GETI
+        valueFrom: HOST
+      - name: CACHE_TTL
+        valueFrom: HOST
+      - name: UNAUTHORIZED_URLS
+        valueFrom: HOST
+      - name: GOMAXPROCS
+        value: '1'
+      - name: ISS_INTERNAL
+        valueFrom: HOST
+      - name: AUD_INTERNAL
+        valueFrom: HOST
+      - name: ISS_EXTERNAL
+        valueFrom: HOST
+      - name: AUD_EXTERNAL
+        valueFrom: HOST
+      - name: REQUIRED_ROLES
+        valueFrom: HOST
+{{- end }}

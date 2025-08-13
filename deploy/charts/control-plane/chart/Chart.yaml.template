@@ -1,0 +1,34 @@
+apiVersion: v2
+name: control-plane
+description: control plane deployment
+version: ${TAG}
+appVersion: ${TAG}
+dependencies:
+  - name: account-service
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/account/.build/chart"
+    condition: enabled.account-service
+  - name: onboarding-service
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/onboarding/.build/chart"
+    condition: enabled.onboarding-service
+  - name: notifier
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/notifier/.build/chart"
+    condition: enabled.notifier
+  - name: credit-system
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/credit/.build/chart"
+    condition: enabled.credit-system
+  - name: auth-proxy
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/auth_proxy/.build/chart"
+    condition: enabled.auth-proxy
+  - name: control-plane-common
+    version: 0.0.1
+    repository: "file://../chart/charts/control-plane-common/"
+  - name: initial-user
+    version: ${TAG}
+    repository: "file://../../../../../platform/services/initial_user/.build/chart"
+    condition: enabled.initial-user
+

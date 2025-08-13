@@ -1,0 +1,78 @@
+image: 
+  registry: docker.io
+  repository: 
+  name: mongo:7.0.6
+imagePullPolicy: IfNotPresent
+
+auth:
+  init_database: init
+
+resources:
+  requests:
+    cpu: 400m
+    memory: 1Gi
+  limits:
+    memory: 2Gi
+
+initResources:
+  requests:
+    cpu: 50m
+    memory: 100Mi
+  limits:
+    memory: 100Mi
+
+service:
+  type: ClusterIP
+  ports:
+    mongodb:
+      port: 27017
+
+serviceAccount:
+  create: true
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 10001
+  capabilities:
+    drop:
+      - ALL
+
+volumeSecurityContext:
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+    add:
+      - CHOWN
+
+livenessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  timeoutSeconds: 10
+  failureThreshold: 6
+  successThreshold: 1
+
+readinessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  timeoutSeconds: 10
+  failureThreshold: 6
+  successThreshold: 1
+
+dir_init_users_mongodb_secret: "/mnt/mongodb_secret"
+
+global:
+  enable_master_node_selector: true
+  storage_volume_claim_name_mongodb: data-storage-volume-claim
+  enable_local_image_pull_secret: true
+  busybox:
+    registry: quay.io
+    repository: prometheus
+    name: busybox:glibc
+  kubectl:
+    registry: docker.io
+    repository: bitnamilegacy
+    name: kubectl:1.31.0

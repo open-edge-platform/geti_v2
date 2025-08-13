@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+description: A Helm chart for deploying Istio CRDs
+name: istio-crds
+version: ${TAG}
+sources:
+  - https://github.com/istio/istio
