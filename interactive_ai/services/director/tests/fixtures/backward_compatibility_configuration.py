@@ -4623,8 +4623,8 @@ def fxt_legacy_model_configuration_rest_view():
                         "description": "Size of each tile in pixels. "
                         "Decreasing the tile size typically results in higher accuracy, "
                         "but it is also more computationally expensive due to the higher number of tiles. "
-                        "In any case, the tile must be large enough to capture the entire object and its surrounding context, "
-                        "so choose a value larger than the size of most annotations.",
+                        "In any case, the tile must be large enough to capture the entire object "
+                        "and its surrounding context, so choose a value larger than the size of most annotations.",
                         "value": 400,
                         "default_value": 128,
                         "min_value": 0,
