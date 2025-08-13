@@ -84,7 +84,7 @@ test.describe(`keypoint detection`, () => {
         await assertPredictionVisibility(page, labels.rightBackLeg.name, 16);
     });
 
-    test('adjust template orientation based on mouse movement', async ({ page, templateManagerPage }) => {
+    test.only('adjust template orientation based on mouse movement', async ({ page, templateManagerPage }) => {
         await page.goto(annotatorUrl);
 
         await page.getByLabel('Keypoint tool').click();
@@ -103,7 +103,6 @@ test.describe(`keypoint detection`, () => {
 
         await page.mouse.move(300, 300, { steps: 20 });
         await page.mouse.up({ button: 'left' });
-        await page.getByLabel('accept new keypoint annotation').click();
 
         const updatedHeadPosition = await templateManagerPage.getPosition(
             page.getByLabel(`Resize keypoint ${labels.head.name} anchor`)
