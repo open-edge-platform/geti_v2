@@ -101,27 +101,6 @@ export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContex
                 </ActionButton>
                 <Tooltip>Mirror Y axis</Tooltip>
             </TooltipTrigger>
-
-            {hasCurrentBoundingBox && (
-                <>
-                    <TooltipTrigger placement={'bottom'}>
-                        <ActionButton
-                            isQuiet
-                            aria-label={'reject keypoint annotation'}
-                            onPress={handleRejectAnnotation}
-                            marginEnd={'size-100'}
-                        >
-                            <Reject height={20} width={20} />
-                        </ActionButton>
-                        <Tooltip>{`Reject keypoint annotation`}</Tooltip>
-                    </TooltipTrigger>
-
-                    <TooltipTrigger placement={'bottom'}>
-                        <AcceptButton aria-label={'accept new keypoint annotation'} onPress={handleAcceptAnnotation} />
-                        <Tooltip>{'Accept new annotation'}</Tooltip>
-                    </TooltipTrigger>
-                </>
-            )}
         </Flex>
     );
 };
