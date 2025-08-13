@@ -139,9 +139,10 @@ class Tiling(BaseModelNoExtra):
         title="Tile size",
         description=(
             "Size of each tile in pixels. "
-            "The tile must be large enough to capture the entire object and its surrounding context, "
-            "so choose a value larger than the size of most annotations. "
-            "Note however that larger tiles also require more computational resources."
+            "Decreasing the tile size typically results in higher accuracy, "
+            "but it is also more computationally expensive due to the higher number of tiles. "
+            "In any case, the tile must be large enough to capture the entire object and its surrounding context, "
+            "so choose a value larger than the size of most annotations."
         ),
     )
     tile_overlap: float = Field(
