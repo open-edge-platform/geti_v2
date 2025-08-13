@@ -56,9 +56,7 @@ export const KeypointTool = ({ annotationToolContext }: ToolAnnotationContextPro
         // We add a label so that the annotation doesn't get flagged as invalid by `hasInvalidAnnotations`
         // when the user submits it
         const newAnnotation = { ...keypointAnnotation, isSelected: true, labels: [labelFromUser(templateLabels[0])] };
-        annotationToolContext.scene.replaceAnnotations([
-            { ...newAnnotation, labels: [labelFromUser(templateLabels[0])], isSelected: true },
-        ]);
+        annotationToolContext.scene.replaceAnnotations([newAnnotation]);
     };
 
     const handleRemoveOldABoundingBox = () => {
