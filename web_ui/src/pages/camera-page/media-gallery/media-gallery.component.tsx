@@ -4,19 +4,16 @@
 import { useEffect, useState } from 'react';
 
 import { paths } from '@geti/core';
-import { Flex, Heading, Selection, Text, View } from '@geti/ui';
+import { Flex, Heading, Selection, Text, useViewMode, View, ViewModeOptions, ViewModes } from '@geti/ui';
 import { isEmpty, isNil } from 'lodash-es';
 import { useNavigate } from 'react-router-dom';
 import { useOverlayTriggerState } from 'react-stately';
 
 import { DatasetIdentifier } from '../../../core/projects/dataset.interface';
-import { useViewMode } from '../../../hooks/use-view-mode/use-view-mode.hook';
 import { MEDIA_CONTENT_BUCKET } from '../../../providers/media-upload-provider/media-upload.interface';
 import { DeleteItemButton } from '../../../shared/components/delete-item-button/delete-item-button.component';
 import { ImageOverlay } from '../../../shared/components/media-preview-list/image-overlay.component';
 import { MediaPreviewList } from '../../../shared/components/media-preview-list/media-preview-list.component';
-import { MediaViewModes } from '../../../shared/components/media-view-modes/media-view-modes.component';
-import { INITIAL_VIEW_MODE, ViewModes } from '../../../shared/components/media-view-modes/utils';
 import { hasEqualId } from '../../../shared/utils';
 import { Screenshot } from '../../camera-support/camera.interface';
 import { ActionButtons } from '../components/action-buttons/action-buttons.component';
@@ -36,7 +33,7 @@ export const MediaGallery = (): JSX.Element => {
 
     const { savedFilesQuery, deleteMany, updateMany } = useCameraStorage();
     const { hasDefaultLabel, defaultLabelId, ...rest } = useCameraParams();
-    const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC, INITIAL_VIEW_MODE);
+    const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC);
 
     const sortingHandler = getSortingHandler(sortingOption);
     const screenshots = sortingHandler(savedFilesQuery?.data ?? []);
@@ -88,10 +85,10 @@ export const MediaGallery = (): JSX.Element => {
                     <SortByDropdown onSelect={setSortingOption} />
                     <Flex gap={'size-100'} alignItems={'center'}>
                         <Text>{viewMode} </Text>
-                        <MediaViewModes
+                        <ViewModes
                             viewMode={viewMode}
                             setViewMode={setViewMode}
-                            items={[ViewModes.LARGE, ViewModes.MEDIUM, ViewModes.SMALL]}
+                            items={[ViewModeOptions.LARGE, ViewModeOptions.MEDIUM, ViewModeOptions.SMALL]}
                         />
                     </Flex>
                 </Flex>

@@ -21,6 +21,7 @@ export const MenuTrigger = ({
     children,
     ariaLabel,
 }: MenuTriggerProps): JSX.Element => {
+    console.log('items', items);
     return (
         <MenuTriggerSpectrum onOpenChange={onOpenChange}>
             {children}
@@ -38,12 +39,7 @@ export const MenuTrigger = ({
                 >
                     {items.map((item: string) => (
                         <Item key={item.toLocaleLowerCase()} aria-label={item.toLocaleLowerCase()} textValue={item}>
-                            <Text
-                                id={`${idMatchingFormat(item.toLowerCase())}-id`}
-                                UNSAFE_style={{ pointerEvents: 'all' }}
-                            >
-                                {isFunction(renderContent) ? renderContent(item) : item}
-                            </Text>
+                            {item}
                         </Item>
                     ))}
                 </Menu>
