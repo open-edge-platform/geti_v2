@@ -7,7 +7,7 @@ import {
     OnboardingService,
     OrganizationMetadata,
 } from '@geti/core/src/users/services/onboarding-service.interface';
-import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { AxiosError, HttpStatusCode } from 'axios';
 
 import { AccountStatus } from '../../core/organizations/organizations.interface';
@@ -51,10 +51,9 @@ const suspendedOrganization = {
 
 const renderApp = async ({
     profile = null,
-    onboardingService,
+    onboardingService = createInMemoryOnboardingService(),
 }: {
     profile?: OnboardingProfile | null;
-    isError?: boolean;
     onboardingService?: OnboardingService;
     organizations?: OrganizationMetadata[];
     selectedOrganization?: OrganizationMetadata | null;
@@ -67,22 +66,15 @@ const renderApp = async ({
         </ErrorBoundary>,
         { profile, services: { onboardingService } }
     );
-
-    await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 };
 
 describe('Organizations context', () => {
     it('Displays <SuspendedOrganization /> if the organization has been suspended or deleted.', async () => {
-        const onboardingService = createInMemoryOnboardingService();
-        onboardingService.getActiveUserProfile = jest.fn(() =>
-            Promise.resolve({
+        await renderApp({
+            profile: {
                 organizations: [suspendedOrganization],
                 hasAcceptedUserTermsAndConditions: true,
-            })
-        );
-
-        await renderApp({
-            onboardingService,
+            },
         });
 
         expect(screen.getByText(/Your organization's account has been suspended/)).toBeVisible();
@@ -104,22 +96,21 @@ describe('Organizations context', () => {
 
         await renderApp({
             onboardingService,
+            profile: null,
         });
 
-        expect(screen.getByText(/You do not have access to any Intel Geti organization/)).toBeVisible();
+        await waitFor(() => {
+            expect(screen.getByText(/You do not have access to any Intel Geti organization/)).toBeVisible();
+        });
     });
 
     describe('multiple organizations', () => {
         it('Displays the "OrganizationSelectionModal" when no organization has been selected', async () => {
-            const onboardingService = createInMemoryOnboardingService();
-            onboardingService.getActiveUserProfile = jest.fn(() =>
-                Promise.resolve({
+            await renderApp({
+                profile: {
                     organizations: [mockedOrganization, mockedOrganizationTwo],
                     hasAcceptedUserTermsAndConditions: true,
-                })
-            );
-            await renderApp({
-                onboardingService,
+                },
             });
 
             expect(screen.getByText(/^You belong to the following organizations./i)).toBeVisible();
@@ -131,16 +122,11 @@ describe('Organizations context', () => {
         });
 
         it('Displays <OrganizationSelectionModal /> if the organization has been suspended.', async () => {
-            const onboardingService = createInMemoryOnboardingService();
-            onboardingService.getActiveUserProfile = jest.fn(() =>
-                Promise.resolve({
+            await renderApp({
+                profile: {
                     organizations: [suspendedOrganization, mockedOrganization],
                     hasAcceptedUserTermsAndConditions: true,
-                })
-            );
-
-            await renderApp({
-                onboardingService,
+                },
             });
 
             expect(

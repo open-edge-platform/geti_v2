@@ -6,6 +6,7 @@ import { ReactNode, useLayoutEffect, useMemo, useRef } from 'react';
 import { getErrorMessage } from '@geti/core/src/services/utils';
 import {
     DefaultOptions,
+    MutationCache,
     QueryCache,
     QueryClient,
     QueryClientProvider as TanstackQueryClientProvider,
@@ -14,7 +15,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { isAxiosError } from 'axios';
 
 import { NOTIFICATION_TYPE } from '../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../notification/notification.component';
+import { AddNotificationProps, useNotification } from '../../notification/notification.component';
 
 declare module '@tanstack/react-query' {
     interface Register {
@@ -25,9 +26,66 @@ declare module '@tanstack/react-query' {
         };
         mutationMeta: {
             notifyOnError?: boolean;
+            errorMessage?: string;
         };
     }
 }
+
+export const createGetiQueryClient = ({
+    defaultQueryOptions,
+    addNotification,
+}: {
+    defaultQueryOptions?: DefaultOptions;
+    addNotification: (props: AddNotificationProps) => string;
+}): QueryClient => {
+    const notify = { current: addNotification };
+
+    const queryCache = new QueryCache({
+        onError: (error, query) => {
+            if (isAxiosError(error) && query.meta && 'notifyOnError' in query.meta) {
+                const message = query.meta.errorMessage;
+
+                if (query.meta.notifyOnError === true) {
+                    notify.current({
+                        message: typeof message === 'string' ? message : getErrorMessage(error),
+                        type: NOTIFICATION_TYPE.ERROR,
+                    });
+                }
+            }
+
+            if (query.meta && 'disableGlobalErrorHandling' in query.meta) {
+                if (query.meta.disableGlobalErrorHandling === true) {
+                    return;
+                }
+            }
+        },
+    });
+
+    const mutationCache = new MutationCache({
+        onError: (error, _variables, _ctx, mutation) => {
+            if (isAxiosError(error) && mutation.meta && 'notifyOnError' in mutation.meta) {
+                const message = mutation.meta.errorMessage;
+
+                notify.current({
+                    message: typeof message === 'string' ? message : getErrorMessage(error),
+                    type: NOTIFICATION_TYPE.ERROR,
+                });
+            }
+        },
+    });
+
+    return new QueryClient({
+        defaultOptions: {
+            queries: {
+                refetchIntervalInBackground: false,
+                refetchOnWindowFocus: false,
+            },
+            ...defaultQueryOptions,
+        },
+        queryCache,
+        mutationCache,
+    });
+};
 
 export const QueryClientProvider = ({
     children,
@@ -46,36 +104,7 @@ export const QueryClientProvider = ({
     }, [addNotification]);
 
     const queryClient = useMemo(() => {
-        const queryCache = new QueryCache({
-            onError: (error, query) => {
-                if (isAxiosError(error) && query.meta && 'notifyOnError' in query.meta) {
-                    const message = query.meta.errorMessage;
-                    if (query.meta.notifyOnError === true) {
-                        notify.current({
-                            message: typeof message === 'string' ? message : getErrorMessage(error),
-                            type: NOTIFICATION_TYPE.ERROR,
-                        });
-                    }
-                }
-
-                if (query.meta && 'disableGlobalErrorHandling' in query.meta) {
-                    if (query.meta.disableGlobalErrorHandling === true) {
-                        return;
-                    }
-                }
-            },
-        });
-
-        return new QueryClient({
-            defaultOptions: {
-                queries: {
-                    refetchIntervalInBackground: false,
-                    refetchOnWindowFocus: false,
-                },
-                ...defaultQueryOptions,
-            },
-            queryCache,
-        });
+        return createGetiQueryClient({ addNotification: notify.current, defaultQueryOptions });
     }, [defaultQueryOptions]);
 
     return (

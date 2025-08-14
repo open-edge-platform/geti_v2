@@ -24,7 +24,7 @@ type addToastNotificationProps = Omit<NotificationToastProps, 'remove'> & {
     placement?: NOTIFICATION_CONTAINER;
 };
 
-interface addNotificationProps {
+export interface AddNotificationProps {
     message: ReactChild;
     type: NOTIFICATION_TYPE;
     dismiss?: DismissOptions;
@@ -35,7 +35,7 @@ interface addNotificationProps {
 interface NotificationContextProps {
     removeNotification: (id: string) => void;
     removeNotifications: () => void;
-    addNotification: ({ message, type, dismiss, actionButtons }: addNotificationProps) => string;
+    addNotification: ({ message, type, dismiss, actionButtons }: AddNotificationProps) => string;
     addToastNotification: (data: addToastNotificationProps) => string;
 }
 
@@ -70,7 +70,7 @@ export const NotificationProvider = ({ children }: NotificationProviderProps): J
             hasCloseButton = true,
             dismiss = DEFAULT_DISMISS_OPTIONS,
             actionButtons,
-        }: addNotificationProps): string => {
+        }: AddNotificationProps): string => {
             const notificationId = isString(message) || isNumber(message) ? `id-${message}` : `id-${message.key}`;
 
             const NotificationContainer: iNotification = {
