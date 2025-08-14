@@ -9,7 +9,8 @@
     "@spectrum-icons/illustrations": "^3.6.24",
     "@spectrum-icons/workflow": "^4.2.23",
     "react-aria-components": "^1.11.0",
-    "usehooks-ts": "^3.1.1"
+    "usehooks-ts": "^3.1.1",
+    "sonner": "^2.0.7"
   },
   "devDependencies": {
     "@geti/config": "*",
