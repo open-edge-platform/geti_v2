@@ -27,7 +27,7 @@
         calc(var(--spectrum-global-dimension-size-125) * (-1)) var(--background);
     box-shadow: 0px 0px var(--spectrum-global-dimension-size-500) calc(var(--spectrum-global-dimension-size-125) * (-1))
         var(--background);
-    background-color: var(--background-inverse);
+    background-color: var(--spectrum-global-color-gray-200);
     color: white;
     width: 640px;
     height: var(--spectrum-global-dimension-size-600) !important;
