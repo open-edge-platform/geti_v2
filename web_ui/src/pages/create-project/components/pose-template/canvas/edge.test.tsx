@@ -24,34 +24,36 @@ describe('Edge', () => {
         onResetAndSelect = jest.fn(),
     }: Partial<EdgeProps>) => {
         await render(
-            <ZoomProvider>
-                <TransformZoomAnnotation>
-                    <svg width='500' height='500'>
-                        <Edge
-                            id={id}
-                            to={to}
-                            from={from}
-                            isSelected={isSelected}
-                            contextMenu={contextMenu}
-                            isDisabled={isDisabled}
-                            onSelect={onSelect}
-                            onNewIntermediatePoint={onNewIntermediatePoint}
-                            onRemoveSelected={onRemoveSelected}
-                            onResetAndSelect={onResetAndSelect}
-                        />
+            <div data-testid={'modal'}>
+                <ZoomProvider>
+                    <TransformZoomAnnotation>
+                        <svg width='500' height='500'>
+                            <Edge
+                                id={id}
+                                to={to}
+                                from={from}
+                                isSelected={isSelected}
+                                contextMenu={contextMenu}
+                                isDisabled={isDisabled}
+                                onSelect={onSelect}
+                                onNewIntermediatePoint={onNewIntermediatePoint}
+                                onRemoveSelected={onRemoveSelected}
+                                onResetAndSelect={onResetAndSelect}
+                            />
 
-                        <rect
-                            x='467'
-                            y='128'
-                            width='16'
-                            height='16'
-                            fillOpacity='0'
-                            fill='white'
-                            aria-label='Resize keypoint'
-                        ></rect>
-                    </svg>
-                </TransformZoomAnnotation>
-            </ZoomProvider>
+                            <rect
+                                x='467'
+                                y='128'
+                                width='16'
+                                height='16'
+                                fillOpacity='0'
+                                fill='white'
+                                aria-label='Resize keypoint'
+                            ></rect>
+                        </svg>
+                    </TransformZoomAnnotation>
+                </ZoomProvider>
+            </div>
         );
     };
 
