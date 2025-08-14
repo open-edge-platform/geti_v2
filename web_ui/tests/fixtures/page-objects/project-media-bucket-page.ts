@@ -3,7 +3,7 @@
 
 import { expect, Locator, Page } from '@playwright/test';
 
-import { ViewModes } from './../../../src/shared/components/media-view-modes/utils';
+import { ViewModes } from '../../../packages/ui/src/view-modes/utils';
 import { FilterDialogPage } from './filter-dialog-page';
 
 export class ProjectMediaBucketPage {
