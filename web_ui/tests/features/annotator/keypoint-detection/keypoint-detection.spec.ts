@@ -84,7 +84,7 @@ test.describe(`keypoint detection`, () => {
         await assertPredictionVisibility(page, labels.rightBackLeg.name, 16);
     });
 
-    test.only('adjust template orientation based on mouse movement', async ({ page, templateManagerPage }) => {
+    test('adjust template orientation based on mouse movement', async ({ page, templateManagerPage }) => {
         await page.goto(annotatorUrl);
 
         await page.getByLabel('Keypoint tool').click();
@@ -187,5 +187,23 @@ test.describe(`keypoint detection`, () => {
         expect(await page.getByRole('listitem').count()).toBe(7);
         await page.keyboard.press('Delete');
         expect(await page.getByRole('listitem').count()).toBe(0);
+    });
+
+    test('Retain previous annotation until mouse release on the next one', async ({ page, templateManagerPage }) => {
+        await page.goto(annotatorUrl);
+        await page.getByLabel('Keypoint tool').click();
+
+        const firstHeadPosition = await templateManagerPage.getPosition(page.getByLabel(`label ${labels.head.name}`));
+
+        // Draw second annotation
+        await page.mouse.move(600, 500);
+        await page.mouse.down({ button: 'left' });
+        await page.mouse.move(900, 800, { steps: 20 });
+        await page.mouse.up();
+
+        // If annotations are replaced, the position should change
+        const newHeadPosition = await templateManagerPage.getPosition(page.getByLabel(`label ${labels.head.name}`));
+
+        expect(newHeadPosition).not.toEqual(firstHeadPosition);
     });
 });
