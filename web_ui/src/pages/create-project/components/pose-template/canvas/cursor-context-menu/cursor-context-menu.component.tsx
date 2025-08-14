@@ -20,21 +20,26 @@ export interface CursorContextMenuProps {
 }
 
 export const X_PADDING = 10;
+
+const getParentModal = () => {
+    return document.querySelector('[data-testid="modal"]');
+};
+
 export const CursorContextMenu = ({ state, children, triggerRef, onOpen, isValidTrigger }: CursorContextMenuProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-
-    const PARENT_MODAL_ELEMENT = document.querySelector('[data-testid="modal"]');
 
     useEventListener(
         MouseEvents.ContextMenu,
         (event) => {
             event.preventDefault();
 
-            if (isValidTrigger(event.target as Element)) {
-                if (PARENT_MODAL_ELEMENT === null) return;
+            const parentModal = getParentModal();
 
-                const modalBox = PARENT_MODAL_ELEMENT.getBoundingClientRect();
+            if (isValidTrigger(event.target as Element)) {
+                if (parentModal === null) return;
+
+                const modalBox = parentModal.getBoundingClientRect();
 
                 onOpen();
                 setCursorPosition({ x: event.clientX - modalBox.x + X_PADDING, y: event.clientY - modalBox.y });
@@ -69,6 +74,6 @@ export const CursorContextMenu = ({ state, children, triggerRef, onOpen, isValid
                 {children}
             </View>
         </div>,
-        PARENT_MODAL_ELEMENT as HTMLElement
+        getParentModal() as HTMLElement
     );
 };
