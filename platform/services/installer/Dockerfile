@@ -1,4 +1,4 @@
-FROM python:3.10.18-bullseye
+FROM python:3.10.18-bullseye@sha256:65c6bdcca22db1a3468a0262ae05f38a0a718f51e9818cd09c12094aaae28a33
 
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 

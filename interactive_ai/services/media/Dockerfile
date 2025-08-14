@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     go-licenses save . --save_path /THIRD_PARTY_NOTICES || true
 
 # Production image
-FROM gcr.io/distroless/static-debian12:nonroot@sha256:627d6c5a23ad24e6bdff827f16c7b60e0289029b0c79e9f7ccd54ae3279fb45f AS runtime
+FROM gcr.io/distroless/static-debian12:nonroot@sha256:cdf4daaf154e3e27cfffc799c16f343a384228f38646928a1513d925f473cb46 AS runtime
 
 COPY --link --from=build /build/interactive_ai/service/media_ms .
 COPY --from=build /THIRD_PARTY_NOTICES /THIRD_PARTY_NOTICES
