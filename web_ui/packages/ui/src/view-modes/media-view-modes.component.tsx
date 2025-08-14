@@ -8,25 +8,25 @@ import { capitalize } from 'lodash-es';
 
 import { Grid, GridMedium, GridSmall, List } from '../../icons';
 import { ActionButton } from '../button/button.component';
-import { ViewModeOptions } from './utils';
+import { VIEW_MODE_LABEL, ViewModes } from './utils';
 
-const ITEMS = [ViewModeOptions.LARGE, ViewModeOptions.MEDIUM, ViewModeOptions.SMALL, ViewModeOptions.DETAILS];
+const ITEMS = [ViewModes.LARGE, ViewModes.MEDIUM, ViewModes.SMALL, ViewModes.DETAILS];
 
-const ICON_PER_MODE: Record<ViewModeOptions, JSX.Element> = {
-    [ViewModeOptions.DETAILS]: <List />,
-    [ViewModeOptions.SMALL]: <GridSmall />,
-    [ViewModeOptions.MEDIUM]: <GridMedium />,
-    [ViewModeOptions.LARGE]: <Grid />,
+const ICON_PER_MODE: Record<ViewModes, JSX.Element> = {
+    [ViewModes.DETAILS]: <List />,
+    [ViewModes.SMALL]: <GridSmall />,
+    [ViewModes.MEDIUM]: <GridMedium />,
+    [ViewModes.LARGE]: <Grid />,
 };
 
-interface ViewModesProps {
-    items?: ViewModeOptions[];
+interface MediaViewModesProps {
+    items?: ViewModes[];
     isDisabled?: boolean;
-    viewMode: ViewModeOptions;
-    setViewMode: Dispatch<SetStateAction<ViewModeOptions>>;
+    viewMode: ViewModes;
+    setViewMode: Dispatch<SetStateAction<ViewModes>>;
 }
 
-export const ViewModes = ({ items = ITEMS, isDisabled = false, viewMode, setViewMode }: ViewModesProps) => {
+export const MediaViewModes = ({ items = ITEMS, isDisabled = false, viewMode, setViewMode }: MediaViewModesProps) => {
     const handleAction = (key: Key): void => {
         const convertedKeyToViewMode = capitalize(String(key));
 
@@ -34,16 +34,16 @@ export const ViewModes = ({ items = ITEMS, isDisabled = false, viewMode, setView
             return;
         }
 
-        setViewMode(convertedKeyToViewMode as ViewModeOptions);
+        setViewMode(convertedKeyToViewMode as ViewModes);
     };
 
     return (
         <MenuTrigger>
             <TooltipTrigger placement='bottom'>
-                <ActionButton isQuiet isDisabled={isDisabled}>
+                <ActionButton isQuiet isDisabled={isDisabled} aria-label='View mode'>
                     {ICON_PER_MODE[viewMode]}
                 </ActionButton>
-                <Tooltip>View modes camilo</Tooltip>
+                <Tooltip>{VIEW_MODE_LABEL}</Tooltip>
             </TooltipTrigger>
             <Menu
                 items={items}

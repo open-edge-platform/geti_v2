@@ -5,10 +5,10 @@ import { useLocalStorage } from 'usehooks-ts';
 
 import { INITIAL_VIEW_MODE, VIEW_MODE_KEY } from './utils';
 
-const getMediaViewModeKey = (subfix: string) => {
-    return `${VIEW_MODE_KEY}-${subfix}`;
+const getMediaViewModeKey = (suffix: string) => {
+    return `${VIEW_MODE_KEY}-${suffix}`;
 };
 
-export const useViewMode = (subfix: string, defaultViewMode = INITIAL_VIEW_MODE) => {
-    return useLocalStorage(getMediaViewModeKey(subfix), defaultViewMode);
+export const useViewMode = (suffix: string, defaultViewMode = INITIAL_VIEW_MODE) => {
+    return useLocalStorage(getMediaViewModeKey(suffix), defaultViewMode);
 };
