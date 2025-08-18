@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = "==3.10.*"
 resolution-markers = [
     "sys_platform == 'darwin'",
@@ -1873,7 +1873,7 @@ wheels = [
 [[package]]
 name = "otx"
 version = "2.5.0"
-source = { git = "https://github.com/open-edge-platform/training_extensions.git?branch=release%2F2.5#476ee18fbd692ded9a1dc620e8eece826ce6f880" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anomalib", extra = ["core"] },
     { name = "datumaro" },
@@ -1898,6 +1898,10 @@ dependencies = [
     { name = "timm" },
     { name = "torchmetrics" },
     { name = "typeguard" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/02/bb/8d870a14dd0b776e9011536f423c5b9923aacaf92949fb29f71016c0b124/otx-2.5.0.tar.gz", hash = "sha256:a87655e3416c49f6eb0f91633d5474d361ae02458d338c2c027a8361c684f907", size = 19169834, upload-time = "2025-08-18T12:02:47.453Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5c/ed/4cef4459f53cd81a14b542befc99327a907235e2cff824ac59f2df7c2d77/otx-2.5.0-py3-none-any.whl", hash = "sha256:ce822281f8f61d495395a9fce197ae1573d37eae6374606e697cb8f817ea7eaa", size = 954232, upload-time = "2025-08-18T12:02:44.841Z" },
 ]
 
 [[package]]
@@ -1935,7 +1939,7 @@ requires-dist = [
     { name = "geti-telemetry-tools", extras = ["telemetry", "kafka"], directory = "../../../../libs/telemetry_tools" },
     { name = "minio", specifier = "~=7.1.0" },
     { name = "numpy", specifier = "==1.26.4" },
-    { name = "otx", git = "https://github.com/open-edge-platform/training_extensions.git?branch=release%2F2.5" },
+    { name = "otx", specifier = "==2.5.0" },
     { name = "requests", specifier = "==2.32.4" },
     { name = "tqdm", specifier = "==4.67.1" },
 ]
