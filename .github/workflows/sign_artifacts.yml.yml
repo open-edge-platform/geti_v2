@@ -1,6 +1,6 @@
 # Artifact Signing Workflow
 #
-# This reusable workflow handles container images and helm charts signing using Cosign.
+# This workflow handles container images and helm charts signing using Cosign.
 #
 # Key Features:
 # - Signs container images and helm charts using GitHub OIDC Token (keyless signing).
@@ -8,65 +8,62 @@
 #
 # Process Stages:
 # 1. Install Cosign.
-# 2. Login to ghcr.io using GitHub secrets.
-# 3. Sign the images and helm charts with GitHub OIDC Token.
-# 4. Verify the signature using the specified certificate identity.
+# 2. Install Crane.
+# 3. Login to ghcr.io using GitHub secrets.
+# 4. Get the image digest.
+# 5. Sign the images or helm charts with GitHub OIDC Token.
+# 6. Verify the signature using the specified certificate identity.
 #
 # Inputs:
-# - `image_tag`: The container image to sign.
+# - `image_uri`: The container image to sign.
 # 
 # Example usage:
-# jobs:
-#   sign-container:
-#     uses: ./.github/workflows/_reusable_sign_artifacts.yml
-#     with:
-#       image_tag: "219678651685.dkr.ecr.us-west-2.amazonaws.com/base-images/base-python:pr-625-e49aabe21b4d74cbbf2b7f64c3485f1e7cab559bb"
-#     secrets: 
-#       GETI_USER: ${{ secrets.LOGIN_TO_GHCR }}
-#       GETI_GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN or secrets.GHCR_PASSWORD }}
-#
+# 1. Call this workflow manually from Github Actions page
+# 2. Create a `repository_dispatch` event to trigger this workflow
 
 name: Sign Container Images and Helm Charts
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
-      image_tag:
-        description: 'Container image to sign'
+      image_uri:
+        description: 'Container image URI (repository, name and tag) (e.g. ghcr.io/open-edge-platform/my-image:latest)'
         required: true
         type: string
+  repository_dispatch:
+    types: [sign-artifacts]
 
-permissions:
-  id-token: write
-  contents: read
+permissions: {}
 
 jobs:
   sign-images:
     name: Sign Container Images
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Install Cosign
         uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2
         with:
           cosign-release: v2.5.3
 
-      - name: Install Skopeo
+      - name: Install Crane
         run: |
-          sudo apt-get update
-          sudo apt-get install -y skopeo
+          VERSION=v0.20.6
+          OS=Linux
+          ARCH=x86_64
+          curl -sL "https://github.com/google/go-containerregistry/releases/download/${VERSION}/go-containerregistry_${OS}_${ARCH}.tar.gz" > go-containerregistry.tar.gz
+          tar -zxvf go-containerregistry.tar.gz -C /usr/local/bin/ crane
 
-      - name: Login to ghcr.io
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1  # v3.5.0
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.GETI_USER }}
-          password: ${{ secrets.GETI_GHCR_TOKEN }}
+      - name: Login crane to ghcr.io
+        run: |
+          echo ${{ secrets.GETI_GHCR_TOKEN }} | crane auth login ghcr.io -u ${{ secrets.GETI_USER }} --password-stdin
 
       - name: Get image digest
         env:
           IMAGE: ${{ inputs.image_tag }}
         run: |
-          DIGEST=$(skopeo inspect --raw "${IMAGE}" | jq -r .config.digest)
+          DIGEST=$(crane digest "${IMAGE}" | tr -d '\n\r')
           echo "Digest for ${IMAGE} is ${DIGEST}"
           # Only allow digests matching the expected format (https://github.com/opencontainers/image-spec/blob/main/descriptor.md#sha-256)
           if ! echo "${DIGEST}" | grep -Eq '^sha256:[a-f0-9]{64}$'; then
@@ -85,13 +82,13 @@ jobs:
 
       - name: Verify the signature
         env:
-          DIGEST: ${{ inputs.image_digest }}
+          DIGEST: ${{ env.DIGEST }}
           TAG: ${{ inputs.image_tag }}
         run: |
           echo "Verifying signature for ${TAG}@${DIGEST}"
-          echo "Using certificate identity: https://github.com/open-edge-platform/geti/.github/workflows/_reusable_sign_artifacts.yml"
+          echo "Using certificate identity: https://github.com/open-edge-platform/geti/.github/workflows/sign_artifacts.yml"
           echo "OIDC Issuer: https://token.actions.githubusercontent.com"
           cosign verify \
-          --certificate-identity-regexp=https://github.com/open-edge-platform/geti/.github/workflows/_reusable_sign_artifacts.yml \
+          --certificate-identity-regexp=https://github.com/open-edge-platform/geti/.github/workflows/sign_artifacts.yml \
           --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
           "${TAG}@${DIGEST}"
