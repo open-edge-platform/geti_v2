@@ -1,23 +1,6 @@
-.closeButton {
-    background-color: transparent;
-    position: fixed;
-    right: 0;
-    height: 100%;
-    border: 0;
-    cursor: pointer;
-    & svg {
-        height: var(--spectrum-global-dimension-font-size-100);
-        width: var(--spectrum-global-dimension-font-size-100);
-    }
-}
-
-.icon {
-    margin: auto var(--spectrum-global-dimension-size-125);
-    display: flex;
-}
-
 .content {
     margin: auto var(--spectrum-global-dimension-size-125);
+    min-width: 0;
 }
 
 .toast {
@@ -27,10 +10,57 @@
         calc(var(--spectrum-global-dimension-size-125) * (-1)) var(--background);
     box-shadow: 0px 0px var(--spectrum-global-dimension-size-500) calc(var(--spectrum-global-dimension-size-125) * (-1))
         var(--background);
-    background-color: var(--spectrum-global-color-gray-200);
-    color: white;
+    background-color: var(--backgroundColor);
+    color: var(--textColor);
     width: 640px;
-    height: var(--spectrum-global-dimension-size-600) !important;
     display: flex;
-    border-left: var(--spectrum-global-dimension-size-40) solid var(--border-color);
+    padding: var(--spectrum-global-dimension-size-100) var(--spectrum-global-dimension-size-100)
+        var(--spectrum-global-dimension-size-100) var(--spectrum-global-dimension-size-150);
+    border-radius: var(--spectrum-alias-border-radius-regular);
+}
+
+.toastDivider {
+    background-color: var(--spectrum-global-color-gray-800);
+    opacity: 25%;
+}
+
+.closeButton {
+    &[class*='is-hovered'] {
+        background-color: hsl(from var(--backgroundColor) h s calc(l - 10)) !important;
+        border-color: hsl(from var(--backgroundColor) h s calc(l - 20)) !important;
+    }
+}
+
+.closeIcon {
+    color: var(--closeIconColor);
+}
+
+.info {
+    --backgroundColor: var(--energy-blue-shade);
+    --textColor: var(--spectrum-global-color-gray-900);
+    --closeIconColor: var(--spectrum-global-color-gray-900);
+}
+
+.warning {
+    --backgroundColor: var(--brand-daisy);
+    --textColor: var(--spectrum-global-color-gray-50);
+    --closeIconColor: var(--spectrum-global-color-gray-50);
+}
+
+.error {
+    --backgroundColor: var(--brand-coral-coral-shade1);
+    --textColor: var(--spectrum-global-color-gray-900);
+    --closeIconColor: var(--spectrum-global-color-gray-900);
+}
+
+.success {
+    --backgroundColor: var(--brand-moss);
+    --textColor: var(--spectrum-global-color-gray-900);
+    --closeIconColor: var(--spectrum-global-color-gray-900);
+}
+
+.neutral {
+    --backgroundColor: var(--spectrum-global-color-gray-200);
+    --textColor: var(--spectrum-global-color-gray-900);
+    --closeIconColor: var(--spectrum-global-color-gray-900);
 }

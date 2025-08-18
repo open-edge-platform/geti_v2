@@ -1,11 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { FC, ReactNode, StrictMode, Suspense, useEffect, useState } from 'react';
+import { FC, ReactNode, StrictMode, Suspense, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { ApplicationServicesProvider } from '@geti/core/src/services/application-services-provider.component';
-import { IntelBrandedLoading, toast, Toast } from '@geti/ui';
+import { IntelBrandedLoading, Toast } from '@geti/ui';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, RouterProviderProps } from 'react-router-dom';
 
 import { NotificationProvider } from '../notification/notification.component';
