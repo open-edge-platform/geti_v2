@@ -14,9 +14,9 @@ global:
     repository: prometheus
     name: busybox:glibc
   kubectl:
-    registry: docker.io
-    repository: rancher
-    name: kubectl:v1.31.12
+    registry: registry.k8s.io
+    repository: kubectl
+    name: v1.31.12
   istio_revision_name: ""
   security_headers: ""
   stripped_headers: ""

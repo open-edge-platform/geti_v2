@@ -10,9 +10,9 @@ global:
   oidc_cidaas: false
   running_on_vm: false
   kubectl: 
-    registry: docker.io
-    repository: rancher
-    name: kubectl:v1.31.12
+    registry: registry.k8s.io
+    repository: kubectl
+    name: v1.31.12
   busybox: 
     registry: quay.io
     repository: prometheus
