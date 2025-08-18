@@ -17,7 +17,7 @@ test-integration:
 build-installer:
 	$(eval CONTAINER_ID := $(shell docker run -d --rm $(IMAGE_TAG) sleep 10))
 	@sleep 2
-	@docker cp $(CONTAINER_ID):/deploy/installer/dist/platform_installer .
+	@docker cp $(CONTAINER_ID):/deploy/services/installer/dist/platform_installer .
 
 build-image:
 	@echo "Building docker image for installer"
