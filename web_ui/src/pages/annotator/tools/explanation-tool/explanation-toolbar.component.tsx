@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key } from 'react';
-
 import { Divider, Flex, Item, Picker, Switch } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
@@ -114,7 +112,8 @@ export const ExplanationToolbar = ({
                 selectedKey={selectedExplanation?.id}
                 isDisabled={!isExplanationVisible}
                 UNSAFE_className={classes.secondaryToolbarMapPicker}
-                onSelectionChange={(key: Key) => {
+                onSelectionChange={(key) => {
+                    if (key === null) return;
                     const stringKey = key.toString();
                     const selectedMap = finalExplanations.find(hasEqualId(stringKey));
                     selectedMap && setSelectedExplanation(selectedMap);

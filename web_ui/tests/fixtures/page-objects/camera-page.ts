@@ -35,16 +35,12 @@ export class CameraPage {
         await this.page.getByRole('link', { name: 'view all captures' }).click();
     }
 
-    async acceptPhotos() {
-        await this.page.getByRole('button', { name: 'Accept' }).click();
-    }
-
     async discardAllPhotos() {
         // Trigger the confirmation dialog
-        await this.page.getByRole('button', { name: 'Discard all' }).click();
+        await this.page.getByRole('button', { name: 'Discard all', exact: true }).click();
 
         // Confirm
-        await this.page.getByRole('button', { name: 'Discard all' }).click();
+        await this.page.getByRole('alertdialog').getByRole('button', { name: 'Discard all' }).click();
     }
 
     async closeCameraPage() {
@@ -56,9 +52,9 @@ export class CameraPage {
 
         // Hover and click on the "trash" icon
         await thumbnail.hover();
-        await this.page.getByRole('button', { name: 'delete' }).click();
+        await this.page.getByRole('button', { name: 'delete', exact: true }).click();
 
         // Confirm deletion by pressing the "delete" button on the dialog
-        await this.page.getByRole('button', { name: 'delete' }).click();
+        await this.page.getByRole('button', { name: 'Delete', exact: true }).click();
     }
 }

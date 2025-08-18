@@ -151,10 +151,10 @@ test.describe(`keypoint detection`, () => {
         await listItemContainer.hover();
         await expect(listItemContainer.getByRole('img', { name: 'occluded icon' })).not.toBeInViewport();
 
-        await listItemContainer.getByRole('button', { name: 'menu trigger' }).click();
+        await listItemContainer.getByRole('button', { name: 'Show actions' }).click();
         await page.getByText('Mark as occluded').click();
 
-        await expect(listItemContainer.getByRole('button', { name: 'menu trigger' })).not.toBeInViewport();
+        await expect(listItemContainer.getByRole('button', { name: 'Show actions' })).not.toBeInViewport();
         await expect(listItemContainer.getByRole('img', { name: 'occluded icon' })).toBeVisible();
     });
 

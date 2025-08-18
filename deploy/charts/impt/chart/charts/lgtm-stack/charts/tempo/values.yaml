@@ -1,0 +1,368 @@
+init:
+  imagePullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      memory: 100Mi
+  securityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 10001
+    capabilities:
+      drop:
+        - ALL
+
+initResources:
+  requests:
+    cpu: 50m
+    memory: 100Mi
+  limits:
+    memory: 100Mi
+
+# -- Overrides the chart's name
+nameOverride: ""
+
+# -- Overrides the chart's computed fullname
+fullnameOverride: ""
+
+# -- Define the amount of instances
+replicas: 1
+
+# -- Annotations for the StatefulSet
+annotations: {}
+
+global:
+  telemetry_retention_geti: 'default'
+  s3_endpoint: 'default'
+  kubectl:
+    registry: docker.io
+    repository: bitnamilegacy
+    name: kubectl:1.31.0
+  busybox:
+    registry: quay.io
+    repository: prometheus
+    name: busybox:glibc
+
+tempo:
+  image: docker.io/grafana/tempo:2.4.1@sha256:0682a4e447849a9420dae088eb75a14222dbcdd5f7b97b13cc7795ebe9f28f85
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - myRegistryKeySecretName
+
+  updateStrategy: RollingUpdate
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 4Gi
+
+  memBallastSizeMbs: 1024
+  multitenancyEnabled: false
+  # -- If true, Tempo will report anonymous usage data about the shape of a deployment to Grafana Labs
+  reportingEnabled: false
+  metricsGenerator:
+    # -- If true, enables Tempo's metrics generator (https://grafana.com/docs/tempo/next/metrics-generator/)
+    enabled: true
+    config:
+      registry:
+        collection_interval: 15s
+        external_labels: {}
+        stale_duration: 15m
+      processor:
+        service_graphs:
+          # -- Additional dimensions to add to the metrics. Dimensions are searched for in the
+          # -- resource and span attributes and are added to the metrics if present.
+          dimensions: []
+          histogram_buckets: [ 0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8 ]
+          max_items: 10000
+          wait: 10s
+          workers: 10
+        span_metrics:
+          # -- Additional dimensions to add to the metrics along with the default dimensions.
+          # -- Dimensions are searched for in the resource and span attributes and are added to the metrics if present.
+          dimensions: []
+          histogram_buckets: [ 0.002, 0.004, 0.008, 0.016, 0.032, 0.064, 0.128, 0.256, 0.512, 1.02, 2.05, 4.10 ]
+      storage:
+        path: /var/tempo/wal
+        wal:
+        remote_write_flush_deadline: 1m
+        # -- A list of remote write endpoints.
+        # -- https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write
+        remote_write:
+          - url: "http://{{ .Release.Namespace }}-mimir.{{ .Release.Namespace }}:9009/api/v1/push"
+
+  # -- Configuration options for the ingester
+  ingester: {}
+  # -- Configuration options for the querier
+  querier: {}
+  # -- Configuration options for the query-fronted
+  queryFrontend:
+    max_outstanding_per_tenant: 20000
+    search:
+      concurrent_jobs: 1000
+  # Global overrides
+  global_overrides:
+    per_tenant_override_config: /conf/overrides.yaml
+    # Disable limit of max traces per user.
+    max_traces_per_user: 0
+  overrides: {}
+
+  # Tempo server configuration
+  # Refers to https://grafana.com/docs/tempo/latest/configuration/#server
+  server:
+    # -- HTTP server listen port
+    http_listen_port: 3100
+    log_level: error
+  storage:
+    trace:
+      # tempo storage backend
+      # refer https://grafana.com/docs/tempo/latest/configuration/
+      ## Use s3 for example
+      # backend: s3
+      # store traces in s3
+      # s3:
+      #   bucket: tempo                                   # store traces in this bucket
+      #   endpoint: s3.dualstack.us-east-2.amazonaws.com  # api endpoint
+      #   access_key: ...                                 # optional. access key when using static credentials.
+      #   secret_key: ...                                 # optional. secret key when using static credentials.
+      #   insecure: false                                 # optional. enable if endpoint is http
+      backend: s3
+      s3:
+        endpoint: "{{ .Values.global.s3_endpoint }}"
+        bucket: tempo
+        insecure: true
+        access_key: "${S3_ACCESS_KEY}"
+        secret_key: "${S3_SECRET_KEY}"
+      local:
+        path: /var/tempo/traces
+      wal:
+        path: /var/tempo/wal
+  # this configuration will listen on all ports and protocols that tempo is capable of.
+  # the receives all come from the OpenTelemetry collector.  more configuration information can
+  # be found there: https://github.com/open-telemetry/opentelemetry-collector/tree/master/receiver
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
+
+  # -- SecurityContext holds container-level security attributes and common container settings
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+  ## Additional container arguments
+  extraArgs:
+    config.expand-env: true
+  # -- Environment variables to add
+  extraEnv:
+    - name: S3_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Release.Namespace }}-seaweed-fs"
+          key: "tempo_access_key"
+    - name: S3_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Release.Namespace }}-seaweed-fs"
+          key: "tempo_secret_key"
+  # -- Environment variables from secrets or configmaps to add to the ingester pods
+  extraEnvFrom: []
+  # -- Volume mounts to add
+  extraVolumeMounts: []
+  # - name: extra-volume
+  #   mountPath: /mnt/volume
+  #   readOnly: true
+  #   existingClaim: volume-claim
+
+# -- Tempo configuration file contents
+# @default -- Dynamically generated tempo configmap
+config: |
+  multitenancy_enabled: {{ .Values.tempo.multitenancyEnabled }}
+  usage_report:
+    reporting_enabled: {{ .Values.tempo.reportingEnabled }}
+  compactor:
+    compaction:
+      block_retention: "{{ mul .Values.global.telemetry_retention_geti 24 }}h"
+  distributor:
+    receivers:
+      {{- toYaml .Values.tempo.receivers | nindent 8 }}
+  ingester:
+    {{- toYaml .Values.tempo.ingester | nindent 6 }}
+  server:
+    {{- toYaml .Values.tempo.server | nindent 6 }}
+  storage:
+    {{- tpl (toYaml .Values.tempo.storage) . | nindent 6 }}
+  querier:
+    {{- toYaml .Values.tempo.querier | nindent 6 }}
+  query_frontend:
+    {{- toYaml .Values.tempo.queryFrontend | nindent 6 }}
+  overrides:
+    {{- toYaml .Values.tempo.global_overrides | nindent 6 }}
+    {{- if .Values.tempo.metricsGenerator.enabled }}
+        metrics_generator_processors:
+        - 'service-graphs'
+        - 'span-metrics'
+    {{- end }}
+  {{- if .Values.tempo.metricsGenerator.enabled }}
+  metrics_generator:
+    processor:
+      {{- tpl (toYaml .Values.tempo.metricsGenerator.config.processor) . | nindent 6 }}
+    storage:
+      {{- tpl (toYaml .Values.tempo.metricsGenerator.config.storage) . | nindent 6 }}
+    registry:
+      {{- tpl (toYaml .Values.tempo.metricsGenerator.config.registry) . | nindent 6 }}
+  {{- end }}
+
+tempoQuery:
+  repository: grafana/tempo-query
+  tag: 2.0.1
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - myRegistryKeySecretName
+
+  # -- if False the tempo-query container is not deployed
+  enabled: false
+
+  service:
+    port: 16686
+
+  ingress:
+    enabled: false
+    # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+    # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+    # ingressClassName: nginx
+    # Values can be templated
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    labels: {}
+    path: /
+
+    # pathType is only for k8s >= 1.1=
+    pathType: Prefix
+
+    hosts:
+      - query.tempo.example.com
+    ## Extra paths to prepend to every host configuration. This is useful when working with annotation based services.
+    extraPaths: []
+    # - path: /*
+    #   backend:
+    #     serviceName: ssl-redirect
+    #     servicePort: use-annotation
+    ## Or for k8s > 1.19
+    # - path: /*
+    #   pathType: Prefix
+    #   backend:
+    #     service:
+    #       name: ssl-redirect
+    #       port:
+    #         name: use-annotation
+
+
+    tls: []
+    #  - secretName: tempo-query-tls
+    #    hosts:
+    #      - query.tempo.example.com
+
+  resources: {}
+  #  requests:
+  #    cpu: 1000m
+  #    memory: 4Gi
+  #  limits:
+  #    cpu: 2000m
+  #    memory: 6Gi
+
+  ## Additional container arguments
+  extraArgs: {}
+  # -- Environment variables to add
+  extraEnv: []
+  # -- Volume mounts to add
+  extraVolumeMounts: []
+  # - name: extra-volume
+  #   mountPath: /mnt/volume
+  #   readOnly: true
+  #   existingClaim: volume-claim
+  securityContext: {}
+    # allowPrivilegeEscalation: false
+    #  capabilities:
+    #    drop:
+    #    - ALL
+    # readOnlyRootFilesystem: false # fails if true, do not enable
+
+# -- securityContext for Pod
+securityContext:
+  fsGroup: 1000
+
+serviceAccount:
+  # -- Specifies whether a ServiceAccount should be created
+  create: true
+  # -- The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: null
+  # -- Image pull secrets for the service account
+  imagePullSecrets: []
+  # -- Annotations for the service account
+  annotations: {}
+  # -- Labels for the service account
+  labels: {}
+  automountServiceAccountToken: true
+
+service:
+  type: ClusterIP
+  annotations: {}
+  labels: {}
+
+serviceMonitor:
+  enabled: false
+  interval: ""
+  additionalLabels: {}
+  annotations: {}
+  # scrapeTimeout: 10s
+
+persistence:
+  enabled: true
+  existing_claim: data-storage-volume-claim
+  mountPath: /var/tempo
+
+# -- Pod Annotations
+podAnnotations:
+  proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+  rollme: "{{ randAlphaNum 5 | quote }}" # Restart to sync S3 credential changes
+
+# -- Pod (extra) Labels
+podLabels: {}
+
+# -- Volumes to add
+extraVolumes: []
+
+# -- Node labels for pod assignment. See: https://kubernetes.io/docs/user-guide/node-selection/
+nodeSelector: {}
+
+# -- Tolerations for pod assignment. See: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []
+
+# -- Affinity for pod assignment. See: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+affinity: {}
+
+# -- The name of the PriorityClass
+priorityClassName: null

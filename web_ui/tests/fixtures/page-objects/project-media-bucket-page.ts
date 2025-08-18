@@ -76,12 +76,12 @@ export class ProjectMediaBucketPage {
     }
 
     async deleteSelectedImages() {
-        await this.bucket.getByRole('button', { name: /delete selected media/i }).click();
+        await this.bucket.getByRole('button', { name: 'Delete selected media' }).click();
 
         const deletionDialog = this.page.getByRole('alertdialog');
         await expect(deletionDialog).toBeVisible();
 
-        await this.page.getByRole('button', { name: 'Delete' }).click();
+        await this.page.getByRole('alertdialog').getByRole('button', { name: 'Delete' }).click();
         await expect(deletionDialog).toBeHidden();
     }
 

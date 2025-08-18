@@ -4,8 +4,7 @@ global:
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##
   imageRegistry: ""
-  imagePullSecrets:
-    - name: regcred
+  imagePullSecrets: []
   istio_ambient_mesh: false
   #imagePullSecrets:
   #  - name: my-pull-secret
@@ -60,11 +59,13 @@ reloader:
     #           - key: "node-role.kubernetes.io/infra-worker"
     #             operator: "Exists"
     affinity: {}
+
     securityContext:
       runAsNonRoot: true
       runAsUser: 65534
       seccompProfile:
         type: RuntimeDefault
+
     containerSecurityContext: {}
       # capabilities:
       #   drop:

@@ -28,7 +28,7 @@ export class IntelAdminPage {
     }
 
     async clickSendInvite() {
-        await this.page.getByRole('button', { name: /Send invite/ }).click();
+        await this.page.getByRole('button', { name: 'Send invite' }).click();
     }
 
     async fillInviteForm(email: string, orgName: string) {
@@ -37,9 +37,9 @@ export class IntelAdminPage {
         await this.page.getByLabel(/Email address/).fill(email);
         await this.page.getByLabel(/Organization name/).fill(orgName);
 
-        await expect(this.page.getByRole('button', { name: /Send invite/ })).toBeEnabled();
+        await expect(this.page.getByTestId('modal').getByRole('button', { name: 'Send invite' })).toBeEnabled();
 
-        await this.clickSendInvite();
+        await this.page.getByTestId('modal').getByRole('button', { name: 'Send invite' }).click();
     }
 
     async selectRowMenu(name: string) {

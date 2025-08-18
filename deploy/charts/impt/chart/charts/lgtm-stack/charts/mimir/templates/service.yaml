@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "mimir.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mimir.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if (or (eq .Values.service.type "ClusterIP") (empty .Values.service.type)) }}
+  type: ClusterIP
+  {{- if .Values.service.clusterIP }}
+  clusterIP: {{ .Values.service.clusterIP }}
+  {{ end }}
+{{- else if eq .Values.service.type "LoadBalancer" }}
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml .Values.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end -}}
+{{- else }}
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.externalIPs }}
+  externalIPs:
+    {{- toYaml .Values.service.externalIPs | nindent 4 }}
+  {{- end }}
+{{- end }}
+  ports:
+  - name: http
+    port: {{ .Values.mimir.httpListenPort }}
+    targetPort: http
+    protocol: TCP
+  selector:
+    {{- include "mimir.selectorLabels" . | nindent 4 }}

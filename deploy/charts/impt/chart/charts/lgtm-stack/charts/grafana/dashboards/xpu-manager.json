@@ -1,0 +1,2803 @@
+{
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "6.7.3"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "This dashboard is to display the metrics from XPU Manager on a Kubernetes (1.19+) cluster",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 26,
+  "iteration": 1647584693304,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "id": 39,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_engine_ratio{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "id": 34,
+      "interval": "5s",
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_engine_ratio{node=\"$Node\"}",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Utilization",
+      "type": "gauge"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "rothz"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_frequency_mhz{node=\"$Node\"}*1000000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}: {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Frequency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "rothz"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 35,
+      "interval": "5s",
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_frequency_mhz{node=\"$Node\"}*1000000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}: {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Frequency",
+      "type": "gauge"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 7
+      },
+      "id": 8,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_temperature_celsius{node=\"$Node\", location=\"gpu\"}",
+          "interval": "",
+          "legendFormat": "avg: {{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "xpum_max_temperature_celsius{node=\"$Node\", location=\"gpu\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "max: {{pci_bdf}}/{{sub_dev}}",
+          "refId": "B"
+        }
+      ],
+      "title": "GPU Temperature",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 7
+      },
+      "id": 36,
+      "interval": "5s",
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_temperature_celsius{node=\"$Node\", location=\"gpu\"}",
+          "interval": "",
+          "legendFormat": "avg: {{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "xpum_max_temperature_celsius{node=\"$Node\", location=\"gpu\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "max: {{pci_bdf}}/{{sub_dev}}",
+          "refId": "B"
+        }
+      ],
+      "title": "GPU Temperature",
+      "type": "gauge"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 12,
+        "y": 7
+      },
+      "id": 42,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_temperature_celsius{node=\"$Node\", location=\"mem\"}",
+          "interval": "",
+          "legendFormat": "avg: {{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "xpum_max_temperature_celsius{node=\"$Node\", location=\"mem\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "max: {{pci_bdf}}/{{sub_dev}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Memory Temperature",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 20,
+        "y": 7
+      },
+      "id": 43,
+      "interval": "5s",
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_temperature_celsius{node=\"$Node\", location=\"mem\"}",
+          "interval": "",
+          "legendFormat": "avg: {{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "xpum_max_temperature_celsius{node=\"$Node\", location=\"mem\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "max: {{pci_bdf}}/{{sub_dev}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Memory Temperature",
+      "type": "gauge"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 14
+      },
+      "id": 16,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_power_watts{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Power",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 14
+      },
+      "id": 37,
+      "interval": "5s",
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_power_watts{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Power",
+      "type": "gauge"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "joule"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 12,
+        "y": 14
+      },
+      "id": 4,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_energy_joules_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Energy",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "joule"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 20,
+        "y": 14
+      },
+      "id": 38,
+      "interval": "5s",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_energy_joules_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Energy",
+      "type": "stat"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 21
+      },
+      "id": 12,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_memory_used_bytes{node=\"$Node\"}",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Used",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 21
+      },
+      "id": 10,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_memory_read_bytes_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Read",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 12,
+        "y": 21
+      },
+      "id": 40,
+      "interval": "5s",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "rate(xpum_memory_read_bytes_total{node=\"$Node\"}[10s])",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Mem Read Throughput",
+      "type": "stat"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 15,
+        "y": 21
+      },
+      "id": 14,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_memory_write_bytes_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Write",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 21,
+        "y": 21
+      },
+      "id": 41,
+      "interval": "5s",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "rate(xpum_memory_write_bytes_total{node=\"$Node\"}[10s])",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Mem Write Throughput",
+      "type": "stat"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 28
+      },
+      "id": 33,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_memory_ratio{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 28
+      },
+      "id": 32,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_memory_bandwidth_ratio{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Bandwidth",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 28
+      },
+      "id": 29,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_engine_group_ratio{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}: {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Engine Group Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 28
+      },
+      "id": 44,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_eu_active_ratio{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "EU Active",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 35
+      },
+      "id": 47,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_pcie_read_bytes_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "PCIe Read",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 6,
+        "y": 35
+      },
+      "id": 49,
+      "interval": "5s",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "rate(xpum_pcie_read_bytes_total{node=\"$Node\"}[10s])",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "PCIe Read Throughput",
+      "type": "stat"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 9,
+        "y": 35
+      },
+      "id": 48,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_pcie_write_bytes_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "PCIe Write",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 15,
+        "y": 35
+      },
+      "id": 50,
+      "interval": "5s",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "rate(xpum_pcie_write_bytes_total{node=\"$Node\"}[10s])",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "PCIe Write Throughput",
+      "type": "stat"
+    },
+    {
+      "datasource": "$datasource",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 35
+      },
+      "id": 45,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_eu_idle_ratio{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "EU Idle",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 42
+      },
+      "id": 23,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_programming_errors_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Programming Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 42
+      },
+      "id": 18,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_cache_errors_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}: {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Cache Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 42
+      },
+      "id": 51,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_driver_errors_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}: {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Driver Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 42
+      },
+      "id": 46,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_eu_stall_ratio{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "EU Stall",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 49
+      },
+      "id": 24,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_resets_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Reset Count",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 49
+      },
+      "id": 19,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_non_compute_errors_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}: {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Non Compute Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 49
+      },
+      "id": 52,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_per_engine_ratio{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}}: {{type}}-{{engine_id}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Per Engine Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 56
+      },
+      "id": 53,
+      "interval": "5s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "xpum_fabric_tx_bytes_total{node=\"$Node\"}",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}} -> {{dst_pci_bdf}}/{{dst_sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Fabric Transmit Bytes",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 56
+      },
+      "id": 54,
+      "interval": "5s",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "rate(xpum_fabric_tx_bytes_total{node=\"$Node\"}[10s])",
+          "interval": "",
+          "legendFormat": "{{pci_bdf}}/{{sub_dev}} -> {{dst_pci_bdf}}/{{dst_sub_dev}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Fabric Transmit Throughput",
+      "type": "stat"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "xpum"
+  ],
+  "templating": {
+    "list": [
+     {
+        "current": {
+          "selected": true,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "$datasource",
+        "definition": "label_values(xpum_power_watts, node)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Node",
+        "multi": false,
+        "name": "Node",
+        "options": [],
+        "query": {
+          "query": "label_values(xpum_power_watts, node)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Intel XPU Manager Exporter",
+  "uid": "9VxbZDPnk",
+  "version": 3
+}

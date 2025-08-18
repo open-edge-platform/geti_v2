@@ -23,7 +23,7 @@ export class ProjectUsersPage {
         await this.page.getByRole('option', { name: role }).click();
         await expect(this.page.getByRole('option', { name: role })).toBeHidden();
 
-        await this.page.getByRole('button', { name: 'Add' }).click();
+        await this.page.getByTestId('modal').getByRole('button', { name: 'Add' }).click();
         await expect(this.page.getByRole('dialog')).toBeHidden();
     }
 

@@ -48,7 +48,7 @@ test.describe('Check FUX notifications on tests page', () => {
             await page.goto(TESTS_PAGE_URL);
 
             await expect(page.getByText(autoTrainingCreditSystemModalRegex)).toBeVisible();
-            await page.getByRole('button', { name: /dismiss/i }).click();
+            await page.getByTestId('modal').getByRole('button', { name: 'Dismiss' }).click();
 
             await expect(page.getByText(autoTrainingCreditSystemModalRegex)).toBeHidden();
             await expect(page.getByText(autoTrainingCreditSystemNotificationRegex)).toBeVisible();

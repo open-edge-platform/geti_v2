@@ -1,0 +1,4 @@
+---
+flytePropeller:
+  enabled: true
+  createCRDs: true

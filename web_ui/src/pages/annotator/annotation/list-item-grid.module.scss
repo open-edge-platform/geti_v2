@@ -1,4 +1,5 @@
-.selectedAnnotation {
+.selectedAnnotation,
+.annotationItem:hover {
     background-color: var(--spectrum-global-color-gray-300);
 }
 
@@ -14,5 +15,16 @@
 .lastAnnotationItem {
     & > div {
         border-bottom: 1px solid var(--spectrum-global-color-gray-50);
+    }
+}
+
+.listItemGrid {
+    &:not(:hover) button[aria-label='Show actions'] {
+        visibility: hidden;
+    }
+
+    &:hover button[aria-label='Show actions'],
+    button[aria-label='Show actions'][aria-expanded='true'] {
+        visibility: visible;
     }
 }

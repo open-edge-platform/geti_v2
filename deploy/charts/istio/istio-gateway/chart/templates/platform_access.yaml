@@ -1,0 +1,62 @@
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: platform-allow-api-keys-access
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  selector:
+    matchLabels:
+      istio: gateway
+  action: ALLOW
+  rules:
+    - when:
+      - key: request.headers[X-Api-Key]
+        values: [ "geti_pat_*" ]
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: platform-allow-anonymous-auth-policy
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  selector:
+    matchLabels:
+      istio: gateway
+  action: ALLOW
+  {{- with .Values.anonymous_auth_policy.rules }}
+  rules:
+    {{ toYaml . | nindent 4 }}
+  {{- end }}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: require-external-token-auth-policy
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  selector:
+    matchLabels:
+      istio: gateway
+  action: ALLOW
+  {{- with .Values.external_token_auth_policy.rules }}
+  rules:
+    {{ toYaml . | nindent 4 }}
+  {{- end }}
+---
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: platform-external-jwt-verifier
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  selector:
+    matchLabels:
+      istio: gateway
+  jwtRules:
+  - forwardOriginalToken: true
+    issuer: {{ .Values.jwtRules.issuer }}
+    jwksUri: {{ .Values.jwtRules.jwksUri }}
+    audiences: {{ .Values.jwtRules.audiences }}

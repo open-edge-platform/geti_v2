@@ -1,0 +1,54 @@
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+{{- if not .Values.auth_proxy.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: ingressgateway-upstream-gateway
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  workloadSelector:
+    labels:
+      istio: gateway
+  configPatches:
+    - applyTo: CLUSTER
+      match:
+        context: GATEWAY
+      patch:
+        operation: ADD
+        value: # Cluster specification
+          name: outbound_gateway
+          type: LOGICAL_DNS
+          connect_timeout: 5s
+          lb_policy: ROUND_ROBIN
+          load_assignment:
+            cluster_name: outbound_gateway
+            endpoints:
+              - lb_endpoints:
+                  - endpoint:
+                      address:
+                        socket_address:
+                          address: "gateway.impt.svc.cluster.local"
+                          protocol: TCP
+                          port_value: 9000
+          # [mTLS STRICT] below 'transportSocket' configuration is needed for wasm plugin
+          # to communicate with account service over mTLS
+          transportSocket:
+            name: envoy.transport_sockets.tls
+            typedConfig:
+              '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+              commonTlsContext:
+                tlsCertificateSdsSecretConfigs:
+                - name: default
+                  sdsConfig:
+                    apiConfigSource:
+                      apiType: GRPC
+                      grpcServices:
+                      - envoyGrpc:
+                          clusterName: sds-grpc
+                      setNodeOnFirstMessageOnly: true
+                      transportApiVersion: V3
+                    resourceApiVersion: V3
+              sni: "gateway.impt.svc.cluster.local"
+{{- end }}

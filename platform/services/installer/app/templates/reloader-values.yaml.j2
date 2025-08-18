@@ -1,0 +1,11 @@
+{% if registry %}
+global:
+  imageRegistry: {{ registry }}
+  imagePullSecrets:
+    - name: regcred
+reloader:
+  deployment:
+    image:
+      base: third-party/reloader
+      tag: v1.2.1.1
+  {% endif %}

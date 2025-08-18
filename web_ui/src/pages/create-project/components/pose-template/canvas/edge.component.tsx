@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ReactNode, RefObject, useRef, useState } from 'react';
+import { ElementRef, ReactNode, useRef } from 'react';
 
-import { useUnwrapDOMRef, type DOMRefValue } from '@geti/ui';
-import { useHover, useInteractOutside } from '@react-aria/interactions';
+import { useHover } from '@react-aria/interactions';
+import { useOverlayTriggerState } from '@react-stately/overlays';
 import { clsx } from 'clsx';
 
 import { KeypointNode, Point } from '../../../../../core/annotations/shapes.interface';
@@ -26,46 +26,18 @@ export interface EdgeProps {
     onNewIntermediatePoint: (newPoint: Point, prevFrom: KeypointNode, prevTo: KeypointNode) => void;
 }
 
-interface InteractOutsideProps {
-    triggerRef: React.RefObject<SVGGElement>;
-    containerRef: RefObject<HTMLElement | null>;
-    onClickOutside: (target: Element) => void;
-}
-
-// Keypoints have their own logic for selecting edge points. To avoid collisions and potential unwanted behavior,
-// we refrain from deselecting them here and allow the canvas-template logic to handle it instead
-const isKeypoint = (element: Element) => {
-    return /^resize keypoint/i.test(element.getAttribute('aria-label') ?? '');
-};
-
 const isHiddenEdge = (element: Element) => {
     return /^hidden padded edge/i.test(element.getAttribute('aria-label') ?? '');
 };
 
-const useContextMenuState = (isSelected: boolean): [boolean, React.Dispatch<React.SetStateAction<boolean>>] => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+const useContextMenuState = (isSelected: boolean) => {
+    const state = useOverlayTriggerState({});
 
-    if (isMenuOpen && !isSelected) {
-        setIsMenuOpen(false);
+    if (state.isOpen && !isSelected) {
+        state.setOpen(false);
     }
 
-    return [isMenuOpen, setIsMenuOpen];
-};
-
-const InteractOutside = ({ triggerRef, containerRef, onClickOutside }: InteractOutsideProps) => {
-    useInteractOutside({
-        ref: triggerRef,
-        onInteractOutside: (event) => {
-            const target = event.target as Element;
-
-            if (containerRef.current?.contains(target)) {
-                return;
-            }
-
-            onClickOutside(target);
-        },
-    });
-    return <></>;
+    return state;
 };
 
 export const Edge = ({
@@ -76,35 +48,22 @@ export const Edge = ({
     contextMenu,
     isDisabled = false,
     onSelect,
-    onRemoveSelected,
     onResetAndSelect,
     onNewIntermediatePoint,
 }: EdgeProps) => {
-    const triggerRef = useRef<SVGGElement>(null);
-    const contextMenuRef = useRef<DOMRefValue>(null);
+    const triggerRef = useRef<ElementRef<'line'>>(null);
     const { hoverProps, isHovered } = useHover({});
-    const unwrappedContextMenuRef = useUnwrapDOMRef(contextMenuRef);
-    const [isMenuOpen, setIsMenuOpen] = useContextMenuState(isSelected);
+    const state = useContextMenuState(isSelected);
 
     const position = { x1: from.x, y1: from.y, x2: to.x, y2: to.y };
 
     const handleOpen = () => {
-        setIsMenuOpen(true);
+        state.open();
         onResetAndSelect([id]);
     };
 
     return (
         <>
-            {isSelected && (
-                <InteractOutside
-                    triggerRef={triggerRef}
-                    containerRef={unwrappedContextMenuRef}
-                    onClickOutside={(target) => {
-                        !isKeypoint(target) && onRemoveSelected(id);
-                        setIsMenuOpen(false);
-                    }}
-                />
-            )}
             <g
                 ref={triggerRef}
                 style={{ pointerEvents: isDisabled ? 'none' : 'auto' }}
@@ -141,17 +100,11 @@ export const Edge = ({
                     onSelect={onSelect}
                     onNewIntermediatePoint={onNewIntermediatePoint}
                 />
-
-                <CursorContextMenu
-                    isOpen={isMenuOpen}
-                    triggerRef={triggerRef}
-                    containerRef={contextMenuRef}
-                    onOpen={handleOpen}
-                    isValidTrigger={isHiddenEdge}
-                >
-                    {contextMenu}
-                </CursorContextMenu>
             </g>
+
+            <CursorContextMenu state={state} triggerRef={triggerRef} onOpen={handleOpen} isValidTrigger={isHiddenEdge}>
+                {contextMenu}
+            </CursorContextMenu>
         </>
     );
 };

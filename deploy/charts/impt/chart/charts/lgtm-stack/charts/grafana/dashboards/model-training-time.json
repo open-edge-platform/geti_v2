@@ -1,0 +1,2647 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 7,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "id": 3,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "min"
+          ],
+          "fields": "/^Value \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Min. model training time",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "Value (lastNotNull)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "id": 8,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "/^Value \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Avg. model training time",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "Value (lastNotNull)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "/^Value \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Max. model training time",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 1,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^Value \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Total model training time",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job_status": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "model_architecture": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "task_type": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 3
+      },
+      "id": 22,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "min"
+          ],
+          "fields": "/^training_job_duration \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Min. train job duration",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "training_job_duration": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "training_job_duration (lastNotNull)"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 3
+      },
+      "id": 20,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "/^training_job_duration \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Avg. train job duration",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "training_job_duration": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "training_job_duration (lastNotNull)"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 3
+      },
+      "id": 23,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "/^training_job_duration \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Max. train job duration",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "training_job_duration": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "training_job_duration (lastNotNull)"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 3
+      },
+      "id": 21,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^training_job_duration \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Total train job duration",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "training_job_duration": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "training_job_duration (lastNotNull)"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 6
+      },
+      "id": 9,
+      "maxDataPoints": 1000000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ],
+          "fields": "/^Value \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Total number of trainings",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 6
+      },
+      "id": 10,
+      "maxDataPoints": 1000000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ],
+          "fields": "/^Value \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Number of successful trainings",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "yellow",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 6
+      },
+      "id": 11,
+      "maxDataPoints": 10000000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ],
+          "fields": "/^Value \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=\"CANCELLED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Number of cancelled trainings",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 6
+      },
+      "id": 12,
+      "maxDataPoints": 100000000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ],
+          "fields": "/^Value \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=\"FAILED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Number of failed trainings",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 9
+      },
+      "id": 17,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "min"
+          ],
+          "fields": "/^dataset_size \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Min. dataset size",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": []
+              },
+              "dataset_size": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job_status": {
+                "aggregations": []
+              },
+              "model_architecture": {
+                "aggregations": []
+              },
+              "task_type": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "dataset_size (lastNotNull)"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "dataset_size (lastNotNull)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 9
+      },
+      "id": 15,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "/^dataset_size \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Average dataset size",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": []
+              },
+              "dataset_size": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job_status": {
+                "aggregations": []
+              },
+              "model_architecture": {
+                "aggregations": []
+              },
+              "task_type": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "dataset_size (lastNotNull)"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "dataset_size (lastNotNull)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 9
+      },
+      "id": 16,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "/^dataset_size \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Max. dataset size",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": []
+              },
+              "dataset_size": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job_status": {
+                "aggregations": []
+              },
+              "model_architecture": {
+                "aggregations": []
+              },
+              "task_type": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "dataset_size (lastNotNull)"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "dataset_size (lastNotNull)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "orange",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 9
+      },
+      "id": 24,
+      "maxDataPoints": 100000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^training_job_duration \\(lastNotNull\\)$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"FAILED|CANCELLED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Total FAILED/CANCELLED train job duration",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "training_job_duration": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "training_job_duration (lastNotNull)"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 4,
+      "maxDataPoints": 100000,
+      "options": {
+        "displayLabels": [
+          "percent",
+          "name"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Number of trainings per task type",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job_status": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "model_architecture": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "task_type": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "Value (lastNotNull)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value (lastNotNull)": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "task_type (lastNotNull)": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 50,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 5,
+      "maxDataPoints": 1000000,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "colorByField": "Value (lastNotNull) (mean)",
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false
+        },
+        "orientation": "horizontal",
+        "showValue": "never",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Average model training time per task type (in s)",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job_status": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "model_architecture": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "task_type": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "Value (lastNotNull)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value (lastNotNull)": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "task_type (lastNotNull)": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "id": 6,
+      "maxDataPoints": 10000000,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Number of trainings per model architecture",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job_status": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "model_architecture": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "task_type": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "Value (lastNotNull)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value (lastNotNull)": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "model_architecture (lastNotNull)": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "groupby"
+              },
+              "task_type (lastNotNull)": {
+                "aggregations": []
+              }
+            }
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 50,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 20
+      },
+      "id": 7,
+      "maxDataPoints": 10000000,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "colorByField": "Value (lastNotNull) (mean)",
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false
+        },
+        "orientation": "horizontal",
+        "showValue": "never",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\", model_architecture=~\"$model_architecture\", job_status=~\"SUCCEEDED\", organization_id=~\"$organization_id\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "interval": "20",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Average model training time per model architecture (in s)",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "job_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job_status": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "model_architecture": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "task_type": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "Value (lastNotNull)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value (lastNotNull)": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "model_architecture (lastNotNull)": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "task_type (lastNotNull)": {
+                "aggregations": []
+              }
+            }
+          }
+        }
+      ],
+      "type": "barchart"
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "mimir"
+        },
+        "definition": "label_values(geti_application_models_training_duration_seconds_total,organization_id)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Organization ID",
+        "multi": false,
+        "name": "organization_id",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(geti_application_models_training_duration_seconds_total,organization_id)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "mimir"
+        },
+        "definition": "label_values(geti_application_models_training_duration_seconds_total,task_type)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Task Type",
+        "multi": false,
+        "name": "task_type",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(geti_application_models_training_duration_seconds_total,task_type)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "mimir"
+        },
+        "definition": "label_values(geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\"},model_architecture)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Model Architecture",
+        "multi": false,
+        "name": "model_architecture",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(geti_application_models_training_duration_seconds_total{task_type=~\"$task_type\"},model_architecture)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Model training time",
+  "uid": "adyywszlqnmkgb",
+  "version": 16,
+  "weekStart": ""
+}
