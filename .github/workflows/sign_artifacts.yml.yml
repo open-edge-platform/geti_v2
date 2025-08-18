@@ -57,11 +57,11 @@ jobs:
 
       - name: Login crane to ghcr.io
         run: |
-          echo ${{ secrets.GETI_GHCR_TOKEN }} | crane auth login ghcr.io -u ${{ secrets.GETI_USER }} --password-stdin
+          echo ${{ secrets.GITHUB_TOKEN  }} | crane auth login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Get image digest
         env:
-          IMAGE: ${{ inputs.image_tag }}
+          IMAGE: ${{ inputs.image_uri }}
         run: |
           DIGEST=$(crane digest "${IMAGE}" | tr -d '\n\r')
           echo "Digest for ${IMAGE} is ${DIGEST}"
@@ -75,20 +75,20 @@ jobs:
       - name: Sign the images with GitHub OIDC Token (keyless mode)
         env:
           DIGEST: ${{ env.DIGEST }}
-          TAG: ${{ inputs.image_tag }}
+          IMAGE: ${{ inputs.image_uri }}
         run: |
-          echo "Signing ${TAG}@${DIGEST}"
-          cosign sign --yes "${TAG}@${DIGEST}"
+          echo "Signing ${IMAGE}@${DIGEST}"
+          cosign sign --yes "${IMAGE}@${DIGEST}"
 
       - name: Verify the signature
         env:
           DIGEST: ${{ env.DIGEST }}
-          TAG: ${{ inputs.image_tag }}
+          IMAGE: ${{ inputs.image_uri }}
         run: |
-          echo "Verifying signature for ${TAG}@${DIGEST}"
+          echo "Verifying signature for ${IMAGE}@${DIGEST}"
           echo "Using certificate identity: https://github.com/open-edge-platform/geti/.github/workflows/sign_artifacts.yml"
           echo "OIDC Issuer: https://token.actions.githubusercontent.com"
           cosign verify \
           --certificate-identity-regexp=https://github.com/open-edge-platform/geti/.github/workflows/sign_artifacts.yml \
           --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
-          "${TAG}@${DIGEST}"
+          "${IMAGE}@${DIGEST}"
