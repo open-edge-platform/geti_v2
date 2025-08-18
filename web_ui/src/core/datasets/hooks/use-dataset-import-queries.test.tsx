@@ -32,10 +32,10 @@ mockedDatasetImportService.importDatasetToNewProjectStatusJob = jest.fn();
 mockedDatasetImportService.prepareDatasetToExistingProjectStatusJob = jest.fn();
 mockedDatasetImportService.importDatasetToExistingProjectStatusJob = jest.fn();
 
-const mockedAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockedAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 const projectId = 'project-id';
@@ -133,7 +133,7 @@ describe('useDatasetImportQueries', () => {
             });
 
             await waitFor(() => {
-                expect(mockedAddNotification).toHaveBeenCalled();
+                expect(mockedToast).toHaveBeenCalled();
             });
         });
 

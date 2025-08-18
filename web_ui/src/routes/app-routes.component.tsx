@@ -73,13 +73,10 @@ const AppProviders = (): JSX.Element => {
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
 
     const location = useLocation();
-    const { removeNotifications } = useNotification();
 
     useEffect(() => {
-        removeNotifications();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        removeToasts();
     }, [location]);
-
     useEventListener('error', (e) => {
         // Virtuoso's resize observer can throw this error, which is caught by DnD's
         // global window.error listener and aborts dragging.

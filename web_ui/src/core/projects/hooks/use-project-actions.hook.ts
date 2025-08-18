@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import {
     InfiniteData,
     QueryKey,
@@ -22,8 +23,6 @@ import { isEmpty, omit } from 'lodash-es';
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
 import { WorkspaceIdentifier } from '../../../../packages/core/src/workspaces/services/workspaces.interface';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { NextPageURL } from '../../shared/infinite-query.interface';
 import { DOMAIN, ProjectIdentifier } from '../core.interface';
 import { DatasetIdentifier } from '../dataset.interface';
@@ -113,11 +112,10 @@ const projectQueryOptions = (projectIdentifier: ProjectIdentifier, projectServic
 
 export const useProjectActions = (): UseProjectActions => {
     const client = useQueryClient();
-    const { addNotification } = useNotification();
     const { projectService } = useApplicationServices();
 
     const onError = (error: AxiosError) => {
-        addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+        toast({ message: getErrorMessage(error), type: 'error' });
     };
 
     const useGetProject = (projectIdentifier: ProjectIdentifier) => {
@@ -248,7 +246,7 @@ export const useProjectActions = (): UseProjectActions => {
 
         onError: (error: AxiosError) => {
             const message = getErrorMessage(error) || 'Labels were not updated due to an error';
-            addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message, type: 'error' });
         },
     });
 

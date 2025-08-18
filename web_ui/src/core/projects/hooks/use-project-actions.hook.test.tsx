@@ -10,10 +10,10 @@ import { createInMemoryProjectService } from '../services/in-memory-project-serv
 import { ProjectService } from '../services/project-service.interface';
 import { useProjectActions } from './use-project-actions.hook';
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 const renderProjectActionsHook = ({ projectService }: { projectService: ProjectService }) => {
@@ -42,7 +42,7 @@ describe('useProjectActions', () => {
                 expect(projectService.deleteProject).toHaveBeenCalledWith(mockData);
             });
 
-            expect(mockAddNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
 
         it('call addNotification when rejects', async () => {
@@ -62,7 +62,7 @@ describe('useProjectActions', () => {
                 expect(projectService.deleteProject).toHaveBeenCalledWith(mockData);
             });
 
-            expect(mockAddNotification).toHaveBeenCalledWith({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            expect(mockedToast).toHaveBeenCalledWith({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
         });
     });
 });

@@ -13,10 +13,10 @@ import { ProjectService } from '../services/project-service.interface';
 import { useImportProjectStatusQuery } from './use-import-project-status.hook';
 import { IMPORT_STATUS_ERROR } from './use-import-project.hook';
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 const projectService = createInMemoryProjectService();
@@ -61,7 +61,7 @@ describe('useImportProjectStatusQuery', () => {
                 expect(mockOnError).toHaveBeenCalled();
             });
 
-            expect(mockAddNotification).toHaveBeenCalledWith({
+            expect(mockedToast).toHaveBeenCalledWith({
                 message: IMPORT_STATUS_ERROR,
                 type: NOTIFICATION_TYPE.ERROR,
             });
@@ -83,7 +83,7 @@ describe('useImportProjectStatusQuery', () => {
                 expect(projectService.getImportProjectStatus).toHaveBeenCalledWith(projectImportIdentifier);
             });
 
-            expect(mockAddNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
 
         it('calls onDone', async () => {
@@ -103,7 +103,7 @@ describe('useImportProjectStatusQuery', () => {
                 expect(mockOnDone).toHaveBeenCalled();
             });
 
-            expect(mockAddNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
     });
 });
