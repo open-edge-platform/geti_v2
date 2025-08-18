@@ -14,9 +14,4 @@ export { type GrabcutData } from './src/grabcut/interfaces';
 
 export { buildIntelligentScissorsInstance, IntelligentScissors } from './src/intelligent-scissors/intelligent-scissors';
 
-export {
-    buildSegmentAnythingInstance,
-    SegmentAnythingModelWrapper,
-} from './src/segment-anything/segment-anything-wrapper';
-export { SegmentAnythingModel } from './src/segment-anything/segment-anything';
-export type { EncodingOutput } from './src/segment-anything/segment-anything-encoder';
+export { Anchor } from './src/edit-bounding-box/anchor.component';

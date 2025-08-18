@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useEffect } from 'react';
 
-import { EncodingOutput } from '@geti/smart-tools';
+import { EncodingOutput } from '@geti/smart-tools/segment-anything';
 import { useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import { isEmpty } from 'lodash-es';
 
