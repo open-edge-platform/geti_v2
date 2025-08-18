@@ -25,8 +25,8 @@ global:
     name: os-shell:12-debian-12-r47
   kubectl:
     registry: docker.io
-    repository: bitnamilegacy
-    name: kubectl:1.31.0
+    repository: rancher
+    name: kubectl:v1.31.12
   busybox:
     registry: quay.io
     repository: prometheus
@@ -96,7 +96,7 @@ kubectlImage:
   # -- The Docker registry
   registry: docker.io
   # -- Docker image repository
-  repository: bitnamilegacy/kubectl
+  repository: rancher/kubectl
   # -- Overrides the image tag whose default is the chart's appVersion
   tag: null
   # -- Docker image pull policy

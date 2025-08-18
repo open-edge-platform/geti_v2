@@ -64,8 +64,8 @@ global:
     name: os-shell:12-debian-12-r47
   kubectl: 
     registry: docker.io
-    repository: bitnamilegacy
-    name: kubectl:1.31.0
+    repository: rancher
+    name: kubectl:v1.31.12
   credit_system_enabled: false
   seaweed_fs_enabled: true
   busybox:
