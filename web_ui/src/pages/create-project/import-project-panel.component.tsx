@@ -3,7 +3,7 @@
 
 import { ChangeEvent, useRef } from 'react';
 
-import { Button, Flex, Text, View , toast } from '@geti/ui';
+import { Button, Flex, Text, toast, View } from '@geti/ui';
 import { DatasetImport as DatasetImportIcon } from '@geti/ui/icons';
 import { isExtraLargeSizeQuery } from '@geti/ui/theme';
 import { Link } from 'react-router-dom';
@@ -27,7 +27,6 @@ export const ProjectImportPanel = ({
     options: ImportOptions;
     onImportProject: () => void;
 }): JSX.Element => {
-    
     const { importProject } = useProjectsImportProvider();
     const docsUrl = useDocsUrl();
 

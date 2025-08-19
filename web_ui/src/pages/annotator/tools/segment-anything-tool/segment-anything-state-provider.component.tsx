@@ -4,11 +4,11 @@
 import { createContext, useContext, useEffect } from 'react';
 
 import { EncodingOutput } from '@geti/smart-tools/segment-anything';
+import { toast } from '@geti/ui';
 import { useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import { isEmpty } from 'lodash-es';
 
 import { Shape } from '../../../../core/annotations/shapes.interface';
-import { toast } from '@geti/ui';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useAddUnfinishedShape } from '../../hooks/use-add-unfinished-shape.hook';
@@ -53,7 +53,7 @@ export const SegmentAnythingStateProvider = ({ children }: StateProviderProps): 
     const throttledDecodingQueryFn = useSingleStackFn(decodingQueryFn);
     const decodingQueryOptions = useDecodingQueryOptions(state.points, throttledDecodingQueryFn);
     const decodingQuery = useDecodingQuery(state.points, throttledDecodingQueryFn);
-    
+
     useEffect(() => {
         if (state.points.length > 0 && decodingQuery.data !== undefined && decodingQuery.data.length === 0) {
             if (!decodingQuery.isPlaceholderData) {

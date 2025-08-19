@@ -17,7 +17,6 @@ import { JobInfoStatus } from '../../../../../core/tests/dtos/tests.interface';
 import { useTests } from '../../../../../core/tests/hooks/use-tests.hook';
 import { MetricType, Test } from '../../../../../core/tests/tests.interface';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
- 
 import { getUniqueNameFromArray, hasEqualId, isNotCropTask } from '../../../../../shared/utils';
 import { SelectableOptimizationType } from '../../../project-details.interface';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
@@ -56,7 +55,6 @@ export const useRunTestDialogState = ({ handleClose, preselectedModel, modelsGro
     const { useProjectModelQuery } = useModels();
     const { data: tests } = useTestsListQuery({ workspaceId, projectId, organizationId });
     const runTestMutation = useRunTestMutation();
-    
 
     const testNames = useMemo(() => tests?.map((test) => test.testName) ?? [], [tests]);
 

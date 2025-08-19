@@ -4,7 +4,7 @@
 import { useState } from 'react';
 
 import { paths } from '@geti/core';
-import { Button , toast } from '@geti/ui';
+import { Button, toast } from '@geti/ui';
 import { groupBy, isEmpty } from 'lodash-es';
 import { NavigateFunction } from 'react-router-dom';
 
@@ -27,7 +27,6 @@ export const insufficientStorageMessage =
 const datasetPagePath = (datasetIdentifier: DatasetIdentifier) => paths.project.dataset.index(datasetIdentifier);
 
 export const AcceptButton = ({ isDisabled, navigate }: AcceptButtonProps): JSX.Element => {
-    
     const { ...datasetIdentifier } = useCameraParams();
     const { mediaUploadState, onUploadMedia } = useDatasetMediaUpload();
     const { savedFilesQuery, updateMany, deleteMany } = useCameraStorage();

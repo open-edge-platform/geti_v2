@@ -3,6 +3,7 @@
 
 import { useEffect, useRef } from 'react';
 
+import { toast } from '@geti/ui';
 import { InfiniteData } from '@tanstack/react-query';
 
 import { useGetScheduledJobs } from '../../../../core/jobs/hooks/use-jobs.hook';
@@ -11,7 +12,6 @@ import { JobsResponse } from '../../../../core/jobs/services/jobs-service.interf
 import { ProjectIdentifier } from '../../../../core/projects/core.interface';
 import { FUX_NOTIFICATION_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { UserGlobalSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
-import { toast } from '@geti/ui';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
 import { useIsAutoTrainingOn } from '../../hooks/use-is-auto-training-on.hook';
 import { JOB_TRIGGER, onScheduledTrainingJobs } from '../utils';

@@ -4,7 +4,7 @@
 import { Fragment } from 'react';
 
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
-import { View , toast } from '@geti/ui';
+import { toast, View } from '@geti/ui';
 import { OverlayTriggerState, useOverlayTriggerState } from '@react-stately/overlays';
 import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -45,7 +45,7 @@ const DatasetImportJobStatus = ({
     deleteDatasetImport,
 }: DatasetImportJobStatusProps) => {
     const client = useQueryClient();
-    
+
     const { usePreparingStatusJob, useImportingStatusJob } = useDatasetImportQueries();
 
     const { id, uploadId, preparingJobId, importingJobId } = datasetImportItem;

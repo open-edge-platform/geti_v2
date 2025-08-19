@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Flex, Grid, Heading, Text, View , toast } from '@geti/ui';
+import { Flex, Grid, Heading, Text, toast, View } from '@geti/ui';
 
 import { getEstimateFreeStorage } from '../../shared/navigator-utils';
 import { ActionButtons } from './components/action-buttons/action-buttons.component';

@@ -5,12 +5,11 @@ import { useRef } from 'react';
 
 import { getErrorMessage } from '@geti/core/src/services/utils';
 import { useOnboardUserMutation } from '@geti/core/src/users/hook/use-onboard-user-mutation.hook';
-import { CustomPopover, dimensionValue, Flex, Item, ListBox, PhotoPlaceholder, Picker, View, toast } from '@geti/ui';
+import { CustomPopover, dimensionValue, Flex, Item, ListBox, PhotoPlaceholder, Picker, toast, View } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { isNil } from 'lodash-es';
 
 import { useSelectedOrganization } from '../../../../core/organizations/hook/use-selected-organization.hook';
- 
 import {
     isInvitedOrganization,
     isOrganizationVisible,
@@ -25,7 +24,7 @@ interface OrganizationsPickerProps {
 
 export const OrganizationsPicker = ({ isLargeSize }: OrganizationsPickerProps): JSX.Element => {
     const triggerRef = useRef(null);
-    
+
     const onboardUserMutation = useOnboardUserMutation();
     const organizationsPopoverState = useOverlayTriggerState({});
     const { selectedOrganization, organizations, isLoading, setSelectedOrganization, hasMultipleOrganizations } =

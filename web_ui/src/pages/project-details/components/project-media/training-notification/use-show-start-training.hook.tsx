@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { removeToast, toast } from '@geti/ui';
 import { OverlayTriggerState } from '@react-stately/overlays';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -16,7 +17,6 @@ import { isAnomalous, isExclusive } from '../../../../../core/labels/utils';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
 import { useOrganizationIdentifier } from '../../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
-import { removeToast, toast } from '@geti/ui';
 import { MEDIA_CONTENT_BUCKET } from '../../../../../providers/media-upload-provider/media-upload.interface';
 import { QuietToggleButton } from '../../../../../shared/components/quiet-button/quiet-toggle-button.component';
 import { useDatasetIdentifier } from '../../../../annotator/hooks/use-dataset-identifier.hook';
@@ -68,7 +68,7 @@ export const useShowStartTraining = (trainModelDialogState: OverlayTriggerState)
     const { useGetOrganizationBalanceQuery } = useCreditsQueries();
     const { organizationId } = useOrganizationIdentifier();
     const projectIdentifier = useProjectIdentifier();
-    
+
     const queryClient = useQueryClient();
 
     const enabled = isSingleDomainProject(isAnomalyDomain);
@@ -133,11 +133,10 @@ export const useShowStartTraining = (trainModelDialogState: OverlayTriggerState)
         // After uploading media, we need to verify if the project is ready to be trained
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROJECT_STATUS_KEY(projectIdentifier) });
     }, [
-        
         moreImagesNeeded,
         projectIdentifier,
         queryClient,
-        
+
         showNotification,
         showStartTraining,
         trainModelDialogState.open,

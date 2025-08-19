@@ -2,8 +2,8 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
-
 import { toast } from '@geti/ui';
+
 import { downloadFile, getDownloadNotificationMessage } from '../../shared/utils';
 import { DownloadButton } from './download-button.component';
 
@@ -14,7 +14,6 @@ interface DownloadServerInfoProps {
 
 export const DownloadServerInfo = ({ exportName, url }: DownloadServerInfoProps): JSX.Element => {
     const { router } = useApplicationServices();
-    
 
     const handlePress = () => {
         downloadFile(router.PREFIX(url));

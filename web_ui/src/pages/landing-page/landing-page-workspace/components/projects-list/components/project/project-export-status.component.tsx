@@ -5,7 +5,7 @@ import { Dispatch, FC, SetStateAction, useEffect } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { WorkspaceIdentifier } from '@geti/core/src/workspaces/services/workspaces.interface';
-import { Button, ButtonGroup, Flex, Loading, Text, View, toast } from '@geti/ui';
+import { Button, ButtonGroup, Flex, Loading, Text, toast, View } from '@geti/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { ExportStatusStateDTO } from '../../../../../../../core/configurable-parameters/dtos/configurable-parameters.interface';
@@ -16,7 +16,6 @@ import { useExportProjectStatusQuery } from '../../../../../../../core/projects/
 import { useLocalStorageProject } from '../../../../../../../core/projects/hooks/use-local-storage-project.hook';
 import { ProjectExport, ProjectExportIdentifier } from '../../../../../../../core/projects/project.interface';
 import { JobStateToExportStatus } from '../../../../../../../core/projects/services/api-project-service';
- 
 import { ANIMATION_PARAMETERS } from '../../../../../../../shared/animation-parameters/animation-parameters';
 import { JobProgress } from '../../../../../../../shared/components/header/jobs-management/job-progress.component';
 import { ThinProgressBar } from '../../../../../../../shared/components/thin-progress-bar/thin-progress-bar.component';
@@ -65,7 +64,6 @@ export const ProjectExportStatus: FC<ProjectExportStatusProps> = ({
     const { router } = useApplicationServices();
     const { setLsExportId, removeLsExportId, getLsExportId } = useLocalStorageProject();
     const { useCancelJob } = useJobs(workspaceIdentifier);
-    
 
     const onSettled = () => {
         setIsExporting(false);

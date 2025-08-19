@@ -4,12 +4,12 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { isEmpty, isEqual } from 'lodash-es';
 import { DetailedError, Upload } from 'tus-js-client';
 
 import { useImportProject } from '../../core/projects/hooks/use-import-project.hook';
 import { ImportOptions } from '../../core/projects/services/project-service.interface';
-import { toast } from '@geti/ui';
 import { MissingProviderError } from '../../shared/missing-provider-error';
 import { idMatchingFormat } from '../../test-utils/id-utils';
 import { getBytesRemaining, getTimeRemaining } from '../dataset-import-to-new-project-provider/utils';
@@ -47,7 +47,6 @@ export const ProjectsImportProvider = ({ children }: ProjectsImportProviderProps
         () => getProjectImportItems(workspaceIdentifier) ?? {}
     );
 
-    
     const { uploadFile } = useTusUpload();
     const pendingUploads = useRef(new Map<string, Upload>());
 

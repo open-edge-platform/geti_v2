@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import {
     useMutation,
     UseMutationResult,
@@ -16,7 +17,6 @@ import { isEmpty } from 'lodash-es';
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
 import { useProjectIdentifier } from '../../../hooks/use-project-identifier/use-project-identifier';
-import { toast } from '@geti/ui';
 import { ProjectIdentifier } from '../../projects/core.interface';
 import { useTasksWithSupportedAlgorithms } from '../../supported-algorithms/hooks/use-tasks-with-supported-algorithms';
 import { TrainingBodyDTO } from '../dtos/train-model.interface';

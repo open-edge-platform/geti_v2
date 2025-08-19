@@ -4,11 +4,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { RITM } from '@geti/smart-tools/ritm';
+import { toast } from '@geti/ui';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { usePrevious } from '../../../../hooks/use-previous/use-previous.hook';
-import { toast } from '@geti/ui';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { useInteractiveSegmentation } from '../../hooks/use-interactive-segmentation.hook';
 import { StateProviderProps } from '../tools.interface';
@@ -31,8 +31,6 @@ export interface RITMStateContextProps {
 const RITMStateContext = createContext<RITMStateContextProps | undefined>(undefined);
 
 export const RITMStateProvider = ({ children }: StateProviderProps): JSX.Element => {
-    
-
     const [box, setBox] = useState<RegionOfInterest | null>(null);
     const [result, setResult, undoRedoActions] = useUndoRedoState<RITMResult | null>(null);
 

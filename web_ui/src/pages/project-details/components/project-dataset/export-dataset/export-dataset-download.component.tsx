@@ -2,11 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
-import { Button, ButtonGroup, Flex, Heading, Text, View, toast } from '@geti/ui';
+import { Button, ButtonGroup, Flex, Heading, Text, toast, View } from '@geti/ui';
 import { isEmpty, isString } from 'lodash-es';
 
 import { ExportDatasetLSData } from '../../../../../core/projects/dataset.interface';
- 
 import { downloadFile, getDownloadNotificationMessage, getFileSize } from '../../../../../shared/utils';
 
 import classes from '../project-dataset.module.scss';
@@ -18,7 +17,6 @@ interface ExportDatasetDownloadProps {
 export const ExportDatasetDownload = ({ onCloseDownload, localStorageData }: ExportDatasetDownloadProps) => {
     const { datasetId, downloadUrl, size, datasetName, exportFormat } = localStorageData;
     const { router } = useApplicationServices();
-    
 
     if (!isString(downloadUrl) || isEmpty(downloadUrl)) {
         return <></>;

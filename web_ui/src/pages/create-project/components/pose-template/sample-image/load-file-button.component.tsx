@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Button, FileTrigger, Flex , toast } from '@geti/ui';
+import { Button, FileTrigger, Flex, toast } from '@geti/ui';
 import { Image } from '@geti/ui/icons';
 
 import {
@@ -20,7 +20,6 @@ export const errorMessage =
     mediaExtensionHandler(VALID_IMAGE_TYPES_SINGLE_UPLOAD);
 
 export const LoadFileButton = ({ onFileLoaded }: LoadFileButtonProps) => {
-
     const handleValidFormat = async ([file]: File[]) => {
         const image = await loadImageFromFile(file);
         onFileLoaded(image.src);

@@ -3,14 +3,13 @@
 
 import { FC, ReactNode, SVGProps } from 'react';
 
-import { AriaDropZone as DropZone, Flex, Text, View, type DimensionValue, type Responsive } from '@geti/ui';
+import { AriaDropZone as DropZone, Flex, Text, toast, View, type DimensionValue, type Responsive } from '@geti/ui';
 import { isFirefox } from '@react-aria/utils';
 import { isEmpty, isNil } from 'lodash-es';
 
 import { MediaUpload } from '../../../assets/images';
 import { useStatus } from '../../../core/status/hooks/use-status.hook';
 import { isBelowTooLowFreeDiskSpace } from '../../../core/status/hooks/utils';
-import { toast } from '@geti/ui';
 import { ExportImportDatasetButtons } from '../../../pages/project-details/components/project-dataset/export-dataset/export-import-dataset-buttons.component';
 import { AnomalyMediaHeaderInformation } from '../../../pages/project-details/components/project-media/anomaly-media-header-information.component';
 import { CANT_UPLOAD_FOLDER_FIREFOX, EMPTY_FOLDER_WARNING_MESSAGE } from '../../custom-notification-messages';
@@ -62,7 +61,7 @@ export const MediaDropBox = ({
     disableUploadButton = false,
 }: MediaDropBoxProps): JSX.Element => {
     const { data: status } = useStatus();
-    
+
     const isUploadMediaDisabled = disableUploadButton || isBelowTooLowFreeDiskSpace(status?.freeSpace ?? 0);
 
     const dropFiles = onDropFiles((files) => {

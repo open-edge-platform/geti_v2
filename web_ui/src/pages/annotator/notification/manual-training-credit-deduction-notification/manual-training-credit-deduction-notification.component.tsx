@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
+import { toast } from '@geti/ui';
 import { InfiniteData } from '@tanstack/react-query';
 import { isNil } from 'lodash-es';
 import { useParams } from 'react-router-dom';
@@ -11,7 +12,6 @@ import { useParams } from 'react-router-dom';
 import { useGetScheduledJobs } from '../../../../core/jobs/hooks/use-jobs.hook';
 import { JobsResponse } from '../../../../core/jobs/services/jobs-service.interface';
 import { isJobTrain } from '../../../../core/jobs/utils';
-import { toast } from '@geti/ui';
 import { useTotalCreditPrice } from '../../../project-details/hooks/use-credits-to-consume.hook';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
 import { JOB_TRIGGER, onScheduledTrainingJobs } from '../utils';

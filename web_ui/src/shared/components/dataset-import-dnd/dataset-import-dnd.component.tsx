@@ -3,14 +3,13 @@
 
 import { Dispatch, SetStateAction, useRef } from 'react';
 
-import { Button, Flex, Text, View, type DimensionValue, type Responsive } from '@geti/ui';
+import { Button, Flex, Text, toast, View, type DimensionValue, type Responsive } from '@geti/ui';
 import { DatasetImport as DatasetImportIcon } from '@geti/ui/icons';
 import { isExtraLargeSizeQuery } from '@geti/ui/theme';
 import { Link } from 'react-router-dom';
 import { useMediaQuery } from 'usehooks-ts';
 
 import { IMPORT_DATASET_LEARN_MORE } from '../../../core/const';
-import { toast } from '@geti/ui';
 import { DropZone, onDropFiles } from '../../drag-and-drop/drag-and-drop.component';
 import { onValidFileList } from '../../utils';
 
@@ -35,7 +34,6 @@ export const DatasetImportDnd = ({
     paddingX = 0,
     paddingY = 0,
 }: DatasetImportDndProps): JSX.Element => {
-    
     const fileInputRef = useRef<HTMLInputElement>({} as HTMLInputElement);
     const isExtraLarge = useMediaQuery(isExtraLargeSizeQuery);
 
