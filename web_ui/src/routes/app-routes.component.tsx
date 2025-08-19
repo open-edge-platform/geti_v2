@@ -12,7 +12,6 @@ import { Navigate, Outlet, Route, useLocation } from 'react-router-dom';
 import { isKeypointTask } from '../core/projects/utils';
 import { useEventListener } from '../hooks/event-listener/event-listener.hook';
 import { useIsSaasEnv } from '../hooks/use-is-saas-env/use-is-saas-env.hook';
-import { Notifications } from '../notification/notification.component';
 import { TaskProvider } from '../pages/annotator/providers/task-provider/task-provider.component';
 import { RouterErrorBoundary } from '../pages/errors/router-error-boundary.component';
 import { WelcomeTrialModal } from '../pages/landing-page/welcome-trial-modal/welcome-trial-modal.component';
@@ -117,7 +116,6 @@ export const appRoutes = () => {
         <Route
             element={
                 <>
-                    <Notifications />
                     <Outlet />
                 </>
             }

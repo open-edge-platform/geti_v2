@@ -15,7 +15,6 @@ import { UserLayout } from '../intel-admin-app/pages/user/user-layout.component'
 import { UserMemberships } from '../intel-admin-app/pages/user/user-memberships.component';
 import { UserOverview } from '../intel-admin-app/pages/user/user-overview.component';
 import { UsersLayout } from '../intel-admin-app/pages/users/users-layout.component';
-import { Notifications } from '../notification/notification.component';
 import { RouterErrorBoundary } from '../pages/errors/router-error-boundary.component';
 import { AuthProvider } from '../providers/auth-provider/auth-provider.component';
 import { AuthenticationLayout } from './auth/auth.layout';
@@ -33,7 +32,6 @@ export const intelAdminRoutes = (): JSX.Element => {
         <Route
             element={
                 <AuthProvider isAdmin>
-                    <Notifications />
                     <Outlet />
                 </AuthProvider>
             }

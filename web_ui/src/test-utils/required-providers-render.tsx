@@ -17,7 +17,6 @@ import { AuthProvider } from 'react-oidc-context';
 import { MemoryRouter as Router } from 'react-router-dom';
 
 import { AccountStatusDTO } from '../core/organizations/dtos/organizations.interface';
-import { NotificationProvider, Notifications } from '../notification/notification.component';
 import { TusUploadProvider } from '../providers/tus-upload-provider/tus-upload-provider.component';
 import { getMockedWorkspace } from './mocked-items-factory/mocked-workspace';
 
@@ -79,17 +78,14 @@ export const RequiredProviders = ({
         <Suspense fallback={<IntelBrandedLoading />}>
             <Router initialEntries={initialEntries}>
                 <AuthProvider>
-                    <NotificationProvider>
-                        <Notifications />
-                        <Toast />
-                        <QueryClientProvider client={queryClient ?? prefilledQueryClient}>
-                            <ThemeProvider theme={defaultTheme}>
-                                <ApplicationServicesProvider useInMemoryEnvironment {...services}>
-                                    <TusUploadProvider>{children}</TusUploadProvider>
-                                </ApplicationServicesProvider>
-                            </ThemeProvider>
-                        </QueryClientProvider>
-                    </NotificationProvider>
+                    <Toast />
+                    <QueryClientProvider client={queryClient ?? prefilledQueryClient}>
+                        <ThemeProvider theme={defaultTheme}>
+                            <ApplicationServicesProvider useInMemoryEnvironment {...services}>
+                                <TusUploadProvider>{children}</TusUploadProvider>
+                            </ApplicationServicesProvider>
+                        </ThemeProvider>
+                    </QueryClientProvider>
                 </AuthProvider>
             </Router>
         </Suspense>
