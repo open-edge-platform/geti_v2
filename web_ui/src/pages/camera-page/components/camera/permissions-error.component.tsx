@@ -3,21 +3,16 @@
 
 import { useEffect } from 'react';
 
-import { dimensionValue, Flex, Heading, Text } from '@geti/ui';
-
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
+import { dimensionValue, Flex, Heading, Text, toast } from '@geti/ui';
 
 export const PermissionError = (): JSX.Element => {
-    const { addToastNotification } = useNotification();
-
     useEffect(() => {
-        addToastNotification({
-            title: 'Camera connection is lost',
+        toast({
             message: 'Please check your device and network settings and try again.',
-            type: NOTIFICATION_TYPE.WARNING,
+            type: 'warning',
+            title: 'Camera connection is lost',
         });
-    }, [addToastNotification]);
+    }, []);
 
     return (
         <Flex
