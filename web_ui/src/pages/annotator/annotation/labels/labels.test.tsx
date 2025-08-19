@@ -123,6 +123,8 @@ describe('Labels', (): void => {
             labels,
         });
 
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
+
         jest.mocked(useROI).mockReturnValue({
             roi,
             image: getMockedImage(roi),
@@ -231,6 +233,8 @@ describe('Labels', (): void => {
             labels: [],
         });
         const annotationToolContext = fakeAnnotationToolContext({ annotations: [annotation], labels });
+
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
 
         renderApp(annotation, { tasks: [getMockedTask({ labels })] });
 

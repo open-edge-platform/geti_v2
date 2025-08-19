@@ -3,7 +3,7 @@
 
 import '@wessberg/pointer-events';
 
-import { useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 
 import { fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
 
@@ -25,7 +25,9 @@ import { AnnotationToolContext, ANNOTATOR_MODE } from '../../core/annotation-too
 import { useAnnotatorMode } from '../../hooks/use-annotator-mode';
 import { AnnotationToolProvider } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { AnnotatorContextMenuProvider } from '../../providers/annotator-context-menu-provider/annotator-context-menu-provider.component';
+import { AnnotatorProvider } from '../../providers/annotator-provider/annotator-provider.component';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
+import { SelectedMediaItemProvider } from '../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { TaskContextProps, TaskProvider, useTask } from '../../providers/task-provider/task-provider.component';
 import { EditTool } from './edit-tool.component';
 
@@ -34,7 +36,8 @@ jest.mock('../../hooks/use-annotator-mode', () => ({
 }));
 
 jest.mock('../../providers/annotation-scene-provider/annotation-scene-provider.component', () => ({
-    useAnnotationScene: () => ({ hasShapePointSelected: { current: false } }),
+    ...jest.requireActual('../../providers/annotation-scene-provider/annotation-scene-provider.component'),
+    useAnnotationScene: () => ({ annotations: [], hasShapePointSelected: { current: false } }),
 }));
 
 const mockROI = { x: 0, y: 0, width: 100, height: 100 };
@@ -56,6 +59,22 @@ jest.mock('../../providers/task-provider/task-provider.component', () => ({
     useTask: jest.fn(),
 }));
 
+const Wrapper = ({ children }: { children: ReactNode }) => {
+    return (
+        <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
+            <TaskProvider>
+                <SelectedMediaItemProvider>
+                    <AnnotatorProvider>
+                        <AnnotationToolProvider>
+                            <AnnotatorContextMenuProvider>{children}</AnnotatorContextMenuProvider>
+                        </AnnotationToolProvider>
+                    </AnnotatorProvider>
+                </SelectedMediaItemProvider>
+            </TaskProvider>
+        </ProjectProvider>
+    );
+};
+
 const renderApp = async (
     annotationToolContext: AnnotationToolContext,
     tasksHook: Partial<TaskContextProps> = {},
@@ -68,19 +87,11 @@ const renderApp = async (
     });
 
     const result = render(
-        <AnnotationToolProvider>
-            <AnnotationToolProvider>
-                <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
-                    <TaskProvider>
-                        <AnnotatorContextMenuProvider>
-                            <svg>
-                                <EditTool annotationToolContext={annotationToolContext} />
-                            </svg>
-                        </AnnotatorContextMenuProvider>
-                    </TaskProvider>
-                </ProjectProvider>
-            </AnnotationToolProvider>
-        </AnnotationToolProvider>
+        <Wrapper>
+            <svg>
+                <EditTool annotationToolContext={annotationToolContext} />
+            </svg>
+        </Wrapper>
     );
 
     await waitForElementToBeRemoved(screen.getByRole('progressbar'));
@@ -205,15 +216,9 @@ describe('Edit tool', (): void => {
         jest.mocked(useTask).mockReturnValue(mockedTaskContextProps({ tasks }));
 
         render(
-            <AnnotationToolProvider>
-                <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
-                    <TaskProvider>
-                        <AnnotatorContextMenuProvider>
-                            <EditToolApp />
-                        </AnnotatorContextMenuProvider>
-                    </TaskProvider>
-                </ProjectProvider>
-            </AnnotationToolProvider>
+            <Wrapper>
+                <EditToolApp />
+            </Wrapper>
         );
 
         await waitForElementToBeRemoved(screen.getByRole('progressbar'));
@@ -357,7 +362,7 @@ describe('editing global labels', () => {
 
         const labels = tasks.flatMap((task) => task.labels);
 
-        it('does render the shape of a segmentation annotation without labels', () => {
+        it('does render the shape of a segmentation annotation without labels', async () => {
             const roi = { x: 0, y: 0, width: image.width, height: image.height };
             jest.mocked(useROI).mockReturnValueOnce({ roi, image: imageData });
 
@@ -382,13 +387,8 @@ describe('editing global labels', () => {
                 labels,
                 selectedTask: tasks[1],
             });
-            render(
-                <AnnotationToolProvider>
-                    <svg>
-                        <EditTool annotationToolContext={annotationToolContext} />
-                    </svg>
-                </AnnotationToolProvider>
-            );
+
+            await renderApp(annotationToolContext, { tasks, selectedTask: tasks[1] });
 
             const canvasAnnotations = screen.queryByLabelText('Drag to move shape');
             expect(canvasAnnotations).toBeInTheDocument();

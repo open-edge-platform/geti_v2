@@ -29,7 +29,7 @@ const mockImage = getMockedImage(mockROI);
 
 jest.mock('../../../providers/annotation-scene-provider/annotation-scene-provider.component', () => ({
     ...jest.requireActual('../../../providers/annotation-scene-provider/annotation-scene-provider.component'),
-    useAnnotationScene: () => ({ hasShapePointSelected: { current: false } }),
+    useAnnotationScene: () => ({ hasShapePointSelected: { current: false }, annotations: [] }),
 }));
 
 jest.mock('../../../providers/region-of-interest-provider/region-of-interest-provider.component', () => ({

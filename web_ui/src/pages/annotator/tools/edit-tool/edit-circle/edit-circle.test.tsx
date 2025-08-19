@@ -16,6 +16,8 @@ import { ProjectProvider } from '../../../../project-details/providers/project-p
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { AnnotationSceneProvider } from '../../../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { AnnotationToolProvider } from '../../../providers/annotation-tool-provider/annotation-tool-provider.component';
+import { AnnotatorProvider } from '../../../providers/annotator-provider/annotator-provider.component';
+import { SelectedMediaItemProvider } from '../../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { TaskProvider } from '../../../providers/task-provider/task-provider.component';
 import { getMaxCircleRadius } from '../../circle-tool/utils';
 import { calculateAnchorPoint, EditCircle as EditCircleTool } from './edit-circle.component';
@@ -23,12 +25,7 @@ import { calculateAnchorPoint, EditCircle as EditCircleTool } from './edit-circl
 const mockROI = { x: 0, y: 0, width: 200, height: 200 };
 const mockImage = getMockedImage(mockROI);
 
-jest.mock('../../../annotator.component', () => ({
-    useAnnotator: jest.fn(),
-}));
-
 jest.mock('../../../providers/region-of-interest-provider/region-of-interest-provider.component', () => ({
-    ...jest.requireActual('../../../providers/region-of-interest-provider/region-of-interest-provider.component'),
     useROI: jest.fn(() => ({
         roi: mockROI,
         image: mockImage,
@@ -36,7 +33,6 @@ jest.mock('../../../providers/region-of-interest-provider/region-of-interest-pro
 }));
 
 jest.mock('./../../../zoom/zoom-provider.component', () => ({
-    ...jest.requireActual('./../../../zoom/zoom-provider.component'),
     useZoom: jest.fn(() => ({ zoomState: { zoom: 1.0, translation: { x: 0, y: 0 } } })),
 }));
 
@@ -47,11 +43,15 @@ const renderApp = async (
     const result = render(
         <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
             <TaskProvider>
-                <AnnotationSceneProvider annotations={[]} labels={[]}>
-                    <AnnotationToolProvider>
-                        <EditCircleTool annotationToolContext={annotationToolContext} annotation={annotation} />
-                    </AnnotationToolProvider>
-                </AnnotationSceneProvider>
+                <SelectedMediaItemProvider>
+                    <AnnotatorProvider>
+                        <AnnotationSceneProvider annotations={[]} labels={[]}>
+                            <AnnotationToolProvider>
+                                <EditCircleTool annotationToolContext={annotationToolContext} annotation={annotation} />
+                            </AnnotationToolProvider>
+                        </AnnotationSceneProvider>
+                    </AnnotatorProvider>
+                </SelectedMediaItemProvider>
             </TaskProvider>
         </ProjectProvider>
     );

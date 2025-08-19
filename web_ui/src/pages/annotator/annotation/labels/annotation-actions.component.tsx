@@ -9,7 +9,7 @@ import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { isAnomalyDomain, isClassificationDomain } from '../../../../core/projects/domains';
 import { ANIMATION_PARAMETERS } from '../../../../shared/animation-parameters/animation-parameters';
 import { hasEqualId } from '../../../../shared/utils';
-import { useAnnotationScene } from '../../providers/annotation-scene-provider/annotation-scene-provider.component';
+import { useAnnotationToolContext } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { getGlobalAnnotations } from '../../providers/task-chain-provider/utils';
 import { useTask } from '../../providers/task-provider/task-provider.component';
@@ -24,7 +24,9 @@ interface LabelActionsProps {
 const useOnRemoveLabels = (annotation: Annotation) => {
     const { selectedTask } = useTask();
     const { roi } = useROI();
-    const { annotations, removeAnnotations, removeLabels } = useAnnotationScene();
+    const {
+        scene: { annotations, removeAnnotations, removeLabels },
+    } = useAnnotationToolContext();
 
     if (selectedTask === null) {
         return () => removeAnnotations([annotation]);
