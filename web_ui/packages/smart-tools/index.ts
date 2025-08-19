@@ -15,3 +15,4 @@ export { type GrabcutData } from './src/grabcut/interfaces';
 export { buildIntelligentScissorsInstance, IntelligentScissors } from './src/intelligent-scissors/intelligent-scissors';
 
 export { Anchor } from './src/edit-bounding-box/anchor.component';
+export { ANCHOR_SIZE, ResizeAnchor } from './src/edit-bounding-box/resize-anchor.component';

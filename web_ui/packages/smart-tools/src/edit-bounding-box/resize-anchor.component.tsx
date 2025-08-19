@@ -3,11 +3,15 @@
 
 import { CSSProperties, ReactNode } from 'react';
 
-import { Anchor as InternalAnchor } from '@geti/smart-tools';
-
-import { ResizeAnchorType } from './resize-anchor.enum';
+import { Anchor as InternalAnchor } from './anchor.component';
 
 export const ANCHOR_SIZE = 8;
+
+enum ResizeAnchorType {
+    SQUARE,
+    CIRCLE,
+    CUSTOM,
+}
 
 interface ResizeAnchorProps {
     zoom: number;

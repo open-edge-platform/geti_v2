@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
 import { Vec2 } from '@geti/smart-tools/utils';
 
 import { Annotation, RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
@@ -14,7 +15,6 @@ import { useROI } from '../../../providers/region-of-interest-provider/region-of
 import { useZoom } from '../../../zoom/zoom-provider.component';
 import { getMaxCircleRadius, MIN_RADIUS } from '../../circle-tool/utils';
 import { isShapeWithinRoi } from '../../utils';
-import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { ResizeAnchorType } from '../resize-anchor.enum';
 import { TranslateShape } from '../translate-shape.component';
 
