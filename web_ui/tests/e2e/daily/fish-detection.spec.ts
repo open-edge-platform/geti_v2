@@ -123,7 +123,7 @@ test(
 
             const timeout = TIMEOUTS.importDataset;
 
-            await page.getByRole('button', { name: /import/i }).click();
+            await page.getByRole('button', { name: /import/i }).click({ timeout });
 
             // Wait for the progress to start
             await expect(page.getByText(/Import dataset to project/)).toBeVisible({ timeout });
@@ -162,7 +162,7 @@ test(
             const modelsPage = await projectPage.goToModelsPage();
 
             // Run test on active model's FP16 version
-            const activeModel = { name: 'MobileNetV2-ATSS', version: '1' };
+            const activeModel = { name: 'ATSS-MobileNetV2', version: '1' };
             const modelPage = await modelsPage.goToModel(activeModel.name, activeModel.version);
             const runTestDialogPage = await modelPage.openTestDialog(`${activeModel.name} OpenVINO FP16`);
 
