@@ -58,10 +58,6 @@ global:
   docker_namespace: impp
   forceNamespace:
     flyte: flyte
-  debian: 
-    registry: quay.io
-    repository: curl
-    name: curl:8.15.0
   kubectl: 
     registry: docker.io
     repository: bitnamilegacy

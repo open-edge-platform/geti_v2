@@ -664,8 +664,8 @@ volumePermissions:
   ##
   image:
     registry: quay.io
-    repository: curl
-    name: curl:8.15.0
+    repository: prometheus
+    name: busybox:glibc
     ## @param volumePermissions.image.pullPolicy Init container volume-permissions image pull policy
     ##
     pullPolicy: IfNotPresent

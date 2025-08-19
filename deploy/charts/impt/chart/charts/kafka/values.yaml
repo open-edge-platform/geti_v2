@@ -879,8 +879,8 @@ volumePermissions:
   ##
   image:
     registry: quay.io
-    repository: curl
-    name: curl:8.15.0
+    repository: prometheus
+    name: busybox:glibc
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
