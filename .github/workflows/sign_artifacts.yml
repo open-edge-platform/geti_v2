@@ -58,7 +58,7 @@ jobs:
 
       - name: Login crane to ghcr.io
         run: |
-          echo ${{ secrets.GITHUB_TOKEN  }} | crane auth login ghcr.io -u "dummy" --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN  }}" | crane auth login ghcr.io -u "dummy" --password-stdin
 
       - name: Get image digest
         env:
