@@ -16,7 +16,7 @@ const BUTTON_LEFT = {
     button: 0,
     buttons: 1,
 };
-export const isLeftButton = (button: MouseButton): boolean => {
+const isLeftButton = (button: MouseButton): boolean => {
     return button.button === BUTTON_LEFT.button || button.buttons === BUTTON_LEFT.buttons;
 };
 
