@@ -11,8 +11,7 @@ import { JobsResponse } from '../../../../core/jobs/services/jobs-service.interf
 import { ProjectIdentifier } from '../../../../core/projects/core.interface';
 import { FUX_NOTIFICATION_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { UserGlobalSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
+import { toast } from '@geti/ui';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
 import { useIsAutoTrainingOn } from '../../hooks/use-is-auto-training-on.hook';
 import { JOB_TRIGGER, onScheduledTrainingJobs } from '../utils';
@@ -49,7 +48,6 @@ const useCreditDeductionNotificationJobs = ({
 
 export const CreditDeductionNotification = ({ settings }: CreditDeductionNotificationProps): JSX.Element => {
     const openedNotification = useRef(new Set<string>());
-    const { addNotification } = useNotification();
 
     const { project, projectIdentifier } = useProject();
     const isAutoTrainingOn = useIsAutoTrainingOn({ project, projectIdentifier });
@@ -79,9 +77,9 @@ export const CreditDeductionNotification = ({ settings }: CreditDeductionNotific
             }
 
             openedNotification.current.add(scheduledJob.id);
-            addNotification({
+            toast({
                 message: `Auto-training round has been started, ${totalCreditsToConsume} credits deducted.`,
-                type: NOTIFICATION_TYPE.INFO,
+                type: 'info',
             });
         }, JOB_TRIGGER.AUTO),
     });

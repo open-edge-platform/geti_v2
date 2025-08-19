@@ -57,13 +57,6 @@ jest.mock('./hooks/use-annotator-scene-interaction-state.hook', () => ({
     useIsSceneBusy: jest.fn(() => false),
 }));
 
-jest.mock('../../notification/notification.component', () => ({
-    ...jest.requireActual('../../notification/notification.component'),
-    useNotification: jest.fn(() => ({
-        addNotification: jest.fn(),
-    })),
-}));
-
 jest.mock('./providers/prediction-provider/prediction-provider.component', () => ({
     ...jest.requireActual('./providers/prediction-provider/prediction-provider.component'),
     usePrediction: jest.fn(),

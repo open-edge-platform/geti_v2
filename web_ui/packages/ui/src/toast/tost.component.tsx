@@ -16,21 +16,23 @@ import classes from './toast.module.scss';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info' | 'neutral';
 
-interface ToastProps {
+type ToastProps = {
+    id?: string | number;
     type: ToastType;
-    message: string;
     actionButtons?: ReactElement[];
     hasCloseButton?: boolean;
     duration?: number;
-}
+    onDismiss?: () => void;
+    message: ReactNode;
+};
 
-interface CustomToastProps {
+type CustomToastProps = {
     id: string;
     type: ToastType;
-    message: string;
+    message: ReactNode;
     actionButtons?: ReactElement[];
     hasCloseButton?: boolean;
-}
+};
 
 const ICON: Record<ToastType, ReactNode> = {
     success: <AcceptCircle />,
@@ -91,19 +93,21 @@ export const removeToasts = () => {
 };
 
 export const toast = ({
+    id,
     message,
     actionButtons,
     hasCloseButton,
     type,
     duration = DEFAULT_TOAST_DURATION,
-}: Omit<ToastProps, 'id'>) => {
-    const id = `id-${message}`;
+    onDismiss,
+}: ToastProps) => {
+    const toastId = id !== undefined ? `id-${id}` : `id-${message}`;
 
     return soonerToast.custom(
         () => {
             return (
                 <CustomToast
-                    id={id}
+                    id={toastId}
                     type={type}
                     message={message}
                     actionButtons={actionButtons}
@@ -112,8 +116,9 @@ export const toast = ({
             );
         },
         {
-            id,
+            id: toastId,
             duration,
+            onDismiss,
         }
     );
 };

@@ -10,8 +10,7 @@ import { Link } from 'react-router-dom';
 import { useMediaQuery } from 'usehooks-ts';
 
 import { IMPORT_DATASET_LEARN_MORE } from '../../../core/const';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
+import { toast } from '@geti/ui';
 import { DropZone, onDropFiles } from '../../drag-and-drop/drag-and-drop.component';
 import { onValidFileList } from '../../utils';
 
@@ -36,7 +35,7 @@ export const DatasetImportDnd = ({
     paddingX = 0,
     paddingY = 0,
 }: DatasetImportDndProps): JSX.Element => {
-    const { addNotification } = useNotification();
+    
     const fileInputRef = useRef<HTMLInputElement>({} as HTMLInputElement);
     const isExtraLarge = useMediaQuery(isExtraLargeSizeQuery);
 
@@ -44,7 +43,7 @@ export const DatasetImportDnd = ({
         try {
             setActiveUploadId(setUploadItem(file));
         } catch (_error: unknown) {
-            addNotification({ message: FILE_FORMAT_ERROR_MESSAGE, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: FILE_FORMAT_ERROR_MESSAGE, type: 'error' });
         } finally {
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';

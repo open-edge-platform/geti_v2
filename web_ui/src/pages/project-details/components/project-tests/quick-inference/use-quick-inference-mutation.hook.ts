@@ -3,6 +3,7 @@
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { getErrorMessageByStatusCode } from '@geti/core/src/services/utils';
+import { toast } from '@geti/ui';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
@@ -11,8 +12,6 @@ import {
     InferenceResult,
 } from '../../../../../core/annotations/services/inference-service.interface';
 import { ProjectIdentifier } from '../../../../../core/projects/core.interface';
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 
 // If the user did not send an inference request recently then the service may be unavailable,
@@ -36,13 +35,12 @@ const retryDelay = (attemptIndex: number) => Math.min(3000 * 2 ** attemptIndex, 
 
 export const useQuickInferenceMutation = (): UseQuickInferenceMutation => {
     const { inferenceService } = useApplicationServices();
-    const { addNotification } = useNotification();
     const { project } = useProject();
 
     const onError = (error: AxiosError) => {
         const message = getErrorMessageByStatusCode(error);
 
-        addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
+        toast({ message, type: 'error' });
     };
 
     const predictionMutation = useMutation({

@@ -1,11 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Button, FileTrigger, Flex } from '@geti/ui';
+import { Button, FileTrigger, Flex , toast } from '@geti/ui';
 import { Image } from '@geti/ui/icons';
 
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import {
     getImageMimeType,
     mediaExtensionHandler,
@@ -22,7 +20,6 @@ export const errorMessage =
     mediaExtensionHandler(VALID_IMAGE_TYPES_SINGLE_UPLOAD);
 
 export const LoadFileButton = ({ onFileLoaded }: LoadFileButtonProps) => {
-    const { addNotification } = useNotification();
 
     const handleValidFormat = async ([file]: File[]) => {
         const image = await loadImageFromFile(file);
@@ -30,7 +27,7 @@ export const LoadFileButton = ({ onFileLoaded }: LoadFileButtonProps) => {
     };
 
     const handleInvalidFormat = () => {
-        addNotification({ message: errorMessage, type: NOTIFICATION_TYPE.ERROR });
+        toast({ message: errorMessage, type: 'error' });
     };
 
     const handleUploadFile = onValidImageFormat(handleValidFormat, handleInvalidFormat);

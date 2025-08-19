@@ -45,7 +45,7 @@ describe('useProjectActions', () => {
             expect(mockedToast).not.toHaveBeenCalled();
         });
 
-        it('call addNotification when rejects', async () => {
+        it('call "toast" when rejects', async () => {
             const error = { message: 'test' };
             const projectService = createInMemoryProjectService();
             projectService.deleteProject = jest.fn(() => Promise.reject(error));

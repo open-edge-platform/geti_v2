@@ -4,7 +4,7 @@
 import { Key } from 'react';
 
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
-import { ActionButton, Flex, Item, Menu, MenuTrigger, Text } from '@geti/ui';
+import { ActionButton, Flex, Item, Menu, MenuTrigger, Text, toast } from '@geti/ui';
 import { Delete, Edit, MoreMenu } from '@geti/ui/icons';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { AxiosError } from 'axios';
@@ -13,8 +13,6 @@ import dayjs from 'dayjs';
 import { usePersonalAccessToken } from '../../../../core/personal-access-tokens/hooks/use-personal-access-token.hook';
 import { PartialPersonalAccessToken } from '../../../../core/personal-access-tokens/personal-access-tokens.interface';
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { DeleteDialog } from '../../../../shared/components/delete-dialog/delete-dialog.component';
 import { getDateTimeInISOAndUTCOffsetFormat } from '../../../../shared/utils';
 import { UpdatePersonalAccessTokenDialog } from './update-personal-access-token-dialog.component';
@@ -35,7 +33,6 @@ const UPDATE_MESSAGE = 'The expiration date has been updated.';
 const UPDATE_ERROR = 'Personal Access Token was not updated due to an error.';
 
 export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps): JSX.Element => {
-    const { addNotification } = useNotification();
     const deleteTriggerState = useOverlayTriggerState({});
     const editTriggerState = useOverlayTriggerState({});
     const { deletePersonalAccessTokenMutation, updatePersonalAccessTokenMutation } = usePersonalAccessToken();
@@ -66,11 +63,11 @@ export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps)
                 },
                 {
                     onSuccess: () => {
-                        addNotification({ message: UPDATE_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
+                        toast({ message: UPDATE_MESSAGE, type: 'neutral' });
                     },
                     onError: (error: AxiosError) => {
                         const message = error?.message ?? UPDATE_ERROR;
-                        addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
+                        toast({ message, type: 'error' });
                     },
                 }
             );
@@ -83,11 +80,11 @@ export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps)
                 { organizationId, userId: activeUser.id, tokenId: token.id },
                 {
                     onSuccess: () => {
-                        addNotification({ message: DELETE_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
+                        toast({ message: DELETE_MESSAGE, type: 'neutral' });
                     },
                     onError: (error: AxiosError) => {
                         const message = error?.message ?? DELETE_ERROR;
-                        addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
+                        toast({ message, type: 'error' });
                     },
                 }
             );

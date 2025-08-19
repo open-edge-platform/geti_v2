@@ -16,6 +16,7 @@ import {
     Tooltip,
     TooltipTrigger,
     View,
+    toast,
 } from '@geti/ui';
 import { ExclamationCircleOutlined, MoreMenu } from '@geti/ui/icons';
 import { useOverlayTriggerState } from '@react-stately/overlays';
@@ -26,8 +27,7 @@ import { isVisualPromptModel } from '../../../../../../core/annotations/services
 import { useCreditsQueries } from '../../../../../../core/credits/hooks/use-credits-api.hook';
 import { useModels } from '../../../../../../core/models/hooks/use-models.hook';
 import { ModelIdentifier } from '../../../../../../core/models/models.interface';
-import { NOTIFICATION_TYPE } from '../../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../../notification/notification.component';
+ 
 import { formatDate } from '../../../../../../shared/utils';
 import { useTotalCreditPrice } from '../../../../hooks/use-credits-to-consume.hook';
 import { isModelDeleted } from '../../../../utils';
@@ -71,7 +71,7 @@ export const ModelCardMenu = ({
     projectIdentifier,
     isMenuOptionsDisabled,
 }: ModelCardMenuProps): JSX.Element => {
-    const { addNotification } = useNotification();
+    
     const { useGetOrganizationBalanceQuery } = useCreditsQueries();
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
     const { getCreditPrice, isLoading: isCreditsToConsumeLoading } = useTotalCreditPrice();
@@ -126,9 +126,9 @@ export const ModelCardMenu = ({
                 { ...projectIdentifier, groupId: model.groupId },
                 {
                     onSuccess: () => {
-                        addNotification({
+                        toast({
                             message: ACTIVATED_MODEL_MESSAGE(modelName, model.version),
-                            type: NOTIFICATION_TYPE.INFO,
+                            type: 'info',
                         });
 
                         isFunction(callback) && callback();
@@ -139,7 +139,7 @@ export const ModelCardMenu = ({
             );
         } catch (error: unknown) {
             if (isAxiosError(error)) {
-                addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: error.message, type: 'error' });
             }
         }
     };

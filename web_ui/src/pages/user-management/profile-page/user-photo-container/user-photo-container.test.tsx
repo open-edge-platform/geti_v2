@@ -10,11 +10,11 @@ import { providersRender as render } from '../../../../test-utils/required-provi
 import { UserPhotoContainer } from './user-photo-container.component';
 import { USER_PHOTO_VALIDATION_MESSAGES } from './utils';
 
-const mockAddNotification = jest.fn();
+const mockedToast = jest.fn();
 
-jest.mock('../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 describe('UserPhotoContainer', () => {
@@ -52,7 +52,7 @@ describe('UserPhotoContainer', () => {
         await uploadFile(fileSize);
 
         await waitFor(() => {
-            expect(mockAddNotification).toHaveBeenCalledWith({
+            expect(mockedToast).toHaveBeenCalledWith({
                 message: USER_PHOTO_VALIDATION_MESSAGES.MAX_SIZE,
                 type: NOTIFICATION_TYPE.ERROR,
             });

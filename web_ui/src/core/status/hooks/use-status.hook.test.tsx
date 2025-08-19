@@ -7,7 +7,6 @@ import { CustomFeatureFlags } from '@geti/core';
 import { waitFor } from '@testing-library/react';
 
 import { useIsSaasEnv } from '../../../hooks/use-is-saas-env/use-is-saas-env.hook';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
 import { createInMemoryStatusService } from '../services/in-memory-status-service';
 import { useStatus } from './use-status.hook';

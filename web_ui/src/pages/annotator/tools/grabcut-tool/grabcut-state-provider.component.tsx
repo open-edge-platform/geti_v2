@@ -4,8 +4,7 @@
 import { createContext, MutableRefObject, useCallback, useContext, useEffect, useRef } from 'react';
 
 import { Point, Polygon, Rect } from '../../../../core/annotations/shapes.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
+import { toast } from '@geti/ui';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useGrabcut } from '../../hooks/use-grabcut.hook';
@@ -51,17 +50,14 @@ const initialState: GrabcutState = {
 export const GrabcutStateProvider = ({ children }: StateProviderProps): JSX.Element => {
     const loadingRect = useRef<Rect | null>(null);
     const { setIsDrawing } = useAnnotationScene();
-    const { addNotification } = useNotification();
+    
     const foregroundMarkers = useRef<Point[][]>([]);
     const backgroundMarkers = useRef<Point[][]>([]);
     const [toolsState, setToolsState, undoRedoActions] = useUndoRedoState<GrabcutState>(initialState);
     const { updateToolSettings } = useAnnotationToolContext();
 
     const showNotificationError = () => {
-        addNotification({
-            message: 'Failed to select the shape boundaries, could you please try again?',
-            type: NOTIFICATION_TYPE.ERROR,
-        });
+        toast({ message: 'Failed to select the shape boundaries, could you please try again?', type: 'error' });
         resetConfig();
     };
 

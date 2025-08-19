@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { removeToasts, toast } from '@geti/ui';
 import { useMutation, UseMutationResult, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
@@ -14,8 +15,6 @@ import { getIntervalJobHandlers } from '../../../core/datasets/hooks/utils';
 import { JobExportStatus, JobStatusIdentifier } from '../../../core/jobs/jobs.interface';
 import { ExportDatasetIdentifier, ExportDatasetStatusIdentifier } from '../../../core/projects/dataset.interface';
 import { isStateDone, isStateError } from '../../../core/projects/hooks/utils';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { useLocalStorageExportDataset } from './use-local-storage-export-dataset.hook';
 
 export interface UseExportDataset {
@@ -31,17 +30,16 @@ export interface StatusJobProps<T> extends Omit<IntervalJobHandlers<T>, 'onError
 
 export const useExportDataset = (datasetName: string): UseExportDataset => {
     const { projectService } = useApplicationServices();
-    const { addNotification, removeNotifications } = useNotification();
     const { addLsExportDataset } = useLocalStorageExportDataset();
 
     const onError = (error: AxiosError) => {
-        addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+        toast({ message: error.message, type: 'error' });
     };
 
     const prepareExportDatasetJob = useMutation({
         mutationFn: projectService.prepareExportDatasetJob,
         onSuccess: ({ jobId }, { datasetId, exportFormat }) => {
-            removeNotifications();
+            removeToasts();
 
             return addLsExportDataset({
                 datasetId,
@@ -58,13 +56,13 @@ export const useExportDataset = (datasetName: string): UseExportDataset => {
         mutationFn: projectService.exportDatasetStatus,
         onSuccess: (response, { datasetId }) => {
             if (isStateDone(response.state)) {
-                addNotification({
+                toast({
                     message: `Dataset ${datasetId} is ready to download`,
-                    type: NOTIFICATION_TYPE.INFO,
+                    type: 'info',
                 });
             }
             if (isStateError(response.state)) {
-                addNotification({ message: response.message, type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: response.message, type: 'error' });
             }
         },
         onError,

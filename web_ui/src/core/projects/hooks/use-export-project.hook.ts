@@ -6,8 +6,7 @@ import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
+import { toast } from '@geti/ui';
 import { ProjectIdentifier } from '../core.interface';
 import { EXPORT_PROJECT_MODELS_OPTIONS, ProjectExport } from '../project.interface';
 
@@ -23,13 +22,13 @@ interface ExportProjectMutationVariables {
 export const DOWNLOAD_STATUS_ERROR = 'Project was not downloaded due to an error.';
 
 export const useExportProject = (): UseExportProject => {
-    const { addNotification } = useNotification();
+    
     const service = useApplicationServices().projectService;
 
     const exportProjectMutation = useMutation<ProjectExport, AxiosError, ExportProjectMutationVariables>({
         mutationFn: service.exportProject,
         onError: (error: AxiosError) => {
-            addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: getErrorMessage(error), type: 'error' });
         },
     });
 

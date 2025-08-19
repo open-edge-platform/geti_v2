@@ -17,8 +17,7 @@ import { AxiosError } from 'axios';
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
 import { WorkspaceIdentifier } from '../../../../packages/core/src/workspaces/services/workspaces.interface';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
+import { toast } from '@geti/ui';
 import { useWorkspaceIdentifier } from '../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { Task } from '../../projects/task.interface';
 import { NextPageURL } from '../../shared/infinite-query.interface';
@@ -135,11 +134,10 @@ export const useGetScheduledJobs = ({
 };
 
 export const useJobs = (workspaceIdentifier: WorkspaceIdentifier): UseJobs => {
-    const { addNotification } = useNotification();
     const { jobsService } = useApplicationServices();
 
     const onError = (error: AxiosError) => {
-        addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+        toast({ message: getErrorMessage(error), type: 'error' });
     };
 
     const useGetJobs: UseJobs['useGetJobs'] = (queryParams = {}, options = {}) => {

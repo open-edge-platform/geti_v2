@@ -14,10 +14,10 @@ import { createInMemoryProjectService } from '../services/in-memory-project-serv
 import { ProjectService } from '../services/project-service.interface';
 import { useExportProject } from './use-export-project.hook';
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 const wrapper = ({ children, projectService }: { children?: ReactNode; projectService: ProjectService }) => {
@@ -55,7 +55,7 @@ describe('useExportProject', () => {
 
             await waitFor(() => {
                 expect(projectService.exportProject).toHaveBeenCalledWith(mockData);
-                expect(mockAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: error.message,
                     type: NOTIFICATION_TYPE.ERROR,
                 });

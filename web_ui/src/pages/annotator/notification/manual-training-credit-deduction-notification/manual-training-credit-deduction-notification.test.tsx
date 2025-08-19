@@ -12,12 +12,10 @@ import { providersRender } from '../../../../test-utils/required-providers-rende
 import { ProjectProvider } from '../../../project-details/providers/project-provider/project-provider.component';
 import { ManualTrainingCreditDeductionNotification } from './manual-training-credit-deduction-notification.component';
 
-const mockedUseNotification = jest.fn();
-jest.mock('../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../notification/notification.component'),
-    useNotification: () => ({
-        addNotification: mockedUseNotification,
-    }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 const mockedProjectIdentifier = {
@@ -67,7 +65,7 @@ describe('ManualTrainingCreditDeductionNotification', () => {
         });
 
         await waitFor(() => {
-            expect(mockedUseNotification).toHaveBeenNthCalledWith(1, {
+            expect(mockedToast).toHaveBeenNthCalledWith(1, {
                 message: 'The model training has been started, 7 credits deducted.',
                 type: NOTIFICATION_TYPE.INFO,
             });
@@ -79,7 +77,7 @@ describe('ManualTrainingCreditDeductionNotification', () => {
             jobCount: { numberOfScheduledJobs: 0 },
         });
 
-        expect(mockedUseNotification).not.toHaveBeenCalled();
+        expect(mockedToast).not.toHaveBeenCalled();
     });
 
     it('check that notification will not appear if the scheduled job was triggered by autotraining', async () => {
@@ -88,7 +86,7 @@ describe('ManualTrainingCreditDeductionNotification', () => {
             mockedJob: getMockedJob({ state: JobState.SCHEDULED, authorId: GETI_SYSTEM_AUTHOR_ID }),
         });
 
-        expect(mockedUseNotification).not.toHaveBeenCalled();
+        expect(mockedToast).not.toHaveBeenCalled();
     });
 
     it(`check that notification won't appear if credit system feature flag is disabled`, async () => {
@@ -98,7 +96,7 @@ describe('ManualTrainingCreditDeductionNotification', () => {
         });
 
         await waitFor(() => {
-            expect(mockedUseNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
     });
 });

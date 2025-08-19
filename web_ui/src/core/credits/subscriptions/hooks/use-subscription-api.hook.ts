@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import {
     InfiniteData,
     infiniteQueryOptions,
@@ -22,8 +23,6 @@ import { AxiosError, HttpStatusCode, isAxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../../packages/core/src/services/utils';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { OrganizationIdentifier } from '../../../organizations/organizations.interface';
 import { Quota, QuotasResponse } from '../quotas.interface';
 import { GetQuotasQueryOptions, SubscriptionsService } from '../services/subscription-service.interface';
@@ -92,7 +91,6 @@ export const getOrganizationQuotasQueryOptions = (
 };
 
 export const useSubscriptions = (): UseSubscriptions => {
-    const { addNotification } = useNotification();
     const { subscriptionsService } = useApplicationServices();
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
     const queryClient = useQueryClient();
@@ -105,7 +103,7 @@ export const useSubscriptions = (): UseSubscriptions => {
 
         useEffect(() => {
             if (query.error && query.error.response?.status !== HttpStatusCode.NotFound) {
-                addNotification({ message: getErrorMessage(query.error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(query.error), type: 'error' });
             }
         }, [query.error]);
 
@@ -126,7 +124,7 @@ export const useSubscriptions = (): UseSubscriptions => {
 
         useEffect(() => {
             if (query.error) {
-                addNotification({ message: getErrorMessage(query.error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(query.error), type: 'error' });
             }
         }, [query.error]);
 
@@ -156,7 +154,7 @@ export const useSubscriptions = (): UseSubscriptions => {
                 });
             },
             onError: (error) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
     };
