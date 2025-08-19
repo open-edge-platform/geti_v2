@@ -62,10 +62,6 @@ global:
     registry: docker.io
     repository: bitnamilegacy
     name: os-shell:12-debian-12-r47
-  kubectl: 
-    registry: registry.k8s.io
-    repository:
-    name: kubectl:v1.31.12
   credit_system_enabled: false
   seaweed_fs_enabled: true
   busybox:
