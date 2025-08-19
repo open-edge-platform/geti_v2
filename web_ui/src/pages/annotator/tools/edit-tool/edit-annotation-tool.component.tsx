@@ -13,6 +13,7 @@ import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { getGlobalAnnotations } from '../../providers/task-chain-provider/utils';
 import { useTask } from '../../providers/task-provider/task-provider.component';
+import { useZoom } from '../../zoom/zoom-provider.component';
 import { SelectingToolType } from '../selecting-tool/selecting-tool.enums';
 import { ToolAnnotationContextProps } from '../tools.interface';
 import { EditBoundingBox as EditBoundingBoxTool } from './edit-bounding-box/edit-bounding-box.component';
@@ -32,21 +33,28 @@ const EditAnnotationToolFactory = ({
     disableTranslation = false,
     disablePoints = false,
 }: EditAnnotationToolFactoryProps) => {
-    const { roi } = useROI();
+    const { roi, image } = useROI();
     const { tasks, selectedTask } = useTask();
     const task = selectedTask ?? tasks[0];
+    const { scene } = annotationToolContext;
+    const {
+        zoomState: { zoom },
+    } = useZoom();
 
-    const globalAnnotations = getGlobalAnnotations(annotationToolContext.scene.annotations, roi, task);
+    const globalAnnotations = getGlobalAnnotations(scene.annotations, roi, task);
 
     if (globalAnnotations.some(hasEqualId(annotation.id))) {
-        return <Labels annotation={annotation} annotationToolContext={annotationToolContext} />;
+        return <Labels annotation={annotation} />;
     }
 
     switch (annotation.shape.shapeType) {
         case ShapeType.Rect: {
             return (
                 <EditBoundingBoxTool
-                    annotationToolContext={annotationToolContext}
+                    roi={roi}
+                    image={image}
+                    zoom={zoom}
+                    updateAnnotation={scene.updateAnnotation}
                     annotation={annotation as Annotation & { shape: { shapeType: ShapeType.Rect } }}
                     disableTranslation={disableTranslation}
                     disablePoints={disablePoints}

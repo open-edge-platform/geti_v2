@@ -10,7 +10,7 @@ import { isAnomalyDomain } from '../../../../core/projects/domains';
 import { TaskLabelTreeSearchPopover } from '../../../../shared/components/task-label-tree-search/task-label-tree-search-popover.component';
 import { hasEqualId, runWhenTruthy } from '../../../../shared/utils';
 import { SelectionIndicator } from '../../components/labels/label-search/selection-indicator.component';
-import { AnnotationToolContext } from '../../core/annotation-tool-context.interface';
+import { useAnnotationScene } from '../../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { getGlobalAnnotations } from '../../providers/task-chain-provider/utils';
 import { useTask } from '../../providers/task-provider/task-provider.component';
@@ -18,13 +18,12 @@ import { useTask } from '../../providers/task-provider/task-provider.component';
 interface EditLabelsProps {
     setEditLabels: (editLabels: boolean) => void;
     annotation: Annotation;
-    annotationToolContext: AnnotationToolContext;
 }
 
-export const EditLabels = ({ annotation, annotationToolContext, setEditLabels }: EditLabelsProps): JSX.Element => {
+export const EditLabels = ({ annotation, setEditLabels }: EditLabelsProps): JSX.Element => {
     const { roi } = useROI();
     const { tasks, selectedTask } = useTask();
-    const { addLabel, removeLabels, annotations } = annotationToolContext.scene;
+    const { addLabel, removeLabels, annotations } = useAnnotationScene();
 
     const isAnomalyTask = selectedTask && isAnomalyDomain(selectedTask?.domain);
     const globalAnnotations = getGlobalAnnotations(annotations, roi, selectedTask);
