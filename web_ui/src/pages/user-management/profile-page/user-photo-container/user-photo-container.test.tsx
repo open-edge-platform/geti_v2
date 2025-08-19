@@ -4,7 +4,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { mockGlobalFile } from '../../../../test-utils/mockFile';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { UserPhotoContainer } from './user-photo-container.component';
@@ -54,7 +53,7 @@ describe('UserPhotoContainer', () => {
         await waitFor(() => {
             expect(mockedToast).toHaveBeenCalledWith({
                 message: USER_PHOTO_VALIDATION_MESSAGES.MAX_SIZE,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         });
     });

@@ -7,7 +7,6 @@ import { ApplicationServicesProvider } from '@geti/core/src/services/application
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { ProjectImport, ProjectImportIdentifier } from '../project.interface';
 import { createInMemoryProjectService } from '../services/in-memory-project-service';
 import { ProjectService } from '../services/project-service.interface';
@@ -74,7 +73,7 @@ describe('useImportProject', () => {
                 });
             });
 
-            expect(mockedToast).toHaveBeenCalledWith({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            expect(mockedToast).toHaveBeenCalledWith({ message: error.message, type: 'error' });
         });
 
         it('returns status url and import project id (file id) on success', async () => {

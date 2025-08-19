@@ -6,7 +6,6 @@ import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/rea
 import { GETI_SYSTEM_AUTHOR_ID, JobState } from '../../../../core/jobs/jobs.const';
 import { Job, JobCount } from '../../../../core/jobs/jobs.interface';
 import { createInMemoryJobsService } from '../../../../core/jobs/services/in-memory-jobs-service';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { getMockedJob, getMockedJobCount } from '../../../../test-utils/mocked-items-factory/mocked-jobs';
 import { providersRender } from '../../../../test-utils/required-providers-render';
 import { ProjectProvider } from '../../../project-details/providers/project-provider/project-provider.component';
@@ -67,7 +66,7 @@ describe('ManualTrainingCreditDeductionNotification', () => {
         await waitFor(() => {
             expect(mockedToast).toHaveBeenNthCalledWith(1, {
                 message: 'The model training has been started, 7 credits deducted.',
-                type: NOTIFICATION_TYPE.INFO,
+                type: 'info',
             });
         });
     });

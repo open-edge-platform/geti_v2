@@ -7,7 +7,6 @@ import { ApplicationServicesProvider } from '@geti/core/src/services/application
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { getMockedProjectExportIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { EXPORT_PROJECT_MODELS_OPTIONS, ProjectExport } from '../project.interface';
 import { createInMemoryProjectService } from '../services/in-memory-project-service';
@@ -57,7 +56,7 @@ describe('useExportProject', () => {
                 expect(projectService.exportProject).toHaveBeenCalledWith(mockData);
                 expect(mockedToast).toHaveBeenCalledWith({
                     message: error.message,
-                    type: NOTIFICATION_TYPE.ERROR,
+                    type: 'error',
                 });
             });
         });

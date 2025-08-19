@@ -3,7 +3,6 @@
 
 import { waitFor } from '@testing-library/react';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { getMockedProjectImportIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
 import { ExportStatusStateDTO } from '../../configurable-parameters/dtos/configurable-parameters.interface';
@@ -63,7 +62,7 @@ describe('useImportProjectStatusQuery', () => {
 
             expect(mockedToast).toHaveBeenCalledWith({
                 message: IMPORT_STATUS_ERROR,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         });
 

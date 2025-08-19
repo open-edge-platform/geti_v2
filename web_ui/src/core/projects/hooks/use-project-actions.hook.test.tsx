@@ -3,7 +3,6 @@
 
 import { act, waitFor } from '@testing-library/react';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { getMockedProjectIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
 import { createInMemoryProjectService } from '../services/in-memory-project-service';
@@ -62,7 +61,7 @@ describe('useProjectActions', () => {
                 expect(projectService.deleteProject).toHaveBeenCalledWith(mockData);
             });
 
-            expect(mockedToast).toHaveBeenCalledWith({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            expect(mockedToast).toHaveBeenCalledWith({ message: error.message, type: 'error' });
         });
     });
 });

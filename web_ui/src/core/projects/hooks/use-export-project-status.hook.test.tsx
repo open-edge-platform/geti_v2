@@ -3,7 +3,6 @@
 
 import { waitFor } from '@testing-library/react';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { getMockedProjectExportIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedProjectExportJob } from '../../../test-utils/mocked-items-factory/mocked-jobs';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
@@ -62,7 +61,7 @@ describe('useExportProjectStatusQuery', () => {
             expect(projectService.exportProjectStatus).toHaveBeenCalledWith(mockData);
             expect(mockedToast).toHaveBeenCalledWith({
                 message: DOWNLOAD_STATUS_ERROR,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         });
 
