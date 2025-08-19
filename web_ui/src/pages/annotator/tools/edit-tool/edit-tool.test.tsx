@@ -23,6 +23,7 @@ import { getMockedImage } from '../../../../test-utils/utils';
 import { ProjectProvider } from '../../../project-details/providers/project-provider/project-provider.component';
 import { AnnotationToolContext, ANNOTATOR_MODE } from '../../core/annotation-tool-context.interface';
 import { useAnnotatorMode } from '../../hooks/use-annotator-mode';
+import { AnnotationToolProvider } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { AnnotatorContextMenuProvider } from '../../providers/annotator-context-menu-provider/annotator-context-menu-provider.component';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { TaskContextProps, TaskProvider, useTask } from '../../providers/task-provider/task-provider.component';
@@ -67,15 +68,19 @@ const renderApp = async (
     });
 
     const result = render(
-        <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
-            <TaskProvider>
-                <AnnotatorContextMenuProvider>
-                    <svg>
-                        <EditTool annotationToolContext={annotationToolContext} />
-                    </svg>
-                </AnnotatorContextMenuProvider>
-            </TaskProvider>
-        </ProjectProvider>
+        <AnnotationToolProvider>
+            <AnnotationToolProvider>
+                <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
+                    <TaskProvider>
+                        <AnnotatorContextMenuProvider>
+                            <svg>
+                                <EditTool annotationToolContext={annotationToolContext} />
+                            </svg>
+                        </AnnotatorContextMenuProvider>
+                    </TaskProvider>
+                </ProjectProvider>
+            </AnnotationToolProvider>
+        </AnnotationToolProvider>
     );
 
     await waitForElementToBeRemoved(screen.getByRole('progressbar'));
@@ -200,13 +205,15 @@ describe('Edit tool', (): void => {
         jest.mocked(useTask).mockReturnValue(mockedTaskContextProps({ tasks }));
 
         render(
-            <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
-                <TaskProvider>
-                    <AnnotatorContextMenuProvider>
-                        <EditToolApp />
-                    </AnnotatorContextMenuProvider>
-                </TaskProvider>
-            </ProjectProvider>
+            <AnnotationToolProvider>
+                <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
+                    <TaskProvider>
+                        <AnnotatorContextMenuProvider>
+                            <EditToolApp />
+                        </AnnotatorContextMenuProvider>
+                    </TaskProvider>
+                </ProjectProvider>
+            </AnnotationToolProvider>
         );
 
         await waitForElementToBeRemoved(screen.getByRole('progressbar'));
@@ -376,9 +383,11 @@ describe('editing global labels', () => {
                 selectedTask: tasks[1],
             });
             render(
-                <svg>
-                    <EditTool annotationToolContext={annotationToolContext} />
-                </svg>
+                <AnnotationToolProvider>
+                    <svg>
+                        <EditTool annotationToolContext={annotationToolContext} />
+                    </svg>
+                </AnnotationToolProvider>
             );
 
             const canvasAnnotations = screen.queryByLabelText('Drag to move shape');

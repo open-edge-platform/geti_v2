@@ -14,6 +14,8 @@ import { providersRender as render } from '../../../../../test-utils/required-pr
 import { getMockedImage } from '../../../../../test-utils/utils';
 import { ProjectProvider } from '../../../../project-details/providers/project-provider/project-provider.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
+import { AnnotationSceneProvider } from '../../../providers/annotation-scene-provider/annotation-scene-provider.component';
+import { AnnotationToolProvider } from '../../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { TaskProvider } from '../../../providers/task-provider/task-provider.component';
 import { getMaxCircleRadius } from '../../circle-tool/utils';
 import { calculateAnchorPoint, EditCircle as EditCircleTool } from './edit-circle.component';
@@ -21,7 +23,12 @@ import { calculateAnchorPoint, EditCircle as EditCircleTool } from './edit-circl
 const mockROI = { x: 0, y: 0, width: 200, height: 200 };
 const mockImage = getMockedImage(mockROI);
 
+jest.mock('../../../annotator.component', () => ({
+    useAnnotator: jest.fn(),
+}));
+
 jest.mock('../../../providers/region-of-interest-provider/region-of-interest-provider.component', () => ({
+    ...jest.requireActual('../../../providers/region-of-interest-provider/region-of-interest-provider.component'),
     useROI: jest.fn(() => ({
         roi: mockROI,
         image: mockImage,
@@ -29,6 +36,7 @@ jest.mock('../../../providers/region-of-interest-provider/region-of-interest-pro
 }));
 
 jest.mock('./../../../zoom/zoom-provider.component', () => ({
+    ...jest.requireActual('./../../../zoom/zoom-provider.component'),
     useZoom: jest.fn(() => ({ zoomState: { zoom: 1.0, translation: { x: 0, y: 0 } } })),
 }));
 
@@ -39,7 +47,11 @@ const renderApp = async (
     const result = render(
         <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
             <TaskProvider>
-                <EditCircleTool annotationToolContext={annotationToolContext} annotation={annotation} />
+                <AnnotationSceneProvider annotations={[]} labels={[]}>
+                    <AnnotationToolProvider>
+                        <EditCircleTool annotationToolContext={annotationToolContext} annotation={annotation} />
+                    </AnnotationToolProvider>
+                </AnnotationSceneProvider>
             </TaskProvider>
         </ProjectProvider>
     );
