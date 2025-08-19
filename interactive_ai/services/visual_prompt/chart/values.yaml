@@ -72,5 +72,5 @@ global:
     name: os-shell:12-debian-12-r47
   kubectl:
     registry: registry.k8s.io
-    repository: kubectl
-    name: v1.31.12
+    repository:
+    name: kubectl:v1.31.12

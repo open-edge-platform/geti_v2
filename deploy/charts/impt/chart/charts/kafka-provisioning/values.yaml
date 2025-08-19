@@ -18,8 +18,8 @@ global:
   kafka_topic_prefix: ""
   kubectl:
     registry: registry.k8s.io
-    repository: kubectl
-    name: v1.31.12
+    repository:
+    name: kubectl:v1.31.12
 
 ## @section Common parameters
 

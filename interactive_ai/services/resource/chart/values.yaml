@@ -71,8 +71,8 @@ global:
     name: busybox:glibc
   kubectl:
     registry: registry.k8s.io
-    repository: kubectl
-    name: v1.31.12
+    repository:
+    name: kubectl:v1.31.12
 
 
 spicedb_log_file_path: "/audit_logs/spicedb.log"

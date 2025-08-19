@@ -10,8 +10,8 @@ global:
     name: busybox:glibc
   kubectl:
     registry: registry.k8s.io
-    repository: kubectl
-    name: v1.31.12
+    repository:
+    name: kubectl:v1.31.12
 
 feature_flags_data: {}
 
