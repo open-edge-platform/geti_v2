@@ -1,12 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ReactElement, ReactNode } from 'react';
+import { CSSProperties, ReactElement, ReactNode } from 'react';
 
-import { Flex, Text, View } from '@adobe/react-spectrum';
+import { Flex, Heading, Text, View } from '@adobe/react-spectrum';
 import { clsx } from 'clsx';
 import { isEmpty } from 'lodash-es';
-import { toast as soonerToast, Toaster } from 'sonner';
+import { toast as soonerToast, Toaster, ToastT } from 'sonner';
 
 import { AcceptCircle, Alert, CloseSmall, CrossCircle, Info } from '../../icons';
 import { ActionButton } from '../button/button.component';
@@ -24,6 +24,9 @@ type ToastProps = {
     duration?: number;
     onDismiss?: () => void;
     message: ReactNode;
+    position?: ToastT['position'];
+    style?: CSSProperties;
+    title?: string;
 };
 
 type CustomToastProps = {
@@ -32,6 +35,7 @@ type CustomToastProps = {
     message: ReactNode;
     actionButtons?: ReactElement[];
     hasCloseButton?: boolean;
+    title?: string;
 };
 
 const ICON: Record<ToastType, ReactNode> = {
@@ -42,40 +46,94 @@ const ICON: Record<ToastType, ReactNode> = {
     neutral: null,
 };
 
-const CustomToast = ({ message, id, actionButtons, type, hasCloseButton = true }: CustomToastProps) => {
-    const TOAST_TYPE_STYLES = classes[type];
+const ToastCloseButton = ({ id }: { id: string }) => {
+    return (
+        <ActionButton
+            isQuiet
+            onPress={() => soonerToast.dismiss(id)}
+            aria-label={'Close toast'}
+            UNSAFE_className={classes.closeButton}
+        >
+            <CloseSmall className={classes.closeIcon} />
+        </ActionButton>
+    );
+};
+
+const ToastContainer = ({ children, type }: { children: ReactNode; type: ToastType }) => {
+    const toastTypeStyles = classes[type];
 
     return (
-        <div aria-label={'toast'} className={clsx(TOAST_TYPE_STYLES, classes.toast)}>
-            <Flex width={'100%'} height={'100%'} justifyContent={'space-between'} alignItems={'center'}>
-                <Flex gap={'size-100'} alignItems={'center'}>
-                    <View>{ICON[type]}</View>
-                    <Text>{message}</Text>
-                </Flex>
+        <div aria-label={'toast'} className={clsx(toastTypeStyles, classes.toast)}>
+            {children}
+        </div>
+    );
+};
 
-                <Flex height={'100%'}>
-                    {!isEmpty(actionButtons) && <Flex alignItems={'center'}>{actionButtons}</Flex>}
+const ToastActionButtons = ({ actionButtons }: { actionButtons?: ReactElement[] }) => {
+    if (isEmpty(actionButtons)) {
+        return null;
+    }
+
+    return (
+        <Flex alignItems={'center'} UNSAFE_className={classes.actionButtons}>
+            {actionButtons}
+        </Flex>
+    );
+};
+
+const CustomToast = ({ message, id, actionButtons, type, hasCloseButton = true, title }: CustomToastProps) => {
+    const icon = ICON[type];
+
+    if (title === undefined) {
+        return (
+            <ToastContainer type={type}>
+                <Flex
+                    width={'100%'}
+                    height={'100%'}
+                    justifyContent={'space-between'}
+                    alignItems={'center'}
+                    gap={'size-200'}
+                >
+                    <Flex flex={1} alignItems={'center'} justifyContent={'space-between'}>
+                        <Flex gap={'size-100'} alignItems={'center'}>
+                            <View>{icon}</View>
+                            <Text>{message}</Text>
+                        </Flex>
+                        <ToastActionButtons actionButtons={actionButtons} />
+                    </Flex>
+
                     {hasCloseButton && (
                         <Flex height={'100%'} alignItems={'center'} gap={'size-50'}>
                             <Divider
                                 orientation={'vertical'}
                                 height={'size-400'}
-                                size={'S'}
+                                size={'M'}
                                 UNSAFE_className={classes.toastDivider}
                             />
-                            <ActionButton
-                                isQuiet
-                                onPress={() => soonerToast.dismiss(id)}
-                                aria-label={'Close toast'}
-                                UNSAFE_className={classes.closeButton}
-                            >
-                                <CloseSmall className={classes.closeIcon} />
-                            </ActionButton>
+                            <ToastCloseButton id={id} />
                         </Flex>
                     )}
                 </Flex>
+            </ToastContainer>
+        );
+    }
+
+    return (
+        <ToastContainer type={type}>
+            <Flex width={'100%'} justifyContent={'space-between'}>
+                <Flex direction={'column'} gap={'size-100'}>
+                    <Flex alignItems={'baseline'} gap={'size-100'}>
+                        <View>{icon}</View>
+                        <Heading level={2} margin={0}>
+                            {title}
+                        </Heading>
+                    </Flex>
+                    <Text>{message}</Text>
+                    <ToastActionButtons actionButtons={actionButtons} />
+                </Flex>
+                <ToastCloseButton id={id} />
             </Flex>
-        </div>
+        </ToastContainer>
     );
 };
 
@@ -100,6 +158,9 @@ export const toast = ({
     type,
     duration = DEFAULT_TOAST_DURATION,
     onDismiss,
+    position,
+    style,
+    title,
 }: ToastProps) => {
     const toastId = id !== undefined ? `id-${id}` : `id-${message}`;
 
@@ -112,13 +173,21 @@ export const toast = ({
                     message={message}
                     actionButtons={actionButtons}
                     hasCloseButton={hasCloseButton}
+                    title={title}
                 />
             );
         },
         {
             id: toastId,
-            duration,
+            // We don't want error notifications to dismiss automatically.
+            // For all the others, we dismiss them after {duration}
+            duration: type === 'error' ? Infinity : duration,
             onDismiss,
+            position,
+            style: {
+                width: 640,
+                ...style,
+            },
         }
     );
 };
