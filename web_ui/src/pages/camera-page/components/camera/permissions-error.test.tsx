@@ -15,9 +15,8 @@ describe('PermissionError', () => {
         renderApp();
 
         await waitFor(() => {
-            expect(screen.getByLabelText('notification toast')).toBeVisible();
-            expect(screen.getAllByText('Camera connection is lost')).toHaveLength(2);
-            expect(screen.getAllByText('Please check your device and network settings and try again.')).toHaveLength(2);
+            expect(screen.getByText('Camera connection is lost')).toBeVisible();
+            expect(screen.getByText('Please check your device and network settings and try again.')).toBeVisible();
         });
     });
 });

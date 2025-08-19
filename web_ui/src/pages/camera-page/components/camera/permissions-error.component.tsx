@@ -1,19 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useEffect } from 'react';
-
-import { dimensionValue, Flex, Heading, Text, toast } from '@geti/ui';
+import { dimensionValue, Flex, Heading, Text } from '@geti/ui';
 
 export const PermissionError = (): JSX.Element => {
-    useEffect(() => {
-        toast({
-            message: 'Please check your device and network settings and try again.',
-            type: 'warning',
-            title: 'Camera connection is lost',
-        });
-    }, []);
-
     return (
         <Flex
             gridArea={'content'}
