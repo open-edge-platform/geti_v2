@@ -87,6 +87,6 @@ global:
     repository: prometheus
     name: busybox:glibc
   kubectl:
-    registry: registry.k8s.io
-    repository:
-    name: kubectl:v1.31.12
+    registry: docker.io
+    repository: alpine
+    name: k8s:1.31.12
