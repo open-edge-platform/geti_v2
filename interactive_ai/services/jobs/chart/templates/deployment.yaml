@@ -48,11 +48,11 @@ spec:
           args:
             - >-
               kubectl wait jobs
-          {{- else }}
+          {{ else }}
           args:
             - >-
               wait jobs
-          {{- end }}
+          {{ end }}
               --timeout=1200s 
               --for=condition=complete 
               --namespace {{ .Release.Namespace }}
