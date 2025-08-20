@@ -219,14 +219,13 @@ spec:
         # that do not have the Istio proxy sidecar
         - name: "kubectl-wait"
           image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
-          command: [ "/bin/bash", "-c" ]
           args:
-            - >-
-              kubectl wait jobs
-              --timeout=1200s
-              --for=condition=complete
-              --namespace {{ .Release.Namespace }}
-              init-job-{{ .Chart.Name }}-scheduler
+            - wait
+            - jobs
+            - --timeout=1200s
+            - --for=condition=complete
+            - --namespace={{ .Release.Namespace }}
+            - init-job-{{ .Chart.Name }}-scheduler
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
@@ -522,14 +521,13 @@ spec:
         # that do not have the Istio proxy sidecar
         - name: "kubectl-wait"
           image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
-          command: [ "/bin/bash", "-c" ]
           args:
-            - >-
-              kubectl wait jobs
-              --timeout=1200s 
-              --for=condition=complete 
-              --namespace {{ .Release.Namespace }}
-              init-job-{{ .Chart.Name }}-scheduling-policy
+            - wait
+            - jobs
+            - --timeout=1200s
+            - --for=condition=complete
+            - --namespace={{ .Release.Namespace }}
+            - init-job-{{ .Chart.Name }}-scheduling-policy
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:

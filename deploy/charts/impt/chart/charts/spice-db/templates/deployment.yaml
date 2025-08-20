@@ -39,7 +39,7 @@ spec:
             - jobs
             - --timeout=1200s
             - --for=condition=complete
-            - --namespace {{ .Release.Namespace }}
+            - --namespace={{ .Release.Namespace }}
             - {{ include "spice-db.fullname" . }}-init-job
           securityContext: {{ toYaml .Values.securityContext | nindent 12 }}
           resources:

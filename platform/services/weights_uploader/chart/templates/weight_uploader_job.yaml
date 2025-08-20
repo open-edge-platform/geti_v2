@@ -28,7 +28,7 @@ spec:
             - --selector=app=seaweed-fs
             - --timeout=1200s
             - --for=condition=Ready
-            - --namespace {{ .Release.Namespace }}
+            - --namespace={{ .Release.Namespace }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
       containers:

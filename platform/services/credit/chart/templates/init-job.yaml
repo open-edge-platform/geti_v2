@@ -40,14 +40,13 @@ spec:
             {{- toYaml .Values.initResources | nindent 12 }}
         - name: wait-for-acc-svc
           image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
-          command: [ "/bin/bash", "-c" ]
           args:
-            - >-
-              kubectl wait jobs
-              --timeout=1800s
-              --for=condition=complete
-              --namespace {{ .Release.Namespace }}
-              initial-user
+            - wait
+            - jobs
+            - --timeout=1800s
+            - --for=condition=complete
+            - --namespace={{ .Release.Namespace }}
+            - initial-user
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
