@@ -5,7 +5,7 @@ import { Suspense, useEffect } from 'react';
 
 import { paths } from '@geti/core';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-import { IntelBrandedLoading, removeToasts } from '@geti/ui';
+import { IntelBrandedLoading, removeToasts, Toast } from '@geti/ui';
 import { negate } from 'lodash-es';
 import { Navigate, Outlet, Route, useLocation } from 'react-router-dom';
 
@@ -116,6 +116,7 @@ export const appRoutes = () => {
         <Route
             element={
                 <>
+                    <Toast />
                     <Outlet />
                 </>
             }

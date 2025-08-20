@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { paths } from '@geti/core';
+import { Toast } from '@geti/ui';
 import { Navigate, Outlet, Route } from 'react-router-dom';
 
 import { Layout } from '../intel-admin-app/layout/layout.component';
@@ -32,6 +33,7 @@ export const intelAdminRoutes = (): JSX.Element => {
         <Route
             element={
                 <AuthProvider isAdmin>
+                    <Toast />
                     <Outlet />
                 </AuthProvider>
             }

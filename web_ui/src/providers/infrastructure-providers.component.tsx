@@ -61,7 +61,6 @@ export const InfrastructureProviders: FC<InfrastructureProvidersProps> = ({ rout
                                 </ApplicationServicesProvider>
                             </Suspense>
                         </ErrorBoundary>
-                        <Toast />
                     </ThemeProvider>
                 </QueryClientProvider>
             </ProgressiveWebAppProvider>
