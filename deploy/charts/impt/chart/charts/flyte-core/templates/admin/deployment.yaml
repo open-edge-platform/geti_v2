@@ -54,14 +54,15 @@ spec:
               drop:
                 - ALL
           resources:
-            {{- toYaml .Values.initResources | nindent 12 }}
+            {{- toYaml .Values.initResources | nindent 12 }}                
+          command: [ "/bin/bash", "-c" ]
           args:
-            - wait
-            - jobs
-            - --timeout=1200s
-            - --for=condition=complete
-            - --namespace {{ template "flyte.namespace" . }}
-            - init-job-{{ template "flyteadmin.name" . }}
+            - >-
+              kubectl wait jobs
+              --timeout=1200s
+              --for=condition=complete
+              --namespace {{ template "flyte.namespace" . }}
+              init-job-{{ template "flyteadmin.name" . }}
         - name: wait-for-kafka
           image: "{{ .Values.global.busybox.registry }}/{{ if .Values.global.busybox.repository }}{{ .Values.global.busybox.repository }}/{{ end }}{{ .Values.global.busybox.name }}"
           securityContext:

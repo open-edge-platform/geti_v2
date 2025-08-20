@@ -34,13 +34,14 @@ spec:
         # that do not have the Istio proxy sidecar
         - name: "kubectl-wait"
           image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
+          command: [ "/bin/bash", "-c" ]
           args:
-            - wait
-            - jobs
-            - --timeout=1200s
-            - --for=condition=complete
-            - --namespace {{ .Release.Namespace }}
-            - {{ include "spice-db.fullname" . }}-init-job
+            - >-
+              kubectl wait jobs
+              --timeout=1200s
+              --for=condition=complete 
+              --namespace {{ .Release.Namespace }}
+              {{ include "spice-db.fullname" . }}-init-job
           securityContext: {{ toYaml .Values.securityContext | nindent 12 }}
           resources:
             {{- toYaml .Values.initResources | nindent 12 }}  

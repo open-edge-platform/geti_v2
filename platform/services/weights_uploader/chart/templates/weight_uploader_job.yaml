@@ -22,13 +22,14 @@ spec:
       initContainers:
         - name: wait-for-pod
           image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
+          command: [ "/bin/bash", "-c" ]
           args:
-            - wait
-            - pods
-            - --selector=app=seaweed-fs
-            - --timeout=1200s
-            - --for=condition=Ready
-            - --namespace {{ .Release.Namespace }}
+            - >-
+              kubectl wait pods
+              --selector=app=seaweed-fs
+              --timeout=1200s
+              --for=condition=Ready
+              --namespace {{ .Release.Namespace }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
       containers:
