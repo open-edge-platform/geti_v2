@@ -5,7 +5,7 @@ enabled:
   dataset-ie: true
   etcd: true
   gateway: false
-  impt-configuration: true
+  configuration: true
   inference-gateway: true
   istio-csr: false
   jobs-execution-namespace: true
