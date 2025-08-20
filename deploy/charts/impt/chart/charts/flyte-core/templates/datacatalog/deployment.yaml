@@ -55,13 +55,14 @@ spec:
                 - ALL
           resources:
             {{- toYaml .Values.initResources | nindent 12 }}
+          command: [ "/bin/bash", "-c" ]
           args:
-            - wait
-            - jobs
-            - --timeout=1200s
-            - --for=condition=complete
-            - --namespace={{ template "flyte.namespace" . }}
-            - init-job-{{ template "datacatalog.name" . }}
+            - >-
+              kubectl wait jobs
+              --timeout=1200s
+              --for=condition=complete
+              --namespace {{ template "flyte.namespace" . }}
+              init-job-{{ template "datacatalog.name" . }}
       containers:
       - command:
         - datacatalog

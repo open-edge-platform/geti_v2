@@ -31,13 +31,14 @@ spec:
               value: "{{ .Values.postgresql.port }}"
         - name: "kubectl-wait"
           image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
+          command: [ "/bin/bash", "-c" ]
           args:
-            - wait
-            - deployment
-            - --timeout=1200s
-            - --for=condition=available
-            - --namespace={{ .Release.Namespace }}
-            - "{{ .Release.Namespace }}-account-service"
+            - >-
+              kubectl wait deployment
+              --timeout=1200s
+              --for=condition=available
+              --namespace {{ .Release.Namespace }}
+              "{{ .Release.Namespace }}-account-service"
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
       containers:
