@@ -8,7 +8,7 @@ export class ImportProjectDatasetPage {
 
     async uploadDataset(datasetPath: string) {
         const [, fileChooser] = await Promise.all([
-            this.page.getByRole('button', { name: /upload/i }).click(),
+            this.page.getByTestId('modal').getByRole('button', { name: 'Upload' }).click(),
             this.page.waitForEvent('filechooser'),
         ]);
         await fileChooser.setFiles([datasetPath]);
