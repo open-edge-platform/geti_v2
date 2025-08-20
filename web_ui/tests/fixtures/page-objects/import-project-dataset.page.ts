@@ -15,4 +15,8 @@ export class ImportProjectDatasetPage {
 
         await expect(this.page.getByRole('dialog').getByText('Dataset is parsed successfully')).toBeVisible();
     }
+
+    async import(params: { timeout?: number } = {}) {
+        await this.page.getByTestId('modal').getByRole('button', { name: 'Import' }).click(params);
+    }
 }
