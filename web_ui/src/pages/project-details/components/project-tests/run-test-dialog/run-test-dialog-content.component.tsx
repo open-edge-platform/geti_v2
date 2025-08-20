@@ -220,7 +220,7 @@ export const RunTestDialogContent = ({
                                         placeholder={'Select evaluation metric'}
                                         items={METRIC_ITEMS}
                                         selectedKey={selectedMetric}
-                                        onSelectionChange={handleSelectMetric}
+                                        onSelectionChange={(key) => key !== null && handleSelectMetric(key)}
                                         marginBottom={'size-250'}
                                         id={'select-metric-id'}
                                     >

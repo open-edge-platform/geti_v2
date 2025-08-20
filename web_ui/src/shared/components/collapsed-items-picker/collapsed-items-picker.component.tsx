@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key } from 'react';
-
 import { Item, Picker } from '@geti/ui';
 
 import classes from './collapsed-items-picker.module.scss';
@@ -29,7 +27,7 @@ export const CollapsedItemsPicker = ({
             UNSAFE_className={[classes.collapsedItemsPicker, !hasSelectedPinnedItem ? classes.selected : ''].join(' ')}
             aria-label={ariaLabel}
             placeholder={`${numberOfCollapsedItems} more`}
-            onSelectionChange={(key: Key) => onSelectionChange(String(key))}
+            onSelectionChange={(key) => onSelectionChange(String(key))}
         >
             {(item) => <Item>{item.name}</Item>}
         </Picker>

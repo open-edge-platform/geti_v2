@@ -3,6 +3,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
+
 import { Annotation } from '../../../../../core/annotations/annotation.interface';
 import { Point } from '../../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
@@ -10,7 +12,6 @@ import { Labels } from '../../../annotation/labels/labels.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useZoom } from '../../../zoom/zoom-provider.component';
-import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { TranslateShape } from '../translate-shape.component';
 import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from '../utils';
 

@@ -64,7 +64,7 @@ export class ProjectTestPage {
     }
 
     async selectItemInPreview(name: string) {
-        await this.page.getByRole('img', { name }).click();
+        await this.page.getByTestId('modal').getByRole('img', { name }).click();
     }
 
     async selectNextItemInPreview() {

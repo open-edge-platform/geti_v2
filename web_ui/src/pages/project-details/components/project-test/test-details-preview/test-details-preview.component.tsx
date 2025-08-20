@@ -3,7 +3,7 @@
 
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 
-import { Flex, Loading } from '@geti/ui';
+import { Flex, Loading, ViewModes } from '@geti/ui';
 import { useParams } from 'react-router-dom';
 
 import { Annotation } from '../../../../../core/annotations/annotation.interface';
@@ -22,7 +22,6 @@ import { useProjectIdentifier } from '../../../../../hooks/use-project-identifie
 import { EditAnnotationsButton } from '../../../../../shared/components/media-item-annotations-preview/edit-annotations-button/edit-annotations-button.component';
 import { ImagePreviewNavigationControls } from '../../../../../shared/components/media-item-annotations-preview/media-item-annotations-preview-dialog/image-preview-navigation-controls/image-preview-navigation-controls.component';
 import { MediaItemAnnotationsPreviewDialog } from '../../../../../shared/components/media-item-annotations-preview/media-item-annotations-preview-dialog/media-item-annotations-preview-dialog.component';
-import { ViewModes } from '../../../../../shared/components/media-view-modes/utils';
 import { useVisibleAnnotations } from '../../../../../shared/hooks/use-visible-annotations.hook';
 import { hasEqualDomain } from '../../../../../shared/utils';
 import { PreviewCanvasContent } from '../../../../annotator/components/annotator-preview/preview-canvas-content.component';

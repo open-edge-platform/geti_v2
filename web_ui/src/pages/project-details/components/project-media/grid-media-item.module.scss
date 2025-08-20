@@ -28,9 +28,18 @@
             }
         }
     }
+
+    &:hover .mediaItemActionsWrapper {
+        visibility: visible;
+    }
+
+    &:has(button[aria-label='open menu'][aria-expanded='true']) .mediaItemActionsWrapper {
+        visibility: visible;
+    }
 }
 
-.mediaItemSelected {
+.mediaItemSelected .mediaItemActionsWrapper {
+    visibility: visible;
     cursor: pointer !important;
 }
 
@@ -41,6 +50,7 @@
 }
 
 .mediaItemActionsWrapper {
+    visibility: hidden;
     box-sizing: border-box;
     padding: var(--spectrum-global-dimension-size-50) var(--spectrum-global-dimension-size-50) 0;
 }

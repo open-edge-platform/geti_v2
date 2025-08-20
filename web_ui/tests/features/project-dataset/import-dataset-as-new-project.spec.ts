@@ -25,7 +25,7 @@ const WORKSPACE_ID = '61011e42d891c82e13ec92da';
 const ORGANIZATION_ID = '5b1f89f3-aba5-4a5f-84ab-de9abb8e0633';
 
 const clickNext = (page: Page) => page.getByRole('button', { name: /next/i }).click();
-const clickCreate = (page: Page) => page.getByRole('button', { name: /create/i }).click();
+const clickCreate = (page: Page) => page.getByRole('button', { name: 'Create', exact: true }).click();
 
 const openImportModal = async (page: Page) => {
     await expect(page.getByRole('button', { name: /Create project menu/i })).toBeVisible();
@@ -38,7 +38,7 @@ const fillProjectNameAndType = async (page: Page, projectName: string, type: str
     await expect(page.getByRole('textbox', { name: /project name/i })).toBeVisible();
     await page.getByRole('textbox', { name: /project name/i }).fill(projectName);
     await page.getByRole('button', { name: /show suggestions/i }).click();
-    await page.getByRole('option', { name: type }).click();
+    await page.getByTestId('popover').getByRole('option', { name: type }).click();
 };
 
 const hideImportModal = (page: Page) => page.getByRole('button', { name: /hide/i }).click();

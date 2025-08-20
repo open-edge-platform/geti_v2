@@ -39,7 +39,7 @@ export const ObjectsList = ({
                     aria-label={'Object class'}
                     items={labels}
                     selectedKey={selectedLabelKey}
-                    onSelectionChange={handleLabelChange}
+                    onSelectionChange={(key) => key !== null && handleLabelChange(key)}
                     marginBottom={'size-50'}
                     width={'size-2000'}
                 >

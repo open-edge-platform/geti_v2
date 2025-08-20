@@ -133,7 +133,18 @@ class Tiling(BaseModelNoExtra):
     adaptive_tiling: bool = Field(
         default=False, title="Adaptive tiling", description="Whether to use adaptive tiling based on image content"
     )
-    tile_size: int = Field(gt=0, default=128, title="Tile size", description="Size of each tile in pixels")
+    tile_size: int = Field(
+        gt=0,
+        default=128,
+        title="Tile size",
+        description=(
+            "Size of each tile in pixels. "
+            "Decreasing the tile size typically results in higher accuracy, "
+            "but it is also more computationally expensive due to the higher number of tiles. "
+            "In any case, the tile must be large enough to capture the entire object and its surrounding context, "
+            "so choose a value larger than the size of most annotations."
+        ),
+    )
     tile_overlap: float = Field(
         ge=0.0,
         lt=1.0,

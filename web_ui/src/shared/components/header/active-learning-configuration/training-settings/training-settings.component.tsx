@@ -28,7 +28,7 @@ const TaskPicker = ({ tasks, selectedTask, setSelectedTask }: TaskPickerProps) =
         <Picker
             isQuiet={false}
             aria-label='Select a task to configure its training settings'
-            onSelectionChange={(taskId) => setSelectedTask(taskId.toString())}
+            onSelectionChange={(taskId) => taskId !== null && setSelectedTask(taskId.toString())}
             selectedKey={selectedTask}
             label={'Task type'}
             width={'100%'}

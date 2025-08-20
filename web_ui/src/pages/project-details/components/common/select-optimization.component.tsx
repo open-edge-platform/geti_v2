@@ -44,7 +44,7 @@ export const SelectOptimization = ({
                     items={options}
                     width={'100%'}
                     selectedKey={selectedOptimizationType.id}
-                    onSelectionChange={handleSelectOptimizationModel}
+                    onSelectionChange={(key) => key !== null && handleSelectOptimizationModel(key)}
                 >
                     {(item) => (
                         <Item key={item.id} textValue={item.text}>

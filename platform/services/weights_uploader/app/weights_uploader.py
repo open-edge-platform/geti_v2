@@ -14,20 +14,24 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def upload_file(client: boto3.client, path: str, filename: str) -> None:
-    """Uploads file from local_path to s3 if it does not already exist"""
+def upload_file(client: boto3.client, path: str, filename: str, overwrite: bool = False) -> None:
+    """
+    Uploads file from local_path to s3. If the "ovewrite" parameter is set to True, skips validation
+    if the file already exist.
+    """
     try:
         file_path = os.path.join(path, filename)
         bucket_name = "pretrainedweights"
 
-        try:
-            client.head_object(Bucket=bucket_name, Key=filename)
-            logger.info(f"File {filename} already exists on S3. Skipping upload.")
-            return
-        except ClientError as err:
-            if err.response["Error"]["Code"] != "404":
-                logger.error(f"Error checking existence of {filename} on S3: {err}")
-                raise err
+        if not overwrite:
+            try:
+                client.head_object(Bucket=bucket_name, Key=filename)
+                logger.info(f"File {filename} already exists on S3. Skipping upload.")
+                return
+            except ClientError as err:
+                if err.response["Error"]["Code"] != "404":
+                    logger.error(f"Error checking existence of {filename} on S3: {err}")
+                    raise err
 
         # Upload the file if it does not exist
         logger.info(f"Uploading file {filename} to S3")
@@ -55,7 +59,7 @@ def main() -> None:
         "s3", endpoint_url=s3_host, aws_access_key_id=s3_access_key, aws_secret_access_key=s3_secret_key
     )
 
-    upload_file(client, config_dir, model_list)
+    upload_file(client, config_dir, model_list, True)
 
     if os.environ.get("DISABLE_WEIGHT_UPLOADING", None) is not None:
         logger.info("Downloading pretrained weights is disabled. Exiting.")

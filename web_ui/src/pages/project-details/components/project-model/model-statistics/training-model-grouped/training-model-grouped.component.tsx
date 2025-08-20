@@ -46,7 +46,7 @@ export const TrainingModelGrouped = ({ header, values }: TrainingModelStatistics
                         aria-label={'Select'}
                         items={values}
                         selectedKey={getKey(selectedChart)}
-                        onSelectionChange={onSelectionChange}
+                        onSelectionChange={(key) => key !== null && onSelectionChange(key)}
                     >
                         {(item) => (
                             <Item key={getKey(item)} textValue={getValue(item)}>

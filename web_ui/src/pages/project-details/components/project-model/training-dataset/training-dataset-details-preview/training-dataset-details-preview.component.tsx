@@ -4,7 +4,7 @@
 import { useState } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
-import { Flex, Loading } from '@geti/ui';
+import { Flex, Loading, ViewModes } from '@geti/ui';
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
 
 import { PredictionMode } from '../../../../../../core/annotations/services/prediction-service.interface';
@@ -24,7 +24,6 @@ import { DatasetIdentifier } from '../../../../../../core/projects/dataset.inter
 import { EditAnnotationsButton } from '../../../../../../shared/components/media-item-annotations-preview/edit-annotations-button/edit-annotations-button.component';
 import { ImagePreviewNavigationControls } from '../../../../../../shared/components/media-item-annotations-preview/media-item-annotations-preview-dialog/image-preview-navigation-controls/image-preview-navigation-controls.component';
 import { MediaItemAnnotationsPreviewDialog } from '../../../../../../shared/components/media-item-annotations-preview/media-item-annotations-preview-dialog/media-item-annotations-preview-dialog.component';
-import { ViewModes } from '../../../../../../shared/components/media-view-modes/utils';
 import { useVisibleAnnotations } from '../../../../../../shared/hooks/use-visible-annotations.hook';
 import { hasEqualId } from '../../../../../../shared/utils';
 import { PreviewCanvasContent } from '../../../../../annotator/components/annotator-preview/preview-canvas-content.component';

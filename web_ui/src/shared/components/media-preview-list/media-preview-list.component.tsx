@@ -3,12 +3,11 @@
 
 import { ReactNode } from 'react';
 
-import { DimensionValue, Responsive, Selection } from '@geti/ui';
+import { DimensionValue, Responsive, Selection, ViewModes } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
 import { getId, getIds } from '../../utils';
 import { MediaItemsList } from '../media-items-list/media-items-list.component';
-import { ViewModes } from '../media-view-modes/utils';
 import { MediaItem } from './media-item.component';
 import { FileItem } from './util';
 

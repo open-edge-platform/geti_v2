@@ -88,7 +88,7 @@ export const DatasetPicker = (): JSX.Element => {
             isQuiet
             items={datasetItems}
             selectedKey={selectedKey}
-            onSelectionChange={handleChangeDataset}
+            onSelectionChange={(key) => key !== null && handleChangeDataset(key)}
         >
             {(item) => (
                 <Item key={item.key} textValue={item.text}>

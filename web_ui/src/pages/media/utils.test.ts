@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { labelFromUser } from '../../core/annotations/utils';
+import { LABEL_BEHAVIOUR } from '../../core/labels/label.interface';
 import { MEDIA_TYPE } from '../../core/media/base-media.interface';
 import {
     AdvancedFilterOptions,
@@ -10,8 +12,10 @@ import {
     SearchRuleShapeType,
 } from '../../core/media/media-filter.interface';
 import { KeyMap } from '../../shared/keyboard-events/keyboard.interface';
+import { getMockedAnnotation } from '../../test-utils/mocked-items-factory/mocked-annotations';
 import { getMockedLabel } from '../../test-utils/mocked-items-factory/mocked-labels';
 import { getMockedImageMediaItem } from '../../test-utils/mocked-items-factory/mocked-media';
+import { getBackgroundMaskAnnotations, isBackgroundMask } from '../annotator/annotation/layers/utils';
 import {
     addOrUpdateFilterRule,
     concatByProperty,
@@ -337,5 +341,30 @@ describe('media util', () => {
                 expect.objectContaining({ pages: [expect.objectContaining({ media: [mockedMedia, mockedMediaTwo] })] })
             );
         });
+    });
+
+    it('isBackgroundMask', () => {
+        const backgroundAnnotation = getMockedAnnotation({
+            labels: [labelFromUser(getMockedLabel({ behaviour: LABEL_BEHAVIOUR.BACKGROUND }))],
+        });
+
+        expect(isBackgroundMask(backgroundAnnotation)).toBe(true);
+        expect(isBackgroundMask(getMockedAnnotation({}))).toBe(false);
+    });
+});
+describe('getBackgroundMaskAnnotations', () => {
+    it('returns array with background mask annotations and their indices', () => {
+        const defaultLabel = labelFromUser(getMockedLabel({}));
+        const backgroundLabel = labelFromUser(getMockedLabel({ behaviour: LABEL_BEHAVIOUR.BACKGROUND }));
+
+        const annotation1 = getMockedAnnotation({ labels: [defaultLabel] });
+        const annotation2 = getMockedAnnotation({ labels: [backgroundLabel] });
+        const annotation3 = getMockedAnnotation({ labels: [defaultLabel, backgroundLabel] });
+        const annotations = [annotation1, annotation2, annotation3];
+
+        expect(getBackgroundMaskAnnotations(annotations)).toEqual([
+            { idx: 1, annotation: annotation2 },
+            { idx: 2, annotation: annotation3 },
+        ]);
     });
 });

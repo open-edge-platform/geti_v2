@@ -1,0 +1,95 @@
+# Artifact Signing Workflow
+#
+# This workflow handles container images and helm charts signing using Cosign.
+#
+# Key Features:
+# - Signs container images and helm charts using GitHub OIDC Token (keyless signing).
+# - Verifies the signatures against a specified certificate identity.
+#
+# Process Stages:
+# 1. Install Cosign.
+# 2. Install Crane.
+# 3. Login to ghcr.io using GitHub secrets.
+# 4. Get the image digest.
+# 5. Sign the images or helm charts with GitHub OIDC Token.
+# 6. Verify the signature using the specified certificate identity.
+#
+# Inputs:
+# - `image_uri`: The container image to sign.
+# 
+# Example usage:
+# 1. Call this workflow manually from Github Actions page
+# 2. Create a `repository_dispatch` event to trigger this workflow
+
+name: Sign artifacts created for release
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_uri:
+        description: 'Container image URI (repository, name and tag) (e.g. ghcr.io/open-edge-platform/my-image:latest)'
+        required: true
+        type: string
+  repository_dispatch:
+    types: [sign-artifacts]
+
+permissions: {}
+
+jobs:
+  sign-artifacts:
+    name: Sign artifacts created for release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # needed for keyless signing
+      packages: write # needed for ghcr.io access
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2
+        with:
+          cosign-release: v2.5.3
+
+      - name: Install Crane
+        run: |
+          VERSION=v0.20.6
+          OS=Linux
+          ARCH=x86_64
+          curl -sL "https://github.com/google/go-containerregistry/releases/download/${VERSION}/go-containerregistry_${OS}_${ARCH}.tar.gz" > go-containerregistry.tar.gz
+          tar -zxvf go-containerregistry.tar.gz -C /usr/local/bin/ crane
+
+      - name: Login crane to ghcr.io
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN  }}" | crane auth login ghcr.io -u "dummy" --password-stdin
+
+      - name: Get image digest
+        env:
+          IMAGE: ${{ inputs.image_uri }}
+        run: |
+          DIGEST=$(crane digest "${IMAGE}" | tr -d '\n\r')
+          echo "Digest for ${IMAGE} is ${DIGEST}"
+          # Only allow digests matching the expected format (https://github.com/opencontainers/image-spec/blob/main/descriptor.md#sha-256)
+          if ! echo "${DIGEST}" | grep -Eq '^sha256:[a-f0-9]{64}$'; then
+            echo "Invalid digest format: ${DIGEST}" >&2
+            exit 1
+          fi
+          echo "DIGEST=${DIGEST}" >> $GITHUB_ENV
+
+      - name: Sign the images with GitHub OIDC Token (keyless mode)
+        env:
+          DIGEST: ${{ env.DIGEST }}
+          IMAGE: ${{ inputs.image_uri }}
+        run: |
+          echo "Signing ${IMAGE}@${DIGEST}"
+          cosign sign --yes "${IMAGE}@${DIGEST}"
+
+      - name: Verify the signature
+        env:
+          DIGEST: ${{ env.DIGEST }}
+          IMAGE: ${{ inputs.image_uri }}
+        run: |
+          echo "Verifying signature for ${IMAGE}@${DIGEST}"
+          echo "Using certificate identity: https://github.com/open-edge-platform/geti/.github/workflows/sign_artifacts.yml"
+          echo "OIDC Issuer: https://token.actions.githubusercontent.com"
+          cosign verify \
+          --certificate-identity-regexp=https://github.com/open-edge-platform/geti/.github/workflows/sign_artifacts.yml \
+          --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+          "${IMAGE}@${DIGEST}"

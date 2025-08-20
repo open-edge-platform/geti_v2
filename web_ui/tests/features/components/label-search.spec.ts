@@ -277,7 +277,7 @@ test.describe('LabelSearch usage', () => {
         await page.getByRole('menuitem', { name: 'Import dataset' }).click();
 
         const fileName = 'e2e file unique name';
-        await loadFile(page, page.getByRole('button', { name: /upload/i }).click(), {
+        await loadFile(page, page.getByRole('button', { name: 'Upload', exact: true }).click(), {
             name: fileName,
             size: fileSize,
         });
@@ -293,6 +293,6 @@ test.describe('LabelSearch usage', () => {
         await page.getByRole('listitem', { name: /donkey/, includeHidden: true }).click();
         await expect(page.getByRole('listitem', { name: /donkey/, includeHidden: true })).toBeHidden();
 
-        await page.getByRole('button', { name: 'Import' }).click();
+        await page.getByRole('button', { name: 'Import', exact: true }).click();
     });
 });

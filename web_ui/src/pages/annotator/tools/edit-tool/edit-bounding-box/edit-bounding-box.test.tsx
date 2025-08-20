@@ -3,6 +3,7 @@
 
 import '@wessberg/pointer-events';
 
+import { ANCHOR_SIZE } from '@geti/smart-tools';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { Annotation } from '../../../../../core/annotations/annotation.interface';
@@ -15,7 +16,6 @@ import { ProjectProvider } from '../../../../project-details/providers/project-p
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { TaskProvider } from '../../../providers/task-provider/task-provider.component';
-import { ANCHOR_SIZE } from '../resize-anchor.component';
 import { EditBoundingBox as EditBoundingBoxTool } from './edit-bounding-box.component';
 
 const mockROI = getMockedROI({ x: 0, y: 0, width: 1000, height: 1000 });
