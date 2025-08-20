@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { CSSProperties, ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 import { Flex, Heading, Text, View } from '@adobe/react-spectrum';
 import { clsx } from 'clsx';
@@ -25,7 +25,6 @@ type ToastProps = {
     onDismiss?: () => void;
     message: ReactNode;
     position?: ToastT['position'];
-    style?: CSSProperties;
     title?: string;
 };
 
@@ -159,7 +158,6 @@ export const toast = ({
     duration = DEFAULT_TOAST_DURATION,
     onDismiss,
     position,
-    style,
     title,
 }: ToastProps) => {
     const toastId = id !== undefined ? `id-${id}` : `id-${message}`;
@@ -184,14 +182,11 @@ export const toast = ({
             duration: type === 'error' ? Infinity : duration,
             onDismiss,
             position,
-            style: {
-                width: 640,
-                ...style,
-            },
+            className: classes.toastContainer,
         }
     );
 };
 
 export const Toast = () => {
-    return <Toaster position='bottom-center' />;
+    return <Toaster position='bottom-center' className={classes.toaster} />;
 };

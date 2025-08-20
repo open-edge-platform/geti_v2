@@ -8,6 +8,14 @@
     border-radius: var(--spectrum-alias-border-radius-regular);
 }
 
+.toaster {
+    width: clamp(320px, 100%, 640px);
+}
+
+.toastContainer {
+    width: inherit;
+}
+
 .toastDivider {
     background-color: hsl(from var(--backgroundColor) h s calc(l - 10));
     opacity: 25%;

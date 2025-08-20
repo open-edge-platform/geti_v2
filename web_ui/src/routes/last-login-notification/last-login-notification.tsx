@@ -22,9 +22,6 @@ export const LastLoginNotification = (): JSX.Element => {
                     message: `Your previous sign-in was \n${lastLoginDate}`,
                     type: 'neutral',
                     position: 'top-right',
-                    style: {
-                        width: 'max-content',
-                    },
                 });
 
                 setLastLoginInfo(`${userId}-${lastLoginDate}`);
