@@ -58,7 +58,7 @@ global:
     registry: quay.io
     repository: prometheus
     name: busybox:glibc
-  debian:
+  curl:
     registry: quay.io
     repository: curl
     name: curl:8.15.0

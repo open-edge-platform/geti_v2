@@ -78,7 +78,7 @@ global:
   s3_endpoint: "impt-seaweed-fs:8333"
   istio_ingress_namespace: 'istio-system'
   istio_gateway_name: 'istio-gateway'
-  debian:
+  curl:
     registry: quay.io
     repository: curl
     name: curl:8.15.0

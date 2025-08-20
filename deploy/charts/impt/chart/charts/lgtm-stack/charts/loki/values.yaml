@@ -19,7 +19,7 @@ global:
   dnsService: "kube-dns"
   # -- configures DNS service namespace
   dnsNamespace: "kube-system"
-  debian:
+  curl:
     registry: quay.io
     repository: curl
     name: curl:8.15.0

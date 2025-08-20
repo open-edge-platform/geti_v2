@@ -4,7 +4,7 @@
 
 global:
   docker_namespace: geti
-  debian:
+  curl:
     registry: quay.io
     repository: curl
     name: curl:8.15.0
