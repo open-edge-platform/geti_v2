@@ -43,20 +43,13 @@ spec:
         # that do not have the Istio proxy sidecar
         - name: "kubectl-wait"
           image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
-          {{ if .Values.global.kubectl.repository }}
-          command: [ "/bin/bash", "-c" ]
           args:
-            - >-
-              kubectl wait jobs
-          {{- else }}
-          args:
-            - >-
-              wait jobs
-          {{- end }}
-              --timeout=1200s 
-              --for=condition=complete 
-              --namespace {{ .Release.Namespace }}
-              init-job-{{ .Chart.Name }}-ms
+            - wait
+            - jobs
+            - --timeout=1200s
+            - --for=condition=complete
+            - --namespace={{ .Release.Namespace }}
+            - init-job-{{ .Chart.Name }}-ms
           securityContext:
             {{ toYaml .Values.securityContext | nindent 12 }}
           resources:
