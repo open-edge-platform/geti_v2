@@ -676,9 +676,9 @@ externalAccess:
     ## @param externalAccess.autoDiscovery.image.pullSecrets Init container auto-discovery image pull secrets
     ##
     image:
-      registry: registry.k8s.io
-      repository: kubectl
-      tag: v1.31.12
+      registry: docker.io
+      repository: alpine
+      tag: k8s:1.31.12
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images

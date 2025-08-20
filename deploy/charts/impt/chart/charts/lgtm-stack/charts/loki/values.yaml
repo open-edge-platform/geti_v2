@@ -94,11 +94,11 @@ imagePullSecrets: []
 
 kubectlImage:
   # -- The Docker registry
-  registry: registry.k8s.io
+  registry: docker.io
   # -- Docker image repository
-  repository: kubectl
+  repository: alpine
   # -- Overrides the image tag whose default is the chart's appVersion
-  tag: null
+  tag: k8s:1.31.12
   # -- Docker image pull policy
   pullPolicy: IfNotPresent
 
