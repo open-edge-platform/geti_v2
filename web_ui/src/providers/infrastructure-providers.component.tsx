@@ -5,7 +5,7 @@ import { FC, ReactNode, StrictMode, Suspense, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { ApplicationServicesProvider } from '@geti/core/src/services/application-services-provider.component';
-import { IntelBrandedLoading, Toast } from '@geti/ui';
+import { IntelBrandedLoading } from '@geti/ui';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, RouterProviderProps } from 'react-router-dom';
 
 import { ErrorBoundary } from '../pages/errors/error-boundary.component';
