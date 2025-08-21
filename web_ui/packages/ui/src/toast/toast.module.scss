@@ -32,36 +32,36 @@
     }
 }
 
-.closeIcon {
-    color: var(--closeIconColor);
+.icon {
+    fill: var(--iconColor);
 }
 
 .info {
     --backgroundColor: var(--energy-blue-shade);
     --textColor: var(--spectrum-global-color-gray-900);
-    --closeIconColor: var(--spectrum-global-color-gray-900);
+    --iconColor: var(--spectrum-global-color-gray-900);
 }
 
 .warning {
     --backgroundColor: var(--brand-daisy);
     --textColor: var(--spectrum-global-color-gray-50);
-    --closeIconColor: var(--spectrum-global-color-gray-50);
+    --iconColor: var(--spectrum-global-color-gray-50);
 }
 
 .error {
     --backgroundColor: var(--brand-coral-coral-shade1);
     --textColor: var(--spectrum-global-color-gray-900);
-    --closeIconColor: var(--spectrum-global-color-gray-900);
+    --iconColor: var(--spectrum-global-color-gray-900);
 }
 
 .success {
     --backgroundColor: var(--brand-moss);
     --textColor: var(--spectrum-global-color-gray-900);
-    --closeIconColor: var(--spectrum-global-color-gray-900);
+    --iconColor: var(--spectrum-global-color-gray-900);
 }
 
 .neutral {
     --backgroundColor: var(--spectrum-global-color-gray-400);
     --textColor: var(--spectrum-global-color-gray-900);
-    --closeIconColor: var(--spectrum-global-color-gray-900);
+    --iconColor: var(--spectrum-global-color-gray-900);
 }

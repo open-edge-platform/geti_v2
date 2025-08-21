@@ -38,10 +38,10 @@ type CustomToastProps = {
 };
 
 const ICON: Record<ToastType, ReactNode> = {
-    success: <AcceptCircle />,
-    error: <CrossCircle />,
-    warning: <Alert />,
-    info: <Info />,
+    success: <AcceptCircle className={classes.icon} />,
+    error: <CrossCircle className={classes.icon} />,
+    warning: <Alert className={classes.icon} />,
+    info: <Info className={classes.icon} />,
     neutral: null,
 };
 
@@ -53,7 +53,7 @@ const ToastCloseButton = ({ id }: { id: string }) => {
             aria-label={'Close toast'}
             UNSAFE_className={classes.closeButton}
         >
-            <CloseSmall className={classes.closeIcon} />
+            <CloseSmall className={classes.icon} />
         </ActionButton>
     );
 };
@@ -95,7 +95,7 @@ const CustomToast = ({ message, id, actionButtons, type, hasCloseButton = true, 
                 >
                     <Flex flex={1} alignItems={'center'} justifyContent={'space-between'}>
                         <Flex gap={'size-100'} alignItems={'center'}>
-                            <View>{icon}</View>
+                            <Flex>{icon}</Flex>
                             <Text>{message}</Text>
                         </Flex>
                         <ToastActionButtons actionButtons={actionButtons} />
