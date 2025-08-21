@@ -71,7 +71,7 @@ const ChangeRoleDialogInner: FC<ChangeRoleDialogInnerProps> = ({ membership, onC
                     items={roles}
                     width={'100%'}
                     selectedKey={selectedRole}
-                    onSelectionChange={handleChangeRole}
+                    onSelectionChange={(key) => key !== null && handleChangeRole(key)}
                 >
                     {(item) => <Item key={item.role}>{item.role}</Item>}
                 </Picker>

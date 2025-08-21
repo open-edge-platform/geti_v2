@@ -3,7 +3,7 @@
 
 import { Fragment, useCallback, useState } from 'react';
 
-import { Button, DialogContainer, Divider, Flex, Loading, Tooltip, TooltipTrigger } from '@geti/ui';
+import { Button, DialogContainer, Divider, Flex, Loading, toast, Tooltip, TooltipTrigger } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
 import {
@@ -18,8 +18,6 @@ import { useProjectActions } from '../../../../core/projects/hooks/use-project-a
 import { ProjectProps } from '../../../../core/projects/project.interface';
 import { TaskMetadata } from '../../../../core/projects/task.interface';
 import { useHistoryBlock } from '../../../../hooks/use-history-block/use-history-block.hook';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { isNew } from '../../../../shared/components/label-tree-view/label-tree-view-item/utils';
 import { PageLayout } from '../../../../shared/components/page-layout/page-layout.component';
 import { UnsavedChangesDialog } from '../../../../shared/components/unsaved-changes-dialog/unsaved-changes-dialog.component';
@@ -42,8 +40,6 @@ export const ProjectLabels = (): JSX.Element => {
     const [tasksMetadata, setTasksMetadata] = useState<TaskMetadata[]>(getTasksMetadata(project.tasks));
     const [labelsValid, setLabelsValidity] = useState<boolean>(true);
 
-    const { addNotification } = useNotification();
-
     const [isOpen, setIsOpen, onUnsavedAction] = useHistoryBlock(isEditionEnabled);
 
     const hasMinimumNumberOfLabels = (): boolean => {
@@ -59,10 +55,10 @@ export const ProjectLabels = (): JSX.Element => {
         const minimumNeededLabels = isSingleDomainProject(isClassificationDomain) ? 2 : 1;
 
         if (projectLabels.length - labelsToBeRemoved.length < minimumNeededLabels) {
-            addNotification({
+            toast({
                 message: `You must have at least ${pluralize(minimumNeededLabels, 'label')} in the project.`,
-                type: NOTIFICATION_TYPE.INFO,
-                dismiss: { duration: 0 },
+                type: 'info',
+                duration: Infinity,
             });
 
             return false;
@@ -119,7 +115,7 @@ export const ProjectLabels = (): JSX.Element => {
                         shouldRevisit ? ' All affected images are assigned the Revisit status. ' : ''
                     }`;
 
-                    addNotification({ message, type: NOTIFICATION_TYPE.INFO });
+                    toast({ message, type: 'info' });
                     setIsDirty(false);
                     setEditionEnablement(false);
                     setTasksMetadata(getTasksMetadata(updatedProject.tasks));

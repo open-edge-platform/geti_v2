@@ -59,7 +59,7 @@ export const SettingOption = ({ label, config, onChange }: SettingOptionProps) =
                     width={'100%'}
                     aria-label={`${label} selection options`}
                     items={config.options.map((name) => ({ id: name, name }))}
-                    onSelectionChange={updateValue}
+                    onSelectionChange={(key) => key !== null && updateValue(key)}
                     selectedKey={value}
                 >
                     {(item) => <Item key={item.id}>{item.name}</Item>}

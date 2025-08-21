@@ -166,7 +166,6 @@ export function AnnotatorCanvas({
                                 <Labels
                                     key={annotation.id}
                                     annotation={annotation}
-                                    annotationToolContext={annotationToolContext}
                                     canEditAnnotationLabel={canEditAnnotationLabel}
                                 />
                             ))}

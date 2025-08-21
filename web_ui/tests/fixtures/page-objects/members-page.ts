@@ -57,7 +57,7 @@ export class MembersPage {
         await this.page.getByLabel('Password', { exact: true }).fill(member.password);
         await this.page.getByLabel('Confirm password').fill(member.password);
 
-        await this.page.getByRole('button', { name: /add/i }).click();
+        await this.page.getByRole('button', { name: 'save add user' }).click();
     }
 
     private getActionMenuButton(email: string) {

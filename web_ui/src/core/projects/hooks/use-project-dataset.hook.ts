@@ -2,13 +2,12 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { clearDatasetStorage } from '../../../hooks/use-clear-indexeddb-storage/use-clear-indexeddb-storage.hook';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import {
     CreateDatasetBody,
     CreateDatasetResponse,
@@ -32,15 +31,13 @@ export const useProjectDataset = (): UseProjectDataset => {
     const service = useApplicationServices().projectService;
     const client = useQueryClient();
 
-    const { addNotification } = useNotification();
-
     const createDataset = useMutation<CreateDatasetResponse, AxiosError, CreateDatasetBody>({
         mutationFn: service.createDataset,
         onSuccess: async (_, variables) => {
             await client.invalidateQueries({ queryKey: QUERY_KEYS.PROJECT_KEY(variables.projectIdentifier) });
         },
         onError: (error: AxiosError) => {
-            addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: error.message, type: 'error' });
         },
     });
 
@@ -52,7 +49,7 @@ export const useProjectDataset = (): UseProjectDataset => {
             await client.invalidateQueries({ queryKey: QUERY_KEYS.PROJECT_KEY(variables) });
         },
         onError: (error: AxiosError) => {
-            addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: error.message, type: 'error' });
         },
     });
 
@@ -66,7 +63,7 @@ export const useProjectDataset = (): UseProjectDataset => {
         },
 
         onError: (error: AxiosError) => {
-            addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: error.message, type: 'error' });
         },
     });
 

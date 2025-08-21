@@ -3,7 +3,7 @@
 
 import { ChangeEvent, useRef } from 'react';
 
-import { Button, Flex, Text, View } from '@geti/ui';
+import { Button, Flex, Text, toast, View } from '@geti/ui';
 import { DatasetImport as DatasetImportIcon } from '@geti/ui/icons';
 import { isExtraLargeSizeQuery } from '@geti/ui/theme';
 import { Link } from 'react-router-dom';
@@ -11,8 +11,6 @@ import { useMediaQuery } from 'usehooks-ts';
 
 import { ImportOptions } from '../../core/projects/services/project-service.interface';
 import { useDocsUrl } from '../../hooks/use-docs-url/use-docs-url.hook';
-import { NOTIFICATION_TYPE } from '../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../notification/notification.component';
 import { mediaExtensionHandler } from '../../providers/media-upload-provider/media-upload.validator';
 import { useProjectsImportProvider } from '../../providers/projects-import-provider/projects-import-provider.component';
 import { DropZone, onDropFiles } from '../../shared/drag-and-drop/drag-and-drop.component';
@@ -29,7 +27,6 @@ export const ProjectImportPanel = ({
     options: ImportOptions;
     onImportProject: () => void;
 }): JSX.Element => {
-    const { addNotification } = useNotification();
     const { importProject } = useProjectsImportProvider();
     const docsUrl = useDocsUrl();
 
@@ -39,7 +36,7 @@ export const ProjectImportPanel = ({
 
     const handleDropProject = (file?: File) => {
         if (file && !isValidFileExtension(file, VALID_EXTENSIONS)) {
-            addNotification({ message: 'Invalid file extension, please try again', type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: 'Invalid file extension, please try again', type: 'error' });
             return;
         }
 

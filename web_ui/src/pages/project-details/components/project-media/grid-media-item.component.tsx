@@ -37,16 +37,6 @@ export const GridMediaItem = ({
     const triggerRef = useRef(null);
     const [selectedMediaItemAction, setSelectedMediaItemAction] = useState<Key | undefined>(undefined);
 
-    const [isHovered, setIsHovered] = useState(false);
-
-    const handlePointerOver = () => {
-        setIsHovered(true);
-    };
-
-    const handlePointerOut = () => {
-        setIsHovered(false);
-    };
-
     const tooltipProps = getMediaItemTooltipProps(mediaItem);
     const pressProps = isLargeSize
         ? { onDoubleClick: handleDblClick, onClick: isAtLeastOneMediaItemSelected ? toggleMediaSelection : undefined }
@@ -56,59 +46,49 @@ export const GridMediaItem = ({
         <div
             id={`grid-media-item-${id}`}
             className={[classes.mediaItem, isSelected ? classes.mediaItemSelected : ''].join(' ')}
-            onPointerOver={handlePointerOver}
-            onPointerOut={handlePointerOut}
         >
-            {(isHovered || isSelected || selectedMediaItemAction !== undefined) && (
-                <Flex
-                    wrap
-                    ref={triggerRef}
-                    width={'100%'}
-                    position={'absolute'}
-                    justifyContent={'space-between'}
-                    UNSAFE_className={classes.mediaItemActionsWrapper}
-                >
-                    <View width='size-500' height='size-500' zIndex={4}>
-                        <Flex
-                            position='relative'
-                            justifyContent='center'
-                            alignItems='center'
-                            width='100%'
-                            height='100%'
-                        >
-                            <View
-                                width={'100%'}
-                                height={'100%'}
-                                position={'absolute'}
-                                borderRadius={'regular'}
-                                backgroundColor={'gray-50'}
-                            />
-                            <Checkbox
-                                aria-label={'Select media item'}
-                                isSelected={isSelected}
-                                onChange={toggleMediaSelection}
-                                UNSAFE_style={{ padding: 8 }}
-                            />
-                        </Flex>
-                    </View>
-
-                    <View
-                        backgroundColor={'gray-50'}
-                        borderRadius={'regular'}
-                        UNSAFE_style={{ boxSizing: 'border-box', display: 'flex', alignItems: 'center' }}
-                        paddingY={'size-150'}
-                        paddingX={'size-75'}
-                        height={'size-500'}
-                        zIndex={10}
-                    >
-                        <MediaItemActions
-                            mediaItem={mediaItem}
-                            onSelectedMediaItemActionChange={setSelectedMediaItemAction}
-                            selectedMediaItemAction={selectedMediaItemAction}
+            <Flex
+                wrap
+                ref={triggerRef}
+                width={'100%'}
+                position={'absolute'}
+                justifyContent={'space-between'}
+                UNSAFE_className={classes.mediaItemActionsWrapper}
+            >
+                <View width='size-500' height='size-500' zIndex={4}>
+                    <Flex position='relative' justifyContent='center' alignItems='center' width='100%' height='100%'>
+                        <View
+                            width={'100%'}
+                            height={'100%'}
+                            position={'absolute'}
+                            borderRadius={'regular'}
+                            backgroundColor={'gray-50'}
                         />
-                    </View>
-                </Flex>
-            )}
+                        <Checkbox
+                            aria-label={'Select media item'}
+                            isSelected={isSelected}
+                            onChange={toggleMediaSelection}
+                            UNSAFE_style={{ padding: 8 }}
+                        />
+                    </Flex>
+                </View>
+
+                <View
+                    backgroundColor={'gray-50'}
+                    borderRadius={'regular'}
+                    UNSAFE_style={{ boxSizing: 'border-box', display: 'flex', alignItems: 'center' }}
+                    paddingY={'size-150'}
+                    paddingX={'size-75'}
+                    height={'size-500'}
+                    zIndex={10}
+                >
+                    <MediaItemActions
+                        mediaItem={mediaItem}
+                        onSelectedMediaItemActionChange={setSelectedMediaItemAction}
+                        selectedMediaItemAction={selectedMediaItemAction}
+                    />
+                </View>
+            </Flex>
 
             <TooltipTrigger>
                 <PressableElement {...pressProps}>

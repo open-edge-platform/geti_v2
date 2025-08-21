@@ -41,12 +41,10 @@ const MOCKED_LABELS_DEEP_HIERARCHY: DatasetImportLabel[] = [
     { name: 'PRS SE Hollowbody', group: 'PRS', parent: 'Hollow' },
 ];
 
-const mockedAddNotifications = jest.fn();
-jest.mock('../../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../../notification/notification.component'),
-    useNotification: jest.fn(() => ({
-        addNotification: mockedAddNotifications,
-    })),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 describe('DatasetImportToNewProjectLabels', () => {
@@ -92,7 +90,7 @@ describe('DatasetImportToNewProjectLabels', () => {
             />
         );
 
-        expect(mockedAddNotifications).not.toHaveBeenCalled();
+        expect(mockedToast).not.toHaveBeenCalled();
         expect(screen.queryByText('No labels')).not.toBeInTheDocument();
 
         expect(screen.queryAllByTestId(/expand-collapse-button/)).toHaveLength(0);
@@ -119,7 +117,7 @@ describe('DatasetImportToNewProjectLabels', () => {
             />
         );
 
-        expect(mockedAddNotifications).not.toHaveBeenCalled();
+        expect(mockedToast).not.toHaveBeenCalled();
         expect(screen.queryByText('No labels')).not.toBeInTheDocument();
 
         const expandCollapseButtons = screen.queryAllByTestId(/expand-collapse-button/);
@@ -142,7 +140,7 @@ describe('DatasetImportToNewProjectLabels', () => {
             />
         );
 
-        expect(mockedAddNotifications).not.toHaveBeenCalled();
+        expect(mockedToast).not.toHaveBeenCalled();
         expect(screen.queryByText('No labels')).not.toBeInTheDocument();
 
         const expandCollapseButtons = screen.queryAllByTestId(/expand-collapse-button/);
@@ -165,7 +163,7 @@ describe('DatasetImportToNewProjectLabels', () => {
             />
         );
 
-        expect(mockedAddNotifications).not.toHaveBeenCalled();
+        expect(mockedToast).not.toHaveBeenCalled();
         expect(screen.queryByText('No labels')).not.toBeInTheDocument();
 
         expect(screen.getByTestId('treeitem-group-animal')).not.toBeVisible();

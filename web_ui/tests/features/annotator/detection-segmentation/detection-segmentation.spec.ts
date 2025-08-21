@@ -907,7 +907,7 @@ test.describe(`Detection -> Segmentation`, () => {
             await page.getByRole('button', { name: 'Select annotation mode' }).click();
 
             await goToDetection(page);
-            await page.getByRole('button', { name: /submit/i }).click();
+            await page.getByTestId('modal').getByRole('button', { name: 'Submit' }).click();
 
             await goToAllTask(page);
 

@@ -30,7 +30,7 @@ export const WorkspacesPicker = ({
             items={workspaces}
             selectedKey={selectedWorkspace.id}
             placeholder={'Select workspace'}
-            onSelectionChange={onSelectionChange}
+            onSelectionChange={(key) => key !== null && onSelectionChange(key)}
         >
             {(item) => (
                 <Item key={item.id} textValue={item.name}>

@@ -43,11 +43,11 @@ test.describe('JobScheduler', (): void => {
             .first()
             .click();
 
-        await page.getByRole('option', { name: /Card detection/ }).click();
+        await page.getByRole('option', { name: 'Card detection', exact: true }).click();
 
         const request = await requestPromise;
 
-        expect(await request.url()).toContain(expectedParams);
+        expect(request.url()).toContain(expectedParams);
     });
 
     test('Badges', async ({ registerApiResponse, page }): Promise<void> => {

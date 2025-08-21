@@ -2,13 +2,12 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { cloneDeep, isNil } from 'lodash-es';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { ProjectIdentifier } from '../../projects/core.interface';
 import {
     ConfigurableParametersParams,
@@ -24,7 +23,6 @@ export interface UseReconfigureParams {
 
 export const useReconfigAutoTraining = (projectIdentifier: ProjectIdentifier) => {
     const { configParametersService } = useApplicationServices();
-    const { addNotification } = useNotification();
     const queryClient = useQueryClient();
     const configurationQueryKey = QUERY_KEYS.CONFIGURATION(projectIdentifier);
 
@@ -60,7 +58,7 @@ export const useReconfigAutoTraining = (projectIdentifier: ProjectIdentifier) =>
         },
 
         onError: (error, _variables, previousSnapshottedConfig) => {
-            addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: error.message, type: 'error' });
 
             if (!isNil(previousSnapshottedConfig)) {
                 queryClient.setQueryData(configurationQueryKey, previousSnapshottedConfig);

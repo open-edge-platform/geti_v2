@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key } from 'react';
-
 import { Icon, Item, Picker, Section, Text } from '@geti/ui';
 import { SortDown, SortUp } from '@geti/ui/icons';
 
@@ -42,7 +40,7 @@ export const SortWidget = <T extends string>({ sortBy, onSort, items, ariaLabel 
             // @ts-expect-error Picker does not like having two possible types of items
             items={items}
             selectedKey={sortBy}
-            onSelectionChange={(key: Key) => onSort(key as T)}
+            onSelectionChange={(key) => onSort(key as T)}
             aria-label={ariaLabel}
             UNSAFE_className={styles.sortWidget}
         >

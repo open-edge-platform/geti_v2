@@ -27,12 +27,6 @@ jest.mock('../../../../annotator/hooks/use-dataset-identifier.hook', () => ({
     useDatasetIdentifier: () => ({ workspaceId: mockWorkspaceId, datasetId: mockDatasetId }),
 }));
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
-}));
-
 const mockPrepareExportDataset = jest.fn();
 jest.mock('../../../hooks/use-export-dataset.hook', () => ({
     ...jest.requireActual('../../../hooks/use-export-dataset.hook'),

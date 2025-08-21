@@ -30,7 +30,7 @@ export const MediaFilterValueType = ({
                 id='media-filter-media-type'
                 aria-label='media-filter-media-type'
                 selectedKey={MEDIA_TYPE_OPTIONS.find((option) => option.text === value)?.key}
-                onSelectionChange={handleSelectionChange}
+                onSelectionChange={(key) => key !== null && handleSelectionChange(key)}
             >
                 {(item) => (
                     <Item key={item.key} aria-label={`option-${item.key}`}>

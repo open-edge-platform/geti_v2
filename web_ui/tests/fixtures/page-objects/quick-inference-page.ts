@@ -7,17 +7,29 @@ export class QuickInferencePage {
     constructor(private page: Page) {}
 
     async uploadImage(file: string) {
+        let element = null;
+
+        if (await this.page.getByTestId('modal').getByRole('button', { name: 'Upload file' }).isVisible()) {
+            element = this.page.getByTestId('modal').getByRole('button', { name: 'Upload file' });
+        } else {
+            element = this.page.getByRole('button', { name: 'Upload file' });
+        }
+
         const [fileChooser] = await Promise.all([
             // It is important to call waitForEvent before click to set up waiting.
             this.page.waitForEvent('filechooser'),
-            this.page.getByRole('button', { name: /upload file/i }).click(),
+            element.click(),
         ]);
 
         await fileChooser.setFiles([file]);
     }
 
-    async getAlertMessage(): Promise<string> {
-        return (await this.page.getByRole('alert').textContent()) ?? '';
+    getAlertMessage() {
+        return this.page.getByRole('tabpanel', { name: 'Live prediction' }).getByRole('alert');
+    }
+
+    getAlertMessageInFullScreen() {
+        return this.page.getByTestId('modal').getByRole('alert');
     }
 
     async openFullscreen() {

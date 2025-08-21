@@ -4,15 +4,13 @@
 import { CSSProperties, Dispatch, SetStateAction } from 'react';
 
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
-import { Flex, View } from '@geti/ui';
+import { Flex, MediaViewModes, View, ViewModes } from '@geti/ui';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { isAnomalyDomain, isKeypointDetection } from '../../../../../core/projects/domains';
 import { TUTORIAL_CARD_KEYS } from '../../../../../core/user-settings/dtos/user-settings.interface';
 import { useSortingParams } from '../../../../../hooks/use-sorting-params/use-sorting-params.hook';
 import { Accordion } from '../../../../../shared/components/accordion/accordion.component';
-import { MediaViewModes } from '../../../../../shared/components/media-view-modes/media-view-modes.component';
-import { ViewModes } from '../../../../../shared/components/media-view-modes/utils';
 import { RefreshButton } from '../../../../../shared/components/refresh-button/refresh-button.component';
 import { TutorialCardBuilder } from '../../../../../shared/components/tutorial-card/tutorial-card-builder.component';
 import { MediaFilterChips } from '../../../../media/components/media-filter-chips.component';

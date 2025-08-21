@@ -5,13 +5,12 @@ import { useEffect, useRef } from 'react';
 
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { isEqual } from 'lodash-es';
 
 import { MediaIdentifier, MediaItem } from '../../../../core/media/media.interface';
 import { DatasetIdentifier } from '../../../../core/projects/dataset.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 
 export const useMediaItemQuery = (
     datasetIdentifier: DatasetIdentifier,
@@ -20,7 +19,6 @@ export const useMediaItemQuery = (
     onSuccess?: (data: MediaItem) => void
 ) => {
     const { mediaService } = useApplicationServices();
-    const { addNotification } = useNotification();
     const handleSuccessRef = useRef(onSuccess);
 
     const query = useQuery<MediaItem>({
@@ -63,8 +61,8 @@ export const useMediaItemQuery = (
             return;
         }
 
-        addNotification({ message: 'Could not retrieve media item', type: NOTIFICATION_TYPE.ERROR });
-    }, [options.enabled, query.isError, addNotification]);
+        toast({ message: 'Could not retrieve media item', type: 'error' });
+    }, [options.enabled, query.isError]);
 
     return query;
 };

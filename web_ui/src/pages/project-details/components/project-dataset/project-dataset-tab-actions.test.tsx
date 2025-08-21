@@ -161,17 +161,21 @@ describe('ProjectDatasetTabActions', () => {
     });
 
     it('should show export dataset dialog', async () => {
+        const mockOpen = jest.fn();
         await renderApp({
             exportDialogState: {
                 isOpen: true,
                 setOpen: jest.fn(),
-                open: jest.fn(),
+                open: mockOpen,
                 close: jest.fn(),
                 toggle: jest.fn(),
             },
         });
 
-        expect(screen.getByText('Select dataset export format')).toBeInTheDocument();
+        fireEvent.click(screen.getByRole('button', { name: 'open dataset menu' }));
+        fireEvent.click(screen.getByRole('menuitem', { name: DatasetTabActions.ExportDataset }));
+
+        expect(mockOpen).toHaveBeenCalled();
     });
 
     describe('Menu actions', () => {

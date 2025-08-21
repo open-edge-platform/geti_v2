@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 
-import { Divider, Flex, Heading, Text, useMediaQuery } from '@geti/ui';
+import { Divider, Flex, Heading, MediaViewModes, Text, useMediaQuery, useViewMode, ViewModes } from '@geti/ui';
 import { isLargeSizeQuery } from '@geti/ui/theme';
 import { useParams } from 'react-router-dom';
 
@@ -12,9 +12,6 @@ import { SortDirection } from '../../../../core/shared/query-parameters';
 import { useTests } from '../../../../core/tests/hooks/use-tests.hook';
 import { TestMediaItem } from '../../../../core/tests/test-media.interface';
 import { useProjectIdentifier } from '../../../../hooks/use-project-identifier/use-project-identifier';
-import { useViewMode } from '../../../../hooks/use-view-mode/use-view-mode.hook';
-import { MediaViewModes } from '../../../../shared/components/media-view-modes/media-view-modes.component';
-import { ViewModes } from '../../../../shared/components/media-view-modes/utils';
 import { SortByAttribute } from '../../../../shared/components/sort-by-attribute/sort-by-attribute.component';
 import { idMatchingFormat } from '../../../../test-utils/id-utils';
 import { getMatchedMediaCounts } from '../../utils';

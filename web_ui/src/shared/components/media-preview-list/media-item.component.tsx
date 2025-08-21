@@ -3,7 +3,7 @@
 
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
-import { Loading, useUnwrapDOMRef, View, type DimensionValue, type Responsive } from '@geti/ui';
+import { Loading, useUnwrapDOMRef, View, ViewModes, type DimensionValue, type Responsive } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { clsx } from 'clsx';
 import { isEmpty, isFunction, isNil } from 'lodash-es';
@@ -12,7 +12,6 @@ import { Label } from '../../../core/labels/label.interface';
 import { useTask } from '../../../pages/annotator/providers/task-provider/task-provider.component';
 import { getSingleValidTask } from '../../../pages/utils';
 import { isVideoFile, loadImageFromFile, loadVideoFromFile } from '../../media-utils';
-import { ViewModes } from '../media-view-modes/utils';
 import { CondensedLabelSelector } from './condensed-label-selector.component';
 import { ImageVideoFactory } from './image-video-factory.component';
 import { MediaItemContextMenu } from './media-item-context-menu.component';
