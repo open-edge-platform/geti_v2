@@ -42,7 +42,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-geti-k8s-tools = { path = "../../libs/k8s_tools", editable = true }
+geti-k8s-tools = { path = "../../../libs/k8s_tools", editable = true }
 
 [tool.ruff]
 target-version = "py310"

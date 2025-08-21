@@ -15,6 +15,7 @@ import {
 
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError, HttpStatusCode } from 'axios';
 import { isEmpty, noop } from 'lodash-es';
@@ -27,8 +28,6 @@ import {
 } from '../../core/datasets/dataset.interface';
 import { useDatasetImportQueries } from '../../core/datasets/hooks/use-dataset-import-queries.hook';
 import { useLocalStorageDatasetImport } from '../../features/dataset-import/hooks/use-local-storage-dataset-import.hook';
-import { NOTIFICATION_TYPE } from '../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../notification/notification.component';
 import { getRandomDistinctColor } from '../../pages/create-project/components/distinct-colors';
 import { getImportDatasetToNewProjectKey } from '../../shared/local-storage-keys';
 import { MissingProviderError } from '../../shared/missing-provider-error';
@@ -84,7 +83,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
     const { router } = useApplicationServices();
     const workspaceIdentifier = useWorkspaceIdentifier();
     const { organizationId, workspaceId } = workspaceIdentifier;
-    const { addNotification } = useNotification();
+
     const { setActiveUpload, uploadFile } = useTusUpload();
     const {
         prepareDatasetForNewProject,
@@ -193,7 +192,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                     if (error.response?.status === HttpStatusCode.NotFound) {
                         deleteLsDatasetImport(datasetImport.id);
                     } else {
-                        addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+                        toast({ message: error.message, type: 'error' });
                     }
                 },
             }
@@ -245,7 +244,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
             endpoint: router.DATASET.IMPORT_TUS(workspaceIdentifier),
             onError: onErrorMessage((message: string): void => {
                 patchLsDatasetImport({ id, progress: 0, status: DATASET_IMPORT_STATUSES.IMPORTING_ERROR });
-                addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
+                toast({ message, type: 'error' });
             }),
             onProgress: onThrottleProgress((datasetImportItem, bytesSent, bytesTotal): void => {
                 const uploadId = getUploadId(upload.url);
@@ -279,7 +278,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 progress: 0,
                 status: DATASET_IMPORT_STATUSES.IMPORTING_TO_NEW_PROJECT_ERROR,
             });
-            addNotification({ message: `Upload ${uploadId} not found`, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: `Upload ${uploadId} not found`, type: 'error' });
             return;
         }
 
@@ -306,7 +305,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 },
                 onError: (error) => {
                     patchLsDatasetImport({ id, status: DATASET_IMPORT_STATUSES.PREPARING_ERROR });
-                    addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+                    toast({ message: error.message, type: 'error' });
                 },
             }
         );
@@ -320,7 +319,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 status: DATASET_IMPORT_STATUSES.IMPORTING_TO_NEW_PROJECT_ERROR,
             });
 
-            addNotification({ message: `Upload ${uploadId} not found`, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: `Upload ${uploadId} not found`, type: 'error' });
 
             return;
         }
@@ -341,7 +340,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 },
                 onError: (error) => {
                     patchLsDatasetImport({ id, status: DATASET_IMPORT_STATUSES.PREPARING_ERROR });
-                    addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+                    toast({ message: error.message, type: 'error' });
                 },
             }
         );
@@ -354,7 +353,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
 
         if (!uploadId) {
             patchLsDatasetImport({ id, status: DATASET_IMPORT_STATUSES.IMPORTING_TO_NEW_PROJECT_ERROR });
-            addNotification({ message: `Upload ${uploadId} not found`, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: `Upload ${uploadId} not found`, type: 'error' });
 
             return;
         }
@@ -382,7 +381,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 },
                 onError: (error: AxiosError) => {
                     patchLsDatasetImport({ id, status: DATASET_IMPORT_STATUSES.IMPORTING_TO_NEW_PROJECT_ERROR });
-                    addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+                    toast({ message: error.message, type: 'error' });
                 },
             }
         );
@@ -395,7 +394,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
 
         if (!uploadId) {
             patchLsDatasetImport({ id, status: DATASET_IMPORT_STATUSES.IMPORTING_TO_NEW_PROJECT_ERROR });
-            addNotification({ message: `Upload ${uploadId} not found`, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: `Upload ${uploadId} not found`, type: 'error' });
 
             return;
         }
@@ -421,7 +420,7 @@ export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToN
                 onSuccess: ({ jobId }) => patchLsDatasetImport({ id, importingJobId: jobId }),
                 onError: (error: AxiosError) => {
                     patchLsDatasetImport({ id, status: DATASET_IMPORT_STATUSES.IMPORTING_TO_NEW_PROJECT_ERROR });
-                    addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+                    toast({ message: error.message, type: 'error' });
                 },
             }
         );

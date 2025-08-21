@@ -51,6 +51,7 @@ describe('Layer Component', () => {
             />
         );
 
-        expect(screen.getAllByLabelText('background-mask')).toHaveLength(mockedBackgroundAnnotations.length);
+        // It generates a background mask for each background annotation, plus one for the mask annotation itself
+        expect(screen.getAllByLabelText('background-mask')).toHaveLength(mockedBackgroundAnnotations.length + 1);
     });
 });

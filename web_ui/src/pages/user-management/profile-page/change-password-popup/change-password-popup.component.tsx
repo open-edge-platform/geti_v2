@@ -15,11 +15,10 @@ import {
     Form,
     Heading,
     PasswordField,
+    toast,
 } from '@geti/ui';
 import { ValidationError } from 'yup';
 
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { CONFIRM_PASSWORD_ERROR_MESSAGE, encodeToBase64 } from '../../../../shared/utils';
 import { PasswordState } from '../../users/add-member-popup/add-member-popup.interface';
 import { handlePassword } from '../../users/add-member-popup/utils';
@@ -44,7 +43,6 @@ export const ChangePasswordPopup = ({ userId }: ChangePasswordPopupProps): JSX.E
     const [confirmPassword, setConfirmPassword] = useState<PasswordState>(defaultPassword);
 
     const changePassword = useChangePassword();
-    const { addNotification } = useNotification();
 
     const isDisabled = Boolean(
         !oldPassword.value ||
@@ -90,9 +88,9 @@ export const ChangePasswordPopup = ({ userId }: ChangePasswordPopupProps): JSX.E
                         onSuccess: () => {
                             close();
                             clearFields();
-                            addNotification({
+                            toast({
                                 message: 'Password changed successfully',
-                                type: NOTIFICATION_TYPE.DEFAULT,
+                                type: 'neutral',
                             });
                         },
                         onError: (error) => {
@@ -107,7 +105,7 @@ export const ChangePasswordPopup = ({ userId }: ChangePasswordPopupProps): JSX.E
                                     error: ErrorUserManagementMessages.WRONG_OLD_PASSWORD,
                                 }));
                             } else {
-                                addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+                                toast({ message: error.message, type: 'error' });
                             }
                         },
                     }

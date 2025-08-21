@@ -1,12 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { toast } from '@geti/ui';
 import { useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import { isNil } from 'lodash-es';
 import { useParams } from 'react-router-dom';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { isVideoFile, loadImageFromFile, loadVideoFromFile } from '../../../shared/media-utils';
 import { assertIsNotNullable } from '../../../types-utils/utils';
 import { Screenshot } from '../../camera-support/camera.interface';
@@ -57,7 +56,6 @@ const useSavedFilesQuery = () => {
 export const useCameraStorage = (): UseCameraStorage => {
     const queryClient = useQueryClient();
     const { worker: cameraWorker } = useLoadCameraWebworker();
-    const { addNotification } = useNotification();
     const { projectId, datasetId } = useParams<{ projectId: string; datasetId: string }>();
 
     const savedFilesQuery = useSavedFilesQuery();
@@ -80,7 +78,7 @@ export const useCameraStorage = (): UseCameraStorage => {
             await cameraWorker.setItem(screenshot.id, screenshot);
             await invalidateCameraStorageQuery();
         } catch (error: unknown) {
-            addNotification({ message: String(error), type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: String(error), type: 'error' });
         }
     };
 
@@ -103,7 +101,7 @@ export const useCameraStorage = (): UseCameraStorage => {
                     await cameraWorker.updateMedia(id, { ...currentData, ...screenshot });
                     await invalidateCameraStorageQuery();
                 } catch (error: unknown) {
-                    addNotification({ message: String(error), type: NOTIFICATION_TYPE.ERROR });
+                    toast({ message: String(error), type: 'error' });
                 }
             })
         );

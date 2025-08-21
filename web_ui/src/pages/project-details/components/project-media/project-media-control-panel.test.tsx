@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { ApplicationServicesContextProps } from '@geti/core/src/services/application-services-provider.component';
+import { INITIAL_VIEW_MODE, VIEW_MODE_LABEL } from '@geti/ui';
 import { UseQueryResult } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import { AxiosError } from 'axios';
@@ -10,7 +11,6 @@ import { MediaItem } from '../../../../core/media/media.interface';
 import { useStatus } from '../../../../core/status/hooks/use-status.hook';
 import { TOO_LOW_FREE_DISK_SPACE_IN_BYTES } from '../../../../core/status/hooks/utils';
 import { StatusProps } from '../../../../core/status/status.interface';
-import { INITIAL_VIEW_MODE, VIEW_MODE_LABEL } from '../../../../shared/components/media-view-modes/utils';
 import {
     getMockedImageMediaItem,
     getMockedVideoMediaItem,

@@ -148,3 +148,5 @@ process.env.REACT_APP_VALIDATION_COMPONENT_TESTS = 'true';
 jest.mock('@geti/smart-tools/ritm', () => ({
     RITM_TEMPLATE_SIZE: 10,
 }));
+
+jest.mock('@geti/smart-tools/segment-anything');

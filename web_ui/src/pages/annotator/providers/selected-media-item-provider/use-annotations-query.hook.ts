@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { getErrorMessageByStatusCode } from '@geti/core/src/services/utils';
+import { toast } from '@geti/ui';
 import { useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
@@ -15,8 +16,6 @@ import { MEDIA_TYPE } from '../../../../core/media/base-media.interface';
 import { MediaItem } from '../../../../core/media/media.interface';
 import { isVideoFrame } from '../../../../core/media/video.interface';
 import { DatasetIdentifier } from '../../../../core/projects/dataset.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { updateVideoTimelineQuery } from './utils';
 
 interface UseGetAnnotations {
@@ -43,7 +42,6 @@ export const useAnnotationsQuery = ({
     enabled = true,
 }: UseGetAnnotations): UseQueryResult<Annotation[], AxiosError> => {
     const queryClient = useQueryClient();
-    const { addNotification } = useNotification();
 
     const isQueryEnabled = enabled && mediaItem !== undefined;
 
@@ -83,8 +81,8 @@ export const useAnnotationsQuery = ({
         }
 
         const message = getErrorMessageByStatusCode(query.error);
-        addNotification({ message: `${message} when getting annotations`, type: NOTIFICATION_TYPE.ERROR });
-    }, [query.isError, query.error, addNotification]);
+        toast({ message: `${message} when getting annotations`, type: 'error' });
+    }, [query.isError, query.error]);
 
     return query;
 };

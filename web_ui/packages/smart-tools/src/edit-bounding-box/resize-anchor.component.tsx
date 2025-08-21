@@ -4,9 +4,14 @@
 import { CSSProperties, ReactNode } from 'react';
 
 import { Anchor as InternalAnchor } from './anchor.component';
-import { ResizeAnchorType } from './resize-anchor.enum';
 
 export const ANCHOR_SIZE = 8;
+
+enum ResizeAnchorType {
+    SQUARE,
+    CIRCLE,
+    CUSTOM,
+}
 
 interface ResizeAnchorProps {
     zoom: number;

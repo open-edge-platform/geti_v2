@@ -1,18 +1,8 @@
 {{- define "gateway.name" -}}
-{{- if eq .Values.api_gateway.feature_flags_data.FEATURE_FLAG_AMBIENT_MESH "true"  }}
-{{- "istio-ingress-gateway" -}}
-{{- else if eq .Release.Name "release-name" -}}
+{{- if eq .Release.Name "RELEASE-NAME" -}}
   {{- .Values.name | default "istio-ingressgateway" -}}
 {{- else -}}
   {{- .Values.name | default .Release.Name | default "istio-ingressgateway" -}}
-{{- end -}}
-{{- end }}
-
-{{- define "gateway.namespace" -}}
-{{- if .Values.namespaceOverride -}}
-{{- .Values.namespaceOverride -}}
-{{- else -}}
-{{- .Release.Namespace -}}
 {{- end -}}
 {{- end }}
 
@@ -46,5 +36,13 @@ istio.io/rev: {{ . | quote }}
 {{- .Values.serviceAccount.name | default (include "gateway.name" .)    }}
 {{- else }}
 {{- .Values.serviceAccount.name | default "default" }}
+{{- end }}
+{{- end }}
+
+{{- define "gateway.namespace"}}
+{{- if .Values.namespaceOverride }}
+{{- .Values.namespaceOverride }}
+{{- else}}
+{{- .Release.Namespace }}
 {{- end }}
 {{- end }}

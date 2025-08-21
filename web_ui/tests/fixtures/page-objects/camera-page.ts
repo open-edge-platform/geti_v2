@@ -22,8 +22,8 @@ export class CameraPage {
     async canTakePhotos() {
         await expect(this.page.getByRole('button', { name: 'photo capture' })).toBeEnabled();
 
-        if (await this.page.getByLabel('close notification', { exact: true }).isVisible()) {
-            await this.page.getByLabel('close notification', { exact: true }).click();
+        if (await this.page.getByLabel('Close toast', { exact: true }).isVisible()) {
+            await this.page.getByLabel('Close toast', { exact: true }).click();
         }
     }
 

@@ -11,7 +11,8 @@ import { useHover } from 'react-aria';
 import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { isRect } from '../../../../core/annotations/utils';
-import { AnnotationToolContext, ToolType } from '../../core/annotation-tool-context.interface';
+import { ToolType } from '../../core/annotation-tool-context.interface';
+import { useAnnotationToolContext } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { useTask } from '../../providers/task-provider/task-provider.component';
 import { AnnotationActions } from './annotation-actions.component';
 import { EditLabels } from './edit-labels.component';
@@ -27,7 +28,6 @@ export interface LabelsProps {
     showOptions?: boolean;
     annotation: Annotation;
     areLabelsInteractive?: boolean;
-    annotationToolContext: AnnotationToolContext;
     canEditAnnotationLabel?: boolean;
 }
 
@@ -67,12 +67,12 @@ export const Labels = ({
     annotation,
     isOverlap = false,
     showOptions = true,
-    annotationToolContext,
     areLabelsInteractive = true,
     canEditAnnotationLabel = true,
 }: LabelsProps): JSX.Element => {
     const { selectedTask } = useTask();
     const { x: left, y, height } = useLabelPosition(annotation);
+    const { tool } = useAnnotationToolContext();
 
     const [editLabels, setEditLabels] = useState(false);
     const { hoverProps, isHovered } = useHover({ isDisabled: editLabels || !canEditAnnotationLabel });
@@ -84,9 +84,10 @@ export const Labels = ({
             return undefined;
         }
 
-        if (!annotation.isSelected && annotationToolContext.tool === ToolType.SelectTool) {
+        if (!annotation.isSelected && tool === ToolType.SelectTool) {
             return isHovered ? 2 : 1;
         }
+
         return undefined;
     };
 
@@ -112,11 +113,7 @@ export const Labels = ({
                     // Make sure the label search component overlaps labels from other annotations
                     style={{ ...style, zIndex: 2 }}
                 >
-                    <EditLabels
-                        annotation={annotation}
-                        setEditLabels={setEditLabels}
-                        annotationToolContext={annotationToolContext}
-                    />
+                    <EditLabels annotation={annotation} setEditLabels={setEditLabels} />
                 </div>
             </>
         );
@@ -167,11 +164,7 @@ export const Labels = ({
 
                 <AnimatePresence>
                     {showOptions && isHovered && (
-                        <AnnotationActions
-                            setEditLabels={setEditLabels}
-                            annotation={annotation}
-                            annotationToolContext={annotationToolContext}
-                        />
+                        <AnnotationActions setEditLabels={setEditLabels} annotation={annotation} />
                     )}
                 </AnimatePresence>
             </ul>
