@@ -1,5 +1,5 @@
-id: Object_Detection_Deim_DFine_l
-name: Deim-DFine-l
+id: Object_Detection_Deim_DFine_L
+name: Deim-DFine-L
 
 description: "DEIM is an advanced training framework designed to enhance the matching mechanism in DETRs, enabling faster convergence and improved accuracy."
 stats:

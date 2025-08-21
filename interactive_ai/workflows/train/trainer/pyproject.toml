@@ -2,7 +2,7 @@
 name = "otx-v2-trainer"
 version = "1.0.0"
 description = "OTX trainer"
-requires-python = ">=3.11, <=3.12"
+requires-python = ">=3.10, <3.13"
 
 dependencies = [
     "minio~=7.1.0",
