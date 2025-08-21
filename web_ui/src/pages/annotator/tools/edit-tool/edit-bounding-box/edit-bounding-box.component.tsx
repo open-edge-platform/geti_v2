@@ -4,44 +4,42 @@
 import { useEffect, useState } from 'react';
 
 import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
+import { RegionOfInterest } from '@geti/smart-tools/types';
 
 import { Annotation } from '../../../../../core/annotations/annotation.interface';
 import { Point } from '../../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
 import { Labels } from '../../../annotation/labels/labels.component';
-import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
-import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
 import { TranslateShape } from '../translate-shape.component';
 import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from '../utils';
 
 import classes from './../../../annotator-canvas.module.scss';
 
 interface EditBoundingBoxProps {
-    annotationToolContext: AnnotationToolContext;
     annotation: Annotation & { shape: { shapeType: ShapeType.Rect } };
     disableTranslation?: boolean;
     disablePoints?: boolean;
+    roi: RegionOfInterest;
+    image: ImageData;
+    zoom: number;
+    updateAnnotation: (annotation: Annotation) => void;
 }
 
 export const EditBoundingBox = ({
-    annotationToolContext,
     annotation,
     disablePoints = false,
     disableTranslation = false,
+    roi,
+    image,
+    zoom,
+    updateAnnotation,
 }: EditBoundingBoxProps): JSX.Element => {
     const [shape, setShape] = useState(annotation.shape);
 
     useEffect(() => setShape(annotation.shape), [annotation.shape]);
 
-    const { scene } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
-    const { roi, image } = useROI();
-
     const onComplete = () => {
-        scene.updateAnnotation({ ...annotation, shape });
+        updateAnnotation({ ...annotation, shape });
     };
 
     const translate = (point: Point) => {
@@ -75,7 +73,7 @@ export const EditBoundingBox = ({
                 />
             </svg>
 
-            <Labels annotation={{ ...annotation, shape }} annotationToolContext={annotationToolContext} />
+            <Labels annotation={{ ...annotation, shape }} />
 
             {disablePoints === false ? (
                 <svg

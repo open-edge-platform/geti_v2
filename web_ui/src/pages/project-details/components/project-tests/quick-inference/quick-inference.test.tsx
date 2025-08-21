@@ -229,23 +229,25 @@ describe('QuickInference', () => {
             new File(['hello'], 'hello.txt', { type: 'text/txt' }),
         ];
 
-        filesWithUnsupportedFormats.map(async (file) => {
-            await uploadFile(screen.getByLabelText('upload link upload media input'), file);
+        await Promise.all(
+            filesWithUnsupportedFormats.map(async (file) => {
+                await uploadFile(screen.getByLabelText('upload link upload media input'), file);
 
-            await Promise.resolve();
+                await Promise.resolve();
 
-            expect(
-                screen.getByText(
-                    `This feature only supports image files. Supported extensions: ${mediaExtensionHandler(
-                        VALID_IMAGE_TYPES
-                    )}`
-                )
-            ).toBeInTheDocument();
+                expect(
+                    await screen.findByText(
+                        `This feature only supports image files. Supported extensions: ${mediaExtensionHandler(
+                            VALID_IMAGE_TYPES
+                        )}`
+                    )
+                ).toBeInTheDocument();
 
-            expect(inferenceService.getPredictionsForFile).not.toHaveBeenCalled();
-        });
+                expect(inferenceService.getPredictionsForFile).not.toHaveBeenCalled();
+            })
+        );
 
-        expect(await screen.findByRole('button', { name: 'close notification' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Close toast' })).toBeInTheDocument();
         expect(screen.getByText('This feature only supports image files.', { exact: false })).toBeInTheDocument();
     });
 

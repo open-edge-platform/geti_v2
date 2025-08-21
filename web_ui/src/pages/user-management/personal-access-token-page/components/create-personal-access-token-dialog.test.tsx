@@ -5,7 +5,6 @@ import { useOverlayTriggerState } from '@react-stately/overlays';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { CREATE_ERROR, CreatePersonalAccessTokenDialog } from './create-personal-access-token-dialog.component';
 
@@ -44,10 +43,10 @@ jest.mock('../../../../core/personal-access-tokens/hooks/use-personal-access-tok
     }),
 }));
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 describe('CreatePersonalAccessTokenDialog', () => {
@@ -124,9 +123,9 @@ describe('CreatePersonalAccessTokenDialog', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Create' }));
 
         await waitFor(() => {
-            expect(mockAddNotification).toHaveBeenCalledWith({
+            expect(mockedToast).toHaveBeenCalledWith({
                 message: errorMessage,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         });
     });
@@ -148,9 +147,9 @@ describe('CreatePersonalAccessTokenDialog', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Create' }));
 
         await waitFor(() => {
-            expect(mockAddNotification).toHaveBeenCalledWith({
+            expect(mockedToast).toHaveBeenCalledWith({
                 message: CREATE_ERROR,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         });
     });

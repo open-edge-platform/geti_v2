@@ -3,14 +3,13 @@
 
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useMemo, useState } from 'react';
 
+import { toast } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
 import { Annotation } from '../../../../../core/annotations/annotation.interface';
 import { Explanation } from '../../../../../core/annotations/prediction.interface';
 import { PredictionResult } from '../../../../../core/annotations/services/prediction-service.interface';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import {
     isValidationFailReason,
     mediaExtensionHandler,
@@ -59,7 +58,6 @@ const QuickInferenceContext = createContext<QuickInferenceContextProps | undefin
 export const QuickInferenceProvider = ({ isDisabled, children }: QuickInferenceProviderProps): JSX.Element => {
     const projectIdentifier = useProjectIdentifier();
     const { predictionMutation, explainMutation } = useQuickInferenceMutation();
-    const { addNotification } = useNotification();
 
     const [warningCardDismissed, setDismissWarningCard] = useState(false);
     const [imageData, setImageData] = useState<ImageData>();
@@ -116,11 +114,11 @@ export const QuickInferenceProvider = ({ isDisabled, children }: QuickInferenceP
 
             // Quick inference only supports image files with a valid extension
             if (!isSupportedFormat) {
-                addNotification({
+                toast({
                     message: `This feature only supports image files. Supported extensions: ${mediaExtensionHandler(
                         VALID_IMAGE_TYPES
                     )}`,
-                    type: NOTIFICATION_TYPE.ERROR,
+                    type: 'error',
                 });
 
                 return;
@@ -141,7 +139,7 @@ export const QuickInferenceProvider = ({ isDisabled, children }: QuickInferenceP
             if (isValidationFailReason(error)) {
                 const errorMessage = error.errors.join('\n');
 
-                addNotification({ message: errorMessage, type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: errorMessage, type: 'error' });
             }
         }
     };

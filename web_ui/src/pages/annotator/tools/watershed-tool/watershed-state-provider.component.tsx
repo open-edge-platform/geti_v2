@@ -4,14 +4,13 @@
 import { createContext, Dispatch, SetStateAction, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { type Watershed, type WatershedPolygon } from '@geti/smart-tools';
+import { toast } from '@geti/ui';
 import { UseMutateFunction, useMutation } from '@tanstack/react-query';
 import { Remote } from 'comlink';
 
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { AlgorithmType } from '../../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { useLoadAIWebworker } from '../../../../hooks/use-load-ai-webworker/use-load-ai-webworker.hook';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
 import { ToolType } from '../../core/annotation-tool-context.interface';
@@ -90,7 +89,6 @@ export const WatershedStateProvider = ({ children }: StateProviderProps): JSX.El
 
     const wsInstance = useRef<Remote<Watershed> | null>(null);
 
-    const { addNotification } = useNotification();
     const { getToolSettings } = useAnnotationToolContext();
     const {
         project: { labels },
@@ -125,10 +123,7 @@ export const WatershedStateProvider = ({ children }: StateProviderProps): JSX.El
             return [];
         },
         onError: () => {
-            addNotification({
-                message: 'Failed to run watershed algorithm, could you please try again?',
-                type: NOTIFICATION_TYPE.ERROR,
-            });
+            toast({ message: 'Failed to run watershed algorithm, could you please try again?', type: 'error' });
         },
     });
 

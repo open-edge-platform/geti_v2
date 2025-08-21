@@ -4,7 +4,7 @@
 import { Fragment } from 'react';
 
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
-import { View } from '@geti/ui';
+import { toast, View } from '@geti/ui';
 import { OverlayTriggerState, useOverlayTriggerState } from '@react-stately/overlays';
 import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -15,8 +15,6 @@ import { DatasetImportItem, DatasetImportToNewProjectItem } from '../../../core/
 import { useDatasetImportQueries } from '../../../core/datasets/hooks/use-dataset-import-queries.hook';
 import { getCurrentJob, isImportingNewProjectJob, isPreparingJob } from '../../../core/datasets/utils';
 import { useJobs } from '../../../core/jobs/hooks/use-jobs.hook';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { useDatasetImportToNewProject } from '../../../providers/dataset-import-to-new-project-provider/dataset-import-to-new-project-provider.component';
 import { formatDatasetPrepareImportResponse } from '../../../providers/dataset-import-to-new-project-provider/utils';
 import { useWorkspaceIdentifier } from '../../../providers/workspaces-provider/use-workspace-identifier.hook';
@@ -47,7 +45,7 @@ const DatasetImportJobStatus = ({
     deleteDatasetImport,
 }: DatasetImportJobStatusProps) => {
     const client = useQueryClient();
-    const { addNotification } = useNotification();
+
     const { usePreparingStatusJob, useImportingStatusJob } = useDatasetImportQueries();
 
     const { id, uploadId, preparingJobId, importingJobId } = datasetImportItem;
@@ -67,7 +65,7 @@ const DatasetImportJobStatus = ({
         },
         onError: (error: AxiosError) => {
             patchDatasetImport({ id, status: DATASET_IMPORT_STATUSES.PREPARING_ERROR });
-            addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: error.message, type: 'error' });
         },
         onCancel: () => {
             deleteDatasetImport(datasetImportItem.id);
@@ -87,7 +85,7 @@ const DatasetImportJobStatus = ({
         },
         onError: (error: AxiosError) => {
             patchDatasetImport({ id, status: DATASET_IMPORT_STATUSES.IMPORTING_TO_NEW_PROJECT_ERROR });
-            addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: error.message, type: 'error' });
         },
         onCancel: () => {
             deleteDatasetImport(datasetImportItem.id);

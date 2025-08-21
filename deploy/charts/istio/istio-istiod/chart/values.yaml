@@ -20,14 +20,13 @@ _internal_defaults_do_not_set:
   image: pilot
   traceSampling: 1.0
     
-  # Resources for a small pilot install
   resources:
     limits:
       cpu: 400m
       memory: 1024Mi
     requests:
       cpu: 400m
-      memory: 1024Mi
+      memory: 400Mi
 
   # Set to `type: RuntimeDefault` to use the default profile if available.
   seccompProfile: {}
@@ -370,7 +369,7 @@ _internal_defaults_do_not_set:
       # would only capture egress traffic on those two IP Ranges, all other outbound traffic would
       # be allowed by the sidecar
       includeIPRanges: "*"
-      excludeIPRanges: "10.43.0.1/32"
+      excludeIPRanges: ""
       includeOutboundPorts: ""
       excludeOutboundPorts: ""
 

@@ -3,12 +3,11 @@
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { getErrorMessage } from '@geti/core/src/services/utils';
+import { toast } from '@geti/ui';
 import { useMutation, UseMutationResult, useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { ProjectIdentifier } from '../../projects/core.interface';
 import { ConfigurableParametersReconfigureDTO } from '../dtos/configurable-parameters.interface';
 import { ConfigurableParametersTaskChain } from '../services/configurable-parameters.interface';
@@ -29,8 +28,6 @@ interface UseConfigParameters {
 
 export const useConfigParameters = (projectIdentifier: ProjectIdentifier): UseConfigParameters => {
     const { configParametersService } = useApplicationServices();
-
-    const { addNotification } = useNotification();
 
     const useGetConfigParameters = (isQueryEnabled: boolean) =>
         useQuery<ConfigurableParametersTaskChain[], AxiosError>({
@@ -63,7 +60,7 @@ export const useConfigParameters = (projectIdentifier: ProjectIdentifier): UseCo
             configParametersService.reconfigureParameters(projectIdentifier, body),
 
         onError: (error: AxiosError) => {
-            addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: getErrorMessage(error), type: 'error' });
         },
     });
 

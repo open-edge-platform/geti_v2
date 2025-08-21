@@ -7,13 +7,12 @@ import { paths } from '@geti/core/src/services/routes';
 import { getErrorMessage } from '@geti/core/src/services/utils';
 import { useOnboardUserMutation } from '@geti/core/src/users/hook/use-onboard-user-mutation.hook';
 import { useProfileQuery } from '@geti/core/src/users/hook/use-profile.hook';
+import { toast } from '@geti/ui';
 import { isNil } from 'lodash-es';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { isActiveOrganization, isUserActivatedInOrg, isUserInvitedInOrg } from '../../../routes/organizations/util';
 import { LOCAL_STORAGE_KEYS } from '../../../shared/local-storage-keys';
 import { hasEqualId } from '../../../shared/utils';
@@ -24,7 +23,6 @@ export const useSelectedOrganization = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { organizationId } = useOrganizationIdentifier();
-    const { addNotification } = useNotification();
     const onboardUserMutation = useOnboardUserMutation();
     const { data, ...profileResponse } = useProfileQuery();
 
@@ -57,7 +55,7 @@ export const useSelectedOrganization = () => {
             {
                 onSuccess,
                 onError: (error) => {
-                    addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                    toast({ message: getErrorMessage(error), type: 'error' });
                 },
                 onSettled: () => {
                     isOnboarding.current = false;

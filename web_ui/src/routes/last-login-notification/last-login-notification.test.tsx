@@ -27,9 +27,9 @@ describe('LastLoginNotification', () => {
         it('for SaaS environments and if lastLoginDate is not "null"', async () => {
             jest.mocked(useIsSaasEnv).mockReturnValue(true);
             jest.mocked(usePreviousSignIn).mockReturnValue({ lastLoginDate: '19 july 2024', userId: 'some-id' });
-            await render(<LastLoginNotification />);
+            render(<LastLoginNotification />);
 
-            expect(screen.getByText(/Your previous sign-in/)).toBeInTheDocument();
+            expect(await screen.findByText(/Your previous sign-in/)).toBeInTheDocument();
         });
     });
 
@@ -37,7 +37,7 @@ describe('LastLoginNotification', () => {
         it('for onprem environments', async () => {
             jest.mocked(useIsSaasEnv).mockReturnValueOnce(false);
 
-            await render(<LastLoginNotification />);
+            render(<LastLoginNotification />);
 
             expect(screen.queryByText(/Your previous sign-in/)).not.toBeInTheDocument();
         });
@@ -46,7 +46,7 @@ describe('LastLoginNotification', () => {
             jest.mocked(useIsSaasEnv).mockReturnValueOnce(true);
             jest.mocked(usePreviousSignIn).mockReturnValueOnce({ lastLoginDate: null, userId: undefined });
 
-            await render(<LastLoginNotification />);
+            render(<LastLoginNotification />);
 
             expect(screen.queryByText(/Your previous sign-in/)).not.toBeInTheDocument();
         });

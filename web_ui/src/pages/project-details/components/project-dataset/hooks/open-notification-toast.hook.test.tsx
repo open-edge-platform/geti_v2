@@ -11,7 +11,6 @@ import { createInMemoryProjectService } from '../../../../../core/projects/servi
 import { LifecycleStage } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { createInMemorySupportedAlgorithmsService } from '../../../../../core/supported-algorithms/services/in-memory-supported-algorithms-service';
 import { getLegacyMockedSupportedAlgorithm } from '../../../../../core/supported-algorithms/services/test-utils';
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
 import {
     getMockedModelsGroupAlgorithmDetails,
     getMockedModelVersion,
@@ -114,10 +113,10 @@ const mockedProjectIdentifier = {
     organizationId: 'organization-id',
 };
 
-const mockedAddToastNotification = jest.fn();
-jest.mock('../../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../../notification/notification.component'),
-    useNotification: jest.fn(() => ({ addToastNotification: mockedAddToastNotification })),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 describe('useOpenNotificationToast', () => {
@@ -155,9 +154,9 @@ describe('useOpenNotificationToast', () => {
         renderHook(() => useOpenNotificationToast(), { wrapper });
 
         await waitFor(() => {
-            expect(mockedAddToastNotification).toHaveBeenCalledWith(
+            expect(mockedToast).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    type: NOTIFICATION_TYPE.WARNING,
+                    type: 'warning',
                     title: `Your active model “${deprecatedActiveModel.groupName}" is deprecated`,
                     actionButtons: expect.arrayContaining([expect.any(Object), expect.any(Object)]),
                 })
@@ -171,9 +170,9 @@ describe('useOpenNotificationToast', () => {
 
         renderHook(() => useOpenNotificationToast(), { wrapper });
         await waitFor(() => {
-            expect(mockedAddToastNotification).toHaveBeenCalledWith(
+            expect(mockedToast).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    type: NOTIFICATION_TYPE.ERROR,
+                    type: 'error',
                     title: `Your active model “${obsoleteActiveModel.groupName}" is Obsolete`,
                     actionButtons: expect.arrayContaining([expect.any(Object), expect.any(Object)]),
                 })
@@ -187,7 +186,7 @@ describe('useOpenNotificationToast', () => {
         renderHook(() => useOpenNotificationToast(), { wrapper });
 
         await waitFor(() => {
-            expect(mockedAddToastNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
     });
 
@@ -197,7 +196,7 @@ describe('useOpenNotificationToast', () => {
         renderHook(() => useOpenNotificationToast(), { wrapper });
 
         await waitFor(() => {
-            expect(mockedAddToastNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
     });
 });

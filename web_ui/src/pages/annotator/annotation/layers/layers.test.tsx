@@ -12,6 +12,8 @@ import { providersRender } from '../../../../test-utils/required-providers-rende
 import { ProjectProvider } from '../../../project-details/providers/project-provider/project-provider.component';
 import { AnnotationSceneProvider } from '../../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { AnnotationThresholdProvider } from '../../providers/annotation-threshold-provider/annotation-threshold-provider.component';
+import { AnnotationToolProvider } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
+import { AnnotatorProvider } from '../../providers/annotator-provider/annotator-provider.component';
 import { PredictionProvider } from '../../providers/prediction-provider/prediction-provider.component';
 import { SelectedMediaItemProvider } from '../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { TaskChainProvider } from '../../providers/task-chain-provider/task-chain-provider.component';
@@ -54,24 +56,28 @@ describe('Layers', () => {
                 <AnnotationSceneProvider annotations={mockContext.scene.annotations} labels={[]}>
                     <TaskProvider>
                         <SelectedMediaItemProvider>
-                            <AnnotationThresholdProvider minThreshold={0} selectedTask={null}>
-                                <TaskChainProvider tasks={[]} selectedTask={null} defaultLabel={null}>
-                                    <PredictionProvider
-                                        settings={getMockedUserProjectSettingsObject()}
-                                        explanations={[]}
-                                        initPredictions={[]}
-                                        userAnnotationScene={mockContext.scene}
-                                    >
-                                        <Layers
-                                            width={100}
-                                            height={100}
-                                            annotations={mockAnnotations}
-                                            annotationToolContext={mockContext}
-                                            annotationsFilter={identity}
-                                        />
-                                    </PredictionProvider>
-                                </TaskChainProvider>
-                            </AnnotationThresholdProvider>
+                            <AnnotatorProvider>
+                                <AnnotationToolProvider>
+                                    <AnnotationThresholdProvider minThreshold={0} selectedTask={null}>
+                                        <TaskChainProvider tasks={[]} selectedTask={null} defaultLabel={null}>
+                                            <PredictionProvider
+                                                settings={getMockedUserProjectSettingsObject()}
+                                                explanations={[]}
+                                                initPredictions={[]}
+                                                userAnnotationScene={mockContext.scene}
+                                            >
+                                                <Layers
+                                                    width={100}
+                                                    height={100}
+                                                    annotations={mockAnnotations}
+                                                    annotationToolContext={mockContext}
+                                                    annotationsFilter={identity}
+                                                />
+                                            </PredictionProvider>
+                                        </TaskChainProvider>
+                                    </AnnotationThresholdProvider>
+                                </AnnotationToolProvider>
+                            </AnnotatorProvider>
                         </SelectedMediaItemProvider>
                     </TaskProvider>
                 </AnnotationSceneProvider>

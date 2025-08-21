@@ -210,11 +210,7 @@ spec:
           - name: PLATFORM
             value: "{{ coalesce .Values.global.platform .Values.platform }}"
           resources:
-{{- if .Values.resources }}
-{{ toYaml .Values.resources | trim | indent 12 }}
-{{- else }}
-{{ toYaml .Values.global.defaultResources | trim | indent 12 }}
-{{- end }}
+          {{ toYaml .Values.resources | nindent 12 }}
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
