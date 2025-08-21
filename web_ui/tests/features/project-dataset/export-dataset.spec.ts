@@ -6,7 +6,7 @@ import { expect, Page } from '@playwright/test';
 import { JobState, JobStepState, JobType } from '../../../src/core/jobs/jobs.const';
 import { test } from '../../fixtures/base-test';
 import { switchCallsAfter } from '../../utils/api';
-import { getMockedJob, projects } from './mocks';
+import { getMockedJob, projects, projectWithTwoDatasets } from './mocks';
 
 const [project] = projects.projects;
 
@@ -79,6 +79,7 @@ test.describe('export dataset', () => {
         registerApiResponse('TriggerDatasetExport', async (_, res, ctx) =>
             res(ctx.json({ export_dataset_id: exportId, status_url: `url/test`, job_id: exportId }))
         );
+        registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(projectWithTwoDatasets)));
 
         registerApiResponse(
             'GetJob',
