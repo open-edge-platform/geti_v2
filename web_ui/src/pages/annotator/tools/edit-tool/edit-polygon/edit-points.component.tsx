@@ -3,6 +3,7 @@
 
 import { PointerEvent, RefObject, useEffect, useRef, useState } from 'react';
 
+import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
 import { Delete } from '@geti/ui/icons';
 import { isEmpty, noop } from 'lodash-es';
 
@@ -15,7 +16,6 @@ import { isKeyboardDelete } from '../../../../media/utils';
 import { getRelativePoint, projectPointOnLine } from '../../../../utils';
 import { useAnnotationScene } from '../../../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { useAnnotatorContextMenu } from '../../../providers/annotator-context-menu-provider/annotator-context-menu-provider.component';
-import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { selectAnchorPointLabel } from './utils';
 
 interface EditPointsProps {

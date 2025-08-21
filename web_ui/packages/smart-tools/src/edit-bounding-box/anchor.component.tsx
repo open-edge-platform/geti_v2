@@ -5,9 +5,20 @@ import { CSSProperties, PointerEvent, ReactNode, useState } from 'react';
 
 import { isFunction } from 'lodash-es';
 
-import { Point } from '../../../../core/annotations/shapes.interface';
-import { isLeftButton } from '../../../buttons-utils';
-import { PointerType } from '../tools.interface';
+import { Point } from '../shared/interfaces';
+
+interface MouseButton {
+    button: number;
+    buttons: number;
+}
+
+const BUTTON_LEFT = {
+    button: 0,
+    buttons: 1,
+};
+const isLeftButton = (button: MouseButton): boolean => {
+    return button.button === BUTTON_LEFT.button || button.buttons === BUTTON_LEFT.buttons;
+};
 
 interface AnchorProps {
     children: ReactNode;
@@ -41,7 +52,7 @@ export const Anchor = ({
     const onPointerDown = (event: PointerEvent) => {
         event.preventDefault();
 
-        if (event.pointerType === PointerType.Touch || !isLeftButton(event)) {
+        if (event.pointerType === 'touch' || !isLeftButton(event)) {
             return;
         }
 
@@ -66,7 +77,7 @@ export const Anchor = ({
     };
 
     const onPointerUp = (event: PointerEvent) => {
-        if (event.pointerType === PointerType.Touch || !isLeftButton(event)) {
+        if (event.pointerType === 'touch' || !isLeftButton(event)) {
             return;
         }
 

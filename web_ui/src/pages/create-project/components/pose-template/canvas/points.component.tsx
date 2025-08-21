@@ -1,9 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ResizeAnchor } from '@geti/smart-tools';
+
 import { KeypointNode } from '../../../../../core/annotations/shapes.interface';
 import { PoseKeypoint } from '../../../../annotator/annotation/shapes/pose-keypoints.component';
-import { ResizeAnchor } from '../../../../annotator/tools/edit-tool/resize-anchor.component';
 import { ResizeAnchorType } from '../../../../annotator/tools/edit-tool/resize-anchor.enum';
 
 interface PointsProps {

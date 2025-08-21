@@ -3,13 +3,12 @@
 
 import { useMemo } from 'react';
 
-import { Flex, Loading } from '@geti/ui';
+import { Flex, Loading, ViewModes } from '@geti/ui';
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
 import { isEmpty } from 'lodash-es';
 
 import { MediaAdvancedFilterResponse, MediaItem, MediaItemResponse } from '../../../../../core/media/media.interface';
 import { MediaItemsList } from '../../../../../shared/components/media-items-list/media-items-list.component';
-import { ViewModes } from '../../../../../shared/components/media-view-modes/utils';
 import { NotFound } from '../../../../../shared/components/not-found/not-found.component';
 import { useGroupedMediaItems } from '../../../../../shared/hooks/use-grouped-media-items.hook';
 import { useSelectedMediaItemIndex } from '../../../../../shared/hooks/use-selected-media-item-index.hook';

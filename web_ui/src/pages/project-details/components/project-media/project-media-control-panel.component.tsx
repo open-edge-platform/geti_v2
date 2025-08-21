@@ -3,15 +3,13 @@
 
 import { Dispatch, SetStateAction } from 'react';
 
-import { Checkbox, dimensionValue, Flex, Tooltip, TooltipTrigger, View } from '@geti/ui';
+import { Checkbox, dimensionValue, Flex, MediaViewModes, Tooltip, TooltipTrigger, View, ViewModes } from '@geti/ui';
 import { Delete } from '@geti/ui/icons';
 import { isEmpty } from 'lodash-es';
 
 import { SearchRuleField } from '../../../../core/media/media-filter.interface';
 import { isVideo } from '../../../../core/media/video.interface';
 import { useSortingParams } from '../../../../hooks/use-sorting-params/use-sorting-params.hook';
-import { MediaViewModes } from '../../../../shared/components/media-view-modes/media-view-modes.component';
-import { ViewModes } from '../../../../shared/components/media-view-modes/utils';
 import { MenuTriggerPopup } from '../../../../shared/components/menu-trigger-popup/menu-trigger-popup.component';
 import { UploadMediaButton } from '../../../../shared/components/upload-media/upload-media-button/upload-media-button.component';
 import { MediaSearch } from '../../../media/media-actions/media-search.component';

@@ -14,18 +14,17 @@ import {
     Flex,
     Heading,
     Selection,
+    useViewMode,
 } from '@geti/ui';
 import { differenceBy, isEmpty, orderBy } from 'lodash-es';
 
 import { Label } from '../../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
-import { useViewMode } from '../../../../../hooks/use-view-mode/use-view-mode.hook';
 import { MEDIA_CONTENT_BUCKET } from '../../../../../providers/media-upload-provider/media-upload.interface';
 import { DeleteItemButton } from '../../../../../shared/components/delete-item-button/delete-item-button.component';
 import { SelectionCheckbox } from '../../../../../shared/components/media-preview-list/checkbox.component';
 import { MediaPreviewList } from '../../../../../shared/components/media-preview-list/media-preview-list.component';
-import { INITIAL_VIEW_MODE } from '../../../../../shared/components/media-view-modes/utils';
 import { getIds } from '../../../../../shared/utils';
 import { TaskProvider } from '../../../../annotator/providers/task-provider/task-provider.component';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
@@ -69,7 +68,7 @@ export const PreviewGalleryDialog = ({
     onUpload,
 }: PreviewGalleryDialogProps) => {
     const { isSingleDomainProject } = useProject();
-    const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC, INITIAL_VIEW_MODE);
+    const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC);
     const [currentFiles, setCurrentFiles] = useState(initFiles.map(getMediaItemFromFile(labelIds)));
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
     const areAllItemsSelected = selectedKeys === 'all';
@@ -91,7 +90,7 @@ export const PreviewGalleryDialog = ({
         onClose();
     };
 
-    const handleSortFiles = (option: Key) => {
+    const handleSortFiles = (option: Key | null) => {
         const order = option === SortingOptions.LABEL_NAME_A_Z ? 'asc' : 'desc';
 
         setCurrentFiles((prevFiles) => orderBy(prevFiles, ['labelName'], order));

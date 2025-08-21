@@ -3,7 +3,16 @@
 
 import { useMemo } from 'react';
 
-import { Flex, IllustratedMessage, Loading, PressableElement, Tooltip, TooltipTrigger, View } from '@geti/ui';
+import {
+    Flex,
+    IllustratedMessage,
+    Loading,
+    PressableElement,
+    Tooltip,
+    TooltipTrigger,
+    View,
+    ViewModes,
+} from '@geti/ui';
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
 import { isEmpty } from 'lodash-es';
 
@@ -12,7 +21,6 @@ import { MediaItem } from '../../../../core/media/media.interface';
 import { TestImageMediaItem } from '../../../../core/tests/test-image.interface';
 import { TestMediaAdvancedFilter, TestMediaItem } from '../../../../core/tests/test-media.interface';
 import { MediaItemsList } from '../../../../shared/components/media-items-list/media-items-list.component';
-import { ViewModes } from '../../../../shared/components/media-view-modes/utils';
 import { NotFound } from '../../../../shared/components/not-found/not-found.component';
 import { useSelectedMediaItemIndex } from '../../../../shared/hooks/use-selected-media-item-index.hook';
 import { isSelected } from '../../../annotator/components/sidebar/dataset/utils';
