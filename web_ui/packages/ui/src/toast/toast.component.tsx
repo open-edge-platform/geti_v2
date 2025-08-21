@@ -17,7 +17,7 @@ import classes from './toast.module.scss';
 type ToastType = 'success' | 'error' | 'warning' | 'info' | 'neutral';
 
 type ToastProps = {
-    id?: string | number;
+    id?: string;
     type: ToastType;
     actionButtons?: ReactElement[];
     hasCloseButton?: boolean;
@@ -166,7 +166,7 @@ export const toast = ({
     position,
     title,
 }: ToastProps) => {
-    const toastId = id !== undefined ? `id-${id}` : `id-${parseId(String(message))}`;
+    const toastId = `id-${parseId(id ?? String(message))}`;
 
     return soonerToast.custom(
         () => {
