@@ -4,6 +4,7 @@
 import { useMemo } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import {
     InfiniteData,
     infiniteQueryOptions,
@@ -23,8 +24,6 @@ import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { OrganizationIdentifier } from '../../organizations/organizations.interface';
 import {
     CreditAccount,
@@ -111,7 +110,6 @@ const organizationCreditAccountsQueryOptions = (
 
 export const useCreditsQueries = (): UseCreditsQueries => {
     const queryClient = useQueryClient();
-    const { addNotification } = useNotification();
     const { creditsService } = useApplicationServices();
 
     const useGetOrganizationBalanceQuery: UseCreditsQueries['useGetOrganizationBalanceQuery'] = (
@@ -169,14 +167,14 @@ export const useCreditsQueries = (): UseCreditsQueries => {
                 await queryClient.invalidateQueries({
                     queryKey: QUERY_KEYS.CREDIT_ACCOUNTS({ organizationId: data.organizationId }),
                 });
-                addNotification({
+                toast({
                     message: 'Credit account updated successfully',
-                    type: NOTIFICATION_TYPE.INFO,
-                    dismiss: { duration: 10000 },
+                    type: 'info',
+                    duration: 10000,
                 });
             },
             onError: (error) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
     };
@@ -191,14 +189,14 @@ export const useCreditsQueries = (): UseCreditsQueries => {
                 await queryClient.invalidateQueries({
                     queryKey: QUERY_KEYS.ORGANIZATION_BALANCE({ organizationId: payload.organizationId }),
                 });
-                addNotification({
+                toast({
                     message: 'Credit account created successfully',
-                    type: NOTIFICATION_TYPE.INFO,
-                    dismiss: { duration: 10 },
+                    type: 'info',
+                    duration: 10,
                 });
             },
             onError: (error) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
     };
@@ -218,14 +216,14 @@ export const useCreditsQueries = (): UseCreditsQueries => {
                 await queryClient.invalidateQueries({
                     queryKey: QUERY_KEYS.ORGANIZATION_BALANCE(payload.id),
                 });
-                addNotification({
+                toast({
                     message: 'Credit account balance updated successfully',
-                    type: NOTIFICATION_TYPE.INFO,
-                    dismiss: { duration: 10000 },
+                    type: 'info',
+                    duration: 10000,
                 });
             },
             onError: (error) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
     };

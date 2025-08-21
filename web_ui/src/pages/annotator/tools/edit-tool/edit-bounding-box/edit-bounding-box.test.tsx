@@ -6,46 +6,36 @@ import '@wessberg/pointer-events';
 import { ANCHOR_SIZE } from '@geti/smart-tools';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { Annotation } from '../../../../../core/annotations/annotation.interface';
+import { Annotation, RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import { fakeAnnotationToolContext } from '../../../../../test-utils/fake-annotator-context';
-import { getMockedProjectIdentifier } from '../../../../../test-utils/mocked-items-factory/mocked-identifiers';
-import { projectRender as render } from '../../../../../test-utils/project-provider-render';
 import { getMockedImage, getMockedROI } from '../../../../../test-utils/utils';
-import { ProjectProvider } from '../../../../project-details/providers/project-provider/project-provider.component';
-import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
-import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { TaskProvider } from '../../../providers/task-provider/task-provider.component';
+import { AnnotationToolProvider } from '../../../providers/annotation-tool-provider/annotation-tool-provider.component';
+import { annotatorRender as render } from '../../../test-utils/annotator-render';
 import { EditBoundingBox as EditBoundingBoxTool } from './edit-bounding-box.component';
 
 const mockROI = getMockedROI({ x: 0, y: 0, width: 1000, height: 1000 });
 const mockImage = getMockedImage(mockROI);
-
-jest.mock('../../../providers/region-of-interest-provider/region-of-interest-provider.component', () => ({
-    useROI: jest.fn(() => ({
-        roi: mockROI,
-        image: mockImage,
-    })),
-}));
-
-jest.mock('./../../../zoom/zoom-provider.component', () => ({
-    useZoom: jest.fn(() => ({ zoomState: { zoom: 2.0, translation: { x: 0, y: 0 } } })),
-}));
+const mockUpdateAnnotation = jest.fn();
+const zoom = 2.0;
 
 const renderApp = async (
-    annotationToolContext: AnnotationToolContext,
     annotation: Annotation & {
         shape: {
             shapeType: ShapeType.Rect;
         };
-    }
+    },
+    roi?: RegionOfInterest
 ) => {
     const result = await render(
-        <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
-            <TaskProvider>
-                <EditBoundingBoxTool annotationToolContext={annotationToolContext} annotation={annotation} />
-            </TaskProvider>
-        </ProjectProvider>
+        <AnnotationToolProvider>
+            <EditBoundingBoxTool
+                roi={roi ?? mockROI}
+                image={mockImage}
+                zoom={zoom}
+                updateAnnotation={mockUpdateAnnotation}
+                annotation={annotation}
+            />
+        </AnnotationToolProvider>
     );
 
     return result;
@@ -63,20 +53,14 @@ describe('EditRectangleTool', (): void => {
         isLocked: false,
     };
     const shape = annotation.shape;
-
-    const zoom = 2.0;
-    const annotationToolContext = fakeAnnotationToolContext({
-        annotations: [annotation],
-        zoom,
-    });
-    const onComplete = annotationToolContext.scene.updateAnnotation;
+    const onComplete = mockUpdateAnnotation;
 
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     it('allows the user to translate a rectangle', async (): Promise<void> => {
-        await renderApp(annotationToolContext, annotation);
+        await renderApp(annotation);
 
         // Move the shape
         const startPoint = { x: 90, y: 10 };
@@ -117,7 +101,6 @@ describe('EditRectangleTool', (): void => {
 
     it('does not allows the user to translate a rectangle outside the roi', async (): Promise<void> => {
         const iRoi = { x: 100, y: 100, width: 100, height: 100 };
-        const iAnnotationToolContext = fakeAnnotationToolContext();
 
         const iAnnotation = {
             id: 'rect-1',
@@ -136,9 +119,7 @@ describe('EditRectangleTool', (): void => {
             isLocked: false,
         };
 
-        jest.mocked(useROI).mockReturnValueOnce({ roi: iRoi, image: getMockedImage(iRoi) });
-
-        await renderApp(iAnnotationToolContext, iAnnotation);
+        await renderApp(iAnnotation, iRoi);
         // Move the shape
         const startPoint = { x: iAnnotation.shape.x, y: iAnnotation.shape.y };
         const endPoint = { x: 0, y: startPoint.y };
@@ -161,7 +142,7 @@ describe('EditRectangleTool', (): void => {
             clientY: endPoint.y,
         });
 
-        expect(iAnnotationToolContext.scene.updateAnnotation).toHaveBeenCalledWith(iAnnotation);
+        expect(mockUpdateAnnotation).toHaveBeenCalledWith(iAnnotation);
     });
 
     test.each([
@@ -188,7 +169,7 @@ describe('EditRectangleTool', (): void => {
     ])(
         'keeps the bounding box in bounds of the roi when moving from %o to %o',
         async (startPoint, endPoint, expectedEndPoint) => {
-            await renderApp(annotationToolContext, annotation);
+            await renderApp(annotation);
 
             const rect = screen.getByLabelText('Drag to move shape');
 
@@ -516,7 +497,7 @@ describe('EditRectangleTool', (): void => {
             y: startPoint.y + translate.y * zoom,
         };
 
-        await renderApp(annotationToolContext, annotation);
+        await renderApp(annotation);
 
         const rect = screen.getByLabelText(`${anchor} resize anchor`);
 
@@ -558,7 +539,7 @@ describe('EditRectangleTool', (): void => {
                 y: startPoint.y + shape.height * zoom,
             };
 
-            await renderApp(annotationToolContext, annotation);
+            await renderApp(annotation);
 
             const rect = screen.getByLabelText(`North west resize anchor`);
             fireEvent.pointerDown(rect, {

@@ -132,7 +132,7 @@ export const EditCircle = ({
                 />
             </svg>
 
-            <Labels annotation={{ ...annotation, shape }} annotationToolContext={annotationToolContext} />
+            <Labels annotation={{ ...annotation, shape }} />
 
             {disablePoints === false ? (
                 <svg

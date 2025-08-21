@@ -26,7 +26,7 @@ def check_internet_connection(config: InstallationConfig | UninstallationConfig 
     try:
         logger.info("Checking Internet access.")
         logger.debug("Sending request to http://ghcr.io...")
-        requests.head("http://ghcr.io", allow_redirects=True, timeout=10).raise_for_status()
+        requests.head("http://ghcr.io", allow_redirects=False, timeout=10).raise_for_status()
         logger.debug("Internet is accessible.")
     except requests.RequestException as error:
         logger.debug("Internet is not accessible.")

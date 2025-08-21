@@ -124,7 +124,7 @@ export const TranslatedAnnotations = ({
                     </svg>
                     {showLabels && (
                         <foreignObject style={{ height: '100%', width: '100%', pointerEvents: 'none' }}>
-                            <Labels annotation={annotation} annotationToolContext={annotationToolContext} />
+                            <Labels annotation={annotation} />
                         </foreignObject>
                     )}
                 </Fragment>

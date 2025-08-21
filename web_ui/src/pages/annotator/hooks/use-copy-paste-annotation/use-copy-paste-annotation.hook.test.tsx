@@ -11,7 +11,6 @@ import { Rect } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { labelFromUser } from '../../../../core/annotations/utils';
 import { DOMAIN } from '../../../../core/projects/core.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { getImageData } from '../../../../shared/canvas-utils';
 import { fakeAnnotationToolContext } from '../../../../test-utils/fake-annotator-context';
 import { getMockedAnnotation } from '../../../../test-utils/mocked-items-factory/mocked-annotations';
@@ -39,13 +38,11 @@ jest.mock('../../providers/region-of-interest-provider/region-of-interest-provid
     })),
 }));
 
-const mockedAddNotification = jest.fn();
+const mockedToast = jest.fn();
 
-jest.mock('../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../notification/notification.component'),
-    useNotification: jest.fn(() => ({
-        addNotification: mockedAddNotification,
-    })),
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 jest.mock('../../zoom/zoom-provider.component', () => ({
@@ -198,9 +195,9 @@ describe('useCopyPasteAnnotation', () => {
 
             await waitFor(() => {
                 expect(mockedScene.addAnnotations).not.toHaveBeenCalled();
-                expect(mockedAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: "One or more annotations outside the region of interest haven't been pasted.",
-                    type: NOTIFICATION_TYPE.INFO,
+                    type: 'info',
                 });
             });
         });
@@ -264,9 +261,9 @@ describe('useCopyPasteAnnotation', () => {
 
             await waitFor(() => {
                 expect(mockedContext.scene.addAnnotations).not.toHaveBeenCalled();
-                expect(mockedAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: 'You can only paste annotations in the same task context.',
-                    type: NOTIFICATION_TYPE.INFO,
+                    type: 'info',
                 });
             });
         });
@@ -456,9 +453,9 @@ describe('useCopyPasteAnnotation', () => {
                 await paste();
 
                 await waitFor(() => {
-                    expect(mockedAddNotification).toHaveBeenCalledWith({
+                    expect(mockedToast).toHaveBeenCalledWith({
                         message: 'Multiple annotations are not allowed for this task.',
-                        type: NOTIFICATION_TYPE.INFO,
+                        type: 'info',
                     });
 
                     expect(mockedScene.addAnnotations).not.toHaveBeenCalled();

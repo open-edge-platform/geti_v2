@@ -29,3 +29,6 @@ build-image:
 
 clean:
 	@rm -rf __pycache__ .cache .pytest_cache .venv .mypy_cache platform_installer platform_logs
+
+list-image:
+	@echo "Not applicable"

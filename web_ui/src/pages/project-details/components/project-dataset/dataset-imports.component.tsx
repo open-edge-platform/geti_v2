@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
-import { View } from '@geti/ui';
+import { toast, View } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -13,8 +13,6 @@ import { useDatasetImportQueries } from '../../../../core/datasets/hooks/use-dat
 import { getCurrentJob, isImportingExistingProjectJob, isPreparingJob } from '../../../../core/datasets/utils';
 import { useJobs } from '../../../../core/jobs/hooks/use-jobs.hook';
 import { ProjectProps } from '../../../../core/projects/project.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { useDatasetImportToExistingProject } from '../../../../providers/dataset-import-to-existing-project-provider/dataset-import-to-existing-project-provider.component';
 import { getLabelsMap } from '../../../../providers/dataset-import-to-existing-project-provider/utils';
 import { useWorkspaceIdentifier } from '../../../../providers/workspaces-provider/use-workspace-identifier.hook';
@@ -40,7 +38,6 @@ const DatasetImportJobStatus = ({
 }: DatasetImportJobStatusProps) => {
     const client = useQueryClient();
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
-    const { addNotification } = useNotification();
     const { usePreparingExistingProjectStatusJob, useImportingExistingProjectStatusJob } = useDatasetImportQueries();
 
     const { id, uploadId, preparingJobId, importingJobId } = datasetImportItem;
@@ -60,7 +57,7 @@ const DatasetImportJobStatus = ({
         },
         onError: (error: AxiosError) => {
             patchDatasetImport({ id, status: DATASET_IMPORT_STATUSES.PREPARING_ERROR });
-            addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: error.message, type: 'error' });
         },
         onCancel: () => {
             deleteDatasetImport(datasetImportItem.id);
@@ -89,7 +86,7 @@ const DatasetImportJobStatus = ({
         },
         onError: (error: AxiosError) => {
             patchDatasetImport({ id, status: DATASET_IMPORT_STATUSES.IMPORTING_TO_EXISTING_PROJECT_ERROR });
-            addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: error.message, type: 'error' });
         },
         onCancel: () => {
             deleteDatasetImport(datasetImportItem.id);

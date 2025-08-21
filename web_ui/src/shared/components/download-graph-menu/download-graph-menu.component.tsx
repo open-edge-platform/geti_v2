@@ -3,11 +3,9 @@
 
 import { forwardRef, RefObject, useState } from 'react';
 
-import { useUnwrapDOMRef, type BackgroundColorValue, type DOMRefValue } from '@geti/ui';
+import { toast, useUnwrapDOMRef, type BackgroundColorValue, type DOMRefValue } from '@geti/ui';
 import { DownloadIcon } from '@geti/ui/icons';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { idMatchingFormat } from '../../../test-utils/id-utils';
 import { runWhenTruthy } from '../../utils';
 import { MenuTriggerList } from '../menu-trigger-list/menu-trigger-list.component';
@@ -60,7 +58,6 @@ const onFormatAndDownload = runWhenTruthy((downloadableData: DownloadableData, f
 
 export const DownloadGraphMenu = forwardRef<HTMLDivElement, DownloadGraphMenuProps>(
     ({ data, tooltip, fileName, graphBackgroundColor }, ref): JSX.Element => {
-        const { addNotification } = useNotification();
         const [isDownloading, setIsDownloading] = useState(false);
         const container = ref as RefObject<DOMRefValue<HTMLDivElement>>;
         const unwrappedContainer = useUnwrapDOMRef(container);
@@ -78,7 +75,7 @@ export const DownloadGraphMenu = forwardRef<HTMLDivElement, DownloadGraphMenuPro
 
                 await downloadMultiplePages(fileName, svgs, htmls, hexColor);
             } catch (_e) {
-                addNotification({ message: ERROR_MESSAGE, type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: ERROR_MESSAGE, type: 'error' });
             } finally {
                 setIsDownloading(false);
             }
@@ -90,7 +87,7 @@ export const DownloadGraphMenu = forwardRef<HTMLDivElement, DownloadGraphMenuPro
             try {
                 onFormatAndDownload(data, fileName);
             } catch (_e) {
-                addNotification({ message: ERROR_MESSAGE, type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: ERROR_MESSAGE, type: 'error' });
             } finally {
                 setIsDownloading(false);
             }

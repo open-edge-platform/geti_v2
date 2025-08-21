@@ -32,10 +32,10 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedNavigate,
 }));
 
-const mockedAddNotification = jest.fn();
-jest.mock('../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockedAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 jest.mock('../../../../core/status/hooks/use-status.hook', () => ({
@@ -134,7 +134,7 @@ describe('UploadMediaButton', () => {
         fireInputChange([mockFile, null, mockFile]);
 
         expect(mockUploadCallback).toHaveBeenCalledWith([mockFile, mockFile]);
-        expect(mockedAddNotification).not.toHaveBeenCalled();
+        expect(mockedToast).not.toHaveBeenCalled();
     });
 
     it('shows empty folder warning', async () => {
@@ -146,7 +146,7 @@ describe('UploadMediaButton', () => {
         selectOption();
         fireInputChange([]);
 
-        expect(mockedAddNotification).toHaveBeenCalled();
+        expect(mockedToast).toHaveBeenCalled();
         expect(mockUploadCallback).not.toHaveBeenCalledWith([mockFile]);
     });
 
