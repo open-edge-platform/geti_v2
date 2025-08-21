@@ -66,7 +66,7 @@ const assertOpenAndExport = async (page: Page) => {
 
     const datasetName = await datasetsList.locator('[aria-selected="true"]').getByTestId('dataset-name').textContent();
 
-    await expect(page.getByLabel(/notification toast/i)).toBeVisible();
+    await expect(page.getByLabel('toast', { exact: true })).toBeVisible();
     await expect(page.getByText(new RegExp(`dataset "${datasetName}" is ready to download.`, 'i'))).toBeVisible();
 };
 
@@ -121,7 +121,7 @@ test.describe('export dataset', () => {
         await assertOpenAndExport(page);
         await openAndExport(page);
 
-        await expect(page.getByLabel(/notification toast/i)).toBeHidden();
+        await expect(page.getByLabel('toast', { exact: true })).toBeHidden();
     });
 
     test('close previous export and show export options', async ({ page }) => {

@@ -79,6 +79,7 @@ export const useOpenNotificationToast = () => {
                 message: deprecatedText,
                 type: 'warning',
                 actionButtons,
+                position: 'bottom-right',
             });
         }
 
@@ -88,6 +89,7 @@ export const useOpenNotificationToast = () => {
                 message: obsoleteText,
                 type: 'error',
                 actionButtons,
+                position: 'bottom-right',
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

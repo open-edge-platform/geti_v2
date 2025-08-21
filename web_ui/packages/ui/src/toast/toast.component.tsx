@@ -139,14 +139,20 @@ const CustomToast = ({ message, id, actionButtons, type, hasCloseButton = true, 
 const DEFAULT_TOAST_DURATION = 8000;
 
 export const removeToast = (id: string | number) => {
+    if (isEmpty(id)) return;
+
     soonerToast.dismiss(id);
 };
 
 export const removeToasts = () => {
     const toasts = soonerToast.getToasts();
     toasts.forEach((toast) => {
-        soonerToast.dismiss(toast.id);
+        removeToast(toast.id);
     });
+};
+
+const parseId = (text: string) => {
+    return text.split(' ').join('-').replace(',', '').toLowerCase();
 };
 
 export const toast = ({
@@ -160,7 +166,7 @@ export const toast = ({
     position,
     title,
 }: ToastProps) => {
-    const toastId = id !== undefined ? `id-${id}` : `id-${message}`;
+    const toastId = id !== undefined ? `id-${id}` : `id-${parseId(String(message))}`;
 
     return soonerToast.custom(
         () => {
