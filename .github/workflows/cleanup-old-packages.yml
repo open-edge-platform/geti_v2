@@ -1,3 +1,30 @@
+# GHCR cleanup workflow
+#
+# This workflow deletes old package versions from GHCR registry.
+# 
+# Key Features:
+# - Deletes old package versions from GHCR registry
+# - Can be triggered manually or by other workflows
+# - Supports dry run mode to preview changes
+# 
+# Process Stages:
+# 1. Prepare list of package versions to delete
+# 2. Delete old package versions
+#
+# Inputs:
+# - package_name: The name of the package to clean up
+# - max_days_old: The maximum age of packages to keep (in days)
+# - dry_run: Perform a dry run without deleting packages
+#
+# Example usage:
+# 1. Call this workflow manually from Github Actions page
+# 2. Trigger this workflow from another workflow using the `workflow_call` event:
+#    uses: ./.github/workflows/cleanup-old-packages.yml
+#    with:
+#      package_name: "your-package-name"
+#      max_days_old: 5
+#      dry_run: true
+
 name: Cleanup old packages from daily builds
 
 on:
@@ -9,8 +36,8 @@ on:
         required: true
       max_days_old:
         description: "The maximum age of packages to keep (in days)"
-        type: string
-        default: "5"
+        type: number
+        default: 5
       dry_run:
         description: "Perform a dry run without deleting packages"
         type: boolean
@@ -24,8 +51,8 @@ on:
         required: true
       max_days_old:
         description: "The maximum age of packages to keep (in days)"
-        type: string
-        default: "5"
+        type: number
+        default: 5
       dry_run:
         description: "Perform a dry run without deleting packages"
         type: boolean
@@ -75,7 +102,7 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     needs: prepare-vars
-    if: ${{ !inputs.dry_run && fromJSON(needs.prepare-vars.outputs.package_version_ids) != '""' }}
+    if: ${{ !inputs.dry_run && needs.prepare-vars.outputs.package_version_ids != '' }}
     steps:
       - name: Cleanup old packages
         uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55  # v5.0.0
