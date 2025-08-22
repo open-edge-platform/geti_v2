@@ -78,6 +78,17 @@ allow if {
 	check_authorization(spicedb_key, "organization", org_id, "can_contribute", user_id)
 }
 
+# Restrict access to PUT, POST, DELETE /api/<api_ver>/organizations/<org_id>/workspaces/<workspace_id> endpoint to workspace_admin permission
+allow if {
+	["api", api_ver, "organizations", org_id, "workspaces", workspace_id] = parsed_path
+	http_request.method in ["POST", "PUT", "DELETE"]
+	is_valid_api_version(api_ver)
+
+	user_id := resolve_user_id(http_request.headers)
+	check_authorization(spicedb_key, "workspace", workspace_id, "can_manage", user_id)
+	check_authorization(spicedb_key, "organization", org_id, "can_contribute", user_id)
+}
+
 # Restrict access to GET /api/<api_ver>/organizations/<org_id>/users endpoint to organization_contributor
 allow if {
 	["api", api_ver, "organizations", org_id, "users"] = parsed_path
@@ -344,6 +355,23 @@ allow if {
 	check_authorization(spicedb_key, "organization", org_id, "can_contribute", base64.encode(accessed_uid))
 }
 
+# Restrict access to GET, POST, DELETE /api/<api_ver>/organizations/<org_id>/membership/<user_id>/roles endpoint to workspace_admin
+allow if {
+	["api", api_ver, "organizations", org_id, "membership", accessed_uid, "roles"] = parsed_path
+	http_request.method in ["GET", "POST", "DELETE"]
+
+	is_valid_api_version(api_ver)
+
+	user_id := resolve_user_id(http_request.headers)
+
+	body := replace(http_request.body, "\\\"", "")
+	unmarshaled_body = json.unmarshal(body)
+	startswith(unmarshaled_body.role, "workspace")
+	check_authorization(spicedb_key, "workspace", unmarshaled_body.resource_id, "can_manage", user_id)
+	check_authorization(spicedb_key, "organization", org_id, "can_contribute", user_id)
+	check_authorization(spicedb_key, "organization", org_id, "can_contribute", base64.encode(accessed_uid))
+}
+
 # Restrict access to GET /api/<api_ver>/organizations/<org_id>/users/<user_id>/roles endpoint to organization_admin
 allow if {
 	["api", api_ver, "organizations", org_id, "users", accessed_uid, "roles"] = parsed_path
@@ -369,7 +397,6 @@ allow if {
 	check_authorization(spicedb_key, "organization", org_id, "can_manage", user_id)
 	check_authorization(spicedb_key, "organization", org_id, "can_contribute", base64.encode(accessed_uid))
 }
-
 
 # Restrict access to PUT /api/<api_ver>/organizations/<org_id>/users/<user_id>/roles endpoint to organization
 # contributor who wants to manage project roles
