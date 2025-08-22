@@ -1,28 +1,26 @@
-annotations:
-  category: Database
-  licenses: Apache-2.0
 apiVersion: v2
-appVersion: 3.5.9
-dependencies:
-  - name: bitnami-common
-    repository: "file://../bitnami-common"
-    tags:
-      - bitnami-common
-    version: 1.11.2
-description: etcd is a distributed key-value store designed to securely store data across a cluster. etcd is widely used in production on account of its reliability, fault-tolerance and ease of use.
-home: https://github.com/bitnami/charts/tree/main/bitnami/etcd
-icon: https://bitnami.com/assets/stacks/etcd/img/etcd-stack-220x234.png
-keywords:
-  - etcd
-  - cluster
-  - database
-  - cache
-  - key-value
-maintainers:
-  - name: Bitnami
-    url: https://github.com/bitnami/charts
 name: etcd
+description: A Helm chart for Kubernetes
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "v3.6.4"
 sources:
-  - https://github.com/bitnami/containers/tree/main/bitnami/etcd
-  - https://coreos.com/etcd/
-version: 9.5.0
+  - https://etcd.io/docs/v3.6/op-guide/kubernetes/#example-manifest
