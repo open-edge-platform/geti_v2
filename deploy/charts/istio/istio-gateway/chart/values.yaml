@@ -5,8 +5,6 @@ certificate:
 auth_proxy:
   enabled: true
 
-main_namespace: impt
-
 # "_internal_defaults_do_not_set" is a workaround for Helm limitations. Users should NOT set "._internal_defaults_do_not_set" explicitly, but rather directly set the fields internally.
 # For instance, instead of `--set _internal_defaults_do_not_set.foo=bar``, just set `--set foo=bar`.
 _internal_defaults_do_not_set:
@@ -20,9 +18,6 @@ _internal_defaults_do_not_set:
   replicaCount:
 
   kind: Deployment
-
-  istio_gateway_name: "istio-gateway"
-  istio_ingress_namespace: "istio-system"
 
   rbac:
     # If enabled, roles will be created to enable accessing certificates from Gateways. This is not needed
@@ -201,6 +196,7 @@ _internal_defaults_do_not_set:
 
   global:
     registry_address: ""
+    docker_namespace: "impp"
 
   api_gateway:
     mountPath: "/api_gateway"
@@ -208,7 +204,9 @@ _internal_defaults_do_not_set:
       "FEATURE_FLAG_ALLOW_EXTERNAL_KEY_PROJECT_IMPORT": "true"
       "FEATURE_FLAG_AMBIENT_MESH": "false"
       "FEATURE_FLAG_ANALYTICS_WORKFLOW_ID": "true"
+      "FEATURE_FLAG_ANOMALY_REDUCTION": "true"
       "FEATURE_FLAG_CAMERA_VIDEO_UPLOAD": "false"
+      "FEATURE_FLAG_CLASSIFICATION_RANGES": "true"
       "FEATURE_FLAG_CREDIT_SYSTEM": "false"
       "FEATURE_FLAG_DECORD_VIDEO_DECODER": "false"
       "FEATURE_FLAG_KEYPOINT_DETECTION": "true"
@@ -227,6 +225,7 @@ _internal_defaults_do_not_set:
       "FEATURE_FLAG_SUPPORT_CORS": "false"
       "FEATURE_FLAG_UPLOAD_OTE_WEIGHTS": "true"
       "FEATURE_FLAG_USER_ONBOARDING": "false"
+      "FEATURE_FLAG_VISUAL_PROMPT_SERVICE": "true"
       "FEATURE_FLAG_WORKSPACE_ACTIONS": "false"
       "FEATURE_FLAG_REQ_ACCESS": "false"
       "FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS": "false"

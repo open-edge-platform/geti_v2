@@ -4,13 +4,11 @@
 import { useRef } from 'react';
 
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
-import { View } from '@geti/ui';
+import { toast, View } from '@geti/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { useIsSaasEnv } from '../../../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import {
     isValidationFailReason,
     mediaExtensionHandler,
@@ -40,15 +38,13 @@ export const UserPhotoContainer = ({ userId, userName, userPhoto, email }: UserP
     const uploadUserPhoto = useUploadUserPhoto();
     const deleteUserPhoto = useDeleteUserPhoto();
 
-    const { addNotification } = useNotification();
-
     const acceptedFormats = mediaExtensionHandler(VALID_IMAGE_TYPES_SINGLE_UPLOAD);
 
     const handleUploadPhoto = onValidFileList(async ([file]: File[]) => {
         if (!isSupportedImageFormat(file)) {
-            addNotification({
+            toast({
                 message: `This feature only supports image files. Supported extensions: ${acceptedFormats}`,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
 
             return;
@@ -62,7 +58,7 @@ export const UserPhotoContainer = ({ userId, userName, userPhoto, email }: UserP
             if (isValidationFailReason(error)) {
                 const errorMessage = error.errors.length === 1 ? error.errors[0] : error.errors.join('\n');
 
-                addNotification({ message: errorMessage, type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: errorMessage, type: 'error' });
             }
         }
     });

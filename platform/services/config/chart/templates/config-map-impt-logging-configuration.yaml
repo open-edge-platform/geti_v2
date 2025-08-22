@@ -16,6 +16,6 @@ data:
   # Telemetry backup forced cleanup limit, expressed as number of total hours.
   # Unconditionally protects the last x hours from deletion on forced cleanup.
   telemetry_cleanup_limit_hours: "24"
-  LOG_LEVEL: "{{ .Values.log_level }}"
+  LOG_LEVEL: {{ .Values.log_level }}
   logging_config.json: |
     {"LOG_LEVEL" : "{{ .Values.log_level }}"}

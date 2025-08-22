@@ -4,6 +4,7 @@
 import { useMemo } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import {
     InfiniteData,
     infiniteQueryOptions,
@@ -20,8 +21,6 @@ import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { NextPage } from '../../shared/infinite-query.interface';
 import { SortDirection } from '../../shared/query-parameters';
 import { Organization, OrganizationIdentifier, OrganizationsResponse } from '../organizations.interface';
@@ -116,7 +115,6 @@ export const getOrganizationQueryOptions = (
 
 export const useOrganizationsApi = (): UseOrganizationsApi => {
     const { organizationsService } = useApplicationServices();
-    const { addNotification } = useNotification();
     const queryClient = useQueryClient();
 
     const useOrganizationsQuery = (options: GetOrganizationsQueryOptions = {}) => {
@@ -159,7 +157,7 @@ export const useOrganizationsApi = (): UseOrganizationsApi => {
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ORGANIZATION(data.id) });
             },
             onError: (error) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
     };
@@ -171,7 +169,7 @@ export const useOrganizationsApi = (): UseOrganizationsApi => {
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ORGANIZATIONS({}) });
             },
             onError: (error) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
     };

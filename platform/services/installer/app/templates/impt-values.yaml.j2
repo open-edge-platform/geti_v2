@@ -27,7 +27,7 @@ dcgm-exporter:
     - name: regcred
 {% endif %}
 
-impt-configuration:
+configuration:
   serverAddress: {{ k8s_server_address }}
   data_folder: {{ data_folder }}
   platformVersion: {{ product_version }}
@@ -102,7 +102,7 @@ global:
     registry: {{ registry }}
     repository: base-images
     name: debian:12.8.1
-  debian:
+  curl:
     registry: {{ registry }}
     repository: base-images
     name: debian:12.8.1

@@ -78,10 +78,10 @@ global:
   s3_endpoint: "impt-seaweed-fs:8333"
   istio_ingress_namespace: 'istio-system'
   istio_gateway_name: 'istio-gateway'
-  debian:
-    registry: docker.io
-    repository: bitnamilegacy
-    name: os-shell:12-debian-12-r47
+  curl:
+    registry: quay.io
+    repository: curl
+    name: curl:8.15.0
   kubectl: 
     registry: docker.io
     repository: bitnamilegacy

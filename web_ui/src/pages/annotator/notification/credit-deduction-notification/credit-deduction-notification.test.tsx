@@ -17,12 +17,10 @@ import { ProjectProvider } from '../../../project-details/providers/project-prov
 import { useIsAutoTrainingOn } from '../../hooks/use-is-auto-training-on.hook';
 import { CreditDeductionNotification } from './credit-deduction-notification.component';
 
-const mockedUseNotification = jest.fn();
-jest.mock('../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../notification/notification.component'),
-    useNotification: () => ({
-        addNotification: mockedUseNotification,
-    }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 jest.mock('../../hooks/use-is-auto-training-on.hook', () => ({
@@ -96,7 +94,7 @@ describe('CreditDeductionNotification', () => {
                 },
             });
 
-            expect(mockedUseNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
 
         it('check that when credit modal enabled the notification will not appear', async () => {
@@ -108,7 +106,7 @@ describe('CreditDeductionNotification', () => {
                 },
             });
 
-            expect(mockedUseNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
 
         it('check that when credit modal if off and credit notification is enabled this notification will not appear', async () => {
@@ -121,7 +119,7 @@ describe('CreditDeductionNotification', () => {
             });
 
             await waitFor(() => {
-                expect(mockedUseNotification).not.toHaveBeenCalled();
+                expect(mockedToast).not.toHaveBeenCalled();
             });
         });
 
@@ -135,7 +133,7 @@ describe('CreditDeductionNotification', () => {
             });
 
             await waitFor(() => {
-                expect(mockedUseNotification).toHaveBeenCalledTimes(0);
+                expect(mockedToast).toHaveBeenCalledTimes(0);
             });
         });
 
@@ -154,7 +152,7 @@ describe('CreditDeductionNotification', () => {
             });
 
             await waitFor(() => {
-                expect(mockedUseNotification).toHaveBeenCalledTimes(1);
+                expect(mockedToast).toHaveBeenCalledTimes(1);
             });
         });
     });

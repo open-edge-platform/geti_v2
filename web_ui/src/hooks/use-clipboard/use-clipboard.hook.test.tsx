@@ -3,7 +3,6 @@
 
 import { renderHook } from '@testing-library/react';
 
-import { NOTIFICATION_TYPE } from '../../notification/notification-toast/notification-type.enum';
 import { useClipboard } from './use-clipboard.hook';
 
 const mockwriteText = jest.fn();
@@ -13,10 +12,10 @@ Object.assign(navigator, {
     },
 });
 
-const mockAddNotification = jest.fn();
-jest.mock('../../notification/notification.component', () => ({
-    ...jest.requireActual('../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 describe('useClipboard', () => {
@@ -33,9 +32,9 @@ describe('useClipboard', () => {
         await result.current.copy(textToCopy, confirmationMessage);
 
         expect(mockwriteText).toHaveBeenCalledWith(textToCopy);
-        expect(mockAddNotification).toHaveBeenCalledWith({
+        expect(mockedToast).toHaveBeenCalledWith({
             message: confirmationMessage,
-            type: NOTIFICATION_TYPE.INFO,
+            type: 'info',
         });
     });
 
@@ -48,6 +47,6 @@ describe('useClipboard', () => {
         await result.current.copy(textToCopy, '', errorMessage);
 
         expect(mockwriteText).toHaveBeenCalledWith(textToCopy);
-        expect(mockAddNotification).toHaveBeenCalledWith({ message: errorMessage, type: NOTIFICATION_TYPE.ERROR });
+        expect(mockedToast).toHaveBeenCalledWith({ message: errorMessage, type: 'error' });
     });
 });

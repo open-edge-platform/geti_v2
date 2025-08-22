@@ -59,7 +59,7 @@ spec:
       {{- end }}
       initContainers:
         - name: copy-api-gateway
-          image: "{{ .Values.global.registry_address }}/api-gateway:{{ .Values.global.tag | default .Chart.Version }}"
+          image: "{{ .Values.global.registry_address }}/{{ .Values.global.docker_namespace }}/api-gateway:{{ .Values.global.tag | default .Chart.Version }}"
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh

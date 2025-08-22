@@ -1,10 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Flex, Grid, Heading, Text, View } from '@geti/ui';
+import { Flex, Grid, Heading, Text, toast, View } from '@geti/ui';
 
-import { NOTIFICATION_TYPE } from '../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../notification/notification.component';
 import { getEstimateFreeStorage } from '../../shared/navigator-utils';
 import { ActionButtons } from './components/action-buttons/action-buttons.component';
 import { CameraFactory } from './components/camera-factory.component';
@@ -21,15 +19,9 @@ const GRID_AREAS = ['header', 'content'];
 const ROWS = ['size-800', 'calc(100% - size-800)'];
 
 const useLowStorage = () => {
-    const { addNotification } = useNotification();
-
     getEstimateFreeStorage().then((estimateFreeStorage) => {
         if (estimateFreeStorage <= TOO_LOW_FREE_STORAGE_IN_BYTES) {
-            addNotification({
-                message: TOO_LOW_FREE_STORAGE_MESSAGE,
-                type: NOTIFICATION_TYPE.WARNING,
-                dismiss: { duration: 0 },
-            });
+            toast({ message: TOO_LOW_FREE_STORAGE_MESSAGE, type: 'warning', duration: Infinity });
         }
     });
 };

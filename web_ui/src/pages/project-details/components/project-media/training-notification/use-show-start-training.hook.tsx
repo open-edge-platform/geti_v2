@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { removeToast, toast } from '@geti/ui';
 import { OverlayTriggerState } from '@react-stately/overlays';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -16,8 +17,6 @@ import { isAnomalous, isExclusive } from '../../../../../core/labels/utils';
 import { isAnomalyDomain } from '../../../../../core/projects/domains';
 import { useOrganizationIdentifier } from '../../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import { MEDIA_CONTENT_BUCKET } from '../../../../../providers/media-upload-provider/media-upload.interface';
 import { QuietToggleButton } from '../../../../../shared/components/quiet-button/quiet-toggle-button.component';
 import { useDatasetIdentifier } from '../../../../annotator/hooks/use-dataset-identifier.hook';
@@ -64,12 +63,12 @@ export const useShowStartTraining = (trainModelDialogState: OverlayTriggerState)
         isSingleDomainProject,
         project: { performance, labels },
     } = useProject();
-    const moreMediasRef = useRef('');
-    const startTrainingRef = useRef('');
+    const moreMediasRef = useRef<string | number>('');
+    const startTrainingRef = useRef<string | number>('');
     const { useGetOrganizationBalanceQuery } = useCreditsQueries();
     const { organizationId } = useOrganizationIdentifier();
     const projectIdentifier = useProjectIdentifier();
-    const { addNotification, removeNotification } = useNotification();
+
     const queryClient = useQueryClient();
 
     const enabled = isSingleDomainProject(isAnomalyDomain);
@@ -109,20 +108,20 @@ export const useShowStartTraining = (trainModelDialogState: OverlayTriggerState)
         }
 
         if (moreImagesNeeded) {
-            removeNotification(startTrainingRef.current);
-            moreMediasRef.current = addNotification({
+            removeToast(startTrainingRef.current);
+            moreMediasRef.current = toast({
                 message: MORE_MEDIAS_MESSAGE,
-                type: NOTIFICATION_TYPE.DEFAULT,
-                dismiss: { duration: 0 }, //0 will act as infinite duration
+                type: 'neutral',
+                duration: Infinity,
             });
         }
 
         if (!moreImagesNeeded && showStartTraining) {
-            removeNotification(moreMediasRef.current);
-            startTrainingRef.current = addNotification({
+            removeToast(moreMediasRef.current);
+            startTrainingRef.current = toast({
                 message: START_TRAINING_MESSAGE,
-                type: NOTIFICATION_TYPE.INFO,
-                dismiss: { duration: 0, click: false, touch: false },
+                type: 'info',
+                duration: Infinity,
                 actionButtons: [
                     <QuietToggleButton key={'open-train-model'} onPress={trainModelDialogState.open}>
                         Train
@@ -134,11 +133,10 @@ export const useShowStartTraining = (trainModelDialogState: OverlayTriggerState)
         // After uploading media, we need to verify if the project is ready to be trained
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROJECT_STATUS_KEY(projectIdentifier) });
     }, [
-        addNotification,
         moreImagesNeeded,
         projectIdentifier,
         queryClient,
-        removeNotification,
+
         showNotification,
         showStartTraining,
         trainModelDialogState.open,

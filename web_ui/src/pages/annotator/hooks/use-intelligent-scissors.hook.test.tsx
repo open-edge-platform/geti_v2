@@ -19,13 +19,6 @@ jest.mock('@tanstack/react-query', () => ({
     useMutation: jest.fn(),
 }));
 
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({
-        addNotification: jest.fn(),
-    }),
-}));
-
 jest.mock('../tools/polygon-tool/polygon-state-provider.component', () => ({
     ...jest.requireActual('../tools/polygon-tool/polygon-state-provider.component'),
     usePolygonState: jest.fn(),

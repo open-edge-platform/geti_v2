@@ -144,7 +144,7 @@ global:
     registry: docker.io
     repository: bitnamilegacy
     name: kubectl:1.31.0
-  debian:
-    registry: docker.io
-    repository: bitnamilegacy
-    name: os-shell:12-debian-12-r47
+  curl:
+    registry: quay.io
+    repository: curl
+    name: curl:8.15.0

@@ -58,10 +58,10 @@ global:
     registry: quay.io
     repository: prometheus
     name: busybox:glibc
-  debian:
-    registry: docker.io
-    repository: bitnamilegacy
-    name: os-shell:12-debian-12-r47
+  curl:
+    registry: quay.io
+    repository: curl
+    name: curl:8.15.0
   kubectl:
     registry: docker.io
     repository: bitnamilegacy

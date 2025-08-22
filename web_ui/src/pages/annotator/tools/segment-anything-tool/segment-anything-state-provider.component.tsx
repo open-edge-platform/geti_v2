@@ -4,12 +4,11 @@
 import { createContext, useContext, useEffect } from 'react';
 
 import { EncodingOutput } from '@geti/smart-tools/segment-anything';
+import { toast } from '@geti/ui';
 import { useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import { isEmpty } from 'lodash-es';
 
 import { Shape } from '../../../../core/annotations/shapes.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useAddUnfinishedShape } from '../../hooks/use-add-unfinished-shape.hook';
@@ -54,19 +53,19 @@ export const SegmentAnythingStateProvider = ({ children }: StateProviderProps): 
     const throttledDecodingQueryFn = useSingleStackFn(decodingQueryFn);
     const decodingQueryOptions = useDecodingQueryOptions(state.points, throttledDecodingQueryFn);
     const decodingQuery = useDecodingQuery(state.points, throttledDecodingQueryFn);
-    const { addNotification } = useNotification();
+
     useEffect(() => {
         if (state.points.length > 0 && decodingQuery.data !== undefined && decodingQuery.data.length === 0) {
             if (!decodingQuery.isPlaceholderData) {
-                addNotification({
+                toast({
                     message: `Unable to segment object from the selected point${
                         state.points.length > 1 ? 's' : ''
                     }. Press ESC to reset points.`,
-                    type: NOTIFICATION_TYPE.WARNING,
+                    type: 'warning',
                 });
             }
         }
-    }, [decodingQuery.data, decodingQuery.isPlaceholderData, state.points, addNotification]);
+    }, [decodingQuery.data, decodingQuery.isPlaceholderData, state.points]);
     const decodingMutation = useDecodingMutation(decodingQueryFn);
 
     const { addShapes, setIsDrawing } = useAnnotationScene();

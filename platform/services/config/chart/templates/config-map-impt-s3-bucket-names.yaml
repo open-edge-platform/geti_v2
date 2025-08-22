@@ -4,6 +4,11 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Namespace }}-s3-bucket-names
   namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+    meta.helm.sh/release-name: {{ .Release.Namespace }}
 data:
   BUCKET_NAME_IMAGES: "{{ .Values.bucket_name_images }}"
   BUCKET_NAME_MODELMESH: "{{ .Values.bucket_name_modelmesh }}"

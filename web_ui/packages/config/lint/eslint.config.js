@@ -11,7 +11,6 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import header from 'eslint-plugin-header';
 import _import from 'eslint-plugin-import';
-import jest from 'eslint-plugin-jest';
 import jsxA11Y from 'eslint-plugin-jsx-a11y';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -99,7 +98,6 @@ export default [
     {
         plugins: {
             import: fixupPluginRules(_import),
-            jest,
             'jsx-a11y': fixupPluginRules(jsxA11Y),
             '@typescript-eslint': fixupPluginRules(typescriptEslint),
             header,
@@ -168,12 +166,6 @@ export default [
                     ignoreRestSiblings: true,
                 },
             ],
-
-            'jest/no-disabled-tests': 'error',
-            'jest/no-focused-tests': 'error',
-            'jest/no-identical-title': 'error',
-            'jest/prefer-to-have-length': 'warn',
-            'jest/valid-expect': 'error',
 
             'import/extensions': [
                 'error',
