@@ -13,6 +13,8 @@ import {
     useStreamingVideoPlayer,
     VideoPlayerPlayerContextProps,
 } from '../../components/video-player/streaming-video-player/streaming-video-player-provider.component';
+import { AnnotationSceneProvider } from '../../providers/annotation-scene-provider/annotation-scene-provider.component';
+import { AnnotationToolProvider } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import {
     SelectedMediaItemProps,
     useSelectedMediaItem,
@@ -62,12 +64,16 @@ describe('LayersFactory', () => {
         } as SelectedMediaItemProps);
 
         const response = await annotatorRender(
-            <LayersFactory
-                width={100}
-                height={100}
-                annotations={mockAnnotations}
-                annotationToolContext={mockContext}
-            />,
+            <AnnotationSceneProvider annotations={[]} labels={[]}>
+                <AnnotationToolProvider>
+                    <LayersFactory
+                        width={100}
+                        height={100}
+                        annotations={mockAnnotations}
+                        annotationToolContext={mockContext}
+                    />
+                </AnnotationToolProvider>
+            </AnnotationSceneProvider>,
             { services: { annotationService } }
         );
 

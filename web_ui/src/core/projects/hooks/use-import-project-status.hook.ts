@@ -4,13 +4,12 @@
 import { useEffect, useRef } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError, isAxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { ExportStatusStateDTO } from '../../configurable-parameters/dtos/configurable-parameters.interface';
 import { ProjectImportIdentifier, ProjectImportStatus } from '../project.interface';
 import { IMPORT_STATUS_ERROR } from './use-import-project.hook';
@@ -29,7 +28,6 @@ export const useImportProjectStatusQuery = ({
     onDone,
     onError,
 }: useImportProjectStatusQueryProps): UseQueryResult<ProjectImportStatus, AxiosError> => {
-    const { addNotification } = useNotification();
     const { projectService } = useApplicationServices();
 
     const handleErrorRef = useRef(onError);
@@ -70,12 +68,12 @@ export const useImportProjectStatusQuery = ({
 
         if (isStateError(importProjectStatusQuery.data.state)) {
             handleErrorRef.current();
-            addNotification({
+            toast({
                 message: importProjectStatusQuery.data.message ?? IMPORT_STATUS_ERROR,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         }
-    }, [importProjectStatusQuery.isSuccess, importProjectStatusQuery.data, addNotification]);
+    }, [importProjectStatusQuery.isSuccess, importProjectStatusQuery.data]);
 
     useEffect(() => {
         if (!importProjectStatusQuery.isError) {

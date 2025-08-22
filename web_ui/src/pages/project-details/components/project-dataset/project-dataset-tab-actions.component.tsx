@@ -19,7 +19,6 @@ import { DeleteDialog } from '../../../../shared/components/delete-dialog/delete
 import { EditNameDialog } from '../../../../shared/components/edit-name-dialog/edit-name-dialog.component';
 import { useMedia } from '../../../media/providers/media-provider.component';
 import { useProject } from '../../providers/project-provider/project-provider.component';
-import { ExportDatasetDialog } from './export-dataset/export-dataset-dialog.component';
 import { useExportImportDatasetDialogStates } from './export-dataset/export-import-dataset-dialog-provider.component';
 import { useSelectedDataset } from './use-selected-dataset/use-selected-dataset.hook';
 import { DatasetTabActions, getDatasetTabActions } from './utils';
@@ -39,7 +38,7 @@ export const ProjectDatasetTabActions = ({ dataset }: ProjectDatasetTabActionsPr
     const updateDatasetDialogState = useOverlayTriggerState({});
     const { datasetImportDialogState: datasetImportDialogTrigger, exportDialogState } =
         useExportImportDatasetDialogStates();
-    const { id: selectedDatasetId, name: selectedDatasetName } = useSelectedDataset();
+    const { id: selectedDatasetId } = useSelectedDataset();
 
     const hasMedia = !isEmpty(media);
     const datasetNames = project.datasets.map(({ name }) => name);
@@ -109,7 +108,6 @@ export const ProjectDatasetTabActions = ({ dataset }: ProjectDatasetTabActionsPr
                 names={datasetNames}
                 title={'dataset name'}
             />
-            <ExportDatasetDialog triggerState={exportDialogState} datasetName={selectedDatasetName} />
         </Flex>
     );
 };

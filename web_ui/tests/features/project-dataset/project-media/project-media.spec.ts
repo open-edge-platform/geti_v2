@@ -6,8 +6,8 @@ import { expect } from '@playwright/test';
 import { range } from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
 
+import { ViewModes } from '../../../../packages/ui/src/view-modes/utils';
 import { OpenApiResponseBody } from '../../../../src/core/server/types';
-import { ViewModes } from '../../../../src/shared/components/media-view-modes/utils';
 import { delay } from '../../../../src/shared/utils';
 import { test } from '../../../fixtures/base-test';
 import { waitForLoadingToBeFinished } from '../../../utils/assertions';

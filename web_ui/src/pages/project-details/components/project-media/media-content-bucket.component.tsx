@@ -10,7 +10,9 @@ import {
     IllustratedMessage,
     Loading,
     useMediaQuery,
+    useViewMode,
     View,
+    ViewModes,
     type DimensionValue,
     type Responsive,
 } from '@geti/ui';
@@ -21,7 +23,6 @@ import { isEmpty } from 'lodash-es';
 import { isKeypointDetection } from '../../../../core/projects/domains';
 import { isKeypointTask } from '../../../../core/projects/utils';
 import { TUTORIAL_CARD_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
-import { useViewMode } from '../../../../hooks/use-view-mode/use-view-mode.hook';
 import { DatasetMediaUploadActions } from '../../../../providers/media-upload-provider/media-upload-reducer-actions';
 import {
     MEDIA_CONTENT_BUCKET,
@@ -29,8 +30,10 @@ import {
 } from '../../../../providers/media-upload-provider/media-upload.interface';
 import { MediaDropBoxHeader } from '../../../../shared/components/media-drop/media-drop-box-header.component';
 import { MediaDropBox } from '../../../../shared/components/media-drop/media-drop-box.component';
-import { MediaItemsList } from '../../../../shared/components/media-items-list/media-items-list.component';
-import { INITIAL_VIEW_MODE, VIEW_MODE_SETTINGS, ViewModes } from '../../../../shared/components/media-view-modes/utils';
+import {
+    MediaItemsList,
+    VIEW_MODE_SETTINGS,
+} from '../../../../shared/components/media-items-list/media-items-list.component';
 import { TutorialCardBuilder } from '../../../../shared/components/tutorial-card/tutorial-card-builder.component';
 import { VALID_MEDIA_TYPES_DISPLAY } from '../../../../shared/media-utils';
 import { idMatchingFormat } from '../../../../test-utils/id-utils';
@@ -90,7 +93,7 @@ export const MediaContentBucket = ({
 }: MediaContentBucketProps): JSX.Element => {
     const { project } = useProject();
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
-    const [viewMode, setViewMode] = useViewMode(mediaBucket, INITIAL_VIEW_MODE);
+    const [viewMode, setViewMode] = useViewMode(mediaBucket);
     const { FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE } = useFeatureFlags();
 
     const isAnomalyProject = mediaBucket !== MEDIA_CONTENT_BUCKET.GENERIC;

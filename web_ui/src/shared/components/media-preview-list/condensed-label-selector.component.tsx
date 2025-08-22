@@ -3,7 +3,7 @@
 
 import { useRef } from 'react';
 
-import { ActionButton, CustomPopover, Flex, Text, View, type ActionButtonProps } from '@geti/ui';
+import { ActionButton, CustomPopover, Flex, Text, View, ViewModes, type ActionButtonProps } from '@geti/ui';
 import { Checkmark } from '@geti/ui/icons';
 import { clsx } from 'clsx';
 import { isEmpty } from 'lodash-es';
@@ -15,7 +15,6 @@ import { isAnomalyDomain } from '../../../core/projects/domains';
 import { useTask } from '../../../pages/annotator/providers/task-provider/task-provider.component';
 import { useProject } from '../../../pages/project-details/providers/project-provider/project-provider.component';
 import { getForegroundColor, hexaToRGBA, isClassificationOrAnomaly } from '../../../pages/utils';
-import { ViewModes } from '../../../shared/components/media-view-modes/utils';
 import { TaskLabelTreeSearch } from '../../../shared/components/task-label-tree-search/task-label-tree-search.component';
 import { hasEqualId } from '../../../shared/utils';
 

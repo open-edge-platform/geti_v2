@@ -5,12 +5,21 @@ import { getErrorMessage } from '@geti/core/src/services/utils';
 import { useOnboardUserMutation } from '@geti/core/src/users/hook/use-onboard-user-mutation.hook';
 import { useProfileQuery } from '@geti/core/src/users/hook/use-profile.hook';
 import { OrganizationMetadata } from '@geti/core/src/users/services/onboarding-service.interface';
-import { Button, Content, Dialog, DialogContainer, dimensionValue, Divider, Flex, Heading, Text } from '@geti/ui';
+import {
+    Button,
+    Content,
+    Dialog,
+    DialogContainer,
+    dimensionValue,
+    Divider,
+    Flex,
+    Heading,
+    Text,
+    toast,
+} from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { noop } from 'lodash-es';
 
-import { NOTIFICATION_TYPE } from '../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../notification/notification.component';
 import { formatUtcToLocal } from '../../shared/utils';
 import { isInvitedOrganization, isOrganizationVisible, isUserInvitedInOrg } from './util';
 
@@ -27,7 +36,6 @@ export const OrganizationSelectionModal = ({
     organizations,
     onSelectedOrganization,
 }: OrganizationSelectionModalProps) => {
-    const { addNotification } = useNotification();
     const { data: profileData } = useProfileQuery();
     const onboardUserMutation = useOnboardUserMutation();
     const dialogState = useOverlayTriggerState({ defaultOpen: true });
@@ -38,7 +46,7 @@ export const OrganizationSelectionModal = ({
             { organizationId, userConsentIsGiven: true },
             {
                 onError: (error) => {
-                    addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                    toast({ message: getErrorMessage(error), type: 'error' });
                 },
                 onSuccess: () => {
                     selectAndClose(organizationId);

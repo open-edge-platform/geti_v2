@@ -97,7 +97,7 @@ loggingLevel: 1
 
 resources:
   limits:
-    memory: 2Gi
+    memory: 4Gi
   requests:
     cpu: 100m
     memory: 400Mi

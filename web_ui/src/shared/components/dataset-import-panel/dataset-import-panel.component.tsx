@@ -3,7 +3,7 @@
 
 import { FC, PropsWithChildren, useRef } from 'react';
 
-import { ActionButton, Divider, Flex, Loading, Text, View } from '@geti/ui';
+import { ActionButton, Divider, Flex, Loading, Text, toast, View } from '@geti/ui';
 import { Alert, InfoOutline } from '@geti/ui/icons';
 import { OverlayTriggerState } from '@react-stately/overlays';
 import { useParams } from 'react-router-dom';
@@ -20,8 +20,6 @@ import {
 import { getJobActiveStep } from '../../../core/jobs/utils';
 import { useStatus } from '../../../core/status/hooks/use-status.hook';
 import { isBelowTooLowFreeDiskSpace } from '../../../core/status/hooks/utils';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { matchStatus } from '../../../providers/dataset-import-to-existing-project-provider/utils';
 import { useWorkspaceIdentifier } from '../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { onValidFileList } from '../../utils';
@@ -123,7 +121,7 @@ export const DatasetImportPanel: FC<DatasetImportPanelProps> = ({
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
     const fileInputRef = useRef<HTMLInputElement>({} as HTMLInputElement);
     const { datasetId } = useParams<{ datasetId?: string }>();
-    const { addNotification } = useNotification();
+
     const { usePreparingStatusJob, useImportingStatusJob } = useDatasetImportQueries();
 
     const isTryAgainButtonDisabled = isBelowTooLowFreeDiskSpace(data?.freeSpace);
@@ -145,7 +143,7 @@ export const DatasetImportPanel: FC<DatasetImportPanelProps> = ({
         try {
             setActiveDatasetImportId(prepareDataset(file, datasetId));
         } catch (_error: unknown) {
-            addNotification({ message: FILE_FORMAT_ERROR_MESSAGE, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: FILE_FORMAT_ERROR_MESSAGE, type: 'error' });
         } finally {
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';

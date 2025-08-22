@@ -15,13 +15,15 @@ import { getMockedAnnotation } from '../../test-utils/mocked-items-factory/mocke
 import { getMockedLabel, labels } from '../../test-utils/mocked-items-factory/mocked-labels';
 import { getMockedImageMediaItem } from '../../test-utils/mocked-items-factory/mocked-media';
 import { getMockedTask, mockedTaskContextProps } from '../../test-utils/mocked-items-factory/mocked-tasks';
-import { providersRender as render } from '../../test-utils/required-providers-render';
+import { projectRender as render } from '../../test-utils/project-provider-render';
 import { getById, getMockedImage } from '../../test-utils/utils';
 import { ProjectProvider } from '../project-details/providers/project-provider/project-provider.component';
 import { AnnotatorCanvas } from './annotator-canvas.component';
 import { AnnotationToolContext } from './core/annotation-tool-context.interface';
 import { AnnotationThresholdProvider } from './providers/annotation-threshold-provider/annotation-threshold-provider.component';
+import { AnnotationToolProvider } from './providers/annotation-tool-provider/annotation-tool-provider.component';
 import { useAnnotatorCanvasSettings } from './providers/annotator-canvas-settings-provider/annotator-canvas-settings-provider.component';
+import { AnnotatorProvider } from './providers/annotator-provider/annotator-provider.component';
 import {
     ExplanationOpacityProvider,
     PredictionContextProps,
@@ -39,6 +41,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('./providers/task-chain-provider/task-chain-provider.component', () => ({
+    ...jest.requireActual('./providers/task-chain-provider/task-chain-provider.component'),
     useTaskChain: jest.fn(),
 }));
 
@@ -55,13 +58,6 @@ jest.mock('./zoom/zoom-provider.component', () => ({
 
 jest.mock('./hooks/use-annotator-scene-interaction-state.hook', () => ({
     useIsSceneBusy: jest.fn(() => false),
-}));
-
-jest.mock('../../notification/notification.component', () => ({
-    ...jest.requireActual('../../notification/notification.component'),
-    useNotification: jest.fn(() => ({
-        addNotification: jest.fn(),
-    })),
 }));
 
 jest.mock('./providers/prediction-provider/prediction-provider.component', () => ({
@@ -159,11 +155,15 @@ describe('Annotator canvas', (): void => {
                 <SelectedMediaItemProvider>
                     <ExplanationOpacityProvider>
                         <AnnotationThresholdProvider minThreshold={0} selectedTask={null}>
-                            <AnnotatorCanvas
-                                annotationToolContext={annotationToolContext}
-                                selectedMediaItem={selectedMediaItem}
-                                canEditAnnotationLabel
-                            />
+                            <AnnotatorProvider>
+                                <AnnotationToolProvider>
+                                    <AnnotatorCanvas
+                                        annotationToolContext={annotationToolContext}
+                                        selectedMediaItem={selectedMediaItem}
+                                        canEditAnnotationLabel
+                                    />
+                                </AnnotationToolProvider>
+                            </AnnotatorProvider>
                         </AnnotationThresholdProvider>
                     </ExplanationOpacityProvider>
                 </SelectedMediaItemProvider>

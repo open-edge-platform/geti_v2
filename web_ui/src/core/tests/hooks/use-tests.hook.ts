@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { removeToasts, toast } from '@geti/ui';
 import {
     InfiniteData,
     QueryKey,
@@ -18,8 +19,6 @@ import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { AdvancedFilterOptions, AdvancedFilterSortingOptions } from '../../media/media-filter.interface';
 import { useModels } from '../../models/hooks/use-models.hook';
 import { ProjectIdentifier } from '../../projects/core.interface';
@@ -58,11 +57,10 @@ interface DeleteTestParams {
 
 export const useTests = (): UseTests => {
     const { testsService } = useApplicationServices();
-    const { addNotification, removeNotifications } = useNotification();
     const queryClient = useQueryClient();
 
     const onError = (error: AxiosError) => {
-        addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+        toast({ message: getErrorMessage(error), type: 'error' });
     };
 
     const useTestsListQuery = (
@@ -120,7 +118,7 @@ export const useTests = (): UseTests => {
             onSuccess: () => {
                 // When user got an error while running test on empty dataset, then user chose correct testing set
                 // we want to hide error notification and display custom notification that test has been started
-                removeNotifications();
+                removeToasts();
             },
         });
     };

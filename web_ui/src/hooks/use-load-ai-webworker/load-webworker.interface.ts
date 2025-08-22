@@ -1,8 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Grabcut, InferenceImage, IntelligentScissors, SegmentAnythingModel, SSIM, Watershed } from '@geti/smart-tools';
+import { Grabcut, InferenceImage, IntelligentScissors, SSIM, Watershed } from '@geti/smart-tools';
 import { RITM } from '@geti/smart-tools/ritm';
+import { SegmentAnythingModel } from '@geti/smart-tools/segment-anything';
 import { Remote } from 'comlink';
 
 import { AlgorithmType } from './algorithm.interface';

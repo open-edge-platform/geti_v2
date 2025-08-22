@@ -4,10 +4,10 @@
 
 global:
   docker_namespace: geti
-  debian:
-    registry: docker.io
-    repository: bitnamilegacy
-    name: os-shell:12-debian-12-r47
+  curl:
+    registry: quay.io
+    repository: curl
+    name: curl:8.15.0
   busybox:
     registry: quay.io
     repository: prometheus

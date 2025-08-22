@@ -2,12 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
-import { Button, ButtonGroup, Flex, Heading, Text, View } from '@geti/ui';
+import { Button, ButtonGroup, Flex, Heading, Text, toast, View } from '@geti/ui';
 import { isEmpty, isString } from 'lodash-es';
 
 import { ExportDatasetLSData } from '../../../../../core/projects/dataset.interface';
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import { downloadFile, getDownloadNotificationMessage, getFileSize } from '../../../../../shared/utils';
 
 import classes from '../project-dataset.module.scss';
@@ -19,7 +17,6 @@ interface ExportDatasetDownloadProps {
 export const ExportDatasetDownload = ({ onCloseDownload, localStorageData }: ExportDatasetDownloadProps) => {
     const { datasetId, downloadUrl, size, datasetName, exportFormat } = localStorageData;
     const { router } = useApplicationServices();
-    const { addNotification } = useNotification();
 
     if (!isString(downloadUrl) || isEmpty(downloadUrl)) {
         return <></>;
@@ -27,7 +24,7 @@ export const ExportDatasetDownload = ({ onCloseDownload, localStorageData }: Exp
 
     const handleDownload = () => {
         downloadFile(router.PREFIX(downloadUrl), `intel_geti_${datasetId}.zip`);
-        addNotification({ message: getDownloadNotificationMessage('dataset'), type: NOTIFICATION_TYPE.INFO });
+        toast({ message: getDownloadNotificationMessage('dataset'), type: 'info' });
 
         onCloseDownload(datasetId);
     };

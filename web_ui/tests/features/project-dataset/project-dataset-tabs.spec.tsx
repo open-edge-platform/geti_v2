@@ -75,7 +75,7 @@ test.describe('Project dataset page', () => {
 
             await expectDatasetTabsToBeLoaded(page);
 
-            const notification = page.getByLabel('notification toast');
+            const notification = page.getByLabel('toast');
 
             await expect(
                 notification.getByText(`Your active model “${obsoleteAlgorithm.name}" is Obsolete`)
@@ -110,7 +110,7 @@ test.describe('Project dataset page', () => {
 
             await expectDatasetTabsToBeLoaded(page);
 
-            const notification = page.getByLabel('notification toast');
+            const notification = page.getByLabel('toast');
 
             await expect(
                 notification.getByText(`Your active model “${deprecatedAlgorithm.name}" is deprecated`)
@@ -163,7 +163,7 @@ test.describe('Project dataset page', () => {
 
             await expectDatasetTabsToBeLoaded(page);
 
-            const notification = page.getByLabel('notification toast');
+            const notification = page.getByLabel('toast');
 
             await expect(
                 notification.getByText(`Your active model “${obsoleteAlgorithm.name}" is Obsolete`)
@@ -211,7 +211,7 @@ test.describe('Project dataset page', () => {
 
             await expectDatasetTabsToBeLoaded(page);
 
-            const notification = page.getByLabel('notification toast');
+            const notification = page.getByLabel('toast');
 
             await expect(
                 notification.getByText(`Your active model “${deprecatedAlgorithm.name}" is deprecated`)

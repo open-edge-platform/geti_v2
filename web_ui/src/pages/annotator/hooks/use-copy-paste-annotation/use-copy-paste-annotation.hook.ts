@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { getCenterOfShape } from '@geti/smart-tools/utils';
+import { toast } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useLocalStorage } from 'usehooks-ts';
@@ -16,8 +17,6 @@ import { isPrediction } from '../../../../core/labels/utils';
 import { MediaItem } from '../../../../core/media/media.interface';
 import { isClassificationDomain, isKeypointDetection } from '../../../../core/projects/domains';
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { LOCAL_STORAGE_KEYS } from '../../../../shared/local-storage-keys';
 import { isNonEmptyArray } from '../../../../shared/utils';
 import { getMediaId } from '../../../media/utils';
@@ -53,7 +52,6 @@ export const useCopyPasteAnnotation = ({
     const { roi } = useROI();
     const { hotkeys } = useAnnotatorHotkeys();
     const { selectedTask } = useTask();
-    const { addNotification } = useNotification();
     const { organizationId } = useOrganizationIdentifier();
 
     const {
@@ -120,17 +118,17 @@ export const useCopyPasteAnnotation = ({
             );
 
             if (hasInvalidLabels) {
-                addNotification({
+                toast({
                     message: 'You can only paste annotations in the same task context.',
-                    type: NOTIFICATION_TYPE.INFO,
+                    type: 'info',
                 });
                 return;
             }
 
             if (!canHaveMultipleAnnotations && hasMultipleAnnotations) {
-                addNotification({
+                toast({
                     message: 'Multiple annotations are not allowed for this task.',
-                    type: NOTIFICATION_TYPE.INFO,
+                    type: 'info',
                 });
                 return;
             }
@@ -177,9 +175,9 @@ export const useCopyPasteAnnotation = ({
             }
 
             if (intersectedAnnotations.length < translatedAnnotations.length) {
-                addNotification({
+                toast({
                     message: `One or more annotations outside the region of interest haven't been pasted.`,
-                    type: NOTIFICATION_TYPE.INFO,
+                    type: 'info',
                 });
             }
 

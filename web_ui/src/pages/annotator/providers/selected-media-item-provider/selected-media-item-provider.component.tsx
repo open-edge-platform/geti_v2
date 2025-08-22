@@ -7,6 +7,7 @@ import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { useNavigateToAnnotatorRoute } from '@geti/core/src/services/use-navigate-to-annotator-route.hook';
 import { getErrorMessage } from '@geti/core/src/services/utils';
+import { toast } from '@geti/ui';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { isEmpty, isEqual } from 'lodash-es';
@@ -20,8 +21,6 @@ import { isClassificationDomain } from '../../../../core/projects/domains';
 import { Task } from '../../../../core/projects/task.interface';
 import { FEATURES_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
 import { useUserProjectSettings } from '../../../../core/user-settings/hooks/use-project-settings.hook';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { hasEqualId } from '../../../../shared/utils';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
@@ -96,7 +95,6 @@ const usePredictionsQueryBasedOnAnnotatorMode = (mediaItem: MediaItem | undefine
     const { isActiveLearningMode } = useAnnotatorMode();
     const { project, projectIdentifier } = useProject();
     const { selectedTask, isTaskChainSecondTask } = useTask();
-    const { addNotification } = useNotification();
 
     const isSuggestPredictionsEnabled = useIsSuggestPredictionEnabled(projectIdentifier);
 
@@ -109,7 +107,7 @@ const usePredictionsQueryBasedOnAnnotatorMode = (mediaItem: MediaItem | undefine
         coreLabels: project.labels,
         onError: (error: AxiosError) => {
             if (predictionMode === PredictionMode.ONLINE) {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             }
         },
     };
@@ -145,7 +143,6 @@ interface SelectedMediaItemProviderProps {
 }
 
 export const SelectedMediaItemProvider = ({ children }: SelectedMediaItemProviderProps): JSX.Element => {
-    const { addNotification } = useNotification();
     const datasetIdentifier = useDatasetIdentifier();
     const { annotationService, router } = useApplicationServices();
     const mediaIdentifierFromRoute = useMediaIdentifierFromRoute();
@@ -228,11 +225,8 @@ export const SelectedMediaItemProvider = ({ children }: SelectedMediaItemProvide
             return;
         }
 
-        addNotification({
-            message: 'Failed loading media item. Please try refreshing the page.',
-            type: NOTIFICATION_TYPE.ERROR,
-        });
-    }, [selectedMediaItemQuery.isError, addNotification]);
+        toast({ message: 'Failed loading media item. Please try refreshing the page.', type: 'error' });
+    }, [selectedMediaItemQuery.isError]);
 
     useEffect(() => {
         if (!isSelectedMediaItemQueryEnabled || !selectedMediaItemQuery.isSuccess) {
