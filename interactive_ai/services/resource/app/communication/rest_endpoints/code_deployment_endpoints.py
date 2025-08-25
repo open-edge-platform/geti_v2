@@ -2,38 +2,23 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import logging
 import pathlib
+import shutil
 from enum import Enum
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from starlette.background import BackgroundTask
 from starlette.responses import FileResponse, Response
 
-from communication.rest_controllers.code_deployment_controller import CodeDeploymentRESTController
 from communication.rest_controllers.deployment_package_controller import DeploymentPackageRESTController
-from communication.rest_utils import send_file_from_path_or_url
 
-from geti_fastapi_tools.dependencies import (
-    get_deployment_id,
-    get_organization_id,
-    get_project_id,
-    get_project_identifier,
-    get_request_json,
-    get_user_id_fastapi,
-    get_workspace_id,
-    setup_session_fastapi,
-)
-from geti_types import ID, ProjectIdentifier
+from geti_fastapi_tools.dependencies import get_project_identifier, get_request_json, setup_session_fastapi
+from geti_types import ProjectIdentifier
 
 logger = logging.getLogger(__name__)
 
 api_project_pattern = "/api/v1/organizations/{organization_id}/workspaces/{workspace_id}/projects/{project_id}"
-code_deployment_router = APIRouter(
-    prefix=api_project_pattern,
-    tags=["Code Deployment"],
-    dependencies=[Depends(setup_session_fastapi)],
-)
 
 deployment_package_router = APIRouter(
     prefix=api_project_pattern,
@@ -42,56 +27,20 @@ deployment_package_router = APIRouter(
 )
 
 
-@code_deployment_router.post("/code_deployments:prepare")
-def prepare_code_deployment(
-    request_json: Annotated[dict, Depends(get_request_json)],
-    organization_id: Annotated[ID, Depends(get_organization_id)],
-    workspace_id: Annotated[ID, Depends(get_workspace_id)],
-    project_id: Annotated[ID, Depends(get_project_id)],
-    user_id: ID = Depends(get_user_id_fastapi),  # noqa: FAST002
-) -> dict:
-    """
-    This endpoint triggers preparation for code deployment for a specific project.
-    For single-task projects (Detection, Segmentation, etc), it will export the only model used.
-    For task-chain projects, it will export all the models.
-    Only models in OpenVINO IR format are supported
-    """
-    data = {} if request_json is None else request_json
-    return CodeDeploymentRESTController.prepare_for_code_deployment(
-        organization_id=organization_id,
-        workspace_id=workspace_id,
-        project_id=project_id,
-        model_list_rest=data,
-        user_id=user_id,
-    )
-
-
-@code_deployment_router.get(
-    "/code_deployments/{deployment_id}",
-)
-def get_code_deployment_detail(
-    project_identifier: Annotated[ProjectIdentifier, Depends(get_project_identifier)],
-    deployment_id: Annotated[ID, Depends(get_deployment_id)],
-) -> dict:
-    """
-    Get details for the code deployment process, which includes the state, the progress,
-    models, the creator id and creation time.
-    """
-    return CodeDeploymentRESTController.get_code_deployment_detail(
-        project_identifier=project_identifier,
-        code_deployment_id=deployment_id,
-    )
-
-
 class DeploymentPackageType(Enum):
     OVMS = "ovms"
     GETI_SDK = "geti_sdk"
 
 
 def _cleanup_deployment_package_from_temp(package_path: pathlib.Path) -> None:
-    package_path.unlink(missing_ok=True)
     try:
-        package_path.parent.rmdir()
+        # First try to remove just the file
+        package_path.unlink(missing_ok=True)
+
+        # Then check if parent directory exists and is a directory before removing
+        parent_dir = package_path.parent
+        if parent_dir.exists() and parent_dir.is_dir():
+            shutil.rmtree(parent_dir, ignore_errors=True)
     except Exception:
         logger.exception(f"Failed to cleanup deployment package temporary directory {package_path}")
 
@@ -128,28 +77,4 @@ def download_deployment_package(
         media_type="application/zip",
         filename=package_path.name,
         background=BackgroundTask(_cleanup_deployment_package_from_temp, package_path),
-    )
-
-
-@code_deployment_router.get(
-    "/code_deployments/{deployment_id}/download",
-)
-def download_code_deployment(
-    request: Request,
-    project_identifier: Annotated[ProjectIdentifier, Depends(get_project_identifier)],
-    deployment_id: Annotated[ID, Depends(get_deployment_id)],
-) -> Response:
-    """Download the deployed code as a zip file"""
-    (
-        filepath,
-        desired_filename,
-    ) = CodeDeploymentRESTController.get_filepath_by_deployment_id(
-        project_identifier=project_identifier,
-        code_deployment_id=deployment_id,
-    )
-    return send_file_from_path_or_url(
-        request_host=str(request.base_url),
-        file_location=filepath,
-        mimetype="application/zip",
-        filename=desired_filename,
     )

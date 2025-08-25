@@ -23,7 +23,6 @@ from iai_core.repos import AnnotationSceneRepo, LabelSchemaRepo, VideoAnnotation
 
 
 class TestAnnotationRESTController:
-    # fmt: off
     @pytest.mark.parametrize(
         "lazyfxt_annotation_scene, lazyfxt_annotation_scene_rest, label_only",
         [
@@ -35,7 +34,6 @@ class TestAnnotationRESTController:
             ),
         ],
     )
-    # fmt: on
     def test_get_annotation(
         self,
         lazyfxt_annotation_scene,
@@ -120,18 +118,19 @@ class TestAnnotationRESTController:
                 media_identifier=media_identifier,
             )
 
-    # fmt: off
     @pytest.mark.parametrize(
         "lazyfxt_ann_scenes_list, lazyfxt_ann_scenes_list_rest, lazyfxt_ann_scene_states_list, label_only",
         [
-            ("fxt_ann_scenes_list", "fxt_ann_scenes_list_rest",
-             "fxt_ann_scene_states_list", False),
-            ("fxt_ann_scenes_list_label_only", "fxt_ann_scenes_list_rest_label_only",
-             "fxt_ann_scene_states_list_label_only", True),
+            ("fxt_ann_scenes_list", "fxt_ann_scenes_list_rest", "fxt_ann_scene_states_list", False),
+            (
+                "fxt_ann_scenes_list_label_only",
+                "fxt_ann_scenes_list_rest_label_only",
+                "fxt_ann_scene_states_list_label_only",
+                True,
+            ),
         ],
         ids=["Return full annotations", "Return labels only"],
     )
-    # fmt: on
     def test_get_video_frame_annotations(
         self,
         fxt_mongo_id,
@@ -269,7 +268,7 @@ class TestAnnotationRESTController:
             ) as mock_get_latest_var,
             patch.object(
                 VideoAnnotationRangeRESTViews, "video_annotation_range_to_rest", return_value=dummy_var_rest
-            ) as mock_var_to_rest
+            ) as mock_var_to_rest,
         ):
             out_var_rest = AnnotationRESTController.get_video_range_annotation(
                 dataset_storage_identifier=fxt_dataset_storage_identifier, video_id=video_id

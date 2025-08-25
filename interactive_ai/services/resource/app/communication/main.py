@@ -20,7 +20,6 @@ from communication.kafka_handlers.preprocessing_kafka_handler import Preprocessi
 from communication.kafka_handlers.thumb_video_kafka_handler import ThumbVideoKafkaHandler
 from communication.rest_endpoints import (
     annotation_router,
-    code_deployment_router,
     dataset_router,
     deployment_package_router,
     media_router,
@@ -79,7 +78,6 @@ if ENABLE_TRACING:
 logger = logging.getLogger(__name__)
 
 app.include_router(annotation_router)
-app.include_router(code_deployment_router)
 app.include_router(deployment_package_router)
 app.include_router(dataset_router)
 app.include_router(media_router)

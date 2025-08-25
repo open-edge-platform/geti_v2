@@ -4,30 +4,35 @@
 import { useEffect, useState } from 'react';
 
 import { paths } from '@geti/core';
-import { Flex, Heading, Text, View } from '@geti/ui';
-import { isEmpty } from 'lodash-es';
+import { Flex, Heading, MediaViewModes, Selection, Text, useViewMode, View, ViewModes } from '@geti/ui';
+import { isEmpty, isNil } from 'lodash-es';
 import { useNavigate } from 'react-router-dom';
+import { useOverlayTriggerState } from 'react-stately';
 
 import { DatasetIdentifier } from '../../../core/projects/dataset.interface';
-import { useViewMode } from '../../../hooks/use-view-mode/use-view-mode.hook';
-import { MEDIA_CONTENT_BUCKET } from '../../../providers/media-upload-provider/media-upload.interface';
-import { MediaViewModes } from '../../../shared/components/media-view-modes/media-view-modes.component';
-import { INITIAL_VIEW_MODE, ViewModes } from '../../../shared/components/media-view-modes/utils';
+import { DeleteItemButton } from '../../../shared/components/delete-item-button/delete-item-button.component';
+import { ImageOverlay } from '../../../shared/components/media-preview-list/image-overlay.component';
+import { MediaPreviewList } from '../../../shared/components/media-preview-list/media-preview-list.component';
+import { hasEqualId } from '../../../shared/utils';
+import { Screenshot } from '../../camera-support/camera.interface';
 import { ActionButtons } from '../components/action-buttons/action-buttons.component';
 import { useCameraParams } from '../hooks/camera-params.hook';
 import { useCameraStorage } from '../hooks/use-camera-storage.hook';
 import { getSortingHandler, SortingOptions } from './../util';
-import { MediaList } from './components/media-list.component';
 import { SortByDropdown } from './components/sort-by-dropdown.component';
 
 const cameraPagePath = (datasetIdentifier: DatasetIdentifier) => paths.project.dataset.camera(datasetIdentifier);
 
 export const MediaGallery = (): JSX.Element => {
     const navigate = useNavigate();
-    const { hasDefaultLabel, defaultLabelId, ...rest } = useCameraParams();
-    const { savedFilesQuery } = useCameraStorage();
-    const [viewMode, setViewMode] = useViewMode(MEDIA_CONTENT_BUCKET.GENERIC, INITIAL_VIEW_MODE);
+    const dialogState = useOverlayTriggerState({});
+    const [previewIndex, setPreviewIndex] = useState<null | number>(0);
+    const [selectedKeys] = useState(new Set(['']));
     const [sortingOption, setSortingOption] = useState(SortingOptions.MOST_RECENT);
+
+    const { savedFilesQuery, deleteMany, updateMany } = useCameraStorage();
+    const { hasDefaultLabel, defaultLabelId, ...rest } = useCameraParams();
+    const [viewMode, setViewMode] = useViewMode('camera-gallery');
 
     const sortingHandler = getSortingHandler(sortingOption);
     const screenshots = sortingHandler(savedFilesQuery?.data ?? []);
@@ -39,6 +44,20 @@ export const MediaGallery = (): JSX.Element => {
             );
         }
     });
+
+    const handleDeleteItem = (id: string) => {
+        return deleteMany([id]);
+    };
+
+    const handleUpdateItem = (id: string, item: Partial<Screenshot>) => {
+        return updateMany([id], item);
+    };
+
+    const handleOpenPreview = (keys: Selection) => {
+        const id = String(Array.from(keys).at(-1));
+        setPreviewIndex(screenshots.findIndex(hasEqualId(id)));
+        dialogState.open();
+    };
 
     return (
         <View padding={'size-250'} backgroundColor={'gray-75'}>
@@ -73,8 +92,30 @@ export const MediaGallery = (): JSX.Element => {
                     </Flex>
                 </Flex>
 
-                <MediaList viewMode={viewMode} screenshots={screenshots} />
+                <MediaPreviewList
+                    items={screenshots}
+                    viewMode={viewMode}
+                    selectedKeys={selectedKeys}
+                    height={`calc(100% - size-550)`}
+                    onUpdateItem={handleUpdateItem}
+                    topRightElement={(id: string) => <DeleteItemButton id={id} onDeleteItem={handleDeleteItem} />}
+                    onSelectionChange={handleOpenPreview}
+                />
             </View>
+
+            {!isNil(previewIndex) && (
+                <ImageOverlay
+                    dialogState={dialogState}
+                    items={screenshots}
+                    defaultIndex={previewIndex}
+                    onDeleteItem={(id) => {
+                        handleDeleteItem(id).then(() => {
+                            dialogState.close();
+                            setPreviewIndex(null);
+                        });
+                    }}
+                />
+            )}
         </View>
     );
 };

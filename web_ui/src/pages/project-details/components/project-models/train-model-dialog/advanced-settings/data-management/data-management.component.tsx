@@ -13,6 +13,10 @@ import { Tiling } from './tiling/tiling.component';
 import { TrainingSubsets } from './training-subsets/training-subsets.component';
 
 interface DataManagementProps {
+    hasSupportedModels: boolean;
+
+    defaultTrainingConfiguration: TrainingConfiguration;
+
     trainingConfiguration: TrainingConfiguration;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
@@ -27,7 +31,12 @@ const getAugmentationParameters = (configuration: TrainingConfiguration) => {
     return augmentation;
 };
 
-export const DataManagement: FC<DataManagementProps> = ({ trainingConfiguration, onUpdateTrainingConfiguration }) => {
+export const DataManagement: FC<DataManagementProps> = ({
+    hasSupportedModels,
+    trainingConfiguration,
+    onUpdateTrainingConfiguration,
+    defaultTrainingConfiguration,
+}) => {
     const augmentationParameters = getAugmentationParameters(trainingConfiguration);
     const subsetSplitParameters = trainingConfiguration.datasetPreparation.subsetSplit;
     const filteringParameters = trainingConfiguration.datasetPreparation.filtering;
@@ -38,7 +47,9 @@ export const DataManagement: FC<DataManagementProps> = ({ trainingConfiguration,
             {/* Not supported in v1 of training flow revamp <BalanceLabelsDistribution /> */}
             {!isEmpty(subsetSplitParameters) && (
                 <TrainingSubsets
-                    subsetsConfiguration={trainingConfiguration.datasetPreparation.subsetSplit}
+                    hasSupportedModels={hasSupportedModels}
+                    defaultSubsetParameters={defaultTrainingConfiguration.datasetPreparation.subsetSplit}
+                    subsetsParameters={trainingConfiguration.datasetPreparation.subsetSplit}
                     onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />
             )}

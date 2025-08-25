@@ -39,7 +39,7 @@ export enum LABEL_BEHAVIOUR {
     // A local label is applied to a shape to localize a point of interest. It is
     // used by the detection and segmentation tasks.
     // Only 1 localized label can be applied to an annotation at a time.
-    // An exception exists for anomaly detection and anomaly segmentation, whose
+    // An exception exists for anomaly detection whose
     // "anomalous" label is both LOCAL and GLOBAL.
     LOCAL = 1 << 1,
 

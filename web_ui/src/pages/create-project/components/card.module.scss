@@ -1,18 +1,11 @@
-.main {
-    cursor: pointer;
-    height: fit-content;
-    width: 95%;
-}
-
 .selected {
     border: var(--spectrum-alias-border-size-thick) solid var(--energy-blue);
     border-radius: var(--spectrum-alias-border-radius-regular);
-    @extend .main;
 }
 
-.accordion {
+.notSelected {
     border: var(--spectrum-alias-border-size-thick) solid transparent;
-    @extend .main;
+    border-radius: var(--spectrum-alias-border-radius-regular);
 }
 
 .disabled {
@@ -20,7 +13,6 @@
 }
 
 .card {
-    flex: 1;
     cursor: pointer;
 }
 

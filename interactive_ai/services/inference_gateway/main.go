@@ -60,7 +60,13 @@ func main() {
 	}
 
 	modelAccessSrv := service.NewModelAccessService(meshClient, registrationClient)
-	router := createRouter(cfg.MaxMultipartMemoryMB, modelAccessSrv)
+	clientManager, err := minio.NewClientManager()
+	if err != nil {
+		logger.Log().Fatalf("Cannot instantiate minio client manager: %s", err)
+	}
+	defer clientManager.Close()
+
+	router := createRouter(cfg.MaxMultipartMemoryMB, modelAccessSrv, clientManager)
 	if err = router.Run(":" + cfg.InferenceGatewayPort); err != nil {
 		logger.Log().Fatalf("Cannot run server: %s", err)
 	}
@@ -68,7 +74,11 @@ func main() {
 
 // createRouter initializes and returns a new instance of *gin.Engine.
 // This function abstracts the setup of routes/route groups.
-func createRouter(maxMultipartLimit int64, modelAccessSrv service.ModelAccessService) *gin.Engine {
+func createRouter(
+	maxMultipartLimit int64,
+	modelAccessSrv service.ModelAccessService,
+	mcm *minio.ClientManager,
+) *gin.Engine {
 	r := gin.New()
 	r.MaxMultipartMemory = maxMultipartLimit << megabyteToByteShift
 
@@ -91,16 +101,15 @@ func createRouter(maxMultipartLimit int64, modelAccessSrv service.ModelAccessSer
 	if err != nil {
 		logger.Log().Fatalf("Cannot instantiate cache service: %s", err)
 	}
-	videoRepo := minio.NewVideoRepositoryImpl()
-	imageRepo := minio.NewImageRepositoryImpl()
+	videoRepo := minio.NewVideoRepositoryImpl(mcm)
+	imageRepo := minio.NewImageRepositoryImpl(mcm)
 	frameReader := new(frames.FramerReaderImpl)
 	frameExtractor := frames.NewFFmpegCLIFrameExtractor()
 	mediaSrv := service.NewMediaServiceImpl(videoRepo, imageRepo, frameReader)
-	predict := usecase.NewPredict(modelAccessSrv, videoRepo, frameExtractor)
-	explain := usecase.NewExplain(modelAccessSrv, videoRepo, frameExtractor)
+	inferUC := usecase.NewInferImpl(modelAccessSrv, videoRepo, frameExtractor)
 	requestHandler := controllers.NewRequestHandlerImpl(mediaSrv)
 
-	inferenceCtrl := controllers.NewInferenceControllerImpl(modelAccessSrv, cacheSrv, requestHandler, predict, explain)
+	inferenceCtrl := controllers.NewInferenceControllerImpl(modelAccessSrv, cacheSrv, requestHandler, inferUC)
 	pipelineCtrl := controllers.NewPipelineController(inferenceCtrl)
 
 	pipelines := r.Group(baseProjectPath + "/pipelines/:pipeline_id")

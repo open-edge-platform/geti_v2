@@ -52,14 +52,14 @@ describe('About page', () => {
         jest.mocked(useIsSaasEnv).mockReturnValue(true);
         render(<AboutPage />);
 
-        expect(screen.queryByRole('button', { name: 'License' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Geti License' })).not.toBeInTheDocument();
     });
 
-    it('Shows and hides license modal when clicking the License button in on-prem environments', () => {
+    it('Shows and hides license modal when clicking the Geti License button in on-prem environments', () => {
         jest.mocked(useIsSaasEnv).mockReturnValue(false);
         render(<AboutPage />);
 
-        const licenseButton = screen.getByRole('button', { name: 'License' });
+        const licenseButton = screen.getByRole('button', { name: 'Geti License' });
         expect(licenseButton).toBeInTheDocument();
 
         // License modal should not be visible initially

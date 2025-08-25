@@ -4,7 +4,7 @@
 import { FC, RefObject, useRef } from 'react';
 
 import { Flex, Text, View, VisuallyHidden } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { mergeProps, useFocusRing, useNumberFormatter, useSlider, useSliderThumb } from 'react-aria';
 import { SliderState, useSliderState } from 'react-stately';
 
@@ -16,10 +16,10 @@ interface ThumbProps {
     index: number;
     state: SliderState;
     trackRef: RefObject<HTMLDivElement>;
+    ariaLabel: string;
 }
 
-const Thumb: FC<ThumbProps> = (props) => {
-    const { state, trackRef, index } = props;
+const Thumb: FC<ThumbProps> = ({ state, trackRef, index, ariaLabel }) => {
     const inputRef = useRef(null);
     const { thumbProps, inputProps } = useSliderThumb(
         {
@@ -39,6 +39,7 @@ const Thumb: FC<ThumbProps> = (props) => {
             style={{
                 left: `${state.getThumbPercent(index) * 100}%`,
             }}
+            aria-label={ariaLabel}
         >
             <VisuallyHidden>
                 <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
@@ -58,7 +59,7 @@ const DistributionTooltip: FC = () => {
 
 interface SubsetsDistributionSliderProps {
     label: string;
-    onChangeEnd?: (values: number[] | number) => void;
+    onChangeEnd: (values: number[] | number) => void;
     value: number | number[];
     defaultValue?: number | number[];
     onChange: (values: number[] | number) => void;
@@ -102,11 +103,13 @@ export const SubsetsDistributionSlider = (props: SubsetsDistributionSliderProps)
                         left={`${state.getThumbPercent(1) * 100}%`}
                         UNSAFE_className={clsx(styles.track, styles.testTrack)}
                     />
-                    <Thumb index={0} state={state} trackRef={trackRef} />
-                    <Thumb index={1} state={state} trackRef={trackRef} />
+                    <Thumb index={0} state={state} trackRef={trackRef} ariaLabel={'Start range'} />
+                    <Thumb index={1} state={state} trackRef={trackRef} ariaLabel={'End range'} />
                 </div>
                 <Text width={'size-1000'}>
-                    {trainingValue}/{validationValue}/{testValue}%
+                    <span aria-label={'Training subsets distribution'}>
+                        {trainingValue}/{validationValue}/{testValue}%
+                    </span>
                 </Text>
             </Flex>
         </>

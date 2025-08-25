@@ -3,14 +3,16 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { Shape as SmartToolsShape } from '@geti/smart-tools/src/shared/interfaces';
+import { RITM } from '@geti/smart-tools/ritm';
+import { Shape as SmartToolsShape } from '@geti/smart-tools/types';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
+import { Remote } from 'comlink';
 
 import { AlgorithmType } from '../../../hooks/use-load-ai-webworker/algorithm.interface';
 import { useLoadAIWebworker } from '../../../hooks/use-load-ai-webworker/use-load-ai-webworker.hook';
 import { useAnnotationScene } from '../providers/annotation-scene-provider/annotation-scene-provider.component';
-import { RITMData, RITMMethods, RITMResult } from '../tools/ritm-tool/ritm-tool.interface';
-import { convertGetiShapeTypeToToolShapeType, convertToolShapeToGetiShape } from '../tools/utils';
+import { RITMData, RITMResult } from '../tools/ritm-tool/ritm-tool.interface';
+import { convertToolShapeToGetiShape } from '../tools/utils';
 
 interface useInteractiveSegmentationProps {
     onSuccess: (result: RITMResult) => void;
@@ -20,7 +22,7 @@ interface useInteractiveSegmentationProps {
 interface useInteractiveSegmentationResult {
     cleanMask: () => void;
     reset: () => void;
-    loadImage: (imageData: ImageData) => void;
+    loadImage: RITM['loadImage'];
     isLoading: boolean;
     mutation: UseMutationResult<SmartToolsShape | undefined, unknown, RITMData>;
     cancel: () => void;
@@ -34,7 +36,7 @@ export const useInteractiveSegmentation = ({
 
     const { worker } = useLoadAIWebworker(AlgorithmType.RITM);
 
-    const wsInstance = useRef<RITMMethods | null>(null);
+    const ritmInstance = useRef<Remote<RITM> | null>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const cancelRequested = useRef<boolean>(false);
@@ -46,9 +48,9 @@ export const useInteractiveSegmentation = ({
     useEffect(() => {
         const loadWorker = async () => {
             if (worker) {
-                wsInstance.current = await new worker.RITM();
+                ritmInstance.current = worker;
 
-                await wsInstance.current?.load();
+                await ritmInstance.current?.load();
 
                 setIsLoading(false);
             }
@@ -57,28 +59,22 @@ export const useInteractiveSegmentation = ({
         if (worker) {
             loadWorker();
         }
-
-        return () => {
-            if (wsInstance && wsInstance.current) {
-                wsInstance.current.cleanMemory();
-            }
-        };
     }, [worker]);
 
     useEffect(() => {
         return () => setIsDrawing(false);
     }, [setIsDrawing]);
 
-    const mutation = useMutation({
+    const mutation = useMutation<SmartToolsShape | undefined, unknown, RITMData>({
         mutationFn: ({ area, givenPoints, outputShape }: RITMData) => {
-            if (!wsInstance.current) {
+            if (!ritmInstance.current) {
                 throw 'Interactive segmentation not ready yet';
             }
 
             cancelRequested.current = false;
             setIsDrawing(true);
 
-            return wsInstance.current.execute(area, givenPoints, convertGetiShapeTypeToToolShapeType(outputShape));
+            return ritmInstance.current.execute(area, givenPoints, outputShape);
         },
 
         onError: showNotificationError,
@@ -96,23 +92,23 @@ export const useInteractiveSegmentation = ({
     });
 
     const cleanMask = () => {
-        wsInstance?.current?.resetPointMask();
+        ritmInstance?.current?.resetPointMask();
     };
 
     const reset = () => {
         setIsDrawing(false);
-        wsInstance?.current?.reset();
+        ritmInstance?.current?.reset();
     };
 
     const loadImage = (imageData: ImageData) => {
-        if (!wsInstance.current) {
+        if (!ritmInstance.current) {
             console.warn('loading image before RITM is loaded...');
 
             return;
         }
 
         reset();
-        wsInstance.current.loadImage(imageData);
+        ritmInstance.current.loadImage(imageData);
     };
 
     return {

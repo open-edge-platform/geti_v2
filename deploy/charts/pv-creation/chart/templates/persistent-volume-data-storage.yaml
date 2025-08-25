@@ -1,0 +1,19 @@
+{{- if eq .Values.storageClassName "local-storage" }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data-storage-volume
+  labels:
+    type: local
+    app: "{{ .Chart.Name }}"
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: {{ .Values.storageLimit }}
+  hostPath:
+    path: "{{ .Values.dataStoragePath }}"
+    type: DirectoryOrCreate
+ {{- end }}

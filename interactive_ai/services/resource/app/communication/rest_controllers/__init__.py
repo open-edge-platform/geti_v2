@@ -2,7 +2,6 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 from .annotation_controller import AnnotationRESTController
-from .code_deployment_controller import CodeDeploymentRESTController
 from .dataset_controller import DatasetRESTController
 from .deployment_package_controller import DeploymentPackageRESTController
 from .media_controller import MediaRESTController
@@ -12,7 +11,6 @@ from .project_controller import ProjectRESTController
 
 __all__ = [
     "AnnotationRESTController",
-    "CodeDeploymentRESTController",
     "DatasetRESTController",
     "DeploymentPackageRESTController",
     "MediaRESTController",

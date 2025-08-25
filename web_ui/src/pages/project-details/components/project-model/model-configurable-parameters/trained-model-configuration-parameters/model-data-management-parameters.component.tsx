@@ -7,11 +7,14 @@ import { isEmpty, noop } from 'lodash-es';
 import { TrainedModelConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
 import { DataAugmentationParametersList } from '../../../project-models/train-model-dialog/advanced-settings/data-management/data-augmentation/data-augmentation-parameters-list.component';
 import { isDataAugmentationEnabled } from '../../../project-models/train-model-dialog/advanced-settings/data-management/data-augmentation/data-augmentation.component';
-import { TilingModeTooltip } from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling-modes.component';
+import {
+    TILING_MODES,
+    TilingModeTooltip,
+} from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling-modes.component';
 import {
     getCustomTilingParameters,
     getTilingMode,
-} from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/tiling.component';
+} from '../../../project-models/train-model-dialog/advanced-settings/data-management/tiling/utils';
 import { Accordion } from '../../../project-models/train-model-dialog/advanced-settings/ui/accordion/accordion.component';
 import { Parameters } from '../../../project-models/train-model-dialog/advanced-settings/ui/parameters.component';
 
@@ -43,7 +46,7 @@ const TilingMode = ({ tilingMode }: TilingModeProps) => {
                     Tiling mode <TilingModeTooltip />
                 </Text>
             </View>
-            <Text>{tilingMode}</Text>
+            <span aria-label={'Tiling mode'}>{tilingMode}</span>
         </Flex>
     );
 };
@@ -55,12 +58,14 @@ const TilingParameters = ({ parameters }: TilingParametersProps) => {
     return (
         <Accordion>
             <Accordion.Title>
-                Title <Accordion.Tag>{tilingMode}</Accordion.Tag>
+                Tiling <Accordion.Tag>{tilingMode}</Accordion.Tag>
             </Accordion.Title>
             <Accordion.Content>
                 <Flex direction={'column'} gap={'size-300'}>
                     <TilingMode tilingMode={tilingMode} />
-                    <Parameters parameters={customTilingParameters} onChange={noop} isReadOnly />
+                    {tilingMode === TILING_MODES.CUSTOM && (
+                        <Parameters parameters={customTilingParameters} onChange={noop} isReadOnly />
+                    )}
                 </Flex>
             </Accordion.Content>
         </Accordion>

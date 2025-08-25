@@ -116,7 +116,7 @@ describe('camera providers utils', () => {
     describe('mergeSettingAndCapabilities', () => {
         it('min max', () => {
             expect(mergeSettingAndCapabilities({ width: { max: 1920, min: 1 } }, { width: 640 })).toEqual([
-                { config: { max: 1920, min: 1, type: 'minMax', value: 640 }, name: 'width' },
+                { config: { max: 1920, min: 1, type: 'minMax', value: 640, defaultValue: 640 }, name: 'width' },
             ]);
         });
 
@@ -127,7 +127,12 @@ describe('camera providers utils', () => {
             expect(mergeSettingAndCapabilities(capabilities, settings)).toEqual([
                 {
                     name: 'resizeMode',
-                    config: { options: ['none', 'crop-and-scale'], type: 'selection', value: 'none' },
+                    config: {
+                        options: ['none', 'crop-and-scale'],
+                        type: 'selection',
+                        value: 'none',
+                        defaultValue: 'none',
+                    },
                 },
             ]);
         });

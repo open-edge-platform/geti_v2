@@ -74,9 +74,9 @@ class ProjectService:
                 )
 
         # init project and training configurations
-        task_ids = [task.id_ for task in project.get_trainable_task_nodes()]
-        ProjectConfigurationRepo(project.identifier).create_default_configuration(task_ids=task_ids)
-        PartialTrainingConfigurationRepo(project.identifier).create_default_configuration(task_ids=task_ids)
+        tasks = project.get_trainable_task_nodes()
+        ProjectConfigurationRepo(project.identifier).create_default_configuration(task_ids=[task.id_ for task in tasks])
+        PartialTrainingConfigurationRepo(project.identifier).create_default_configuration(tasks=tasks)
 
     @staticmethod
     def delete_entities(workspace_id: ID, project_id: ID, dataset_storage_id: ID) -> None:

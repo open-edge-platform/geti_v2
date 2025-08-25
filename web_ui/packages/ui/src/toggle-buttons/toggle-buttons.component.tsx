@@ -5,14 +5,14 @@ import { Button, Flex } from '@adobe/react-spectrum';
 
 import styles from './toggle-buttons.module.scss';
 
-interface ToggleButtonProps<T extends string> {
+interface ToggleButtonProps<T extends string | number> {
     selectedOption: T;
     option: T;
     onOptionChange: (option: T) => void;
     isDisabled?: boolean;
 }
 
-const ToggleButton = <T extends string>({
+const ToggleButton = <T extends string | number>({
     selectedOption,
     option,
     onOptionChange,
@@ -20,7 +20,7 @@ const ToggleButton = <T extends string>({
 }: ToggleButtonProps<T>) => {
     return (
         <Button
-            data-activated={selectedOption === option}
+            aria-pressed={selectedOption === option}
             variant={selectedOption === option ? 'accent' : 'secondary'}
             UNSAFE_className={styles.toggleButton}
             onPress={() => {
@@ -33,14 +33,14 @@ const ToggleButton = <T extends string>({
     );
 };
 
-interface ToggleButtonsProps<T extends string> {
+interface ToggleButtonsProps<T extends string | number> {
     options: T[];
     selectedOption: T;
     onOptionChange: (option: T) => void;
     isDisabled?: boolean;
 }
 
-export const ToggleButtons = <T extends string>({
+export const ToggleButtons = <T extends string | number>({
     options,
     selectedOption,
     onOptionChange,

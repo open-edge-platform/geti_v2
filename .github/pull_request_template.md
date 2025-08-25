@@ -1,16 +1,13 @@
 ## 📝 Description
 
+<!--  
 Provide a clear summary of the changes and the context behind them. Describe **what** was changed, **why** it was needed, and **how** the changes address the issue or add value.
 
-<!--  
-If the PR addresses a specific GitHub issue, include one of the following lines to enable auto-closing:
-Fixes #<issue_number>
-Closes #<issue_number>
-
-If referencing an internal ticket (e.g. JIRA), include the ticket number instead:
-JIRA: <project-key>-<ticket-number>
-
-If there’s no related issue or ticket, you can skip this section.
+If the PR addresses a specific GitHub issue, link it through the 'Development' panel on the side.
+This will ensure that the issue is automatically closed after the PR is merged.
+Alternatively, include one of the special GitHub keywords in the description, for example:
+- Fixes #<issue_number>
+- Closes #<issue_number>
 -->
 
 ## ✨ Type of Change
@@ -37,8 +34,9 @@ Describe how the changes were tested and how reviewers can test them too:
 
 Before submitting the PR, ensure the following:
 
-- [ ] 🔍 PR title is clear and descriptive
-- [ ] 📝 For internal contributors: If applicable, include the JIRA ticket number (e.g., ITEP-123456) in the PR **title**. Do **not** include full URLs
+- [ ] 🔍 PR title is clear and meaningful
+- [ ] ✍️ PR description clearly explains the changes and their reason
+- [ ] 📝 I have linked the PR to the corresponding GitHub Issues, if any
 - [ ] 💬 I have commented my code, especially in hard-to-understand areas
 - [ ] 📄 I have made corresponding changes to the documentation
 - [ ] ✅ I have added tests that prove my fix is effective or my feature works

@@ -4,19 +4,17 @@
 import { useEffect } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError, HttpStatusCode } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { ModelIdentifier } from '../../models/models.interface';
 import { ModelMetrics } from '../model-statistics.interface';
 
 export const useModelStatistics = (modelIdentifier: ModelIdentifier): UseQueryResult<ModelMetrics, AxiosError> => {
     const service = useApplicationServices().modelStatisticsService;
-    const { addNotification } = useNotification();
 
     const modelStatisticsQuery = useQuery<ModelMetrics, AxiosError>({
         queryKey: QUERY_KEYS.MODEL_STATISTICS_KEY(modelIdentifier),
@@ -32,9 +30,9 @@ export const useModelStatistics = (modelIdentifier: ModelIdentifier): UseQueryRe
         }
 
         if (modelStatisticsQuery.error.response?.status === HttpStatusCode.NotFound) {
-            addNotification({ message: getErrorMessage(modelStatisticsQuery.error), type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: getErrorMessage(modelStatisticsQuery.error), type: 'error' });
         }
-    }, [modelStatisticsQuery.isError, modelStatisticsQuery.error, addNotification]);
+    }, [modelStatisticsQuery.isError, modelStatisticsQuery.error]);
 
     return modelStatisticsQuery;
 };

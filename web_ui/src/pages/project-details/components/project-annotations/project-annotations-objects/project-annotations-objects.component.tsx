@@ -1,13 +1,13 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Flex } from '@geti/ui';
+import { Flex, FullscreenAction } from '@geti/ui';
 import { ResponsiveContainer } from 'recharts';
 
 import { ObjectsPerLabelInterface } from '../../../../../core/statistics/dtos/dataset-statistics.interface';
 import { CardContent } from '../../../../../shared/components/card-content/card-content.component';
 import { Colors } from '../../../../../shared/components/charts/chart.interface';
-import { FullscreenAction } from '../../../../../shared/components/fullscreen-action/fullscreen-action.component';
+import { DownloadGraphMenu } from '../../../../../shared/components/download-graph-menu/download-graph-menu.component';
 import { InfoTooltip } from '../../../../../shared/components/info-tooltip/info-tooltip.component';
 import { ProjectGridArea } from '../project-grid-area.interface';
 import { AnnotationObjectsBarHorizontalChart } from './annotations-objects-bar-horizontal-chart/annotations-objects-bar-horizontal-chart.component';
@@ -47,9 +47,15 @@ export const ProjectAnnotationsObjects = ({
                 titleActions={<ActionTooltip />}
                 actions={
                     <FullscreenAction
-                        isDownloadable
+                        actionButton={
+                            <DownloadGraphMenu
+                                fileName={title}
+                                data={{ type: 'barChart', data }}
+                                tooltip={'Download graph'}
+                                graphBackgroundColor={'gray-100'}
+                            />
+                        }
                         title='Number of objects per label'
-                        downloadableData={{ type: 'barChart', data }}
                     >
                         <AnnotationObjectsBarHorizontalChart data={data} colors={colors} barSize={50} title={title} />
                     </FullscreenAction>

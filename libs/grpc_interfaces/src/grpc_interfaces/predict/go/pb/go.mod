@@ -2,7 +2,7 @@ module geti.com/predict
 
 go 1.23.3
 
-toolchain go1.23.8
+toolchain go1.23.11
 
 require (
 	github.com/stretchr/testify v1.9.0

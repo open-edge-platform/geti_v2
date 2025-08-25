@@ -1,0 +1,103 @@
+get:
+  tags:
+    - Configuration
+  summary: "Retrieve project or task-specific configuration settings"
+  description: |
+    Retrieves the configuration settings for a project or a specific task within a project.
+    
+    - If task_id is provided, returns only configuration for that specific task
+    - Otherwise, returns configuration for the entire project, including all tasks
+  operationId: GetProjectConfiguration
+  parameters:
+    - $ref: "../../parameters/path/organization_id.yaml"
+    - $ref: "../../parameters/path/workspace_id.yaml"
+    - $ref: "../../parameters/path/project_id.yaml"
+    - $ref: "../../parameters/query/task_id.yaml"
+  responses:
+    '200':
+      description: Get full configuration response
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/configuration/responses/revamp/project_configuration.yaml"
+          examples:
+            Project configuration response:
+              value:
+                - $ref: "../../examples/configuration/responses/revamp/project_configuration.json"
+    '404':
+      description: Object not found. See the examples for details.
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+          examples:
+            Organization not found response:
+              value:
+                $ref: "../../examples/organizations/error_responses/organization_not_found.json"
+            Workspace not found response:
+              value:
+                $ref: "../../examples/workspaces/error_responses/workspace_not_found.json"
+            Project not found response:
+              value:
+                $ref: "../../examples/projects/error_responses/project_not_found.json"
+            Project configuration not found response:
+              value:
+                $ref: "../../examples/configuration/error_responses/revamp/project_configuration_not_found.json"
+
+patch:
+  tags:
+    - Configuration
+  summary: "Update project or task-specific configuration settings"
+  description: |
+    Updates the configuration settings for a project or a specific task within a project.
+    
+    - If task_id is provided, updates only configuration for that specific task
+    - Otherwise, updates configuration for the entire project
+  operationId: UpdateProjectConfiguration
+  parameters:
+    - $ref: "../../parameters/path/organization_id.yaml"
+    - $ref: "../../parameters/path/workspace_id.yaml"
+    - $ref: "../../parameters/path/project_id.yaml"
+    - $ref: "../../parameters/query/task_id.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../interactive_ai/services/api/schemas/configuration/requests/revamp/project_configuration.yaml"
+        examples:
+          Project configuration payload:
+            value:
+              - $ref: "../../examples/configuration/requests/revamp/project_configuration.json"
+    required: true
+  responses:
+    '204':
+      description: Configuration updated successfully
+    '404':
+      description: Object not found. See the examples for details.
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+          examples:
+            Organization not found response:
+              value:
+                $ref: "../../examples/organizations/error_responses/organization_not_found.json"
+            Workspace not found response:
+              value:
+                $ref: "../../examples/workspaces/error_responses/workspace_not_found.json"
+            Project not found response:
+              value:
+                $ref: "../../examples/projects/error_responses/project_not_found.json"
+            Project configuration not found response:
+              value:
+                $ref: "../../examples/configuration/error_responses/revamp/project_configuration_not_found.json"
+    '400':
+      description: Payload configuration contains validation error. See the examples for details.
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/generic_responses/error_response.yaml"
+          examples:
+            Payload validation error response:
+              value:
+                $ref: "../../examples/configuration/error_responses/revamp/pydantic_validation_error.json"

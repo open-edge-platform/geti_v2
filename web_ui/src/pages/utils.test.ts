@@ -1,13 +1,18 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { DOMAIN } from '../core/projects/core.interface';
 import { VALID_IMAGE_TYPES_SINGLE_UPLOAD } from '../shared/media-utils';
+import { getMockedTask } from '../test-utils/mocked-items-factory/mocked-tasks';
 import {
     getForegroundColor,
     getMaxMinPoint,
     getPointInRoi,
+    getSingleValidTask,
     hexaToRGBA,
+    isClassificationOrAnomaly,
     isSupportedImageFormat,
+    onValidImageFormat,
     PointAxis,
 } from './utils';
 
@@ -84,5 +89,52 @@ describe('page utils', () => {
         expect(maxX).toEqual(15);
         expect(minY).toEqual(10);
         expect(maxY).toEqual(30);
+    });
+
+    describe('onValidImageFormat', () => {
+        const validFiles = [
+            new File(['foo'], 'foo.jpg', { type: `image/${VALID_IMAGE_TYPES_SINGLE_UPLOAD[0]}` }),
+            new File(['bar'], 'bar.png', { type: `image/${VALID_IMAGE_TYPES_SINGLE_UPLOAD[1]}` }),
+        ];
+
+        const invalidFiles = [
+            new File(['bar'], 'bar.pdf', { type: 'application/pdf' }),
+            new File(['foo'], 'video.mov', { type: 'video/quicktime' }),
+        ];
+
+        it('invoke callback function when all provided files have valid image formats', () => {
+            const mockedCallback = jest.fn();
+            const mockedErrorCallback = jest.fn();
+            onValidImageFormat(mockedCallback, mockedErrorCallback)(validFiles);
+
+            expect(mockedCallback).toHaveBeenCalledWith(validFiles);
+            expect(mockedErrorCallback).not.toHaveBeenCalled();
+        });
+
+        it('invoke error callback when files with unsupported formats are provided', () => {
+            const mockedCallback = jest.fn();
+            const mockedErrorCallback = jest.fn();
+            onValidImageFormat(mockedCallback, mockedErrorCallback)(invalidFiles);
+
+            expect(mockedCallback).not.toHaveBeenCalled();
+            expect(mockedErrorCallback).toHaveBeenCalledWith(invalidFiles);
+        });
+    });
+
+    it('isClassificationOrAnomaly', () => {
+        expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.CLASSIFICATION }))).toBe(true);
+        expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.ANOMALY_DETECTION }))).toBe(true);
+        expect(isClassificationOrAnomaly(getMockedTask({ domain: DOMAIN.ANOMALY_CLASSIFICATION }))).toBe(true);
+    });
+
+    it('getSingleValidTask', () => {
+        expect(getSingleValidTask([getMockedTask({ domain: DOMAIN.DETECTION })])).toEqual([]);
+        expect(getSingleValidTask([getMockedTask({ domain: DOMAIN.SEGMENTATION })])).toEqual([]);
+        expect(
+            getSingleValidTask([
+                getMockedTask({ domain: DOMAIN.DETECTION }),
+                getMockedTask({ domain: DOMAIN.CLASSIFICATION }),
+            ])
+        ).toEqual([]);
     });
 });

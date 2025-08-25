@@ -1,0 +1,5 @@
+task: anomaly
+
+hyperparameters:
+  evaluation:
+    metric: accuracy

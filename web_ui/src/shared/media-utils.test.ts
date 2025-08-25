@@ -7,6 +7,8 @@ import {
     defineMediaType,
     downloadMediaItem,
     getVideoDimensionErrors,
+    isImgFile,
+    isImgOrVideoFile,
     isTiffFormat,
     isValidFileExtension,
     isVideoFile,
@@ -184,6 +186,32 @@ describe('defineMediaType', () => {
 it('isVideoFile', () => {
     expect(isVideoFile(mockFile({ type: 'video/mp4' }))).toBe(true);
     expect(isVideoFile(mockFile({ type: 'image/jpg' }))).toBe(false);
+});
+
+it('isImgFile', () => {
+    expect(isImgFile(mockFile({ type: 'image/jpg' }))).toBe(true);
+    expect(isImgFile(mockFile({ type: 'image/jpeg' }))).toBe(true);
+    expect(isImgFile(mockFile({ type: 'image/png' }))).toBe(true);
+    expect(isImgFile(mockFile({ type: 'image/bmp' }))).toBe(true);
+    expect(isImgFile(mockFile({ type: 'image/tiff' }))).toBe(true);
+    expect(isImgFile(mockFile({ name: 'test.jpg' }))).toBe(true);
+    expect(isImgFile(mockFile({ name: 'test.png' }))).toBe(true);
+    expect(isImgFile(mockFile({ type: 'video/mp4' }))).toBe(false);
+    expect(isImgFile(mockFile({ type: 'application/pdf' }))).toBe(false);
+    expect(isImgFile(mockFile({ type: '' }))).toBe(false);
+});
+
+it('isImgOrVideoFile', () => {
+    expect(isImgOrVideoFile(mockFile({ type: 'image/jpg' }))).toBe(true);
+    expect(isImgOrVideoFile(mockFile({ type: 'image/png' }))).toBe(true);
+    expect(isImgOrVideoFile(mockFile({ type: 'image/tiff' }))).toBe(true);
+    expect(isImgOrVideoFile(mockFile({ type: 'video/mp4' }))).toBe(true);
+    expect(isImgOrVideoFile(mockFile({ type: 'video/quicktime' }))).toBe(true);
+    expect(isImgOrVideoFile(mockFile({ name: 'test.jpg' }))).toBe(true);
+    expect(isImgOrVideoFile(mockFile({ name: 'test.mkv' }))).toBe(true);
+    expect(isImgOrVideoFile(mockFile({ type: 'application/pdf' }))).toBe(false);
+    expect(isImgOrVideoFile(mockFile({ type: 'text/plain' }))).toBe(false);
+    expect(isImgOrVideoFile(mockFile({ type: '' }))).toBe(false);
 });
 
 it('isTiffFormat', () => {

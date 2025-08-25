@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "mimir.name" . }}-runtime
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mimir.labels" . | nindent 4 }}
+data:
+  runtime.yaml: |
+    {{ tpl (toYaml .Values.mimir.runtimeConfig) . | nindent 4 }}

@@ -1,0 +1,45 @@
+oneOf:
+  - type: object
+  - type: array
+description: A parameter that contains nested parameters
+additionalProperties:
+  anyOf:
+    - type: array
+      items:
+        anyOf:
+          - $ref: bool.yaml
+          - $ref: float.yaml
+          - $ref: int.yaml
+          - $ref: string.yaml
+          - $ref: enum.yaml
+          - type: object # nested parameters object
+    - type: object # nested parameters object
+
+example:
+  augmentation:
+    center_crop:
+      - default_value: false
+        description: Whether to apply center cropping to the image
+        key: enable
+        name: Enable center crop
+        type: bool
+        value: true
+      - default_value: 1.0
+        description: Ratio of original dimensions to keep when cropping
+        key: ratio
+        name: Crop ratio
+        type: float
+        value: 0.8
+    color_jitter:
+      - default_value: false
+        description: Whether to apply color jittering to the image
+        key: enable
+        name: Enable color jitter
+        type: bool
+        value: true
+      - default_value: 0.2
+        description: Maximum brightness adjustment factor
+        key: brightness
+        name: Brightness factor
+        type: float
+        value: 0.1

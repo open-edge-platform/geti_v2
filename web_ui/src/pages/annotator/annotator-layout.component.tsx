@@ -20,7 +20,6 @@ import { UpgradeBanner } from '../../routes/upgrade-banner/upgrade-banner.compon
 import { CoachMark } from '../../shared/components/coach-mark/coach-mark.component';
 import { SuccessfullyAutotrainedNotification } from '../../shared/components/coach-mark/fux-notifications/successfully-auto-trained-notification.component';
 import { TutorialCardBuilder } from '../../shared/components/tutorial-card/tutorial-card-builder.component';
-import { getFuxSetting } from '../../shared/components/tutorials/utils';
 import { useTutorialEnablement } from '../../shared/hooks/use-tutorial-enablement.hook';
 import { ErrorBoundary } from '../errors/error-boundary.component';
 import { useProject } from '../project-details/providers/project-provider/project-provider.component';
@@ -97,22 +96,19 @@ const CopyPaste = ({ labels, scene, selectedMediaItem }: CopyPasteProps): JSX.El
 };
 
 export const AnnotatorLayout = (): JSX.Element => {
-    const labels = useLabelShortcuts();
-    const { userGlobalSettings, userProjectSettings } = useAnnotator();
-
     const { project } = useProject();
+    const labels = useLabelShortcuts();
+
     const { selectedMediaItem } = useSelectedMediaItem();
     const annotationToolContext = useAnnotationToolContext();
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
+    const { userGlobalSettings, userProjectSettings } = useAnnotator();
     const { isOpen: isAnnotateInteractivelyNotificationEnabled, close } = useTutorialEnablement(
         FUX_NOTIFICATION_KEYS.ANNOTATE_INTERACTIVELY
     );
 
-    const hasPreviouslyAutoTrained = !getFuxSetting(FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED, userGlobalSettings.config);
-    const firstAutoTrainedProjectId = getFuxSetting(
-        FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_PROJECT_ID,
-        userGlobalSettings.config
-    );
+    const hasPreviouslyAutoTrained = !userGlobalSettings.config[FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED].value;
+    const firstAutoTrainedProjectId = userGlobalSettings.config[FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_PROJECT_ID].value;
 
     const filteredLabels = project.tasks.some(isKeypointTask) ? [] : labels;
 

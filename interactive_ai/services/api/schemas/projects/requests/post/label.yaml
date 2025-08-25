@@ -17,5 +17,8 @@ properties:
   group:
     type: string
     description: 'Name of label group'
+  is_background:
+    type: boolean
+    description: Indicates whether the label is the background label
   parent_id:
     description: 'Name of parent label'

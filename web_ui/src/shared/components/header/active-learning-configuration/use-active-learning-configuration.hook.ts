@@ -30,76 +30,59 @@ export const useActiveLearningConfiguration = (
 
     const projectConfigurationMutation = useProjectConfigurationMutation();
     const notCropTasks = tasks.filter(isNotCropTask);
-    const istTaskChain = notCropTasks.length > 1;
 
-    const updateProjectConfiguration = ({
-        taskId,
-        payload,
-    }: {
-        taskId?: string;
-        payload: ProjectConfigurationUploadPayload;
-    }) => {
+    const updateProjectConfiguration = (payload: ProjectConfigurationUploadPayload) => {
         projectConfigurationMutation.mutate({
             projectIdentifier,
             payload,
-            queryParameters: istTaskChain ? { taskId } : undefined,
         });
     };
 
     const updateAutoTraining = (taskId: string, value: boolean) => {
         updateProjectConfiguration({
-            taskId,
-            payload: {
-                taskConfigs: [
-                    {
-                        taskId,
-                        autoTraining: [
-                            {
-                                key: 'enable',
-                                value,
-                            },
-                        ],
-                    },
-                ],
-            },
+            taskConfigs: [
+                {
+                    taskId,
+                    autoTraining: [
+                        {
+                            key: 'enable',
+                            value,
+                        },
+                    ],
+                },
+            ],
         });
     };
 
     const updateDynamicRequiredAnnotations = (taskId: string, value: boolean) => {
         updateProjectConfiguration({
-            taskId,
-            payload: {
-                taskConfigs: [
-                    {
-                        taskId,
-                        autoTraining: [
-                            {
-                                key: 'enable_dynamic_required_annotations',
-                                value,
-                            },
-                        ],
-                    },
-                ],
-            },
+            taskConfigs: [
+                {
+                    taskId,
+                    autoTraining: [
+                        {
+                            key: 'enable_dynamic_required_annotations',
+                            value,
+                        },
+                    ],
+                },
+            ],
         });
     };
 
     const updateRequiredImagesAutoTraining = (taskId: string, value: number) => {
         updateProjectConfiguration({
-            taskId,
-            payload: {
-                taskConfigs: [
-                    {
-                        taskId,
-                        autoTraining: [
-                            {
-                                key: 'min_images_per_label',
-                                value,
-                            },
-                        ],
-                    },
-                ],
-            },
+            taskConfigs: [
+                {
+                    taskId,
+                    autoTraining: [
+                        {
+                            key: 'min_images_per_label',
+                            value,
+                        },
+                    ],
+                },
+            ],
         });
     };
 

@@ -2,12 +2,15 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import logging
 import os
+import tempfile
 from tempfile import TemporaryDirectory
 from typing import Any
 
+from PIL import Image as PILImage
+
 from geti_kafka_tools import publish_event
 from geti_types import CTX_SESSION_VAR, ID
-from iai_core.adapters.binary_interpreters import NumpyBinaryInterpreter
+from iai_core.adapters.binary_interpreters import StreamBinaryInterpreter
 from iai_core.entities.dataset_storage import DatasetStorageIdentifier
 from iai_core.entities.image import Image
 from iai_core.entities.video import Video
@@ -67,20 +70,56 @@ class MediaUploadedUseCase:
         :param image_id: image ID
         :param data_binary_filename: uploaded binary filename
         """
-        image_numpy = ImageBinaryRepo(dataset_storage_identifier).get_by_filename(
-            filename=data_binary_filename, binary_interpreter=NumpyBinaryInterpreter()
+        data_stream = ImageBinaryRepo(dataset_storage_identifier).get_by_filename(
+            filename=data_binary_filename, binary_interpreter=StreamBinaryInterpreter()
         )
         try:
+            data_stream.seek(0)
+            pil_image = PILImage.open(data_stream)
             # Create a thumbnail for the image
-            Media2DFactory.create_and_save_media_thumbnail(
-                dataset_storage_identifier=dataset_storage_identifier,
-                media_numpy=image_numpy,
-                thumbnail_binary_filename=Image.thumbnail_filename_by_image_id(image_id),
-            )
+            dst_file_name = Image.thumbnail_filename_by_image_id(image_id)
+            with tempfile.NamedTemporaryFile(suffix=dst_file_name) as temp_file:
+                thumbnail_image = MediaUploadedUseCase.crop_to_thumbnail(
+                    pil_image=pil_image, target_width=DEFAULT_THUMBNAIL_SIZE, target_height=DEFAULT_THUMBNAIL_SIZE
+                )
+                if thumbnail_image.mode in ("RGBA", "P"):
+                    thumbnail_image = thumbnail_image.convert("RGB")
+                thumbnail_image.save(temp_file.name)
+                ThumbnailBinaryRepo(dataset_storage_identifier).save(
+                    data_source=temp_file.name, dst_file_name=dst_file_name
+                )
             logger.debug(f"Image {image_id} has been successfully preprocessed")
         except Exception as ex:
             logger.error(f"Error occurred while preprocessing image {image_id}", exc_info=ex)
             raise RuntimeError("Failed to preprocess image file") from ex
+
+    @staticmethod
+    def crop_to_thumbnail(pil_image: PILImage.Image, target_height: int, target_width: int) -> PILImage.Image:
+        """
+        Crop an image to a thumbnail. The image is first scaled according to the side with the least amount of
+        rescaling, and then the other side is cropped. In this way, a maximal portion of the image is visible in the
+        thumbnail.
+
+        :param pil_image: image to generate thumbnail for
+        :param target_height: target height to crop the thumbnail to
+        :param target_width: target width to crop the thumbnail to
+        """
+        scale_width = target_width / pil_image.width
+        scale_height = target_height / pil_image.height
+        scaling_factor = max(scale_width, scale_height)
+        resized_image = pil_image.resize(
+            (int(pil_image.width * scaling_factor), int(pil_image.height * scaling_factor))
+        )
+        # cropping
+        x1 = (resized_image.width - target_width) / 2
+        x2 = x1 + target_width
+        y1 = (resized_image.height - target_height) / 2
+        y2 = y1 + target_height
+        x1 = round(max(x1, 0))
+        x2 = round(min(x2, resized_image.width))
+        y1 = round(max(y1, 0))
+        y2 = round(min(y2, resized_image.height))
+        return resized_image.crop((x1, y1, x2, y2))
 
     @staticmethod
     def on_video_uploaded(

@@ -3,13 +3,13 @@
 
 import { useMemo, useState } from 'react';
 
-import { Flex, Text } from '@geti/ui';
+import { Flex, FullscreenAction, Text } from '@geti/ui';
 
 import { isClassificationDomain } from '../../../../../core/projects/domains';
 import { ObjectSizeDistribution } from '../../../../../core/statistics/services/dataset-statistics.interface';
 import { CardContent } from '../../../../../shared/components/card-content/card-content.component';
 import { PieChart } from '../../../../../shared/components/charts/pie-chart/pie-chart.component';
-import { FullscreenAction } from '../../../../../shared/components/fullscreen-action/fullscreen-action.component';
+import { DownloadGraphMenu } from '../../../../../shared/components/download-graph-menu/download-graph-menu.component';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { ProjectGridArea } from '../project-grid-area.interface';
 import { DistributionChart } from './distribution-chart/distribution-chart.component';
@@ -71,13 +71,19 @@ export const ObjectSizeDistributionWrapper = ({
                 title={CHART_TITLE}
                 actions={
                     <FullscreenAction
-                        isDownloadable
+                        actionButton={
+                            <DownloadGraphMenu
+                                fileName={CHART_TITLE}
+                                data={{
+                                    type: 'default',
+                                    header: ['Width', 'Height'],
+                                    data: selectedObjectDistribution.sizeDistribution,
+                                }}
+                                tooltip={'Download graph'}
+                                graphBackgroundColor={'gray-100'}
+                            />
+                        }
                         title={CHART_TITLE}
-                        downloadableData={{
-                            type: 'default',
-                            header: ['Width', 'Height'],
-                            data: selectedObjectDistribution.sizeDistribution,
-                        }}
                     >
                         <DistributionChart
                             title={CHART_TITLE}

@@ -2,8 +2,12 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import {
+    BoolParameter,
     ConfigurationParameter,
+    EnumConfigurationParameter,
+    NumberParameter,
     ProjectConfiguration,
+    TrainedModelConfiguration,
     TrainingConfiguration,
 } from '../../core/configurable-parameters/services/configuration.interface';
 
@@ -69,9 +73,93 @@ export const getMockedProjectConfiguration = (config: Partial<ProjectConfigurati
 });
 
 export const getMockedTrainingConfiguration = (config: Partial<TrainingConfiguration> = {}): TrainingConfiguration => ({
-    training: [],
+    training: [
+        getMockedConfigurationParameter({
+            key: 'max_epochs',
+            type: 'int',
+            name: 'Maximum epochs',
+            value: 200,
+            description: 'Maximum number of training epochs to run',
+            defaultValue: 500,
+            maxValue: null,
+            minValue: 0,
+        }),
+        getMockedConfigurationParameter({
+            key: 'learning_rate',
+            type: 'float',
+            name: 'Learning rate',
+            value: 0.004,
+            description: 'Base learning rate for the optimizer',
+            defaultValue: 0.001,
+            maxValue: 1,
+            minValue: 0,
+        }),
+        {
+            early_stopping: [
+                getMockedConfigurationParameter({
+                    key: 'enable',
+                    type: 'bool',
+                    name: 'Enable early stopping',
+                    value: true,
+                    description: 'Whether to stop training early when performance stops improving',
+                    defaultValue: true,
+                }),
+                getMockedConfigurationParameter({
+                    key: 'patience',
+                    type: 'int',
+                    name: 'Patience',
+                    value: 10,
+                    description: 'Number of epochs with no improvement after which training will be stopped',
+                    defaultValue: 1,
+                    maxValue: null,
+                    minValue: 0,
+                }),
+            ],
+        },
+    ],
     datasetPreparation: {
-        subsetSplit: [],
+        subsetSplit: [
+            getMockedConfigurationParameter({
+                key: 'training',
+                type: 'int',
+                name: 'Training percentage',
+                value: 70,
+                description: 'Percentage of data to use for training',
+                defaultValue: 70,
+                maxValue: 100,
+                minValue: 1,
+            }),
+            getMockedConfigurationParameter({
+                key: 'validation',
+                type: 'int',
+                name: 'Validation percentage',
+                value: 20,
+                description: 'Percentage of data to use for validation',
+                defaultValue: 20,
+                maxValue: 100,
+                minValue: 1,
+            }),
+            getMockedConfigurationParameter({
+                key: 'test',
+                type: 'int',
+                name: 'Test percentage',
+                value: 10,
+                description: 'Percentage of data to use for testing',
+                defaultValue: 10,
+                maxValue: 100,
+                minValue: 1,
+            }),
+            getMockedConfigurationParameter({
+                key: 'dataset_size',
+                type: 'int',
+                name: 'Dataset size',
+                value: 100,
+                description: 'Dataset size',
+                defaultValue: 100,
+                maxValue: null,
+                minValue: 1,
+            }),
+        ],
         augmentation: {},
         filtering: {},
     },
@@ -80,11 +168,33 @@ export const getMockedTrainingConfiguration = (config: Partial<TrainingConfigura
     ...config,
 });
 
-export const getMockedConfigurationParameter = (
+export const getMockedTrainedModelConfigurationParameters = (
+    config: Partial<TrainedModelConfiguration> = {}
+): TrainedModelConfiguration => ({
+    training: [],
+    datasetPreparation: {
+        augmentation: {},
+    },
+    evaluation: [],
+    taskId: '',
+    advancedConfiguration: [],
+    ...config,
+});
+
+export function getMockedConfigurationParameter(
+    parameter: Partial<EnumConfigurationParameter> & Required<Pick<ConfigurationParameter, 'type'>>
+): EnumConfigurationParameter;
+export function getMockedConfigurationParameter(
+    parameter: Partial<NumberParameter> & Required<Pick<NumberParameter, 'type'>>
+): NumberParameter;
+export function getMockedConfigurationParameter(
+    parameter: Partial<BoolParameter> & Required<Pick<BoolParameter, 'type'>>
+): BoolParameter;
+export function getMockedConfigurationParameter(
     parameter: Partial<ConfigurationParameter> & Required<Pick<ConfigurationParameter, 'type'>> = {
         type: 'float',
     }
-): ConfigurationParameter => {
+): ConfigurationParameter {
     if (parameter.type === 'float' || parameter.type === 'int') {
         return {
             value: 0,
@@ -111,15 +221,15 @@ export const getMockedConfigurationParameter = (
 
     if (parameter.type === 'enum') {
         return {
-            allowedValues: ['option1', 'option2'],
-            defaultValue: 'option1',
+            allowedValues: [100, 200],
+            defaultValue: 100,
             name: 'Mocked Enum Parameter',
             description: 'This is a mocked enum configuration parameter',
-            value: 'option1',
+            value: 100,
             key: 'mocked_enum_parameter',
             ...parameter,
         };
     }
 
     throw new Error(`Unsupported parameter type: ${parameter.type}`);
-};
+}

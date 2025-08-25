@@ -3,9 +3,9 @@
 
 import { PointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { clampPointBetweenImage, isPointOverPoint } from '@geti/smart-tools/utils';
 import { differenceWith, isEmpty, isEqual } from 'lodash-es';
 
-import { clampPointBetweenImage, isPointOverPoint } from '../../../../core/annotations/math';
 import { Point, Polygon } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { useEventListener } from '../../../../hooks/event-listener/event-listener.hook';
@@ -23,7 +23,7 @@ import { useZoom } from '../../zoom/zoom-provider.component';
 import { PolygonDraw } from '../polygon-draw.component';
 import { SvgToolCanvas } from '../svg-tool-canvas.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
-import { drawingStyles, isPolygonValid, removeOffLimitPointsPolygon } from '../utils';
+import { convertToolShapeToGetiShape, drawingStyles, isPolygonValid, removeOffLimitPointsPolygon } from '../utils';
 import { usePolygonState } from './polygon-state-provider.component';
 import { PointerIcons, PointerIconsOffset, PolygonMode } from './polygon-tool.enum';
 import { isCloseMode, START_POINT_FIELD_DEFAULT_RADIUS, START_POINT_FIELD_FOCUS_RADIUS } from './utils';
@@ -143,16 +143,18 @@ export const PolygonTool = ({ annotationToolContext }: ToolAnnotationContextProp
         [image, zoom]
     );
 
-    const optimizePolygonOrSegments = (iPolygon: Polygon): Promise<Polygon> => {
+    const optimizePolygonOrSegments = async (iPolygon: Polygon): Promise<Polygon> => {
         if (worker) {
             if (mode === PolygonMode.MagneticLasso) {
-                return worker.optimizePolygon(iPolygon);
+                return convertToolShapeToGetiShape(await worker.optimizePolygon(iPolygon));
             }
 
             const lastSegment = differenceWith(iPolygon.points, segments.flat(), isEqual);
             const newSegments = isEmpty(lastSegment) ? [...segments] : [...segments, lastSegment];
 
-            return worker.optimizeSegments(newSegments);
+            const resultPolygon = await worker.optimizeSegments(newSegments);
+
+            return convertToolShapeToGetiShape(resultPolygon);
         } else {
             return Promise.reject();
         }

@@ -9,11 +9,8 @@ from datetime import datetime
 from enum import IntEnum, auto
 from typing import Any
 
-from geti_feature_tools import FeatureFlagProvider
-
 from communication.views.media_identifier_rest_views import MediaIdentifierRESTViews
 from communication.views.scored_label_rest_views import ScoredLabelRESTViews
-from features.feature_flag import FeatureFlag
 
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID
@@ -625,8 +622,5 @@ class AnnotationRESTViews:
             )
             for annotation in annotation_scene.annotations
         ]
-
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION):
-            result[ANNOTATIONS] = [annotation for annotation in result[ANNOTATIONS] if annotation != {}]
 
         return result

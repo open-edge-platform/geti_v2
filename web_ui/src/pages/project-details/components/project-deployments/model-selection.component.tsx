@@ -3,7 +3,7 @@
 
 import { Key, useEffect, useMemo, useState } from 'react';
 
-import { Flex, Item, Picker, Text } from '@geti/ui';
+import { Flex, Item, Loading, Picker, Text, View } from '@geti/ui';
 import { capitalize, isEmpty } from 'lodash-es';
 
 import { useModels } from '../../../../core/models/hooks/use-models.hook';
@@ -27,7 +27,8 @@ import { ModelInfo } from './model-info.component';
 export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSelectionProps): JSX.Element => {
     const projectIdentifier = useProjectIdentifier();
     const { useModelQuery } = useModels();
-    const { data: supportedAlgorithms } = useSupportedAlgorithms(projectIdentifier);
+    const { data: supportedAlgorithms, isPending: isPendingSupportedAlgorithms } =
+        useSupportedAlgorithms(projectIdentifier);
 
     const [localModelConfiguration, setLocalModelConfiguration] = useState<ModelConfiguration>({
         selectedVersionId: selectedModel.versionId || models[0].modelVersions[0].groupId,
@@ -141,6 +142,14 @@ export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSele
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [optimizationOptions]);
 
+    if (isPendingSupportedAlgorithms) {
+        return (
+            <View padding={'size-200'}>
+                <Loading mode={'inline'} />
+            </View>
+        );
+    }
+
     if (isEmpty(models)) {
         return <WarningMessage isVisible message={NO_MODELS_MESSAGE} marginTop={'size-250'} />;
     }
@@ -157,7 +166,7 @@ export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSele
                     width={'100%'}
                     placeholder={'Select model'}
                     selectedKey={selectedModelVersion?.groupId}
-                    onSelectionChange={handleChangeArchitecture}
+                    onSelectionChange={(key) => key !== null && handleChangeArchitecture(key)}
                 >
                     {(item) => {
                         const algorithm = supportedAlgorithms?.find(
@@ -181,7 +190,7 @@ export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSele
                     id={'select-version-id'}
                     items={validModelVersions || []}
                     selectedKey={selectedVersionId}
-                    onSelectionChange={handleChangeModelVersion}
+                    onSelectionChange={(key) => key !== null && handleChangeModelVersion(key)}
                     isDisabled={!Boolean(selectedModelVersion)}
                 >
                     {(item) => (

@@ -3,11 +3,9 @@
 
 import { ComponentProps } from 'react';
 
-import { ActionButton, View } from '@geti/ui';
+import { ActionButton, PhotoPlaceholder, View } from '@geti/ui';
 import { isNil } from 'lodash-es';
 import { usePress } from 'react-aria';
-
-import { PhotoPlaceholder } from '../../../../../shared/components/photo-placeholder/photo-placeholder.component';
 
 import classes from './user-photo-placeholder.module.scss';
 

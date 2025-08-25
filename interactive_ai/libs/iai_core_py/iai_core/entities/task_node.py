@@ -6,6 +6,7 @@
 import logging
 from dataclasses import dataclass
 
+from iai_core.entities.label import Domain
 from iai_core.entities.model_template import ModelTemplate, TaskFamily, TaskType
 
 from geti_types import ID, PersistentEntity
@@ -49,6 +50,17 @@ class TaskProperties:
             is_global=model_template.task_type.is_global,
             is_anomaly=model_template.task_type.is_anomaly,
         )
+
+    @property
+    def has_annotations_with_area(self) -> bool:
+        """Check if this task type has annotations with area.
+
+        Tasks that don't have annotations with area (such as classification, keypoint detection,
+        or anomaly tasks) do not support filtering on annotations.
+
+        :returns: True if task has annotations with area, False otherwise
+        """
+        return self.task_type.domain not in {Domain.CLASSIFICATION, Domain.KEYPOINT_DETECTION, Domain.ANOMALY}
 
 
 class TaskNode(PersistentEntity):

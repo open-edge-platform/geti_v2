@@ -53,7 +53,7 @@ export const WorkspaceUsersPanel = ({
                 selectedKey={selectedWorkspace}
                 isDisabled={workspaceCreateDisabled}
                 isQuiet={workspaceCreateDisabled}
-                onSelectionChange={onSelectionChange}
+                onSelectionChange={(key) => key !== null && onSelectionChange(key)}
             >
                 {(item) => (
                     <Item key={item.id} textValue={item.text}>

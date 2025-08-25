@@ -1,11 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 
+import { useOverlayTriggerState } from '@react-stately/overlays';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { CursorContextMenu, CursorContextMenuProps, X_PADDING } from './cursor-context-menu.component';
+import { CursorContextMenu } from './cursor-context-menu.component';
 
 describe('CursorContextMenu', () => {
     const renderApp = ({
@@ -13,21 +14,30 @@ describe('CursorContextMenu', () => {
         isValidTrigger = jest.fn(),
         isOpen = false,
         children = <div>Menu Content</div>,
-    }: Partial<CursorContextMenuProps>) => {
+    }: {
+        onOpen?: () => void;
+        isValidTrigger?: (element: Element) => boolean;
+        isOpen?: boolean;
+        children?: ReactNode;
+    }) => {
         const App = () => {
             const triggerRef = useRef<HTMLButtonElement>(null);
+            const state = useOverlayTriggerState({
+                isOpen,
+            });
+
             return (
-                <>
+                <div data-testid='modal' style={{ position: 'relative' }}>
                     <button ref={triggerRef}>trigger</button>
                     <CursorContextMenu
                         onOpen={onOpen}
-                        isOpen={isOpen}
+                        state={state}
                         isValidTrigger={isValidTrigger}
                         triggerRef={triggerRef}
                     >
                         {children}
                     </CursorContextMenu>
-                </>
+                </div>
             );
         };
         render(<App />);
@@ -46,22 +56,5 @@ describe('CursorContextMenu', () => {
         fireEvent.contextMenu(triggerElement, { clientX: 100, clientY: 150 });
 
         expect(mockOnOpen).not.toHaveBeenCalled();
-    });
-
-    it('positions the menu at the cursor position on context menu event', () => {
-        const mockOnOpen = jest.fn();
-        renderApp({ isOpen: true, onOpen: mockOnOpen, isValidTrigger: () => true });
-
-        const position = { clientX: 100, clientY: 150 };
-        const triggerElement = screen.getByRole('button', { name: 'trigger' });
-        fireEvent.contextMenu(triggerElement, position);
-
-        const container = screen.getByTestId('position container');
-
-        expect(mockOnOpen).toHaveBeenCalled();
-        expect(container.style.top).toBe(`${position.clientY}px`);
-        expect(container.style.left).toBe(`${position.clientX + X_PADDING}px`);
-
-        expect(screen.getByText('Menu Content')).toBeVisible();
     });
 });

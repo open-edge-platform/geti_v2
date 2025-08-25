@@ -27,7 +27,7 @@ export const LabelPicker = ({ availableLabels, backgroundLabel, handleSelectLabe
             width='size-2400'
             items={availableLabels}
             defaultSelectedKey={availableLabels[0].label.name}
-            onSelectionChange={handleSelectLabel}
+            onSelectionChange={(key) => key !== null && handleSelectLabel(key)}
             UNSAFE_className={classes.picker}
         >
             <Section>

@@ -6,6 +6,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import { LabelsRelationType } from '../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
+import { getMockedWorkspaceIdentifier } from '../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { projectListRender as render } from '../../../../test-utils/projects-list-providers-render';
 import { MORE_THAN_100_CHARS_NAME } from '../../../../test-utils/utils';
 import {
@@ -15,6 +16,12 @@ import {
 } from '../../new-project-dialog-provider/new-project-dialog-provider.interface';
 import { MAX_NUMBER_OF_CHARACTERS_OF_PROJECT_NAME, REQUIRED_PROJECT_NAME_VALIDATION_MESSAGE } from '../utils';
 import { NameProject } from './name-project.component';
+
+const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier();
+jest.mock('../../../../providers/workspaces-provider/use-workspace-identifier.hook', () => ({
+    ...jest.requireActual('../../../../providers/workspaces-provider/use-workspace-identifier.hook'),
+    useWorkspaceIdentifier: jest.fn(() => mockedWorkspaceIdentifier),
+}));
 
 describe('Name project step', () => {
     const setValidationError = jest.fn();
@@ -36,6 +43,7 @@ describe('Name project step', () => {
     it("There's Name project step with name 'Project name' field", async () => {
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -50,6 +58,7 @@ describe('Name project step', () => {
     it('Check if empty name will show error', async () => {
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -68,6 +77,7 @@ describe('Name project step', () => {
     it('Check if name is limited to 100 characters', async () => {
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -90,6 +100,7 @@ describe('Name project step', () => {
     it('Clear validation errors upon unmounting', async () => {
         const { unmount } = await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -107,6 +118,7 @@ describe('Name project step', () => {
 
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}
@@ -122,6 +134,7 @@ describe('Name project step', () => {
 
         await render(
             <NameProject
+                animationDirection={0}
                 metadata={mockMetadata}
                 updateProjectState={jest.fn()}
                 setValidationError={setValidationError}

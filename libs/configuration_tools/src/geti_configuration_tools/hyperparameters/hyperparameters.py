@@ -1,20 +1,24 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
-from pydantic import BaseModel, Field, model_validator
+from pydantic import Field, model_validator
 
 from geti_configuration_tools.utils import partial_model
 
 from .augmentation import AugmentationParameters
+from .base_model_no_extra import BaseModelNoExtra
 
 
-class DatasetPreparationParameters(BaseModel):
+class DatasetPreparationParameters(BaseModelNoExtra):
     """Parameters for dataset preparation before training."""
 
-    augmentation: AugmentationParameters
+    augmentation: AugmentationParameters = Field(
+        default_factory=AugmentationParameters,
+        title="Data augmentation",
+        description="Configuration for data augmentation techniques applied to the dataset",
+    )
 
 
-class EarlyStopping(BaseModel):
+class EarlyStopping(BaseModelNoExtra):
     enable: bool = Field(
         default=False,
         title="Enable early stopping",
@@ -28,107 +32,115 @@ class EarlyStopping(BaseModel):
     )
 
 
-class MaxDetectionPerImage(BaseModel):
-    enable: bool = Field(
-        default=False,
-        title="Enable maximum detection per image",
-        description="Whether to limit the number of detections per image",
-    )
-    max_detection_per_image: int = Field(
-        default=10000,
-        gt=0,
-        title="Maximum number of detections per image",
-        description=(
-            "Maximum number of objects that can be detected in a single image, "
-            "only applicable for instance segmentation models"
-        ),
-    )
-
-
-class TrainingHyperParameters(BaseModel):
+class TrainingHyperParameters(BaseModelNoExtra):
     """Hyperparameters for model training process."""
 
-    max_epochs: int = Field(
-        gt=0, default=1000, title="Maximum epochs", description="Maximum number of training epochs to run"
+    max_epochs: int | None = Field(
+        gt=0, default=None, title="Maximum epochs", description="Maximum number of training epochs to run"
     )
-    early_stopping: EarlyStopping = Field(
-        default_factory=EarlyStopping, title="Early stopping", description="Configuration for early stopping mechanism"
+    early_stopping: EarlyStopping | None = Field(
+        default=None, title="Early stopping", description="Configuration for early stopping mechanism"
     )
-    learning_rate: float = Field(
-        gt=0, lt=1, default=0.001, title="Learning rate", description="Base learning rate for the optimizer"
+    learning_rate: float | None = Field(
+        gt=0, lt=1, default=None, title="Learning rate", description="Base learning rate for the optimizer"
     )
-    max_detection_per_image: MaxDetectionPerImage | None = Field(
-        default_factory=MaxDetectionPerImage,
-        title="Maximum number of detections per image",
-        description=(
-            "Maximum number of objects that can be detected in a single image, "
-            "only applicable for instance segmentation models"
-        ),
-    )
-    input_size: str | None = Field(
+    input_size_width: int | None = Field(
         default=None,
-        title="Input size",
+        gt=0,
+        title="Input size width",
         description=(
-            "Width and height dimensions for model input images in 'WxH' format (e.g., '512x512'). "
-            "Determines the resolution at which images are processed by the model."
+            "Width dimension in pixels for model input images. "
+            "Determines the horizontal resolution at which images are processed."
         ),
         json_schema_extra={},
     )
-    allowed_values_input_size: list[str] | None = Field(
+    input_size_height: int | None = Field(
         default=None,
-        title="Supported input sizes",
+        gt=0,
+        title="Input size height",
         description=(
-            "List of supported input sizes for the model in 'WxH' format (e.g., ['512x512', '640x640']). "
-            "Only these dimensions will be accepted."
+            "Height dimension in pixels for model input images. "
+            "Determines the vertical resolution at which images are processed."
+        ),
+        json_schema_extra={},
+    )
+    allowed_values_input_size: list[int] | None = Field(
+        default=None,
+        title="Supported input size dimensions",
+        description=(
+            "List of supported values for input width and height. "
+            "When specified, both width and height must be chosen from these values."
         ),
         json_schema_extra={"validation_only": True},
     )
 
     @model_validator(mode="after")
     def validate_input_size(self) -> "TrainingHyperParameters":
-        # skip validation if not set
-        if self.input_size is None:
+        w, h = self.input_size_width, self.input_size_height
+
+        # Skip validation if neither width nor height are set
+        if w is None and h is None:
             return self
 
-        # validate format is 'WxH' (e.g. '512x512')
-        try:
-            w, h, *_bin = str(self.input_size).split("x")
-            input_size = f"{int(w)}x{int(h)}"
-        except ValueError:
-            raise ValueError(f"Input size '{self.input_size}' is not in the expected format 'WxH' (e.g. '512x512')")
+        # For non-partial models, both width and height must be set
+        class_name = type(self).__name__
+        if "partial" not in class_name.lower() and (w is None or h is None):
+            raise ValueError("Both input_size_width and input_size_height must be specified")
 
-        # validate against allowed input sizes if available
-        if self.allowed_values_input_size and input_size not in self.allowed_values_input_size:
-            raise ValueError(
-                f"Input size '{input_size}' is not in the list of supported input sizes: "
-                f"{self.allowed_values_input_size}"
-            )
+        # Validate against allowed input sizes if available
+        if allowed_values := self.allowed_values_input_size:
+            if w and w not in allowed_values:
+                raise ValueError(
+                    f"Input size width '{w}' is not in the list of supported input sizes: {allowed_values}"
+                )
+            if h and h not in allowed_values:
+                raise ValueError(
+                    f"Input size height '{h}' is not in the list of supported input sizes: {allowed_values}"
+                )
 
         # Update the model's json_schema to include allowed values for input_size
         # Note: existing json_schema_extra cannot be overwritten, otherwise it will absent from model_json_schema()
-        self.model_fields["input_size"].json_schema_extra.update(  # type: ignore[union-attr]
+        self.model_fields["input_size_width"].json_schema_extra.update(  # type: ignore[union-attr]
             {
                 "allowed_values": self.allowed_values_input_size,  # type:ignore[dict-item]
-                "default_value": input_size,
+                "default_value": w,
+            }
+        )
+        self.model_fields["input_size_height"].json_schema_extra.update(  # type: ignore[union-attr]
+            {
+                "allowed_values": self.allowed_values_input_size,  # type:ignore[dict-item]
+                "default_value": h,
             }
         )
         return self
 
 
-class EvaluationParameters(BaseModel):
+class EvaluationParameters(BaseModelNoExtra):
     """Parameters for model evaluation."""
 
-    metric: None = Field(
+    metric: str | None = Field(
         default=None, title="Evaluation metric", description="Metric used to evaluate model performance"
     )
 
 
-class Hyperparameters(BaseModel):
+class Hyperparameters(BaseModelNoExtra):
     """Complete set of configurable parameters for model training and evaluation."""
 
-    dataset_preparation: DatasetPreparationParameters
-    training: TrainingHyperParameters
-    evaluation: EvaluationParameters
+    dataset_preparation: DatasetPreparationParameters = Field(
+        default_factory=DatasetPreparationParameters,
+        title="Dataset preparation",
+        description="Parameters for preparing the dataset before training",
+    )
+    training: TrainingHyperParameters | None = Field(
+        default=None,
+        title="Training hyperparameters",
+        description="Hyperparameters for the model training process",
+    )
+    evaluation: EvaluationParameters = Field(
+        default_factory=EvaluationParameters,
+        title="Evaluation parameters",
+        description="Parameters for evaluating the trained model",
+    )
 
 
 @partial_model

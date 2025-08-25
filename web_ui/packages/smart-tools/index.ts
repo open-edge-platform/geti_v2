@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-export { OpenCVLoader } from './src/utils/opencv-loader';
-
 export { buildWatershedInstance, Watershed } from './src/watershed/watershed';
 export { type WatershedPolygon } from './src/watershed/interfaces';
 
@@ -11,12 +9,10 @@ export { buildInferenceImageInstance, InferenceImage } from './src/inference-ima
 export { buildSSIMInstance, SSIM } from './src/ssim/ssim';
 export { type RunSSIMProps, type SSIMMatch } from './src/ssim/interfaces';
 
-export {
-    formatContourToPoints,
-    approximateShape,
-    formatImageData,
-    loadSource,
-    concatFloat32Arrays,
-    stackPlanes,
-    isPolygonValid,
-} from './src/utils/tool-utils';
+export { buildGrabcutInstance, Grabcut } from './src/grabcut/grabcut';
+export { type GrabcutData } from './src/grabcut/interfaces';
+
+export { buildIntelligentScissorsInstance, IntelligentScissors } from './src/intelligent-scissors/intelligent-scissors';
+
+export { Anchor } from './src/edit-bounding-box/anchor.component';
+export { ANCHOR_SIZE, ResizeAnchor } from './src/edit-bounding-box/resize-anchor.component';

@@ -15,12 +15,10 @@ from communication.exceptions import (
     LabelNotFoundException,
 )
 from communication.rest_views.annotation_rest_views import AnnotationRESTViews, RestShapeType
-from features.feature_flags import FeatureFlag
 from service.label_schema_service import LabelSchemaService
 
 from geti_fastapi_tools.exceptions import BadRequestException
 from geti_fastapi_tools.validation import RestApiValidator
-from geti_feature_tools import FeatureFlagProvider
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, ImageIdentifier, MediaIdentifierEntity, VideoFrameIdentifier
 from iai_core.entities.label import Label
@@ -519,10 +517,9 @@ class AnnotationRestValidator(RestApiValidator):
         """
         previous_task: TaskNode | None = None
         previous_task_labels: list[Label] = []
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
         for task in project.get_trainable_task_nodes():
             task_labels = labels_by_task[task.id_]
-            if task.task_properties.is_global or (is_anomaly_reduced and task.task_properties.is_anomaly):
+            if task.task_properties.is_global:
                 self.__validate_global_annotation(
                     annotation_rest=annotation_rest,
                     task=task,
@@ -631,7 +628,7 @@ class AnnotationRestValidator(RestApiValidator):
             raise BadRequestException("Annotation for a global task is missing a label for the preceding task.")
 
     @staticmethod
-    def __validate_local_annotation(  # noqa: C901, PLR0913
+    def __validate_local_annotation(  # noqa: C901, PLR0912, PLR0913
         annotation_rest: dict,
         task: TaskNode,
         previous_task: TaskNode | None,
@@ -648,6 +645,7 @@ class AnnotationRestValidator(RestApiValidator):
           be present
         - If the annotation contains an empty label, no other annotation for this task may intersect with the empty
           label.
+        - If the annotation contains a background label, it must also contain a label for the current task
         - If the task is (rotated) detection, shape must be (rotated) rectangle
 
         :param annotation_rest: REST view of the annotation
@@ -663,6 +661,17 @@ class AnnotationRestValidator(RestApiValidator):
         if len(annotation_labels_current_task) == 0:
             # If the annotation contains no labels for this task, return without doing validation for this task
             return
+
+        # Validate that a background label is not the only label in the annotation scene
+        background_label_ids = {label.id_ for label in task_labels if label.is_background}
+        only_background_labels = True
+        for annotation in annotation_scene_rest[ANNOTATIONS]:
+            label_ids = {ID(label_rest[ID_]) for label_rest in annotation[LABELS]}
+            if background_label_ids != label_ids:
+                only_background_labels = False
+                break
+        if only_background_labels:
+            raise BadRequestException("It is not allowed to create an annotation with only background labels.")
 
         # Validate that if the task is a local anomaly task, it contains only one of the labels (it's not allowed to
         # have both the normal and the anomalous label).

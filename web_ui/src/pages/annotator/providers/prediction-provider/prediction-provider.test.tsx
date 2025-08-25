@@ -65,12 +65,6 @@ jest.mock('./use-prediction-roi-query.hook', () => ({
     usePredictionsRoiQuery: jest.fn(() => ({ refetch: () => Promise.resolve() })),
 }));
 
-const mockedAddNotification = jest.fn();
-jest.mock('../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockedAddNotification }),
-}));
-
 jest.mock('../../hooks/use-annotator-mode', () => ({
     ...jest.requireActual('../../hooks/use-annotator-mode'),
     useAnnotatorMode: jest.fn(() => ({ isActiveLearningMode: true })),

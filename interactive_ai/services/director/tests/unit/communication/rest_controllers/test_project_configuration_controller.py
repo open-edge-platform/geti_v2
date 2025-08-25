@@ -1,15 +1,18 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+from unittest.mock import patch
 
 import pytest
-from geti_configuration_tools.project_configuration import PartialProjectConfiguration
+from geti_configuration_tools.project_configuration import NullProjectConfiguration, PartialProjectConfiguration
 from testfixtures import compare
 
 from communication.controllers.project_configuration_controller import ProjectConfigurationRESTController
 from communication.exceptions import ProjectConfigurationNotFoundException
+from communication.views.project_configuration_rest_views import ProjectConfigurationRESTViews
 from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
 from geti_types import ID, ProjectIdentifier
+from iai_core.repos import ProjectRepo, TaskNodeRepo
 
 
 class TestProjectConfigurationRESTController:
@@ -31,13 +34,45 @@ class TestProjectConfigurationRESTController:
         # Convert to dict to compare with expected output
         compare(result, fxt_project_configuration_rest_view, ignore_eq=True)
 
-    def test_get_configuration_not_found(self) -> None:
+    @pytest.mark.parametrize("project_exists", [True, False])
+    def test_get_configuration_not_found(self, project_exists, fxt_project_configuration) -> None:
         project_id = ID("dummy_project_id")
         workspace_id = ID("dummy_workspace_id")
+        task_ids = [ID("task_1"), ID("task_2")]
+        dummy_rest_view = {"key": "value"}
         project_identifier = ProjectIdentifier(workspace_id=workspace_id, project_id=project_id)
 
-        with pytest.raises(ProjectConfigurationNotFoundException):
-            ProjectConfigurationRESTController.get_configuration(project_identifier=project_identifier)
+        # if project exists, then default configuration should be created
+        if project_exists:
+            with (
+                patch.object(ProjectRepo, "exists", return_value=True) as mock_project_exists,
+                patch.object(
+                    TaskNodeRepo, "get_trainable_task_ids", return_value=task_ids
+                ) as mock_get_trainable_task_ids,
+                patch.object(
+                    ProjectConfigurationRepo, "create_default_configuration"
+                ) as mock_create_default_configuration,
+                patch.object(
+                    ProjectConfigurationRepo,
+                    "get_project_configuration",
+                    side_effect=[NullProjectConfiguration(), fxt_project_configuration],
+                ),
+                patch.object(
+                    ProjectConfigurationRESTViews,
+                    "project_configuration_to_rest",
+                    return_value=dummy_rest_view,
+                ) as mock_project_configuration_to_rest,
+            ):
+                config = ProjectConfigurationRESTController.get_configuration(project_identifier=project_identifier)
+
+            mock_project_exists.assert_called_once_with(project_id)
+            mock_get_trainable_task_ids.assert_called_once()
+            mock_create_default_configuration.assert_called_once_with(task_ids=task_ids)
+            mock_project_configuration_to_rest.assert_called_once_with(fxt_project_configuration)
+            assert config == dummy_rest_view
+        else:
+            with pytest.raises(ProjectConfigurationNotFoundException):
+                ProjectConfigurationRESTController.get_configuration(project_identifier=project_identifier)
 
     def test_update_configuration(
         self,

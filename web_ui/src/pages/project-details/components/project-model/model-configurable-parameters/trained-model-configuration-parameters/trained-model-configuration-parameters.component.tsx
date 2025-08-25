@@ -19,7 +19,9 @@ interface TrainedModelConfigurationParametersListProps {
     parameters: TrainedModelConfiguration;
 }
 
-const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelConfigurationParametersListProps) => {
+export const TrainedModelConfigurationParametersList = ({
+    parameters,
+}: TrainedModelConfigurationParametersListProps) => {
     const tabs = [
         {
             name: 'Data management',
@@ -99,6 +101,15 @@ export const TrainedModelConfigurationParameters = ({ taskId }: TrainedModelConf
                         <CustomerSupportLink />.
                     </Text>
                 }
+            />
+        );
+    }
+
+    if (isEmpty(data.training) && isEmpty(data.datasetPreparation.augmentation)) {
+        return (
+            <NotFound
+                heading={'No training parameters'}
+                content={<Text>The model does not have any configurable training parameters.</Text>}
             />
         );
     }

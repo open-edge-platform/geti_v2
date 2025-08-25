@@ -15,6 +15,7 @@ from geti_configuration_tools.training_configuration import (
     PartialTrainingConfiguration,
     TrainingConfiguration,
 )
+from geti_supported_models import NullModelManifest, SupportedModels
 
 from communication.views.configurable_parameters_to_rest import ConfigurableParametersRESTViews
 
@@ -30,12 +31,17 @@ class TrainingConfigurationRESTViews(ConfigurableParametersRESTViews):
 
     @classmethod
     def _dataset_preparation_to_rest(
-        cls, global_parameters: GlobalParameters | None, hyperparameters: Hyperparameters | None
+        cls,
+        global_parameters: GlobalParameters | None,
+        hyperparameters: Hyperparameters | None,
+        default_config: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         # Return a combined view of global and hyperparameters for dataset preparation
+        default_config = default_config or {}
         global_parameters_rest = (
             cls.configurable_parameters_to_rest(
                 configurable_parameters=global_parameters.dataset_preparation,
+                default_config=default_config.get("dataset_preparation"),
             )
             if global_parameters and global_parameters.dataset_preparation
             else {}
@@ -43,6 +49,7 @@ class TrainingConfigurationRESTViews(ConfigurableParametersRESTViews):
         hyperparameters_rest = (
             cls.configurable_parameters_to_rest(
                 configurable_parameters=hyperparameters.dataset_preparation,
+                default_config=default_config.get("dataset_preparation"),
             )
             if hyperparameters and hyperparameters.dataset_preparation
             else {}
@@ -62,9 +69,15 @@ class TrainingConfigurationRESTViews(ConfigurableParametersRESTViews):
         if isinstance(training_configuration, NullTrainingConfiguration):
             return {}
 
+        model_manifest = SupportedModels.get_model_manifest_by_id(training_configuration.model_manifest_id)
+        default_config = (
+            {} if isinstance(model_manifest, NullModelManifest) else model_manifest.hyperparameters.model_dump()
+        )
+
         training_params_rest = (
             cls.configurable_parameters_to_rest(
                 configurable_parameters=training_configuration.hyperparameters.training,
+                default_config=default_config.get("training", {}),
             )
             if training_configuration.hyperparameters and training_configuration.hyperparameters.training
             else []
@@ -75,6 +88,7 @@ class TrainingConfigurationRESTViews(ConfigurableParametersRESTViews):
             DATASET_PREPARATION: cls._dataset_preparation_to_rest(
                 global_parameters=training_configuration.global_parameters,
                 hyperparameters=training_configuration.hyperparameters,
+                default_config=default_config,
             ),
             TRAINING: training_params_rest,
             EVALUATION: [],  # Evaluation parameters are not yet available

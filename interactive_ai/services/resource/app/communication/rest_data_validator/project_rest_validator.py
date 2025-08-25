@@ -52,7 +52,7 @@ from geti_telemetry_tools import unified_tracing
 from iai_core.entities.color import Color
 from iai_core.entities.label import Domain
 from iai_core.entities.model_template import TaskType
-from iai_core.factories.project_parser import DOMAIN_TO_EMPTY_LABEL_NAME
+from iai_core.factories.project_parser import DOMAIN_TO_BACKGROUND_LABEL_NAME, DOMAIN_TO_EMPTY_LABEL_NAME
 
 CONNECTIONS = "connections"
 EDGES = "edges"
@@ -110,6 +110,7 @@ class LabelProperties:
     domain: Domain
     group: str | None = None
     is_empty: bool = False
+    is_background: bool = False
     hotkey: str = ""
     color: str = ""
     id: str | None = None
@@ -220,6 +221,7 @@ class ProjectRestValidator(RestApiValidator):
         ProjectRestValidator._validate_parent_labels(data=data)
         ProjectRestValidator._validate_label_groups(labels=labels)
         ProjectRestValidator._validate_empty_labels(labels=labels)
+        ProjectRestValidator._validate_background_labels(labels=labels)
         ProjectRestValidator._validate_label_deletion(data=data)
         if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_KEYPOINT_DETECTION):
             ProjectRestValidator._validate_keypoint_structure(data=data, labels=labels)
@@ -253,18 +255,6 @@ class ProjectRestValidator(RestApiValidator):
 
         if len(task_titles) > len(set(task_titles)):
             raise DuplicateTaskNamesException
-
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
-        if is_anomaly_reduced:
-            for task_type in task_types:
-                if task_type == "ANOMALY":
-                    continue
-                if TaskType[task_type] in [
-                    TaskType.ANOMALY_CLASSIFICATION,
-                    TaskType.ANOMALY_DETECTION,
-                    TaskType.ANOMALY_SEGMENTATION,
-                ]:
-                    raise InvalidTaskTypeException(task_type=task_type)
 
         is_keypoint_detection_enabled = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_KEYPOINT_DETECTION)
         if not is_keypoint_detection_enabled and "KEYPOINT_DETECTION" in task_types:
@@ -404,15 +394,10 @@ class ProjectRestValidator(RestApiValidator):
         :raises BadNumberOfLabelsException: if any task does not have
             a proper number of labels
         """
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
         pipeline_data = data[PIPELINE]
         for task_data in pipeline_data[TASKS]:
             task_title = task_data[TITLE]
-            task_type_str = task_data[TASK_TYPE].upper()
-            if is_anomaly_reduced and task_type_str == "ANOMALY":
-                task_type = TaskType.ANOMALY_CLASSIFICATION
-            else:
-                task_type = TaskType[task_type_str]
+            task_type = TaskType[task_data[TASK_TYPE].upper()]
             labels: Sequence = task_data.get(LABELS, [])
             num_labels = len(labels)
             if task_type.is_trainable:
@@ -470,11 +455,7 @@ class ProjectRestValidator(RestApiValidator):
         :raises InvalidLabelDeletedException: if label deletion produces an invalid label
         group for the task
         """
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
-        if is_anomaly_reduced and task_type_str.upper() == "ANOMALY":
-            task_type = TaskType.ANOMALY_CLASSIFICATION
-        else:
-            task_type = TaskType[task_type_str.upper()]
+        task_type = TaskType[task_type_str.upper()]
         total_label_count = 0
         for label in label_data:
             is_deleted = label.get(IS_DELETED, False)
@@ -489,7 +470,7 @@ class ProjectRestValidator(RestApiValidator):
             raise InvalidLabelDeletedException(reason="Can not delete all labels.")
 
     @staticmethod
-    def __validate_parent_labels(  # noqa: C901
+    def __validate_parent_labels(
         label_data: dict[str, Any],
         task_data: dict[str, Any],
         pipeline_data: dict[str, Any],
@@ -517,12 +498,7 @@ class ProjectRestValidator(RestApiValidator):
         """
         task_title = task_data[TITLE]
         task_id = task_data.get(ID_, "")
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
-        task_type_str = task_data[TASK_TYPE].upper()
-        if is_anomaly_reduced and task_type_str == "ANOMALY":
-            task_type = TaskType.ANOMALY_CLASSIFICATION
-        else:
-            task_type = TaskType[task_type_str]
+        task_type = TaskType[task_data[TASK_TYPE].upper()]
         parent_id = label_data.get(PARENT_ID)
 
         if parent_id is not None:  # it's either the id or name of a label
@@ -655,7 +631,26 @@ class ProjectRestValidator(RestApiValidator):
                 raise ReservedLabelNameException(label_name=empty_label_name)
 
     @staticmethod
-    def _validate_keypoint_structure(data: dict[str, Any], labels: list[LabelProperties]) -> None:  # noqa: C901
+    def _validate_background_labels(labels: list[LabelProperties]) -> None:
+        """
+        Validates that user defined label names do not include the name of the background
+        label for that domain
+
+        :param labels: List of LabelProperties, each entry representing the properties
+            for a single label that are up for validation
+        :raises ReservedLabelNameException: if any label has the same name of the label
+            of the background one for the same domain
+        """
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+            for label in labels:
+                background_label_name = DOMAIN_TO_BACKGROUND_LABEL_NAME.get(label.domain, None)
+                if background_label_name is None:
+                    continue
+                if label.name == background_label_name and not label.is_background:
+                    raise ReservedLabelNameException(label_name=label.name)
+
+    @staticmethod
+    def _validate_keypoint_structure(data: dict[str, Any], labels: list[LabelProperties]) -> None:
         """
         Validates that a user defined keypoint structure has exactly 2 nodes, node names match with existing labels,
         has no duplicate edges, and position values are in the range [0.0 1.0]]
@@ -673,13 +668,8 @@ class ProjectRestValidator(RestApiValidator):
         existing_labels = [label.name for label in labels] + [str(label.id) for label in labels]
         pipeline_data = data[PIPELINE]
         duplicate_list = []
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
         for task_data in pipeline_data[TASKS]:
-            task_type_str = task_data[TASK_TYPE].upper()
-            if is_anomaly_reduced and task_type_str == "ANOMALY":
-                task_type = TaskType.ANOMALY_CLASSIFICATION
-            else:
-                task_type = TaskType[task_type_str]
+            task_type = TaskType[task_data[TASK_TYPE].upper()]
             if task_type == TaskType.KEYPOINT_DETECTION:
                 keypoint_structure = task_data.get(KEYPOINT_STRUCTURE, {})
                 edges = keypoint_structure[EDGES]
@@ -712,13 +702,8 @@ class ProjectRestValidator(RestApiValidator):
             for a single label that are up for validation
         """
         labels: list[LabelProperties] = []
-        is_anomaly_reduced = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION)
         for task in data[PIPELINE][TASKS]:
-            task_type_str = task[TASK_TYPE].upper()
-            if is_anomaly_reduced and task_type_str == "ANOMALY":
-                task_type = TaskType.ANOMALY_CLASSIFICATION
-            else:
-                task_type = TaskType[task_type_str]
+            task_type = TaskType[task[TASK_TYPE].upper()]
             for label in task.get(LABELS, []):
                 label_properties = LabelProperties.from_rest_and_task_details(
                     data_dict=label,

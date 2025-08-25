@@ -887,15 +887,19 @@ def test_handle_task_event_revert(mock_sm_set_step_details, request) -> None:
             "FAILED",
             JobTaskState.FAILED,
             {"code": "OOMKilled"},
-            "Task execution failed due to internal issue (Reason: OOM). "
-            "Please contact customer support for assistance.",
+            "The job failed due to insufficient memory. "
+            "This may happen if the chosen model is too large for the available hardware, "
+            "or if there is an internal bug in the training pipeline. Please try again with a more "
+            "lightweight model if possible: if the problem persists, please report the issue.",
         ),
         (
             "FAILED",
             JobTaskState.FAILED,
             {"message": "Pod has been OOM-killed"},
-            "Task execution failed due to internal issue (Reason: OOM). "
-            "Please contact customer support for assistance.",
+            "The job failed due to insufficient memory. "
+            "This may happen if the chosen model is too large for the available hardware, "
+            "or if there is an internal bug in the training pipeline. Please try again with a more "
+            "lightweight model if possible: if the problem persists, please report the issue.",
         ),
     ],
 )

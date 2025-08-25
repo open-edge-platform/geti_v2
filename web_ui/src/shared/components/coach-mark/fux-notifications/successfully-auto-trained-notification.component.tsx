@@ -18,7 +18,6 @@ import { useUserGlobalSettings } from '../../../../core/user-settings/hooks/use-
 import { useFuxNotifications } from '../../../../hooks/use-fux-notifications/use-fux-notifications.hook';
 import { useProjectIdentifier } from '../../../../hooks/use-project-identifier/use-project-identifier';
 import { useProject } from '../../../../pages/project-details/providers/project-provider/project-provider.component';
-import { getFuxSetting } from '../../tutorials/utils';
 import { CoachMark } from '../coach-mark.component';
 import { onFirstSuccessfulAutoTrainingJob } from '../utils';
 
@@ -62,11 +61,8 @@ export const SuccessfullyAutotrainedNotification = () => {
     const { data: modelsData = [] } = useProjectModelsQuery({ refetchInterval: 15000 });
     const isAnomalous = isAnomalyDomain(project.domains[0]);
 
-    const neverSuccessfullyAutoTrained = getFuxSetting(
-        FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED,
-        settings.config
-    );
-    const firstAutoTrainedModelId = getFuxSetting(FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_MODEL_ID, settings.config);
+    const neverSuccessfullyAutoTrained = settings.config[FUX_SETTINGS_KEYS.NEVER_SUCCESSFULLY_AUTOTRAINED].value;
+    const firstAutoTrainedModelId = settings.config[FUX_SETTINGS_KEYS.FIRST_AUTOTRAINED_MODEL_ID].value;
     const isQueryEnabled = Boolean(neverSuccessfullyAutoTrained);
 
     const trainedModel = modelsData.find((model) =>

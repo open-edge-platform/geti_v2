@@ -1,5 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
 from typing import Any
 
 from geti_configuration_tools import ConfigurationOverlayTools
@@ -15,6 +16,9 @@ from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
 from geti_telemetry_tools import unified_tracing
 from geti_types import ID, ProjectIdentifier
+from iai_core.repos import ProjectRepo, TaskNodeRepo
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectConfigurationRESTController:
@@ -22,24 +26,27 @@ class ProjectConfigurationRESTController:
     @unified_tracing
     def get_configuration(
         project_identifier: ProjectIdentifier,
-        task_id: str | None = None,
     ) -> dict[str, Any]:
         """
         Retrieves configuration related to a specific project.
 
         :param project_identifier: Identifier for the project (containing organization_id, workspace_id, and project_id)
-        :param task_id: Optional ID of the task to retrieve configuration for a specific task.
         :return: Dictionary representation of the project configuration
         """
-        project_config = ProjectConfigurationRepo(project_identifier).get_project_configuration()
+        project_config_repo = ProjectConfigurationRepo(project_identifier)
+        project_config = project_config_repo.get_project_configuration()
         if isinstance(project_config, NullProjectConfiguration):
-            raise ProjectConfigurationNotFoundException(project_identifier.project_id)
-        # return single task configuration
-        if len(project_config.task_configs) == 1 or task_id:
-            _task_id = project_config.task_configs[0].task_id or task_id
-            task_config = project_config.get_task_config(_task_id)
-            return ProjectConfigurationRESTViews.task_config_to_rest(task_config)
-        # return entire task-chain configuration
+            # create default configuration in case the project exists but has no configuration
+            if ProjectRepo().exists(project_identifier.project_id):
+                logger.warning(
+                    f"Project configuration for project {project_identifier.project_id} not found, "
+                    f"creating default configuration."
+                )
+                task_ids = list(TaskNodeRepo(project_identifier).get_trainable_task_ids())
+                project_config_repo.create_default_configuration(task_ids=task_ids)
+                project_config = project_config_repo.get_project_configuration()
+            else:
+                raise ProjectConfigurationNotFoundException(project_identifier.project_id)
         return ProjectConfigurationRESTViews.project_configuration_to_rest(project_config)
 
     @staticmethod

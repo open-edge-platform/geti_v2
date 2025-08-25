@@ -229,23 +229,25 @@ describe('QuickInference', () => {
             new File(['hello'], 'hello.txt', { type: 'text/txt' }),
         ];
 
-        filesWithUnsupportedFormats.map(async (file) => {
-            await uploadFile(screen.getByLabelText('upload link upload media input'), file);
+        await Promise.all(
+            filesWithUnsupportedFormats.map(async (file) => {
+                await uploadFile(screen.getByLabelText('upload link upload media input'), file);
 
-            await Promise.resolve();
+                await Promise.resolve();
 
-            expect(
-                screen.getByText(
-                    `This feature only supports image files. Supported extensions: ${mediaExtensionHandler(
-                        VALID_IMAGE_TYPES
-                    )}`
-                )
-            ).toBeInTheDocument();
+                expect(
+                    await screen.findByText(
+                        `This feature only supports image files. Supported extensions: ${mediaExtensionHandler(
+                            VALID_IMAGE_TYPES
+                        )}`
+                    )
+                ).toBeInTheDocument();
 
-            expect(inferenceService.getPredictionsForFile).not.toHaveBeenCalled();
-        });
+                expect(inferenceService.getPredictionsForFile).not.toHaveBeenCalled();
+            })
+        );
 
-        expect(await screen.findByRole('button', { name: 'close notification' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Close toast' })).toBeInTheDocument();
         expect(screen.getByText('This feature only supports image files.', { exact: false })).toBeInTheDocument();
     });
 
@@ -327,15 +329,15 @@ describe('QuickInference', () => {
         expect(useFileButton).toBeInTheDocument();
         expect(useCameraButton).toBeInTheDocument();
 
-        expect(useFileButton).toHaveAttribute('data-activated', 'true');
-        expect(useCameraButton).toHaveAttribute('data-activated', 'false');
+        expect(useFileButton).toHaveAttribute('aria-pressed', 'true');
+        expect(useCameraButton).toHaveAttribute('aria-pressed', 'false');
     });
 
     describe('Live camera inference', () => {
         const clickUseCameraButton = () => {
             const useCameraButton = screen.getByRole('button', { name: 'Use camera' });
             fireEvent.click(useCameraButton);
-            expect(useCameraButton).toHaveAttribute('data-activated', 'true');
+            expect(useCameraButton).toHaveAttribute('aria-pressed', 'true');
         };
 
         it('shows loading when camera permission is not granted', async () => {
@@ -379,35 +381,43 @@ describe('QuickInference', () => {
                             config: {
                                 type: 'minMax',
                                 value: 30,
+                                defaultValue: 30,
                                 max: 30,
                                 min: 0,
                             },
+                            onChange: jest.fn(),
                         },
                         {
                             name: 'height',
                             config: {
                                 type: 'minMax',
                                 value: 480,
+                                defaultValue: 480,
                                 max: 1920,
                                 min: 1,
                             },
+                            onChange: jest.fn(),
                         },
                         {
                             name: 'resizeMode',
                             config: {
                                 type: 'selection',
                                 value: 'none',
+                                defaultValue: 'none',
                                 options: ['none', 'crop-and-scale'],
                             },
+                            onChange: jest.fn(),
                         },
                         {
                             name: 'width',
                             config: {
                                 type: 'minMax',
                                 value: 640,
+                                defaultValue: 640,
                                 max: 1920,
                                 min: 1,
                             },
+                            onChange: jest.fn(),
                         },
                     ],
                     userPermissions: UserCameraPermission.GRANTED,

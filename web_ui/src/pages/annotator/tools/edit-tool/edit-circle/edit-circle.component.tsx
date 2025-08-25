@@ -3,17 +3,18 @@
 
 import { useEffect, useState } from 'react';
 
+import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
+import { Vec2 } from '@geti/smart-tools/utils';
+
 import { Annotation, RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
 import { Point } from '../../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import { sub, Vec2 } from '../../../../../core/annotations/vec2';
 import { Labels } from '../../../annotation/labels/labels.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useZoom } from '../../../zoom/zoom-provider.component';
 import { getMaxCircleRadius, MIN_RADIUS } from '../../circle-tool/utils';
 import { isShapeWithinRoi } from '../../utils';
-import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { ResizeAnchorType } from '../resize-anchor.enum';
 import { TranslateShape } from '../translate-shape.component';
 
@@ -29,7 +30,7 @@ interface EditCircleProps {
     disablePoints?: boolean;
 }
 
-export const calculateAnchorPoint = ({ x, y }: Vec2, angle: number, radius: number): Vec2 => {
+export const calculateAnchorPoint = ({ x, y }: Vec2.Vec2, angle: number, radius: number): Vec2.Vec2 => {
     return {
         x: x - Math.cos(angle) * radius,
         y: y - Math.sin(angle) * radius,
@@ -37,7 +38,7 @@ export const calculateAnchorPoint = ({ x, y }: Vec2, angle: number, radius: numb
 };
 
 const getPreferredAnchorPosition = (circle: Circle, roi: RegionOfInterest, oldAngle?: number): number => {
-    const { x, y } = sub(circle, roi);
+    const { x, y } = Vec2.sub(circle, roi);
 
     // Get position of current angle, or default (right)
     const anchorPosition = calculateAnchorPoint({ x, y }, oldAngle ?? Math.PI, circle.r);
@@ -49,7 +50,7 @@ const getPreferredAnchorPosition = (circle: Circle, roi: RegionOfInterest, oldAn
 
     // Calculate angle from circle to center of image
     const centerOfROI = { x: roi.width / 2, y: roi.height / 2 };
-    const distance = sub({ x, y }, centerOfROI);
+    const distance = Vec2.sub({ x, y }, centerOfROI);
     const newAngle = Math.atan(distance.y / distance.x);
     if (distance.x < 0) {
         return newAngle - Math.PI;
@@ -131,7 +132,7 @@ export const EditCircle = ({
                 />
             </svg>
 
-            <Labels annotation={{ ...annotation, shape }} annotationToolContext={annotationToolContext} />
+            <Labels annotation={{ ...annotation, shape }} />
 
             {disablePoints === false ? (
                 <svg

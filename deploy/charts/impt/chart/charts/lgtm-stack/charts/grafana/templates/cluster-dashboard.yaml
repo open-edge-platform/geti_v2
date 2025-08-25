@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-cluster-dashboard
+  namespace: {{ .Release.Namespace }}
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "general"
+data:
+{{- if .Values.global.dcgm_dashboard }}
+{{ (.Files.Glob "dashboards/dcgm-exporter.json").AsConfig | indent 2 }}
+{{- end }}
+{{- if .Values.global.xpum_dashboard }}
+{{ (.Files.Glob "dashboards/xpu-manager.json").AsConfig | indent 2 }}
+{{- end }}
+{{ (.Files.Glob "dashboards/opentelemetry-collector.json").AsConfig | indent 2 }}
+{{ (.Files.Glob "dashboards/logs.json").AsConfig | indent 2 }}
+{{ (.Files.Glob "dashboards/resource-ms-access-log.json").AsConfig | indent 2 }}
+{{ (.Files.Glob "dashboards/modelmesh.json").AsConfig | indent 2 }}
+{{ (.Files.Glob "dashboards/projects-and-model-totals.json").AsConfig | indent 2 }}
+{{ (.Files.Glob "dashboards/model-training-time.json").AsConfig | indent 2 }}

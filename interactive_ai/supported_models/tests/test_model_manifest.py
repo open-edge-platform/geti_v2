@@ -91,7 +91,7 @@ class TestModelManifest:
 
     def test_relative_path_parsing(self):
         sources = ("base.yaml", "dummy_base_model_manifest.yaml", "dummy_model_manifest.yaml")
-        expected_paths = [resources.files(manifests).joinpath(path) for path in sources]
+        expected_paths = [str(resources.files(manifests).joinpath(path)) for path in sources]
 
         # Create a more complete mock result with all required nested fields
         mock_yaml_result = {
@@ -105,7 +105,7 @@ class TestModelManifest:
                 "performance_ratings": {
                     "accuracy": 1,
                     "training_time": 2,
-                    "inference_time": 3,
+                    "inference_speed": 3,
                 },
             },
             "support_status": "active",
@@ -114,7 +114,7 @@ class TestModelManifest:
                 "dataset_preparation": {
                     "augmentation": {
                         "gaussian_blur": {"kernel_size": 2},
-                        "tiling": {"adaptive_tiling": True, "tile_size": 100, "tile_overlap": 50},
+                        "tiling": {"adaptive_tiling": True, "tile_size": 100, "tile_overlap": 0.3},
                     }
                 },
                 "training": {"max_epochs": 100, "learning_rate": 0.01, "early_stopping": {"patience": 3}},
@@ -132,7 +132,11 @@ class TestModelManifest:
 
             # Verify hiyapyco.load was called with the correct paths
             mock_load.assert_called_once_with(
-                *expected_paths, method=hiyapyco.METHOD_MERGE, interpolate=True, failonmissingfiles=True
+                *expected_paths,
+                method=hiyapyco.METHOD_MERGE,
+                interpolate=True,
+                failonmissingfiles=True,
+                none_behavior=hiyapyco.NONE_BEHAVIOR_OVERRIDE,
             )
             assert model_manifest == ModelManifest(**mock_yaml_result)
 

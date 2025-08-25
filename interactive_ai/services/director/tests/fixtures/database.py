@@ -18,6 +18,7 @@ import cv2
 import jsonschema
 import numpy as np
 import pytest
+from geti_supported_models.default_models import DefaultModels
 
 from coordination.configuration_manager.task_node_config import TaskNodeConfig
 
@@ -184,11 +185,11 @@ DETECTION_CLASSIFICATION_PIPELINE_DATA = {
 }
 
 
-ANOMALY_CLASSIFICATION_PIPELINE_DATA = {
+ANOMALY_PIPELINE_DATA = {
     "connections": [
         {
             "from": "dataset",
-            "to": "anomaly classification task",
+            "to": "anomaly task",
         },
     ],
     "tasks": [
@@ -197,8 +198,8 @@ ANOMALY_CLASSIFICATION_PIPELINE_DATA = {
             "title": "dataset",
         },
         {
-            "task_type": "anomaly_classification",
-            "title": "anomaly classification task",
+            "task_type": "anomaly",
+            "title": "anomaly task",
         },
     ],
 }
@@ -346,10 +347,7 @@ class RestProjectParser(ProjectParser):
 
     def get_task_type_by_name(self, task_name: str) -> TaskType:
         task_rest = self._get_task_rest(task_name=task_name)
-        task_type = task_rest[TASK_TYPE].upper()
-        if task_type == "ANOMALY":
-            return TaskType.ANOMALY_CLASSIFICATION
-        return TaskType[task_type]
+        return TaskType[task_rest[TASK_TYPE].upper()]
 
     def get_custom_labels_names_by_task(self, task_name: str) -> tuple[str, ...]:
         task_rest = self._get_task_rest(task_name=task_name)
@@ -689,9 +687,9 @@ class DBProjectService:
         ]
 
     @staticmethod
-    def create_anomaly_classification_model_templates() -> list[ModelTemplate]:
+    def create_anomaly_model_templates() -> list[ModelTemplate]:
         model_template_dataset = ModelTemplateList().get_by_id("dataset")
-        model_template_classification = ModelTemplateList().get_by_id("anomaly_classification")
+        model_template_classification = ModelTemplateList().get_by_id("anomaly")
         return [
             model_template_dataset,
             model_template_classification,
@@ -724,6 +722,7 @@ class DBProjectService:
                 creator_id="",
                 parser_class=RestProjectParser,
                 parser_kwargs=parser_kwargs,
+                default_models_per_task=DefaultModels.get_default_models_per_task(),
             )
 
         return self._project

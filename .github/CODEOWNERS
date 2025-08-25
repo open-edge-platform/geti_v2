@@ -5,7 +5,7 @@
 * @Radwan-Ibrahim @mpryahin @jcchr @leoll2 @piotrgrubicki
 
 # Platform components
-platform/ @jcchr @piotrgrubicki
+platform/ @jcchr @piotrgrubicki @mgumowsk
 
 # IAI components
 interactive_ai/ @open-edge-platform/geti-core-backend-write

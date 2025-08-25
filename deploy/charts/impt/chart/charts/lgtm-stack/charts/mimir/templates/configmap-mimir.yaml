@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "mimir.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mimir.labels" . | nindent 4 }}
+data:
+  overrides.yaml: |
+    overrides:
+      {{- toYaml .Values.mimir.overrides | nindent 6 }}
+  mimir.yaml: |
+    {{- tpl .Values.config . | nindent 4 }}

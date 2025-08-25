@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { FullscreenAction } from '@geti/ui';
+
 import {
     TrainingModelBarRadialChart,
     TrainingModelChartConfig,
@@ -9,7 +11,7 @@ import { CardContent } from '../../../../../../shared/components/card-content/ca
 import { BarHorizontalChart } from '../../../../../../shared/components/charts/bar-horizontal-chart/bar-horizontal-chart.component';
 import { Colors } from '../../../../../../shared/components/charts/chart.interface';
 import { convertColorToFadedColor } from '../../../../../../shared/components/charts/utils';
-import { FullscreenAction } from '../../../../../../shared/components/fullscreen-action/fullscreen-action.component';
+import { DownloadGraphMenu } from '../../../../../../shared/components/download-graph-menu/download-graph-menu.component';
 import { getDistinctColorBasedOnHash } from '../../../../../create-project/components/distinct-colors';
 
 const TrainingModelBarChart = ({
@@ -39,9 +41,15 @@ const TrainingModelBarChart = ({
                 title={header}
                 actions={
                     <FullscreenAction
-                        isDownloadable
+                        actionButton={
+                            <DownloadGraphMenu
+                                fileName={header}
+                                data={{ type: 'barChart', data: barData }}
+                                tooltip={'Download graph'}
+                                graphBackgroundColor={'gray-100'}
+                            />
+                        }
                         title={header}
-                        downloadableData={{ type: 'barChart', data: barData }}
                     >
                         <BarHorizontalChart title={header} data={barData} barSize={40} colors={colors} />
                     </FullscreenAction>

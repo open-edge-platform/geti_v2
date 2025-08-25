@@ -1,4 +1,30 @@
-name: Detection workflow
+# Main CI workflow for the Geti project
+#
+# This workflow is triggered on various events such as schedule, pull requests, and pushes to the main branch.
+# It prepares build metadata, runs tests, builds components, and publishes binaries if required.
+# It also generates a summary report of the daily build.
+#
+# Key Features:
+# - Prepares build variables and metadata
+# - Runs tests for libraries and components
+# - Builds and publishes Docker images and Helm charts
+# - Generates a daily build summary report
+#
+# Process Stages:
+# 1. Prepare build metadata
+# 2. Run library tests
+# 3. Run component tests
+# 4. Build and publish web UI
+# 5. Build and publish components
+# 6. Build platform distribution binaries
+# 7. Check status of all builds and generate daily build summary
+#
+# Inputs:
+# - publish_binaries: Enable publishing binaries (default: true)
+# - ref: The branch, tag, or SHA to checkout (default: current ref)
+#
+
+name: Main CI
 
 on:
   schedule:
@@ -203,7 +229,6 @@ jobs:
       build_version: ${{ needs.get-vars.outputs.build_version }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
       ref: ${{ needs.get-vars.outputs.checkout_ref }}
-
     secrets:
       AWS_ROLE: ${{ secrets.AWS_ROLE }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -212,6 +237,7 @@ jobs:
   success:
     name: Required status checks
     needs:
+      - get-vars
       - component-workflow
       - web-ui-workflow
       - package-distribution-workflow
@@ -219,6 +245,7 @@ jobs:
     if: ${{ always() && !cancelled() }}
     env:
       CHECKS: ${{ join(needs.*.result, ' ') }}
+      BUILD_VERSION: ${{ needs.get-vars.outputs.build_version }}
     steps:
       - name: Check
         run: |
@@ -229,3 +256,9 @@ jobs:
               exit 1
             fi
           done
+      - name: Create Summary with build version
+        if: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }}
+        run: |
+          echo "## Required status checks passed" >> $GITHUB_STEP_SUMMARY
+          echo "All required status checks have passed successfully." >> $GITHUB_STEP_SUMMARY
+          echo "Packages published with tag: $BUILD_VERSION" >> $GITHUB_STEP_SUMMARY

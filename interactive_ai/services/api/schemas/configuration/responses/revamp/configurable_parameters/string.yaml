@@ -1,0 +1,43 @@
+type: object
+properties:
+  allowed_values:
+    type: array
+    items:
+      type: string
+    description: Optional list of allowed values for the string parameter, if applicable
+  default_value:
+    type: string
+    description: Default value for the string parameter when not explicitly set
+  description:
+    type: string
+    description: Detailed explanation of the string parameter's purpose and usage
+  key:
+    type: string
+    description: Identifier for the string parameter used in code references
+  name:
+    type: string
+    description: Display name of the string parameter
+  type:
+    type: string
+    enum: [string]
+    description: Type of the parameter, which is 'string' in this case
+  value:
+    type: string
+    description: Current configured value of the string parameter
+
+required:
+  - default_value
+  - description
+  - key
+  - name
+  - type
+  - value
+
+example:
+  allowed_values: ["f_measure", "accuracy", "precision", "recall"]
+  default_value: "f_measure"
+  description: "Metric used to evaluate model performance"
+  key: "evaluation_metric"
+  name: "Evaluation Metric"
+  type: "string"
+  value: "f-measure"

@@ -5,7 +5,7 @@ import { cloneDeep, orderBy } from 'lodash-es';
 
 import { test as baseTest } from '../../fixtures/base-test';
 import { extendWithOpenApi } from '../../fixtures/open-api';
-import { supportedAlgorithms } from '../../fixtures/open-api/mocks';
+import { legacySupportedAlgorithms } from '../../fixtures/open-api/mocks';
 import { ProjectModelsPage } from '../../fixtures/page-objects/models-page';
 import { project } from '../../mocks/classification/mocks';
 import { getModelDetail, getModelGroup, getModelGroups } from './models.mocks';
@@ -14,22 +14,23 @@ interface ModelsFixtures {
     modelsPage: ProjectModelsPage;
 }
 
-export const testWithModels = extendWithOpenApi(baseTest).extend<ModelsFixtures>({
+export const legacyTestWithModels = extendWithOpenApi(baseTest).extend<ModelsFixtures>({
     modelsPage: async ({ modelsPage, registerApiResponse }, use) => {
         registerApiResponse('GetProjectInfo', (_, res, ctx) => {
             return res(ctx.json(cloneDeep(project)));
         });
 
         registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => {
-            return res(ctx.status(200), ctx.json(supportedAlgorithms));
+            return res(ctx.status(200), ctx.json(legacySupportedAlgorithms));
         });
 
         registerApiResponse('GetModelGroups', (_, res, ctx) => {
             const task = (project.pipeline?.tasks ?? []).find(({ task_type }) => task_type !== 'dataset');
 
             const algorithmsPerTask =
-                supportedAlgorithms.supported_algorithms?.filter(({ task_type }) => task_type === task?.task_type) ??
-                [];
+                legacySupportedAlgorithms.supported_algorithms?.filter(
+                    ({ task_type }) => task_type === task?.task_type
+                ) ?? [];
 
             const sortedAlgorithms = orderBy(algorithmsPerTask, 'gigaflops', 'asc');
 
@@ -47,19 +48,6 @@ export const testWithModels = extendWithOpenApi(baseTest).extend<ModelsFixtures>
         registerApiResponse('GetModelDetail', (_, res, ctx) => {
             return res(ctx.status(200), ctx.json(getModelDetail));
         });
-
-        await use(modelsPage);
-    },
-});
-
-export const testWithModelsApiExamples = extendWithOpenApi(baseTest).extend<ModelsFixtures>({
-    modelsPage: async ({ modelsPage, registerApiExample }, use) => {
-        registerApiExample('GetProjectInfo', 'Task chain creation response');
-        registerApiExample('GetSupportedAlgorithms', 'Supported algorithms');
-
-        registerApiExample('GetModelGroups', 'Model list response');
-        registerApiExample('GetModelDetail', 'Model detail response');
-        registerApiExample('FilterMediaInTrainingRevision', 'Combined media list response');
 
         await use(modelsPage);
     },

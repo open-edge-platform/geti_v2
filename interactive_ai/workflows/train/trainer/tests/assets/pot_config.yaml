@@ -1,0 +1,7 @@
+job_type: optimize_pot
+model_manifest_id: Custom_Image_Classification_EfficinetNet-B0
+export_models:
+  - format: openvino
+    output_model_id: 67a32b09544a46e1b1e78318
+    precision: INT8
+    with_xai: false

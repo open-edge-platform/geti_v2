@@ -252,7 +252,8 @@
   {
     "url": "https://download.pytorch.org/models/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth",
     "target": "/home/non-root/.cache/torch/hub/checkpoints/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth",
-    "sha_sum": "73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e"
+    "sha_sum": "73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e",
+    "template_ids": ["Rotated_Detection_MaskRCNN_ResNet50_V2", "Custom_Instance_Segmentation_MaskRCNN_ResNet50_v2"]
   },
   {
     "url": "https://download.pytorch.org/models/resnet50-0676ba61.pth",
@@ -314,14 +315,14 @@
     "template_ids": ["Custom_Image_Classification_MobileNet-V3-small"]
   },
   {
-    "url": "http://repository.toolbox.iotg.sclab.intel.com/extra-deps/models/models--timm--resnet18.a1_in1k.zip",
+    "url": "models--timm--resnet18.a1_in1k.zip",
     "target": "/home/non-root/.cache/torch/hub/checkpoints/models--timm--resnet18.a1_in1k.zip",
     "unzip": false,
     "sha_sum": "c0ddac84c0ad89a29428527669359316f76bc746dc9f0d51b72f148e2f7b9252",
-    "template_ids": ["ote_anomaly_classification_padim", "ote_anomaly_classification_stfpm", "ote_anomaly_uflow"]
+    "template_ids": ["ote_anomaly_padim", "ote_anomaly_stfpm", "ote_anomaly_uflow"]
   },
   {
-    "url": "http://repository.toolbox.iotg.sclab.intel.com/extra-deps/models/models--timm--tf_efficientnetv2_s.in21k.zip",
+    "url": "models--timm--tf_efficientnetv2_s.in21k.zip",
     "target": "/home/non-root/.cache/torch/hub/checkpoints/models--timm--tf_efficientnetv2_s.in21k.zip",
     "unzip": false,
     "sha_sum": "7ef98ff5be511c04239b066c054fb3e624c4920cbab2c77d92a638f4d6810263",
@@ -337,19 +338,7 @@
     "url": "https://download.pytorch.org/models/resnet18-5c106cde.pth",
     "target": "/home/non-root/.cache/torch/hub/checkpoints/resnet18-5c106cde.pth",
     "sha_sum": "5c106cde386e87d4033832f2996f5493238eda96ccf559d1d62760c4de0613f8",
-    "template_ids": ["ote_anomaly_classification_padim", "ote_anomaly_classification_stfpm"]
-  },
-  {
-    "url": "https://download.pytorch.org/models/resnet18-5c106cde.pth",
-    "target": "/home/non-root/.cache/torch/hub/checkpoints/resnet18-5c106cde.pth",
-    "sha_sum": "5c106cde386e87d4033832f2996f5493238eda96ccf559d1d62760c4de0613f8",
-    "template_ids": ["ote_anomaly_detection_padim", "ote_anomaly_detection_stfpm"]
-  },
-  {
-    "url": "https://download.pytorch.org/models/resnet18-5c106cde.pth",
-    "target": "/home/non-root/.cache/torch/hub/checkpoints/resnet18-5c106cde.pth",
-    "sha_sum": "5c106cde386e87d4033832f2996f5493238eda96ccf559d1d62760c4de0613f8",
-    "template_ids": ["ote_anomaly_segmentation_padim", "ote_anomaly_segmentation_stfpm"]
+    "template_ids": ["ote_anomaly_padim", "ote_anomaly_stfpm"]
   },
   {
     "url": "https://download.openmmlab.com/mmclassification/v0/deit/deit-tiny_pt-4xb256_in1k_20220218-13b382a0.pth",
@@ -368,5 +357,23 @@
     "target": "/home/non-root/.cache/torch/hub/checkpoints/resnext101_64x4d-ee2c6f71.pth",
     "sha_sum": "ee2c6f713dbd26a7bbc4f1bdd599dd19b1fc58b6e7d756c3eb080761cf820e1f",
     "template_ids": ["Object_Detection_ResNeXt101_ATSS"]
+  },
+  {
+    "url": "https://github.com/eugene123tw/DEIM/releases/download/poc/deim_dfine_hgnetv2_x_coco_50e.pth",
+    "target": "/home/non-root/.cache/torch/hub/checkpoints/deim_dfine_hgnetv2_x_coco_50e.pth",
+    "sha_sum": "e729436f96d95e78dbf67452bf3fb654cd5bed37de43067f5cf0aafb24d0fc7a",
+    "template_ids": ["Object_Detection_Deim_DFine_X"]
+  },
+  {
+    "url": "https://github.com/eugene123tw/DEIM/releases/download/poc/deim_dfine_hgnetv2_m_coco_90e.pth",
+    "target": "/home/non-root/.cache/torch/hub/checkpoints/deim_dfine_hgnetv2_m_coco_90e.pth",
+    "sha_sum": "2b6cd0582a4aa711f583982057b7fb0f3daebdd98e4dc168824714014c3219bc",
+    "template_ids": ["Object_Detection_Deim_DFine_M"]
+  },
+  {
+    "url": "https://github.com/eugene123tw/DEIM/releases/download/poc/deim_dfine_hgnetv2_l_coco_50e.pth",
+    "target": "/home/non-root/.cache/torch/hub/checkpoints/deim_dfine_hgnetv2_l_coco_50e.pth",
+    "sha_sum": "a9ac1f9bf51a41a7ec02c373c85e0109f84908dde11d80759b43248dcb638baa",
+    "template_ids": ["Object_Detection_Deim_DFine_L"]
   }
 ]

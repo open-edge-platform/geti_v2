@@ -1,0 +1,42 @@
+.container {
+    overflow: hidden;
+    position: relative;
+
+    &:hover .floatingContainer {
+        opacity: 1;
+    }
+}
+
+[data-selected] .floatingContainer {
+    opacity: 1;
+}
+
+.deleteContainer {
+    background: var(--spectrum-global-color-gray-50) !important;
+    border-radius: var(--spectrum-global-dimension-size-50) !important;
+
+    &[class*='is-hovered'] {
+        background: var(--spectrum-global-color-gray-50) !important;
+    }
+}
+
+.floatingContainer {
+    opacity: 0;
+    position: absolute;
+    background: var(--spectrum-global-color-gray-50) !important;
+    border-radius: var(--spectrum-global-dimension-size-50) !important;
+
+    &.visible {
+        opacity: 1;
+    }
+}
+
+.leftTopElement {
+    top: var(--spectrum-global-dimension-size-50);
+    left: var(--spectrum-global-dimension-size-50);
+}
+
+.rightTopElement {
+    top: var(--spectrum-global-dimension-size-50);
+    right: var(--spectrum-global-dimension-size-50);
+}

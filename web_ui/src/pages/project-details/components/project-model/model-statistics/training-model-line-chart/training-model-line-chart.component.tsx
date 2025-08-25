@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { FullscreenAction } from '@geti/ui';
+
 import {
     TrainingModelChartConfig,
     TrainingModelLineChartType,
@@ -8,7 +10,7 @@ import {
 import { CardContent } from '../../../../../../shared/components/card-content/card-content.component';
 import { LineChart } from '../../../../../../shared/components/charts/line-chart/line-chart.component';
 import { LineChartData } from '../../../../../../shared/components/charts/line-chart/line-chart.interface';
-import { FullscreenAction } from '../../../../../../shared/components/fullscreen-action/fullscreen-action.component';
+import { DownloadGraphMenu } from '../../../../../../shared/components/download-graph-menu/download-graph-menu.component';
 import { getDistinctColorBasedOnHash } from '../../../../../create-project/components/distinct-colors';
 
 export const TrainingModelLineChart = ({
@@ -40,14 +42,20 @@ export const TrainingModelLineChart = ({
             downloadableData={{ type: 'lineChart', data: convertedLineData, xLabel: xAxisLabel, yLabel: yAxisLabel }}
             actions={
                 <FullscreenAction
-                    isDownloadable
+                    actionButton={
+                        <DownloadGraphMenu
+                            fileName={header}
+                            data={{
+                                type: 'lineChart',
+                                data: convertedLineData,
+                                xLabel: xAxisLabel,
+                                yLabel: yAxisLabel,
+                            }}
+                            tooltip={'Download graph'}
+                            graphBackgroundColor={'gray-100'}
+                        />
+                    }
                     title={header}
-                    downloadableData={{
-                        type: 'lineChart',
-                        data: convertedLineData,
-                        xLabel: xAxisLabel,
-                        yLabel: yAxisLabel,
-                    }}
                 >
                     {chartComponent}
                 </FullscreenAction>

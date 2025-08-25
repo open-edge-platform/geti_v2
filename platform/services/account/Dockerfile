@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # Builder image
-FROM golang:1.23.8@sha256:ec5612bbd9e96d5b80a8b968cea06a4a9b985fe200ff6da784bf607063273c59 AS build
+FROM golang:1.23.11@sha256:080fb3462a60d926829ddcf0626acf0533eeeee934fea6c160d85565281ddc0a AS build
 
 WORKDIR /build/control_plane/account_service
 
@@ -21,10 +21,20 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=app,target=app \
 	CGO_ENABLED=0 go build -trimpath -mod=readonly -gcflags="all=-spectre=all" -asmflags="all=-spectre=all" -ldflags="all=-s -w" -a -o account_service .
 
+# Save Go third party package licenses
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+    --mount=type=bind,source=go.sum,target=go.sum \
+    --mount=type=bind,source=go.mod,target=go.mod \
+    --mount=type=bind,source=main.go,target=main.go \
+    --mount=type=bind,source=app,target=app \
+    go install github.com/google/go-licenses@v1.0.0 && \
+    go-licenses save . --save_path /THIRD_PARTY_NOTICES || true
+
 # Production image
 FROM gcr.io/distroless/static-debian12:nonroot@sha256:627d6c5a23ad24e6bdff827f16c7b60e0289029b0c79e9f7ccd54ae3279fb45f AS runtime
 
 COPY --link --from=build /build/control_plane/account_service/account_service .
+COPY --from=build /THIRD_PARTY_NOTICES /THIRD_PARTY_NOTICES
 
 USER nonroot
 

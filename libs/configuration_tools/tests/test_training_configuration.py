@@ -42,8 +42,9 @@ def ftx_hyperparameters():
             max_epochs=100,
             early_stopping=EarlyStopping(enable=True, patience=10),
             learning_rate=0.001,
-            input_size="32x32",
-            allowed_values_input_size=["32x32", "64x64", "128x128"],
+            input_size_width=32,
+            input_size_height=32,
+            allowed_values_input_size=[32, 64, 128],
         ),
         evaluation=EvaluationParameters(),
     )
@@ -84,7 +85,9 @@ class TestTrainingConfiguration:
         assert training_config.global_parameters.dataset_preparation.subset_split.training == 70
         assert training_config.global_parameters.dataset_preparation.subset_split.validation == 20
         assert training_config.global_parameters.dataset_preparation.subset_split.test == 10
+        assert training_config.hyperparameters.training is not None
         assert training_config.hyperparameters.training.max_epochs == 100
+        assert training_config.hyperparameters.training.early_stopping
         assert training_config.hyperparameters.training.early_stopping.enable
         assert training_config.hyperparameters.training.early_stopping.patience == 10
 
@@ -165,6 +168,7 @@ class TestTrainingConfiguration:
         assert partial_training_config_incomplete.model_manifest_id == "test_manifest"
         assert partial_training_config_incomplete.id_ == ID("partial_config")
         assert partial_training_config_incomplete.task_id == ID("test_task")
+        assert global_parameters.dataset_preparation.filtering.min_annotation_pixels
         assert global_parameters.dataset_preparation.filtering.min_annotation_pixels.min_annotation_pixels == 42
         assert global_parameters.dataset_preparation.filtering.min_annotation_pixels.enable is None
         assert global_parameters.dataset_preparation.subset_split is None
@@ -225,3 +229,33 @@ class TestTrainingConfiguration:
         partial_global_params_full = PartialGlobalParameters.model_validate(full_global_params_dict)
 
         assert partial_global_params_full.model_dump() == fxt_global_parameters.model_dump()
+
+    def test_validate_subsets(self) -> None:
+        # subsets dont add app to 100
+        with pytest.raises(ValueError):
+            PartialGlobalParameters.model_validate(
+                {
+                    "dataset_preparation": {
+                        "subset_split": {
+                            "training": 1,
+                            "validation": 1,
+                            "test": 1,
+                        }
+                    }
+                }
+            )
+
+        # test doesn't have items
+        with pytest.raises(ValueError):
+            PartialGlobalParameters.model_validate(
+                {
+                    "dataset_preparation": {
+                        "subset_split": {
+                            "training": 50,
+                            "validation": 49,
+                            "test": 1,
+                            "dataset_size": 2,
+                        }
+                    }
+                }
+            )

@@ -17,7 +17,6 @@ import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../../../core/user-
 import { useUserGlobalSettings } from '../../../../core/user-settings/hooks/use-global-settings.hook';
 import { UserGlobalSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
 import { CreditsToConsume } from '../../../../shared/components/header/credit-balance/credits-to-consume.component';
-import { getFuxSetting } from '../../../../shared/components/tutorials/utils';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
 import { useIsAutoTrainingOn } from '../../hooks/use-is-auto-training-on.hook';
 import { onFirstScheduledOrRunningAutoTrainingJob } from './util';
@@ -76,7 +75,7 @@ export const AutoTrainingCreditsModal = ({ settings }: AutoTrainingCreditsModalP
     const [isOpen, setIsOpen] = useState(false);
 
     const isAutoTrainingOn = useIsAutoTrainingOn({ project, projectIdentifier });
-    const hasNeverAutotrained = getFuxSetting(FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED, settings.config);
+    const hasNeverAutotrained = settings.config[FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED].value;
     const isQueryEnabled = Boolean(isAutoTrainingOn && !settings.isSavingConfig && hasNeverAutotrained);
 
     const handleDisplayModal = async (jobId: string) => {

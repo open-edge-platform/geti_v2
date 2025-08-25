@@ -3,8 +3,6 @@
 
 import { orderBy } from 'lodash-es';
 
-import { isAnomalyDomain, isClassificationDomain } from '../../core/projects/domains';
-import { Task } from '../../core/projects/task.interface';
 import { getFileSize } from '../../shared/utils';
 import { Screenshot, UserCameraPermission } from '../camera-support/camera.interface';
 
@@ -19,13 +17,6 @@ export const hasPermissionsDenied = (permissions: UserCameraPermission) =>
 
 export const isPermissionPending = (permissions: UserCameraPermission) =>
     permissions.includes(UserCameraPermission.PENDING);
-
-export const isClassificationOrAnomaly = ({ domain }: Task) =>
-    isClassificationDomain(domain) || isAnomalyDomain(domain);
-
-// Task-chain and task different to anomaly and classification are not valid for camera feature
-export const getSingleValidTask = (tasks: Task[]) =>
-    tasks.length === 1 ? tasks.filter(isClassificationOrAnomaly) : [];
 
 export enum SortingOptions {
     MOST_RECENT = 'mostRecent',

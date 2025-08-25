@@ -3,20 +3,22 @@
 
 import { useEffect, useState } from 'react';
 
-import { Annotation } from '../../../../../core/annotations/annotation.interface';
-import { clampBetween, rotatedRectCorners } from '../../../../../core/annotations/math';
+import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
 import {
     calculateSizeAndPositionBasedOfCornerAnchor,
     calculateSizeAndPositionOfSideAnchor,
+    clampBetween,
     cursorForDirection,
-} from '../../../../../core/annotations/rotated-rect-math';
+    rotatedRectCorners,
+    Vec2,
+} from '@geti/smart-tools/utils';
+
+import { Annotation } from '../../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import * as Vec2 from '../../../../../core/annotations/vec2';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useZoom } from '../../../zoom/zoom-provider.component';
 import { isShapeWithinRoi } from '../../utils';
-import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { ResizeAnchorType } from '../resize-anchor.enum';
 import { TranslateShape } from '../translate-shape.component';
 import { getSideAnchorLocations } from './location';

@@ -27,7 +27,7 @@ export const TaskSelection: FC<TaskSelectionProps> = ({ tasks, selectedTask, onT
         <Picker
             items={tasks}
             selectedKey={selectedTask.id}
-            onSelectionChange={handleChangeTask}
+            onSelectionChange={(key) => key !== null && handleChangeTask(key)}
             aria-label={'Select domain'}
             alignSelf={'flex-end'}
             width={'100%'}

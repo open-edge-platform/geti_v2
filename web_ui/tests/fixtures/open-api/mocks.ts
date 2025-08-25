@@ -1,13 +1,21 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { OpenApiResponseBody } from '../../../src/core/server/types';
+import { TASK_TYPE } from '../../../src/core/projects/dtos/task.interface';
+import {
+    LegacySupportedAlgorithmDTO,
+    LifecycleStage,
+    PerformanceCategory,
+} from '../../../src/core/supported-algorithms/dtos/supported-algorithms.interface';
 import {
     FUX_NOTIFICATION_KEYS,
     FUX_SETTINGS_KEYS,
     GLOBAL_MODALS_KEYS,
     TUTORIAL_CARD_KEYS,
 } from '../../../src/core/user-settings/dtos/user-settings.interface';
+
+// Copyright (C) 2022-2025 Intel Corporation
+// LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 export const disabledFUXSettings = {
     homePageTutorial: {
@@ -117,7 +125,7 @@ export const disabledFUXSettings = {
 
 export const settings = JSON.stringify(disabledFUXSettings);
 
-export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> = {
+export const legacySupportedAlgorithms: { supported_algorithms: LegacySupportedAlgorithmDTO[] } = {
     supported_algorithms: [
         {
             name: 'U-Net',
@@ -125,9 +133,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 21.1,
             model_template_id: 'U-Net',
             summary: 'This algorithm is only used for testing purposes',
-            task_type: 'classification',
+            task_type: TASK_TYPE.CLASSIFICATION,
             default_algorithm: true,
-            lifecycle_stage: 'active',
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
         },
         {
             name: 'U-Net',
@@ -135,9 +144,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 21.1,
             model_template_id: 'U-Net',
             summary: 'This algorithm is only used for testing purposes',
-            task_type: 'segmentation',
+            task_type: TASK_TYPE.SEGMENTATION,
             default_algorithm: true,
-            lifecycle_stage: 'active',
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
         },
         {
             name: 'STFPM',
@@ -145,9 +155,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 21.1,
             model_template_id: 'ote_anomaly_classification_stfpm',
             summary: 'Use this model when the position of the objects in the image frame might differ between images.',
-            task_type: 'anomaly',
+            task_type: TASK_TYPE.ANOMALY,
             default_algorithm: true,
-            lifecycle_stage: 'active',
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
         },
         {
             name: 'PADIM',
@@ -157,29 +168,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             summary:
                 // eslint-disable-next-line max-len
                 'This model is faster and in many cases more accurate, but it requires a fixed position of the objects within the image.',
-            task_type: 'anomaly',
-            lifecycle_stage: 'active',
-        },
-        {
-            name: 'STFPM',
-            gigaflops: 5.6,
-            model_size: 21.1,
-            model_template_id: 'ote_anomaly_segmentation_stfpm',
-            summary: 'Use this model when the position of the objects in the image frame might differ between images.',
-            task_type: 'anomaly',
-            default_algorithm: true,
-            lifecycle_stage: 'active',
-        },
-        {
-            name: 'PADIM',
-            gigaflops: 3.9,
-            model_size: 168.4,
-            model_template_id: 'ote_anomaly_segmentation_padim',
-            summary:
-                // eslint-disable-next-line max-len
-                'This model is faster and in many cases more accurate, but it requires a fixed position of the objects within the image.',
-            task_type: 'anomaly',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.ANOMALY,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'STFPM',
@@ -187,9 +179,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 21.1,
             model_template_id: 'ote_anomaly_detection_stfpm',
             summary: 'Use this model when the position of the objects in the image frame might differ between images.',
-            task_type: 'anomaly',
+            task_type: TASK_TYPE.ANOMALY,
             default_algorithm: true,
-            lifecycle_stage: 'active',
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
         },
         {
             name: 'PADIM',
@@ -199,8 +192,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             summary:
                 // eslint-disable-next-line max-len
                 'This model is faster and in many cases more accurate, but it requires a fixed position of the objects within the image.',
-            task_type: 'anomaly',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.ANOMALY,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'EfficientNet-V2-S',
@@ -208,9 +203,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 20.23,
             model_template_id: 'Custom_Image_Classification_EfficientNet-V2-S',
             summary: 'Class-Incremental Image Classification for EfficientNet-V2-S',
-            task_type: 'classification',
+            task_type: TASK_TYPE.CLASSIFICATION,
             default_algorithm: true,
-            lifecycle_stage: 'active',
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
         },
         {
             name: 'MobileNet-V3-large-1x',
@@ -218,8 +214,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 4.29,
             model_template_id: 'Custom_Image_Classification_MobileNet-V3-large-1x',
             summary: 'Class-Incremental Image Classification for MobileNet-V3-large-1x',
-            task_type: 'classification',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.CLASSIFICATION,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'EfficientNet-B0',
@@ -227,8 +225,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 4.09,
             model_template_id: 'Custom_Image_Classification_EfficinetNet-B0',
             summary: 'Class-Incremental Image Classification for EfficientNet-B0',
-            task_type: 'classification',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.CLASSIFICATION,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'Lite-HRNet-18-mod2',
@@ -238,8 +238,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             summary:
                 // eslint-disable-next-line max-len
                 'Class-Incremental Semantic Segmentation with middle-sized architecture which based on the Lite-HRNet backbone for the balance between the fast inference and long training.',
-            task_type: 'segmentation',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.SEGMENTATION,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'Lite-HRNet-s-mod2',
@@ -249,8 +251,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             summary:
                 // eslint-disable-next-line max-len
                 'Class-Incremental Semantic Segmentation with lightweight architecture which based on the Lite-HRNet backbone for the fast inference and training on the limited amount of data.',
-            task_type: 'segmentation',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.SEGMENTATION,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'Lite-HRNet-x-mod3',
@@ -260,8 +264,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             summary:
                 // eslint-disable-next-line max-len
                 'Class-Incremental Semantic Segmentation with heavy-size architecture which based on the Lite-HRNet backbone for the accurate predictions but long training.',
-            task_type: 'segmentation',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.SEGMENTATION,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'Lite-HRNet-18',
@@ -271,8 +277,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             summary:
                 // eslint-disable-next-line max-len
                 'Class-Incremental Semantic Segmentation with middle-sized architecture which based on the Lite-HRNet backbone for the balance between the fast inference and long training. (deprecated in next version)',
-            task_type: 'segmentation',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.SEGMENTATION,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'ATSS',
@@ -280,9 +288,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 9.1,
             model_template_id: 'Custom_Object_Detection_Gen3_ATSS',
             summary: 'Class-Incremental Object Detection for ATSS',
-            task_type: 'detection',
+            task_type: TASK_TYPE.DETECTION,
             default_algorithm: true,
-            lifecycle_stage: 'active',
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
         },
         {
             name: 'SSD',
@@ -290,8 +299,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 7.6,
             model_template_id: 'Custom_Object_Detection_Gen3_SSD',
             summary: 'Class-Incremental Object Detection for SSD',
-            task_type: 'detection',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.DETECTION,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'YOLOX',
@@ -299,8 +310,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 20.4,
             model_template_id: 'Custom_Object_Detection_YOLOX',
             summary: 'Class-Incremental Object Detection for YOLOX',
-            task_type: 'detection',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.DETECTION,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'MaskRCNN-ResNet50',
@@ -308,9 +321,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 177.9,
             model_template_id: 'Custom_Counting_Instance_Segmentation_MaskRCNN_ResNet50',
             summary: 'Class-Incremental Instance Segmentation for MaskRCNN-ResNet50',
-            task_type: 'instance_segmentation',
+            task_type: TASK_TYPE.SEGMENTATION_INSTANCE,
             default_algorithm: true,
-            lifecycle_stage: 'active',
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
         },
         {
             name: 'MaskRCNN-EfficientNetB2B',
@@ -318,8 +332,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 13.27,
             model_template_id: 'Custom_Counting_Instance_Segmentation_MaskRCNN_EfficientNetB2B',
             summary: 'Class-Incremental Instance Segmentation for MaskRCNN-EfficientNetB2B',
-            task_type: 'instance_segmentation',
-            lifecycle_stage: 'active',
+            task_type: TASK_TYPE.SEGMENTATION_INSTANCE,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
+            default_algorithm: false,
         },
         {
             name: 'MaskRCNN-ResNet50',
@@ -327,9 +343,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 177.9,
             model_template_id: 'Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_ResNet50',
             summary: 'Class-Incremental Rotated object detection for MaskRCNN-ResNet50',
-            task_type: 'rotated_detection',
+            task_type: TASK_TYPE.DETECTION_ROTATED_BOUNDING_BOX,
             default_algorithm: true,
-            lifecycle_stage: 'active',
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
         },
         {
             name: 'MaskRCNN-EfficientNetB2B',
@@ -337,7 +354,10 @@ export const supportedAlgorithms: OpenApiResponseBody<'GetSupportedAlgorithms'> 
             model_size: 13.27,
             model_template_id: 'Custom_Rotated_Detection_via_Instance_Segmentation_MaskRCNN_EfficientNetB2B',
             summary: 'Class-Incremental Rotated object detection for MaskRCNN-EfficientNetB2B',
-            task_type: 'rotated_detection',
+            task_type: TASK_TYPE.DETECTION_ROTATED_BOUNDING_BOX,
+            default_algorithm: false,
+            lifecycle_stage: LifecycleStage.ACTIVE,
+            performance_category: PerformanceCategory.OTHER,
         },
     ],
 };

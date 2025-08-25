@@ -30,7 +30,6 @@ export const AVAILABLE_FORMATS: ExportFormatDetails[] = [
             DOMAIN.SEGMENTATION,
             DOMAIN.ANOMALY_CLASSIFICATION,
             DOMAIN.ANOMALY_DETECTION,
-            DOMAIN.ANOMALY_SEGMENTATION,
             DOMAIN.SEGMENTATION_INSTANCE,
             DOMAIN.KEYPOINT_DETECTION,
         ],
@@ -54,7 +53,6 @@ export const AVAILABLE_FORMATS: ExportFormatDetails[] = [
             DOMAIN.DETECTION_ROTATED_BOUNDING_BOX,
             DOMAIN.SEGMENTATION,
             DOMAIN.SEGMENTATION_INSTANCE,
-            DOMAIN.KEYPOINT_DETECTION,
         ],
     },
     {

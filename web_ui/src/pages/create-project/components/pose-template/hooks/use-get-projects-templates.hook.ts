@@ -9,7 +9,7 @@ import { KeypointTask } from '../../../../../core/projects/task.interface';
 import { isKeypointTask } from '../../../../../core/projects/utils';
 import { useWorkspaceIdentifier } from '../../../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { hasEqualId } from '../../../../../shared/utils';
-import { RawTemplate } from '../templates/utils';
+import { getProjectTemplateKey, RawTemplate } from '../templates/utils';
 
 export const useGetProjectsTemplates = () => {
     const { useGetProjects } = useProjectActions();
@@ -29,6 +29,7 @@ export const useGetProjectsTemplates = () => {
         const keypointTask = project.tasks[0] as KeypointTask;
 
         return {
+            id: getProjectTemplateKey(project.id),
             name: capitalize(project.name),
             template: {
                 // Convert labels to use names instead of IDs since we don't have IDs when creating a new project

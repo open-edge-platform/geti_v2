@@ -3,9 +3,8 @@
 
 import { FC } from 'react';
 
-import { Flex, Skeleton, View } from '@geti/ui';
+import { Flex, PhotoPlaceholder, Skeleton, View } from '@geti/ui';
 
-import { PhotoPlaceholder } from '../../../../shared/components/photo-placeholder/photo-placeholder.component';
 import { TruncatedTextWithTooltip } from '../../../../shared/components/truncated-text/truncated-text.component';
 
 import classes from './sidebar.module.scss';

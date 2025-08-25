@@ -5,10 +5,12 @@ import { FC } from 'react';
 
 import { Checkbox, Flex, Radio, RadioGroup } from '@geti/ui';
 
+import { useDocsUrl } from '../../../../../../../hooks/use-docs-url/use-docs-url.hook';
 import { InfoTooltip } from '../../../../../../../shared/components/info-tooltip/info-tooltip.component';
+import { LinkNewTab } from '../../../../../../../shared/components/link-new-tab/link-new-tab.component';
 import { Accordion } from '../ui/accordion/accordion.component';
 
-import classes from '../../../legacy-train-model-dialog/train-model-settings-item/train-model-settings-item.module.scss';
+import styles from './fine-tune-parameters.module.scss';
 
 interface FineTuneParametersProps {
     trainFromScratch: boolean;
@@ -23,12 +25,17 @@ enum TRAINING_WEIGHTS {
     PREVIOUS_TRAINING_WEIGHTS = 'Previous training weights',
 }
 
+const ADVANCED_SETTINGS_URL = 'docs/user-guide/geti-fundamentals/model-training-and-optimization/#advanced-settings';
+
 export const FineTuneParameters: FC<FineTuneParametersProps> = ({
     trainFromScratch,
     onTrainFromScratchChange,
     isReshufflingSubsetsEnabled,
     onReshufflingSubsetsEnabledChange,
 }) => {
+    const docsUrl = useDocsUrl();
+    const originalModelUrl = `${docsUrl}${ADVANCED_SETTINGS_URL}`;
+
     const trainingWeight = trainFromScratch
         ? TRAINING_WEIGHTS.PRE_TRAINED_WEIGHTS
         : TRAINING_WEIGHTS.PREVIOUS_TRAINING_WEIGHTS;
@@ -44,7 +51,8 @@ export const FineTuneParameters: FC<FineTuneParametersProps> = ({
     return (
         <Accordion>
             <Accordion.Title>
-                Fine-tune parameters <Accordion.Tag>{trainingWeight}</Accordion.Tag>
+                Fine-tune parameters{' '}
+                <Accordion.Tag ariaLabel={'Fine-tune parameters tag'}>{trainingWeight}</Accordion.Tag>
             </Accordion.Title>
             <Accordion.Content>
                 <Accordion.Description>
@@ -56,9 +64,27 @@ export const FineTuneParameters: FC<FineTuneParametersProps> = ({
                     <Radio value={TRAINING_WEIGHTS.PREVIOUS_TRAINING_WEIGHTS}>
                         Previous training weights - fine-tune the previous version of your model
                     </Radio>
-                    <Radio value={TRAINING_WEIGHTS.PRE_TRAINED_WEIGHTS}>
-                        Pre-trained weights - fine-tune the original model
-                    </Radio>
+                    <Flex alignItems={'center'}>
+                        <Radio value={TRAINING_WEIGHTS.PRE_TRAINED_WEIGHTS} marginEnd={'size-65'}>
+                            Pre-trained weights - fine-tune the original model
+                        </Radio>
+                        <InfoTooltip
+                            tooltipText={
+                                <>
+                                    <span>
+                                        The original model is a base version with pre-trained weights, already trained
+                                        on a large, general-purpose dataset. It provides a strong foundation for
+                                        adapting to new, specific tasks.
+                                    </span>{' '}
+                                    <LinkNewTab
+                                        url={originalModelUrl}
+                                        text='Learn more.'
+                                        className={styles.originalModelLink}
+                                    />
+                                </>
+                            }
+                        />
+                    </Flex>
                 </RadioGroup>
 
                 <Flex gap={'size-100'} alignItems={'center'} marginTop={'size-100'}>
@@ -66,7 +92,7 @@ export const FineTuneParameters: FC<FineTuneParametersProps> = ({
                         isEmphasized
                         isSelected={isReshufflingSubsetsEnabled}
                         onChange={onReshufflingSubsetsEnabledChange}
-                        UNSAFE_className={classes.trainModelCheckbox}
+                        UNSAFE_className={styles.trainModelCheckbox}
                         isDisabled={trainingWeight === TRAINING_WEIGHTS.PREVIOUS_TRAINING_WEIGHTS}
                     >
                         Reshuffle subsets

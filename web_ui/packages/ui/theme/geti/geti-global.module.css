@@ -44,9 +44,12 @@
     --spectrum-alias-icon-color: var(--spectrum-global-color-gray-900);
     --spectrum-body-text-color: var(--spectrum-global-color-gray-900);
     --spectrum-global-color-red-600: rgb(215, 55, 63);
+
     --brand-moss: #8bae46;
     --brand-moss-tint: #d7f3a2;
     --brand-moss-darken: #7b9c3b;
+    --moss-tint-1: #b1d272;
+
     --default-chart-color: var(--brand-moss);
     --balanced-distribution: var(--brand-moss);
     --wide-distribution: #cc94da;

@@ -27,12 +27,6 @@ jest.mock('../../../../annotator/hooks/use-dataset-identifier.hook', () => ({
     useDatasetIdentifier: () => ({ workspaceId: mockWorkspaceId, datasetId: mockDatasetId }),
 }));
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
-}));
-
 const mockPrepareExportDataset = jest.fn();
 jest.mock('../../../hooks/use-export-dataset.hook', () => ({
     ...jest.requireActual('../../../hooks/use-export-dataset.hook'),
@@ -179,14 +173,6 @@ describe('ExportDatasetDialog', () => {
             expect(queryRadioOption(ExportFormats.DATUMARO)).toBeEnabled();
         });
 
-        it('anomaly segmentation', async () => {
-            await renderApp({ domains: [DOMAIN.ANOMALY_SEGMENTATION] });
-            expect(queryRadioOption(ExportFormats.VOC)).not.toBeInTheDocument();
-            expect(queryRadioOption(ExportFormats.COCO)).not.toBeInTheDocument();
-            expect(queryRadioOption(ExportFormats.YOLO)).not.toBeInTheDocument();
-            expect(queryRadioOption(ExportFormats.DATUMARO)).toBeEnabled();
-        });
-
         it('detection classification', async () => {
             await renderApp({ domains: [DOMAIN.DETECTION, DOMAIN.CROP, DOMAIN.CLASSIFICATION] });
             expect(queryRadioOption(ExportFormats.VOC)).toBeEnabled();
@@ -210,7 +196,6 @@ describe('ExportDatasetDialog', () => {
             DOMAIN.SEGMENTATION,
             DOMAIN.ANOMALY_CLASSIFICATION,
             DOMAIN.ANOMALY_DETECTION,
-            DOMAIN.ANOMALY_SEGMENTATION,
             DOMAIN.SEGMENTATION_INSTANCE,
         ])('should render Datumaro export option when project domain is "%s"', async (domain) => {
             await renderApp({ domains: [domain] });

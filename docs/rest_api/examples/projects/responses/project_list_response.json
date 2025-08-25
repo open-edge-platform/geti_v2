@@ -29,6 +29,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "610123e5efba22ca453f11b9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "object",
                                 "parent_id": null
@@ -91,6 +92,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "610123e5efba22ca453f11b9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "object",
                                 "parent_id": null
@@ -154,6 +156,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "6101254defba22ca453f11c6",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse",
                                 "parent_id": null
@@ -164,6 +167,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "6101254defba22ca453f11c7",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey",
                                 "parent_id": null
@@ -174,6 +178,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "6101254defba22ca453f11c8",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled",
                                 "parent_id": null
@@ -184,6 +189,7 @@
                                 "hotkey": "ctrl+9",
                                 "id": "6101254defba22ca453f11c9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled",
                                 "parent_id": null
@@ -244,6 +250,7 @@
                                 "hotkey": "",
                                 "id": "61012b5cefba22ca453f11d7",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "animal",
                                 "parent_id": null
@@ -254,6 +261,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "61012b5cefba22ca453f11d8",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse",
                                 "parent_id": null
@@ -264,6 +272,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "61012b5cefba22ca453f11d9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey",
                                 "parent_id": null
@@ -274,6 +283,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "61012b5cefba22ca453f11da",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled",
                                 "parent_id": null
@@ -284,6 +294,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "61012b5cefba22ca453f11db",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled",
                                 "parent_id": null
@@ -347,6 +358,7 @@
                                 "hotkey": "",
                                 "id": "61012bf776379a12afa07894",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "animal",
                                 "parent_id": null
@@ -357,6 +369,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "61012bf776379a12afa07895",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse",
                                 "parent_id": null
@@ -367,6 +380,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "61012bf776379a12afa07896",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey",
                                 "parent_id": null
@@ -377,6 +391,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "61012bf776379a12afa07897",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled",
                                 "parent_id": null
@@ -387,6 +402,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "61012bf776379a12afa07898",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled",
                                 "parent_id": null
@@ -450,6 +466,7 @@
                                 "hotkey": "",
                                 "id": "61012cdb1d38a5e71ef3baf1",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "animal",
                                 "parent_id": null
@@ -460,6 +477,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "61012cdb1d38a5e71ef3baf2",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse",
                                 "parent_id": "61012cdb1d38a5e71ef3baf1"
@@ -470,6 +488,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "61012cdb1d38a5e71ef3baf3",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey",
                                 "parent_id": "61012cdb1d38a5e71ef3baf1"
@@ -480,6 +499,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "61012cdb1d38a5e71ef3baf4",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled",
                                 "parent_id": null
@@ -490,6 +510,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "61012cdb1d38a5e71ef3baf5",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled",
                                 "parent_id": null
@@ -564,6 +585,7 @@
                                 "hotkey": "",
                                 "id": "6290a8f9003ddb3967f1438c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Normal",
                                 "parent_id": null
@@ -574,6 +596,7 @@
                                 "hotkey": "",
                                 "id": "6290a8f9003ddb3967f1438d",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Anomalous",
                                 "parent_id": null
@@ -634,6 +657,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475b",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Card",
                                 "parent_id": null
@@ -667,6 +691,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14760",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Hearts",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -677,6 +702,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14762",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Diamonds",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -687,6 +713,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14763",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Spades",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -697,6 +724,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14764",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Clubs",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -707,6 +735,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14765",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Seven",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -717,6 +746,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14767",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Eight",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -727,6 +757,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14768",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Nine",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -737,6 +768,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14769",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Ten",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -747,6 +779,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476a",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Jack",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -757,6 +790,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476b",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Queen",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -767,6 +801,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "King",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -777,6 +812,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476d",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Ace",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -841,6 +877,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "head",
                                 "parent_id": null
@@ -851,6 +888,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475e",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "neck",
                                 "parent_id": null

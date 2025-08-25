@@ -2,20 +2,52 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { DOMAIN } from '../projects/core.interface';
-import { SupportedAlgorithmDTO } from './dtos/supported-algorithms.interface';
+import {
+    LegacySupportedAlgorithmDTO,
+    LifecycleStage,
+    PerformanceCategory,
+    SupportedAlgorithmStatsValues,
+} from './dtos/supported-algorithms.interface';
 
-export interface SupportedAlgorithm {
-    name: SupportedAlgorithmDTO['name'];
-    modelSize: SupportedAlgorithmDTO['model_size'];
-    modelTemplateId: SupportedAlgorithmDTO['model_template_id'];
+export interface LegacySupportedAlgorithm {
+    name: LegacySupportedAlgorithmDTO['name'];
+    modelSize: LegacySupportedAlgorithmDTO['model_size'];
+    modelTemplateId: LegacySupportedAlgorithmDTO['model_template_id'];
     templateName: string | undefined;
     domain: DOMAIN;
-    summary: string;
+    description: string;
     gigaflops: number;
     isDefaultAlgorithm: boolean;
-    lifecycleStage: SupportedAlgorithmDTO['lifecycle_stage'];
-    performanceCategory: SupportedAlgorithmDTO['performance_category'];
+    lifecycleStage: LegacySupportedAlgorithmDTO['lifecycle_stage'];
+    performanceCategory: LegacySupportedAlgorithmDTO['performance_category'];
     license: string;
 }
 
-export type TaskWithSupportedAlgorithms = Record<string, SupportedAlgorithm[]>;
+export interface SupportedAlgorithm {
+    name: string;
+    modelTemplateId: string;
+    domain: DOMAIN;
+    description: string;
+    isDefaultAlgorithm: boolean;
+    lifecycleStage: LifecycleStage;
+    performanceCategory: PerformanceCategory;
+    capabilities: {
+        tiling: boolean;
+        xai: boolean;
+    };
+    supportedGPUs: {
+        intel: boolean;
+        nvidia: boolean;
+    };
+    gigaflops: number;
+    trainableParameters: number; // in millions
+    performanceRatings: {
+        accuracy: SupportedAlgorithmStatsValues;
+        inferenceSpeed: SupportedAlgorithmStatsValues;
+        trainingTime: SupportedAlgorithmStatsValues;
+    };
+    license: string;
+    templateName: string | undefined;
+}
+
+export type TaskWithSupportedAlgorithms = Record<string, LegacySupportedAlgorithm[] | SupportedAlgorithm[]>;

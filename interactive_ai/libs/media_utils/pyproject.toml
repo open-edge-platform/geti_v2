@@ -29,7 +29,7 @@ dev = [
     "click~=8.1",
     "pre-commit~=2.15",
     "pytest-html~=4.1",
-    "ruff~=0.11",
+    "ruff~=0.11.2",
     "testcontainers[mongodb]~=4.9",
     "types-requests~=2.32",
 ]

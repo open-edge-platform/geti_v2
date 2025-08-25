@@ -107,7 +107,7 @@ class TestConfigurationManager:
         mock_save_hyper_parameters.assert_called_once_with(hyper_parameters)
         mock_get_model_storage.assert_called_once_with(
             task_node=detection_task,
-            model_template_id=algorithm_name,
+            model_manifest_id=algorithm_name,
             project_identifier=fxt_project_with_detection_task.identifier,
         )
 
@@ -125,7 +125,7 @@ class TestConfigurationManager:
     ):
         # Arrange
         detection_task = fxt_project_with_detection_task.tasks[-1]
-        algorithm_name = "test_model_template_id"
+        algorithm_name = fxt_model_template_detection.model_manifest_id
 
         # Set a non-default value for one of the parameters to make sure we're not
         # just returning the defaults, upon comparison later on
@@ -138,7 +138,6 @@ class TestConfigurationManager:
                 id_to_str=True,
             )
         )
-        fxt_model_template_detection.model_template_id = algorithm_name
         fxt_model_storage_detection._model_template = fxt_model_template_detection
 
         # Act

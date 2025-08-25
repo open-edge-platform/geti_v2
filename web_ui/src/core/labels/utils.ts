@@ -80,6 +80,7 @@ export const isBackgroundLabel = <T extends EmptyOrBackground>(label: T): boolea
 export const isNonBackgroundLabel = negate(isBackgroundLabel);
 
 export const isEmptyOrBackgroundLabel = overSome([isEmptyLabel, isBackgroundLabel]);
+export const isNonEmptyOrBackgroundLabel = negate(isEmptyOrBackgroundLabel);
 
 export const filterOutEmptyLabel = (labels: readonly Label[]): readonly Label[] => labels.filter(isNonEmptyLabel);
 
@@ -199,4 +200,8 @@ export const getNonEmptyLabelsFromProject = (tasks: Task[]): Label[] => {
 
 export const getNotEmptyLabelsFromOneTask = (task: Task): readonly Label[] => {
     return filterOutEmptyLabel(task.labels);
+};
+
+export const filterNonEmptyOrBackgroundLabels = (task: Task) => {
+    return task.labels.filter((label) => isNonEmptyOrBackgroundLabel(label));
 };

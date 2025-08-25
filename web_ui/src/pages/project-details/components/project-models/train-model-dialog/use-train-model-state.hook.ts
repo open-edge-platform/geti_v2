@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-import { isEmpty, isNumber } from 'lodash-es';
+import { isEmpty, isEqual, isNumber } from 'lodash-es';
 
 import {
     useTrainingConfigurationMutation,
@@ -17,6 +17,7 @@ import { ModelsGroups } from '../../../../../core/models/models.interface';
 import { isActiveModel } from '../../../../../core/models/utils';
 import { ProjectIdentifier } from '../../../../../core/projects/core.interface';
 import { Task } from '../../../../../core/projects/task.interface';
+import { PerformanceCategory } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { useTasksWithSupportedAlgorithms } from '../../../../../core/supported-algorithms/hooks/use-tasks-with-supported-algorithms';
 import { SupportedAlgorithm } from '../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
@@ -24,6 +25,7 @@ import { isNotCropTask } from '../../../../../shared/utils';
 import { useTotalCreditPrice } from '../../../hooks/use-credits-to-consume.hook';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { getTrainingBodyDTO } from '../legacy-train-model-dialog/utils';
+import { areSubsetsSizesValid } from './advanced-settings/data-management/training-subsets/utils';
 
 enum TrainModelMode {
     BASIC = 'Basic',
@@ -35,14 +37,15 @@ const getActiveModelTemplateId = (
     algorithms: SupportedAlgorithm[],
     taskId: string
 ): string | null => {
-    if (isEmpty(modelsGroups)) {
-        return algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId ?? null;
+    const activeModelTemplateId = modelsGroups?.find(
+        (modelGroup) => modelGroup.taskId === taskId && modelGroup.modelVersions.some(isActiveModel)
+    )?.modelTemplateId;
+
+    if (activeModelTemplateId !== undefined) {
+        return activeModelTemplateId;
     }
 
-    return (
-        modelsGroups?.find((modelGroup) => modelGroup.taskId === taskId && modelGroup.modelVersions.some(isActiveModel))
-            ?.modelTemplateId ?? null
-    );
+    return algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId ?? null;
 };
 
 const useTrainingConfiguration = ({
@@ -95,6 +98,8 @@ const useSelectedModelTemplateId = ({
     return [selectedModelTemplateId, setSelectedModelTemplateId, activeModelTemplateId] as const;
 };
 
+const SAM_MODEL_TEMPLATE_ID = 'visual_prompting_model';
+
 export const useTrainModelState = () => {
     const [mode, setMode] = useState<TrainModelMode>(TrainModelMode.BASIC);
 
@@ -109,7 +114,7 @@ export const useTrainModelState = () => {
     const [task] = tasks;
     const { tasksWithSupportedAlgorithms } = useTasksWithSupportedAlgorithms();
     const [selectedTask, setSelectedTask] = useState<Task>(task);
-    const algorithms = tasksWithSupportedAlgorithms[selectedTask.id] ?? [];
+    const algorithms = (tasksWithSupportedAlgorithms[selectedTask.id] ?? []) as SupportedAlgorithm[];
 
     const [selectedModelTemplateId, setSelectedModelTemplateId, activeModelTemplateId] = useSelectedModelTemplateId({
         algorithms,
@@ -118,6 +123,11 @@ export const useTrainModelState = () => {
     });
 
     const isBasicMode = mode === TrainModelMode.BASIC;
+    const hasSupportedModels =
+        (models ?? []).filter(
+            (modelGroup) =>
+                modelGroup.taskId === selectedTask.id && modelGroup.modelTemplateId !== SAM_MODEL_TEMPLATE_ID
+        ).length > 0;
 
     const [trainingConfiguration, setTrainingConfiguration, defaultTrainingConfiguration] = useTrainingConfiguration({
         projectIdentifier,
@@ -130,6 +140,45 @@ export const useTrainModelState = () => {
 
     const openAdvancedSettingsMode = (): void => {
         setMode(TrainModelMode.ADVANCED_SETTINGS);
+    };
+
+    const openBasicMode = (): void => {
+        setMode(TrainModelMode.BASIC);
+
+        const recommendedAlgorithms = algorithms.filter((algorithm) =>
+            [PerformanceCategory.BALANCE, PerformanceCategory.SPEED, PerformanceCategory.ACCURACY].includes(
+                algorithm.performanceCategory
+            )
+        );
+
+        const isSelectedOneOfRecommendedAlgorithms = recommendedAlgorithms.some(
+            (algorithm) => algorithm.modelTemplateId === selectedModelTemplateId
+        );
+
+        if (isSelectedOneOfRecommendedAlgorithms) {
+            return;
+        }
+
+        const isDefaultAlgorithmSelected =
+            isEmpty(models) &&
+            algorithms.find((algorithm) => algorithm.isDefaultAlgorithm)?.modelTemplateId === selectedModelTemplateId;
+
+        if (isDefaultAlgorithmSelected) {
+            return;
+        }
+
+        const isSelectedActiveAlgorithm =
+            models?.find((modelsGroup) => {
+                return modelsGroup.taskId === selectedTask.id && modelsGroup.modelVersions.some(isActiveModel);
+            })?.modelTemplateId === selectedModelTemplateId;
+
+        if (isSelectedActiveAlgorithm) {
+            return;
+        }
+
+        const newActiveModelTemplateId = getActiveModelTemplateId(models, algorithms, selectedTask.id);
+
+        changeSelectedModelTemplateId(newActiveModelTemplateId);
     };
 
     const constructTrainingBodyDTO = (): TrainingBodyDTO => {
@@ -145,11 +194,6 @@ export const useTrainModelState = () => {
         });
     };
 
-    const changeTask = (newTask: Task): void => {
-        setSelectedTask(newTask);
-        setSelectedModelTemplateId(getActiveModelTemplateId(models, algorithms, newTask.id));
-    };
-
     const handleTrainFromScratchChange = (newTrainFromScratch: boolean): void => {
         setTrainFromScratch(newTrainFromScratch);
 
@@ -158,23 +202,39 @@ export const useTrainModelState = () => {
         }
     };
 
+    const changeSelectedModelTemplateId = (newModelTemplateId: string | null): void => {
+        setSelectedModelTemplateId(newModelTemplateId);
+
+        handleTrainFromScratchChange(false);
+    };
+
+    const changeTask = (newTask: Task): void => {
+        setSelectedTask(newTask);
+
+        const newAlgorithms = (tasksWithSupportedAlgorithms[newTask.id] ?? []) as SupportedAlgorithm[];
+        const newActiveModelTemplateId = getActiveModelTemplateId(models, newAlgorithms, newTask.id);
+
+        changeSelectedModelTemplateId(newActiveModelTemplateId);
+    };
+
     const useTrainModel = () => {
         const trainingConfigurationMutation = useTrainingConfigurationMutation();
 
         const { useTrainModelMutation } = useModels();
-        const trainModel = useTrainModelMutation();
+        const trainModelMutation = useTrainModelMutation();
 
         const handleTrainModel = (onSuccess?: () => void) => {
             // 1. If we are in basic mode, we can directly train the model, without updating the training configuration.
-            // 2. If we are in advanced settings mode, we need to update the training configuration first.
-            // 2.1. If the training configuration fails, we don't want to train the model.
-            // 2.2. If the training configuration succeeds, we can train the model with the updated configuration.
-            // 3. Train model is called.
-            // 3.1. If train model fails, we revert the training configuration to the default one.
-            // 3.2. If train model succeeds, we call the onSuccess callback if provided.
+            // 2. If we are in basic mode and training configuration is not changed, we can directly train the model.
+            // 3. If we are in advanced settings mode, we need to update the training configuration first.
+            // 3.1. If the training configuration fails, we don't want to train the model.
+            // 3.2. If the training configuration succeeds, we can train the model with the updated configuration.
+            // 4. Train model is called.
+            // 4.1. If train model fails, we revert the training configuration to the default one.
+            // 4.2. If train model succeeds, we call the onSuccess callback if provided.
 
-            if (isBasicMode) {
-                trainModel.mutate(
+            if (isBasicMode || isEqual(trainingConfiguration, defaultTrainingConfiguration)) {
+                trainModelMutation.mutate(
                     {
                         projectIdentifier,
                         body: constructTrainingBodyDTO(),
@@ -201,7 +261,7 @@ export const useTrainModelState = () => {
                 },
                 {
                     onSuccess: () => {
-                        trainModel.mutate(
+                        trainModelMutation.mutate(
                             { projectIdentifier, body: constructTrainingBodyDTO() },
                             {
                                 onSuccess,
@@ -224,9 +284,34 @@ export const useTrainModelState = () => {
 
         return {
             mutate: handleTrainModel,
-            isPending: trainModel.isPending || trainingConfigurationMutation.isPending,
-            error: trainModel.error?.message || trainingConfigurationMutation.error?.message,
+            isPending: trainModelMutation.isPending || trainingConfigurationMutation.isPending,
+            error: trainModelMutation.error?.message || trainingConfigurationMutation.error?.message,
         };
+    };
+
+    const isStartTrainingButtonDisabled = () => {
+        if (isBasicMode) {
+            return false;
+        }
+
+        if (trainingConfiguration === undefined || defaultTrainingConfiguration === undefined) {
+            return false;
+        }
+
+        if (isEqual(trainingConfiguration, defaultTrainingConfiguration)) {
+            return false;
+        }
+
+        if (
+            !isEqual(
+                trainingConfiguration.datasetPreparation.subsetSplit,
+                defaultTrainingConfiguration.datasetPreparation.subsetSplit
+            )
+        ) {
+            return !areSubsetsSizesValid(trainingConfiguration.datasetPreparation.subsetSplit);
+        }
+
+        return false;
     };
 
     return {
@@ -238,7 +323,7 @@ export const useTrainModelState = () => {
         selectedModelTemplateId,
         algorithms,
         changeTask,
-        changeSelectedTemplateId: setSelectedModelTemplateId,
+        changeSelectedTemplateId: changeSelectedModelTemplateId,
         isTaskChainProject,
         isReshufflingSubsetsEnabled,
         changeReshufflingSubsetsEnabled: setIsReshufflingSubsetsEnabled,
@@ -247,5 +332,9 @@ export const useTrainModelState = () => {
         trainingConfiguration,
         updateTrainingConfiguration: setTrainingConfiguration,
         trainModel: useTrainModel(),
+        openBasicMode,
+        hasSupportedModels,
+        isStartTrainingButtonDisabled: isStartTrainingButtonDisabled(),
+        defaultTrainingConfiguration,
     } as const;
 };

@@ -81,10 +81,7 @@ def fxt_random_annotated_image_factory():  # noqa: C901
                 domain,
             )
 
-        needs_local_labels = domain not in [
-            Domain.CLASSIFICATION,
-            Domain.ANOMALY_CLASSIFICATION,
-        ]
+        needs_local_labels = domain not in [Domain.CLASSIFICATION, Domain.ANOMALY]
 
         img = (np.random.standard_normal([image_height, image_width, 3]) * 255).astype(np.uint8)
         label_map = {label.name: label for label in labels}

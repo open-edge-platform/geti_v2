@@ -20,18 +20,25 @@ import { MissingProviderError } from '../../../shared/missing-provider-error';
 import { getVideoDevices } from '../../../shared/navigator-utils';
 import { runWhen } from '../../../shared/utils';
 import { UserCameraPermission } from '../../camera-support/camera.interface';
-import { DeviceConfiguration, getBrowserPermissions, getValidCapabilities, mergeSettingAndCapabilities } from './util';
+import { useCustomSettings } from '../hooks/use-custom-settings.hook';
+import {
+    applySettings,
+    DeviceConfiguration,
+    getBrowserPermissions,
+    getValidCapabilities,
+    mergeSettingAndCapabilities,
+} from './util';
 
 export interface SettingsContextProps {
     webcamRef: RefObject<Webcam>;
     videoDevices: MediaDeviceInfo[];
     selectedDeviceId: string | undefined;
     deviceConfig: DeviceConfiguration[];
+    setDeviceConfig: Dispatch<SetStateAction<DeviceConfiguration[]>>;
     userPermissions: UserCameraPermission;
     loadDeviceCapabilities: (stream: MediaStream) => void;
     setSelectedDeviceId: Dispatch<SetStateAction<string | undefined>>;
     isMirrored: boolean;
-    setIsMirrored: (isMirrored: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(undefined);
@@ -43,9 +50,18 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
     const [deviceConfig, setDeviceConfig] = useState<DeviceConfiguration[]>([]);
     const [userPermissions, setUserPermissions] = useState(UserCameraPermission.PENDING);
     const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(undefined);
-    const [isMirrored, setIsMirrored] = useState(false);
 
+    const { mirrorOption, isMirrored } = useCustomSettings();
     const onComponentIsMounted = runWhen<MediaDeviceInfo[]>(isMounted);
+
+    const enhanceConfigWithOnChange = (config: Omit<DeviceConfiguration, 'onChange'>) => ({
+        ...config,
+        onChange: (value: number | string) => {
+            if (webcamRef.current?.stream) {
+                applySettings(webcamRef.current?.stream, { [config.name]: value });
+            }
+        },
+    });
 
     useEffect(() => {
         getBrowserPermissions().then(({ permissions, stream }) => {
@@ -66,9 +82,9 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
     const loadDeviceCapabilities = (stream: MediaStream) => {
         const [videoTrack] = stream.getVideoTracks();
         const filteredValidCapabilities = getValidCapabilities(videoTrack.getCapabilities());
-        const newDevicesConfig = mergeSettingAndCapabilities(filteredValidCapabilities, videoTrack.getSettings());
-
-        setDeviceConfig(newDevicesConfig);
+        const newDevicesConfig = mergeSettingAndCapabilities(filteredValidCapabilities, videoTrack.getSettings()) || [];
+        const fullDevicesConfig = [...newDevicesConfig.map(enhanceConfigWithOnChange), mirrorOption];
+        setDeviceConfig(fullDevicesConfig);
     };
 
     return (
@@ -77,12 +93,12 @@ export const DeviceSettingsProvider = ({ children }: { children: ReactNode }) =>
                 webcamRef,
                 videoDevices,
                 deviceConfig,
+                setDeviceConfig,
                 userPermissions,
                 selectedDeviceId,
                 setSelectedDeviceId,
                 loadDeviceCapabilities,
                 isMirrored,
-                setIsMirrored,
             }}
         >
             {children}

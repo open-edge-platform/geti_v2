@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm@sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2c2dcedb1da95114372b6d7 AS base
+FROM python:3.10-slim-bookworm@sha256:81f1cdb3770d54ecfdbddcc52c2125fce674c14a1d976dfd8f65dc0734f9c3c5 AS base
 
 FROM base AS build
 
@@ -7,10 +7,6 @@ ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 # Disable Python downloads, because we want to use the system interpreter
 # across both images.
 ENV UV_PYTHON_DOWNLOADS=0
-
-# Copy the service dependencies
-WORKDIR /builder
-COPY --link --from=libs . ../libs
 
 WORKDIR /builder/weights_uploader/app
 

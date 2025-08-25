@@ -14,7 +14,6 @@ import { KeypointTask, Task } from './task.interface';
 const TASK_TYPE_FROM_DOMAIN: Record<DOMAIN, TASK_TYPE> = {
     [DOMAIN.ANOMALY_CLASSIFICATION]: TASK_TYPE.ANOMALY_CLASSIFICATION,
     [DOMAIN.ANOMALY_DETECTION]: TASK_TYPE.ANOMALY_DETECTION,
-    [DOMAIN.ANOMALY_SEGMENTATION]: TASK_TYPE.ANOMALY_SEGMENTATION,
     [DOMAIN.DETECTION]: TASK_TYPE.DETECTION,
     [DOMAIN.DETECTION_ROTATED_BOUNDING_BOX]: TASK_TYPE.DETECTION_ROTATED_BOUNDING_BOX,
     [DOMAIN.CROP]: TASK_TYPE.CROP,
@@ -24,8 +23,8 @@ const TASK_TYPE_FROM_DOMAIN: Record<DOMAIN, TASK_TYPE> = {
     [DOMAIN.KEYPOINT_DETECTION]: TASK_TYPE.KEYPOINT_DETECTION,
 };
 
-export const getTaskTypeFromDomain = (domain: DOMAIN, anomalyRevampFlagEnabled = false): TASK_TYPE => {
-    if (anomalyRevampFlagEnabled && isAnomalyDomain(domain)) {
+export const getTaskTypeFromDomain = (domain: DOMAIN): TASK_TYPE => {
+    if (isAnomalyDomain(domain)) {
         return TASK_TYPE.ANOMALY;
     }
 

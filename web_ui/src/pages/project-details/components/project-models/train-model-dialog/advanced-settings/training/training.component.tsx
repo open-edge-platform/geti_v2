@@ -4,6 +4,7 @@
 import { FC } from 'react';
 
 import { View } from '@geti/ui';
+import { isEmpty } from 'lodash-es';
 
 import { TrainingConfiguration } from '../../../../../../../core/configurable-parameters/services/configuration.interface';
 import { FineTuneParameters } from './fine-tune-parameters.component';
@@ -14,6 +15,7 @@ interface TrainingProps {
     onTrainFromScratchChange: (trainFromScratch: boolean) => void;
 
     trainingConfiguration: TrainingConfiguration;
+    defaultTrainingConfiguration: TrainingConfiguration;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
@@ -29,6 +31,7 @@ export const Training: FC<TrainingProps> = ({
     onReshufflingSubsetsEnabledChange,
     isReshufflingSubsetsEnabled,
     onUpdateTrainingConfiguration,
+    defaultTrainingConfiguration,
 }) => {
     return (
         <View>
@@ -38,10 +41,13 @@ export const Training: FC<TrainingProps> = ({
                 isReshufflingSubsetsEnabled={isReshufflingSubsetsEnabled}
                 onReshufflingSubsetsEnabledChange={onReshufflingSubsetsEnabledChange}
             />
-            <LearningParameters
-                parameters={trainingConfiguration.training}
-                onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
-            />
+            {!isEmpty(trainingConfiguration.training) && (
+                <LearningParameters
+                    defaultParameters={defaultTrainingConfiguration.training}
+                    parameters={trainingConfiguration.training}
+                    onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                />
+            )}
         </View>
     );
 };

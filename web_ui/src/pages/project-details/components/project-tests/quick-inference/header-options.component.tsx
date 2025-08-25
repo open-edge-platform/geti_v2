@@ -3,9 +3,7 @@
 
 import { ReactNode } from 'react';
 
-import { Flex, Heading } from '@geti/ui';
-
-import { FullscreenAction } from '../../../../../shared/components/fullscreen-action/fullscreen-action.component';
+import { Flex, FullscreenAction, Heading } from '@geti/ui';
 
 interface HeaderOptionsProps {
     fullscreenComponent: ReactNode;

@@ -178,16 +178,16 @@ class ModelService:
     def get_or_create_model_storage(
         project_identifier: ProjectIdentifier,
         task_node: TaskNode,
-        model_template_id: str,
+        model_manifest_id: str,
     ) -> ModelStorage:
         """
-        Returns the model storage for a particular task_node and model_template. If no
-        model storage for that task node and model template exists, this method will
+        Returns the model storage for a particular task_node and model_manifest. If no
+        model storage for that task node and model manifest exists, this method will
         create one.
 
         :param project_identifier: Identifier of the project containing the task node
         :param task_node: Task node associated with the model storage to get
-        :param model_template_id: Identifier of the model template associated with
+        :param model_manifest_id: Identifier of the model manifest associated with
             the model storage to get
         :return: ModelStorage
         """
@@ -196,10 +196,10 @@ class ModelService:
         model_storages = model_storage_repo.get_by_task_node_id(task_node_id=task_node.id_)
 
         for task_model_storage in model_storages:
-            if task_model_storage.model_template.model_template_id == model_template_id:
+            if task_model_storage.model_manifest_id == model_manifest_id:
                 model_storage = task_model_storage
         if model_storage is None:
-            model_template = ModelTemplateList().get_by_id(model_template_id)
+            model_template = ModelTemplateList().get_by_id(model_manifest_id)
             if (
                 isinstance(model_template, NullModelTemplate)
                 or model_template.task_type != task_node.task_properties.task_type
@@ -210,7 +210,7 @@ class ModelService:
                     if model_template.task_type == task_node.task_properties.task_type
                 ]
                 raise ValueError(
-                    f"Algorithm with name '{model_template_id}' was not found for task "
+                    f"Algorithm with name '{model_manifest_id}' was not found for task "
                     f"{task_node.title} of type {task_node.task_properties.task_type}. "
                     f"Algorithms that are available to this task are: {available_algos}."
                 )

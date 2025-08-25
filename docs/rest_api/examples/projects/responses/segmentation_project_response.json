@@ -36,6 +36,7 @@
                         "id": "610123e5efba22ca453f11b9",
                         "parent_id": null,
                         "is_empty": false,
+                        "is_background": false,
                         "is_anomalous": false,
                         "name": "object"
                     },
@@ -47,7 +48,19 @@
                         "parent_id": null,
                         "is_empty": true,
                         "is_anomalous": false,
+                        "is_background": false,
                         "name": "Empty"
+                    },
+                    {
+                        "color": "#b10334ff",
+                        "group": "Background",
+                        "hotkey": "",
+                        "id": "610123e5efba22ca453f11c1",
+                        "parent_id": null,
+                        "is_empty": false,
+                        "is_anomalous": false,
+                        "is_background": true,
+                        "name": "Background"
                     }
                 ],
                 "task_type": "segmentation",

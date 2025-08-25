@@ -5,7 +5,7 @@ import { ComponentProps, FC, ReactNode } from 'react';
 
 import { Disclosure, DisclosurePanel, DisclosureTitle, Divider, Flex, Text, View } from '@geti/ui';
 import { AlertOutlined } from '@geti/ui/icons';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import styles from './accordion.module.scss';
 
@@ -15,24 +15,21 @@ type DisclosurePanelProps = ComponentProps<typeof DisclosurePanel>;
 
 interface AccordionTag {
     children: ReactNode;
+    ariaLabel?: string;
 }
 
 const AccordionTitle: FC<DisclosureTitleProps> = ({ UNSAFE_className, ...props }) => {
     return <DisclosureTitle {...props} UNSAFE_className={clsx(UNSAFE_className, styles.accordionTitle)} />;
 };
 
-export const RawContent: FC<{ children: ReactNode }> = ({ children }) => {
-    return <View UNSAFE_className={styles.accordionContent}>{children}</View>;
-};
-
 const AccordionContent: FC<DisclosurePanelProps> = ({ UNSAFE_className, ...props }) => {
     return <DisclosurePanel {...props} UNSAFE_className={clsx(UNSAFE_className, styles.accordionContent)} />;
 };
 
-const AccordionTag: FC<AccordionTag> = ({ children }) => {
+const AccordionTag: FC<AccordionTag> = ({ children, ariaLabel }) => {
     return (
         <View borderRadius={'regular'} borderWidth={'thin'} padding={'size-50'} UNSAFE_className={styles.accordionTag}>
-            {children}
+            <div aria-label={ariaLabel}>{children}</div>
         </View>
     );
 };

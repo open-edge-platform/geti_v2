@@ -211,7 +211,9 @@ class ConfigurationManager:
             model_params = PartialTrainingConfiguration.model_validate(
                 {"hyperparameters": config_dict, "task_id": task_id}
             )
-            full_model_config = ConfigurationOverlayTools.overlay_training_configurations(full_config, model_params)
+            full_model_config = ConfigurationOverlayTools.overlay_training_configurations(
+                full_config, model_params, common_hyperparameters_only=True
+            )
             project_configuration = ProjectConfigurationRepo(project_identifier).get_project_configuration()
             _, task_chain_config = ConfigurationsBackwardCompatibility.backward_mapping(
                 project_identifier=project_identifier,
@@ -273,7 +275,7 @@ class ConfigurationManager:
             model_storage = ModelService.get_or_create_model_storage(
                 project_identifier=project.identifier,
                 task_node=trainable_task,
-                model_template_id=algorithm_name,
+                model_manifest_id=algorithm_name,
             )
         except ValueError as error:
             raise AlgorithmNotFoundException(message=str(error))

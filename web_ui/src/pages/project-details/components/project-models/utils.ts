@@ -30,7 +30,9 @@ export const getTrainingConfigParametersDTO = ({
 export const addAlgorithmDetails =
     (tasksWithSupportedAlgorithms: TaskWithSupportedAlgorithms) =>
     (model: ModelsGroups): ModelGroupsAlgorithmDetails => {
-        const match = tasksWithSupportedAlgorithms[model.taskId]?.find(({ name }) => name === model.groupName);
+        const match = tasksWithSupportedAlgorithms[model.taskId]?.find(
+            ({ modelTemplateId }) => modelTemplateId === model.modelTemplateId
+        );
 
         return {
             ...model,

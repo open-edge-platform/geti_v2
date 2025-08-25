@@ -3,9 +3,10 @@
 
 import { intersectionOverUnion } from './intersection-over-union';
 import { Rect } from './shapes.interface';
+import { ShapeType } from './shapetype.enum';
 
 describe('intersection-over-union', () => {
-    const rect = { shapeType: 1, x: 0, y: 0, width: 0, height: 0 };
+    const rect: Rect = { shapeType: ShapeType.Rect, x: 0, y: 0, width: 0, height: 0 };
     const testData: [Rect, Rect, number][] = [
         [{ ...rect, x: 0, y: 0, width: 50, height: 50 }, { ...rect, x: 25, y: 25, width: 50, height: 50 }, 0.14],
         [{ ...rect, x: 0, y: 0, width: 50, height: 50 }, { ...rect, x: 25, y: 0, width: 50, height: 50 }, 0.33],

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Namespace }}-versions
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+    meta.helm.sh/release-name: {{ .Release.Namespace }}
+data:
+  platformVersion: "{{ .Values.platformVersion }}"
+  buildVersion: "{{ .Values.buildVersion }}"
+  intelEmail: "{{ .Values.intelEmail }}"

@@ -15,15 +15,18 @@ post:
     - $ref: '../../parameters/path/organization_id.yaml'
     - $ref: '../../parameters/path/workspace_id.yaml'
     - $ref: '../../parameters/path/project_id.yaml'
+    - $ref: '../../parameters/query/include_models.yaml'
   responses:
     '200':
       description: Success
       content:
         application/json:
+          schema:
+            $ref: "../../../../interactive_ai/services/api/schemas/jobs/responses/job_id.yaml"
           examples:
             Export job submitted successfully:
               value:
-                $ref: '../../examples/jobs/responses/single_job_id_response.json'
+                $ref: "../../examples/jobs/responses/single_job_id_response.json"
     '404':
       description: Object not found
       content:

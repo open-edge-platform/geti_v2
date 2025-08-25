@@ -16,7 +16,6 @@ import { useFuxNotifications } from '../../../../hooks/use-fux-notifications/use
 import { useIsAutoTrainingOn } from '../../../../pages/annotator/hooks/use-is-auto-training-on.hook';
 import { onFirstScheduledOrRunningAutoTrainingJob } from '../../../../pages/annotator/notification/auto-training-credits-modal/util';
 import { useProject } from '../../../../pages/project-details/providers/project-provider/project-provider.component';
-import { getFuxSetting } from '../../tutorials/utils';
 import { CoachMark } from '../coach-mark.component';
 
 const useAutoTrainingCoachMarkJobs = () => {
@@ -27,7 +26,7 @@ const useAutoTrainingCoachMarkJobs = () => {
     const { useGetJobs } = useJobs(projectIdentifier);
 
     const isAutoTrainingOn = useIsAutoTrainingOn({ project, projectIdentifier });
-    const neverAutoTrained = getFuxSetting(FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED, settings.config);
+    const neverAutoTrained = settings.config[FUX_SETTINGS_KEYS.NEVER_AUTOTRAINED].value;
     const isQueryEnabled = Boolean(!FEATURE_FLAG_CREDIT_SYSTEM && isAutoTrainingOn && neverAutoTrained);
 
     const handleSuccess = useCallback(

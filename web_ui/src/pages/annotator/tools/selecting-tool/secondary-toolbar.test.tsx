@@ -99,11 +99,7 @@ describe('Selector Toolbar', () => {
         DOMAIN.ANOMALY_CLASSIFICATION,
     ];
 
-    const DOMAINS_WITH_SELECTION_TOOL_BUTTON = [
-        DOMAIN.SEGMENTATION,
-        DOMAIN.SEGMENTATION_INSTANCE,
-        DOMAIN.ANOMALY_SEGMENTATION,
-    ];
+    const DOMAINS_WITH_SELECTION_TOOL_BUTTON = [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE];
 
     it('has title "Selector"', async () => {
         await renderToolbar({});

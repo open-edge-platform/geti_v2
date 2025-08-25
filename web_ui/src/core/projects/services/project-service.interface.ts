@@ -19,6 +19,7 @@ import { ProjectStatus } from '../project-status.interface';
 import {
     CreateProjectProps,
     EditProjectProps,
+    EXPORT_PROJECT_MODELS_OPTIONS,
     ProjectExport,
     ProjectExportIdentifier,
     ProjectImport,
@@ -61,19 +62,20 @@ export interface ProjectService {
     createDataset({ projectIdentifier, name }: CreateDatasetBody): Promise<CreateDatasetResponse>;
     deleteDataset(datasetIdentifier: DatasetIdentifier): Promise<DeleteDatasetResponse>;
     updateDataset(datasetIdentifier: DatasetIdentifier, updatedDataset: Dataset): Promise<CreateDatasetResponse>;
-    editProject(
-        projectIdentifier: ProjectIdentifier,
-        body: EditProjectProps,
-        anomalyRevampFlagEnabled?: boolean
-    ): Promise<ProjectProps>;
+    editProject(projectIdentifier: ProjectIdentifier, body: EditProjectProps): Promise<ProjectProps>;
     createProject(
         workspaceIdentifier: WorkspaceIdentifier,
         name: string,
         domains: DOMAIN[],
-        projectTypeMetadata: TaskMetadata[],
-        anomalyRevampFlagEnabled?: boolean
+        projectTypeMetadata: TaskMetadata[]
     ): Promise<CreateProjectProps>;
-    exportProject(projectIdentifier: ProjectIdentifier): Promise<ProjectExport>;
+    exportProject({
+        projectIdentifier,
+        selectedModelExportOption,
+    }: {
+        projectIdentifier: ProjectIdentifier;
+        selectedModelExportOption?: EXPORT_PROJECT_MODELS_OPTIONS;
+    }): Promise<ProjectExport>;
     exportProjectStatus(projectIdentifier: ProjectExportIdentifier): Promise<JobProjectExportStatus>;
     importProject(projectImportFileIdentifier: ProjectImportIdentifier, options: ImportOptions): Promise<ProjectImport>;
     getImportProjectStatus(projectImportIdentifier: ProjectImportIdentifier): Promise<ProjectImportStatus>;

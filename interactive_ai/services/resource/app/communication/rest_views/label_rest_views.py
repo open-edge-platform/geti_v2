@@ -1,5 +1,8 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+from features.feature_flags import FeatureFlag
+
+from geti_feature_tools import FeatureFlagProvider
 from iai_core.entities.color import Color
 from iai_core.entities.label import Domain, Label
 from iai_core.entities.label_schema import LabelSchema
@@ -19,6 +22,7 @@ PARENT_ID = "parent_id"
 SHOW_TO_USER = "show_to_user"
 TASK_ID = "task_id"
 IS_ANOMALOUS = "is_anomalous"
+IS_BACKGROUND = "is_background"
 
 
 class LabelRESTViews:
@@ -35,8 +39,7 @@ class LabelRESTViews:
         """
         label_group = label_schema.get_group_containing_label(label)
         parent = label_schema.get_parent(label)
-
-        return {
+        label_dict = {
             ID_: str(label.id_),
             NAME: label.name,
             IS_ANOMALOUS: label.is_anomalous,
@@ -46,6 +49,11 @@ class LabelRESTViews:
             GROUP: label_group.name if label_group is not None else "",
             PARENT_ID: None if parent is None else str(parent.id_),
         }
+
+        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+            label_dict[IS_BACKGROUND] = label.is_background
+
+        return label_dict
 
     @staticmethod
     def label_from_rest(label_dict: dict, domain: Domain) -> Label:
@@ -65,6 +73,7 @@ class LabelRESTViews:
         is_empty = label_dict.get(IS_EMPTY, False)
         id_ = label_dict.get(ID_)
         ephemeral = False
+        is_background = label_dict.get(IS_BACKGROUND, False)
         if id_ is None:
             id_ = LabelRepo.generate_id()
             ephemeral = True
@@ -74,6 +83,7 @@ class LabelRESTViews:
             color=color,
             hotkey=hotkey,
             is_empty=is_empty,
+            is_background=is_background,
             id_=id_,
             ephemeral=ephemeral,
         )

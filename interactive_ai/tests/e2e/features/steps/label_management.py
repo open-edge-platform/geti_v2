@@ -7,6 +7,8 @@ from behave import then, when
 from behave.runner import Context
 from geti_client import (
     CreateProject201Response,
+    CreateProject201ResponsePipelineTasksInner,
+    CreateProject201ResponsePipelineTasksInnerLabelsInner,
     EditProjectRequest,
     EditProjectRequestPipeline,
     EditProjectRequestPipelineConnectionsInner,
@@ -66,6 +68,65 @@ def _add_label(context: Context, new_label_name: str) -> None:
                         )
                     ]
                     if task.task_type not in ("dataset", "crop")
+                    else []
+                ),
+            )
+            for task in project_info.pipeline.tasks
+        ],
+    )
+
+    context.project_info = projects_api.edit_project(
+        organization_id=context.organization_id,
+        workspace_id=context.workspace_id,
+        project_id=context.project_id,
+        edit_project_request=EditProjectRequest(
+            id=context.project_id,
+            name=context.project_info.name,
+            pipeline=edit_pipeline,
+        ),
+    )
+
+
+def _get_ordered_labels_for_task(
+    task: CreateProject201ResponsePipelineTasksInner, ordered_label_names: list[str]
+) -> list[CreateProject201ResponsePipelineTasksInnerLabelsInner]:
+    ordered_labels = []
+    for label_name in ordered_label_names:
+        label = next((label for label in task.labels if label.name == label_name), None)
+        if label is not None:
+            ordered_labels.append(label)
+    return ordered_labels
+
+
+def _reorder_labels(context: Context, ordered_label_names: list[str]) -> None:
+    projects_api: ProjectsApi = context.projects_api
+    project_info: CreateProject201Response = context.project_info
+
+    edit_pipeline = EditProjectRequestPipeline(
+        connections=[
+            EditProjectRequestPipelineConnectionsInner(var_from=conn.var_from, to=conn.to)
+            for conn in project_info.pipeline.connections
+        ],
+        tasks=[
+            EditProjectRequestPipelineTasksInner(
+                id=task.id,
+                title=task.title,
+                task_type=task.task_type,
+                labels=(
+                    [  # existing labels
+                        EditProjectRequestPipelineTasksInnerLabelsInner(
+                            id=label.id,
+                            name=label.name,
+                            color=label.color,
+                            group=label.group,
+                            is_empty=label.is_empty,
+                            is_anomalous=label.is_anomalous,
+                            parent_id=label.parent_id,
+                        )
+                        for label in _get_ordered_labels_for_task(task, ordered_label_names)
+                        if not label.is_empty  # empty labels should not be included in the update payload
+                    ]
+                    if task.labels
                     else []
                 ),
             )
@@ -157,6 +218,12 @@ def step_when_user_tries_adding_label(context: Context, new_label_name: str) -> 
         context.exception = e
 
 
+@when("the user reorders the labels to '{raw_label_names}'")
+def step_when_user_reorders_labels(context: Context, raw_label_names: str):
+    ordered_label_names = raw_label_names.split(", ")
+    _reorder_labels(context=context, ordered_label_names=ordered_label_names)
+
+
 @then("the project has labels '{raw_label_names}'")
 def step_then_project_has_labels(context: Context, raw_label_names: str) -> None:
     """
@@ -181,6 +248,34 @@ def step_then_project_has_labels(context: Context, raw_label_names: str) -> None
         if task.task_type not in ("dataset", "crop")
         for label in task.labels
     }
+    assert found_label_names == expected_label_names, (
+        f"Expected labels: {expected_label_names}, found: {found_label_names}"
+    )
+
+
+@then("the project has labels '{raw_label_names}' in this order")
+def step_then_project_has_ordered_labels(context: Context, raw_label_names: str) -> None:
+    """
+    Verifies that the project has the expected "raw_label_names" via a GET request.
+    """
+    projects_api: ProjectsApi = context.projects_api
+
+    # Fetch information about the project and its labels
+    context.project_info = projects_api.get_project_info(
+        organization_id=context.organization_id,
+        workspace_id=context.workspace_id,
+        project_id=context.project_id,
+    )
+
+    # Verify that the project has the expected labels (plus the empty label, if applicable)
+    expected_label_names = raw_label_names.split(", ")
+    found_label_names = [
+        label.name
+        for task in context.project_info.pipeline.tasks
+        if task.task_type not in ("dataset", "crop")
+        for label in task.labels
+        if not label.is_empty
+    ]
     assert found_label_names == expected_label_names, (
         f"Expected labels: {expected_label_names}, found: {found_label_names}"
     )

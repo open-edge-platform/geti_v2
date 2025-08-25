@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { ActionButton } from '@geti/ui';
 import { Delete, SortUpDown } from '@geti/ui/icons';
@@ -53,12 +53,12 @@ export const CanvasTemplate = ({
     const { zoomState } = useZoom();
     const { setSelected, isSelected } = useSelected();
     const [visibleLabelId, setVisibleLabelId] = useState<null | string>(null);
+    const nextPointName = useRef(points.length + 1);
 
     const [ghostLine, setGhostLine] = useState<{ from: KeypointNode; to?: Point } | null>(null);
 
     const isDrawingGhostLine = !isNil(ghostLine?.from);
     const selectedPoint = points.find(({ label }) => isSelected(label.id));
-    const nextPointName = String(points.length + 1);
 
     const isShiftPress = useIsPressed({
         key: KeyMap.Shift,
@@ -72,6 +72,7 @@ export const CanvasTemplate = ({
     });
 
     const handleNewPoint = (newPoint: KeypointNode) => {
+        nextPointName.current += 1;
         const newEdges = ghostLine !== null ? [...edges, { ...ghostLine, to: newPoint, id: uuidv4() }] : edges;
 
         setSelected([newPoint.label.id]);
@@ -170,7 +171,7 @@ export const CanvasTemplate = ({
                 {isAddPointEnabled && (
                     <DrawingBox
                         onAddPoint={handleNewPoint}
-                        nextPointName={nextPointName}
+                        nextPointName={String(nextPointName.current)}
                         onPointerMove={handleGhostLineEndMoving}
                     />
                 )}

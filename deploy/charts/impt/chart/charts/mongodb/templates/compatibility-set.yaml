@@ -1,0 +1,46 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "mongodb.fullname" . }}-comaptibility-set
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "mongodb.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "post-upgrade"
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  template:
+    metadata:
+      labels: {{- include "mongodb.labels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: {{ include "mongodb.fullname" . }}-compatibility-set
+      restartPolicy: Never
+      containers:
+      - name: "compatibility-set"
+        image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        env:
+        - name: MONGODB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Namespace }}-mongodb
+              key: mongodb-username
+        - name: MONGODB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Namespace }}-mongodb
+              key: mongodb-password
+        resources: {{ toYaml $.Values.initResources | nindent 10 }}
+        securityContext:
+          {{ toYaml .Values.volumeSecurityContext | nindent 12 }}
+        command: ["/bin/sh", "-c"]
+        args:
+          - >-
+            kubectl exec -n impt impt-mongodb-0 --
+            bash -c 'mongosh --username $MONGO_INITDB_ROOT_USERNAME
+            --password $MONGO_INITDB_ROOT_PASSWORD admin
+            --eval "db.adminCommand( { setFeatureCompatibilityVersion: \"7.0\", confirm: true } )"'
+

@@ -8,15 +8,17 @@ import {
     GridLayout,
     ListBoxItem,
     ListLayout,
+    Selection,
+    SelectionMode,
     Size,
     View,
+    ViewModes,
     Virtualizer,
     type DimensionValue,
     type Responsive,
 } from '@geti/ui';
 import { useLoadMore } from '@react-aria/utils';
 
-import { VIEW_MODE_SETTINGS, ViewModes } from '../media-view-modes/utils';
 import { useGetTargetPosition } from './use-get-target-position.hook';
 
 import classes from './media-items-list.module.scss';
@@ -28,26 +30,39 @@ interface MediaItemsListProps<T> {
     viewMode: ViewModes;
     mediaItems: T[];
     height?: Responsive<DimensionValue>;
+    selectedKeys?: Selection;
     scrollToIndex?: number;
     viewModeSettings?: ViewModeSettings;
+    selectionMode?: SelectionMode;
     endReached?: () => void;
     itemContent: (item: T) => ReactNode;
     idFormatter: (item: T) => string;
     getTextValue: (item: T) => string;
+    onSelectionChange?: (keys: Selection) => void;
 }
+
+export const VIEW_MODE_SETTINGS = {
+    [ViewModes.LARGE]: { minItemSize: 300, gap: 12, maxColumns: 4 },
+    [ViewModes.MEDIUM]: { minItemSize: 150, gap: 8, maxColumns: 8 },
+    [ViewModes.SMALL]: { minItemSize: 112, gap: 4, maxColumns: 11 },
+    [ViewModes.DETAILS]: { size: 81, gap: 0 },
+};
 
 export const MediaItemsList = <T extends object>({
     id,
     height,
     viewMode,
     mediaItems,
+    selectedKeys,
     scrollToIndex,
+    selectionMode,
     ariaLabel = 'media items list',
     viewModeSettings = VIEW_MODE_SETTINGS,
     itemContent,
     endReached,
     idFormatter,
     getTextValue,
+    onSelectionChange,
 }: MediaItemsListProps<T>): JSX.Element => {
     const config = viewModeSettings[viewMode];
     const isDetails = viewMode === ViewModes.DETAILS;
@@ -85,8 +100,12 @@ export const MediaItemsList = <T extends object>({
                     ref={ref}
                     key={layout}
                     layout={layout}
+                    items={mediaItems}
                     aria-label={ariaLabel}
+                    selectionMode={selectionMode}
+                    selectedKeys={selectedKeys}
                     className={classes.container}
+                    onSelectionChange={onSelectionChange}
                 >
                     {mediaItems.map((item) => {
                         return (

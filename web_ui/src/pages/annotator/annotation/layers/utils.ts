@@ -7,6 +7,7 @@ import { isNil } from 'lodash-es';
 
 import { Annotation as AnnotationInterface } from '../../../../core/annotations/annotation.interface';
 import { Explanation } from '../../../../core/annotations/prediction.interface';
+import { isBackgroundLabel } from '../../../../core/labels/utils';
 import { Task } from '../../../../core/projects/task.interface';
 import { hasEqualId } from '../../../../shared/utils';
 import { AnnotationToolContext } from '../../core/annotation-tool-context.interface';
@@ -60,3 +61,11 @@ export const filterByExplanationSelection = (
         })
         .filter(hasValidLabels);
 };
+
+export const isBackgroundMask = (annotation: AnnotationInterface) => annotation.labels.some(isBackgroundLabel);
+
+export const getBackgroundMaskAnnotations = (annotations: AnnotationInterface[]) =>
+    annotations.reduce<{ idx: number; annotation: AnnotationInterface }[]>(
+        (acc, annotation, idx) => (isBackgroundMask(annotation) ? [...acc, { idx, annotation }] : acc),
+        []
+    );

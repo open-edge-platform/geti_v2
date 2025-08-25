@@ -5,8 +5,10 @@ from collections.abc import Sequence
 
 import pytest
 
+from features.feature_flags import FeatureFlag
 from tests.fixtures.values import DummyValues, IDOffsets
 
+from geti_feature_tools import FeatureFlagProvider
 from geti_types import ID
 from iai_core.entities.color import Color
 from iai_core.entities.label import Domain, Label
@@ -129,17 +131,17 @@ def fxt_segmentation_label(fxt_segmentation_label_factory):
 
 
 @pytest.fixture
-def fxt_anomaly_classification_labels(fxt_mongo_id):
+def fxt_anomaly_labels(fxt_mongo_id):
     normal_label = Label(
         name="Normal",
-        domain=Domain.ANOMALY_CLASSIFICATION,
+        domain=Domain.ANOMALY,
         color=Color(red=139, green=174, blue=70),
         id_=fxt_mongo_id(51),
         is_anomalous=False,
     )
     anomalous_label = Label(
         name="Anomalous",
-        domain=Domain.ANOMALY_CLASSIFICATION,
+        domain=Domain.ANOMALY,
         color=Color(red=255, green=86, blue=98),
         id_=fxt_mongo_id(52),
         is_anomalous=True,
@@ -148,27 +150,8 @@ def fxt_anomaly_classification_labels(fxt_mongo_id):
 
 
 @pytest.fixture
-def fxt_anomaly_classification_label(fxt_anomaly_classification_labels):
-    yield fxt_anomaly_classification_labels[0]
-
-
-@pytest.fixture
-def fxt_anomaly_segmentation_labels(fxt_mongo_id):
-    normal_label = Label(
-        name="Normal",
-        domain=Domain.ANOMALY_SEGMENTATION,
-        color=Color(red=139, green=174, blue=70),
-        id_=fxt_mongo_id(51),
-        is_anomalous=False,
-    )
-    anomalous_label = Label(
-        name="Anomalous",
-        domain=Domain.ANOMALY_SEGMENTATION,
-        color=Color(red=255, green=86, blue=98),
-        id_=fxt_mongo_id(52),
-        is_anomalous=True,
-    )
-    yield [normal_label, anomalous_label]
+def fxt_anomaly_label(fxt_anomaly_labels):
+    yield fxt_anomaly_labels[0]
 
 
 @pytest.fixture
@@ -208,6 +191,19 @@ def fxt_empty_segmentation_label(fxt_mongo_id):
 
 
 @pytest.fixture
+def fxt_background_segmentation_label(fxt_mongo_id):
+    yield Label(
+        name="Empty segmentation label",
+        domain=DummyValues.SEGMENTATION_DOMAIN,
+        color=Color.from_hex_str("#ff0000"),
+        hotkey=DummyValues.LABEL_HOTKEY,
+        is_empty=False,
+        is_background=True,
+        id_=ID(fxt_mongo_id(103)),
+    )
+
+
+@pytest.fixture
 def fxt_label(fxt_mongo_id):
     yield Label(
         name=DummyValues.LABEL_NAME,
@@ -220,7 +216,7 @@ def fxt_label(fxt_mongo_id):
 
 @pytest.fixture
 def fxt_label_rest(fxt_label):
-    yield {
+    label_dict = {
         "id": str(fxt_label.id_),
         "name": DummyValues.LABEL_NAME,
         "color": "#ff0000ff",
@@ -230,6 +226,9 @@ def fxt_label_rest(fxt_label):
         "is_anomalous": False,
         "parent_id": None,
     }
+    if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+        label_dict["is_background"] = False
+    yield label_dict
 
 
 @pytest.fixture(scope="function")
@@ -367,13 +366,25 @@ def fxt_segmentation_label_schema_factory(fxt_segmentation_label_factory, fxt_em
 
 
 @pytest.fixture
-def fxt_anomaly_classificaction_label_schema(fxt_anomaly_classification_labels):
-    yield LabelSchemaView.from_labels(fxt_anomaly_classification_labels)
+def fxt_segmentation_label_schema_with_background(
+    fxt_segmentation_label_factory, fxt_empty_segmentation_label, fxt_background_segmentation_label
+):
+    """
+    Create a label schema for a segmentation task with a background label
+    """
+    yield label_schema_from_labels(
+        [fxt_segmentation_label_factory(0), fxt_empty_segmentation_label, fxt_background_segmentation_label]
+    )
 
 
 @pytest.fixture
-def fxt_anomaly_segmentation_label_schema(fxt_anomaly_segmentation_labels):
-    yield LabelSchemaView.from_labels(fxt_anomaly_segmentation_labels)
+def fxt_anomaly_label_schema(fxt_anomaly_labels):
+    yield LabelSchemaView.from_labels(fxt_anomaly_labels)
+
+
+@pytest.fixture
+def fxt_anomaly_segmentation_label_schema(fxt_anomaly_labels):
+    yield LabelSchemaView.from_labels(fxt_anomaly_labels)
 
 
 @pytest.fixture

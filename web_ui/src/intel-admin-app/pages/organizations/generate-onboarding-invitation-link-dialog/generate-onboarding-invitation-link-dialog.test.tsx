@@ -15,7 +15,7 @@ jest.mock('../../../../hooks/use-clipboard/use-clipboard.hook', () => ({
 }));
 
 describe('GenerateOnboardingTokenDialog', () => {
-    let originalLocation: typeof window.location;
+    let originalLocation: Location;
 
     beforeAll(() => {
         originalLocation = window.location;
@@ -26,7 +26,10 @@ describe('GenerateOnboardingTokenDialog', () => {
     });
 
     afterAll(() => {
-        window.location = originalLocation;
+        Object.defineProperty(window, 'location', {
+            value: originalLocation,
+            writable: true,
+        });
     });
 
     afterEach(() => {

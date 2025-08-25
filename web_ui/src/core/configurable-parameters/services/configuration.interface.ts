@@ -21,18 +21,20 @@ export interface BoolParameter extends ParameterBase {
     defaultValue: boolean;
 }
 
-interface EnumParameter extends ParameterBase {
+interface EnumParameter<T extends boolean | number> extends ParameterBase {
     type: 'enum';
-    value: string;
-    defaultValue: string;
-    allowedValues: string[];
+    value: T;
+    defaultValue: T;
+    allowedValues: T[];
 }
 
 export interface StaticParameter extends ParameterBase {
-    value: number | string | boolean;
+    value: number | boolean;
 }
 
-export type ConfigurationParameter = BoolParameter | NumberParameter | EnumParameter;
+export type EnumConfigurationParameter = EnumParameter<number>;
+
+export type ConfigurationParameter = BoolParameter | NumberParameter | EnumConfigurationParameter;
 
 interface ProjectConfigurationTaskConfigsTraining {
     constraints: ConfigurationParameter[];

@@ -2,19 +2,14 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { SSIMMatch as ToolSSIMMatch, type RunSSIMProps as ToolRunSSIMProps } from '@geti/smart-tools';
+import { getBoundingBox } from '@geti/smart-tools/utils';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { intersectionOverUnion } from '../../../../core/annotations/intersection-over-union';
-import { getBoundingBox } from '../../../../core/annotations/math';
 import { Rect, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { DOMAIN } from '../../../../core/projects/core.interface';
-import {
-    convertGetiShapeToToolShape,
-    convertGetiShapeTypeToToolShapeType,
-    convertToolShapeToGetiShape,
-    isShapeWithinRoi,
-} from '../utils';
+import { convertToolShapeToGetiShape, isShapeWithinRoi } from '../utils';
 import { RunSSIMProps, SSIMMatch } from './ssim-tool.interface';
 
 export const MAX_NUMBER_ITEMS = 500;
@@ -24,7 +19,6 @@ export const SSIM_SUPPORTED_DOMAINS = [
     DOMAIN.SEGMENTATION,
     DOMAIN.SEGMENTATION_INSTANCE,
     DOMAIN.ANOMALY_DETECTION,
-    DOMAIN.ANOMALY_SEGMENTATION,
 ];
 
 export const guessNumberOfItemsThreshold = (matches: SSIMMatch[], confidenceThreshold = 0.9): number => {
@@ -104,8 +98,8 @@ export const convertRunSSIMPropsToToolRunSSIMProps = (runSSIMProps: RunSSIMProps
             ...runSSIMProps.template,
             shapeType: 'rect',
         },
-        shapeType: convertGetiShapeTypeToToolShapeType(runSSIMProps.shapeType),
-        existingAnnotations: runSSIMProps.existingAnnotations.map(convertGetiShapeToToolShape),
+        shapeType: runSSIMProps.shapeType,
+        existingAnnotations: runSSIMProps.existingAnnotations,
     };
 };
 

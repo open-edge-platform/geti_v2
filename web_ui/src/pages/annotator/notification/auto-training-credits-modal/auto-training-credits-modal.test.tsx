@@ -10,7 +10,6 @@ import { FUX_NOTIFICATION_KEYS, FUX_SETTINGS_KEYS } from '../../../../core/user-
 import { UserGlobalSettings, UseSettings } from '../../../../core/user-settings/services/user-settings.interface';
 import { INITIAL_GLOBAL_SETTINGS } from '../../../../core/user-settings/utils';
 import { useActiveLearningConfiguration } from '../../../../shared/components/header/active-learning-configuration/use-active-learning-configuration.hook';
-import { getFuxSetting } from '../../../../shared/components/tutorials/utils';
 import { getMockedJob, getMockedJobCount } from '../../../../test-utils/mocked-items-factory/mocked-jobs';
 import {
     getMockedUserGlobalSettings,
@@ -115,7 +114,6 @@ describe('AutoTrainingCreditsModal', () => {
 
     it('modal is open and disabled by dismissing', async () => {
         const mockedSaveSettings = jest.fn();
-        jest.mocked(getFuxSetting).mockReturnValue(true);
 
         await renderApp({ mockedSaveSettings });
 

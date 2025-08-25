@@ -1,8 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import {
     InfiniteData,
     QueryKey,
@@ -23,8 +23,6 @@ import { isEmpty, omit } from 'lodash-es';
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
 import { WorkspaceIdentifier } from '../../../../packages/core/src/workspaces/services/workspaces.interface';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { NextPageURL } from '../../shared/infinite-query.interface';
 import { DOMAIN, ProjectIdentifier } from '../core.interface';
 import { DatasetIdentifier } from '../dataset.interface';
@@ -114,12 +112,10 @@ const projectQueryOptions = (projectIdentifier: ProjectIdentifier, projectServic
 
 export const useProjectActions = (): UseProjectActions => {
     const client = useQueryClient();
-    const { addNotification } = useNotification();
     const { projectService } = useApplicationServices();
-    const { FEATURE_FLAG_ANOMALY_REDUCTION } = useFeatureFlags();
 
     const onError = (error: AxiosError) => {
-        addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+        toast({ message: getErrorMessage(error), type: 'error' });
     };
 
     const useGetProject = (projectIdentifier: ProjectIdentifier) => {
@@ -161,13 +157,7 @@ export const useProjectActions = (): UseProjectActions => {
 
     const createProjectMutation = useMutation({
         mutationFn: ({ workspaceIdentifier, name, domains, projectTypeMetadata }: UseCreateProjectMutation) =>
-            projectService.createProject(
-                workspaceIdentifier,
-                name,
-                domains,
-                projectTypeMetadata,
-                FEATURE_FLAG_ANOMALY_REDUCTION
-            ),
+            projectService.createProject(workspaceIdentifier, name, domains, projectTypeMetadata),
 
         onError,
         onSettled: (_, __, { workspaceIdentifier }) => {
@@ -182,7 +172,7 @@ export const useProjectActions = (): UseProjectActions => {
         UseEditProjectParamsContext
     >({
         mutationFn: ({ projectIdentifier, project }) => {
-            return projectService.editProject(projectIdentifier, project, FEATURE_FLAG_ANOMALY_REDUCTION);
+            return projectService.editProject(projectIdentifier, project);
         },
         onMutate: ({ projectIdentifier, project }) => {
             const queryKey = QUERY_KEYS.PROJECTS_KEY(projectIdentifier.workspaceId);
@@ -251,16 +241,12 @@ export const useProjectActions = (): UseProjectActions => {
 
             const tasks = getEditTasksEntity(project.tasks, tasksMetadata, shouldRevisit);
 
-            return projectService.editProject(
-                { organizationId, workspaceId, projectId },
-                { ...project, tasks },
-                FEATURE_FLAG_ANOMALY_REDUCTION
-            );
+            return projectService.editProject({ organizationId, workspaceId, projectId }, { ...project, tasks });
         },
 
         onError: (error: AxiosError) => {
             const message = getErrorMessage(error) || 'Labels were not updated due to an error';
-            addNotification({ message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message, type: 'error' });
         },
     });
 

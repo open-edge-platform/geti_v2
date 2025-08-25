@@ -43,11 +43,6 @@ const mockDatasetImportItem: DatasetImportToNewProjectItem = {
     completedSteps: [],
 };
 
-jest.mock('../../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: jest.fn() }),
-}));
-
 const renderMockedComponent = async (datasetImportItem?: DatasetImportToNewProjectItem) => {
     render(
         <ProjectProvider
@@ -61,7 +56,6 @@ const renderMockedComponent = async (datasetImportItem?: DatasetImportToNewProje
                 prepareDataset={jest.fn()}
                 patchDatasetImport={jest.fn()}
                 setActiveDatasetImportId={jest.fn()}
-                anomalyRevamp={false}
             />
         </ProjectProvider>
     );

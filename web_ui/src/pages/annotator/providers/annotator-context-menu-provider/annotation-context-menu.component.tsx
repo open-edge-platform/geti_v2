@@ -3,10 +3,10 @@
 
 import { MutableRefObject, RefObject, useRef } from 'react';
 
+import { pointInRectangle } from '@geti/smart-tools/utils';
 import { Overlay, View } from '@geti/ui';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
-import { pointInRectangle } from '../../../../core/annotations/math';
 import { getTheTopShapeAt } from '../../../../core/annotations/utils';
 import { useEventListener } from '../../../../hooks/event-listener/event-listener.hook';
 import { MouseEvents } from '../../../../shared/mouse-events/mouse.interface';

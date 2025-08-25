@@ -9,8 +9,10 @@ from zipfile import ZipFile, ZipInfo
 
 import pytest
 
+from features.feature_flags import FeatureFlag
 from tests.fixtures.values import DummyValues
 
+from geti_feature_tools import FeatureFlagProvider
 from iai_core.adapters.model_adapter import ExportableCodeAdapter
 from iai_core.configuration.elements.hyper_parameters import NullHyperParameters
 from iai_core.entities.active_model_state import ActiveModelState
@@ -140,31 +142,13 @@ def fxt_model_template_segmentation():
 
 
 @pytest.fixture
-def fxt_model_template_anomaly_classification():
+def fxt_model_template_anomaly():
     yield ModelTemplate(
-        model_template_id="test_template_anomaly_classification",
+        model_template_id="test_template_anomaly",
         model_template_path="",
-        name="Sample Anomaly Classification Template",
+        name="Sample Anomaly Template",
         task_family=TaskFamily.VISION,
-        task_type=TaskType.ANOMALY_CLASSIFICATION,
-        is_trainable=True,
-        hyper_parameters=HyperParameterData(base_path=""),
-        instantiation=InstantiationType.NONE,
-        gigaflops=24,
-        size=88.8,
-        framework="dummy framework",
-        dataset_requirements=DatasetRequirements(classes=["Normal", "Anomalous"]),
-    )
-
-
-@pytest.fixture
-def fxt_model_template_anomaly_detection():
-    yield ModelTemplate(
-        model_template_id="test_template_anomaly_detection",
-        model_template_path="",
-        name="Sample Anomaly Detection Template",
-        task_family=TaskFamily.VISION,
-        task_type=TaskType.ANOMALY_DETECTION,
+        task_type=TaskType.ANOMALY,
         is_trainable=True,
         hyper_parameters=HyperParameterData(base_path=""),
         instantiation=InstantiationType.NONE,
@@ -311,22 +295,22 @@ def fxt_model_storage_segmentation(fxt_model_template_segmentation, fxt_mongo_id
 
 
 @pytest.fixture
-def fxt_model_storage_anomaly_classification(fxt_model_template_anomaly_classification, fxt_mongo_id):
+def fxt_model_storage_anomaly_classification(fxt_model_template_anomaly, fxt_mongo_id):
     yield ModelStorage(
         id_=fxt_mongo_id(5),
         project_id=fxt_mongo_id(1),
         task_node_id=fxt_mongo_id(14),
-        model_template=fxt_model_template_anomaly_classification,
+        model_template=fxt_model_template_anomaly,
     )
 
 
 @pytest.fixture
-def fxt_model_storage_anomaly_detection(fxt_model_template_anomaly_detection, fxt_mongo_id):
+def fxt_model_storage_anomaly(fxt_model_template_anomaly, fxt_mongo_id):
     yield ModelStorage(
         id_=fxt_mongo_id(5),
         project_id=fxt_mongo_id(1),
         task_node_id=fxt_mongo_id(14),
-        model_template=fxt_model_template_anomaly_detection,
+        model_template=fxt_model_template_anomaly,
     )
 
 
@@ -369,7 +353,7 @@ def fxt_model(
             0,
             tzinfo=datetime.timezone.utc,
         ),
-        data_source_dict={"dummy.file": b"DUMMY_DATA"},
+        data_source_dict={"dummy.file": b"DUMMY_DATA", "openvino.xml": b"xml_data"},
         model_status=ModelStatus.NOT_IMPROVED,
     )
 
@@ -447,13 +431,13 @@ def fxt_model_empty_dataset(
 @pytest.fixture
 def fxt_model_group_rest(fxt_model, fxt_mongo_id):
     yield {
-        "id": fxt_mongo_id(0),
-        "name": "Sample Detection Template",
-        "task_id": fxt_mongo_id(1),
-        "model_template_id": "test_template_detection",
+        "id": str(fxt_mongo_id(0)),
+        "name": fxt_model.model_storage.name,
+        "task_id": str(fxt_mongo_id(1)),
+        "model_template_id": fxt_model.model_storage.model_template_id,
         "models": [
             {
-                "id": fxt_model.id_,
+                "id": str(fxt_model.id_),
                 "name": fxt_model.model_storage.name,
                 "creation_date": "2020-01-01T00:00:00+00:00",
                 "performance": {"score": get_performance_score(fxt_model.performance)},
@@ -477,6 +461,18 @@ def fxt_model_group_rest(fxt_model, fxt_mongo_id):
 
 @pytest.fixture()
 def fxt_model_info_rest(fxt_model, fxt_dataset_counts):
+    label = {
+        "color": "#ff0000ff",
+        "group": "from_label_list",
+        "hotkey": "ctrl+V",
+        "id": "60d31793d5f1fb7e6e3c1a50",
+        "is_empty": False,
+        "is_anomalous": False,
+        "name": "dog",
+        "parent_id": None,
+    }
+    if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+        label["is_background"] = False
     yield {
         "id": fxt_model.id_,
         "name": fxt_model.model_storage.name,
@@ -496,18 +492,7 @@ def fxt_model_info_rest(fxt_model, fxt_dataset_counts):
         "total_disk_size": 1,
         "previous_trained_revision_id": "",
         "previous_revision_id": "",
-        "labels": [
-            {
-                "color": "#ff0000ff",
-                "group": "from_label_list",
-                "hotkey": "ctrl+V",
-                "id": "60d31793d5f1fb7e6e3c1a50",
-                "is_empty": False,
-                "is_anomalous": False,
-                "name": "dog",
-                "parent_id": None,
-            }
-        ],
+        "labels": [label],
         "training_dataset_info": fxt_dataset_counts,
         "training_framework": {"type": "otx", "version": "2.2.0"},
         "purge_info": {"is_purged": False, "purge_time": None, "user_uid": None},
@@ -518,6 +503,18 @@ def fxt_model_info_rest(fxt_model, fxt_dataset_counts):
 
 @pytest.fixture()
 def fxt_obsolete_model_info_rest(fxt_obsolete_model, fxt_dataset_counts):
+    label = {
+        "color": "#ff0000ff",
+        "group": "from_label_list",
+        "hotkey": "ctrl+V",
+        "id": "60d31793d5f1fb7e6e3c1a50",
+        "is_empty": False,
+        "is_anomalous": False,
+        "name": "dog",
+        "parent_id": None,
+    }
+    if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_ANNOTATION_HOLE):
+        label["is_background"] = False
     yield {
         "id": fxt_obsolete_model.id_,
         "name": fxt_obsolete_model.model_storage.name,
@@ -537,18 +534,7 @@ def fxt_obsolete_model_info_rest(fxt_obsolete_model, fxt_dataset_counts):
         "total_disk_size": 1,
         "previous_trained_revision_id": "",
         "previous_revision_id": "",
-        "labels": [
-            {
-                "color": "#ff0000ff",
-                "group": "from_label_list",
-                "hotkey": "ctrl+V",
-                "id": "60d31793d5f1fb7e6e3c1a50",
-                "is_empty": False,
-                "is_anomalous": False,
-                "name": "dog",
-                "parent_id": None,
-            }
-        ],
+        "labels": [label],
         "training_dataset_info": fxt_dataset_counts,
         "training_framework": {"type": "otx", "version": "1.6.0"},
         "purge_info": {"is_purged": False, "purge_time": None, "user_uid": None},
@@ -605,7 +591,7 @@ def fxt_optimized_openvino_model(
         train_dataset=fxt_dataset_non_empty,
         configuration=ModelConfiguration(fxt_configuration.data, fxt_label_schema),
         id_=ModelRepo.generate_id(),
-        data_source_dict={"dummy.file": b"DUMMY_DATA"},
+        data_source_dict={"dummy.file": b"DUMMY_DATA", "openvino.xml": b"xml_data"},
         exportable_code_adapter=ExportableCodeAdapter(data_source=b"DUMMY_EXPORTABLE_CODE_DATA"),
     )
 
@@ -812,6 +798,8 @@ def fxt_zip_file_data():
     with ZipFile(output_bytes, "w") as zf:
         info = ZipInfo("dummy.file")
         zf.writestr(info, b"DUMMY_DATA")
+        info = ZipInfo("model.xml")
+        zf.writestr(info, b"xml_data")
     output_bytes.seek(0)
     return output_bytes
 

@@ -3,11 +3,11 @@
 
 import { ReactNode, Suspense } from 'react';
 
+import { Toast } from '@geti/ui';
 import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { AxiosError } from 'axios';
 
-import { NotificationProvider, Notifications } from '../../notification/notification.component';
 import { QueryClientProvider } from './query-client-provider.component';
 
 describe('QueryClientProvider', () => {
@@ -17,15 +17,15 @@ describe('QueryClientProvider', () => {
 
     const wrapper = ({ children }: { children: ReactNode }) => {
         return (
-            <NotificationProvider>
+            <>
                 <Suspense fallback={'loading...'}>
                     <QueryClientProvider defaultQueryOptions={{ queries: { retry: 0 } }}>
                         {children}
                     </QueryClientProvider>
                     <div id='custom-notification'></div>
                 </Suspense>
-                <Notifications />
-            </NotificationProvider>
+                <Toast />
+            </>
         );
     };
 
@@ -47,7 +47,7 @@ describe('QueryClientProvider', () => {
         render(<App />, { wrapper });
 
         expect(await screen.findByText('error')).toBeInTheDocument();
-        expect(screen.getByLabelText('notification toast')).toHaveTextContent('An API error occured');
+        expect(screen.getByLabelText('toast')).toHaveTextContent('An API error occured');
     });
 
     it('Adds a single error notifications when a query fails in multiple components', async () => {
@@ -75,7 +75,7 @@ describe('QueryClientProvider', () => {
         );
 
         expect(await screen.findAllByText('error')).toHaveLength(3);
-        expect(screen.getByLabelText('notification toast')).toHaveTextContent('An API error occured');
+        expect(screen.getByLabelText('toast')).toHaveTextContent('An API error occured');
     });
 
     it('Ignores errors from queries not explicitely wanting to notify', async () => {
@@ -96,7 +96,7 @@ describe('QueryClientProvider', () => {
         render(<App />, { wrapper });
 
         expect(await screen.findByText('error')).toBeInTheDocument();
-        expect(screen.queryByLabelText('notification toast')).not.toBeInTheDocument();
+        expect(screen.queryByLabelText('toast')).not.toBeInTheDocument();
     });
 
     it('Ignores non axios errors', async () => {
@@ -117,6 +117,6 @@ describe('QueryClientProvider', () => {
         render(<App />, { wrapper });
 
         expect(await screen.findByText('error')).toBeInTheDocument();
-        expect(screen.queryByLabelText('notification toast')).not.toBeInTheDocument();
+        expect(screen.queryByLabelText('toast')).not.toBeInTheDocument();
     });
 });

@@ -660,8 +660,7 @@ types-pytz
 bcrypt	
 types-mock	
 databricks-cli	Copyright 2017 Databricks, Inc.
-mlflow	
-pycryptodome	
+pycryptodome
 moto	Copyright 2012 Steve Pulec
 pytest-aiohttp	Copyright 2016-2018 Andrew Svetlov and aiohttp team
 flaky	
@@ -1012,7 +1011,6 @@ License: Zlib
 
 python3-requests	(c) 2012 by Kenneth Reitz
 databricks-sdk
-mlflow-skinny
 github.com/grpc-ecosystem/go-grpc-middleware/v2
 intel_extension_for_pytorch Copyright 2020-2021 Intel Corporation
 openssl-fips-provider-so  © 2025 OpenSSL.

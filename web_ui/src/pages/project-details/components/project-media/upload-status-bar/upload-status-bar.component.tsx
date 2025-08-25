@@ -3,11 +3,9 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 
-import { ActionButton, Flex, ProgressCircle, Text } from '@geti/ui';
+import { ActionButton, Flex, ProgressCircle, removeToast, Text, toast } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import {
     MediaUploadPerDataset,
     UploadMedia,
@@ -82,9 +80,8 @@ export const UploadStatusBar = ({
     abortMediaUploads,
     mediaUploadState,
 }: UploadStatusBarProps): JSX.Element => {
-    const loadedMediasRef = useRef('');
-    const loadingMediasRef = useRef('');
-    const { addNotification, removeNotification } = useNotification();
+    const loadedMediasRef = useRef<string | number>('');
+    const loadingMediasRef = useRef<string | number>('');
     const uploadStatusDialogState = useOverlayTriggerState({});
 
     const { processingQueue, timeUploadStarted, successList, errorList, isUploadInProgress, isUploadStatusBarVisible } =
@@ -104,22 +101,23 @@ export const UploadStatusBar = ({
 
     useEffect(() => {
         if (!isUploadStatusBarVisible) {
-            removeNotification(loadingMediasRef.current);
-            removeNotification(loadedMediasRef.current);
+            removeToast(loadingMediasRef.current);
+            removeToast(loadedMediasRef.current);
             return;
         }
 
         if (!isUploadInProgress) {
-            removeNotification(loadingMediasRef.current);
+            removeToast(loadingMediasRef.current);
 
-            loadedMediasRef.current = addNotification({
-                onClose: () => {
+            loadedMediasRef.current = toast({
+                onDismiss: () => {
                     reset();
                     uploadStatusDialogState.close();
                 },
+                id: 'upload-result-message',
                 message: resultMessage,
-                type: NOTIFICATION_TYPE.DEFAULT,
-                dismiss: { duration: 0, click: false, touch: false },
+                type: 'neutral',
+                duration: Infinity,
                 actionButtons: [
                     <ActionButton
                         isQuiet
@@ -134,9 +132,9 @@ export const UploadStatusBar = ({
         }
 
         if (isUploadInProgress) {
-            removeNotification(loadedMediasRef.current);
-            loadingMediasRef.current = addNotification({
+            loadingMediasRef.current = toast({
                 hasCloseButton: false,
+                id: 'loading-medias',
                 message: (
                     <LoadingMedias
                         key={'loading-medias'}
@@ -158,14 +156,12 @@ export const UploadStatusBar = ({
                         Details
                     </ActionButton>,
                 ],
-                type: NOTIFICATION_TYPE.DEFAULT,
-                dismiss: { duration: 0, click: false, touch: false },
+                type: 'neutral',
+                duration: Infinity,
             });
         }
     }, [
         reset,
-        removeNotification,
-        addNotification,
         isUploadInProgress,
         isUploadStatusBarVisible,
         processingQueue,

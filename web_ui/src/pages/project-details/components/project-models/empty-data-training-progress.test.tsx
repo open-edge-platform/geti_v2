@@ -4,6 +4,7 @@
 import { screen } from '@testing-library/react';
 
 import { DOMAIN } from '../../../../core/projects/core.interface';
+import { getMockedWorkspaceIdentifier } from '../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { mockedRunningTrainingJobs } from '../../../../test-utils/mocked-items-factory/mocked-jobs';
 import { getMockedTask } from '../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
@@ -12,6 +13,12 @@ import { useTrainingProgress } from './training-progress/use-training-progress/u
 
 jest.mock('./training-progress/use-training-progress/use-training-progress.hook', () => ({
     useTrainingProgress: jest.fn(() => ({})),
+}));
+
+const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier();
+jest.mock('../../../../providers/workspaces-provider/use-workspace-identifier.hook', () => ({
+    ...jest.requireActual('../../../../providers/workspaces-provider/use-workspace-identifier.hook'),
+    useWorkspaceIdentifier: jest.fn(() => mockedWorkspaceIdentifier),
 }));
 
 describe('EmptyDataTrainingProgress', () => {

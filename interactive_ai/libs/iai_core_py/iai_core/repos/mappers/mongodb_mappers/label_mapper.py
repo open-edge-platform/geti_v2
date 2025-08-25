@@ -52,6 +52,7 @@ class LabelToMongo(IMapperSimple[Label, dict]):
             "creation_date": DatetimeToMongo.forward(instance.creation_date),
             "is_empty": instance.is_empty,
             "is_anomalous": instance.is_anomalous,
+            "is_background": instance.is_background,
         }
 
     @staticmethod
@@ -70,6 +71,7 @@ class LabelToMongo(IMapperSimple[Label, dict]):
             is_empty=instance.get("is_empty", False),
             id_=label_id,
             is_anomalous=instance.get("is_anomalous", False),
+            is_background=instance.get("is_background", False),
             ephemeral=False,
         )
 
@@ -216,6 +218,7 @@ class ScoredLabelToMongo(
         return {
             "label_id": IDToMongo.forward(instance.id_),
             "is_empty": instance.is_empty,
+            "is_background": instance.is_background,
             "probability": instance.probability,
             "label_source": LabelSourceToMongo.forward(instance.label_source),
         }
@@ -224,10 +227,15 @@ class ScoredLabelToMongo(
     def backward(instance: dict, project_identifier: ProjectIdentifier) -> ScoredLabel:
         label_id = IDToMongo.backward(instance["label_id"])
         is_empty = instance.get("is_empty")
+        is_background = instance.get("is_background")
 
         if is_empty is None:
             label = ScoredLabelToMongo.get_label_by_id(label_id=label_id, project_identifier=project_identifier)
             is_empty = label.is_empty
+
+        if is_background is None:
+            label = ScoredLabelToMongo.get_label_by_id(label_id=label_id, project_identifier=project_identifier)
+            is_background = label.is_background
 
         label_source_dict = instance.get("label_source")
         label_source = (
@@ -237,6 +245,7 @@ class ScoredLabelToMongo(
         return ScoredLabel(
             label_id=label_id,
             is_empty=is_empty,
+            is_background=is_background,
             probability=instance["probability"],
             label_source=label_source,
         )

@@ -101,8 +101,7 @@ const NewProjectDialogInner: FC<NewProjectDialogInnerProps> = ({ onCloseDialog }
 
     return (
         <Dialog
-            height='100%'
-            minWidth={{ base: 'auto', L: '90rem' }}
+            minWidth={{ base: 'auto', L: '90rem', minHeight: currentStep === STEPS.NAME_PROJECT ? undefined : '52vh' }}
             UNSAFE_style={isLargeSize ? paddingStyle : tabletPaddingStyle}
         >
             <Heading id={`${currentStep}-title-id`}>
@@ -117,9 +116,9 @@ const NewProjectDialogInner: FC<NewProjectDialogInnerProps> = ({ onCloseDialog }
                 </Flex>
             </Heading>
             <Divider />
-            <Content UNSAFE_style={{ overflowX: 'hidden' }}>
+            <Content UNSAFE_style={{ overflow: 'hidden' }}>
                 {content}
-                {(currentStep === 'name-project' || currentStep === 'select-template') && <Divider size='S' />}
+                {(currentStep === STEPS.NAME_PROJECT || currentStep === STEPS.SELECT_TEMPLATE) && <Divider size='S' />}
             </Content>
 
             <ButtonGroup UNSAFE_style={{ paddingTop: 'size-300' }}>

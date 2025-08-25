@@ -4,7 +4,7 @@
 import { FC, SVGProps } from 'react';
 
 import { dimensionValue, Heading, Image, Radio, RadioGroup, Text, View } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isString } from 'lodash-es';
 import { usePress } from 'react-aria';
 
@@ -53,10 +53,10 @@ export const Card = ({
             {...pressProps}
             id={id}
             data-testid={id}
-            className={clsx({
-                [classes.card]: true,
+            className={clsx(classes.card, {
                 [classes.selected]: isSelected,
                 [classes.disabled]: isDisabled,
+                [classes.notSelected]: !isSelected,
             })}
             aria-label={title}
         >

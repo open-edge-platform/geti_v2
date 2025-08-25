@@ -4,7 +4,7 @@
 import { Fragment } from 'react';
 
 import { Text } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { NavLink } from 'react-router-dom';
 
 import { MenuOption } from '../menu-option.interface';

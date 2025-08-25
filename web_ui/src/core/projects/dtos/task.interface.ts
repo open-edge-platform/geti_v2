@@ -8,7 +8,6 @@ export enum TASK_TYPE {
     ANOMALY = 'anomaly',
     ANOMALY_CLASSIFICATION = 'anomaly_classification',
     ANOMALY_DETECTION = 'anomaly_detection',
-    ANOMALY_SEGMENTATION = 'anomaly_segmentation',
     CLASSIFICATION = 'classification',
     CROP = 'crop',
     DETECTION = 'detection',
@@ -29,7 +28,7 @@ export interface CropTask {
     title: 'Crop';
 }
 
-type AnomalyTaskType = TASK_TYPE.ANOMALY_CLASSIFICATION | TASK_TYPE.ANOMALY_DETECTION | TASK_TYPE.ANOMALY_SEGMENTATION;
+type AnomalyTaskType = TASK_TYPE.ANOMALY_CLASSIFICATION | TASK_TYPE.ANOMALY_DETECTION;
 interface AnomalyTask {
     task_type: AnomalyTaskType;
     title: 'Anomaly';

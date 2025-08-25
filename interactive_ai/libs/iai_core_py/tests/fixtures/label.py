@@ -174,7 +174,7 @@ def fxt_label(fxt_mongo_id):
 def fxt_anomalous_label(fxt_mongo_id):
     yield Label(
         name=DummyValues.LABEL_NAME,
-        domain=Domain.ANOMALY_DETECTION,
+        domain=Domain.ANOMALY,
         color=Color.from_hex_str("#ff0000"),
         hotkey=DummyValues.LABEL_HOTKEY,
         id_=ID(fxt_mongo_id(2)),

@@ -4,6 +4,7 @@
 import { useEffect, useRef } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useMutation, UseMutationResult, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import isFunction from 'lodash-es/isFunction';
@@ -11,8 +12,6 @@ import isFunction from 'lodash-es/isFunction';
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
 import { WorkspaceIdentifier } from '../../../../packages/core/src/workspaces/services/workspaces.interface';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import {
     JobImportDatasetToExistingProjectStatus,
     JobImportDatasetToNewProjectStatus,
@@ -101,7 +100,6 @@ interface UseDatasetImportQueries {
 }
 
 export const useDatasetImportQueries = (): UseDatasetImportQueries => {
-    const { addNotification } = useNotification();
     const { datasetImportService: service } = useApplicationServices();
 
     const prepareDatasetForNewProject: UseDatasetImportQueries['prepareDatasetForNewProject'] = useMutation({
@@ -115,7 +113,7 @@ export const useDatasetImportQueries = (): UseDatasetImportQueries => {
     const importDatasetToNewProject: UseDatasetImportQueries['importDatasetToNewProject'] = useMutation({
         mutationFn: service.importDatasetToNewProject,
         onError: (error: AxiosError) => {
-            addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: getErrorMessage(error), type: 'error' });
         },
     });
 

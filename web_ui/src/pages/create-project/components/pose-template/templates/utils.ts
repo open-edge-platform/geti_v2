@@ -17,6 +17,7 @@ export interface RawStructure {
 }
 
 export interface RawTemplate {
+    id: string;
     name: string;
     template: RawStructure;
 }
@@ -50,8 +51,8 @@ export const formatTemplate = (structure: RawStructure, roi: RegionOfInterest): 
     return { points, edges };
 };
 
-const PROJECT_TEMPLATE_SUFFIX = 'project-template';
-const GETI_TEMPLATE_SUFFIX = 'geti-template';
+export const PROJECT_TEMPLATE_SUFFIX = 'project-template';
+export const GETI_TEMPLATE_SUFFIX = 'geti-template';
 
 export const isProjectTemplate = (name: Key): name is string => String(name).startsWith(PROJECT_TEMPLATE_SUFFIX);
 export const isGetiTemplate = (name: Key): name is string => String(name).startsWith(GETI_TEMPLATE_SUFFIX);

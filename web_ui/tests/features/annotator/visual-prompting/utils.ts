@@ -3,9 +3,13 @@
 
 import { labelFromUser } from '../../../../src/core/annotations/utils';
 import { OpenApiFixtures } from '../../../fixtures/open-api';
+
+import '../../../fixtures/open-api/setup-open-api-handlers';
+
 import { media, project, userAnnotationsResponse } from '../../../mocks/segmentation/mocks';
 import { registerFullImage, registerFullVideoFrame } from '../../../utils/api';
 import { resolveTestAssetPath } from '../../../utils/dataset';
+import { projectConfiguration } from './mocks';
 
 const labelId = '6101254defba22ca453f11c6';
 const annotations = [
@@ -101,4 +105,9 @@ export const registerProjectResponses = (registerApiResponse: OpenApiFixtures['r
     registerApiResponse('GetVideoFrameAnnotation', (_, res, ctx) => {
         return res(ctx.json({ ...userAnnotationsResponse, annotations: [] }));
     });
+
+    registerApiResponse('GetProjectConfiguration', (_, res, ctx) =>
+        // @ts-expect-error Issue ie openapi types
+        res(ctx.status(200), ctx.json(projectConfiguration))
+    );
 };

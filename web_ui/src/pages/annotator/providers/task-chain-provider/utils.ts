@@ -1,15 +1,15 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { BoundingBox, getBoundingBox, hasEqualBoundingBox } from '@geti/smart-tools/utils';
 import { intersectionBy, isEmpty, isEqual, isNil } from 'lodash-es';
 
 import { Annotation, TaskChainInput } from '../../../../core/annotations/annotation.interface';
-import { BoundingBox, getBoundingBox, hasEqualBoundingBox } from '../../../../core/annotations/math';
 import { Rect, Shape } from '../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { isRect } from '../../../../core/annotations/utils';
 import { Label, LABEL_BEHAVIOUR } from '../../../../core/labels/label.interface';
-import { isAnomalous, isExclusive, isGlobal, isLocal } from '../../../../core/labels/utils';
+import { isAnomalous, isBackgroundBehavior, isExclusive, isGlobal, isLocal } from '../../../../core/labels/utils';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import {
     isAnomalyDomain,
@@ -256,7 +256,12 @@ export const getLabelConflictPredicate = (tasks: Task[]): LabelConflictPredicate
             return true;
         }
 
-        if (isExclusive(label) || isExclusive(otherLabel)) {
+        if (
+            isExclusive(label) ||
+            isExclusive(otherLabel) ||
+            isBackgroundBehavior(label) ||
+            isBackgroundBehavior(otherLabel)
+        ) {
             const task = tasks.find(({ labels }) => labels.some(hasEqualId(label.id)));
             const otherTask = tasks.find(({ labels }) => labels.some(hasEqualId(otherLabel.id)));
             return task?.id === otherTask?.id;

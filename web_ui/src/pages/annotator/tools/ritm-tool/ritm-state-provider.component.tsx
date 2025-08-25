@@ -3,11 +3,12 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
+import { RITM } from '@geti/smart-tools/ritm';
+import { toast } from '@geti/ui';
+
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { usePrevious } from '../../../../hooks/use-previous/use-previous.hook';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { useInteractiveSegmentation } from '../../hooks/use-interactive-segmentation.hook';
 import { StateProviderProps } from '../tools.interface';
@@ -16,7 +17,7 @@ import useUndoRedoState from '../undo-redo/use-undo-redo-state';
 import { RITMPoint, RITMResult } from './ritm-tool.interface';
 
 export interface RITMStateContextProps {
-    loadImage: (imageData: ImageData) => void;
+    loadImage: RITM['loadImage'];
     isLoading: boolean;
     isProcessing: boolean;
     reset: () => void;
@@ -30,18 +31,13 @@ export interface RITMStateContextProps {
 const RITMStateContext = createContext<RITMStateContextProps | undefined>(undefined);
 
 export const RITMStateProvider = ({ children }: StateProviderProps): JSX.Element => {
-    const { addNotification } = useNotification();
-
     const [box, setBox] = useState<RegionOfInterest | null>(null);
     const [result, setResult, undoRedoActions] = useUndoRedoState<RITMResult | null>(null);
 
     const previousResult = usePrevious(result);
 
     const showNotificationError = () => {
-        addNotification({
-            message: 'Interactive segmentation failed, please reload and try again',
-            type: NOTIFICATION_TYPE.ERROR,
-        });
+        toast({ message: 'Interactive segmentation failed, please reload and try again', type: 'error' });
         reset();
     };
 

@@ -31,7 +31,7 @@ class CreatePersonalAccessTokenDialogPage {
         this.name = this.page.getByRole('textbox', { name: /name/i });
         this.description = this.page.getByRole('textbox', { name: /description/i });
         this.cancelButton = this.page.getByRole('button', { name: /Cancel/i });
-        this.createButton = this.page.getByRole('button', { name: /Create/i });
+        this.createButton = this.page.getByRole('dialog').getByRole('button', { name: /Create/i });
     }
 
     async setName(name: string) {

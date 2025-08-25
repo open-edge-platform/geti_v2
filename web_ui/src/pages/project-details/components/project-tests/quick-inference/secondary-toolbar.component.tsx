@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key } from 'react';
-
 import { Divider, Flex, Item, Picker, Switch, Text, Tooltip, TooltipTrigger } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
@@ -96,7 +94,7 @@ export const SecondaryToolbar = ({
                                     aria-label='show explanations dropdown'
                                     isDisabled={!showExplanation || isDisabled || hasEmptyExplanations}
                                     UNSAFE_className={classes.secondaryToolbarMapPicker}
-                                    onSelectionChange={(key: Key) => {
+                                    onSelectionChange={(key) => {
                                         const selectedExplanation = explanations.find(hasEqualId(String(key)));
                                         setExplanation(selectedExplanation);
                                     }}

@@ -545,7 +545,6 @@ class AnnotationRESTViews:
         shape = AnnotationRESTViews.shape_from_rest(data[SHAPE], media_height, media_width, modification_date)
 
         labels_data = data.get(LABELS)
-
         labels = [
             ScoredLabelRESTViews.scored_label_from_rest(scored_label_data=data, label=label_per_id[ID(data[ID_])])
             for data in labels_data  # type: ignore

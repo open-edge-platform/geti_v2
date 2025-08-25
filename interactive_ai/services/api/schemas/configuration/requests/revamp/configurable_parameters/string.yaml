@@ -1,0 +1,16 @@
+type: object
+properties:
+  key:
+    type: string
+    description: Identifier for the string parameter used in code references
+  value:
+    type: string
+    description: Current configured value of the string parameter
+
+required:
+  - key
+  - value
+
+example:
+  key: "evaluation_metric"
+  value: "f-measure"

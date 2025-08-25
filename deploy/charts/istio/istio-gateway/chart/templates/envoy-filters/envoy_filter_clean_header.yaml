@@ -1,0 +1,38 @@
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: clean-header
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  workloadSelector:
+    labels:
+      istio: gateway
+  configPatches:
+    - applyTo: NETWORK_FILTER
+      match:
+        context: GATEWAY
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+      patch:
+        operation: MERGE
+        value:
+          typed_config:
+            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager"
+            server_header_transformation: PASS_THROUGH
+    - applyTo: HTTP_ROUTE
+      match:
+        context: GATEWAY
+      patch:
+        operation: MERGE
+        value:
+          decorator:
+            propagate: false # removes the decorator header
+          response_headers_to_remove:
+          - x-envoy-upstream-service-time
+          - x-powered-by
+          - server

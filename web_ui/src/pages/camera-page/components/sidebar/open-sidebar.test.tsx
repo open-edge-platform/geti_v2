@@ -3,8 +3,6 @@
 
 import { screen, waitFor } from '@testing-library/react';
 
-import '@testing-library/jest-dom/extend-expect';
-
 import { Label } from '../../../../core/labels/label.interface';
 import { getMockedScreenshot } from '../../../../test-utils/mocked-items-factory/mocked-camera';
 import { getMockedProjectIdentifier } from '../../../../test-utils/mocked-items-factory/mocked-identifiers';

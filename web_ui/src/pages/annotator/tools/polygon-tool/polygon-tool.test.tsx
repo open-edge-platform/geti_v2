@@ -71,7 +71,7 @@ jest.mock('./../../zoom/zoom-provider.component', () => ({
 
 const mockOptimizePolygon = jest.fn((polygon) => polygon);
 const mockOptimizeSegments = jest.fn((segments: Point[][]) => ({
-    shapeType: ShapeType.Polygon,
+    shapeType: 'polygon',
     points: segments.flat(),
 }));
 
@@ -136,7 +136,6 @@ const renderApp = async (annotationToolContext: AnnotationToolContext) => {
     jest.mocked(useAnnotator).mockReturnValue({ activeTool: ToolType.PolygonTool, setActiveTool: jest.fn() });
     // @ts-expect-error We only care about selectedMediaItem tool stuff
     jest.mocked(useSelectedMediaItem).mockReturnValue({ selectedMediaItem });
-    // @ts-expect-error ignore this typescript error until we finish ITEP-66305
     jest.mocked(useLoadAIWebworker).mockImplementation(() => {
         return {
             worker: {

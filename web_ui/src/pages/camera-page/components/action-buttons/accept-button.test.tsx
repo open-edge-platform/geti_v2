@@ -3,49 +3,70 @@
 
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { MediaUploadProvider } from '../../../../providers/media-upload-provider/media-upload-provider.component';
+import { MediaUploadPerDataset } from '../../../../providers/media-upload-provider/media-upload.interface';
 import { getMockedScreenshot } from '../../../../test-utils/mocked-items-factory/mocked-camera';
 import { getMockedDatasetIdentifier } from '../../../../test-utils/mocked-items-factory/mocked-identifiers';
+import { mockedMediaUploadPerDataset } from '../../../../test-utils/mocked-items-factory/mocked-upload-items';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
+import { checkTooltip } from '../../../../test-utils/utils';
 import { Screenshot } from '../../../camera-support/camera.interface';
+import { useDatasetMediaUpload } from '../../../project-details/components/project-dataset/hooks/dataset-media-upload';
 import { ProjectProvider } from '../../../project-details/providers/project-provider/project-provider.component';
 import { useCameraParams } from '../../hooks/camera-params.hook';
 import { getUseCameraParams } from '../../test-utils/camera-params';
 import { configUseCameraStorage } from '../../test-utils/config-use-camera';
-import { AcceptButton } from './accept-button.component';
-
-const mockedNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: () => mockedNavigate,
-}));
+import { AcceptButton, insufficientStorageMessage } from './accept-button.component';
 
 jest.mock('../../hooks/camera-params.hook', () => ({
     ...jest.requireActual('../../hooks/camera-params.hook'),
     useCameraParams: jest.fn(),
 }));
 
-const mockedDatasetIdentifier = getMockedDatasetIdentifier();
+jest.mock('../../../project-details/components/project-dataset/hooks/dataset-media-upload', () => ({
+    ...jest.requireActual('../../../project-details/components/project-dataset/hooks/dataset-media-upload'),
+    useDatasetMediaUpload: jest.fn(() => ({
+        mediaUploadState: { insufficientStorage: false },
+        onUploadMedia: jest.fn(),
+    })),
+}));
 
 const mockedScreenshot = getMockedScreenshot({});
+const mockedDatasetIdentifier = getMockedDatasetIdentifier();
+
+const mockedDatasetMediaUpload = (mediaUploadPerDataset: Partial<MediaUploadPerDataset>) => ({
+    mediaUploadState: {
+        ...mockedMediaUploadPerDataset,
+        ...mediaUploadPerDataset,
+    },
+    onUploadMedia: jest.fn(),
+    dispatch: jest.fn(),
+    abort: jest.fn(),
+    reset: jest.fn(),
+    retry: jest.fn(),
+});
 
 describe('AcceptButton', () => {
     const renderApp = async ({
         filesData,
+        deleteMany = jest.fn(),
         updateMany = jest.fn().mockResolvedValue(''),
         deleteAllItems = jest.fn().mockResolvedValue(''),
-        onPress = undefined,
+        navigate = jest.fn(),
+        insufficientStorage = false,
     }: {
-        onPress?: () => void;
+        navigate?: jest.Mock;
         filesData?: Screenshot[];
         isLivePrediction?: boolean;
         updateMany?: jest.Mock;
+        deleteMany?: jest.Mock;
         deleteAllItems?: jest.Mock;
         mockedGetBrowserPermissions?: jest.Mock;
+        insufficientStorage?: boolean;
     }) => {
         jest.mocked(useCameraParams).mockReturnValue(getUseCameraParams({ ...mockedDatasetIdentifier }));
+        jest.mocked(useDatasetMediaUpload).mockReturnValue(mockedDatasetMediaUpload({ insufficientStorage }));
 
-        configUseCameraStorage({ deleteAllItems, updateMany, filesData });
+        configUseCameraStorage({ deleteAllItems, updateMany, deleteMany, filesData });
 
         render(
             <ProjectProvider
@@ -55,9 +76,7 @@ describe('AcceptButton', () => {
                     organizationId: 'organization-id',
                 }}
             >
-                <MediaUploadProvider>
-                    <AcceptButton onPress={onPress} />
-                </MediaUploadProvider>
+                <AcceptButton navigate={navigate} />
             </ProjectProvider>
         );
     };
@@ -68,31 +87,36 @@ describe('AcceptButton', () => {
 
     const filesData = [mockedScreenshot];
 
-    it('custom onPress function is passed', async () => {
+    it('load the files and delete the screenshots', async () => {
+        const mockedNavigate = jest.fn();
+        const mockedDeleteMany = jest.fn();
         const mockedUpdateMany = jest.fn().mockResolvedValue('');
-        const mockedOnPress = jest.fn();
-        await renderApp({ updateMany: mockedUpdateMany, filesData, onPress: mockedOnPress });
+
+        await renderApp({
+            filesData,
+            navigate: mockedNavigate,
+            updateMany: mockedUpdateMany,
+            deleteMany: mockedDeleteMany,
+        });
 
         await waitFor(() => {
             fireEvent.click(screen.getByRole('button', { name: /accept/i }));
         });
 
-        expect(mockedUpdateMany).toHaveBeenCalledWith([mockedScreenshot.id], { isAccepted: true });
-        expect(mockedOnPress).toHaveBeenCalled();
+        expect(screen.getByText('Preparing media upload...')).toBeVisible();
+        expect(mockedDeleteMany).toHaveBeenCalledWith([mockedScreenshot.id]);
         expect(mockedNavigate).toHaveBeenCalledWith(
             `/organizations/${mockedDatasetIdentifier.organizationId}/workspaces/${mockedDatasetIdentifier.workspaceId}/projects/${mockedDatasetIdentifier.projectId}/datasets/${mockedDatasetIdentifier.datasetId}`
         );
-        expect(mockedOnPress.mock.invocationCallOrder[0]).toBeLessThan(mockedNavigate.mock.invocationCallOrder[0]);
     });
 
-    it('empty data', async () => {
-        const mockedUpdateMany = jest.fn().mockResolvedValue('');
-        await renderApp({ updateMany: mockedUpdateMany, filesData: undefined });
+    it('insufficient storage', async () => {
+        await renderApp({ filesData, insufficientStorage: true });
 
-        await waitFor(() => {
-            fireEvent.click(screen.getByRole('button', { name: /accept/i }));
+        await waitFor(async () => {
+            expect(screen.getByRole('button', { name: /accept/i })).toBeVisible();
         });
 
-        expect(mockedUpdateMany).toHaveBeenCalledWith([], { isAccepted: true });
+        await checkTooltip(screen.getByRole('button', { name: /accept/i }), insufficientStorageMessage);
     });
 });

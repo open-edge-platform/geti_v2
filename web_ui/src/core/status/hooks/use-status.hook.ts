@@ -5,13 +5,12 @@ import { useEffect, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { StatusProps } from '../status.interface';
 import {
     isBelowLowFreeDiskSpace,
@@ -21,7 +20,6 @@ import {
 } from './utils';
 
 export const useStatus = (): UseQueryResult<StatusProps, AxiosError> => {
-    const { addNotification } = useNotification();
     const { organizationId } = useOrganizationIdentifier();
     const { FEATURE_FLAG_STORAGE_SIZE_COMPUTATION } = useFeatureFlags();
 
@@ -48,11 +46,12 @@ export const useStatus = (): UseQueryResult<StatusProps, AxiosError> => {
 
         if (isBelowTooLowFreeDiskSpace(statusQuery.data.freeSpace)) {
             if (isTooLowOpenOnce) {
-                addNotification({
+                toast({
                     message: TOO_LOW_FREE_DISK_SPACE_MESSAGE,
-                    type: NOTIFICATION_TYPE.ERROR,
-                    dismiss: { duration: 0 },
+                    type: 'error',
+                    duration: Infinity,
                 });
+
                 setIsTooLowOpenOnce(false);
             }
 
@@ -61,10 +60,10 @@ export const useStatus = (): UseQueryResult<StatusProps, AxiosError> => {
 
         if (isBelowLowFreeDiskSpace(statusQuery.data.freeSpace)) {
             if (isLowOpenOnce) {
-                addNotification({
+                toast({
                     message: LOW_FREE_DISK_SPACE_MESSAGE,
-                    type: NOTIFICATION_TYPE.WARNING,
-                    dismiss: { duration: 0 },
+                    type: 'warning',
+                    duration: Infinity,
                 });
                 setIsLowOpenOnce(false);
             }
@@ -75,7 +74,6 @@ export const useStatus = (): UseQueryResult<StatusProps, AxiosError> => {
         statusQuery.isSuccess,
         statusQuery.data,
         FEATURE_FLAG_STORAGE_SIZE_COMPUTATION,
-        addNotification,
         setIsLowOpenOnce,
         isLowOpenOnce,
         isTooLowOpenOnce,

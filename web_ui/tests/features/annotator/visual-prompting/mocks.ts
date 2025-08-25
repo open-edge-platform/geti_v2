@@ -1,6 +1,15 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ProjectConfigurationDTO } from '../../../../src/core/configurable-parameters/dtos/configuration.interface';
+import { TASK_TYPE } from '../../../../src/core/projects/dtos/task.interface';
+import {
+    LifecycleStage,
+    PerformanceCategory,
+    SupportedAlgorithmDTO,
+} from '../../../../src/core/supported-algorithms/dtos/supported-algorithms.interface';
+import { project } from '../../../mocks/segmentation/mocks';
+
 export const modelGroups = {
     model_groups: [
         {
@@ -29,6 +38,37 @@ export const modelGroups = {
             ],
             learning_approach: 'one_shot',
             lifecycle_stage: 'active',
+        },
+    ],
+};
+
+export const supportedAlgorithms: { supported_algorithms: SupportedAlgorithmDTO[] } = {
+    supported_algorithms: [
+        {
+            model_manifest_id: modelGroups.model_groups[0].model_template_id,
+            task: TASK_TYPE.SEGMENTATION,
+            name: 'SegNext-T',
+            description: 'ABC',
+            stats: {
+                gigaflops: 12.44,
+                trainable_parameters: 4.23,
+                performance_ratings: {
+                    accuracy: 2,
+                    training_time: 3,
+                    inference_speed: 3,
+                },
+            },
+            support_status: LifecycleStage.ACTIVE,
+            supported_gpus: {
+                intel: true,
+                nvidia: true,
+            },
+            capabilities: {
+                xai: true,
+                tiling: true,
+            },
+            is_default_model: false,
+            performance_category: PerformanceCategory.OTHER,
         },
     ],
 };
@@ -167,6 +207,56 @@ export const test = {
             label_id: '672cfd8046d386c537aafb01',
             name: 'Card',
             value: 0.9513264945217998,
+        },
+    ],
+};
+
+export const projectConfiguration: ProjectConfigurationDTO = {
+    task_configs: [
+        {
+            task_id: project.pipeline.tasks[1].id,
+            training: {
+                constraints: [
+                    {
+                        key: 'min_images_per_label',
+                        name: 'Minimum number of images per label',
+                        type: 'int',
+                        description: 'Minimum number of images that must be present for each label to train',
+                        value: 0,
+                        default_value: 0,
+                        min_value: 0,
+                        max_value: null,
+                    },
+                ],
+            },
+            auto_training: [
+                {
+                    key: 'enable',
+                    name: 'Enable auto training',
+                    type: 'bool',
+                    description: 'Whether automatic training is enabled for this task',
+                    value: false,
+                    default_value: true,
+                },
+                {
+                    key: 'enable_dynamic_required_annotations',
+                    name: 'Enable dynamic required annotations',
+                    type: 'bool',
+                    description: 'Whether to dynamically adjust the number of required annotations',
+                    value: false,
+                    default_value: false,
+                },
+                {
+                    key: 'min_images_per_label',
+                    name: 'Minimum images per label',
+                    type: 'int',
+                    description: 'Minimum number of images needed for each label to trigger auto-training',
+                    value: 12,
+                    default_value: 12,
+                    min_value: 3,
+                    max_value: null,
+                },
+            ],
         },
     ],
 };

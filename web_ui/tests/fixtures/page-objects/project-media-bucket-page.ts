@@ -3,7 +3,7 @@
 
 import { expect, Locator, Page } from '@playwright/test';
 
-import { ViewModes } from './../../../src/shared/components/media-view-modes/utils';
+import { ViewModes } from '../../../packages/ui/src/view-modes/utils';
 import { FilterDialogPage } from './filter-dialog-page';
 
 export class ProjectMediaBucketPage {
@@ -38,6 +38,13 @@ export class ProjectMediaBucketPage {
         }
     }
 
+    async acceptPreviewFiles() {
+        const container = this.page.getByRole('dialog');
+
+        await expect(container).toBeInViewport();
+        await container.getByRole('button', { name: /upload/i }).click();
+    }
+
     getBucketLocator(): Locator {
         return this.bucket;
     }
@@ -69,12 +76,12 @@ export class ProjectMediaBucketPage {
     }
 
     async deleteSelectedImages() {
-        await this.bucket.getByRole('button', { name: /delete selected media/i }).click();
+        await this.bucket.getByRole('button', { name: 'Delete selected media' }).click();
 
         const deletionDialog = this.page.getByRole('alertdialog');
         await expect(deletionDialog).toBeVisible();
 
-        await this.page.getByRole('button', { name: 'Delete' }).click();
+        await this.page.getByRole('alertdialog').getByRole('button', { name: 'Delete' }).click();
         await expect(deletionDialog).toBeHidden();
     }
 

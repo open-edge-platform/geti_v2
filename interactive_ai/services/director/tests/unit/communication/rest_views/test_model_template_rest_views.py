@@ -1,7 +1,8 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+from unittest.mock import MagicMock
 
-
+from geti_supported_models import SupportedModels
 from testfixtures import compare
 
 from communication.views.model_template_rest_views import ModelTemplateRESTViews
@@ -27,25 +28,27 @@ class TestSCModelTemplateRESTViews:
 
         compare(result, expected_result, ignore_eq=True)
 
-    def test_model_template_to_rest_with_reduced_anomaly(
-        self,
-        fxt_model_template_anomaly_detection,
-        fxt_enable_feature_flag_name,
-    ) -> None:
-        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_ANOMALY_REDUCTION.name)
+    def test_model_manifest_to_rest(self, fxt_enable_feature_flag_name) -> None:
+        # Arrange
+        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+        model_manifest = SupportedModels.get_model_manifest_by_id("Object_Detection_DFine_X")
         expected_result = {
-            "name": fxt_model_template_anomaly_detection.name,
-            "task_type": "anomaly",
-            "model_size": fxt_model_template_anomaly_detection.size,
-            "model_template_id": fxt_model_template_anomaly_detection.model_template_id,
-            "gigaflops": fxt_model_template_anomaly_detection.gigaflops,
-            "summary": fxt_model_template_anomaly_detection.summary,
-            "supports_auto_hpo": False,
-            "default_algorithm": False,
-            "performance_category": fxt_model_template_anomaly_detection.model_category.name.lower(),
-            "lifecycle_stage": fxt_model_template_anomaly_detection.model_status.name.lower(),
+            "model_manifest_id": model_manifest.id,
+            "task": model_manifest.task.lower(),
+            "name": model_manifest.name,
+            "description": model_manifest.description,
+            "stats": model_manifest.stats.model_dump(),
+            "support_status": model_manifest.support_status.name.lower(),
+            "supported_gpus": model_manifest.supported_gpus,
+            "capabilities": model_manifest.capabilities.model_dump(),
+            "is_default_model": model_manifest.is_default_model,
+            "performance_category": model_manifest.model_category or "other",
         }
+        mock_model_template = MagicMock()
+        mock_model_template.model_manifest_id = model_manifest.id
 
-        result = ModelTemplateRESTViews.model_template_to_rest(model_template=fxt_model_template_anomaly_detection)
+        # Act
+        rest_view = ModelTemplateRESTViews.model_template_to_rest(mock_model_template)
 
-        compare(result, expected_result, ignore_eq=True)
+        # Assert
+        assert rest_view == expected_result

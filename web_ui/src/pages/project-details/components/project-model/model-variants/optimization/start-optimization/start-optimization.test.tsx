@@ -4,9 +4,6 @@
 import { fireEvent, screen } from '@testing-library/react';
 
 import { providersRender as render } from '../../../../../../../test-utils/required-providers-render';
-
-import '@testing-library/jest-dom/extend-expect';
-
 import { checkTooltip } from '../../../../../../../test-utils/utils';
 import { StartOptimization } from './start-optimization.component';
 
