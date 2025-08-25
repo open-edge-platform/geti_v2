@@ -53,7 +53,7 @@ export const SidebarSplitPanel = ({
             <PanelGroup direction={'vertical'}>
                 {selectedMediaItem !== undefined && showCountingPanel && (
                     <>
-                        <Panel collapsible order={1}>
+                        <Panel order={1}>
                             <AnnotationListCounting annotationToolContext={annotationToolContext} />
                         </Panel>
                         <PanelResizeHandle />
@@ -62,7 +62,7 @@ export const SidebarSplitPanel = ({
 
                 {selectedMediaItem !== undefined && showAnnotationPanel && (
                     <>
-                        <Panel collapsible order={2}>
+                        <Panel order={2}>
                             <AnnotationListAccordion />
                         </Panel>
                         <PanelResizeHandle />
@@ -71,7 +71,7 @@ export const SidebarSplitPanel = ({
 
                 {showDatasetPanel && (
                     <>
-                        <Panel collapsible order={3}>
+                        <Panel order={3}>
                             <DatasetAccordion viewMode={datasetViewMode} setViewMode={setDatasetViewMode} />
                         </Panel>
                     </>
