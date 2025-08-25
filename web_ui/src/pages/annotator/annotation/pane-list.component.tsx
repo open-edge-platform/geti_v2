@@ -5,8 +5,6 @@ import React, { ReactNode } from 'react';
 
 import { Panel, PanelGroup, PanelResizeHandle } from '../components/sidebar/split-pane/split-pane.component';
 
-import 'allotment/dist/style.css';
-
 interface PaneListProps {
     itemsList: ReactNode;
     listActions: ReactNode;

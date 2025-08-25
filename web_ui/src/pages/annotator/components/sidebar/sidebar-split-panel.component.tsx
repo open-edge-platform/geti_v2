@@ -10,8 +10,6 @@ import { DatasetAccordion } from './dataset/dataset-accordion.component';
 import { SidebarCommonProps } from './sidebar.interface';
 import { Panel, PanelGroup, PanelResizeHandle } from './split-pane/split-pane.component';
 
-import 'allotment/dist/style.css';
-
 /*
     Outer pane = Top list section + Bottom dataset section
     Inner pane = Within the outer pane, holds all the accordions and lists

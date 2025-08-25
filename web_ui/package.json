@@ -27,7 +27,6 @@
     "@tanstack/react-query": "^5.74.11",
     "@tanstack/react-query-devtools": "^5.74.11",
     "@wessberg/pointer-events": "^1.0.9",
-    "allotment": "^1.20.3",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
     "comlink": "^4.4.2",
