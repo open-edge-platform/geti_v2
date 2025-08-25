@@ -25,7 +25,7 @@ interface ActionButtonsProps {
     annotationToolContext: AnnotationToolContext;
 }
 
-export const ActionButtons = ({ annotationToolContext }: ActionButtonsProps): JSX.Element => {
+export const ActionButtons = ({ annotationToolContext }: ActionButtonsProps) => {
     const isSceneBusy = useIsSceneBusy();
     const { tasks, selectedTask } = useTask();
     const { isActiveLearningMode } = useAnnotatorMode();

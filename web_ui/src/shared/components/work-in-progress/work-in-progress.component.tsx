@@ -7,7 +7,7 @@ import { WorkInProgressIcon } from '../../../assets/images';
 
 import classes from './work-in-progress.module.scss';
 
-export const WorkInProgress = ({ description }: { description?: string }): JSX.Element => {
+export const WorkInProgress = ({ description }: { description?: string }) => {
     return (
         <Flex direction='column' alignItems='center' justifyContent='center' height='100%'>
             <WorkInProgressIcon />

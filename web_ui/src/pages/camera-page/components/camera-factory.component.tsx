@@ -25,10 +25,7 @@ interface CameraFactoryProps {
     isPermissionPending?: boolean;
 }
 
-export const CameraFactory = ({
-    isPermissionDenied = false,
-    isPermissionPending = true,
-}: CameraFactoryProps): JSX.Element => {
+export const CameraFactory = ({ isPermissionDenied = false, isPermissionPending = true }: CameraFactoryProps) => {
     const { tasks } = useTask();
     const { defaultLabelId, hasDefaultLabel } = useCameraParams();
 

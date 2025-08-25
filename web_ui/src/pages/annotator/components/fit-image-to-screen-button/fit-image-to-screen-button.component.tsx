@@ -5,7 +5,7 @@ import { ActionButton } from '@geti/ui';
 import { FitScreen } from '@geti/ui/icons';
 import { useControls } from 'react-zoom-pan-pinch';
 
-export const FitImageToScreenButton = (): JSX.Element => {
+export const FitImageToScreenButton = () => {
     const { resetTransform } = useControls();
 
     const handleFitImageToScreen = () => {

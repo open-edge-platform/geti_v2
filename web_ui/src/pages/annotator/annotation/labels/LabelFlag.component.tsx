@@ -22,7 +22,7 @@ const getHeight = (annotation: Annotation, top: number, y: number) => {
     return isCircle(annotation.shape) ? getFlagFromTop(annotation.shape) : y - top;
 };
 
-export const LabelFlag = ({ annotation, top, left, y }: LabelFlagProps): JSX.Element => {
+export const LabelFlag = ({ annotation, top, left, y }: LabelFlagProps) => {
     const { shape } = annotation;
 
     if (isRect(shape)) {

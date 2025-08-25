@@ -23,7 +23,7 @@ enum CreditAccountMenuActions {
 
 const menuItems = [CreditAccountMenuActions.EDIT, CreditAccountMenuActions.EDIT_BALANCE];
 
-const renderItems = (item: string): JSX.Element => {
+const renderItems = (item: string) => {
     return (
         <Flex gap={'size-75'} alignItems={'center'}>
             {item === CreditAccountMenuActions.EDIT && <Edit />}
@@ -33,7 +33,7 @@ const renderItems = (item: string): JSX.Element => {
     );
 };
 
-export const ActionsCell = (props: ActionsCellProps): JSX.Element => {
+export const ActionsCell = (props: ActionsCellProps) => {
     const { rowData: creditAccount } = props;
     const { useUpdateCreditAccountMutation, useUpdateCreditAccountBalanceMutation } = useCreditsQueries();
     const updateCreditAccount = useUpdateCreditAccountMutation();

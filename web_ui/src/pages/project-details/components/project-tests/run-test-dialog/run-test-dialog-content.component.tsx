@@ -38,11 +38,7 @@ import { useRunTestDialogState } from './use-run-test-dialog-state.hook';
 
 import classes from './run-test-dialog.module.scss';
 
-export const RunTestDialogContent = ({
-    modelsGroups,
-    preselectedModel,
-    handleClose,
-}: RunTestDialogContentProps): JSX.Element => {
+export const RunTestDialogContent = ({ modelsGroups, preselectedModel, handleClose }: RunTestDialogContentProps) => {
     const MAX_TEST_NAME_LENGTH = 30;
 
     const { workspaceId, projectId, organizationId } = useProjectIdentifier();

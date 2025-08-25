@@ -28,7 +28,7 @@ import { ProjectTaskLabels } from './project-task-labels/project-task-labels.com
 import { RevisitAlertDialog } from './revisit-alert-dialog/revisit-alert-dialog.component';
 import { getTasksMetadata } from './utils';
 
-export const ProjectLabels = (): JSX.Element => {
+export const ProjectLabels = () => {
     const { editProjectLabelsMutation } = useProjectActions();
     const datasetIdentifier = useDatasetIdentifier();
 

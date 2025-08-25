@@ -31,7 +31,7 @@ type UseTrainingProgress = UseTrainingProgressDetails | UseTrainingProgressNoDet
 const useTrainingProgressJobs = () => {
     const queryClient = useQueryClient();
     const projectIdentifier = useProjectIdentifier();
-    const prevJobsSize = useRef<number>();
+    const prevJobsSize = useRef<number>(undefined);
     const areTrainingDetails = true;
 
     const handleSuccess = useCallback(

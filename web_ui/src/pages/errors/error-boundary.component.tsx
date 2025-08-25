@@ -84,7 +84,7 @@ export const ErrorBoundary = ({
 }: {
     children: ReactNode;
     FallbackComponent?: typeof ErrorFallback;
-}): JSX.Element => {
+}) => {
     const [inErrorState, setInErrorState] = useState(false);
     const { reset } = useQueryErrorResetBoundary();
 

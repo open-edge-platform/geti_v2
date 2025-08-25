@@ -22,7 +22,7 @@ import { MAX_NUMBER_OF_DISPLAYED_WORKSPACES } from './utils';
 
 import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
 
-export const WorkspacesTabs = (): JSX.Element => {
+export const WorkspacesTabs = () => {
     const { organizationId } = useOrganizationIdentifier();
     const {
         workspaces,

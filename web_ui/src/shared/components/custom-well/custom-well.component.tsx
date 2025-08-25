@@ -1,13 +1,15 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { Well, type DimensionValue, type Responsive, type SpectrumWellProps } from '@geti/ui';
 
 import classes from './custom-well.module.scss';
 
 export interface CustomWellProps extends SpectrumWellProps {
     id: string;
-    children: JSX.Element;
+    children: ReactNode;
     isSelected?: boolean;
     isSelectable?: boolean;
     height?: Responsive<DimensionValue>;
@@ -25,7 +27,7 @@ export const CustomWell = ({
     isSelectable = true,
     className,
     ...props
-}: CustomWellProps): JSX.Element => {
+}: CustomWellProps) => {
     return (
         <Well
             position={position}

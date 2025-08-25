@@ -15,11 +15,7 @@ interface ProjectAnnotationsImagesProps extends ProjectGridArea {
     images: number;
 }
 
-export const ProjectAnnotationsImages = ({
-    annotatedImages,
-    images,
-    gridArea,
-}: ProjectAnnotationsImagesProps): JSX.Element => {
+export const ProjectAnnotationsImages = ({ annotatedImages, images, gridArea }: ProjectAnnotationsImagesProps) => {
     return (
         <CardContent title='Annotated images' gridArea={gridArea}>
             <Flex direction={'column'} alignItems={'center'} justifyContent={'center'} height={'100%'}>

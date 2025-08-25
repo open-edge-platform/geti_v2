@@ -36,7 +36,7 @@ export const HeaderSubmenu = ({
     isDarkMode,
     buttonClasses,
     menuWidth = 'size-2400',
-}: HeaderSubmenuProps): JSX.Element => {
+}: HeaderSubmenuProps) => {
     return (
         <MenuTrigger>
             <ActionButton

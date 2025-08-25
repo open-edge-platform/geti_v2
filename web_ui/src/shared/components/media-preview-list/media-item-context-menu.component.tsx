@@ -12,10 +12,10 @@ import { MouseEvents } from '../../mouse-events';
 
 interface MediaItemContextMenuProps {
     options: [string, () => void][];
-    containerRef: RefObject<HTMLElement>;
+    containerRef: RefObject<HTMLElement | null>;
 }
 
-export const MediaItemContextMenu = ({ options, containerRef }: MediaItemContextMenuProps): JSX.Element => {
+export const MediaItemContextMenu = ({ options, containerRef }: MediaItemContextMenuProps) => {
     const menuTriggerRef = useRef(null);
     const menuOverlayState = useOverlayTriggerState({});
     const [menuTriggerPosition, setMenuTriggerPosition] = useState({ x: 0, y: 0 });

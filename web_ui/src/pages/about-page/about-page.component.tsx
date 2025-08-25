@@ -13,7 +13,7 @@ import { PageLayout } from '../../shared/components/page-layout/page-layout.comp
 
 import classes from './about-page.module.scss';
 
-const AboutPage = (): JSX.Element => {
+const AboutPage = () => {
     const { data, isPending } = useProductInfo();
     const isSaasEnvironment = useIsSaasEnv();
 

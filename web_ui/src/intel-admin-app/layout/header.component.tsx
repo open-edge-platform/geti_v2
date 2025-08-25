@@ -8,7 +8,7 @@ import { Navbar } from './navbar.component';
 
 import classes from './layout.module.scss';
 
-export const Header = (): JSX.Element => {
+export const Header = () => {
     return (
         <SpectrumHeader UNSAFE_className={classes.header}>
             <Flex height={'100%'} alignItems={'center'} gap={'size-700'} marginX={'size-200'}>

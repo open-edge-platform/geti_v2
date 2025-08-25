@@ -15,7 +15,7 @@ export const SelectableManyTasks = ({
     selectedComponentId,
     selectedComponent,
     updateParameter,
-}: SelectableManyTasksProps): JSX.Element => {
+}: SelectableManyTasksProps) => {
     return (
         <View padding={'size-250'} paddingEnd={0} height={'100%'} UNSAFE_className={classes.configParametersBox}>
             <Flex height={'100%'}>

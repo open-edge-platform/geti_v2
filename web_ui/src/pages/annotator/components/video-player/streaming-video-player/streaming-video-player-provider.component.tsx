@@ -4,7 +4,6 @@
 import {
     createContext,
     Dispatch,
-    MutableRefObject,
     ReactNode,
     RefObject,
     SetStateAction,
@@ -37,7 +36,7 @@ import { useBufferStreamingQueries } from './use-buffer-streaming-queries.hook';
 import { BufferRange } from './utils';
 
 export interface VideoPlayerPlayerContextProps {
-    videoRef: RefObject<HTMLVideoElement>;
+    videoRef: RefObject<HTMLVideoElement | null>;
     isPlaying: boolean;
     setIsPlaying: Dispatch<SetStateAction<boolean>>;
     currentIndex: number;
@@ -68,8 +67,8 @@ interface StreamingVideoPlayerProviderProps {
 
 interface useResumeVideoProps {
     isPlaying: boolean;
-    videoRef: RefObject<HTMLVideoElement>;
-    videoPausedBySystem: MutableRefObject<boolean>;
+    videoRef: RefObject<HTMLVideoElement | null>;
+    videoPausedBySystem: RefObject<boolean>;
 }
 
 const useResumeVideo = ({ isPlaying, videoRef, videoPausedBySystem }: useResumeVideoProps) => {

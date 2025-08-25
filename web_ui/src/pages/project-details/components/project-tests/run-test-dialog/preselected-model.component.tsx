@@ -17,7 +17,7 @@ export const PreselectedModelInfo = ({
     modelGroupName,
     modelVersion,
     optimizationModelName,
-}: PreselectedModelProps): JSX.Element => {
+}: PreselectedModelProps) => {
     const items = [taskName, modelGroupName, modelVersion];
 
     if (optimizationModelName) {

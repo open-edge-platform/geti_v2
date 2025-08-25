@@ -5,7 +5,7 @@ import { Heading, Text, View } from '@geti/ui';
 
 import { CreateWorkspaceDialog } from './create-workspace-dialog.component';
 
-export const CreateWorkspace = (): JSX.Element => {
+export const CreateWorkspace = () => {
     return (
         <View>
             <Heading level={6} margin={0}>

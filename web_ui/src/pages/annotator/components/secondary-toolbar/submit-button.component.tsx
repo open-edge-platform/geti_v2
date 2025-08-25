@@ -76,7 +76,7 @@ export const SubmitButton = ({
     annotationToolContext,
     onSubmitEnd,
     selectMediaItem,
-}: SubmitButtonProps): JSX.Element => {
+}: SubmitButtonProps) => {
     const queryClient = useQueryClient();
     const { datasetIdentifier } = useDataset();
     const { mediaItemsQuery } = useDataset();

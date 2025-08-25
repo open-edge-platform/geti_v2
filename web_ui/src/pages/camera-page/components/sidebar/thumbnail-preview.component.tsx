@@ -15,11 +15,7 @@ interface ThumbnailPreviewProps {
     isCloseSidebar?: boolean;
 }
 
-export const ThumbnailPreview = ({
-    screenshots,
-    defaultIndex = 0,
-    isCloseSidebar = false,
-}: ThumbnailPreviewProps): JSX.Element => {
+export const ThumbnailPreview = ({ screenshots, defaultIndex = 0, isCloseSidebar = false }: ThumbnailPreviewProps) => {
     const { deleteMany } = useCameraStorage();
     const dialogState = useOverlayTriggerState({});
 

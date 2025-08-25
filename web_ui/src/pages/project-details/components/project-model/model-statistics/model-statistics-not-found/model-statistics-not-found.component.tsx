@@ -3,7 +3,7 @@
 
 import { Text, View } from '@geti/ui';
 
-export const ModelStatisticsNotFound = (): JSX.Element => {
+export const ModelStatisticsNotFound = () => {
     return (
         <View>
             <Text id={'models-statistics-unavailable-id'}>

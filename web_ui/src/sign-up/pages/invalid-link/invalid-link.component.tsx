@@ -10,7 +10,7 @@ import { redirectTo } from '../../../shared/utils';
 
 import classes from '../../../pages/errors/error-layout/error-layout.module.scss';
 
-export const InvalidLink = (): JSX.Element => {
+export const InvalidLink = () => {
     const handleLoginRedirect = (): void => {
         redirectTo(paths.root({}));
     };

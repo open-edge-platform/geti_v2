@@ -26,7 +26,7 @@ export const TabItemWithMenu = ({
     name,
     isMoreIconVisible,
     disabledKeys,
-}: CustomTabItemWithMenuProps): JSX.Element => {
+}: CustomTabItemWithMenuProps) => {
     return (
         <MenuTriggerButton
             isQuiet

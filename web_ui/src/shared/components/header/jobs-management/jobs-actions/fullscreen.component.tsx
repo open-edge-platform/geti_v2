@@ -11,7 +11,7 @@ interface FullscreenProps {
     toggle: Dispatch<SetStateAction<boolean>>;
 }
 
-export const Fullscreen = ({ enabled, toggle }: FullscreenProps): JSX.Element => {
+export const Fullscreen = ({ enabled, toggle }: FullscreenProps) => {
     return (
         <ActionButton
             isQuiet

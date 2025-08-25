@@ -28,7 +28,7 @@ export const RotationAnchor = ({
     zoom,
     isRotating,
     cursor,
-}: RotationAnchorProps): JSX.Element => {
+}: RotationAnchorProps) => {
     const anchorSize = 14 / zoom;
 
     return (

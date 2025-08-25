@@ -10,14 +10,7 @@ interface BrushSizeCursorProps {
     ariaLabel: string;
 }
 
-export const BrushSizeCursor = ({
-    x,
-    y,
-    brushSize,
-    strokeWidth,
-    fill,
-    ariaLabel,
-}: BrushSizeCursorProps): JSX.Element => {
+export const BrushSizeCursor = ({ x, y, brushSize, strokeWidth, fill, ariaLabel }: BrushSizeCursorProps) => {
     return (
         <circle
             cx={x}

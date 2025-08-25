@@ -15,7 +15,7 @@ import classes from './line-chart.module.scss';
 
 const DownloadableLineChart = withDownloadableSvg(LineChartRecharts);
 
-export const LineChart = ({ title, data, xAxisLabel, yAxisLabel }: LineChartProps): JSX.Element => {
+export const LineChart = ({ title, data, xAxisLabel, yAxisLabel }: LineChartProps) => {
     const [margin, setMargin] = useState<number>(0);
     const formatter = useNumberFormatter({
         notation: 'compact',

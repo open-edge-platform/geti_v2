@@ -46,7 +46,7 @@ const useCreditDeductionNotificationJobs = ({
     }, [enabled, jobsQuery.data, jobsQuery.isSuccess]);
 };
 
-export const CreditDeductionNotification = ({ settings }: CreditDeductionNotificationProps): JSX.Element => {
+export const CreditDeductionNotification = ({ settings }: CreditDeductionNotificationProps) => {
     const openedNotification = useRef(new Set<string>());
 
     const { project, projectIdentifier } = useProject();

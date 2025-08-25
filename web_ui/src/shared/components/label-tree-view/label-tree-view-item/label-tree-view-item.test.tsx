@@ -291,7 +291,7 @@ describe('LabelTreeViewItem - menu', () => {
         item: LabelTreeItem,
         domains: DOMAIN[],
         options = { isNewProject: false, isMixedRelation: false }
-    ): JSX.Element => (
+    ) => (
         <LabelTreeViewItem
             item={item}
             actions={{ ...mockedActions, save: saveHandler }}

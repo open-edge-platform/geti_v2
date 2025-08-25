@@ -13,7 +13,7 @@ import { usePrediction } from '../../../providers/prediction-provider/prediction
 import { useTask } from '../../../providers/task-provider/task-provider.component';
 import { PredictionScoreThreshold } from './prediction-score-threshold.component';
 
-export const AnnotationsHeader = (): JSX.Element => {
+export const AnnotationsHeader = () => {
     const isSceneBusy = useIsSceneBusy();
 
     const { userProjectSettings } = useAnnotator();

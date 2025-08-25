@@ -19,7 +19,7 @@ export const BreadcrumbSegment = ({
     text,
     withoutArrow = false,
     isDisabled = false,
-}: BreadcrumbSegmentProps): JSX.Element => {
+}: BreadcrumbSegmentProps) => {
     return (
         <li id={`breadcrumb-${idSuffix}`} className={classes.breadcrumbListItem}>
             <button

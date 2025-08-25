@@ -67,7 +67,7 @@ const RawCanvas = () => {
     );
 };
 
-export const ImageSection = (): JSX.Element => {
+export const ImageSection = () => {
     // NOTE: the ImageSection renders the ZoomProvider and AnnotationToolProvider so that
     // it will work both when rendered in the Accordion and in the FullScreenAction.
     // If we had moved these providers into the `PreRequiredAnnotatorProviders`, then

@@ -51,7 +51,7 @@ interface UserActionsProps {
     activeUser: User | undefined;
 }
 
-export const ProjectUserActions = ({ user, activeUser }: UserActionsProps): JSX.Element => {
+export const ProjectUserActions = ({ user, activeUser }: UserActionsProps) => {
     const [action, setAction] = useState<USER_ACTIONS_OPTIONS | undefined>(undefined);
     const {
         projectIdentifier: { projectId },

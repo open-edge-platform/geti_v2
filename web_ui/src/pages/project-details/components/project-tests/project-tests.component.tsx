@@ -24,7 +24,7 @@ const TESTS_TABS_TO_URL_MAPPING = {
     [TestsTabsKeys.LIVE_PREDICTION]: paths.project.tests.livePrediction,
 };
 
-export const ProjectTests = (): JSX.Element => {
+export const ProjectTests = () => {
     const projectIdentifier = useProjectIdentifier();
     const activeTab = useActiveTab(TestsTabsKeys.TESTS);
     const navigate = useNavigate();

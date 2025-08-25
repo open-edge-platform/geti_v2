@@ -18,7 +18,7 @@ const TrainingModelBarChart = ({
     header,
     value,
     inCard = true,
-}: TrainingModelBarRadialChart & TrainingModelChartConfig): JSX.Element => {
+}: TrainingModelBarRadialChart & TrainingModelChartConfig) => {
     const colors: Colors[] = [];
 
     const hasOnlyOneBar = value.length === 1;

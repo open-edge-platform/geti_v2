@@ -33,7 +33,7 @@ export const EditBoundingBox = ({
     image,
     zoom,
     updateAnnotation,
-}: EditBoundingBoxProps): JSX.Element => {
+}: EditBoundingBoxProps) => {
     const [shape, setShape] = useState(annotation.shape);
 
     useEffect(() => setShape(annotation.shape), [annotation.shape]);

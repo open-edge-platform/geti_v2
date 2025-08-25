@@ -29,7 +29,7 @@ export const SubmitDialogs = ({
     submitAnnotationsMutation,
     showConfirmationDialog,
     showFailDialog,
-}: SubmitDialogsProps): JSX.Element => {
+}: SubmitDialogsProps) => {
     const isPredictionRejected = useIsPredictionRejected();
     const acceptedAnnotations = annotations.filter(negate(isPredictionRejected));
 

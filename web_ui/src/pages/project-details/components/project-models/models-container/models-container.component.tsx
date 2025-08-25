@@ -30,7 +30,7 @@ export const ModelsContainer = ({
     modelTemplateId,
     lifecycleStage,
     performanceCategory,
-}: ModelContainerProps): JSX.Element => {
+}: ModelContainerProps) => {
     const [areModelsExpanded, setAreModelsExpanded] = useState<boolean>(false);
 
     const handleShowingModels = () => {

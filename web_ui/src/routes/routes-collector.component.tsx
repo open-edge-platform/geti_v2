@@ -13,7 +13,7 @@ interface RoutesCollectorProps {
     children: ReactNode;
 }
 
-export const RoutesCollector = ({ children }: RoutesCollectorProps): JSX.Element => {
+export const RoutesCollector = ({ children }: RoutesCollectorProps) => {
     const useCollectRouteChangeMetric = (): void => {
         const matches = useMatches();
         const navigationType = useNavigationType();

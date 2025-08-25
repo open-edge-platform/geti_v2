@@ -30,13 +30,7 @@ import { ProjectThumbnail } from './project-thumbnail.component';
 import sharedClasses from '../../../../../../../shared/shared.module.scss';
 import classes from './project.module.scss';
 
-export const Project = ({
-    project,
-    onSelectItem,
-}: {
-    project: ProjectProps;
-    onSelectItem?: () => void;
-}): JSX.Element => {
+export const Project = ({ project, onSelectItem }: { project: ProjectProps; onSelectItem?: () => void }) => {
     const navigate = useNavigate();
 
     const { id, name, creationDate, thumbnail, tasks, domains, performance } = project;

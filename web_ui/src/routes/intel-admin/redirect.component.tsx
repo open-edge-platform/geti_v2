@@ -5,11 +5,11 @@ import { paths } from '@geti/core';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Navigate, Outlet, useParams } from 'react-router-dom';
 
-export const RedirectToTheOrganizations = (): JSX.Element => {
+export const RedirectToTheOrganizations = () => {
     return <Navigate to={paths.intelAdmin.organizations({})} replace />;
 };
 
-export const RedirectToOrganizationOverview = (): JSX.Element => {
+export const RedirectToOrganizationOverview = () => {
     const { organizationId } = useParams<{ organizationId: string }>();
 
     if (!organizationId) {

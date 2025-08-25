@@ -15,7 +15,7 @@ interface MediaFilterFieldProps {
     fieldsOptions: FilterItems[][];
 }
 
-export const MediaFilterField = ({ onSelectionChange, value, fieldsOptions }: MediaFilterFieldProps): JSX.Element => {
+export const MediaFilterField = ({ onSelectionChange, value, fieldsOptions }: MediaFilterFieldProps) => {
     const keyConfig = getKeyConfig(fieldsOptions.flat(), value);
 
     return (

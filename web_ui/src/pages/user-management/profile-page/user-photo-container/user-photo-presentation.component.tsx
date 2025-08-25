@@ -18,7 +18,7 @@ export const UserPhotoPresentation = ({
     handleUploadClick,
     width,
     height,
-}: UserPhotoPresentationProps): JSX.Element => {
+}: UserPhotoPresentationProps) => {
     return userPhoto ? (
         <UserPhotoPreview userPhoto={userPhoto} width={width} height={height} />
     ) : (

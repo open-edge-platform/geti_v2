@@ -8,7 +8,7 @@ import { useCreditsQueries } from '../../../core/credits/hooks/use-credits-api.h
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { CreditAccountsTable } from './credit-accounts-table/credit-account-table.component';
 
-export const UsageCreditAccountsCard = (props: StyleProps): JSX.Element => {
+export const UsageCreditAccountsCard = (props: StyleProps) => {
     const { useCreditsQuery } = useCreditsQueries();
     const { organizationId } = useOrganizationIdentifier();
     const {

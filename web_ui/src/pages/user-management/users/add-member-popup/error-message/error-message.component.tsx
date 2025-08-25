@@ -13,7 +13,7 @@ interface ErrorMessageProps extends Omit<ComponentProps<typeof Text>, 'children'
     paddingLeft?: DimensionValue;
 }
 
-export const ErrorMessage = (props: ErrorMessageProps): JSX.Element => {
+export const ErrorMessage = (props: ErrorMessageProps) => {
     const { message, id, UNSAFE_style, ...rest } = props;
 
     return message ? (

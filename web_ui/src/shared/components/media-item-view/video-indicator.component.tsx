@@ -13,7 +13,7 @@ interface VideoIndicatorProps {
     frames: number | undefined;
 }
 
-export const VideoIndicator = ({ duration, frames }: VideoIndicatorProps): JSX.Element => {
+export const VideoIndicator = ({ duration, frames }: VideoIndicatorProps) => {
     const shouldShowFramesIndicator = frames !== undefined;
     const durationText = useDurationText(duration);
     const frameText = useFramesText(frames ?? 0);

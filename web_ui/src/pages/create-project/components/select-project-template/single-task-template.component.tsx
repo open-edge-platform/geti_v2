@@ -12,7 +12,7 @@ import { DomainCardsMetadata, SingleTemplateProps } from './project-template.int
 
 import classes from './project-template.module.scss';
 
-export const SingleTaskTemplate = ({ cards, metaData, setSelectedDomains }: SingleTemplateProps): JSX.Element => {
+export const SingleTaskTemplate = ({ cards, metaData, setSelectedDomains }: SingleTemplateProps) => {
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const [selectedSubDomain, setSelectedSubDomain] = useState<SUBDOMAIN>(cards[0].subDomain);
 

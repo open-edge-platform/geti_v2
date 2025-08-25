@@ -8,7 +8,7 @@ import { MediaItem } from '../../../../core/media/media.interface';
 import { LastAnnotator } from './last-annotator.component';
 import { MediaNameAndResolution } from './media-name-and-resolution.component';
 
-export const MediaItemImageMetadata = ({ mediaItem }: { mediaItem: MediaItem }): JSX.Element => {
+export const MediaItemImageMetadata = ({ mediaItem }: { mediaItem: MediaItem }) => {
     const { width, height } = mediaItem.metadata;
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
 

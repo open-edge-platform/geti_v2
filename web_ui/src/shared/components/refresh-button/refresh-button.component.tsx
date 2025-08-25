@@ -23,7 +23,7 @@ export const RefreshButton = ({
     ariaLabel,
     isLoading,
     isDisabled = isLoading,
-}: RefreshButtonProps): JSX.Element => {
+}: RefreshButtonProps) => {
     return (
         <TooltipTrigger placement={'bottom'}>
             <ActionButton

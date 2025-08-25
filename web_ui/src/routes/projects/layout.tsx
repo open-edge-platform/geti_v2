@@ -14,7 +14,7 @@ import { UpgradeBanner } from '../upgrade-banner/upgrade-banner.component';
 
 import classes from './../routes.module.scss';
 
-export const ProjectLayout = (): JSX.Element => {
+export const ProjectLayout = () => {
     const { project, isSingleDomainProject } = useProject();
     const isAnomalyProject = isSingleDomainProject(isAnomalyDomain);
 

@@ -13,7 +13,7 @@ interface TrainingProgressProps {
     taskId: string;
 }
 
-export const TrainingProgress = ({ taskId }: TrainingProgressProps): JSX.Element => {
+export const TrainingProgress = ({ taskId }: TrainingProgressProps) => {
     const trainingData = useTrainingProgress(taskId);
 
     return (

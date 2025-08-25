@@ -12,7 +12,7 @@ interface DownloadServerInfoProps {
     exportName: string;
 }
 
-export const DownloadServerInfo = ({ exportName, url }: DownloadServerInfoProps): JSX.Element => {
+export const DownloadServerInfo = ({ exportName, url }: DownloadServerInfoProps) => {
     const { router } = useApplicationServices();
 
     const handlePress = () => {

@@ -9,7 +9,7 @@ interface TestItemSubmenuProps {
     handleDeleteTest: () => void;
 }
 
-export const TestItemSubmenu = ({ id, testName, handleDeleteTest }: TestItemSubmenuProps): JSX.Element => {
+export const TestItemSubmenu = ({ id, testName, handleDeleteTest }: TestItemSubmenuProps) => {
     const DELETE = 'Delete';
     const items = [DELETE];
 

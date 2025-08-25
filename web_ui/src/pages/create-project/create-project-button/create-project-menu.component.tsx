@@ -53,7 +53,7 @@ const useMenuItems = () => {
     return items;
 };
 
-export const CreateProjectMenu = ({ openImportDatasetDialog }: CreateProjectMenuProps): JSX.Element => {
+export const CreateProjectMenu = ({ openImportDatasetDialog }: CreateProjectMenuProps) => {
     const { data: status } = useStatus();
     const [showImportProjectDialog, setShowImportProjectDialog] = useState(false);
     const [projectName, setProjectName] = useState('');

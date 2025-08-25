@@ -47,7 +47,7 @@ interface BaseLabelSearchProps {
     className?: string;
     dontFocusOnMount?: boolean;
     textFieldProps?: ComponentProps<typeof TextField>;
-    ResultWrapper?: (props: { children: ReactNode }) => JSX.Element;
+    ResultWrapper?: (props: { children: ReactNode }) => ReactNode;
     suffix?: SearchLabelTreeItemSuffix;
     prefix?: SearchLabelTreeItemSuffix;
     resultWrapperProps?: object;
@@ -67,7 +67,7 @@ export const BaseLabelSearch = forwardRef<TextFieldRef, BaseLabelSearchProps>(
             prefix,
         },
         ref
-    ): JSX.Element => {
+    ) => {
         const [input, setInput] = useState(textFieldProps.value ?? '');
 
         const results = useFilteredResults(input, labels);

@@ -30,7 +30,7 @@ export const AnnotationObjectsBarHorizontalChart = ({
     barSize = 20,
     yPadding,
     colors,
-}: AnnotationObjectsBarHorizontalChartProps): JSX.Element => {
+}: AnnotationObjectsBarHorizontalChartProps) => {
     const navigate = useNavigate();
     const datasetIdentifier = useDatasetIdentifier();
 

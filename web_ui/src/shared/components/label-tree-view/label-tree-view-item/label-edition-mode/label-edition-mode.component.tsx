@@ -36,7 +36,7 @@ export const LabelEditionMode = ({
     setValidationError,
     validationErrors,
     newTree,
-}: TreeViewItemEditModeProps<LabelTreeLabelProps>): JSX.Element => {
+}: TreeViewItemEditModeProps<LabelTreeLabelProps>) => {
     const wrapperRef = useRef(null);
 
     const isFocus = useRef(false);

@@ -17,7 +17,7 @@ export const TrainingModelLineChart = ({
     header,
     value,
     inCard = true,
-}: TrainingModelLineChartType & TrainingModelChartConfig): JSX.Element => {
+}: TrainingModelLineChartType & TrainingModelChartConfig) => {
     const { lineData, xAxisLabel, yAxisLabel } = value;
 
     const hasOnlyOneLine = lineData.length === 1;

@@ -13,7 +13,7 @@ interface UndoRedoProviderProps {
     state: UndoRedoActions;
 }
 
-const UndoRedoProvider = ({ state, children }: UndoRedoProviderProps): JSX.Element => {
+const UndoRedoProvider = ({ state, children }: UndoRedoProviderProps) => {
     return <UndoRedoContext.Provider value={state}>{children}</UndoRedoContext.Provider>;
 };
 

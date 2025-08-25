@@ -7,7 +7,7 @@ import { ToolLabel, ToolType } from '../../core/annotation-tool-context.interfac
 import { PrimaryToolbarButtonProps } from './primary-toolbar-button.interface';
 import { ToolToggleButton } from './tool-toggle-button.component';
 
-export const SelectToolButton = ({ activeTool, setActiveTool }: PrimaryToolbarButtonProps): JSX.Element => {
+export const SelectToolButton = ({ activeTool, setActiveTool }: PrimaryToolbarButtonProps) => {
     const handleSetActiveTool = () => {
         setActiveTool(ToolType.SelectTool);
     };

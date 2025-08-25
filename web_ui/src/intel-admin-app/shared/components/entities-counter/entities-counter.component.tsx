@@ -12,12 +12,7 @@ interface EntitiesCounterProps {
     entity: string;
 }
 
-export const EntitiesCounter: FC<EntitiesCounterProps> = ({
-    totalMatchedCount,
-    totalCount,
-    hasFilters,
-    entity,
-}): JSX.Element => {
+export const EntitiesCounter: FC<EntitiesCounterProps> = ({ totalMatchedCount, totalCount, hasFilters, entity }) => {
     const text = `${entity}${totalMatchedCount === 1 ? '' : 's'}`;
 
     if (hasFilters && totalCount > 0) {

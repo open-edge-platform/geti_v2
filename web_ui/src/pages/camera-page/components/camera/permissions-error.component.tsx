@@ -3,7 +3,7 @@
 
 import { dimensionValue, Flex, Heading, Text } from '@geti/ui';
 
-export const PermissionError = (): JSX.Element => {
+export const PermissionError = () => {
     return (
         <Flex
             gridArea={'content'}

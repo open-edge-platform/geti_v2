@@ -16,7 +16,7 @@ import classes from './video-player.module.scss';
 interface ResizeRangeThumbProps {
     isActive: boolean;
     index: number;
-    trackRef: RefObject<HTMLDivElement>;
+    trackRef: RefObject<HTMLDivElement | null>;
     state: SliderState;
     showResizeIcons: boolean;
 }
@@ -89,7 +89,7 @@ export const CreateRange = ({
             ? [videoTimelineValue, videoTimelineValue, videoTimelineValue]
             : [range[0], videoTimelineValue, range[1]];
 
-    const trackRef = useRef(null);
+    const trackRef = useRef<HTMLDivElement>(null);
     const numberFormatter = useNumberFormatter({});
 
     const state = useSliderState({ ...props, numberFormatter, onChange, value });

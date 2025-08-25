@@ -41,7 +41,7 @@ const isPositivePoint = (point: Point, shapes: Shape[], isRightClick: boolean, r
 // the user's cpu with too many decoding requests
 const THROTTLE_TIME = 150;
 
-export const SegmentAnythingTool = (): JSX.Element => {
+export const SegmentAnythingTool = () => {
     const { image, roi } = useROI();
     const {
         zoomState: { zoom },

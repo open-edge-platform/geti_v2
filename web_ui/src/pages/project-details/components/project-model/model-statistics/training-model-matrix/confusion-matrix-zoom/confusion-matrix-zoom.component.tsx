@@ -18,7 +18,7 @@ const fitConfusionMatrixSize = 3;
 
 const DownloadableConfusionMatrix = withDownloadableHtml(ConfusionMatrix);
 
-export const ConfusionMatrixZoom = ({ size, ...rest }: ConfusionMatrixZoomProps): JSX.Element => {
+export const ConfusionMatrixZoom = ({ size, ...rest }: ConfusionMatrixZoomProps) => {
     const disablePanningAndZoom = size <= fitConfusionMatrixSize;
 
     return (

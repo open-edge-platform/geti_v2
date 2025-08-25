@@ -16,7 +16,7 @@ export const AdjustmentAnnotation = ({
     formatOptions,
     defaultValue,
     isDisabled,
-}: AdjustmentAnnotationProps): JSX.Element => {
+}: AdjustmentAnnotationProps) => {
     return (
         <View>
             <AdjustmentHeader

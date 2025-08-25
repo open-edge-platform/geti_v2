@@ -19,7 +19,7 @@ export const CollapsedItemsPicker = ({
     onSelectionChange,
     hasSelectedPinnedItem,
     numberOfCollapsedItems,
-}: CollapsedItemsPickerProps): JSX.Element => {
+}: CollapsedItemsPickerProps) => {
     return (
         <Picker
             isQuiet

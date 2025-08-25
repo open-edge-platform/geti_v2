@@ -13,7 +13,7 @@ export const ProjectListItemSkeletonLoader = ({
 }: {
     itemCount: number;
     style?: CSSProperties;
-}): JSX.Element => {
+}) => {
     return (
         <div
             data-testid='project-item-loader-list'

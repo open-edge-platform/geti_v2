@@ -14,7 +14,7 @@ interface CopyTextProps {
     confirmationMessage: string;
 }
 
-export const OrganizationAdminsCopyText = (props: CopyTextProps): JSX.Element => {
+export const OrganizationAdminsCopyText = (props: CopyTextProps) => {
     const { copy } = useClipboard();
     const { pressProps } = usePress({ onPress: () => copy(props.text, props.confirmationMessage) });
 

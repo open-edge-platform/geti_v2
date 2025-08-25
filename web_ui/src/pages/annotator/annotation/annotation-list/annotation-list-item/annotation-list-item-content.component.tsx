@@ -131,7 +131,7 @@ export const AnnotationListItemContent = ({
     isLast = false,
     annotation,
     annotationToolContext,
-}: AnnotationListItemContentProps): JSX.Element => {
+}: AnnotationListItemContentProps) => {
     const [selectLabel, setSelectLabel] = useState(false);
 
     const isSceneBusy = useIsSceneBusy();

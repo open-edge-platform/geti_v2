@@ -33,12 +33,7 @@ interface ExportProjectDialogProps {
     ) => void;
 }
 
-export const ExportProjectDialog = ({
-    onClose,
-    isOpen,
-    onExportProject,
-    projectId,
-}: ExportProjectDialogProps): JSX.Element => {
+export const ExportProjectDialog = ({ onClose, isOpen, onExportProject, projectId }: ExportProjectDialogProps) => {
     const [selectedModelExportOption, setSelectedModelExportOption] = useState(EXPORT_PROJECT_MODELS_OPTIONS.ALL);
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
 

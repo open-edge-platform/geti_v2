@@ -37,7 +37,7 @@ interface ProjectsImportProviderProps {
     children: ReactNode;
 }
 
-export const ProjectsImportProvider = ({ children }: ProjectsImportProviderProps): JSX.Element => {
+export const ProjectsImportProvider = ({ children }: ProjectsImportProviderProps) => {
     const { useImportProjectMutation } = useImportProject();
     const importProjectMutation = useImportProjectMutation();
 

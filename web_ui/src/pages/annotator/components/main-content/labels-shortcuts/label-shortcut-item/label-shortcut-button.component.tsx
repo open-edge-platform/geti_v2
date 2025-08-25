@@ -8,10 +8,7 @@ import { ActionButton, type ActionButtonProps, type FocusableRef } from '@geti/u
 import classes from './label-shortcut-button.module.scss';
 
 export const LabelShortcutButton = forwardRef(
-    (
-        { children, id, onPress, UNSAFE_className, ...rest }: ActionButtonProps,
-        ref: FocusableRef<HTMLButtonElement>
-    ): JSX.Element => {
+    ({ children, id, onPress, UNSAFE_className, ...rest }: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) => {
         return (
             <ActionButton
                 id={id}

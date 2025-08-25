@@ -23,7 +23,7 @@ import { SortByDropdown } from './components/sort-by-dropdown.component';
 
 const cameraPagePath = (datasetIdentifier: DatasetIdentifier) => paths.project.dataset.camera(datasetIdentifier);
 
-export const MediaGallery = (): JSX.Element => {
+export const MediaGallery = () => {
     const navigate = useNavigate();
     const dialogState = useOverlayTriggerState({});
     const [previewIndex, setPreviewIndex] = useState<null | number>(0);

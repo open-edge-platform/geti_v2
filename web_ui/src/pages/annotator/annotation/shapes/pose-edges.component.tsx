@@ -22,7 +22,7 @@ interface PoseEdgesProps extends KeypointProps {
     showBoundingBox?: boolean;
 }
 
-export const PoseEdges = ({ shape, boundingBox, showBoundingBox = true }: PoseEdgesProps): JSX.Element => {
+export const PoseEdges = ({ shape, boundingBox, showBoundingBox = true }: PoseEdgesProps) => {
     const { project } = useProject();
     const { zoomState } = useZoom();
     const { isSelected } = useSelected();

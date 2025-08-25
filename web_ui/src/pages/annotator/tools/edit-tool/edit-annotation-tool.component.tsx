@@ -104,7 +104,7 @@ const EditAnnotationToolFactory = ({
 };
 
 interface EditAnnotationToolProps extends EditAnnotationToolFactoryProps {
-    canvasRef?: RefObject<SVGSVGElement>;
+    canvasRef?: RefObject<SVGSVGElement | null>;
 }
 
 export const EditAnnotationTool = ({
@@ -113,7 +113,7 @@ export const EditAnnotationTool = ({
     disableTranslation = false,
     disablePoints = false,
     canvasRef,
-}: EditAnnotationToolProps): JSX.Element => {
+}: EditAnnotationToolProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const { getToolSettings } = annotationToolContext;
 

@@ -46,7 +46,7 @@ export const OrganizationsTable = ({
     isLoading,
     isFetchingNextPage,
     setOrganizationsQueryOptions,
-}: OrganizationsTableProps): JSX.Element => {
+}: OrganizationsTableProps) => {
     const queryClient = useQueryClient();
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
 

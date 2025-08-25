@@ -16,7 +16,7 @@ interface CardContentProps extends StyleProps {
     title: string;
     gridArea?: string;
     styles?: CSSProperties;
-    actions?: JSX.Element;
+    actions?: ReactNode;
     isDownloadable?: boolean;
     titleActions?: ReactNode;
     downloadableData?: DownloadableData;
@@ -34,7 +34,7 @@ export const CardContent = ({
     downloadableData,
     tooltip,
     ...rest
-}: CardContentProps): JSX.Element => {
+}: CardContentProps) => {
     const id = idMatchingFormat(title);
     const container = useRef(null);
 

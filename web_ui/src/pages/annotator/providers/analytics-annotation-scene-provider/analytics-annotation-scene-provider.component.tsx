@@ -21,10 +21,7 @@ interface AnalyticsAnnotationSceneProviderProps {
     activeTool: ToolType;
 }
 
-export const AnalyticsAnnotationSceneProvider = ({
-    children,
-    activeTool,
-}: AnalyticsAnnotationSceneProviderProps): JSX.Element => {
+export const AnalyticsAnnotationSceneProvider = ({ children, activeTool }: AnalyticsAnnotationSceneProviderProps) => {
     const parentScene = useAnnotationScene();
     const [scene, toolPerAnnotationState] = useEnhancedAnalyticsAnnotationScene(parentScene, activeTool);
 

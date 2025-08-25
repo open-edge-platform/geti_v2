@@ -57,7 +57,7 @@ const onFormatAndDownload = runWhenTruthy((downloadableData: DownloadableData, f
 });
 
 export const DownloadGraphMenu = forwardRef<HTMLDivElement, DownloadGraphMenuProps>(
-    ({ data, tooltip, fileName, graphBackgroundColor }, ref): JSX.Element => {
+    ({ data, tooltip, fileName, graphBackgroundColor }, ref) => {
         const [isDownloading, setIsDownloading] = useState(false);
         const container = ref as RefObject<DOMRefValue<HTMLDivElement>>;
         const unwrappedContainer = useUnwrapDOMRef(container);

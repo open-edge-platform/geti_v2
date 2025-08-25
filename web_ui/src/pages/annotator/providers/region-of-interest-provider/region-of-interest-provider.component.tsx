@@ -35,7 +35,7 @@ const useContainerBoundingBox = (image: ImageData): RegionOfInterest => {
     }, [inputAnnotation, image]);
 };
 
-export const RegionOfInterestProvider = ({ children }: RegionOfInterestProviderProps): JSX.Element => {
+export const RegionOfInterestProvider = ({ children }: RegionOfInterestProviderProps) => {
     const { selectedMediaItem } = useSelectedMediaItem();
 
     const image = useMemo<ImageData>(

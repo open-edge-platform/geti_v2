@@ -27,7 +27,7 @@ export const OrganizationsFilters = ({
     hasFilters,
     totalMatchedCount,
     setOrganizationsQueryOptions,
-}: OrganizationsFiltersProps): JSX.Element => {
+}: OrganizationsFiltersProps) => {
     const [filterByOrganizationName, setFilterByOrganizationName] = useState<string>('');
     const [selectedOrgStatus, setSelectedOrgStatus] = useState<OrganizationsStatusName>(STATUSES[0].name);
 

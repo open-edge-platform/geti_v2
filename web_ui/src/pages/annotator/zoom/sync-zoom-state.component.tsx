@@ -52,7 +52,7 @@ export const SyncZoomTarget = () => {
     - Reset the zoomState if the selectedTask is a global task
     - Zoom in on the annotation if the selectedTask is a local task
 */
-export const SyncZoomState = (): JSX.Element => {
+export const SyncZoomState = () => {
     const { zoomTarget, getZoomStateForTarget, screenSize, zoomState, setZoomState } = useZoom();
 
     const { setTransform } = useControls();

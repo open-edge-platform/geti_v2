@@ -26,7 +26,7 @@ export const ProjectImportPanel = ({
 }: {
     options: ImportOptions;
     onImportProject: () => void;
-}): JSX.Element => {
+}) => {
     const { importProject } = useProjectsImportProvider();
     const docsUrl = useDocsUrl();
 

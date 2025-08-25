@@ -33,7 +33,7 @@ export const DatasetImportDnd = ({
     isAnomaly = false,
     paddingX = 0,
     paddingY = 0,
-}: DatasetImportDndProps): JSX.Element => {
+}: DatasetImportDndProps) => {
     const fileInputRef = useRef<HTMLInputElement>({} as HTMLInputElement);
     const isExtraLarge = useMediaQuery(isExtraLargeSizeQuery);
 

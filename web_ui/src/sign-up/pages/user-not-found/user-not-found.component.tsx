@@ -9,7 +9,7 @@ import { redirectTo } from '../../../shared/utils';
 
 import classes from '../../../pages/errors/error-layout/error-layout.module.scss';
 
-export const UserNotFound = (): JSX.Element => {
+export const UserNotFound = () => {
     const handleLoginRedirect = (): void => {
         redirectTo(paths.root({}));
     };

@@ -32,7 +32,7 @@ export const ModelCard = ({
     modelTemplateId,
     isMenuOptionsDisabled,
     complexity,
-}: ModelCardProps): JSX.Element => {
+}: ModelCardProps) => {
     const { id, version, performance, creationDate, isActiveModel, groupId, groupName, isLabelSchemaUpToDate } = model;
 
     const navigate = useNavigate();

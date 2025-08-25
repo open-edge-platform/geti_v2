@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { getFormattedPoints } from '../../utils';
 import { PolygonProps } from './shape.interface';
 
-export const Polygon = ({ shape, styles, ariaLabel }: PolygonProps): JSX.Element => {
+export const Polygon = ({ shape, styles, ariaLabel }: PolygonProps) => {
     const points = useMemo((): string => getFormattedPoints(shape.points), [shape]);
 
     return (

@@ -36,7 +36,7 @@ export const MediaItemsBucket = ({
     selectedMediaItem,
     mediaFilterOptions,
     setSelectedTestItem,
-}: MediaItemsBucketProps): JSX.Element => {
+}: MediaItemsBucketProps) => {
     const projectIdentifier = useProjectIdentifier();
     const { testId } = useParams<{ testId: string }>();
     const [viewMode, setViewMode] = useViewMode(type, ViewModes.SMALL);

@@ -16,13 +16,7 @@ interface TasksListProps {
     marginBottom?: StyleProps['marginBottom'];
 }
 
-export const TasksList = ({
-    items,
-    selectedTask,
-    setSelectedTask,
-    marginTop,
-    marginBottom,
-}: TasksListProps): JSX.Element => {
+export const TasksList = ({ items, selectedTask, setSelectedTask, marginTop, marginBottom }: TasksListProps) => {
     return (
         <Picker
             isQuiet

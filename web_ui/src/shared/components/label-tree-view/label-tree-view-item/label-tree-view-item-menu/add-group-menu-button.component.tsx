@@ -6,7 +6,7 @@ import { AddGroup } from '@geti/ui/icons';
 
 import { MenuButtonProps } from './menu-button.interface';
 
-export const AddGroupMenuButton = ({ action, id }: MenuButtonProps): JSX.Element => {
+export const AddGroupMenuButton = ({ action, id }: MenuButtonProps) => {
     const elementId = `${id}-add-child-group-button`;
 
     return (

@@ -29,7 +29,7 @@ import { Settings } from './settings/settings.component';
 
 import classes from './navigation-toolbar.module.scss';
 
-export const NavigationToolbar = ({ settings }: { settings: UseSettings<UserProjectSettings> }): JSX.Element => {
+export const NavigationToolbar = ({ settings }: { settings: UseSettings<UserProjectSettings> }) => {
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const selectedDataset = useSelectedDataset();
     const isCreditAccountEnabled = useIsCreditAccountEnabled();

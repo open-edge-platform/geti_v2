@@ -42,7 +42,7 @@ export const ActivateModelDialog = ({
     handleDismiss,
     handleActivateModel,
     handleActivateAndRetrainModel,
-}: ActivateModelDialogProps): JSX.Element => {
+}: ActivateModelDialogProps) => {
     // we need two separate variables to correctly display disabled/loading status of buttons
     const [isActivateLoading, setIsActivateLoading] = useState<boolean>(false);
     const [isActivateRetrainLoading, setIsActivateRetrainLoading] = useState<boolean>(false);

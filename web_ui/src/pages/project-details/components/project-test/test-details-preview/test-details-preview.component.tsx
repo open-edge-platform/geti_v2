@@ -86,7 +86,7 @@ const TestDetailsPreviewContent = ({
     setSelectedMediaItem,
     selectedTestMediaItem,
     setSelectedTestMediaItem,
-}: TestDetailsPreviewWrapperProps): JSX.Element => {
+}: TestDetailsPreviewWrapperProps) => {
     const { project } = useProject();
     const [mode, setMode] = useState<ANNOTATOR_MODE>(ANNOTATOR_MODE.PREDICTION);
     const isPredictionMode = mode === ANNOTATOR_MODE.PREDICTION;
@@ -123,13 +123,13 @@ const TestDetailsPreviewContent = ({
     return (
         <MediaItemAnnotationsPreviewDialog
             close={close}
-            additionalButtons={[
+            additionalButtons={
                 <EditAnnotationsButton
                     key={'test-dataset-edit-predictions'}
                     datasetIdentifier={datasetIdentifier}
                     mediaItem={selectedMediaItem}
-                />,
-            ]}
+                />
+            }
             title={testName}
             subTitle={modelInformation}
             selectedPreviewItem={selectedMediaItem}

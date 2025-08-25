@@ -13,7 +13,7 @@ import classes from './security-page.module.scss';
 interface SecurityPageProps {
     activeUserId: string;
 }
-export const SecurityPage = ({ activeUserId }: SecurityPageProps): JSX.Element => {
+export const SecurityPage = ({ activeUserId }: SecurityPageProps) => {
     const isSaaS = useIsSaasEnv();
 
     return (

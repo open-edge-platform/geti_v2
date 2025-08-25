@@ -79,7 +79,7 @@ export const UploadStatusBar = ({
     onUploadMedia,
     abortMediaUploads,
     mediaUploadState,
-}: UploadStatusBarProps): JSX.Element => {
+}: UploadStatusBarProps) => {
     const loadedMediasRef = useRef<string | number>('');
     const loadingMediasRef = useRef<string | number>('');
     const uploadStatusDialogState = useOverlayTriggerState({});

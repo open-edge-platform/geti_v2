@@ -75,7 +75,7 @@ interface ResetInitialZoomProps {
 
 // The goal of this component is to override the initial props that are passed to the TransformWrapper component.
 // TransformWrapper does not change the props when initialZoomState changes. This component fixes that behaviour.
-const ResetInitialZoom = ({ initialZoomState }: ResetInitialZoomProps): JSX.Element => {
+const ResetInitialZoom = ({ initialZoomState }: ResetInitialZoomProps) => {
     const instance = useTransformContext();
 
     useEffect(() => {
@@ -95,7 +95,7 @@ const ResetInitialZoom = ({ initialZoomState }: ResetInitialZoomProps): JSX.Elem
     return <></>;
 };
 
-export const ZoomProvider = ({ children }: ZoomProviderProps): JSX.Element => {
+export const ZoomProvider = ({ children }: ZoomProviderProps) => {
     const [isZoomDisabled, setIsZoomDisabled] = useState<boolean>(false);
     const [isPanningDisabled, setIsPanningDisabled] = useState<boolean>(true);
     const [isPanning, setIsPanning] = useState<boolean>(false);

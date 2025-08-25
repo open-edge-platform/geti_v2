@@ -31,7 +31,7 @@ interface UserActionsProps {
 
 type UserSignedInProps = Pick<User, 'userPhoto' | 'email'> & { fullName: string };
 
-const UserSignedIn = ({ email, fullName, userPhoto }: UserSignedInProps): JSX.Element => {
+const UserSignedIn = ({ email, fullName, userPhoto }: UserSignedInProps) => {
     return (
         <Text data-testid={'user-summary-id'} id={'user-summary-id'}>
             <Grid gap={'size-100'} columns={['max-content', '1fr']} alignItems={'start'}>
@@ -53,7 +53,7 @@ const UserSignedIn = ({ email, fullName, userPhoto }: UserSignedInProps): JSX.El
     );
 };
 
-export const UserActions = ({ isDarkMode }: UserActionsProps): JSX.Element => {
+export const UserActions = ({ isDarkMode }: UserActionsProps) => {
     const handleSignOut = useHandleSignOut();
     const navigate = useNavigate();
     const { organizationId } = useOrganizationIdentifier();

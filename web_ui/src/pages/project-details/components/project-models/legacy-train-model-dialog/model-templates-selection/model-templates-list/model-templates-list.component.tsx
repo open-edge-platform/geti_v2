@@ -46,7 +46,7 @@ const ModelTemplatesGrid = ({
     selectedModelTemplateId,
     handleSelectedTemplateId,
     activeModelTemplateIdPerTask,
-}: ModelTemplatesGridProps): JSX.Element => {
+}: ModelTemplatesGridProps) => {
     const sortingHandler = sortingHandlers[sortingOption];
 
     return (
@@ -76,7 +76,7 @@ export const ModelTemplatesList = ({
     selectedModelTemplateId,
     handleSelectedTemplateId,
     activeModelTemplateIdPerTask,
-}: TrainModelTemplatesProps): JSX.Element => {
+}: TrainModelTemplatesProps) => {
     const [sortingOption, setSortingOption] = useState<SortingOptions>(SortingOptions.RELEVANCE);
     const [otherTemplates, recommendedTemplates] = partition(templates, [
         'performanceCategory',

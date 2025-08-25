@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ComponentProps, CSSProperties } from 'react';
+import { ComponentProps, CSSProperties, ReactNode } from 'react';
 
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { Point } from '../../../../core/annotations/shapes.interface';
@@ -28,5 +28,5 @@ export interface MarkerToolProps {
     strokeLinecap?: StrokeLinecap;
     strokeLinejoin?: StrokeLinejoin;
     onComplete: (marker: Marker) => void;
-    renderCursor?: (props: ComponentProps<typeof BrushSizeCursor>) => JSX.Element;
+    renderCursor?: (props: ComponentProps<typeof BrushSizeCursor>) => ReactNode;
 }

@@ -30,7 +30,7 @@ export const RadialChart = ({
     circleSize = 100,
     innerRadius = 80,
     legend,
-}: RadialChartProps): JSX.Element => {
+}: RadialChartProps) => {
     return (
         <ResponsiveContainer width={'98%'} height={'98%'}>
             <DownloadableRadialBarChart

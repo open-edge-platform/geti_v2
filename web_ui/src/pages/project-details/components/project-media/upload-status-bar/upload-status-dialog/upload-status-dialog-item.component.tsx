@@ -44,7 +44,7 @@ interface UploadStatusDialogItemProps {
     item: SuccessListItem | ErrorListItem | ProgressListItem | QueuedListItem;
     type: UploadStatusDialogItemTypes;
 }
-export const UploadStatusDialogItem = ({ item, type }: UploadStatusDialogItemProps): JSX.Element => {
+export const UploadStatusDialogItem = ({ item, type }: UploadStatusDialogItemProps) => {
     const { retry } = useDatasetMediaUpload();
 
     const itemProgress = useMemo<number>(() => {
@@ -77,7 +77,7 @@ export const UploadStatusDialogItem = ({ item, type }: UploadStatusDialogItemPro
         return errorItem.status < 0 || errorItem.status === 415;
     }, [type, item]);
 
-    const statusColumnContent = useMemo<JSX.Element>(() => {
+    const statusColumnContent = useMemo(() => {
         switch (type) {
             case UploadStatusDialogItemTypes.PROGRESS:
             case UploadStatusDialogItemTypes.COMMON:
@@ -127,7 +127,7 @@ export const UploadStatusDialogItem = ({ item, type }: UploadStatusDialogItemPro
         }
     }, [type, item, isValidationError, retry]);
 
-    const baseItemIcon = useMemo<JSX.Element>(() => {
+    const baseItemIcon = useMemo(() => {
         const isImageType = item.fileType.startsWith(MEDIA_TYPE.IMAGE);
         const isVideoType =
             item.fileType.startsWith(MEDIA_TYPE.VIDEO) || item.fileType.startsWith(MEDIA_TYPE.VIDEO_FRAME);

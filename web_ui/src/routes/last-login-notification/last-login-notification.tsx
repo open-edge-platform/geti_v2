@@ -10,7 +10,7 @@ import { useIsSaasEnv } from '../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { usePreviousSignIn } from '../../shared/hooks/use-previous-sign-in.hook';
 import { LOCAL_STORAGE_KEYS } from '../../shared/local-storage-keys';
 
-export const LastLoginNotification = (): JSX.Element => {
+export const LastLoginNotification = () => {
     const isSaaS = useIsSaasEnv();
     const { lastLoginDate, userId } = usePreviousSignIn();
     const [lastLoginInfo, setLastLoginInfo] = useLocalStorage<string>(LOCAL_STORAGE_KEYS.LAST_LOGIN_INFO, '');

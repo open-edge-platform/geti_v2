@@ -22,11 +22,7 @@ const KEY_SEPARATOR = '_';
 
 const getKey = (name: string, direction: string) => `${name.toLocaleLowerCase()}${KEY_SEPARATOR}${direction}`;
 
-export const MediaSorting = ({
-    isDisabled = false,
-    sortingOptions,
-    setSortingOptions,
-}: MediaSortingProps): JSX.Element => {
+export const MediaSorting = ({ isDisabled = false, sortingOptions, setSortingOptions }: MediaSortingProps) => {
     const selectedKey = !isEmpty(sortingOptions)
         ? `${getKey(sortingOptions.sortBy ?? '', sortingOptions.sortDir ?? '')}`
         : '';

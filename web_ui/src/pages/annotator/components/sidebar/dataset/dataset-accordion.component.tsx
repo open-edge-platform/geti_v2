@@ -66,7 +66,7 @@ const RefreshActiveSet = () => {
     );
 };
 
-export const DatasetAccordion = ({ setViewMode, viewMode }: DatasetAccordionProps): JSX.Element => {
+export const DatasetAccordion = ({ setViewMode, viewMode }: DatasetAccordionProps) => {
     const {
         totalMatches,
         isInActiveMode,

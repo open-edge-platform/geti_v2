@@ -94,7 +94,7 @@ const useSegmentAnythingWorker = (
 ) => {
     const { worker } = useLoadAIWebworker(algorithmType);
 
-    const modelRef = useRef<Remote<SegmentAnythingModel>>();
+    const modelRef = useRef<Remote<SegmentAnythingModel>>(undefined);
     const [modelIsLoading, setModelIsLoading] = useState(false);
 
     useEffect(() => {

@@ -25,7 +25,7 @@ interface AnalyticsProviderProps {
 
 const AnalyticsContext = createContext<AnalyticsContextProps | undefined>(undefined);
 
-const AnalyticsProvider = ({ children }: AnalyticsProviderProps): JSX.Element => {
+const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const [isWindowFocus, setIsWindowFocus] = useState<boolean>(true);
     const [isDocumentContentVisible, setIsDocumentContentVisible] = useState<boolean>(true);
     const { data: workflowId } = useWorkflowId();

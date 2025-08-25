@@ -59,7 +59,7 @@ export const LabelTreeViewItem = ({
     isMixedRelation,
     validationErrors,
     setValidationError,
-}: LabelTreeViewItemProps): JSX.Element => {
+}: LabelTreeViewItemProps) => {
     const { FEATURE_FLAG_LABELS_REORDERING } = useFeatureFlags();
 
     const [isOpen, setIsOpen] = useState<boolean>(item.open);

@@ -8,6 +8,6 @@ import { TextFieldRef } from '@react-types/textfield';
 
 type SearchFieldProps = Omit<ComponentProps<typeof SpectrumSearchField>, 'ref'>;
 
-export const SearchField = forwardRef<TextFieldRef, SearchFieldProps>((props, ref): JSX.Element => {
+export const SearchField = forwardRef<TextFieldRef, SearchFieldProps>((props, ref) => {
     return <SpectrumSearchField {...props} ref={ref} />;
 });

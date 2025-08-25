@@ -14,7 +14,7 @@ interface SuspendedOrganizationProps {
     status: AccountStatus.SUSPENDED | AccountStatus.DELETED;
 }
 
-export const SuspendedOrganization = ({ status }: SuspendedOrganizationProps): JSX.Element => {
+export const SuspendedOrganization = ({ status }: SuspendedOrganizationProps) => {
     const handleSignOut = useHandleSignOut();
 
     return (

@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Dispatch, Key, SetStateAction } from 'react';
+import { Dispatch, Key, ReactNode, SetStateAction } from 'react';
 
 import { Item, Menu, MenuTrigger, Tooltip, TooltipTrigger } from '@adobe/react-spectrum';
 import { capitalize } from 'lodash-es';
@@ -12,7 +12,7 @@ import { VIEW_MODE_LABEL, ViewModes } from './utils';
 
 const ITEMS = [ViewModes.LARGE, ViewModes.MEDIUM, ViewModes.SMALL, ViewModes.DETAILS];
 
-const ICON_PER_MODE: Record<ViewModes, JSX.Element> = {
+const ICON_PER_MODE: Record<ViewModes, ReactNode> = {
     [ViewModes.DETAILS]: <List />,
     [ViewModes.SMALL]: <GridSmall />,
     [ViewModes.MEDIUM]: <GridMedium />,

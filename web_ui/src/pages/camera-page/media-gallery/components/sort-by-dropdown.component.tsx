@@ -9,7 +9,7 @@ interface SortByDropdownProps {
     onSelect: (key: SortingOptions) => void;
 }
 
-export const SortByDropdown = ({ onSelect }: SortByDropdownProps): JSX.Element => {
+export const SortByDropdown = ({ onSelect }: SortByDropdownProps) => {
     return (
         <Flex alignItems={'center'} gap={'size-100'}>
             <Text UNSAFE_style={{ fontWeight: 'bold' }}>Sort by: </Text>

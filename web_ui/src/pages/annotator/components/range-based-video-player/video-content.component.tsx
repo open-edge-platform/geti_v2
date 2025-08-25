@@ -13,7 +13,7 @@ import { TransformZoom } from './transform-zoom.component';
 
 interface VideoContentProps {
     mediaItem: VideoFrame;
-    video: RefObject<HTMLVideoElement>;
+    video: RefObject<HTMLVideoElement | null>;
     setFrameNumber: (number: number) => void;
     onPlay: () => void;
     onPause: () => void;

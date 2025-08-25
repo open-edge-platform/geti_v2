@@ -22,7 +22,7 @@ export const WorkspaceRoleRow = ({
     changeWorkspace,
     changeRole,
     workspaces,
-}: WorkspaceRoleProps): JSX.Element => {
+}: WorkspaceRoleProps) => {
     const { workspace, role } = workspaceRole;
 
     return (

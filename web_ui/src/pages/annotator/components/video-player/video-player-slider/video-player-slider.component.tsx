@@ -82,8 +82,8 @@ export const VideoPlayerSlider = forwardRef<HTMLDivElement, VideoPlayerSliderPro
             sizePerSquare,
         },
         ref
-    ): JSX.Element => {
-        const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+    ) => {
+        const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
         const [showThumbnail, setShowThumbnail] = useState(false);
         const [thumbnailPosition, setThumbnailPosition] = useState<null | number>(null);
 

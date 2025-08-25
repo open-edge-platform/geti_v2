@@ -24,7 +24,7 @@ export const NameEditionField = ({
     gridArea,
     labelState,
     onFocusChange = noop,
-}: NameEditionFieldProps): JSX.Element => {
+}: NameEditionFieldProps) => {
     const newChildNameRef = useRef<TextFieldRef>(null);
 
     useEffect(() => {

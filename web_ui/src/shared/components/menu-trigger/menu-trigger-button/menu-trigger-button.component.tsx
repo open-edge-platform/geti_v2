@@ -16,7 +16,7 @@ import classes from '../menu-trigger.module.scss';
 interface MenuTriggerButtonProps extends Omit<MenuTriggerProps, 'children'> {
     title?: string;
     isQuiet?: boolean;
-    icon?: JSX.Element;
+    icon?: ReactNode;
     variant?: ComponentProps<typeof Button>['variant'];
     ariaLabel?: string;
     isDisabled?: boolean;
@@ -44,7 +44,7 @@ export const MenuTriggerButton = ({
     isDisabled,
     tooltipPlacement = 'bottom',
     grayedOutKeys,
-}: MenuTriggerButtonProps): JSX.Element => {
+}: MenuTriggerButtonProps) => {
     return (
         <MenuTrigger
             id={id}

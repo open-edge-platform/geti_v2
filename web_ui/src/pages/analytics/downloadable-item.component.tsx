@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { Flex, Heading, Text, View } from '@geti/ui';
 
 import { idMatchingFormat } from '../../test-utils/id-utils';
@@ -15,7 +17,7 @@ export enum ExportServerType {
 
 interface DownloadableItemBaseProps {
     description: string;
-    icon: JSX.Element;
+    icon: ReactNode;
 }
 
 interface DownloadableAnalyticsItemProps extends DownloadableItemBaseProps {
@@ -30,7 +32,7 @@ interface DownloadableServerInfoItemProps extends DownloadableItemBaseProps {
 
 type DownloadableItemProps = DownloadableAnalyticsItemProps | DownloadableServerInfoItemProps;
 
-export const DownloadableItem = ({ url, icon, header, description }: DownloadableItemProps): JSX.Element => {
+export const DownloadableItem = ({ url, icon, header, description }: DownloadableItemProps) => {
     return (
         <View paddingY={'size-200'}>
             <Flex gap={'size-200'} data-testid={`downloadable-item-${idMatchingFormat(header)}`}>

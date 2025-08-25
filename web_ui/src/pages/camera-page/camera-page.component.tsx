@@ -26,7 +26,7 @@ const useLowStorage = () => {
     });
 };
 
-export const CameraPage = (): JSX.Element => {
+export const CameraPage = () => {
     const { userPermissions } = useDeviceSettings();
 
     useLowStorage();

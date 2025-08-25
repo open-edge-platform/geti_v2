@@ -10,7 +10,7 @@ interface LabelEditionFieldsWrapperProps {
     wrapperRef?: MutableRefObject<null>;
 }
 
-export const LabelEditionFieldsWrapper = ({ children, wrapperRef }: LabelEditionFieldsWrapperProps): JSX.Element => {
+export const LabelEditionFieldsWrapper = ({ children, wrapperRef }: LabelEditionFieldsWrapperProps) => {
     const GRID_AREAS = ['color name hotkey actionButtons', '. nameError hotkeyError hotkeyError'];
     const GRID_COLUMNS = ['min-content', '1fr', 'auto', 'min-content'];
 
