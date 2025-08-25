@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { cloneElement, isValidElement, ReactNode, useRef } from 'react';
+import { ReactNode, RefObject, useRef } from 'react';
 
 import {
     ActionButton,
@@ -14,6 +14,8 @@ import {
     Tooltip,
     TooltipTrigger,
 } from '@adobe/react-spectrum';
+import { type DOMRefValue } from '@react-types/shared';
+import { isFunction } from 'lodash-es';
 
 import { Collapse, Expand } from '../../icons';
 
@@ -22,7 +24,7 @@ import classes from './fullscreen-dialog.module.scss';
 interface FullscreenActionProps {
     children: ReactNode;
     title?: string | ReactNode;
-    actionButton?: ReactNode;
+    actionButton?: ((ref: RefObject<DOMRefValue<HTMLDivElement> | null>) => ReactNode) | ReactNode;
     id?: string;
 }
 
@@ -45,9 +47,7 @@ export const FullscreenAction = ({ children, title, actionButton, id }: Fullscre
                     <Divider />
 
                     <ButtonGroup>
-                        {actionButton && isValidElement(actionButton)
-                            ? cloneElement(actionButton as React.ReactElement, { ref: container })
-                            : actionButton}
+                        {isFunction(actionButton) ? actionButton(container) : actionButton}
 
                         <TooltipTrigger placement={'bottom'}>
                             <ActionButton isQuiet onPress={close} aria-label='Close fullscreen'>

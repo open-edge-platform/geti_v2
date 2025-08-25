@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { memo, MutableRefObject, useEffect, useMemo, useRef } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
 
 import { Flex } from '@geti/ui';
 import useVirtual from 'react-cool-virtual';
@@ -76,7 +76,7 @@ export const VideoTimeline = ({ selectFrame, labels }: VideoTimelineProps) => {
                 <div style={{ width: sizePerSquare * totalSegments }} className={classes.timelineSliderWrapper}>
                     <VideoPlayerSlider
                         frameOffset={frameOffset}
-                        ref={outerRef as MutableRefObject<null>}
+                        ref={outerRef}
                         isInActiveMode={false}
                         mediaItem={videoFrame}
                         selectFrame={selectFrame}

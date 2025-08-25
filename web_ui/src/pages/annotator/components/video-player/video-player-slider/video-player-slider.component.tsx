@@ -1,9 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ForwardedRef, forwardRef, PointerEvent, RefObject, useEffect, useRef, useState } from 'react';
+import { PointerEvent, RefObject, useEffect, useRef, useState } from 'react';
 
-import { type DOMRefValue } from '@geti/ui';
 import { isEmpty, minBy } from 'lodash-es';
 import { useHover } from 'react-aria';
 
@@ -54,157 +53,156 @@ interface VideoPlayerSliderProps {
     minValue: number;
     frameOffset?: number;
     sizePerSquare?: number;
+    ref?: RefObject<HTMLDivElement | null>;
 }
 
-const getContainerScroll = (ref: ForwardedRef<HTMLDivElement>) => {
-    const containerRef = ref as RefObject<DOMRefValue<HTMLDivElement>>;
+const getContainerScroll = (ref?: RefObject<HTMLDivElement | null>) => {
+    if (ref === undefined) {
+        return 0;
+    }
 
-    if (containerRef?.current) {
-        return (containerRef?.current as unknown as HTMLDivElement)?.scrollLeft ?? 0;
+    if (ref.current) {
+        return ref.current.scrollLeft;
     }
 
     return 0;
 };
 
 const THUMBNAIL_DELAY = 1000;
-export const VideoPlayerSlider = forwardRef<HTMLDivElement, VideoPlayerSliderProps>(
-    (
-        {
-            mediaItem,
-            selectFrame,
-            step,
-            isInActiveMode,
-            restrictedVideoFrames,
-            maxValue,
-            minValue,
-            highlightedFrames = [],
-            frameOffset = 0,
-            sizePerSquare,
+export const VideoPlayerSlider = ({
+    mediaItem,
+    selectFrame,
+    step,
+    isInActiveMode,
+    restrictedVideoFrames,
+    maxValue,
+    minValue,
+    highlightedFrames = [],
+    frameOffset = 0,
+    sizePerSquare,
+    ref,
+}: VideoPlayerSliderProps) => {
+    const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+    const [showThumbnail, setShowThumbnail] = useState(false);
+    const [thumbnailPosition, setThumbnailPosition] = useState<null | number>(null);
+
+    const [thumbnailVideoFrame, setThumbnailVideoFrame] = useState<null | number>(null);
+    const setThumbnailVideoFrameDebounced = useDebouncedCallback(setThumbnailVideoFrame, 200);
+
+    const frameNumber = mediaItem.identifier.frameNumber;
+    const containerScrollLeft = getContainerScroll(ref);
+    const buffers = useStreamingVideoPlayerContext()?.buffers ?? [];
+    const [sliderValue, setSliderValue] = useState(frameNumber);
+
+    const isDisplayingFrames = FRAME_STEP_TO_DISPLAY_ALL_FRAMES === step;
+    const lastFrame = isDisplayingFrames ? mediaItem.metadata.frames : mediaItem.metadata.frames - step;
+
+    const { hoverProps } = useHover({
+        onHoverStart: () => {
+            timeoutRef.current = setTimeout(() => setShowThumbnail(true), THUMBNAIL_DELAY);
         },
-        ref
-    ) => {
-        const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-        const [showThumbnail, setShowThumbnail] = useState(false);
-        const [thumbnailPosition, setThumbnailPosition] = useState<null | number>(null);
+        onHoverEnd: () => {
+            timeoutRef.current && clearTimeout(timeoutRef.current);
+            setShowThumbnail(false);
+            setThumbnailPosition(null);
+            setThumbnailVideoFrameDebounced(null);
+        },
+    });
 
-        const [thumbnailVideoFrame, setThumbnailVideoFrame] = useState<null | number>(null);
-        const setThumbnailVideoFrameDebounced = useDebouncedCallback(setThumbnailVideoFrame, 200);
+    useEffect(() => setSliderValue(frameNumber), [frameNumber]);
 
-        const frameNumber = mediaItem.identifier.frameNumber;
-        const containerScrollLeft = getContainerScroll(ref);
-        const buffers = useStreamingVideoPlayerContext()?.buffers ?? [];
-        const [sliderValue, setSliderValue] = useState(frameNumber);
+    useEffect(() => {
+        return () => {
+            timeoutRef.current && clearTimeout(timeoutRef.current);
+        };
+    }, []);
 
-        const isDisplayingFrames = FRAME_STEP_TO_DISPLAY_ALL_FRAMES === step;
-        const lastFrame = isDisplayingFrames ? mediaItem.metadata.frames : mediaItem.metadata.frames - step;
+    // The videoFrames can be empty when the user uses active frames and the active
+    // set for this video is empty.
+    if (restrictedVideoFrames !== undefined && isEmpty(restrictedVideoFrames)) {
+        return <DisabledSlider />;
+    }
 
-        const { hoverProps } = useHover({
-            onHoverStart: () => {
-                timeoutRef.current = setTimeout(() => setShowThumbnail(true), THUMBNAIL_DELAY);
-            },
-            onHoverEnd: () => {
-                timeoutRef.current && clearTimeout(timeoutRef.current);
-                setShowThumbnail(false);
-                setThumbnailPosition(null);
-                setThumbnailVideoFrameDebounced(null);
-            },
-        });
+    const findNearestVideoFrame = (toFrameNumber: number): number => {
+        // Get the nearest video frame
+        const videoFrame =
+            restrictedVideoFrames === undefined
+                ? toFrameNumber
+                : minBy(restrictedVideoFrames, (allowedFrameNumber) => {
+                      return Math.abs(toFrameNumber - allowedFrameNumber);
+                  });
 
-        useEffect(() => setSliderValue(frameNumber), [frameNumber]);
-
-        useEffect(() => {
-            return () => {
-                timeoutRef.current && clearTimeout(timeoutRef.current);
-            };
-        }, []);
-
-        // The videoFrames can be empty when the user uses active frames and the active
-        // set for this video is empty.
-        if (restrictedVideoFrames !== undefined && isEmpty(restrictedVideoFrames)) {
-            return <DisabledSlider />;
+        // minBy only returns undefined if videoFrames is empty, in this case we
+        // default to the currently selected video frame
+        if (videoFrame === undefined) {
+            return mediaItem.identifier.frameNumber;
         }
 
-        const findNearestVideoFrame = (toFrameNumber: number): number => {
-            // Get the nearest video frame
-            const videoFrame =
-                restrictedVideoFrames === undefined
-                    ? toFrameNumber
-                    : minBy(restrictedVideoFrames, (allowedFrameNumber) => {
-                          return Math.abs(toFrameNumber - allowedFrameNumber);
-                      });
+        return videoFrame;
+    };
 
-            // minBy only returns undefined if videoFrames is empty, in this case we
-            // default to the currently selected video frame
-            if (videoFrame === undefined) {
-                return mediaItem.identifier.frameNumber;
-            }
+    const onPointerMove = (event: PointerEvent<HTMLDivElement>): void => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const thumbnailPosX = Math.max(0, event.clientX - rect.x) - containerScrollLeft;
 
-            return videoFrame;
-        };
-
-        const onPointerMove = (event: PointerEvent<HTMLDivElement>): void => {
-            const rect = event.currentTarget.getBoundingClientRect();
-            const thumbnailPosX = Math.max(0, event.clientX - rect.x) - containerScrollLeft;
-
-            const thumbnailFrameNumber = getFrameNumber(
-                thumbnailPosX - frameOffset + containerScrollLeft,
-                rect.width,
-                minValue ?? 0,
-                maxValue ?? 0,
-                step
-            );
-
-            const videoFrame = findNearestVideoFrame(thumbnailFrameNumber);
-
-            if (videoFrame !== undefined) {
-                setThumbnailPosition(thumbnailPosX);
-                setThumbnailVideoFrameDebounced(videoFrame);
-            }
-        };
-
-        return (
-            <div className={classes.sliderWrapper} onPointerMove={onPointerMove} {...hoverProps}>
-                <VideoSlider
-                    id='video-player-timeline-slider'
-                    leftOffset={frameOffset}
-                    sizePerSquare={sizePerSquare}
-                    highlightedFrames={highlightedFrames}
-                    onChangeEnd={(newFrameNumber) => {
-                        const videoFrame = findNearestVideoFrame(newFrameNumber);
-
-                        selectFrame(videoFrame);
-                        blurActiveInput(true);
-                    }}
-                    value={sliderValue}
-                    onChange={(newFrameNumber: number) => {
-                        const videoFrame = findNearestVideoFrame(newFrameNumber);
-
-                        setSliderValue(videoFrame);
-                        setShowThumbnail(true);
-                    }}
-                    defaultValue={frameNumber}
-                    minValue={minValue}
-                    maxValue={maxValue}
-                    step={isInActiveMode ? 1 : step}
-                    aria-label='Videoframe'
-                    showValueLabel={false}
-                    isFilled
-                    width='100%'
-                    buffers={buffers}
-                    lastFrame={lastFrame}
-                />
-                {showThumbnail && thumbnailVideoFrame !== null && thumbnailPosition !== null ? (
-                    <ThumbnailPreview
-                        x={thumbnailPosition}
-                        width={100}
-                        height={100}
-                        videoFrame={thumbnailVideoFrame}
-                        mediaItem={mediaItem}
-                    />
-                ) : (
-                    <></>
-                )}
-            </div>
+        const thumbnailFrameNumber = getFrameNumber(
+            thumbnailPosX - frameOffset + containerScrollLeft,
+            rect.width,
+            minValue ?? 0,
+            maxValue ?? 0,
+            step
         );
-    }
-);
+
+        const videoFrame = findNearestVideoFrame(thumbnailFrameNumber);
+
+        if (videoFrame !== undefined) {
+            setThumbnailPosition(thumbnailPosX);
+            setThumbnailVideoFrameDebounced(videoFrame);
+        }
+    };
+
+    return (
+        <div className={classes.sliderWrapper} onPointerMove={onPointerMove} {...hoverProps}>
+            <VideoSlider
+                id='video-player-timeline-slider'
+                leftOffset={frameOffset}
+                sizePerSquare={sizePerSquare}
+                highlightedFrames={highlightedFrames}
+                onChangeEnd={(newFrameNumber) => {
+                    const videoFrame = findNearestVideoFrame(newFrameNumber);
+
+                    selectFrame(videoFrame);
+                    blurActiveInput(true);
+                }}
+                value={sliderValue}
+                onChange={(newFrameNumber: number) => {
+                    const videoFrame = findNearestVideoFrame(newFrameNumber);
+
+                    setSliderValue(videoFrame);
+                    setShowThumbnail(true);
+                }}
+                defaultValue={frameNumber}
+                minValue={minValue}
+                maxValue={maxValue}
+                step={isInActiveMode ? 1 : step}
+                aria-label='Videoframe'
+                showValueLabel={false}
+                isFilled
+                width='100%'
+                buffers={buffers}
+                lastFrame={lastFrame}
+            />
+            {showThumbnail && thumbnailVideoFrame !== null && thumbnailPosition !== null ? (
+                <ThumbnailPreview
+                    x={thumbnailPosition}
+                    width={100}
+                    height={100}
+                    videoFrame={thumbnailVideoFrame}
+                    mediaItem={mediaItem}
+                />
+            ) : (
+                <></>
+            )}
+        </div>
+    );
+};

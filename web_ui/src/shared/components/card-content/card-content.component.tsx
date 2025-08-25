@@ -3,7 +3,17 @@
 
 import { CSSProperties, ReactNode, useRef } from 'react';
 
-import { Divider, Flex, Heading, PressableElement, Tooltip, TooltipTrigger, View, type StyleProps } from '@geti/ui';
+import {
+    Divider,
+    Flex,
+    Heading,
+    PressableElement,
+    Tooltip,
+    TooltipTrigger,
+    View,
+    type DOMRefValue,
+    type StyleProps,
+} from '@geti/ui';
 import { Info } from '@geti/ui/icons';
 import { isEmpty } from 'lodash-es';
 
@@ -36,7 +46,7 @@ export const CardContent = ({
     ...rest
 }: CardContentProps) => {
     const id = idMatchingFormat(title);
-    const container = useRef(null);
+    const container = useRef<DOMRefValue<HTMLDivElement>>(null);
 
     return (
         <View

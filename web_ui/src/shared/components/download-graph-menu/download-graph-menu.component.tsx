@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { forwardRef, RefObject, useState } from 'react';
+import { RefObject, useState } from 'react';
 
 import { toast, useUnwrapDOMRef, type BackgroundColorValue, type DOMRefValue } from '@geti/ui';
 import { DownloadIcon } from '@geti/ui/icons';
@@ -32,6 +32,7 @@ interface DownloadGraphMenuProps {
     fileName: string;
     data?: DownloadableData;
     graphBackgroundColor: BackgroundColorValue;
+    ref: RefObject<DOMRefValue<HTMLDivElement> | null>;
 }
 
 const onFormatAndDownload = runWhenTruthy((downloadableData: DownloadableData, fileName: string): void => {
@@ -56,57 +57,51 @@ const onFormatAndDownload = runWhenTruthy((downloadableData: DownloadableData, f
     }
 });
 
-export const DownloadGraphMenu = forwardRef<HTMLDivElement, DownloadGraphMenuProps>(
-    ({ data, tooltip, fileName, graphBackgroundColor }, ref) => {
-        const [isDownloading, setIsDownloading] = useState(false);
-        const container = ref as RefObject<DOMRefValue<HTMLDivElement>>;
-        const unwrappedContainer = useUnwrapDOMRef(container);
-        const hexColor = getVarColorToHex(`--spectrum-global-color-${graphBackgroundColor}`);
+export const DownloadGraphMenu = ({ data, tooltip, fileName, graphBackgroundColor, ref }: DownloadGraphMenuProps) => {
+    const [isDownloading, setIsDownloading] = useState(false);
+    const unwrappedContainer = useUnwrapDOMRef(ref);
+    const hexColor = getVarColorToHex(`--spectrum-global-color-${graphBackgroundColor}`);
 
-        const onDownloadPdf = async () => {
-            setIsDownloading(true);
+    const onDownloadPdf = async () => {
+        setIsDownloading(true);
 
-            try {
-                const svgs = getContainerElements<SVGSVGElement>(unwrappedContainer.current, DOWNLOADABLE_SVG_SELECTOR);
-                const htmls = getContainerElements<HTMLDivElement>(
-                    unwrappedContainer.current,
-                    DOWNLOADABLE_HTML_SELECTOR
-                );
+        try {
+            const svgs = getContainerElements<SVGSVGElement>(unwrappedContainer.current, DOWNLOADABLE_SVG_SELECTOR);
+            const htmls = getContainerElements<HTMLDivElement>(unwrappedContainer.current, DOWNLOADABLE_HTML_SELECTOR);
 
-                await downloadMultiplePages(fileName, svgs, htmls, hexColor);
-            } catch (_e) {
-                toast({ message: ERROR_MESSAGE, type: 'error' });
-            } finally {
-                setIsDownloading(false);
-            }
-        };
+            await downloadMultiplePages(fileName, svgs, htmls, hexColor);
+        } catch (_e) {
+            toast({ message: ERROR_MESSAGE, type: 'error' });
+        } finally {
+            setIsDownloading(false);
+        }
+    };
 
-        const onDownloadCSV = async () => {
-            setIsDownloading(true);
+    const onDownloadCSV = async () => {
+        setIsDownloading(true);
 
-            try {
-                onFormatAndDownload(data, fileName);
-            } catch (_e) {
-                toast({ message: ERROR_MESSAGE, type: 'error' });
-            } finally {
-                setIsDownloading(false);
-            }
-        };
+        try {
+            onFormatAndDownload(data, fileName);
+        } catch (_e) {
+            toast({ message: ERROR_MESSAGE, type: 'error' });
+        } finally {
+            setIsDownloading(false);
+        }
+    };
 
-        const menuOptions: [string, () => void][] = [
-            ['PDF', onDownloadPdf],
-            ['CSV', onDownloadCSV],
-        ];
+    const menuOptions: [string, () => void][] = [
+        ['PDF', onDownloadPdf],
+        ['CSV', onDownloadCSV],
+    ];
 
-        return (
-            <MenuTriggerList
-                id={`${idMatchingFormat(fileName)}-download-action-menu`}
-                ariaLabel={`Download menu`}
-                title={tooltip}
-                options={menuOptions}
-                icon={<DownloadIcon />}
-                isDisabled={isDownloading}
-            />
-        );
-    }
-);
+    return (
+        <MenuTriggerList
+            id={`${idMatchingFormat(fileName)}-download-action-menu`}
+            ariaLabel={`Download menu`}
+            title={tooltip}
+            options={menuOptions}
+            icon={<DownloadIcon />}
+            isDisabled={isDownloading}
+        />
+    );
+};
