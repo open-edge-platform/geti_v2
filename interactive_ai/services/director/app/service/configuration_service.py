@@ -1,7 +1,13 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
+
 from geti_configuration_tools import ConfigurationOverlayTools
-from geti_configuration_tools.training_configuration import PartialTrainingConfiguration, TrainingConfiguration
+from geti_configuration_tools.training_configuration import (
+    NullTrainingConfiguration,
+    PartialTrainingConfiguration,
+    TrainingConfiguration,
+)
 from geti_supported_models import NullModelManifest, SupportedModels
 
 from communication.exceptions import ModelManifestNotFoundException
@@ -11,7 +17,9 @@ from geti_fastapi_tools.exceptions import ModelNotFoundException
 from geti_types import ID, ModelStorageIdentifier, ProjectIdentifier
 from iai_core.entities.model import NullModel
 from iai_core.entities.model_storage import ModelStorage
-from iai_core.repos import ModelRepo, ModelStorageRepo
+from iai_core.repos import ModelRepo, ModelStorageRepo, TaskNodeRepo
+
+logger = logging.getLogger(__name__)
 
 
 class ConfigurationService:
@@ -49,6 +57,16 @@ class ConfigurationService:
         )
         training_configuration_repo = PartialTrainingConfigurationRepo(project_identifier)
         task_level_config = training_configuration_repo.get_task_only_configuration(task_id)
+        # create default configuration in case the task exists but has no training configuration yet
+        if isinstance(task_level_config, NullTrainingConfiguration):
+            logger.warning(
+                f"Task training configuration for project `{project_identifier.project_id}` and task `{task_id}` "
+                f"not found, creating default training configuration."
+            )
+            task = TaskNodeRepo(project_identifier).get_by_id(task_id)
+            training_configuration_repo.create_default_task_only_configuration(task)
+            task_level_config = training_configuration_repo.get_task_only_configuration(task_id)
+
         algo_level_config = (
             training_configuration_repo.get_by_model_manifest_id(model_manifest_id) if model_manifest_id else None
         )
