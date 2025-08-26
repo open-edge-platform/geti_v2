@@ -97,9 +97,10 @@ class PartialTrainingConfigurationRepo(ProjectBasedSessionRepo[PartialTrainingCo
         task_level_config = self.get_one(extra_filter=task_filter)
         # create default configuration in case the task exists but has no training configuration yet
         if isinstance(task_level_config, NullTrainingConfiguration) and TaskNodeRepo(self.identifier).exists(task_id):
+            sanitized_task_id = str(task_id).replace("\r", "").replace("\n", "").replace("\t", "")
             logger.warning(
-                f"Task training configuration for project `{self.identifier.project_id}` and task `{task_id}` "
-                f"not found, creating default training configuration."
+                f"Task training configuration for project `{self.identifier.project_id}` and task "
+                f"`{sanitized_task_id}` not found, creating default training configuration."
             )
             task = TaskNodeRepo(self.identifier).get_by_id(task_id)
             self.create_default_task_only_configuration(task)
