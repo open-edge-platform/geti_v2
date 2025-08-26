@@ -73,7 +73,10 @@ export const CustomTabItemWithMenu = ({
             { id: workspace.id },
             {
                 onSuccess: () => {
-                    selectWorkspace(workspaces[0].id);
+                    const nextWorkspace = workspaces.find(({ id }) => id !== workspace.id);
+                    if (nextWorkspace) {
+                        selectWorkspace(nextWorkspace.id);
+                    }
 
                     dispatchWorkspaces({
                         type: PinnedCollapsedItemsAction.REMOVE,
