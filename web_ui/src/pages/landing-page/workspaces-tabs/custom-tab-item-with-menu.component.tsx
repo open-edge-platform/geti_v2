@@ -5,6 +5,7 @@ import { ComponentProps, Dispatch } from 'react';
 
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
 
+import { hasDifferentId } from '../../../shared/utils';
 import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import {

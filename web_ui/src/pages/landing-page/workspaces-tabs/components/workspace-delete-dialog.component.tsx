@@ -30,7 +30,7 @@ export const WorkspaceDeleteDialog = ({
             }}
             cancelLabel={'Cancel'}
         >
-            {`Are you sure you want to delete "${name}"?`}
+            {`Are you sure you want to delete workspace "${name}"?`}
         </AlertDialog>
     );
 
