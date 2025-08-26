@@ -49,7 +49,7 @@ export const CustomTabItemWithMenu = ({
         isWorkspaceEmpty
     );
 
-    const otherWorkspacesNames = workspaces.filter(({ id }) => id !== workspace.id).map(({ name }) => name);
+    const otherWorkspacesNames = workspaces.filter(hasDifferentId(workspace.id)).map(({ name }) => name);
 
     const handleEditDialog = (newName: string): void => {
         editDialog.editWorkspaceMutation.mutate(
