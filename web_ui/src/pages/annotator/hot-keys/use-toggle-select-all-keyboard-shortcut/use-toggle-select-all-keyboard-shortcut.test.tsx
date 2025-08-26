@@ -3,17 +3,12 @@
 
 import { ReactNode } from 'react';
 
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { RequiredProviders } from '../../../../test-utils/required-providers-render';
 import { AnnotatorProviders } from '../../test-utils/annotator-render';
 import { useToggleSelectAllKeyboardShortcut } from './use-toggle-select-all-keyboard-shortcut';
-
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useLocation: () => jest.fn(),
-}));
 
 const wrapper = ({ children }: { children: ReactNode }) => {
     const datasetIdentifier = {
@@ -38,6 +33,8 @@ describe('useToggleSelectAllKeyboardShortcut', () => {
             wrapper,
         });
 
+        await waitForElementToBeRemoved(screen.getByRole('progressbar'));
+
         await userEvent.keyboard('{Control>}A');
 
         await waitFor(() => {
@@ -51,6 +48,8 @@ describe('useToggleSelectAllKeyboardShortcut', () => {
         renderHook(() => useToggleSelectAllKeyboardShortcut(toggleSelectAll), {
             wrapper,
         });
+
+        await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
         await userEvent.keyboard('{Control>}D');
 

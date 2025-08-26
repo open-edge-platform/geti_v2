@@ -496,7 +496,7 @@ describe('useSubmitAnnotations', () => {
             });
 
             await waitFor(() => {
-                expect(result.current).toBeDefined();
+                expect(result.current).not.toBeNull();
             });
 
             act(() => {
@@ -561,7 +561,7 @@ describe('useSubmitAnnotations', () => {
             });
 
             await waitFor(() => {
-                expect(result.current).toBeDefined();
+                expect(result.current).not.toBeNull();
             });
 
             act(() => {
@@ -601,7 +601,7 @@ describe('useSubmitAnnotations', () => {
             });
 
             await waitFor(() => {
-                expect(result.current).toBeDefined();
+                expect(result.current).not.toBeNull();
             });
 
             act(() => {
@@ -644,7 +644,7 @@ describe('useSubmitAnnotations', () => {
             });
 
             await waitFor(() => {
-                expect(result.current).toBeDefined();
+                expect(result.current).not.toBeNull();
             });
 
             const callback = jest.fn();
@@ -691,7 +691,7 @@ describe('useSubmitAnnotations', () => {
             });
 
             await waitFor(() => {
-                expect(result.current).toBeDefined();
+                expect(result.current).not.toBeNull();
             });
 
             act(() => {

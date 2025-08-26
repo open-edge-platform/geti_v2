@@ -69,15 +69,18 @@ describe('usePredictionsQuery', (): void => {
             expect(result.current).toBeDefined();
         });
 
-        expect(mockedInferenceService.getExplanations).toHaveBeenCalledWith(
-            datasetIdentifier,
-            mediaItem,
-            taskId,
-            undefined,
+        await waitFor(() => {
+            expect(mockedInferenceService.getExplanations).toHaveBeenCalledWith(
+                datasetIdentifier,
+                mediaItem,
+                taskId,
+                undefined,
 
-            // AbortController
-            expect.anything()
-        );
+                // AbortController
+                expect.anything()
+            );
+        });
+
         expect(mockedInferenceService.getPredictions).toHaveBeenCalledWith(
             datasetIdentifier,
             coreLabels,

@@ -18,7 +18,6 @@ export const LabelTag = ({ id, label, onClick, isPointer }: LabelTagProps) => {
     return (
         <Flex alignItems='center' gap='size-75'>
             <LabelColorThumb label={label} size={7} id={`${id}-color`} />
-
             <TooltipTrigger>
                 <PressableElement
                     id={id}
