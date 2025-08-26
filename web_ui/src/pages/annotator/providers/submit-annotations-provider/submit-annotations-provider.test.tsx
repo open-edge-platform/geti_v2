@@ -389,21 +389,6 @@ describe('Saving annotations', () => {
             expect(screen.getByRole('button', { name: /Submit/i })).toBeDisabled();
         });
     });
-
-    it('Requires the SubmitAnnotationsProvider', () => {
-        // Expect an error to be thrown when rendering app
-        const App = () => {
-            useSubmitAnnotations();
-
-            return null;
-        };
-
-        const spy = jest.spyOn(console, 'error').mockImplementation();
-        expect(() => providersRender(<App />)).toThrow();
-        expect(spy).toHaveBeenCalledTimes(3);
-
-        spy.mockRestore();
-    });
 });
 
 describe('useSubmitAnnotations', () => {

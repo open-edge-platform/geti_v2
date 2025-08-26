@@ -16,8 +16,7 @@ export const Fullscreen = ({ enabled, toggle }: FullscreenProps) => {
         <ActionButton
             isQuiet
             justifySelf='end'
-            id='job-scheduler-action-expand'
-            data-testid='job-scheduler-action-expand'
+            data-testid={`job-scheduler-action-${enabled ? 'collapse' : 'expand'}`}
             aria-label='Job scheduler action expand'
             onPress={() => toggle((prevState: boolean) => !prevState)}
         >

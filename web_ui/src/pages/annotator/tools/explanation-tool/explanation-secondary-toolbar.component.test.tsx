@@ -154,8 +154,6 @@ const noObjectPrediction = getMockedAnnotation(
 
 describe('ExplanationSecondaryToolbar', () => {
     beforeEach(() => {
-        jest.useRealTimers();
-
         jest.mocked(useAnnotationToolContext).mockImplementation(() => fakeAnnotationToolContext({}));
 
         jest.mocked(useAnnotatorCanvasSettings).mockReturnValue({

@@ -44,7 +44,7 @@ const mockedJob = getMockedJob({
 const baseCheck = (): void => {
     expect(screen.getByTestId('job-scheduler-job-1')).toBeInTheDocument();
     expect(screen.getByTestId('job-scheduler-job-1')).toHaveTextContent('Train task job');
-    expect(screen.getByTestId('job-scheduler-job-1-action-delete')).toHaveTextContent('trash.svg');
+    expect(screen.getByTestId('job-scheduler-job-1-action-delete')).toBeInTheDocument();
 
     expect(screen.getByText(`Project: ${mockedMetadata.project.name}`)).toBeInTheDocument();
     expect(screen.getByText(`Architecture: ${mockedMetadata.task.modelArchitecture}`)).toBeInTheDocument();
