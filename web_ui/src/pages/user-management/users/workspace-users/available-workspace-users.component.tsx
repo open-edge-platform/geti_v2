@@ -14,7 +14,7 @@ import { useOrganizationIdentifier } from '../../../../hooks/use-organization-id
 import { useWorkspaces } from '../../../../providers/workspaces-provider/workspaces-provider.component';
 import { HasPermission } from '../../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../../shared/components/has-permission/has-permission.interface';
-import { UsersTable, USERS_TABLE_COLUMNS } from '../users-table/users-table.component';
+import { USERS_TABLE_COLUMNS, UsersTable } from '../users-table/users-table.component';
 
 interface AvailableWorkspaceUsersProps {
     workspaceId: string;
@@ -35,7 +35,7 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
         isFetchingNextPage: isOrgFetchingMore,
         getNextPage: getNextOrgPage,
         totalCount: orgTotal,
-    totalMatchedCount: _orgMatched,
+        totalMatchedCount: _orgMatched,
     } = useGetUsersQuery(organizationId);
 
     // Users that belong to the selected workspace
@@ -44,8 +44,8 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
         isLoading: isWsLoading,
         isFetchingNextPage: isWsFetchingMore,
         getNextPage: getNextWsPage,
-    totalCount: _wsTotal,
-    totalMatchedCount: _wsMatched,
+        totalCount: _wsTotal,
+        totalMatchedCount: _wsMatched,
     } = useGetUsersQuery(organizationId, { resourceType: RESOURCE_TYPE.WORKSPACE, resourceId: workspaceId });
 
     // Compute users not in the workspace

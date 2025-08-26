@@ -11,13 +11,16 @@ import {
 } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
+import {
+    ProjectSortingOptions,
+    ProjectsQueryOptions,
+} from '../../../../../src/core/projects/services/project-service.interface';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
 import { getErrorMessage } from '../../services/utils';
-import { RESOURCE_TYPE, USER_ROLE, User } from '../../users/users.interface';
 import { getRoleCreationPayload } from '../../users/services/utils';
+import { RESOURCE_TYPE, User, USER_ROLE } from '../../users/users.interface';
 import { WorkspaceEntity } from '../services/workspaces.interface';
-import { ProjectSortingOptions, ProjectsQueryOptions } from '../../../../../src/core/projects/services/project-service.interface';
 
 interface UseWorkspacesApi {
     useWorkspacesQuery: () => UseSuspenseQueryResult<WorkspaceEntity[], AxiosError>;

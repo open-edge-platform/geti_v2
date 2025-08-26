@@ -20,12 +20,12 @@ import { TabItem } from '../../../shared/components/tabs/tabs.interface';
 import { getUniqueNameFromArray, hasEqualId } from '../../../shared/utils';
 import { MAX_LENGTH_OF_WORKSPACE_NAME, MIN_LENGTH_OF_WORKSPACE_NAME } from '../../user-management/workspaces/utils';
 import { LandingPageWorkspace as Workspace } from '../landing-page-workspace/landing-page-workspace.component';
+import { NoPermissionPlaceholder } from './components/no-permission-placeholder.component';
 import { usePinnedCollapsedWorkspaces } from './hooks/use-pinned-collapsed-workspace.hook';
 import { useWorkspaceActions } from './hooks/use-workspace-actions.hook';
 import { MAX_NUMBER_OF_DISPLAYED_WORKSPACES } from './utils';
 
 import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
-import { NoPermissionPlaceholder } from './components/no-permission-placeholder.component';
 
 export const WorkspacesTabs = (): JSX.Element => {
     const { organizationId } = useOrganizationIdentifier();

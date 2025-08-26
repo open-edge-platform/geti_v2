@@ -5,8 +5,8 @@ import { FC, FormEvent, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
-import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import { getRoleCreationPayload, getRoleDeletionPayload } from '@geti/core/src/users/services/utils';
+import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import {
     RESOURCE_TYPE,
     RoleResource,

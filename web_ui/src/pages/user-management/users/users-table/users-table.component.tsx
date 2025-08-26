@@ -171,15 +171,11 @@ export const UsersTable = ({
     });
 
     return (
-    <Flex flex={1} width={'100%'} justifyContent={'center'} alignItems={'start'}>
+        <Flex flex={1} width={'100%'} justifyContent={'center'} alignItems={'start'}>
             {shouldShowNotFound ? (
                 <NotFound />
             ) : (
-                <View
-                    minHeight={0}
-                    width={'100%'}
-                    data-testid={tableId ?? 'users-table-id'}
-                >
+                <View minHeight={0} width={'100%'} data-testid={tableId ?? 'users-table-id'}>
                     <TableView
                         id={tableId ?? 'users-table-id'}
                         aria-label={'Users table'}
