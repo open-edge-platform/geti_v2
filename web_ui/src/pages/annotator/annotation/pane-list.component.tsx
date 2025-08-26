@@ -16,14 +16,14 @@ export const PaneList = ({ itemsList, listActions, thumbnailGrid = null }: PaneL
         <PanelGroup direction={'vertical'}>
             {thumbnailGrid && (
                 <>
-                    <Panel minSize={10} order={1}>
+                    <Panel minSize={5} order={1}>
                         {thumbnailGrid}
                     </Panel>
                     <PanelResizeHandle />
                 </>
             )}
 
-            <Panel order={2}>
+            <Panel minSize={5} order={2}>
                 <div style={{ height: 'calc(100% - var(--spectrum-global-dimension-size-675))' }}>
                     {listActions}
                     {itemsList}
