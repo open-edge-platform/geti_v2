@@ -5,7 +5,6 @@ import { ComponentProps, Dispatch } from 'react';
 
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
 
-import { hasDifferentId } from '../../../shared/utils';
 import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import {
@@ -18,6 +17,7 @@ import {
 } from '../../../shared/components/custom-tab-item/custom-tab-item.component';
 import { EditNameDialog } from '../../../shared/components/edit-name-dialog/edit-name-dialog.component';
 import { MenuTriggerButton } from '../../../shared/components/menu-trigger/menu-trigger-button/menu-trigger-button.component';
+import { hasDifferentId } from '../../../shared/utils';
 import { MAX_LENGTH_OF_WORKSPACE_NAME, MIN_LENGTH_OF_WORKSPACE_NAME } from '../../user-management/workspaces/utils';
 import { WorkspaceDeleteDialog } from './components/workspace-delete-dialog.component';
 import { useWorkspaceActions } from './hooks/use-workspace-actions.hook';
