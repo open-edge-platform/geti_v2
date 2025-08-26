@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from './utils';
+import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from './tool-utils';
 
 const mockedRoi = {
     x: 0,

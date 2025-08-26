@@ -52,3 +52,13 @@ export interface Vector {
     x: number;
     y: number;
 }
+
+export interface Annotation {
+    readonly id: string;
+    readonly shape: Shape;
+    readonly zIndex: number;
+    readonly isSelected: boolean;
+    readonly isHidden: boolean;
+    readonly isLocked: boolean;
+    readonly color?: string;
+}

@@ -13,14 +13,15 @@ import {
     Vec2,
 } from '@geti/smart-tools/utils';
 
-import { Annotation } from '../../../../../core/annotations/annotation.interface';
+import { TranslateShape } from '../../../../../../packages/smart-tools/src/edit-bounding-box/translate-shape.component';
+import { Annotation as AnnotationType } from '../../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
+import { Annotation } from '../../../annotation/annotation.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useZoom } from '../../../zoom/zoom-provider.component';
 import { isShapeWithinRoi } from '../../utils';
 import { ResizeAnchorType } from '../resize-anchor.enum';
-import { TranslateShape } from '../translate-shape.component';
 import { getSideAnchorLocations } from './location';
 import { RotationElement } from './rotation-element/rotation-element.component';
 
@@ -28,7 +29,7 @@ import classes from './../../../annotator-canvas.module.scss';
 
 interface EditRotatedBoundingBoxProps {
     annotationToolContext: AnnotationToolContext;
-    annotation: Annotation & { shape: { shapeType: ShapeType.RotatedRect } };
+    annotation: AnnotationType & { shape: { shapeType: ShapeType.RotatedRect } };
     disableTranslation?: boolean;
     disablePoints?: boolean;
 }
@@ -181,7 +182,9 @@ export const EditRotatedBoundingBox = ({
                     annotation={{ ...annotation, shape }}
                     translateShape={translate}
                     onComplete={onComplete}
-                />
+                >
+                    <Annotation annotation={annotation} />
+                </TranslateShape>
             </svg>
 
             {disablePoints === false ? (

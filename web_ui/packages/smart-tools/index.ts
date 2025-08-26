@@ -16,3 +16,4 @@ export { buildIntelligentScissorsInstance, IntelligentScissors } from './src/int
 
 export { Anchor } from './src/edit-bounding-box/anchor.component';
 export { ANCHOR_SIZE, ResizeAnchor } from './src/edit-bounding-box/resize-anchor.component';
+export { EditBoundingBox } from './src/edit-bounding-box/edit-bounding-box/edit-bounding-box.component';

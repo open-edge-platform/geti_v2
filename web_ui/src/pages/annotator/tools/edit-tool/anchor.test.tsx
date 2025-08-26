@@ -3,9 +3,8 @@
 
 import '@wessberg/pointer-events';
 
+import { Anchor } from '@geti/smart-tools';
 import { fireEvent, render, screen } from '@testing-library/react';
-
-import { Anchor } from './anchor.component';
 
 describe('anchor', (): void => {
     const properties = {

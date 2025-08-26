@@ -3,12 +3,8 @@
 
 import { PointerEvent, ReactNode, useState } from 'react';
 
-import { Annotation as AnnotationInterface } from '../../../../core/annotations/annotation.interface';
-import { Point } from '../../../../core/annotations/shapes.interface';
-import { isLeftButton } from '../../../buttons-utils';
-import { Annotation } from '../../annotation/annotation.component';
-import { PointerType } from '../tools.interface';
-import { allowPanning } from '../utils';
+import { Annotation as AnnotationInterface, Point } from '../shared/interfaces';
+import { allowPanning, isLeftButton } from '../utils/mouse-utils';
 
 const STROKE_WIDTH = 2;
 
@@ -27,7 +23,7 @@ export const TranslateShape = ({
     annotation,
     onComplete,
     translateShape,
-    children = <Annotation annotation={annotation} />,
+    children,
 }: TranslateShapeProps): JSX.Element => {
     const [dragFromPoint, setDragFromPoint] = useState<null | Point>(null);
 
@@ -36,7 +32,7 @@ export const TranslateShape = ({
             return;
         }
 
-        if (event.pointerType === PointerType.Touch || !isLeftButton(event)) {
+        if (event.pointerType === 'touch' || !isLeftButton(event)) {
             return;
         }
 
@@ -67,7 +63,9 @@ export const TranslateShape = ({
         if (dragFromPoint === null) {
             return;
         }
+
         event.preventDefault();
+
         setDragFromPoint(null);
         event.currentTarget.releasePointerCapture(event.pointerId);
         onComplete();

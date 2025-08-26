@@ -2,8 +2,10 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { ResizeAnchor } from '@geti/smart-tools';
+import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from '@geti/smart-tools/utils';
 import { isEmpty, isNil } from 'lodash-es';
 
+import { TranslateShape } from '../../../../../packages/smart-tools/src/edit-bounding-box/translate-shape.component';
 import { RegionOfInterest } from '../../../../core/annotations/annotation.interface';
 import { Point } from '../../../../core/annotations/shapes.interface';
 import { labelFromUser } from '../../../../core/annotations/utils';
@@ -12,8 +14,6 @@ import { PoseKeypoints } from '../../annotation/shapes/pose-keypoints.component'
 import { useVisibleAnnotations } from '../../hooks/use-visible-annotations.hook';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useZoom } from '../../zoom/zoom-provider.component';
-import { TranslateShape } from '../edit-tool/translate-shape.component';
-import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from '../edit-tool/utils';
 import { SvgToolCanvas } from '../svg-tool-canvas.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
 import { CrosshairDrawingBox } from './crosshair-drawing-box.component';

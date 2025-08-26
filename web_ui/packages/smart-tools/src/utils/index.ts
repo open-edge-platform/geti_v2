@@ -12,7 +12,11 @@ export {
     isPolygonValid,
     getPointsFromMat,
     getMatFromPoints,
+    getBoundingBoxInRoi,
+    getBoundingBoxResizePoints,
+    getClampedBoundingBox,
 } from './tool-utils';
+export { isLeftButton, isWheelButton, allowPanning } from './mouse-utils';
 export * as Vec2 from './vec2';
 export {
     degreesToRadians,

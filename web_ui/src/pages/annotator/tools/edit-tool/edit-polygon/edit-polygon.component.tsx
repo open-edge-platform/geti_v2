@@ -3,29 +3,29 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { Annotation } from '../../../../../core/annotations/annotation.interface';
+import { TranslateShape } from '../../../../../../packages/smart-tools/src/edit-bounding-box/translate-shape.component';
+import { Annotation as AnnotationType } from '../../../../../core/annotations/annotation.interface';
 import { Polygon } from '../../../../../core/annotations/shapes.interface';
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import { Labels } from '../../../annotation/labels/labels.component';
+import { Annotation } from '../../../annotation/annotation.component';
 import { AnnotationScene } from '../../../core/annotation-scene.interface';
 import { AnnotationToolContext, ToolType } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useZoom } from '../../../zoom/zoom-provider.component';
 import { SelectingToolType } from '../../selecting-tool/selecting-tool.enums';
 import { isPolygonValid, removeOffLimitPointsPolygon } from '../../utils';
-import { TranslateShape } from '../translate-shape.component';
 import { EditPoints } from './edit-points.component';
 
 import classes from './../../../annotator-canvas.module.scss';
 
 interface EditPolygonProps {
     annotationToolContext: AnnotationToolContext;
-    annotation: Annotation & { shape: { shapeType: ShapeType.Polygon } };
+    annotation: AnnotationType & { shape: { shapeType: ShapeType.Polygon } };
     disableTranslation?: boolean;
     disablePoints?: boolean;
 }
 
-const updateOrRemovePolygonAnnotation = (annotation: Annotation, scene: AnnotationScene): void => {
+const updateOrRemovePolygonAnnotation = (annotation: AnnotationType, scene: AnnotationScene): void => {
     if (isPolygonValid(annotation.shape as Polygon)) {
         scene.updateAnnotation({ ...annotation });
     } else {
@@ -122,10 +122,10 @@ export const EditPolygon = ({
                     annotation={{ ...annotation, shape }}
                     onComplete={() => onComplete(shape)}
                     disabled={disableTranslation || isBrushSubTool}
-                />
+                >
+                    <Annotation annotation={annotation} />
+                </TranslateShape>
             </svg>
-
-            {shape.points.length > 0 && !isBrushSubTool && <Labels annotation={{ ...annotation, shape }} />}
 
             {disablePoints === false && !isBrushSubTool ? (
                 <svg

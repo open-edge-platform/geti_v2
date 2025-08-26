@@ -1,10 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { PointerEvent, SVGProps } from 'react';
-
-import Clipper from '@doodle3d/clipper-js';
 import type ClipperShape from '@doodle3d/clipper-js';
+import Clipper from '@doodle3d/clipper-js';
 import {
     Shape as SmartToolsShape,
     Circle as ToolCircle,
@@ -20,7 +18,6 @@ import { Circle, Point, Polygon, Rect, RotatedRect, Shape } from '../../../core/
 import { ShapeType } from '../../../core/annotations/shapetype.enum';
 import { isCircle, isPolygon, isPoseShape, isRect, isRotatedRect } from '../../../core/annotations/utils';
 import { Label } from '../../../core/labels/label.interface';
-import { isLeftButton, isWheelButton } from '../../buttons-utils';
 import { ToolLabel, ToolType } from '../core/annotation-tool-context.interface';
 import { PolygonMode } from './polygon-tool/polygon-tool.enum';
 
@@ -74,23 +71,6 @@ export const drawingStyles = (defaultLabel: Label | null): typeof DEFAULT_ANNOTA
         ...DEFAULT_ANNOTATION_STYLES,
         fill: defaultLabel.color,
         stroke: defaultLabel.color,
-    };
-};
-
-type OnPointerDown = SVGProps<SVGElement>['onPointerDown'];
-export const allowPanning = (onPointerDown?: OnPointerDown): OnPointerDown | undefined => {
-    if (onPointerDown === undefined) {
-        return;
-    }
-
-    return (event: PointerEvent<SVGElement>) => {
-        const isPressingPanningHotKeys = (isLeftButton(event) && event.ctrlKey) || isWheelButton(event);
-
-        if (isPressingPanningHotKeys) {
-            return;
-        }
-
-        return onPointerDown(event);
     };
 };
 

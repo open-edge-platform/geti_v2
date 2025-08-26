@@ -1,8 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { RefObject } from 'react';
+import { Fragment, RefObject } from 'react';
 
+import { Labels } from '../../annotation/labels/labels.component';
 import { useAnnotatorMode } from '../../hooks/use-annotator-mode';
 import { getOutputFromTask } from '../../providers/task-chain-provider/utils';
 import { useTask } from '../../providers/task-provider/task-provider.component';
@@ -41,16 +42,18 @@ export const EditTool = ({
 
     return (
         <div aria-label='edit-annotations' className={classes.disabledLayer}>
-            {annotations.map((annotation) => {
+            {annotations.map((annotation, index) => {
                 return (
-                    <EditAnnotationTool
-                        key={annotation.id}
-                        annotation={annotation}
-                        annotationToolContext={annotationToolContext}
-                        disablePoints={disablePoints}
-                        disableTranslation={disableTranslation}
-                        canvasRef={canvasRef}
-                    />
+                    <Fragment key={annotation.id}>
+                        <EditAnnotationTool
+                            annotation={annotation}
+                            annotationToolContext={annotationToolContext}
+                            disablePoints={disablePoints}
+                            disableTranslation={disableTranslation}
+                            canvasRef={canvasRef}
+                        />
+                        <Labels key={`${annotation.id}-${index}`} annotation={annotation} />
+                    </Fragment>
                 );
             })}
         </div>

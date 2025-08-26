@@ -6,19 +6,7 @@ import { CSSProperties, PointerEvent, ReactNode, useState } from 'react';
 import { isFunction } from 'lodash-es';
 
 import { Point } from '../shared/interfaces';
-
-interface MouseButton {
-    button: number;
-    buttons: number;
-}
-
-const BUTTON_LEFT = {
-    button: 0,
-    buttons: 1,
-};
-const isLeftButton = (button: MouseButton): boolean => {
-    return button.button === BUTTON_LEFT.button || button.buttons === BUTTON_LEFT.buttons;
-};
+import { isLeftButton } from '../utils/mouse-utils';
 
 interface AnchorProps {
     children: ReactNode;

@@ -3,15 +3,13 @@
 
 import '@wessberg/pointer-events';
 
-import { ANCHOR_SIZE } from '@geti/smart-tools';
+import { ANCHOR_SIZE, EditBoundingBox as EditBoundingBoxTool } from '@geti/smart-tools';
+import { Annotation, RegionOfInterest } from '@geti/smart-tools/types';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { Annotation, RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
-import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import { getMockedImage, getMockedROI } from '../../../../../test-utils/utils';
-import { AnnotationToolProvider } from '../../../providers/annotation-tool-provider/annotation-tool-provider.component';
-import { annotatorRender as render } from '../../../test-utils/annotator-render';
-import { EditBoundingBox as EditBoundingBoxTool } from './edit-bounding-box.component';
+import { getMockedImage, getMockedROI } from '../../../../test-utils/utils';
+import { AnnotationToolProvider } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
+import { annotatorRender as render } from '../../test-utils/annotator-render';
 
 const mockROI = getMockedROI({ x: 0, y: 0, width: 1000, height: 1000 });
 const mockImage = getMockedImage(mockROI);
@@ -21,7 +19,7 @@ const zoom = 2.0;
 const renderApp = async (
     annotation: Annotation & {
         shape: {
-            shapeType: ShapeType.Rect;
+            shapeType: 'rect';
         };
     },
     roi?: RegionOfInterest
@@ -45,7 +43,7 @@ describe('EditRectangleTool', (): void => {
     const annotation = {
         id: 'rect-1',
         labels: [],
-        shape: { shapeType: ShapeType.Rect as const, x: 10, y: 10, width: 300, height: 200 },
+        shape: { shapeType: 'rect' as const, x: 10, y: 10, width: 300, height: 200 },
         zIndex: 0,
         isHovered: false,
         isSelected: false,
@@ -106,7 +104,7 @@ describe('EditRectangleTool', (): void => {
             id: 'rect-1',
             labels: [],
             shape: {
-                shapeType: ShapeType.Rect as const,
+                shapeType: 'rect' as const,
                 x: iRoi.x,
                 y: iRoi.y,
                 width: iRoi.width / 2,
@@ -207,7 +205,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y },
             { x: 10, y: 10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x + 10,
                 y: shape.y + 10,
                 width: shape.width - 10,
@@ -219,7 +217,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y },
             { x: -10, y: -10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x - 10,
                 y: shape.y - 10,
                 width: shape.width + 10,
@@ -231,7 +229,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width / 2, y: shape.y },
             { x: 10, y: 10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y + 10,
                 width: shape.width,
@@ -243,7 +241,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y },
             { x: -10, y: -10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y - 10,
                 width: shape.width,
@@ -255,7 +253,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width, y: shape.y },
             { x: 10, y: 10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y + 10,
                 width: shape.width + 10,
@@ -267,7 +265,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width, y: shape.y },
             { x: -10, y: -10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y - 10,
                 width: shape.width - 10,
@@ -279,7 +277,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width, y: shape.y + shape.height / 2 },
             { x: 10, y: 10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y,
                 width: shape.width + 10,
@@ -291,7 +289,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width, y: shape.y + shape.height / 2 },
             { x: -10, y: -10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y,
                 width: shape.width - 10,
@@ -303,7 +301,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width, y: shape.y + shape.height },
             { x: 10, y: 10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y,
                 width: shape.width + 10,
@@ -315,7 +313,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width, y: shape.y + shape.height },
             { x: -10, y: -10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y,
                 width: shape.width - 10,
@@ -327,7 +325,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width / 2, y: shape.y + shape.height },
             { x: 10, y: 10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y,
                 width: shape.width,
@@ -339,7 +337,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width / 2, y: shape.y + shape.height },
             { x: -10, y: -10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y,
                 width: shape.width,
@@ -351,7 +349,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y + shape.height },
             { x: 10, y: 10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x + 10,
                 y: shape.y,
                 width: shape.width - 10,
@@ -363,7 +361,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y + shape.height },
             { x: -10, y: -10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x - 10,
                 y: shape.y,
                 width: shape.width + 10,
@@ -375,7 +373,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y + shape.height / 2 },
             { x: 10, y: 10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x + 10,
                 y: shape.y,
                 width: shape.width - 10,
@@ -387,7 +385,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y + shape.height / 2 },
             { x: -10, y: -10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x - 10,
                 y: shape.y,
                 width: shape.width + 10,
@@ -400,7 +398,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y },
             { x: -20, y: -20 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: 0,
                 y: 0,
                 width: shape.width + shape.x,
@@ -412,7 +410,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width / 2, y: shape.y },
             { x: 10, y: -20 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: 0,
                 width: shape.width,
@@ -424,7 +422,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width, y: shape.y },
             { x: mockROI.width, y: -10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: 0,
                 width: mockROI.width - shape.x,
@@ -436,7 +434,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width, y: shape.y + shape.height / 2 },
             { x: mockROI.width, y: 10 },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y,
                 width: mockROI.width - shape.x,
@@ -448,7 +446,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width, y: shape.y + shape.height },
             { x: mockROI.width, y: mockROI.height },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y,
                 width: mockROI.width - shape.x,
@@ -460,7 +458,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x + shape.width / 2, y: shape.y + shape.height },
             { x: 10, y: mockROI.height },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x,
                 y: shape.y,
                 width: shape.width,
@@ -472,7 +470,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y + shape.height },
             { x: -mockROI.width, y: mockROI.height },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: 0,
                 y: shape.y,
                 width: shape.width + shape.x,
@@ -484,7 +482,7 @@ describe('EditRectangleTool', (): void => {
             { x: shape.x, y: shape.y + shape.height / 2 },
             { x: -mockROI.width, y: mockROI.height },
             {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: 0,
                 y: shape.y,
                 width: shape.width + shape.x,
@@ -527,7 +525,7 @@ describe('EditRectangleTool', (): void => {
             const gap = (2 * ANCHOR_SIZE) / zoom;
             const startPoint = { x: shape.x, y: shape.y };
             const expectedRect = {
-                shapeType: ShapeType.Rect,
+                shapeType: 'rect',
                 x: shape.x + shape.width - gap,
                 y: shape.y + shape.height - gap,
                 width: gap,

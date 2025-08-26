@@ -3,20 +3,15 @@
 
 import { useEffect, useState } from 'react';
 
-import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
-import { RegionOfInterest } from '@geti/smart-tools/types';
-
-import { Annotation } from '../../../../../core/annotations/annotation.interface';
-import { Point } from '../../../../../core/annotations/shapes.interface';
-import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
-import { Labels } from '../../../annotation/labels/labels.component';
+import { Annotation, Point, RegionOfInterest } from '../../shared/interfaces';
+import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from '../../utils/tool-utils';
+import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { TranslateShape } from '../translate-shape.component';
-import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from '../utils';
 
-import classes from './../../../annotator-canvas.module.scss';
+import classes from './edit-bounding-box.module.scss';
 
 interface EditBoundingBoxProps {
-    annotation: Annotation & { shape: { shapeType: ShapeType.Rect } };
+    annotation: Annotation & { shape: { shapeType: 'rect' } };
     disableTranslation?: boolean;
     disablePoints?: boolean;
     roi: RegionOfInterest;
@@ -35,6 +30,8 @@ export const EditBoundingBox = ({
     updateAnnotation,
 }: EditBoundingBoxProps): JSX.Element => {
     const [shape, setShape] = useState(annotation.shape);
+
+    const ariaLabel = `${annotation.isSelected ? 'Selected' : 'Not selected'} shape ${annotation.id}`;
 
     useEffect(() => setShape(annotation.shape), [annotation.shape]);
 
@@ -70,10 +67,28 @@ export const EditBoundingBox = ({
                     annotation={{ ...annotation, shape }}
                     translateShape={translate}
                     onComplete={onComplete}
-                />
+                >
+                    <g
+                        id={`canvas-annotation-${annotation.id}`}
+                        fill={annotation.color || '#0095ca'}
+                        fillOpacity='var(--annotation-fill-opacity, 0.2)'
+                        stroke={annotation.color || '#0095ca'}
+                        strokeWidth={2 / zoom}
+                        strokeOpacity='var(--annotation-border-opacity, 0.8)'
+                        strokeLinecap='round'
+                        strokeDasharray='0'
+                        strokeDashoffset='0'
+                    >
+                        <rect
+                            x={shape.x}
+                            y={shape.y}
+                            width={shape.width}
+                            height={shape.height}
+                            aria-label={ariaLabel}
+                        />
+                    </g>
+                </TranslateShape>
             </svg>
-
-            <Labels annotation={{ ...annotation, shape }} />
 
             {disablePoints === false ? (
                 <svg

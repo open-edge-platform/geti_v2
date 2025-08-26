@@ -3,12 +3,15 @@
 
 import { RefObject, useRef } from 'react';
 
+import { EditBoundingBox as EditBoundingBoxTool } from '@geti/smart-tools';
+
 import { Annotation, KeypointAnnotation } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { useOutsideClick } from '../../../../hooks/outside-click/outside-click.hook';
 import { hasEqualId } from '../../../../shared/utils';
 import { isWheelButton } from '../../../buttons-utils';
 import { Labels } from '../../annotation/labels/labels.component';
+import { getLabelsColor } from '../../annotation/labels/utils';
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { getGlobalAnnotations } from '../../providers/task-chain-provider/utils';
@@ -16,7 +19,7 @@ import { useTask } from '../../providers/task-provider/task-provider.component';
 import { useZoom } from '../../zoom/zoom-provider.component';
 import { SelectingToolType } from '../selecting-tool/selecting-tool.enums';
 import { ToolAnnotationContextProps } from '../tools.interface';
-import { EditBoundingBox as EditBoundingBoxTool } from './edit-bounding-box/edit-bounding-box.component';
+import { convertToolShapeToGetiShape } from '../utils';
 import { EditCircle as EditCircleTool } from './edit-circle/edit-circle.component';
 import { EditKeypointTool } from './edit-keypoint/edit-keypoint-tool.component';
 import { EditPolygon as EditPolygonTool } from './edit-polygon/edit-polygon.component';
@@ -49,13 +52,25 @@ const EditAnnotationToolFactory = ({
 
     switch (annotation.shape.shapeType) {
         case ShapeType.Rect: {
+            const annotationColor = getLabelsColor(annotation.labels, selectedTask);
+
             return (
                 <EditBoundingBoxTool
                     roi={roi}
                     image={image}
                     zoom={zoom}
-                    updateAnnotation={scene.updateAnnotation}
-                    annotation={annotation as Annotation & { shape: { shapeType: ShapeType.Rect } }}
+                    updateAnnotation={(newAnnotation) => {
+                        scene.updateAnnotation({
+                            ...newAnnotation,
+                            shape: convertToolShapeToGetiShape(newAnnotation.shape),
+                            labels: annotation.labels,
+                        });
+                    }}
+                    annotation={
+                        { ...annotation, color: annotationColor } as Annotation & {
+                            shape: { shapeType: ShapeType.Rect };
+                        }
+                    }
                     disableTranslation={disableTranslation}
                     disablePoints={disablePoints}
                 />
