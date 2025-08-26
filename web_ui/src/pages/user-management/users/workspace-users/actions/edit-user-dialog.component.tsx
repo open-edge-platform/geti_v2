@@ -90,10 +90,11 @@ export const EditUserDialog = ({
 }: EditUserDialogProps): JSX.Element => {
     const { workspaces } = useWorkspaces();
     const isOrgAdmin = isOrganizationAdmin(activeUser, organizationId);
-    const { useUpdateUser, useUpdateUserRoles } = useUsers();
+    const { useUpdateUser, useUpdateUserRoles, useUpdateMemberRole } = useUsers();
     const updateRoles = useUpdateUserRoles();
     const updateUser = useUpdateUser();
-    const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();
+    const updateMemberRole = useUpdateMemberRole();
+    const { FEATURE_FLAG_MANAGE_USERS_ROLES, FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
 
     const [firstName, setFirstName] = useState<string>(user.firstName);
     const [lastName, setLastName] = useState<string>(user.lastName);
@@ -187,16 +188,37 @@ export const EditUserDialog = ({
         });
     };
 
+    const updateMemberRolesPromises = () => {
+        return workspaceRoles.map((workspaceRole) =>
+            updateMemberRole.mutateAsync({
+                organizationId,
+                memberId: user.id,
+                role: {
+                    role: MAP_WORKSPACE_ROLE_TO_ORGANIZATION_ROLE[workspaceRole.role],
+                    resourceId: organizationId,
+                },
+            })
+        );
+    };
+
     const handleEditMember = async () => {
         if (isSaasEnvironment && !areRolesEqual) {
-            await updateUserRoles();
+            if (!FEATURE_FLAG_WORKSPACE_ACTIONS) {
+                await Promise.all(updateMemberRolesPromises());
+            } else {
+                await updateUserRoles();
+            }
             return;
         }
 
         const editMemberPromises: Promise<void>[] = [];
 
         if (!areRolesEqual) {
-            editMemberPromises.push(updateUserRoles());
+            if (!FEATURE_FLAG_WORKSPACE_ACTIONS) {
+                editMemberPromises.push(...updateMemberRolesPromises());
+            } else {
+                editMemberPromises.push(updateUserRoles());
+            }
         }
 
         if (user.firstName !== firstName || user.lastName !== lastName) {

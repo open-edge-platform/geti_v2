@@ -163,7 +163,17 @@ export const UsersTable = ({
         ];
 
         return tableColumns.filter(({ dataKey }) => !ignoredColumns.includes(dataKey as USERS_TABLE_COLUMNS));
-    }, [ignoredColumns, resourceId, UserActions, activeUser, isProjectUsersTable, organizationId, workspaces, users]);
+    }, [
+        ignoredColumns,
+        resourceId,
+        UserActions,
+        activeUser,
+        isProjectUsersTable,
+        organizationId,
+        workspaces,
+        users,
+        overrideRoleColumn,
+    ]);
 
     const [sortingOptions, sort] = useSortTable<UsersQueryParams>({
         queryOptions: usersQueryParams,
