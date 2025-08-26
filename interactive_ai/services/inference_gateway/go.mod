@@ -2,7 +2,7 @@ module inference_gateway
 
 go 1.23.3
 
-toolchain go1.23.11
+toolchain go1.23.12
 
 replace (
 	geti.com/iai_core => ./../../libs/iai_core_go

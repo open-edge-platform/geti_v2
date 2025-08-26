@@ -7,11 +7,13 @@ import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.i
 import { Button, Divider, Flex, Heading, View } from '@geti/ui';
 import { useNavigate } from 'react-router-dom';
 
+import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
+import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { ActionMenu } from '../../../shared/components/action-menu/action-menu.component';
-import { DeleteDialog } from '../../../shared/components/delete-dialog/delete-dialog.component';
 import { EditNameDialog } from '../../../shared/components/edit-name-dialog/edit-name-dialog.component';
 import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
+import { WorkspaceDeleteDialog } from '../../landing-page/workspaces-tabs/components/workspace-delete-dialog.component';
 import { useWorkspaceActions } from '../../landing-page/workspaces-tabs/hooks/use-workspace-actions.hook';
 import { WorkspaceMenuActions } from '../../landing-page/workspaces-tabs/utils';
 import { MAX_LENGTH_OF_WORKSPACE_NAME, MIN_LENGTH_OF_WORKSPACE_NAME } from './utils';
@@ -23,7 +25,15 @@ interface WorkspaceCardProps {
 
 export const WorkspaceCard = ({ workspace, workspaces }: WorkspaceCardProps): JSX.Element => {
     const navigate = useNavigate();
-    const { items, handleMenuAction, deleteDialog, editDialog } = useWorkspaceActions(workspaces.length);
+    const { organizationId } = useOrganizationIdentifier();
+    const { useGetProjectNames } = useProjectActions();
+    const projectsNamesQuery = useGetProjectNames({ organizationId, workspaceId: workspace.id });
+
+    const isWorkspaceEmpty = projectsNamesQuery.data?.projects.length === 0;
+    const { items, handleMenuAction, deleteDialog, editDialog, grayedOutKeys } = useWorkspaceActions(
+        workspaces.length,
+        isWorkspaceEmpty
+    );
 
     const workspaceActions = items.map((item) => ({ name: item, id: item }));
     const handleSeeMore = (): void => {
@@ -72,6 +82,7 @@ export const WorkspaceCard = ({ workspace, workspaces }: WorkspaceCardProps): JS
                         items={workspaceActions}
                         id={`${workspace.name}-action-menu`}
                         onAction={handleMenuAction}
+                        grayedOutKeys={grayedOutKeys}
                     />
                 </HasPermission>
             </Flex>
@@ -80,12 +91,14 @@ export const WorkspaceCard = ({ workspace, workspaces }: WorkspaceCardProps): JS
                 operations={[OPERATION.WORKSPACE_MANAGEMENT]}
                 resources={[{ type: RESOURCE_TYPE.WORKSPACE, id: workspace.id }]}
             >
-                <DeleteDialog
-                    name={workspace.name}
-                    title={'workspace'}
-                    onAction={handleDeleteWorkspace}
-                    triggerState={deleteDialog.deleteWorkspaceDialogState}
-                />
+                {deleteDialog.deleteWorkspaceDialogState.isOpen && (
+                    <WorkspaceDeleteDialog
+                        name={workspace.name}
+                        onAction={handleDeleteWorkspace}
+                        triggerState={deleteDialog.deleteWorkspaceDialogState}
+                        isWorkspaceEmpty={isWorkspaceEmpty}
+                    />
+                )}
                 <EditNameDialog
                     isLoading={editDialog.editWorkspaceMutation.isPending}
                     triggerState={editDialog.editWorkspaceDialogState}
