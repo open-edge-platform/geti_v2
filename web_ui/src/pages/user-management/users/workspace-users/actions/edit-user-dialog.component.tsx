@@ -5,6 +5,7 @@ import { FC, FormEvent, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
+import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import { getRoleCreationPayload, getRoleDeletionPayload } from '@geti/core/src/users/services/utils';
 import {
     RESOURCE_TYPE,
@@ -49,7 +50,8 @@ const RolesSelection: FC<{
     onChangeRoleHandler: (role: WorkspaceRole['role']) => void;
     onChangeWorkspaceRoles: (roles: WorkspaceRole[]) => void;
     workspaces: WorkspaceEntity[];
-}> = ({ rolesOptions, workspaceRoles, onChangeRoleHandler, onChangeWorkspaceRoles, workspaces }) => {
+    isOrgAdmin: boolean;
+}> = ({ rolesOptions, workspaceRoles, onChangeRoleHandler, onChangeWorkspaceRoles, workspaces, isOrgAdmin }) => {
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
     const shouldUseSimpleRolesPicker = !FEATURE_FLAG_WORKSPACE_ACTIONS && workspaces.length === 1;
 
@@ -72,6 +74,7 @@ const RolesSelection: FC<{
             workspaceRoles={workspaceRoles}
             setWorkspaceRoles={onChangeWorkspaceRoles}
             workspaces={workspaces}
+            isOrgAdmin={isOrgAdmin}
         />
     );
 };
@@ -86,10 +89,10 @@ export const EditUserDialog = ({
     users,
 }: EditUserDialogProps): JSX.Element => {
     const { workspaces } = useWorkspaces();
-    const { useUpdateUser, useUpdateUserRoles, useUpdateMemberRole } = useUsers();
+    const isOrgAdmin = isOrganizationAdmin(activeUser, organizationId);
+    const { useUpdateUser, useUpdateUserRoles } = useUsers();
     const updateRoles = useUpdateUserRoles();
     const updateUser = useUpdateUser();
-    const updateMemberRole = useUpdateMemberRole();
     const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();
 
     const [firstName, setFirstName] = useState<string>(user.firstName);
@@ -184,30 +187,16 @@ export const EditUserDialog = ({
         });
     };
 
-    const updateMemberRolesPromises = () => {
-        return workspaceRoles.map((workspaceRole) =>
-            updateMemberRole.mutateAsync({
-                organizationId,
-                memberId: user.id,
-                role: {
-                    role: MAP_WORKSPACE_ROLE_TO_ORGANIZATION_ROLE[workspaceRole.role],
-                    resourceId: organizationId,
-                },
-            })
-        );
-    };
-
     const handleEditMember = async () => {
         if (isSaasEnvironment && !areRolesEqual) {
-            await Promise.all(updateMemberRolesPromises());
-
+            await updateUserRoles();
             return;
         }
 
         const editMemberPromises: Promise<void>[] = [];
 
         if (!areRolesEqual) {
-            editMemberPromises.push(...updateMemberRolesPromises());
+            editMemberPromises.push(updateUserRoles());
         }
 
         if (user.firstName !== firstName || user.lastName !== lastName) {
@@ -263,6 +252,7 @@ export const EditUserDialog = ({
                         onChangeWorkspaceRoles={setWorkspaceRoles}
                         workspaces={workspaces}
                         workspaceRoles={workspaceRoles}
+                        isOrgAdmin={isOrgAdmin}
                     />
                     <ButtonGroup align={'end'} marginTop={'size-350'}>
                         <Button variant='secondary' onPress={closeDialog} id={'cancel-edit-user'}>

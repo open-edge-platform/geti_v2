@@ -25,6 +25,7 @@ import { useWorkspaceActions } from './hooks/use-workspace-actions.hook';
 import { MAX_NUMBER_OF_DISPLAYED_WORKSPACES } from './utils';
 
 import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
+import { NoPermissionPlaceholder } from './components/no-permission-placeholder.component';
 
 export const WorkspacesTabs = (): JSX.Element => {
     const { organizationId } = useOrganizationIdentifier();
@@ -193,7 +194,7 @@ export const WorkspacesTabs = (): JSX.Element => {
                             <HasPermission
                                 operations={[OPERATION.CAN_SEE_WORKSPACE]}
                                 specialCondition={!FEATURE_FLAG_WORKSPACE_ACTIONS || undefined}
-                                Fallback={<div data-testid='no-permission-to-tab'>TODO: no permission</div>}
+                                Fallback={<NoPermissionPlaceholder />}
                             >
                                 {item.children}
                             </HasPermission>

@@ -14,10 +14,11 @@ import { useWorkspaces } from '../../../providers/workspaces-provider/workspaces
 import { ANIMATION_PARAMETERS } from '../../../shared/animation-parameters/animation-parameters';
 import { UsersHeader } from './users-header.component';
 import { UsersTable } from './users-table/users-table.component';
+import { AvailableWorkspaceUsers } from './workspace-users/available-workspace-users.component';
 
 interface UsersProps {
     activeUser: User;
-    resourceType: RESOURCE_TYPE;
+    resourceType: RESOURCE_TYPE | undefined;
     resourceId: string | undefined;
     UserActions?: ComponentProps<typeof UsersTable>['UserActions'];
     ignoredColumns?: ComponentProps<typeof UsersTable>['ignoredColumns'];
@@ -63,7 +64,7 @@ export const Users = ({
             animate={'visible'}
             style={{ height: '100%' }}
         >
-            <Flex direction={'column'} height={'100%'}>
+            <Flex direction={'column'}>
                 <UsersHeader
                     totalMatchedCount={totalMatchedCount}
                     totalCount={totalCount}
@@ -88,6 +89,9 @@ export const Users = ({
                     isProjectUsersTable={isProjectUsersTable}
                     organizationId={organizationId}
                 />
+                {resourceType === RESOURCE_TYPE.WORKSPACE && resourceId !== undefined && (
+                    <AvailableWorkspaceUsers workspaceId={resourceId} activeUser={activeUser} />
+                )}
             </Flex>
         </motion.div>
     );
