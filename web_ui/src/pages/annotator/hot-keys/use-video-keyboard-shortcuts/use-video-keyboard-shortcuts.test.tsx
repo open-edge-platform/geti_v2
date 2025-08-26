@@ -11,8 +11,6 @@ import { getMockedVideoControls } from '../../components/video-player/video-cont
 import { AnnotatorProviders } from '../../test-utils/annotator-render';
 import { useVideoKeyboardShortcuts } from './use-video-keyboard-shortcuts';
 
-// Copyright (C) 2022-2025 Intel Corporation
-// LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useLocation: () => jest.fn(),
@@ -52,8 +50,6 @@ describe('useVideoKeyboardShortcuts', () => {
     it('should invoke pause callback correctly', async () => {
         const mockedVideoControls = getMockedVideoControls({ isPlaying: true });
         await renderVideoKeyboardShortcuts(mockedVideoControls);
-
-        screen.debug();
 
         await userEvent.keyboard('k');
 

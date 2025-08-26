@@ -149,8 +149,6 @@ describe('ActiveLearningConfiguration', () => {
 
             await waitForElementToBeRemoved(screen.getByRole('progressbar', { name: 'Loading' }));
 
-            screen.debug();
-
             expect(await screen.findByRole('heading', { name: 'Training' })).toBeInTheDocument();
 
             fireEvent.click(screen.getByRole('button', { name: /Select a task to configure its training settings/ }));
