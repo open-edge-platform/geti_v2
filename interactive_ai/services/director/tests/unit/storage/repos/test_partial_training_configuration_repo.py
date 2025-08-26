@@ -1,5 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+from unittest.mock import patch
 
 from geti_configuration_tools.training_configuration import (
     Filtering,
@@ -16,10 +17,13 @@ from geti_configuration_tools.training_configuration import (
 from storage.repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_types import ID
+from iai_core.repos import TaskNodeRepo
 
 
 class TestTrainingConfigurationRepo:
-    def test_get_task_only_configuration(self, request, fxt_project_identifier, fxt_training_configuration_task_level):
+    def test_get_or_create_task_only_configuration(
+        self, request, fxt_project_identifier, fxt_training_configuration_task_level, fxt_task
+    ):
         # Arrange
         repo = PartialTrainingConfigurationRepo(fxt_project_identifier)
         request.addfinalizer(lambda: repo.delete_all())
@@ -29,7 +33,7 @@ class TestTrainingConfigurationRepo:
         repo.save(fxt_training_configuration_task_level)
 
         # Act
-        retrieved_config = repo.get_task_only_configuration(fxt_training_configuration_task_level.task_id)
+        retrieved_config = repo.get_or_create_task_only_configuration(fxt_training_configuration_task_level.task_id)
 
         # Assert
         assert retrieved_config.id_ == fxt_training_configuration_task_level.id_
@@ -40,8 +44,18 @@ class TestTrainingConfigurationRepo:
 
         # Test with non-existent task ID
         non_existent_task_id = ID("non_existent_task_id")
-        null_config = repo.get_task_only_configuration(non_existent_task_id)
+        null_config = repo.get_or_create_task_only_configuration(non_existent_task_id)
         assert isinstance(null_config, NullTrainingConfiguration)
+
+        # Test with existing task but no configuration
+        with (
+            patch.object(TaskNodeRepo, "exists", return_value=True) as mock_exists,
+            patch.object(TaskNodeRepo, "get_by_id", return_value=fxt_task) as mock_get_by_id,
+        ):
+            default_config = repo.get_or_create_task_only_configuration(fxt_task.id_)
+            assert not isinstance(default_config, NullTrainingConfiguration)
+            mock_exists.assert_called_once_with(fxt_task.id_)
+            mock_get_by_id.assert_called_once_with(fxt_task.id_)
 
     def test_get_by_model_manifest_id(self, request, fxt_project_identifier, fxt_training_configuration_task_level):
         # Arrange
@@ -102,7 +116,7 @@ class TestTrainingConfigurationRepo:
 
         # Assert - Verify configurations were created for each task
         for task in tasks:
-            created_config = repo.get_task_only_configuration(task.id_)
+            created_config = repo.get_or_create_task_only_configuration(task.id_)
 
             # Verify the configuration was created
             assert not isinstance(created_config, NullTrainingConfiguration)
@@ -118,13 +132,13 @@ class TestTrainingConfigurationRepo:
 
         # Test idempotence - calling create_default_configuration again should not create duplicates
         # or overwrite existing configurations
-        original_configs = {str(task.id_): repo.get_task_only_configuration(task.id_) for task in tasks}
+        original_configs = {str(task.id_): repo.get_or_create_task_only_configuration(task.id_) for task in tasks}
 
         # Call create_default_configuration again
         repo.create_default_configuration(tasks)
 
         # Verify configurations remain the same
         for task in tasks:
-            config_after = repo.get_task_only_configuration(task.id_)
+            config_after = repo.get_or_create_task_only_configuration(task.id_)
             assert config_after.id_ == original_configs[str(task.id_)].id_
             assert config_after.model_dump() == original_configs[str(task.id_)].model_dump()
