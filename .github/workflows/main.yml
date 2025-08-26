@@ -70,6 +70,7 @@ jobs:
     outputs:
       build_all: ${{ steps.set-vars.outputs.build_all }}
       build_version: "${{ steps.prepare-build-version.outputs.version }}"
+      platform_version: "${{ steps.prepare-build-version.outputs.platform_version }}"
       checkout_ref: ${{ steps.set-vars.outputs.checkout_ref }}
       publish_binaries: ${{ steps.set-vars.outputs.publish_binaries }}
       components-list: ${{ steps.components-list.outputs.paths_list }}
@@ -227,12 +228,14 @@ jobs:
     with:
       build_all: ${{ fromJSON(needs.get-vars.outputs.build_all) }} # fromJSON is required to cast string to boolean
       build_version: ${{ needs.get-vars.outputs.build_version }}
+      platform_version: ${{ needs.get-vars.outputs.platform_version }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
       ref: ${{ needs.get-vars.outputs.checkout_ref }}
     secrets:
       AWS_ROLE: ${{ secrets.AWS_ROLE }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
       REGISTRY: ${{ secrets.REGISTRY }}
+      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
 
   success:
     name: Required status checks

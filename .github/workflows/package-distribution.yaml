@@ -10,6 +10,10 @@ on:
         description: "Specifies the build version to apply to all binaries produced by this workflow"
         type: string
         required: true
+      platform_version:
+        description: "Specifies the current Geti platform version"
+        type: string
+        required: true
       publish_binaries:
         description: "Enable pushing Docker images and Helm charts"
         type: boolean
@@ -25,6 +29,8 @@ on:
         required: true
       REGISTRY:
         required: true
+      S3_BUCKET_NAME:
+        required: true
 
 jobs:
   package-distribution-workflow:
@@ -36,6 +42,7 @@ jobs:
       id-token: write
     env:
       TAG: ${{ inputs.build_version }}
+      PLATFORM_VERSION: ${{ inputs.platform_version }}
       REGISTRY: ${{ secrets.REGISTRY }}
     steps:
       - name: Checkout code
@@ -61,3 +68,20 @@ jobs:
       - name: Publish umbrella charts
         if: ${{ inputs.publish_binaries }}
         run: make publish-umbrella-chart
+
+      - name: Build installer binary
+        if: ${{ inputs.publish_binaries }}
+        working-directory: platform/services/installer
+        run: |
+          printf "product_version: %s\nproduct_build: %s\n" "$PLATFORM_VERSION" "$TAG" > app/version.yaml
+          make build
+
+      - name: Publish the installer binary to S3
+        if: ${{ inputs.publish_binaries }}
+        working-directory: platform/services/installer
+        shell: bash
+        env:
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          tar -czf platform_installer.tar.gz platform_installer
+          aws s3 cp platform_installer.tar.gz s3://$S3_BUCKET_NAME/v$TAG/

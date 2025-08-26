@@ -10,9 +10,12 @@ inputs:
     required: false
     default: ''
 outputs:
-  version:
+  platform_version:
+    description: 'Base platform version from the file'
+    value: ${{ steps.generate-version.outputs.platform_version }}
+  build_version:
     description: 'Generated version string'
-    value: ${{ steps.generate-version.outputs.version }}
+    value: ${{ steps.generate-version.outputs.build_version }}
 
 runs:
   using: 'composite'
@@ -101,5 +104,6 @@ runs:
             echo "Generated default version: $VERSION"
             ;;
         esac
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Final version: $VERSION"
+        echo "platform_version=$BASE_VERSION" >> $GITHUB_OUTPUT
+        echo "build_version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Final build_version: $VERSION"
