@@ -89,6 +89,17 @@ allow if {
 	check_authorization(spicedb_key, "organization", org_id, "can_contribute", user_id)
 }
 
+# Restrict access to POST /api/<api_ver>/organizations/<org_id>/workspaces endpoint to workspace_admin permission
+allow if {
+	["api", api_ver, "organizations", org_id, "workspaces"] = parsed_path
+	http_request.method == "POST"
+	is_valid_api_version(api_ver)
+
+	user_id := resolve_user_id(http_request.headers)
+
+    is_workspace_admin(user_id, org_id)
+}
+
 # Restrict access to GET /api/<api_ver>/organizations/<org_id>/users endpoint to organization_contributor
 allow if {
 	["api", api_ver, "organizations", org_id, "users"] = parsed_path
