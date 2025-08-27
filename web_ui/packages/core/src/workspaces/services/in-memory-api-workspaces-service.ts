@@ -13,7 +13,11 @@ export const createInMemoryApiWorkspacesService = (): WorkspacesService => {
         ]);
     };
 
-    const createWorkspace = async (_organizationId: string, _workspaceName: string): Promise<WorkspaceEntity> =>
+    const createWorkspace = async (
+        _organizationId: string,
+        _workspaceName: string,
+        _workspaceAdminId?: string
+    ): Promise<WorkspaceEntity> =>
         Promise.resolve(
             getMockedWorkspace({
                 id: 'workspace-id',
