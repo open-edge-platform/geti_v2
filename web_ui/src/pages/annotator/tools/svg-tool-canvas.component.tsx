@@ -7,7 +7,7 @@ import { roiFromImage } from '@geti/smart-tools/utils';
 
 import { allowPanning } from './utils';
 
-type CanvasProps = SVGProps<SVGSVGElement> & { image: ImageData } & { canvasRef?: RefObject<SVGRectElement | null> };
+type CanvasProps = SVGProps<SVGSVGElement> & { image: ImageData } & { canvasRef?: RefObject<SVGRectElement> };
 // This svg component is used to by tools that need to add local listeners that work in
 // a given region of interest.
 // An invisible rect is rendered to guarantee that the svg gets a width and height.

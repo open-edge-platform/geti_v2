@@ -4,6 +4,7 @@
 import {
     createContext,
     Dispatch,
+    MutableRefObject,
     ReactNode,
     RefObject,
     SetStateAction,
@@ -35,8 +36,10 @@ import { VideoPlayerErrorReason } from './streaming-video-player.interface';
 import { useBufferStreamingQueries } from './use-buffer-streaming-queries.hook';
 import { BufferRange } from './utils';
 
+// Copyright (C) 2022-2025 Intel Corporation
+// LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 export interface VideoPlayerPlayerContextProps {
-    videoRef: RefObject<HTMLVideoElement | null>;
+    videoRef: RefObject<HTMLVideoElement>;
     isPlaying: boolean;
     setIsPlaying: Dispatch<SetStateAction<boolean>>;
     currentIndex: number;
@@ -67,8 +70,8 @@ interface StreamingVideoPlayerProviderProps {
 
 interface useResumeVideoProps {
     isPlaying: boolean;
-    videoRef: RefObject<HTMLVideoElement | null>;
-    videoPausedBySystem: RefObject<boolean>;
+    videoRef: RefObject<HTMLVideoElement>;
+    videoPausedBySystem: MutableRefObject<boolean>;
 }
 
 const useResumeVideo = ({ isPlaying, videoRef, videoPausedBySystem }: useResumeVideoProps) => {
