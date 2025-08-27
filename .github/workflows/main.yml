@@ -69,7 +69,7 @@ jobs:
     timeout-minutes: 10
     outputs:
       build_all: ${{ steps.set-vars.outputs.build_all }}
-      build_version: "${{ steps.prepare-build-version.outputs.version }}"
+      build_version: "${{ steps.prepare-build-version.outputs.build_version }}"
       platform_version: "${{ steps.prepare-build-version.outputs.platform_version }}"
       checkout_ref: ${{ steps.set-vars.outputs.checkout_ref }}
       publish_binaries: ${{ steps.set-vars.outputs.publish_binaries }}
