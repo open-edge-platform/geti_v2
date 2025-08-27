@@ -2,12 +2,11 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { ProjectImport, ProjectImportIdentifier } from '../project.interface';
 import { ImportOptions } from '../services/project-service.interface';
 
@@ -25,7 +24,6 @@ interface UseImportProject {
 export const IMPORT_STATUS_ERROR = 'Project is not uploaded due to an error.';
 
 export const useImportProject = (): UseImportProject => {
-    const { addNotification } = useNotification();
     const { projectService } = useApplicationServices();
 
     const useImportProjectMutation = () =>
@@ -40,7 +38,7 @@ export const useImportProject = (): UseImportProject => {
             mutationFn: ({ identifier, options }) => projectService.importProject(identifier, options),
 
             onError: (error: AxiosError) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
 

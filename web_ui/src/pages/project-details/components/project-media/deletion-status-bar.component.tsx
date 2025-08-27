@@ -3,31 +3,29 @@
 
 import { useEffect, useRef } from 'react';
 
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
+import { removeToast, toast } from '@geti/ui';
 
 interface DeletionStatusBarProps {
     visible: boolean;
 }
 
 export const DeletionStatusBar = ({ visible }: DeletionStatusBarProps): JSX.Element => {
-    const { addNotification, removeNotification } = useNotification();
-    const deletingMediasRef = useRef('');
+    const deletingMediasRef = useRef<string | number>('');
 
     useEffect(() => {
         if (!visible) {
-            removeNotification(deletingMediasRef.current);
+            removeToast(deletingMediasRef.current);
         }
 
         if (visible) {
-            deletingMediasRef.current = addNotification({
+            deletingMediasRef.current = toast({
                 hasCloseButton: false,
                 message: 'Media deletion in progress...',
-                type: NOTIFICATION_TYPE.DEFAULT,
-                dismiss: { duration: 0 },
+                type: 'neutral',
+                duration: Infinity,
             });
         }
-    }, [addNotification, removeNotification, visible]);
+    }, [visible]);
 
     return <></>;
 };

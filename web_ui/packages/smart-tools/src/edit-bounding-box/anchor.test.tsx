@@ -32,7 +32,7 @@ describe('anchor', (): void => {
         const anchorActor = screen.getByLabelText(properties.label);
         fireEvent.pointerDown(anchorActor);
         fireEvent.pointerMove(anchorActor, { clientX: 10, clientY: 10 });
-        expect(moveAnchorCallback).toBeCalledTimes(1);
+        expect(moveAnchorCallback).toHaveBeenCalledTimes(1);
     });
 
     it('calls onComplete when clicked and released', () => {
@@ -48,6 +48,6 @@ describe('anchor', (): void => {
         fireEvent.pointerDown(anchorActor);
         fireEvent.pointerMove(anchorActor, { clientX: 10, clientY: 10 });
         fireEvent.pointerUp(anchorActor);
-        expect(onCompleteCallback).toBeCalledTimes(1);
+        expect(onCompleteCallback).toHaveBeenCalledTimes(1);
     });
 });

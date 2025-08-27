@@ -3,7 +3,6 @@
 
 import { waitFor } from '@testing-library/react';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { getMockedProjectExportIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedProjectExportJob } from '../../../test-utils/mocked-items-factory/mocked-jobs';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
@@ -13,10 +12,10 @@ import { ProjectService } from '../services/project-service.interface';
 import { useExportProjectStatusQuery } from './use-export-project-status.hook';
 import { DOWNLOAD_STATUS_ERROR } from './use-export-project.hook';
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 describe('useExportProjectStatusQuery', () => {
@@ -60,9 +59,9 @@ describe('useExportProjectStatusQuery', () => {
             });
 
             expect(projectService.exportProjectStatus).toHaveBeenCalledWith(mockData);
-            expect(mockAddNotification).toHaveBeenCalledWith({
+            expect(mockedToast).toHaveBeenCalledWith({
                 message: DOWNLOAD_STATUS_ERROR,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         });
 
@@ -83,7 +82,7 @@ describe('useExportProjectStatusQuery', () => {
 
             expect(mockOnSettled).not.toHaveBeenCalled();
             expect(projectService.exportProjectStatus).toHaveBeenCalledWith(mockData);
-            expect(mockAddNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
     });
 });

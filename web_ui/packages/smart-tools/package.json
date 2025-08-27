@@ -30,7 +30,8 @@
     "./opencv": "./src/opencv/interfaces/index.d.ts",
     "./utils": "./src/utils/index.ts",
     "./types": "./src/shared/index.ts",
-    "./ritm": "./src/ritm/index.ts"
+    "./ritm": "./src/ritm/index.ts",
+    "./segment-anything": "./src/segment-anything/index.ts"
   },
   "scripts": {
     "type-check": "tsc --noEmit -p tsconfig.json",

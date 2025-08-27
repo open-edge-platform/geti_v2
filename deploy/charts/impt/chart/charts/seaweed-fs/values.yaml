@@ -15,8 +15,8 @@ global:
     name: busybox:glibc
   kubectl:
     registry: docker.io
-    repository: bitnamilegacy
-    name: kubectl:1.31.0
+    repository: alpine
+    name: k8s:1.31.12
   istio_revision_name: ""
   security_headers: ""
   stripped_headers: ""
@@ -97,7 +97,7 @@ loggingLevel: 1
 
 resources:
   limits:
-    memory: 2Gi
+    memory: 4Gi
   requests:
     cpu: 100m
     memory: 400Mi

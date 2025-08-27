@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
 import {
     calculateSizeAndPositionBasedOfCornerAnchor,
     calculateSizeAndPositionOfSideAnchor,
@@ -18,7 +19,6 @@ import { AnnotationToolContext } from '../../../core/annotation-tool-context.int
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useZoom } from '../../../zoom/zoom-provider.component';
 import { isShapeWithinRoi } from '../../utils';
-import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { ResizeAnchorType } from '../resize-anchor.enum';
 import { TranslateShape } from '../translate-shape.component';
 import { getSideAnchorLocations } from './location';

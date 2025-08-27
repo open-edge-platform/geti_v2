@@ -1,0 +1,4 @@
+{
+  "script": "remove_premature_configuration.py",
+  "metadata": "remove_premature_configuration.json"
+}

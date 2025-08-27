@@ -145,7 +145,7 @@ spec:
               mountPath: "/init"
         {{- if not .Values.global.istio_ambient_mesh }}
         - name: "istio-sidecar-quit"
-          image: "{{ .Values.global.debian.registry }}/{{ if .Values.global.debian.repository }}{{ .Values.global.debian.repository }}/{{ end }}{{ .Values.global.debian.name }}"
+          image: "{{ .Values.global.curl.registry }}/{{ if .Values.global.curl.repository }}{{ .Values.global.curl.repository }}/{{ end }}{{ .Values.global.curl.name }}"
           securityContext:
             {{- toYaml .Values.securityContext_init | nindent 12 }}
           resources:

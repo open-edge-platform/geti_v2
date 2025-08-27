@@ -15,7 +15,8 @@ import { getMockedLabel, labels, mockedLongLabels } from '../../../../test-utils
 import { getMockedTask, mockedTaskContextProps } from '../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { getMockedImage } from '../../../../test-utils/utils';
-import { AnnotationToolContext } from '../../core/annotation-tool-context.interface';
+import { AnnotationSceneProvider } from '../../providers/annotation-scene-provider/annotation-scene-provider.component';
+import { useAnnotationToolContext } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useTaskChain } from '../../providers/task-chain-provider/task-chain-provider.component';
 import { TaskContextProps, useTask } from '../../providers/task-provider/task-provider.component';
@@ -44,26 +45,23 @@ jest.mock('../../providers/region-of-interest-provider/region-of-interest-provid
     })),
 }));
 
+jest.mock('../../providers/annotation-tool-provider/annotation-tool-provider.component', () => ({
+    ...jest.requireActual('../../providers/annotation-tool-provider/annotation-tool-provider.component'),
+    useAnnotationToolContext: jest.fn(),
+}));
+
 describe('Labels', (): void => {
     jest.mocked(useTaskChain).mockImplementation(() => {
         return { inputs: [], outputs: [] };
     });
 
-    const renderApp = (
-        annotation: Annotation,
-        annotationToolContext: AnnotationToolContext,
-        tasksHook: Partial<TaskContextProps> = {},
-        showOptions = true
-    ) => {
+    const renderApp = (annotation: Annotation, tasksHook: Partial<TaskContextProps> = {}, showOptions = true) => {
         jest.mocked(useTask).mockReturnValue(mockedTaskContextProps(tasksHook));
 
         render(
-            <Labels
-                annotation={annotation}
-                showOptions={showOptions}
-                annotationToolContext={annotationToolContext}
-                canEditAnnotationLabel
-            />
+            <AnnotationSceneProvider annotations={[]} labels={[]}>
+                <Labels annotation={annotation} showOptions={showOptions} canEditAnnotationLabel />)
+            </AnnotationSceneProvider>
         );
     };
 
@@ -73,7 +71,9 @@ describe('Labels', (): void => {
         });
         const annotationToolContext = fakeAnnotationToolContext({ annotations: [annotation], labels });
 
-        renderApp(annotation, annotationToolContext);
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
+
+        renderApp(annotation);
 
         expect(screen.getByRole('list')).toHaveAttribute('id', `${annotation.id}-labels`);
 
@@ -123,12 +123,14 @@ describe('Labels', (): void => {
             labels,
         });
 
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
+
         jest.mocked(useROI).mockReturnValue({
             roi,
             image: getMockedImage(roi),
         });
 
-        renderApp(annotation, annotationToolContext, { tasks, selectedTask: tasks[0] });
+        renderApp(annotation, { tasks, selectedTask: tasks[0] });
 
         expect(screen.getByRole('list')).toHaveAttribute('id', `${annotation.id}-labels`);
 
@@ -168,12 +170,14 @@ describe('Labels', (): void => {
             labels,
         });
 
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
+
         jest.mocked(useROI).mockReturnValue({
             roi,
             image: getMockedImage(roi),
         });
 
-        renderApp(annotation, annotationToolContext, { tasks, selectedTask: tasks[0] });
+        renderApp(annotation, { tasks, selectedTask: tasks[0] });
 
         expect(screen.getByRole('list')).toHaveAttribute('id', `${annotation.id}-labels`);
 
@@ -211,12 +215,14 @@ describe('Labels', (): void => {
             labels,
         });
 
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
+
         jest.mocked(useROI).mockReturnValue({
             roi,
             image: getMockedImage(roi),
         });
 
-        renderApp(annotation, annotationToolContext, { tasks, selectedTask: tasks[0] });
+        renderApp(annotation, { tasks, selectedTask: tasks[0] });
 
         expect(screen.getByText('Empty')).toBeInTheDocument();
         expect(screen.queryByText('Empty (100%)')).not.toBeInTheDocument();
@@ -228,7 +234,9 @@ describe('Labels', (): void => {
         });
         const annotationToolContext = fakeAnnotationToolContext({ annotations: [annotation], labels });
 
-        renderApp(annotation, annotationToolContext, { tasks: [getMockedTask({ labels })] });
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
+
+        renderApp(annotation, { tasks: [getMockedTask({ labels })] });
 
         expect(screen.getByRole('list')).toHaveAttribute('id', `${annotation.id}-labels`);
 
@@ -259,8 +267,9 @@ describe('Labels', (): void => {
         ];
         const mockedAnnotation = getMockedAnnotation({ labels: mockedAnnotationLabels });
         const annotationToolContext = fakeAnnotationToolContext({ annotations: [mockedAnnotation], labels });
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
 
-        renderApp(mockedAnnotation, annotationToolContext, { tasks: [getMockedTask({ labels })] });
+        renderApp(mockedAnnotation, { tasks: [getMockedTask({ labels })] });
 
         expect(screen.getByText(mockedLongLabels[0].name)).toHaveStyle('text-overflow: ellipsis');
     });
@@ -276,8 +285,9 @@ describe('Labels', (): void => {
         ];
         const mockedAnnotation = getMockedAnnotation({ labels: mockedAnnotationLabels });
         const annotationToolContext = fakeAnnotationToolContext({ annotations: [mockedAnnotation], labels });
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
 
-        renderApp(mockedAnnotation, annotationToolContext, { tasks: [getMockedTask({ labels })] });
+        renderApp(mockedAnnotation, { tasks: [getMockedTask({ labels })] });
 
         expect(screen.getByText('princess')).toBeInTheDocument();
     });
@@ -287,8 +297,9 @@ describe('Labels', (): void => {
             labels: [labelFromUser(labels[0]), labelFromUser(labels[1]), labelFromUser(labels[3])],
         });
         const annotationToolContext = fakeAnnotationToolContext({ annotations: [annotation], labels });
+        jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
 
-        renderApp(annotation, annotationToolContext, { tasks: [getMockedTask({ labels })] }, false);
+        renderApp(annotation, { tasks: [getMockedTask({ labels })] }, false);
 
         expect(screen.getByRole('list')).toHaveAttribute('id', `${annotation.id}-labels`);
 
@@ -332,13 +343,14 @@ describe('Labels', (): void => {
             const annotationToolContext = fakeAnnotationToolContext({
                 annotations: [annotation],
             });
+            jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
 
             jest.mocked(useROI).mockReturnValue({
                 roi,
                 image: getMockedImage(roi),
             });
 
-            renderApp(annotation, annotationToolContext, { tasks, selectedTask: tasks[0] });
+            renderApp(annotation, { tasks, selectedTask: tasks[0] });
 
             expect(screen.getByRole('list')).toHaveAttribute('id', `${annotation.id}-labels`);
 
@@ -362,8 +374,9 @@ describe('Labels', (): void => {
             const annotationToolContext = fakeAnnotationToolContext({
                 annotations: [annotation],
             });
+            jest.mocked(useAnnotationToolContext).mockReturnValue(annotationToolContext);
 
-            renderApp(annotation, annotationToolContext, { tasks, selectedTask: tasks[0] });
+            renderApp(annotation, { tasks, selectedTask: tasks[0] });
 
             expect(screen.getByRole('list')).toHaveAttribute('id', `${annotation.id}-labels`);
 

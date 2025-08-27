@@ -6,7 +6,7 @@ import { expect, Page } from '@playwright/test';
 import { JobState, JobStepState, JobType } from '../../../src/core/jobs/jobs.const';
 import { test } from '../../fixtures/base-test';
 import { switchCallsAfter } from '../../utils/api';
-import { getMockedJob, projects } from './mocks';
+import { getMockedJob, projects, projectWithTwoDatasets } from './mocks';
 
 const [project] = projects.projects;
 
@@ -66,7 +66,7 @@ const assertOpenAndExport = async (page: Page) => {
 
     const datasetName = await datasetsList.locator('[aria-selected="true"]').getByTestId('dataset-name').textContent();
 
-    await expect(page.getByLabel(/notification toast/i)).toBeVisible();
+    await expect(page.getByLabel('toast', { exact: true })).toBeVisible();
     await expect(page.getByText(new RegExp(`dataset "${datasetName}" is ready to download.`, 'i'))).toBeVisible();
 };
 
@@ -79,6 +79,7 @@ test.describe('export dataset', () => {
         registerApiResponse('TriggerDatasetExport', async (_, res, ctx) =>
             res(ctx.json({ export_dataset_id: exportId, status_url: `url/test`, job_id: exportId }))
         );
+        registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(projectWithTwoDatasets)));
 
         registerApiResponse(
             'GetJob',
@@ -121,7 +122,7 @@ test.describe('export dataset', () => {
         await assertOpenAndExport(page);
         await openAndExport(page);
 
-        await expect(page.getByLabel(/notification toast/i)).toBeHidden();
+        await expect(page.getByLabel('toast', { exact: true })).toBeHidden();
     });
 
     test('close previous export and show export options', async ({ page }) => {

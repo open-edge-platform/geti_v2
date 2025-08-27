@@ -4,13 +4,12 @@
 import { useEffect, useMemo } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { isFunction, once } from 'lodash-es';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { JobProjectExportStatus } from '../../jobs/jobs.interface';
 import { ProjectExportIdentifier } from '../project.interface';
 import { JobStateToExportStatus } from '../services/api-project-service';
@@ -34,7 +33,6 @@ export const useExportProjectStatusQuery = ({
     onResponseError,
     isExporting = false,
 }: useExportProjectStatusQueryProps): UseQueryResult<JobProjectExportStatus, AxiosError> => {
-    const { addNotification } = useNotification();
     const service = useApplicationServices().projectService;
     const { projectId, workspaceId, exportProjectId, organizationId } = variables;
 
@@ -75,18 +73,12 @@ export const useExportProjectStatusQuery = ({
         callOnStartOnce();
 
         if (isStateError(state)) {
-            addNotification({
+            toast({
                 message: 'Project was not downloaded due to an error.',
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         }
-    }, [
-        isQueryEnabled,
-        exportProjectStatusQuery.isSuccess,
-        exportProjectStatusQuery.data,
-        addNotification,
-        callOnStartOnce,
-    ]);
+    }, [isQueryEnabled, exportProjectStatusQuery.isSuccess, exportProjectStatusQuery.data, callOnStartOnce]);
 
     useEffect(() => {
         const isError = isResponseErrorQuery(exportProjectStatusQuery);

@@ -3,9 +3,8 @@
 
 import { CSSProperties } from 'react';
 
+import { Anchor } from '@geti/smart-tools';
 import { Rotation } from '@geti/ui/icons';
-
-import { Anchor } from '../../anchor.component';
 
 interface RotationAnchorProps {
     zoom: number;

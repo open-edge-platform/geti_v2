@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
+import { toast } from '@geti/ui';
 import { InfiniteData } from '@tanstack/react-query';
 import { isNil } from 'lodash-es';
 import { useParams } from 'react-router-dom';
@@ -11,8 +12,6 @@ import { useParams } from 'react-router-dom';
 import { useGetScheduledJobs } from '../../../../core/jobs/hooks/use-jobs.hook';
 import { JobsResponse } from '../../../../core/jobs/services/jobs-service.interface';
 import { isJobTrain } from '../../../../core/jobs/utils';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { useTotalCreditPrice } from '../../../project-details/hooks/use-credits-to-consume.hook';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
 import { JOB_TRIGGER, onScheduledTrainingJobs } from '../utils';
@@ -31,7 +30,6 @@ export const ManualTrainingCreditDeductionNotificationFactory = () => {
 const useManualTrainingCreditDeductionNotificationJobs = () => {
     const { projectIdentifier } = useProject();
     const openedNotification = useRef(new Set<string>());
-    const { addNotification } = useNotification();
     const { isLoading, getCreditPrice } = useTotalCreditPrice();
     const queryEnabled = !isLoading;
 
@@ -55,13 +53,13 @@ const useManualTrainingCreditDeductionNotificationJobs = () => {
                 const { totalCreditsToConsume } = getCreditPrice(jobTask.metadata.task.taskId);
 
                 openedNotification.current.add(scheduledJob.id);
-                addNotification({
+                toast({
                     message: `The model training has been started, ${totalCreditsToConsume} credits deducted.`,
-                    type: NOTIFICATION_TYPE.INFO,
+                    type: 'info',
                 });
             }, JOB_TRIGGER.MANUAL)(jobs);
         },
-        [addNotification, getCreditPrice, queryEnabled]
+        [getCreditPrice, queryEnabled]
     );
 
     useEffect(() => {

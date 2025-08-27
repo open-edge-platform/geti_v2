@@ -37,11 +37,6 @@ const mockDatasetImportItem: DatasetImportItem = {
     warnings: [],
 };
 
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: jest.fn() }),
-}));
-
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: () => ({ datasetId: 'dataset-id' }),

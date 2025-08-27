@@ -14,6 +14,7 @@ export interface MenuTriggerProps {
     renderContent?: (item: string) => JSX.Element;
     children: JSX.Element;
     ariaLabel?: string;
+    grayedOutKeys?: Key[];
 }
 
 export enum MenuItemsKey {

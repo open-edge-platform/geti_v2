@@ -4,13 +4,12 @@
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { getErrorMessage } from '@geti/core/src/services/utils';
+import { toast } from '@geti/ui';
 import { InfiniteData, QueryKey, useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { chunk } from 'lodash-es';
 
 import { MediaAdvancedFilterResponse, MediaItem } from '../../../../core/media/media.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { useDatasetIdentifier } from '../../../annotator/hooks/use-dataset-identifier.hook';
 import { filterPageMedias } from '../../utils';
 
@@ -40,7 +39,6 @@ const getQueriesAndPreviousItems = (
 
 export const useDeleteMediaMutation = (): UseDeleteMediaMutation => {
     const queryClient = useQueryClient();
-    const { addNotification } = useNotification();
     const { mediaService } = useApplicationServices();
     const datasetIdentifier = useDatasetIdentifier();
     const mediaQueryKeyPrefix = QUERY_KEYS.ADVANCED_MEDIA_ITEMS(datasetIdentifier, {}, {}).slice(0, 2);
@@ -70,9 +68,9 @@ export const useDeleteMediaMutation = (): UseDeleteMediaMutation => {
                 queryClient.setQueriesData({ queryKey: queryKeys }, data);
             }
 
-            addNotification({
+            toast({
                 message: `Media cannot be deleted. ${getErrorMessage(error) ?? ''}`,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         },
         onMutate: (itemsDeleted) => {

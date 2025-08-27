@@ -10,14 +10,13 @@ import {
     ApplicationServicesProvider,
 } from '@geti/core/src/services/application-services-provider.component';
 import { OnboardingProfile } from '@geti/core/src/users/services/onboarding-service.interface';
-import { defaultTheme, IntelBrandedLoading, Provider as ThemeProvider } from '@geti/ui';
+import { defaultTheme, IntelBrandedLoading, Provider as ThemeProvider, Toast } from '@geti/ui';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, RenderOptions, RenderResult } from '@testing-library/react';
 import { AuthProvider } from 'react-oidc-context';
 import { MemoryRouter as Router } from 'react-router-dom';
 
 import { AccountStatusDTO } from '../core/organizations/dtos/organizations.interface';
-import { NotificationProvider, Notifications } from '../notification/notification.component';
 import { TusUploadProvider } from '../providers/tus-upload-provider/tus-upload-provider.component';
 import { getMockedWorkspace } from './mocked-items-factory/mocked-workspace';
 
@@ -79,16 +78,14 @@ export const RequiredProviders = ({
         <Suspense fallback={<IntelBrandedLoading />}>
             <Router initialEntries={initialEntries}>
                 <AuthProvider>
-                    <NotificationProvider>
-                        <Notifications />
-                        <QueryClientProvider client={queryClient ?? prefilledQueryClient}>
-                            <ThemeProvider theme={defaultTheme}>
-                                <ApplicationServicesProvider useInMemoryEnvironment {...services}>
-                                    <TusUploadProvider>{children}</TusUploadProvider>
-                                </ApplicationServicesProvider>
-                            </ThemeProvider>
-                        </QueryClientProvider>
-                    </NotificationProvider>
+                    <Toast />
+                    <QueryClientProvider client={queryClient ?? prefilledQueryClient}>
+                        <ThemeProvider theme={defaultTheme}>
+                            <ApplicationServicesProvider useInMemoryEnvironment {...services}>
+                                <TusUploadProvider>{children}</TusUploadProvider>
+                            </ApplicationServicesProvider>
+                        </ThemeProvider>
+                    </QueryClientProvider>
                 </AuthProvider>
             </Router>
         </Suspense>

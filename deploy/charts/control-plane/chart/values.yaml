@@ -9,10 +9,6 @@ global:
   enable_local_image_pull_secret: false
   oidc_cidaas: false
   running_on_vm: false
-  kubectl: 
-    registry: docker.io
-    repository: bitnamilegacy
-    name: kubectl:1.31.0
   busybox: 
     registry: quay.io
     repository: prometheus
