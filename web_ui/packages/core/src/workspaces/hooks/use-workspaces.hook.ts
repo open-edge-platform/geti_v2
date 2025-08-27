@@ -11,9 +11,15 @@ import {
 } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
+import {
+    ProjectSortingOptions,
+    ProjectsQueryOptions,
+} from '../../../../../src/core/projects/services/project-service.interface';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
 import { getErrorMessage } from '../../services/utils';
+import { getRoleCreationPayload } from '../../users/services/utils';
+import { RESOURCE_TYPE, User, USER_ROLE } from '../../users/users.interface';
 import { WorkspaceEntity } from '../services/workspaces.interface';
 
 interface UseWorkspacesApi {
@@ -24,7 +30,7 @@ interface UseWorkspacesApi {
 }
 
 export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
-    const { workspacesService } = useApplicationServices();
+    const { workspacesService, usersService, projectService } = useApplicationServices();
 
     const queryClient = useQueryClient();
 
@@ -42,8 +48,57 @@ export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
             mutationFn: async ({ name }) => {
                 return workspacesService.createWorkspace(organizationId, name);
             },
-            onSuccess: async () => {
+            onSuccess: async (workspace) => {
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.WORKSPACES(organizationId) });
+
+                try {
+                    await queryClient.fetchQuery({
+                        queryKey: QUERY_KEYS.WORKSPACES(organizationId),
+                        queryFn: () => workspacesService.getWorkspaces(organizationId),
+                        retry: 6,
+                        retryDelay: (attempt) => Math.min(1000 * Math.pow(1.5, attempt), 4000),
+                        meta: { notifyOnError: false },
+                    });
+
+                    const projectsQueryOptions: ProjectsQueryOptions = {
+                        sortBy: ProjectSortingOptions.name,
+                        sortDir: 'asc',
+                    };
+
+                    await queryClient.fetchQuery({
+                        queryKey: QUERY_KEYS.PROJECTS_KEY(workspace.id, projectsQueryOptions),
+                        queryFn: () =>
+                            projectService.getProjects(
+                                { organizationId, workspaceId: workspace.id },
+                                projectsQueryOptions,
+                                undefined,
+                                false
+                            ),
+                        retry: 6,
+                        retryDelay: (attempt) => Math.min(1000 * Math.pow(1.5, attempt), 4000),
+                        // Don't show toasts, we'll handle error below if it persists
+                        meta: { notifyOnError: false },
+                    });
+
+                    let activeUser = queryClient.getQueryData<User>(QUERY_KEYS.ACTIVE_USER(organizationId));
+                    if (!activeUser) {
+                        activeUser = await usersService.getActiveUser(organizationId);
+                    }
+
+                    if (activeUser) {
+                        await usersService.updateRoles(organizationId, activeUser.id, [
+                            getRoleCreationPayload({
+                                role: USER_ROLE.WORKSPACE_ADMIN,
+                                resourceId: workspace.id,
+                                resourceType: RESOURCE_TYPE.WORKSPACE,
+                            }),
+                        ]);
+
+                        await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ACTIVE_USER(organizationId) });
+                    }
+                } catch (error) {
+                    toast({ message: getErrorMessage(error as AxiosError), type: 'error' });
+                }
             },
             onError: (error) => {
                 toast({ message: getErrorMessage(error), type: 'error' });

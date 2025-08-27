@@ -15,6 +15,7 @@ interface WorkspaceRoleProps {
     changeRole: (value: WorkspaceRole['role']) => void;
     deleteWorkspaceRole: () => void;
     workspaces: WorkspaceEntity[];
+    deletable?: boolean;
 }
 export const WorkspaceRoleRow = ({
     workspaceRole,
@@ -22,6 +23,7 @@ export const WorkspaceRoleRow = ({
     changeWorkspace,
     changeRole,
     workspaces,
+    deletable = false,
 }: WorkspaceRoleProps): JSX.Element => {
     const { workspace, role } = workspaceRole;
 
@@ -31,16 +33,19 @@ export const WorkspaceRoleRow = ({
                 selectedWorkspace={workspace}
                 workspaces={[...workspaces, workspace]}
                 changeWorkspace={changeWorkspace}
+                width={'calc(50% - 32px)'}
             />
             <RolePicker
                 roles={[USER_ROLE.WORKSPACE_CONTRIBUTOR, USER_ROLE.WORKSPACE_ADMIN]}
                 selectedRole={role}
                 setSelectedRole={changeRole}
-                width={'50%'}
+                width={'calc(50% - 32px)'}
             />
-            <ActionButton onPress={deleteWorkspaceRole}>
-                <Close />
-            </ActionButton>
+            {deletable && (
+                <ActionButton onPress={deleteWorkspaceRole}>
+                    <Close />
+                </ActionButton>
+            )}
         </Flex>
     );
 };

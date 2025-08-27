@@ -13,12 +13,14 @@ interface WorkspaceRolesProps {
     workspaceRoles: WorkspaceRole[];
     setWorkspaceRoles: (workspaces: WorkspaceRole[]) => void;
     workspaces: WorkspaceEntity[];
+    isOrgAdmin: boolean;
 }
 
 export const WorkspaceRolesContainer = ({
     workspaceRoles,
     setWorkspaceRoles,
     workspaces,
+    isOrgAdmin,
 }: WorkspaceRolesProps): JSX.Element => {
     const { canAddNewRole, availableWorkspaces } = useUserRoles(workspaces, workspaceRoles);
 
@@ -57,11 +59,17 @@ export const WorkspaceRolesContainer = ({
                         changeRole={(value) => changeRole(value, index)}
                         deleteWorkspaceRole={() => deleteWorkspaceRole(index)}
                         workspaces={availableWorkspaces}
+                        deletable={workspaceRoles.length > 1}
                     />
                 );
             })}
 
-            <Button variant={'primary'} onPress={addWorkspaceRole} isDisabled={!canAddNewRole} marginTop={'size-175'}>
+            <Button
+                variant={'primary'}
+                onPress={addWorkspaceRole}
+                isDisabled={!canAddNewRole || !isOrgAdmin}
+                marginTop={'size-175'}
+            >
                 Add workspace role
             </Button>
         </>
