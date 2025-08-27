@@ -64,7 +64,6 @@ export const Layers = ({
                             showOptions={showLabelOptions && isActiveLearningMode}
                             annotation={annotation}
                             areLabelsInteractive={props.areLabelsInteractive}
-                            annotationToolContext={props.annotationToolContext}
                         />
                     )}
                 />
@@ -86,7 +85,6 @@ export const Layers = ({
                             annotation={annotation}
                             isOverlap={!isClassification}
                             areLabelsInteractive={props.areLabelsInteractive}
-                            annotationToolContext={props.annotationToolContext}
                         />
                     )}
                 />

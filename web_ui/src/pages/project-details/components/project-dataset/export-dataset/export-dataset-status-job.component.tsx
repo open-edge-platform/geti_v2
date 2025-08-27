@@ -3,12 +3,10 @@
 
 import { FC, ReactNode, useState } from 'react';
 
-import { Divider, Flex, Heading, Loading, Text, View } from '@geti/ui';
+import { Divider, Flex, Heading, Loading, Text, toast, View } from '@geti/ui';
 
 import { getJobActiveStep } from '../../../../../core/jobs/utils';
 import { DatasetIdentifier, ExportDatasetLSData, ExportFormats } from '../../../../../core/projects/dataset.interface';
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import { JobProgress } from '../../../../../shared/components/header/jobs-management/job-progress.component';
 import { ThinProgressBar } from '../../../../../shared/components/thin-progress-bar/thin-progress-bar.component';
 import { formatDownloadUrl } from '../../../../../shared/utils';
@@ -53,7 +51,6 @@ export const ExportDatasetStatusJob = ({
     onPrepareDone,
     onCloseStatus,
 }: ExportDatasetStatusJobProps) => {
-    const { addNotification } = useNotification();
     const { datasetId, datasetName } = localStorageData;
 
     const { useExportDatasetStatusJob } = useExportDataset(datasetName);
@@ -77,9 +74,9 @@ export const ExportDatasetStatusJob = ({
                 downloadUrl: formatDownloadUrl(downloadUrl),
                 size: metadata.size,
             });
-            addNotification({
+            toast({
                 message: `Dataset "${datasetName}" is ready to download`,
-                type: NOTIFICATION_TYPE.INFO,
+                type: 'info',
             });
         },
         onCancelOrFailed: () => onCloseStatus(datasetId),

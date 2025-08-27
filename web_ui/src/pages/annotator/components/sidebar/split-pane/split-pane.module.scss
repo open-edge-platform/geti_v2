@@ -1,0 +1,22 @@
+.handle {
+    --handleHeight: var(--spectrum-global-dimension-size-100);
+    height: var(--handleHeight);
+    width: 100%;
+    position: relative;
+    cursor: row-resize !important;
+
+    &::before {
+        position: absolute;
+        content: '';
+        width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        height: calc(var(--handleHeight) / 4);
+        background-color: var(--spectrum-global-color-gray-500);
+    }
+
+    &:hover::before {
+        --focus-border: #007fd4;
+        background-color: var(--focus-border);
+    }
+}

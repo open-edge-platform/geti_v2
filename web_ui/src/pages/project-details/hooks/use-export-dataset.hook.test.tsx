@@ -8,7 +8,6 @@ import { JobState } from '../../../core/jobs/jobs.const';
 import { ExportDatasetStatusIdentifier, ExportFormats } from '../../../core/projects/dataset.interface';
 import { createInMemoryProjectService } from '../../../core/projects/services/in-memory-project-service';
 import { ProjectService } from '../../../core/projects/services/project-service.interface';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { getMockedDatasetExportIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedDatasetExportJob } from '../../../test-utils/mocked-items-factory/mocked-jobs';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
@@ -31,12 +30,13 @@ jest.mock('./use-local-storage-export-dataset.hook', () => ({
     }),
 }));
 
-const mockAddNotification = jest.fn();
-const mockRemoveNotifications = jest.fn();
+const mockedToast = jest.fn();
+const mockedRemoveToasts = jest.fn();
 
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification, removeNotifications: mockRemoveNotifications }),
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
+    removeToasts: (params: unknown) => mockedRemoveToasts(params),
 }));
 
 const datasetName = 'testDatasetName';
@@ -79,7 +79,7 @@ describe('useExportDataset', () => {
                 });
             });
 
-            expect(mockRemoveNotifications).toHaveBeenCalled();
+            expect(mockedRemoveToasts).toHaveBeenCalled();
         });
 
         it('shows notification error message', async () => {
@@ -96,9 +96,9 @@ describe('useExportDataset', () => {
             });
 
             await waitFor(() => {
-                expect(mockAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: errorMessage,
-                    type: NOTIFICATION_TYPE.ERROR,
+                    type: 'error',
                 });
             });
         });
@@ -127,7 +127,7 @@ describe('useExportDataset', () => {
 
             await waitFor(() => {
                 expect(result.current.exportDatasetStatus.status).toBe('success');
-                expect(mockAddNotification).not.toBeCalled();
+                expect(mockedToast).not.toBeCalled();
             });
         });
 
@@ -152,9 +152,9 @@ describe('useExportDataset', () => {
             });
 
             await waitFor(() => {
-                expect(mockAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: expect.any(String),
-                    type: NOTIFICATION_TYPE.INFO,
+                    type: 'info',
                 });
             });
         });
@@ -175,9 +175,9 @@ describe('useExportDataset', () => {
             });
 
             await waitFor(() => {
-                expect(mockAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: errorMessage,
-                    type: NOTIFICATION_TYPE.ERROR,
+                    type: 'error',
                 });
             });
         });
@@ -200,9 +200,9 @@ describe('useExportDataset', () => {
             });
 
             await waitFor(() => {
-                expect(mockAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: errorMessage,
-                    type: NOTIFICATION_TYPE.ERROR,
+                    type: 'error',
                 });
             });
         });

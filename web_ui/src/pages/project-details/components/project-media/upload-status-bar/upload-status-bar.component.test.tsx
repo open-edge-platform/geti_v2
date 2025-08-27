@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { MediaUploadPerDataset } from '../../../../../providers/media-upload-provider/media-upload.interface';
 import {
@@ -68,7 +68,7 @@ describe('UploadStatusBar', () => {
         expect(screen.getByRole('progressbar')).toBeVisible();
         expect(screen.getByText('1 file left')).toBeVisible();
         expect(screen.getByText('Upload pending...')).toBeVisible();
-        expect(screen.queryByRole('button', { name: /close notification/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: /Close toast/i })).not.toBeInTheDocument();
     });
 
     describe('loaded items bar is visible', () => {
@@ -88,8 +88,10 @@ describe('UploadStatusBar', () => {
             openAndCloseUploadStatusDialog('Uploaded');
             expect(screen.getByText('Uploaded 1 of 1 file')).toBeVisible();
 
-            fireEvent.click(screen.getByRole('button', { name: /close notification/i }));
-            expect(mockedReset).toHaveBeenCalled();
+            fireEvent.click(screen.getByRole('button', { name: /Close toast/i }));
+            await waitFor(() => {
+                expect(mockedReset).toHaveBeenCalled();
+            });
         });
 
         it('some items failed', async () => {

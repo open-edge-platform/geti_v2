@@ -45,7 +45,7 @@ spec:
               image: {{ include "etcd.volumePermissions.image" . }}
               imagePullPolicy: {{ .Values.volumePermissions.image.pullPolicy | quote }}
               command:
-                - /bin/bash
+                - /bin/sh
                 - -ec
                 - |
                   find /snapshots -type d -exec chown -v {{ .Values.containerSecurityContext.runAsUser }} {} +

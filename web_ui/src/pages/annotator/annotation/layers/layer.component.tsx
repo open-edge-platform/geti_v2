@@ -36,7 +36,7 @@ export const Layer = ({
                 // otherwise use the user's settings
                 const showLabel = hideLabels === false || hideAnnotationShape;
                 const maskId = `${annotation.id}-mask`;
-                const savedMasks = maskAnnotations.filter((mask) => mask.idx >= index);
+                const masks = maskAnnotations.filter((mask) => mask.idx >= index);
 
                 return (
                     <div key={annotation.id} className={classes.disabledLayer}>
@@ -48,7 +48,7 @@ export const Layer = ({
                                 id={`annotations-canvas-${annotation.id}-shape`}
                                 aria-label={`annotations-canvas-${annotation.id}-shape`}
                             >
-                                {isNonEmptyArray(savedMasks) && <BackgroundMasks id={maskId} masks={savedMasks} />}
+                                {isNonEmptyArray(masks) && <BackgroundMasks id={maskId} masks={masks} />}
 
                                 <Annotation
                                     key={annotation.id}
@@ -56,7 +56,7 @@ export const Layer = ({
                                     annotation={annotation}
                                     selectedTask={selectedTask}
                                     isPredictionMode={isPredictionMode}
-                                    maskId={isNonEmptyArray(savedMasks) ? `url(#${maskId})` : undefined}
+                                    maskId={isNonEmptyArray(masks) ? `url(#${maskId})` : undefined}
                                 />
                             </svg>
                         )}

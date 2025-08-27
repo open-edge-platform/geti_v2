@@ -24,7 +24,9 @@ interface ActionMenuProps<T> {
     onAction: (key: Key) => void;
     tooltipMessage?: string;
     ariaLabel?: string;
+    grayedOutKeys?: Key[];
 }
+
 export const ActionMenu = <T extends string>({
     id,
     items,
@@ -32,7 +34,10 @@ export const ActionMenu = <T extends string>({
     onAction,
     ariaLabel = 'action menu',
     tooltipMessage = 'More',
+    grayedOutKeys,
 }: ActionMenuProps<T>): JSX.Element => {
+    const isGrayedOut = (name: string) => grayedOutKeys?.includes(name);
+
     return (
         <SpectrumMenuTrigger>
             <TooltipTrigger placement={'bottom'}>
@@ -45,7 +50,15 @@ export const ActionMenu = <T extends string>({
                 {(item) => {
                     return (
                         <Item textValue={item.name}>
-                            <Text>{item.name}</Text>
+                            <Text
+                                UNSAFE_style={
+                                    isGrayedOut(item.name)
+                                        ? { color: 'var(--spectrum-global-color-gray-400)' }
+                                        : undefined
+                                }
+                            >
+                                {item.name}
+                            </Text>
                             {item.icon && <Icon>{item.icon}</Icon>}
                         </Item>
                     );

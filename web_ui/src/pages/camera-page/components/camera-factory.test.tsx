@@ -95,7 +95,7 @@ describe('CameraFactory', () => {
     it('permission denied', async () => {
         await renderApp({ isPermissionDenied: true });
 
-        expect(screen.getAllByText(/camera connection is lost/i)).toHaveLength(2);
+        expect(screen.getByText(/camera connection is lost/i)).toBeVisible();
     });
 
     describe('label selector is visible', () => {

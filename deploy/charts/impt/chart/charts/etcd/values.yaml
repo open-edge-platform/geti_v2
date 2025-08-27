@@ -663,9 +663,9 @@ volumePermissions:
   ## @param volumePermissions.image.digest Init container volume-permissions image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
   ##
   image:
-    registry: docker.io
-    repository: bitnamilegacy
-    name: os-shell:12-debian-12-r47
+    registry: quay.io
+    repository: prometheus
+    name: busybox:glibc
     ## @param volumePermissions.image.pullPolicy Init container volume-permissions image pull policy
     ##
     pullPolicy: IfNotPresent

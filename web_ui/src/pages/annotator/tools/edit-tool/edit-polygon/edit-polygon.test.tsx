@@ -16,7 +16,10 @@ import { providersRender as render } from '../../../../../test-utils/required-pr
 import { getMockedImage, getMockedROI } from '../../../../../test-utils/utils';
 import { ProjectProvider } from '../../../../project-details/providers/project-provider/project-provider.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
+import { AnnotationToolProvider } from '../../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { AnnotatorContextMenuProvider } from '../../../providers/annotator-context-menu-provider/annotator-context-menu-provider.component';
+import { AnnotatorProvider } from '../../../providers/annotator-provider/annotator-provider.component';
+import { SelectedMediaItemProvider } from '../../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { TaskProvider } from '../../../providers/task-provider/task-provider.component';
 import { removeOffLimitPointsPolygon } from '../../utils';
 import { EditPolygon as EditPolygonTool } from './edit-polygon.component';
@@ -25,10 +28,12 @@ const mockROI = getMockedROI({ x: 0, y: 0, width: 1000, height: 1000 });
 const mockImage = getMockedImage(mockROI);
 
 jest.mock('../../../providers/annotation-scene-provider/annotation-scene-provider.component', () => ({
-    useAnnotationScene: () => ({ hasShapePointSelected: { current: false } }),
+    ...jest.requireActual('../../../providers/annotation-scene-provider/annotation-scene-provider.component'),
+    useAnnotationScene: () => ({ hasShapePointSelected: { current: false }, annotations: [] }),
 }));
 
 jest.mock('../../../providers/region-of-interest-provider/region-of-interest-provider.component', () => ({
+    ...jest.requireActual('../../../providers/region-of-interest-provider/region-of-interest-provider.component'),
     useROI: jest.fn(() => ({
         roi: mockROI,
         image: mockImage,
@@ -80,9 +85,18 @@ const renderApp = async (
     const result = render(
         <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
             <TaskProvider>
-                <AnnotatorContextMenuProvider>
-                    <EditPolygonTool annotationToolContext={annotationToolContext} annotation={annotation} />
-                </AnnotatorContextMenuProvider>
+                <SelectedMediaItemProvider>
+                    <AnnotatorProvider>
+                        <AnnotationToolProvider>
+                            <AnnotatorContextMenuProvider>
+                                <EditPolygonTool
+                                    annotationToolContext={annotationToolContext}
+                                    annotation={annotation}
+                                />
+                            </AnnotatorContextMenuProvider>
+                        </AnnotationToolProvider>
+                    </AnnotatorProvider>
+                </SelectedMediaItemProvider>
             </TaskProvider>
         </ProjectProvider>
     );

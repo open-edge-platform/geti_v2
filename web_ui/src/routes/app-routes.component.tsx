@@ -5,14 +5,13 @@ import { Suspense, useEffect } from 'react';
 
 import { paths } from '@geti/core';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-import { IntelBrandedLoading } from '@geti/ui';
+import { IntelBrandedLoading, removeToasts, Toast } from '@geti/ui';
 import { negate } from 'lodash-es';
 import { Navigate, Outlet, Route, useLocation } from 'react-router-dom';
 
 import { isKeypointTask } from '../core/projects/utils';
 import { useEventListener } from '../hooks/event-listener/event-listener.hook';
 import { useIsSaasEnv } from '../hooks/use-is-saas-env/use-is-saas-env.hook';
-import { Notifications, useNotification } from '../notification/notification.component';
 import { TaskProvider } from '../pages/annotator/providers/task-provider/task-provider.component';
 import { RouterErrorBoundary } from '../pages/errors/router-error-boundary.component';
 import { WelcomeTrialModal } from '../pages/landing-page/welcome-trial-modal/welcome-trial-modal.component';
@@ -73,13 +72,10 @@ const AppProviders = (): JSX.Element => {
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
 
     const location = useLocation();
-    const { removeNotifications } = useNotification();
 
     useEffect(() => {
-        removeNotifications();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        removeToasts();
     }, [location]);
-
     useEventListener('error', (e) => {
         // Virtuoso's resize observer can throw this error, which is caught by DnD's
         // global window.error listener and aborts dragging.
@@ -120,7 +116,7 @@ export const appRoutes = () => {
         <Route
             element={
                 <>
-                    <Notifications />
+                    <Toast />
                     <Outlet />
                 </>
             }

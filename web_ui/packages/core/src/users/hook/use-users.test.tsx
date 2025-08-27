@@ -16,12 +16,6 @@ jest.mock('react-router-dom', () => ({
     useParams: () => ({ workspaceId: 'workspace-id', projectId: 'project-id', organizationId: 'organization-123' }),
 }));
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../../../src/notification/notification.component', () => ({
-    ...jest.requireActual('../../../../../src/notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
-}));
-
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {

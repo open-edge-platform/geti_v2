@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import sharedEslintConfig from '@geti/config/lint';
+import jest from 'eslint-plugin-jest';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -18,6 +19,19 @@ const compat = new FlatCompat({
 
 export default [
     ...sharedEslintConfig,
+    {
+        files: ['**/*.test.tsx', '**/*.test.ts'],
+        plugins: {
+            jest,
+        },
+        rules: {
+            'jest/no-disabled-tests': 'error',
+            'jest/no-focused-tests': 'error',
+            'jest/no-identical-title': 'error',
+            'jest/prefer-to-have-length': 'warn',
+            'jest/valid-expect': 'error',
+        },
+    },
     {
         rules: {
             'no-restricted-imports': [

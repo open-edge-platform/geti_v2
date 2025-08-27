@@ -4,13 +4,12 @@
 import { useMemo } from 'react';
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { AxiosError, isAxiosError } from 'axios';
 import { isEmpty, isEqual, negate } from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
 
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import { hasEqualId } from '../../../../../shared/utils';
 import { useProject } from '../../../../project-details/providers/project-provider/project-provider.component';
 import { useDatasetIdentifier } from '../../../hooks/use-dataset-identifier.hook';
@@ -40,7 +39,6 @@ export const usePropagateAnnotations = (): UsePropagateAnnotations => {
 
     const { selectedTask } = useTask();
     const { isTaskChainProject } = useProject();
-    const { addNotification } = useNotification();
 
     const disableDueToTaskChain = isTaskChainProject && selectedTask !== null;
 
@@ -139,7 +137,7 @@ export const usePropagateAnnotations = (): UsePropagateAnnotations => {
                             videoControls.goto(nextVideoFrame.identifier.frameNumber);
                         } catch (error: unknown) {
                             if (isAxiosError(error)) {
-                                addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+                                toast({ message: error.message, type: 'error' });
                             }
                         }
                     },
@@ -154,7 +152,7 @@ export const usePropagateAnnotations = (): UsePropagateAnnotations => {
                             videoControls.goto(nextVideoFrame.identifier.frameNumber);
                         } catch (error: unknown) {
                             if (isAxiosError(error)) {
-                                addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+                                toast({ message: error.message, type: 'error' });
                             }
                         }
                     },
@@ -163,7 +161,7 @@ export const usePropagateAnnotations = (): UsePropagateAnnotations => {
         },
 
         onError: (error: AxiosError) => {
-            addNotification({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: error.message, type: 'error' });
         },
     });
 

@@ -3,12 +3,14 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Namespace }}-configuration
   namespace: {{ .Release.Namespace }}
+  labels:
+    ip_change_applicable: "true"
 data:
   # Percent of CPUs on a single machine that can be allocated for training
   serverAddress: "{{ .Values.global.serverAddress }}"
   registry_address: "{{ .Values.global.registry_address }}"
   tag: "{{ .Chart.AppVersion }}"
-  installation_profile: "{{ .Values.global.installation_profile }}"
+  mlflow_sidecar_image: "{{ .Values.global.registry_address }}/{{ .Values.global.docker_namespace }}/mlflow-geti-store:{{ .Values.global.tag | default .Chart.AppVersion }}"
   {{- if contains "intel" .Values.accelerator.name }}
   otx2_image: "{{ .Values.global.registry_address }}/{{ .Values.global.docker_namespace }}/otx2-intel:{{ .Values.global.tag | default .Chart.AppVersion }}"
   render_gid: "{{ .Values.render_gid }}"
@@ -40,7 +42,7 @@ data:
   max_video_length: "{{ .Values.global.max_video_length }}"
   min_free_disk_space_gib: "{{ .Values.global.min_free_disk_space_gib }}"
   grafana_enabled: "{{ .Values.global.grafana_enabled }}"
-  workflow_versions: "{{ .Values.global.workflow_versions | default .Chart.AppVersion }}"
+  workflow_versions: "{{ .Values.global.workflow_versions }}"
   mongodb_credentials_provider: "{{ .Values.global.mongodb_credentials_provider }}"
   s3_credentials_provider: "{{ .Values.global.s3_credentials_provider }}"
   {{ if .Values.global.enable_object_storage }}

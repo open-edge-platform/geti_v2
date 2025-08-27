@@ -10,6 +10,8 @@ import { CollapsedItemsPicker } from '../../../../shared/components/collapsed-it
 import { TabItem } from '../../../../shared/components/tabs/tabs.interface';
 import { hasEqualId } from '../../../../shared/utils';
 import { useProject } from '../../providers/project-provider/project-provider.component';
+import { ExportDatasetDialog } from './export-dataset/export-dataset-dialog.component';
+import { useExportImportDatasetDialogStates } from './export-dataset/export-import-dataset-dialog-provider.component';
 import { ProjectDatasetTabActions } from './project-dataset-tab-actions.component';
 import { useSelectedDataset } from './use-selected-dataset/use-selected-dataset.hook';
 import { MAX_NUMBER_OF_DISPLAYED_DATASETS } from './utils';
@@ -23,6 +25,8 @@ export const DatasetTabList = () => {
     const numberOfDatasets = project.datasets.length;
 
     const { createDataset, pinnedDatasets, collapsedDatasets, handleCreateDataset, handleSelectDataset } = useDataset();
+
+    const { exportDialogState } = useExportImportDatasetDialogStates();
 
     const hasSelectedPinnedDataset = pinnedDatasets.find(hasEqualId(selectedDataset.id)) !== undefined;
     const collapsedPickerItems = collapsedDatasets.map(({ id, name }) => ({ id, name }));
@@ -42,6 +46,8 @@ export const DatasetTabList = () => {
                     </Item>
                 )}
             </TabList>
+
+            <ExportDatasetDialog triggerState={exportDialogState} datasetName={selectedDataset.name} />
 
             {numberOfDatasets > MAX_NUMBER_OF_DISPLAYED_DATASETS ? (
                 <CollapsedItemsPicker

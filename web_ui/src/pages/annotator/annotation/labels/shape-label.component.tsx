@@ -9,13 +9,7 @@ interface ShapeLabelProps extends LabelsProps {
     isOverlap?: boolean;
 }
 
-export const ShapeLabel = ({
-    isOverlap,
-    annotation,
-    showOptions,
-    areLabelsInteractive,
-    annotationToolContext,
-}: ShapeLabelProps) => {
+export const ShapeLabel = ({ isOverlap, annotation, showOptions, areLabelsInteractive }: ShapeLabelProps) => {
     if (isPoseShape(annotation.shape)) {
         return annotation.shape.points.map((point) => (
             <ExpandablePointLabel isVisible key={point.label.id} point={point} isOverlap={isOverlap} />
@@ -28,7 +22,6 @@ export const ShapeLabel = ({
             showOptions={showOptions}
             annotation={annotation}
             areLabelsInteractive={areLabelsInteractive}
-            annotationToolContext={annotationToolContext}
         />
     );
 };
