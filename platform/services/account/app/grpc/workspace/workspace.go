@@ -52,7 +52,7 @@ func workspaceToPb(workspace models.Workspace) *pb.WorkspaceData {
 	}
 }
 
-func CreateWorkspace(tx *gorm.DB, workspace *models.Workspace) error {
+func CreateWorkspace(tx *gorm.DB, workspace *models.Workspace, workspaceAdmin string) error {
 	result := tx.Create(&workspace)
 	if result.Error != nil {
 		logger.Errorf("error during workspace Create: %v", result.Error)
@@ -75,6 +75,21 @@ func CreateWorkspace(tx *gorm.DB, workspace *models.Workspace) error {
 		logger.Errorf("failed to create parent_organization relation for workspace: %v", err)
 		return status.Errorf(codes.Unknown, "unexpected error")
 	}
+
+	if workspaceAdmin != "" {
+    	err = rolesMgr.ChangeUserRelation(
+	        "workspace",
+	        workspace.ID.String(),
+	        []string{"workspace_admin"},
+	        workspaceAdmin,
+	        authzed.RelationshipUpdate_OPERATION_CREATE)
+
+	    if err != nil {
+		    logger.Errorf("failed to create workspace_admin relation for a user creating a workspace: %v", err)
+		    return status.Errorf(codes.Unknown, "unexpected error")
+	    }
+    }
+
 	logger.Infof("workspace %s has been successfully created, parent organization id: %s",
 		workspace.ID.String(), workspace.OrganizationID.String())
 
@@ -102,7 +117,7 @@ func (s *GRPCServer) Create(ctx context.Context, data *pb.WorkspaceData) (*pb.Wo
 		workspace.CreatedBy = authTokenData.UserID
 	}
 
-	err = CreateWorkspace(s.DB, &workspace)
+	err = CreateWorkspace(s.DB, &workspace, data.WorkspaceAdmin)
 	if err != nil {
 		return nil, err
 	}
