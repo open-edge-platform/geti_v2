@@ -17,11 +17,6 @@ import { useQuickInferenceMutation } from './use-quick-inference-mutation.hook';
 
 jest.mock('./use-quick-inference-mutation.hook', () => ({ useQuickInferenceMutation: jest.fn() }));
 
-jest.mock('../../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../../notification/notification.component'),
-    useNotification: jest.fn().mockImplementation(() => ({ addNotification: jest.fn() })),
-}));
-
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: () => ({

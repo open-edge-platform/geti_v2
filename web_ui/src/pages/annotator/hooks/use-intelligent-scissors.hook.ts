@@ -4,13 +4,12 @@
 import { PointerEvent, useEffect, useRef } from 'react';
 
 import { IntelligentScissors } from '@geti/smart-tools';
+import { toast } from '@geti/ui';
 import { useMutation } from '@tanstack/react-query';
 import { Remote } from 'comlink';
 import { isEmpty, isEqual, throttle } from 'lodash-es';
 
 import { Point, Polygon } from '../../../core/annotations/shapes.interface';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { runWhen, runWhenTruthy } from '../../../shared/utils';
 import { leftRightMouseButtonHandler } from '../../utils';
 import { usePolygonState } from '../tools/polygon-tool/polygon-state-provider.component';
@@ -49,8 +48,6 @@ export const useIntelligentScissors = ({
     const isFreeDrawing = useRef<boolean>(false);
     const buildMapPoint = useRef<Point | null>(null);
     const intelligentScissors = useRef<Remote<IntelligentScissors> | null>(null);
-
-    const { addNotification } = useNotification();
 
     const { segments, setSegments, mode, setMode, setIsIntelligentScissorsLoaded } = usePolygonState();
 
@@ -168,10 +165,7 @@ export const useIntelligentScissors = ({
         mutationFn: async (point: Point) => intelligentScissors.current?.calcPoints(point),
 
         onError: (): void => {
-            addNotification({
-                message: 'Failed to select the shape boundaries, could you please try again?',
-                type: NOTIFICATION_TYPE.ERROR,
-            });
+            toast({ message: 'Failed to select the shape boundaries, could you please try again?', type: 'error' });
         },
 
         onSuccess: runWhenTruthy((newPoints: Point[]) => {

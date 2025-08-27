@@ -125,9 +125,7 @@ export const EditPolygon = ({
                 />
             </svg>
 
-            {shape.points.length > 0 && !isBrushSubTool && (
-                <Labels annotation={{ ...annotation, shape }} annotationToolContext={annotationToolContext} />
-            )}
+            {shape.points.length > 0 && !isBrushSubTool && <Labels annotation={{ ...annotation, shape }} />}
 
             {disablePoints === false && !isBrushSubTool ? (
                 <svg

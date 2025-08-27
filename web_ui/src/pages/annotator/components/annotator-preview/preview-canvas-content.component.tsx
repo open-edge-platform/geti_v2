@@ -12,7 +12,6 @@ import { AnnotationsMask } from '../../annotation/annotations-mask.component';
 import { ShapeLabel } from '../../annotation/labels/shape-label.component';
 import { Layer } from '../../annotation/layers/layer.component';
 import { MediaImage } from '../../media-image.component';
-import { useAnnotationToolContext } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { useAnnotatorCanvasSettings } from '../../providers/annotator-canvas-settings-provider/annotator-canvas-settings-provider.component';
 import {
     useExplanationOpacity,
@@ -46,7 +45,6 @@ export const PreviewCanvasContent = ({
     const { inputs } = useTaskChain();
     const { zoomState } = useZoom();
     const { tasks, selectedTask } = useTask();
-    const annotationToolContext = useAnnotationToolContext();
     const { canvasSettingsState } = useAnnotatorCanvasSettings();
     const { showOverlapAnnotations } = useExplanationOpacity();
     const { isExplanationVisible, selectedExplanation } = usePrediction();
@@ -97,13 +95,7 @@ export const PreviewCanvasContent = ({
                             selectedTask={selectedTask}
                             globalAnnotations={getGlobalAnnotations(visibleAnnotations, roi, selectedTask)}
                             removeBackground={showOverlapAnnotations}
-                            renderLabel={(annotation) => (
-                                <ShapeLabel
-                                    showOptions={false}
-                                    annotation={annotation}
-                                    annotationToolContext={annotationToolContext}
-                                />
-                            )}
+                            renderLabel={(annotation) => <ShapeLabel showOptions={false} annotation={annotation} />}
                         />
                     )}
 
@@ -117,13 +109,7 @@ export const PreviewCanvasContent = ({
                             selectedTask={selectedTask}
                             globalAnnotations={getGlobalAnnotations(annotations, roi, selectedTask)}
                             isOverlap={!isClassification}
-                            renderLabel={(annotation) => (
-                                <ShapeLabel
-                                    showOptions={false}
-                                    annotation={annotation}
-                                    annotationToolContext={annotationToolContext}
-                                />
-                            )}
+                            renderLabel={(annotation) => <ShapeLabel showOptions={false} annotation={annotation} />}
                         />
                     )}
                 </div>

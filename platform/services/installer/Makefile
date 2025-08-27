@@ -14,6 +14,8 @@ test-component:
 test-integration:
 	@echo "Not applicable"
 
+build: build-image build-installer
+
 build-installer:
 	$(eval CONTAINER_ID := $(shell docker run -d --rm $(IMAGE_TAG) sleep 10))
 	@sleep 2
@@ -29,3 +31,6 @@ build-image:
 
 clean:
 	@rm -rf __pycache__ .cache .pytest_cache .venv .mypy_cache platform_installer platform_logs
+
+list-image:
+	@echo "Not applicable"

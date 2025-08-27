@@ -14,7 +14,6 @@ import {
     JobImportDatasetToNewProjectStatus,
     JobPrepareDatasetImportNewProjectStatus,
 } from '../../../core/jobs/jobs.interface';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { ProjectProvider } from '../../../pages/project-details/providers/project-provider/project-provider.component';
 import { getMockedProjectIdentifier } from '../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedImportStatusJob, getMockedPrepareJob } from '../../../test-utils/mocked-items-factory/mocked-jobs';
@@ -60,10 +59,10 @@ const mockDatasetImportItem: DatasetImportItem = {
     warnings: [],
 };
 
-const mockedAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockedAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 jest.mock('react-router-dom', () => ({
@@ -209,9 +208,9 @@ describe('DatasetImportPanel', () => {
 
         await userEvent.upload(getFileInput(), file);
 
-        expect(mockedAddNotification).toHaveBeenCalledWith({
+        expect(mockedToast).toHaveBeenCalledWith({
             message: FILE_FORMAT_ERROR_MESSAGE,
-            type: NOTIFICATION_TYPE.ERROR,
+            type: 'error',
         });
     });
 

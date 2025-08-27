@@ -4,7 +4,7 @@
 import { useEffect } from 'react';
 
 import { paths } from '@geti/core';
-import { ActionButton } from '@geti/ui';
+import { ActionButton, toast } from '@geti/ui';
 import { isEmpty, noop } from 'lodash-es';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,8 +14,6 @@ import { hasActiveModels } from '../../../../../core/models/utils';
 import { LifecycleStage } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { useTasksWithSupportedAlgorithms } from '../../../../../core/supported-algorithms/hooks/use-tasks-with-supported-algorithms';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import { addAlgorithmDetails } from '../../project-models/utils';
 
 import classes from './open-notification-toast.module.scss';
@@ -49,7 +47,6 @@ const obsoleteText = `Previously trained models are still shown in the Intel® G
 However, it is no longer possible to train new models with this architecture: try one of the new algorithms instead.`;
 
 export const useOpenNotificationToast = () => {
-    const { addToastNotification } = useNotification();
     const { useProjectModelsQuery } = useModels();
     const { data = [] } = useProjectModelsQuery();
     const { tasksWithSupportedAlgorithms } = useTasksWithSupportedAlgorithms();
@@ -77,19 +74,19 @@ export const useOpenNotificationToast = () => {
         const activeDeprecatedModel: ModelGroupsAlgorithmDetails | undefined = activeModels.find(isDeprecated);
 
         if (activeDeprecatedModel) {
-            addToastNotification({
+            toast({
                 title: `Your active model “${activeDeprecatedModel.groupName}" is deprecated`,
                 message: deprecatedText,
-                type: NOTIFICATION_TYPE.WARNING,
+                type: 'warning',
                 actionButtons,
             });
         }
 
         if (activeObsoleteModel) {
-            addToastNotification({
+            toast({
                 title: `Your active model “${activeObsoleteModel.groupName}" is Obsolete`,
                 message: obsoleteText,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
                 actionButtons,
             });
         }

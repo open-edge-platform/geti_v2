@@ -91,7 +91,8 @@ spec:
           image: {{ include "etcd.volumePermissions.image" . }}
           imagePullPolicy: {{ .Values.volumePermissions.image.pullPolicy | quote }}
           command:
-            - /bin/bash
+            - /bin/sh
+          args:
             - -ec
             - |
               find /bitnami/etcd -type d -exec chown -v {{ .Values.containerSecurityContext.runAsUser }}:{{ .Values.podSecurityContext.fsGroup }} {} +

@@ -3,13 +3,12 @@
 
 import { useEffect, useMemo } from 'react';
 
+import { toast } from '@geti/ui';
 import { useInfiniteQuery, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError, HttpStatusCode } from 'axios';
 import { validate } from 'uuid';
 
 import { AccountStatusDTO } from '../../../../../src/core/organizations/dtos/organizations.interface';
-import { NOTIFICATION_TYPE } from '../../../../../src/notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../src/notification/notification.component';
 import { redirectTo } from '../../../../../src/shared/utils';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
@@ -68,16 +67,15 @@ export const useChangePassword = (): UseMutationResult<void, AxiosError, UpdateP
 
 export const useUserRegister = (): UseMutationResult<void, AxiosError, UserRegistrationDTO> => {
     const { usersService } = useApplicationServices();
-    const { addNotification } = useNotification();
 
     const handleError = (error: AxiosError) => {
-        addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+        toast({ message: getErrorMessage(error), type: 'error' });
     };
 
     const handleUserNotFoundError = () => {
-        addNotification({
+        toast({
             message: 'User does not exist, it may have been deleted by the administrator.',
-            type: NOTIFICATION_TYPE.ERROR,
+            type: 'error',
         });
     };
 
@@ -101,7 +99,6 @@ export const useUserRegister = (): UseMutationResult<void, AxiosError, UserRegis
 export const useUsers = (): UseUsers => {
     const { usersService } = useApplicationServices();
 
-    const { addNotification } = useNotification();
     const queryClient = useQueryClient();
 
     const useGetUsersQuery: UseUsers['useGetUsersQuery'] = (organizationId, queryParams = {}) => {
@@ -189,11 +186,11 @@ export const useUsers = (): UseUsers => {
         useMutation<void, AxiosError, UseInviteUserPayload>({
             mutationFn: ({ organizationId, email, roles }) => usersService.inviteUser(organizationId, email, roles),
             onSuccess: async (_, { organizationId, email }) => {
-                addNotification({ message: `The invite has been sent to: ${email}`, type: NOTIFICATION_TYPE.DEFAULT });
+                toast({ message: `The invite has been sent to: ${email}`, type: 'neutral' });
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USERS(organizationId) });
             },
             onError: (error: AxiosError) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
 

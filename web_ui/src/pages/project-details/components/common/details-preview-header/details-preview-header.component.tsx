@@ -11,7 +11,9 @@ import {
     DialogTrigger,
     Divider,
     Flex,
+    removeToast,
     Text,
+    toast,
     useNumberFormatter,
     View,
 } from '@geti/ui';
@@ -22,8 +24,6 @@ import { Explanation } from '../../../../../core/annotations/prediction.interfac
 import { Task } from '../../../../../core/projects/task.interface';
 import { getAverageScore } from '../../../../../core/tests/services/utils';
 import { TestImageMediaResult } from '../../../../../core/tests/test-image.interface';
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import { TaskLabelTreeContainer } from '../../../../../shared/components/task-label-tree-search/task-label-tree-container.component';
 import { useFilteredTaskMetadata } from '../../../../../shared/components/task-label-tree-search/use-filtered-task-metadata.hook';
 import { hasEqualDomain } from '../../../../../shared/utils';
@@ -64,18 +64,16 @@ export const DetailsPreviewHeader = ({
     });
     const filteredDomainLabels = domainLabels.filter(hasEqualDomain(selectedTask?.domain));
 
-    const { addNotification, removeNotification } = useNotification();
-
     const isPredictionMode = mode === ANNOTATOR_MODE.PREDICTION;
 
     useEffect(() => {
         if (disableActionModes) {
-            const notificationId = addNotification({
+            const notificationId = toast({
                 message: 'Predictions are only available in the active model. Displaying annotations.',
-                type: NOTIFICATION_TYPE.INFO,
+                type: 'info',
             });
 
-            return () => removeNotification(notificationId);
+            return () => removeToast(notificationId);
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

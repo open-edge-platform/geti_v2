@@ -3,6 +3,7 @@
 
 import { useRef } from 'react';
 
+import { ResizeAnchor } from '@geti/smart-tools';
 import { Invisible, Visible } from '@geti/ui/icons';
 
 import { RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
@@ -15,7 +16,6 @@ import { PoseKeypointVisibility } from '../../../annotation/shapes/pose-keypoint
 import { useAnnotatorCanvasSettings } from '../../../providers/annotator-canvas-settings-provider/annotator-canvas-settings-provider.component';
 import { useAnnotatorContextMenu } from '../../../providers/annotator-context-menu-provider/annotator-context-menu-provider.component';
 import { useZoom } from '../../../zoom/zoom-provider.component';
-import { ResizeAnchor } from '../resize-anchor.component';
 import { ResizeAnchorType } from '../resize-anchor.enum';
 
 export interface EditPosePointToolProps {

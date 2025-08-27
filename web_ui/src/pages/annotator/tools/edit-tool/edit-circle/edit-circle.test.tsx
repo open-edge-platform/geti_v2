@@ -14,6 +14,10 @@ import { providersRender as render } from '../../../../../test-utils/required-pr
 import { getMockedImage } from '../../../../../test-utils/utils';
 import { ProjectProvider } from '../../../../project-details/providers/project-provider/project-provider.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
+import { AnnotationSceneProvider } from '../../../providers/annotation-scene-provider/annotation-scene-provider.component';
+import { AnnotationToolProvider } from '../../../providers/annotation-tool-provider/annotation-tool-provider.component';
+import { AnnotatorProvider } from '../../../providers/annotator-provider/annotator-provider.component';
+import { SelectedMediaItemProvider } from '../../../providers/selected-media-item-provider/selected-media-item-provider.component';
 import { TaskProvider } from '../../../providers/task-provider/task-provider.component';
 import { getMaxCircleRadius } from '../../circle-tool/utils';
 import { calculateAnchorPoint, EditCircle as EditCircleTool } from './edit-circle.component';
@@ -39,7 +43,15 @@ const renderApp = async (
     const result = render(
         <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
             <TaskProvider>
-                <EditCircleTool annotationToolContext={annotationToolContext} annotation={annotation} />
+                <SelectedMediaItemProvider>
+                    <AnnotatorProvider>
+                        <AnnotationSceneProvider annotations={[]} labels={[]}>
+                            <AnnotationToolProvider>
+                                <EditCircleTool annotationToolContext={annotationToolContext} annotation={annotation} />
+                            </AnnotationToolProvider>
+                        </AnnotationSceneProvider>
+                    </AnnotatorProvider>
+                </SelectedMediaItemProvider>
             </TaskProvider>
         </ProjectProvider>
     );

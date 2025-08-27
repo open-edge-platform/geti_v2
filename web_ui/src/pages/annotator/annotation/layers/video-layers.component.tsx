@@ -77,7 +77,6 @@ export const VideoLayers = ({
                             showOptions={isActiveLearningMode}
                             annotation={annotation}
                             areLabelsInteractive={props.areLabelsInteractive}
-                            annotationToolContext={props.annotationToolContext}
                         />
                     )}
                 />
@@ -96,7 +95,6 @@ export const VideoLayers = ({
                             showOptions={false}
                             annotation={annotation}
                             areLabelsInteractive={props.areLabelsInteractive}
-                            annotationToolContext={props.annotationToolContext}
                         />
                     )}
                 />

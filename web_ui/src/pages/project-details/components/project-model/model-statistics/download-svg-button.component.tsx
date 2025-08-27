@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import {
     ActionButton,
+    toast,
     Tooltip,
     TooltipTrigger,
     View,
@@ -13,8 +14,6 @@ import {
 } from '@geti/ui';
 import { DownloadIcon } from '@geti/ui/icons';
 
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import {
     DOWNLOADABLE_HTML_SELECTOR,
     DOWNLOADABLE_SVG_SELECTOR,
@@ -45,7 +44,6 @@ export const DownloadSvgButton = ({
     graphBackgroundColor,
     ...props
 }: DownloadSvgButtonProps) => {
-    const { addNotification } = useNotification();
     const [isDownloading, setIsDownloading] = useState(false);
     const hexColor = getVarColorToHex(`--spectrum-global-color-${graphBackgroundColor}`);
 
@@ -57,7 +55,7 @@ export const DownloadSvgButton = ({
 
             await downloadMultiplePages(fileName, svgs, htmls, hexColor);
         } catch (_e) {
-            addNotification({ message: ERROR_MESSAGE, type: NOTIFICATION_TYPE.ERROR });
+            toast({ message: ERROR_MESSAGE, type: 'error' });
         } finally {
             setIsDownloading(false);
         }

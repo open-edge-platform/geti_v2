@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 
-import { Button, ButtonGroup, View } from '@geti/ui';
+import { Button, ButtonGroup, toast, View } from '@geti/ui';
 import { Alert } from '@geti/ui/icons';
 
 import { Label } from '../../../../core/labels/label.interface';
@@ -11,8 +11,6 @@ import { useProjectActions } from '../../../../core/projects/hooks/use-project-a
 import { KeypointTask, Task, TaskMetadata } from '../../../../core/projects/task.interface';
 import { isKeypointTask } from '../../../../core/projects/utils';
 import { useHistoryBlock } from '../../../../hooks/use-history-block/use-history-block.hook';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { useWorkspaceIdentifier } from '../../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { PageLayout } from '../../../../shared/components/page-layout/page-layout.component';
 import { UnsavedChangesDialog } from '../../../../shared/components/unsaved-changes-dialog/unsaved-changes-dialog.component';
@@ -58,7 +56,6 @@ const formatWithTaskMetadata = (metadata: TaskMetadata | null) => (task: Keypoin
 
 export const ProjectTemplate = (): JSX.Element => {
     const { project } = useProject();
-    const { addNotification } = useNotification();
     const [isDirty, setIsDirty] = useState(false);
     const { editProjectMutation } = useProjectActions();
     const [taskMetadata, setTaskMetadata] = useState<TaskMetadata | null>(null);
@@ -83,8 +80,8 @@ export const ProjectTemplate = (): JSX.Element => {
             {
                 onSuccess: () => {
                     setIsDirty(false);
-                    addNotification({
-                        type: NOTIFICATION_TYPE.INFO,
+                    toast({
+                        type: 'info',
                         message: 'Template have been updated successfully',
                     });
                 },

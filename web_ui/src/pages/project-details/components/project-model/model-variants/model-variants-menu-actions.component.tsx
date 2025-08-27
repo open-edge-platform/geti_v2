@@ -2,9 +2,8 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import { MenuTriggerList } from '../../../../../shared/components/menu-trigger-list/menu-trigger-list.component';
 import { downloadFile, getDownloadNotificationMessage, isNonEmptyString } from '../../../../../shared/utils';
 import { DownloadCell } from './download-cell/download-cell.component';
@@ -21,7 +20,6 @@ export const ModelVariantsMenuActions = ({
     handleOpenRunTest,
 }: ModelVariantsMenuActionsProps): JSX.Element => {
     const { router } = useApplicationServices();
-    const { addNotification } = useNotification();
 
     const downloadHandler = () => {
         if (!isNonEmptyString(downloadUrl)) {
@@ -29,7 +27,7 @@ export const ModelVariantsMenuActions = ({
         }
 
         downloadFile(router.PREFIX(downloadUrl));
-        addNotification({ message: getDownloadNotificationMessage('model'), type: NOTIFICATION_TYPE.INFO });
+        toast({ message: getDownloadNotificationMessage('model'), type: 'info' });
     };
 
     const menuOptions: [string, () => void][] = [

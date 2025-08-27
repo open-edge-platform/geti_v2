@@ -4,13 +4,11 @@
 import { useState } from 'react';
 
 import { paths } from '@geti/core';
-import { Button } from '@geti/ui';
+import { Button, toast } from '@geti/ui';
 import { groupBy, isEmpty } from 'lodash-es';
 import { NavigateFunction } from 'react-router-dom';
 
 import { DatasetIdentifier } from '../../../../core/projects/dataset.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { TooltipWithDisableButton } from '../../../../shared/components/custom-tooltip/tooltip-with-disable-button';
 import { getIds } from '../../../../shared/utils';
 import { useDatasetMediaUpload } from '../../../project-details/components/project-dataset/hooks/dataset-media-upload';
@@ -29,7 +27,6 @@ export const insufficientStorageMessage =
 const datasetPagePath = (datasetIdentifier: DatasetIdentifier) => paths.project.dataset.index(datasetIdentifier);
 
 export const AcceptButton = ({ isDisabled, navigate }: AcceptButtonProps): JSX.Element => {
-    const { addNotification } = useNotification();
     const { ...datasetIdentifier } = useCameraParams();
     const { mediaUploadState, onUploadMedia } = useDatasetMediaUpload();
     const { savedFilesQuery, updateMany, deleteMany } = useCameraStorage();
@@ -56,15 +53,12 @@ export const AcceptButton = ({ isDisabled, navigate }: AcceptButtonProps): JSX.E
         setIsPendingButton(true);
 
         try {
-            addNotification({ message: 'Preparing media upload...', type: NOTIFICATION_TYPE.INFO });
+            toast({ message: 'Preparing media upload...', type: 'info' });
             await updateMany(getIds(savedFilesQuery.data ?? []), {});
             await handleScreenLoading();
             navigate(datasetPagePath(datasetIdentifier));
         } catch (_error) {
-            addNotification({
-                type: NOTIFICATION_TYPE.ERROR,
-                message: 'There was an issue while uploading the media files. Please try again.',
-            });
+            toast({ type: 'error', message: 'There was an issue while uploading the media files. Please try again.' });
         } finally {
             setIsPendingButton(false);
         }

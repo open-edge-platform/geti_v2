@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
 import { getBoundingBox } from '@geti/smart-tools/utils';
 
 import { KeypointAnnotation } from '../../../../../core/annotations/annotation.interface';
@@ -20,7 +21,6 @@ import {
     MIN_BOUNDING_BOX_SIZE,
     rotatePointsAroundPivot,
 } from '../../keypoint-tool/utils';
-import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { TranslateShape } from '../translate-shape.component';
 import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from '../utils';
 import { ClosestKeypoint } from './closest-keypoint.component';

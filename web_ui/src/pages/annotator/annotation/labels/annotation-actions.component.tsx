@@ -9,7 +9,7 @@ import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { isAnomalyDomain, isClassificationDomain } from '../../../../core/projects/domains';
 import { ANIMATION_PARAMETERS } from '../../../../shared/animation-parameters/animation-parameters';
 import { hasEqualId } from '../../../../shared/utils';
-import { AnnotationToolContext } from '../../core/annotation-tool-context.interface';
+import { useAnnotationToolContext } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { getGlobalAnnotations } from '../../providers/task-chain-provider/utils';
 import { useTask } from '../../providers/task-provider/task-provider.component';
@@ -18,21 +18,22 @@ import classes from './labels.module.scss';
 
 interface LabelActionsProps {
     annotation: Annotation;
-    annotationToolContext: AnnotationToolContext;
     setEditLabels: (editLabels: boolean) => void;
 }
 
-const useOnRemoveLabels = (annotationToolContext: AnnotationToolContext, annotation: Annotation) => {
+const useOnRemoveLabels = (annotation: Annotation) => {
     const { selectedTask } = useTask();
     const { roi } = useROI();
-    const { removeAnnotations, removeLabels } = annotationToolContext.scene;
+    const {
+        scene: { annotations, removeAnnotations, removeLabels },
+    } = useAnnotationToolContext();
 
     if (selectedTask === null) {
         return () => removeAnnotations([annotation]);
     }
 
     if (isClassificationDomain(selectedTask.domain) || isAnomalyDomain(selectedTask.domain)) {
-        const globalAnnotations = getGlobalAnnotations(annotationToolContext.scene.annotations, roi, selectedTask);
+        const globalAnnotations = getGlobalAnnotations(annotations, roi, selectedTask);
 
         if (!globalAnnotations.some(hasEqualId(annotation.id))) {
             return () => {
@@ -50,12 +51,8 @@ const useOnRemoveLabels = (annotationToolContext: AnnotationToolContext, annotat
     };
 };
 
-export const AnnotationActions = ({
-    annotation,
-    annotationToolContext,
-    setEditLabels,
-}: LabelActionsProps): JSX.Element => {
-    const onRemoveLabels = useOnRemoveLabels(annotationToolContext, annotation);
+export const AnnotationActions = ({ annotation, setEditLabels }: LabelActionsProps): JSX.Element => {
+    const onRemoveLabels = useOnRemoveLabels(annotation);
 
     const onEditLabels = () => {
         setEditLabels(true);
