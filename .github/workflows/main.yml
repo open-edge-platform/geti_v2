@@ -112,7 +112,7 @@ jobs:
             checkout_ref="$GITHUB_REF"
           fi
 
-          echo "build_all=$build_all"               >> $GITHUB_OUTPUT
+          echo "build_all=true"               >> $GITHUB_OUTPUT
           echo "publish_binaries=$publish_binaries" >> $GITHUB_OUTPUT
           echo "checkout_ref=$checkout_ref"         >> $GITHUB_OUTPUT
           
