@@ -299,18 +299,15 @@ func (s *GRPCServer) Find(ctx context.Context, findRequest *pb.FindWorkspaceRequ
 	statementSession = statementSession.Model(&workspaces)
 
 	authTokenData, ok := grpcUtils.GetAuthTokenHeaderData(ctx)
-	if !ok {
-		logger.Errorf("failed to retrieve auth token data - find workspaces: %v", authTokenData)
-		return nil, status.Error(codes.Unknown, "unexpected error")
-	}
+	if ok {
+        availableWorkspaces := GetAvailableWorkspaces(authTokenData.UserID)
 
-	availableWorkspaces := GetAvailableWorkspaces(authTokenData.UserID)
-
-	if availableWorkspaces != "" {
-	    statementSession = statementSession.Where("id IN (" + availableWorkspaces + ")")
-	} else {
-	    logger.Debugf("lack of available workspaces")
-	    return &pb.ListWorkspacesResponse{}, nil
+        if availableWorkspaces != "" {
+            statementSession = statementSession.Where("id IN (" + availableWorkspaces + ")")
+        } else {
+            logger.Debugf("lack of available workspaces")
+            return &pb.ListWorkspacesResponse{}, nil
+        }
 	}
 
 	if findRequest.Name != "" {
