@@ -8,9 +8,7 @@ LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
     <a align="center" href="https://docs.geti.intel.com/">
       <img
         width="120%"
-        src="docs/static/geti-logo.png?raw=true"
-        alt="Intel® Geti™ enables anyone from domain experts to data scientists to rapidly develop production-ready AI models."
-      >
+        src="https://github.com/user-attachments/assets/9faee9f9-8c04-4287-8302-6b9d8c8675fe" />
     </a>
   </p>
 
@@ -37,7 +35,7 @@ Intel® Geti™ enables anyone to build computer vision AI models in a fraction 
 Geti™ covers the complete AI model lifecycle, from dataset preparation and model training to model deployment and inferencing at the edge. You can now start building AI by running model fine-tuning on Intel® Arc™ GPU B-series. Once your computer vision solution is ready for deployment, you can easily run your OpenVINO™-optimized model across the full Intel XPU portfolio.
 
 <p align="center">
- <image src="https://github.com/user-attachments/assets/ec275031-aa67-41bb-9e59-79301c71b4f4" width="600"/>
+ <image src="https://github.com/user-attachments/assets/209e2aee-78cf-4d4b-aa26-a82a83f5e3ec" width="600"/>
 </p>
 
 ### Key features
@@ -187,3 +185,4 @@ FFmpeg is an open source project licensed under LGPL and GPL. See https://www.ff
 ---
 
 \* Other names and brands may be claimed as the property of others.
+
