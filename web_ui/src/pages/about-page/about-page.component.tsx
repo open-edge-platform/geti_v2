@@ -28,11 +28,11 @@ const AboutPage = (): JSX.Element => {
                     </Text>
                 </View>
                 <Text UNSAFE_className={classes.productDescription} marginY={'size-250'}>
-                    The Geti™ platform enables enterprise teams to rapidly build Computer Vision AI models.
-                    Through an intuitive graphical interface, users add image or video data, make annotations, train,
-                    retrain, export, and optimize AI models for deployment. Equipped with state-of-the-art technology
-                    such as active learning, task chaining, and smart annotations, the Geti™ platform reduces
-                    labor-intensive tasks, enables collaborative model development, and speeds up model creation.
+                    The Geti™ platform enables enterprise teams to rapidly build Computer Vision AI models. Through an
+                    intuitive graphical interface, users add image or video data, make annotations, train, retrain,
+                    export, and optimize AI models for deployment. Equipped with state-of-the-art technology such as
+                    active learning, task chaining, and smart annotations, the Geti™ platform reduces labor-intensive
+                    tasks, enables collaborative model development, and speeds up model creation.
                 </Text>
                 <Flex direction={'column'} UNSAFE_className={classes.legalInformation}>
                     <Heading level={3} marginBottom={'size-100'}>

@@ -42,8 +42,8 @@ export const RequestAccessFlow: FC<RequestAccessDialogProps> = ({
             <Form onSubmit={onSubmit(requestAccessReason)}>
                 <Flex direction={'column'} gap={'size-200'}>
                     <Heading level={3} margin={0} marginBottom={'size-200'} UNSAFE_className={classes.heading}>
-                        You are trying to access Geti™ but you are not a registered user. Would you like to
-                        request access?
+                        You are trying to access Geti™ but you are not a registered user. Would you like to request
+                        access?
                     </Heading>
 
                     <Heading level={6} margin={0}>

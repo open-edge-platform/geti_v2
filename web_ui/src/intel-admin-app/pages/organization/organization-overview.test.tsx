@@ -130,9 +130,7 @@ describe('OrganizationOverview', () => {
             },
         });
 
-        expect(screen.getByRole('textbox', { name: /use case of using geti™/i })).toHaveValue(
-            requestAccessReason
-        );
+        expect(screen.getByRole('textbox', { name: /use case of using geti™/i })).toHaveValue(requestAccessReason);
     });
 
     test('Does not display request access reason when FEATURE_FLAG_REQ_ACCESS enabled and reason is empty', () => {
