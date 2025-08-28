@@ -16,7 +16,7 @@ on:
         type: boolean
         default: false
       ref:
-        description: 'The branch, tag or SHA to checkout'
+        description: "The branch, tag or SHA to checkout"
         type: string
         default: ""
     secrets:
@@ -29,14 +29,14 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'The branch, tag or SHA to checkout'
+        description: "The branch, tag or SHA to checkout"
         required: true
         default: "main"
       component_dir:
         description: "Path to the component (relative to the root of the repository)"
         required: true
 
-permissions: { } # No permissions by default on workflow level
+permissions: {} # No permissions by default on workflow level
 
 env:
   COMPONENT_DIR: ${{ inputs.component_dir }}
@@ -55,6 +55,11 @@ jobs:
       PYTHON_BUILDER_IMAGE: builder-images/python-builder:v0.1
       GO_BUILDER_IMAGE: builder-images/go-builder:v0.1
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -71,7 +76,7 @@ jobs:
         if: steps.component-config.outputs.cleanup_type == 'initial' || steps.component-config.outputs.cleanup_type == 'all'
         uses: ./.github/actions/cleanup-runner
         with:
-          type: 'initial'
+          type: "initial"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
@@ -103,19 +108,20 @@ jobs:
         run: make builder -C "${COMPONENT_DIR}" test-unit
 
       - name: Integration testing
+        env:
+          INPUTS_INTEGRATION_BUILDER: ${{ steps.component-config.outputs.integration_builder }}
         run: |
-          if [[ "${{ steps.component-config.outputs.integration_builder }}" == "false" ]]; then
+          if [[ "$INPUTS_INTEGRATION_BUILDER" == "false" ]]; then
             sudo apt-get update && sudo apt-get install -y ffmpeg && make -C "${COMPONENT_DIR}" test-integration
           else
             make builder -C "${COMPONENT_DIR}" test-integration
           fi
-      
 
       - name: Pre-build cleanup
         if: steps.component-config.outputs.cleanup_type == 'pre-build' || steps.component-config.outputs.cleanup_type == 'all'
         uses: ./.github/actions/cleanup-runner
         with:
-          type: 'pre-build'
+          type: "pre-build"
 
       - name: Build image
         id: build-image

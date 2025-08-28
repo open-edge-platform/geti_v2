@@ -28,7 +28,7 @@ name: Main CI
 
 on:
   schedule:
-    - cron: '0 18 * * *'
+    - cron: "0 18 * * *"
   merge_group:
     branches:
       - main
@@ -50,7 +50,7 @@ on:
         type: boolean
         default: true
       ref:
-        description: 'The branch, tag or SHA to checkout'
+        description: "The branch, tag or SHA to checkout"
         required: true
         default: ""
 
@@ -58,7 +58,7 @@ concurrency:
   group: ${{ github.head_ref || github.ref_name }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-permissions: { } # No permissions by default on workflow level
+permissions: {} # No permissions by default on workflow level
 
 jobs:
   get-vars:
@@ -78,6 +78,11 @@ jobs:
       libs-list: ${{ steps.libs-list.outputs.paths_list }}
 
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+
       - name: Prepare build variables
         id: set-vars
         env:
@@ -87,24 +92,24 @@ jobs:
           DISPATCH_REF: ${{ github.event.inputs.ref }}
         run: |
 
-          is_build_all_event() { 
-            [[ "$EVENT_NAME" == "workflow_dispatch" ]] || 
-            [[ "$EVENT_NAME" == "schedule" ]]; 
+          is_build_all_event() {
+            [[ "$EVENT_NAME" == "workflow_dispatch" ]] ||
+            [[ "$EVENT_NAME" == "schedule" ]];
           }
-          is_publish_event() { 
-            [[ "$EVENT_NAME" == "schedule" ]] || 
-            [[ "$EVENT_NAME" == "workflow_dispatch" && "$DISPATCH_PUB" == "true" ]]; 
+          is_publish_event() {
+            [[ "$EVENT_NAME" == "schedule" ]] ||
+            [[ "$EVENT_NAME" == "workflow_dispatch" && "$DISPATCH_PUB" == "true" ]];
           }
           is_tag() { [[ "$GITHUB_REF" == refs/tags/* ]]; }
-          
+
           # Set defaults
           build_all=false
           publish_binaries=false
-          
+
           # Override defaults when conditions are met
           (is_build_all_event || is_tag) && build_all=true
           (is_publish_event || is_tag) && publish_binaries=true
-          
+
           # CHECKOUT_REF: manual input if provided, else use default ref
           if [[ "$EVENT_NAME" == "workflow_dispatch" && -n "$DISPATCH_REF" ]]; then
             checkout_ref="$DISPATCH_REF"
@@ -115,7 +120,7 @@ jobs:
           echo "build_all=$build_all"               >> $GITHUB_OUTPUT
           echo "publish_binaries=$publish_binaries" >> $GITHUB_OUTPUT
           echo "checkout_ref=$checkout_ref"         >> $GITHUB_OUTPUT
-          
+
           echo "build_all=$build_all"
           echo "publish_binaries=$publish_binaries"
           echo "checkout_ref=$checkout_ref"
@@ -250,6 +255,10 @@ jobs:
       CHECKS: ${{ join(needs.*.result, ' ') }}
       BUILD_VERSION: ${{ needs.get-vars.outputs.build_version }}
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
       - name: Check
         run: |
           for check in ${CHECKS}; do
