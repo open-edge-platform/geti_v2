@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+    "strings"
 
 	"account_service/app/common/utils"
 	"account_service/app/config"
@@ -262,12 +263,55 @@ func (s *GRPCServer) GetById(_ context.Context, req *pb.WorkspaceIdRequest) (*pb
 	return workspaceToPb(workspace), nil
 }
 
+func GetAvailableWorkspaces(userID string) (string) {
+	logger.Debugf("get available workspace call: %v", userID)
+    rolesMgr, err := roles.NewRolesManager(config.SpiceDBAddress, config.SpiceDBToken)
+
+    if (err!=nil) {
+    	logger.Errorf("error during getting available workspaces - roles manager: %v", err)
+		return ""
+    }
+
+    relationships, err := rolesMgr.GetUserRelationships(userID, "workspaces")
+
+    if (err!=nil) {
+    	logger.Errorf("error during getting available workspaces: %v", err)
+		return ""
+    }
+
+    var builder strings.Builder
+
+    for i, relationship := range relationships {
+	    if i > 0 {
+		    builder.WriteString(",")
+	    }
+	    builder.WriteString(relationship.Resource.ObjectId)
+    }
+
+    return builder.String()
+}
+
 func (s *GRPCServer) Find(ctx context.Context, findRequest *pb.FindWorkspaceRequest) (*pb.ListWorkspacesResponse, error) {
 	logger.Debugf("find workspace request: %v", findRequest)
 
 	var workspaces []models.Workspace
 	statementSession := s.DB.WithContext(ctx)
 	statementSession = statementSession.Model(&workspaces)
+
+	authTokenData, ok := grpcUtils.GetAuthTokenHeaderData(ctx)
+	if !ok {
+		logger.Errorf("failed to retrieve auth token data - find workspaces: %v", authTokenData)
+		return nil, status.Error(codes.Unknown, "unexpected error")
+	}
+
+	availableWorkspaces := GetAvailableWorkspaces(authTokenData.UserID)
+
+	if availableWorkspaces != "" {
+	    statementSession = statementSession.Where("id IN (" + availableWorkspaces + ")")
+	} else {
+	    logger.Debugf("lack of available workspaces")
+	    return &pb.ListWorkspacesResponse{}, nil
+	}
 
 	if findRequest.Name != "" {
 		statementSession = statementSession.Where("name LIKE ?", fmt.Sprintf("%%%s%%", findRequest.Name))
