@@ -13,7 +13,7 @@ export const Header = (): JSX.Element => {
             <Flex height={'100%'} alignItems={'center'} gap={'size-700'} marginX={'size-200'}>
                 <Flex alignItems={'center'} gap={'size-300'}>
                     <Heading margin={0} UNSAFE_style={{ fontSize: dimensionValue('size-250'), fontWeight: 'normal' }}>
-                        Intel® Geti™ Admin
+                        Geti™ Admin
                     </Heading>
                 </Flex>
                 <Navbar />

@@ -34,7 +34,7 @@ export const SignUpFlow = ({
     onCheckedChange,
 }: SignUpDialogOldFlowProps) => {
     return (
-        <Container title={"Let's complete your registration to Intel® Geti™!"} isOpen={isOpen}>
+        <Container title={"Let's complete your registration to Geti™!"} isOpen={isOpen}>
             <Form onSubmit={onSubmit}>
                 <Flex direction={'column'} UNSAFE_style={{ padding: 'size-300', paddingTop: 0 }} gap={'size-200'}>
                     <Heading level={6} margin={0}>

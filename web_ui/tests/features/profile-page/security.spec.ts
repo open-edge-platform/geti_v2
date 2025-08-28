@@ -23,7 +23,7 @@ test.describe('Account page - security tab', () => {
     test('Check tab elements', async ({ page }) => {
         await expect(page.locator('#password-title')).toHaveText('Password');
         await expect(page.locator('#change-password-description')).toHaveText(
-            'Set a unique password to protect your personal Intel® Geti™ account.'
+            'Set a unique password to protect your personal Geti™ account.'
         );
 
         await expect(page.getByRole('button', { name: 'Change password' })).toBeEnabled();

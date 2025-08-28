@@ -32,7 +32,7 @@ export const SecurityPage = ({ activeUserId }: SecurityPageProps): JSX.Element =
                 </Flex>
                 <Flex width={'100%'} marginBottom={'size-150'}>
                     <Text UNSAFE_className={classes.text} id={'change-password-description'}>
-                        Set a unique password to protect your personal Intel® Geti™ account.
+                        Set a unique password to protect your personal Geti™ account.
                     </Text>
                 </Flex>
                 <ChangePasswordPopup userId={activeUserId} />

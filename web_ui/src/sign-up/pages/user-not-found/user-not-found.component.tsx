@@ -36,7 +36,7 @@ export const UserNotFound = (): JSX.Element => {
             </Heading>
             <Text id={`${id}-text-id`}>User does not exist, it may have been deleted by an administrator.</Text>
             <Button id={`${id}-button-id`} variant={'primary'} marginTop={'size-250'} onPress={handleLoginRedirect}>
-                Go to Intel® Geti™
+                Go to Geti™
             </Button>
         </ErrorLayout>
     );

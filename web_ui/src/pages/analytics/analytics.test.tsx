@@ -79,7 +79,7 @@ describe('Analytics', () => {
 
         expect(
             screen.getByText(
-                /Please note that Analytics feature is enabled only when the Intel® Geti™ platform has been installed with the --install-telemetry-stack option./i
+                /Please note that Analytics feature is enabled only when the Geti™ platform has been installed with the --install-telemetry-stack option./i
             )
         ).toBeInTheDocument();
 

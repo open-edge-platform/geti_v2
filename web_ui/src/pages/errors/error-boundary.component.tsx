@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 /*
-    Error boundaries on Intel® Geti™:
+    Error boundaries on Geti™:
 
     1) Wrapping the whole <App />, for error that might happens anywhere (e.g. session expired)
     2) Wrapping <Annotator />, in case of any annotator related endpoint failing (e.g /annotations)

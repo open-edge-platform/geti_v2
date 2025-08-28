@@ -83,7 +83,7 @@ const DisabledAnalyticsContent: FC = () => {
     return (
         <View>
             <Heading>
-                Please note that Analytics feature is enabled only when the Intel® Geti™ platform has been installed
+                Please note that Analytics feature is enabled only when the Geti™ platform has been installed
                 with the --install-telemetry-stack option. For details see our{' '}
                 <Link
                     to={'https://docs.geti.intel.com/docs/user-guide/getting-started/installation/using-geti-installer'}

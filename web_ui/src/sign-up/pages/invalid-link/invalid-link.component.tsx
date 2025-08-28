@@ -23,7 +23,7 @@ export const InvalidLink = (): JSX.Element => {
             </Heading>
             <Text>It has already been used or expired.</Text>
             <Button variant={'primary'} marginTop={'size-250'} onPress={handleLoginRedirect}>
-                Go to Intel® Geti™
+                Go to Geti™
             </Button>
         </ErrorLayout>
     );

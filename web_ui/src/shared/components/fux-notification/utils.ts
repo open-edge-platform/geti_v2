@@ -41,7 +41,7 @@ export const getFuxNotificationData = (fuxNotificationId: string): FuxNotificati
                 description:
                     `Effective data annotation lays the groundwork for a model’s ability to accurately interpret and` +
                     ` learn from information. By annotating your data, you teach the model what patterns to ` +
-                    `recognize. Intel® Geti™ provides you with various smart annotation assistants to accelerate` +
+                    `recognize. Geti™ provides you with various smart annotation assistants to accelerate` +
                     ` this annotation process.`,
                 docUrl: DocsUrl.ANNOTATION_TOOLS,
                 nextStepId: FUX_NOTIFICATION_KEYS.ANNOTATOR_ACTIVE_SET,
@@ -53,7 +53,7 @@ export const getFuxNotificationData = (fuxNotificationId: string): FuxNotificati
                 header: `What’s Active set?`,
                 description:
                     `In the media gallery you can switch between Active set and Dataset. Active set is set by default` +
-                    ` in Intel® Geti™ and it displays the media items in an order that is optimal for creating a ` +
+                    ` in Geti™ and it displays the media items in an order that is optimal for creating a ` +
                     `well-balanced model, based on their informative features compared to the rest of your dataset.` +
                     ` However, you can switch to Dataset to display the media items in the order that was arranged ` +
                     `in your dataset folder.`,

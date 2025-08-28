@@ -176,7 +176,7 @@ export const OrganizationOverview = (): JSX.Element => {
                     {FEATURE_FLAG_REQ_ACCESS && !isEmpty(organization.requestAccessReason) && (
                         <>
                             <TextField
-                                label={'Use case of using Intel® Geti™'}
+                                label={'Use case of using Geti™'}
                                 value={organization.requestAccessReason}
                                 UNSAFE_className={[classes.textFieldReadOnly, classes.textField].join(' ')}
                                 isReadOnly

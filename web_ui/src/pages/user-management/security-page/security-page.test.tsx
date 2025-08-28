@@ -13,7 +13,7 @@ describe('security page', () => {
         expect(screen.getByText('Password')).toBeInTheDocument();
         expect(screen.getByText('Change password')).toBeInTheDocument();
         expect(
-            screen.getByText('Set a unique password to protect your personal Intel® Geti™ account.')
+            screen.getByText('Set a unique password to protect your personal Geti™ account.')
         ).toBeInTheDocument();
     });
 });
