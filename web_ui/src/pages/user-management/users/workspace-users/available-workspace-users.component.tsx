@@ -85,7 +85,10 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
     };
 
     const AddContributorAction = ({ user }: { user: User }) => (
-        <HasPermission operations={[OPERATION.ADD_USER_TO_WORKSPACE]}>
+        <HasPermission
+            operations={[OPERATION.ADD_USER_TO_WORKSPACE]}
+            resources={[{ type: RESOURCE_TYPE.WORKSPACE, id: workspaceId }]}
+        >
             <ActionButton
                 aria-label={`Add ${user.email} to workspace`}
                 onPress={() => handleAddUserWithRole(user, USER_ROLE.WORKSPACE_CONTRIBUTOR)}
