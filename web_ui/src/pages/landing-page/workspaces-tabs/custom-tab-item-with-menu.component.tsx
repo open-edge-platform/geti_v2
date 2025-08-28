@@ -45,9 +45,10 @@ export const CustomTabItemWithMenu = ({
     const projectsNamesQuery = useGetProjectNames({ organizationId, workspaceId: workspace.id });
     const isWorkspaceEmpty = projectsNamesQuery.data?.projects.length === 0;
 
-    const { items, handleMenuAction, editDialog, deleteDialog, grayedOutKeys } = useWorkspaceActions(
+    const { items, handleMenuAction, editDialog, deleteDialog, grayedOutKeys, disabledKeys } = useWorkspaceActions(
         workspaces.length,
-        isWorkspaceEmpty
+        isWorkspaceEmpty,
+        workspace.id
     );
 
     const otherWorkspacesNames = workspaces.filter(hasDifferentId(workspace.id)).map(({ name }) => name);
@@ -98,6 +99,7 @@ export const CustomTabItemWithMenu = ({
                 onAction={handleMenuAction}
                 ariaLabel={ariaLabel}
                 grayedOutKeys={grayedOutKeys}
+                disabledKeys={disabledKeys}
                 customTriggerContent={<CustomTabItem name={workspace.name} isMoreIconVisible={isMoreIconVisible} />}
                 menuTriggerClasses={classes.customTabItemMenuTrigger}
             />
