@@ -272,7 +272,7 @@ func GetAvailableWorkspaces(userID string) (string) {
 		return ""
     }
 
-    relationships, err := rolesMgr.GetUserRelationships(userID, "workspaces")
+    relationships, err := rolesMgr.GetUserRelationships(userID, "workspace")
 
     if (err!=nil) {
     	logger.Errorf("error during getting available workspaces: %v", err)
