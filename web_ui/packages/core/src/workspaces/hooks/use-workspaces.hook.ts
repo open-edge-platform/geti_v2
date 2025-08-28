@@ -48,20 +48,8 @@ export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
                 const adminId = activeUser?.id;
                 return workspacesService.createWorkspace(organizationId, name, adminId);
             },
-            onSuccess: async (workspace) => {
+            onSuccess: async () => {
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.WORKSPACES(organizationId) });
-
-                try {
-                    await queryClient.fetchQuery({
-                        queryKey: QUERY_KEYS.WORKSPACES(organizationId),
-                        queryFn: () => workspacesService.getWorkspaces(organizationId),
-                        retry: 6,
-                        retryDelay: (attempt) => Math.min(1000 * Math.pow(1.5, attempt), 4000),
-                        meta: { notifyOnError: false },
-                    });
-                } catch (error) {
-                    toast({ message: getErrorMessage(error as AxiosError), type: 'error' });
-                }
             },
             onError: (error) => {
                 toast({ message: getErrorMessage(error), type: 'error' });
