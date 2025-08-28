@@ -371,6 +371,9 @@
         },
         "modifiedBy": {
           "type": "string"
+        },
+        "workspaceAdmin": {
+          "type": "string"
         }
       }
     },
@@ -396,6 +399,9 @@
         },
         "modifiedBy": {
           "type": "string"
+        },
+        "workspaceAdmin": {
+          "type": "string"
         }
       }
     },
@@ -417,6 +423,9 @@
           "format": "date-time"
         },
         "modifiedBy": {
+          "type": "string"
+        },
+        "workspaceAdmin": {
           "type": "string"
         }
       }

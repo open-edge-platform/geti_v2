@@ -904,7 +904,7 @@ func (s *GRPCServer) SendInvitation(ctx context.Context, req *pb.OrganizationInv
 			defaultWorkspace.CreatedBy = authTokenData.UserID
 		}
 
-		err = workspace.CreateWorkspace(tx, &defaultWorkspace)
+		err = workspace.CreateWorkspace(tx, &defaultWorkspace, "")
 		if err != nil {
 			return err
 		}
