@@ -61,7 +61,7 @@ global:
   min_free_disk_space_gib: 20
   storage_clean_up_interval_in_hours: 24
   running_on_vm: false
-  download_url_validity_period: 28800 # 8 hours
+  download_url_validity_period: 14400 # 8 hours
   cors_policy:
     enabled: false
     allowed_origins: []
