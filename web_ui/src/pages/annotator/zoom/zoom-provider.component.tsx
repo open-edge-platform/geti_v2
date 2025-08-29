@@ -42,8 +42,8 @@ interface ZoomContextProps {
     setZoomTargetOnRoi: (roi?: RegionOfInterest) => void;
 
     // we disable the double click to zoom out only when we are using pen
-    isDblCLickDisabled: boolean;
-    setIsDblClickDisabled: (disabled: boolean) => void;
+    isDblClickDisabled: boolean;
+    setisDblClickDisabled: (disabled: boolean) => void;
 
     isPanning: boolean;
     isPanningDisabled: boolean;
@@ -99,7 +99,7 @@ export const ZoomProvider = ({ children }: ZoomProviderProps) => {
     const [isZoomDisabled, setIsZoomDisabled] = useState<boolean>(false);
     const [isPanningDisabled, setIsPanningDisabled] = useState<boolean>(true);
     const [isPanning, setIsPanning] = useState<boolean>(false);
-    const [isDblCLickDisabled, setIsDblClickDisabled] = useState<boolean>(false);
+    const [isDblClickDisabled, setisDblClickDisabled] = useState<boolean>(false);
 
     // Once we set a new scale, it means the zoom bounds (min/max zoom) change
     // E.g. when we zoom into an annotation the new scale belongs to the annotation's bounding box dimensions,
@@ -160,8 +160,8 @@ export const ZoomProvider = ({ children }: ZoomProviderProps) => {
         isPanningDisabled,
         setIsPanningDisabled,
 
-        isDblCLickDisabled,
-        setIsDblClickDisabled,
+        isDblClickDisabled,
+        setisDblClickDisabled,
 
         zoomTarget,
         setZoomTarget,
@@ -196,7 +196,7 @@ export const ZoomProvider = ({ children }: ZoomProviderProps) => {
                 onPanningStart={() => setIsPanning(true)}
                 onPanningStop={() => setIsPanning(false)}
                 limitToBounds={false}
-                doubleClick={{ mode: 'reset', disabled: isDblCLickDisabled }}
+                doubleClick={{ mode: 'reset', disabled: isDblClickDisabled }}
             >
                 {children}
                 <ResetInitialZoom initialZoomState={initialZoomState} />

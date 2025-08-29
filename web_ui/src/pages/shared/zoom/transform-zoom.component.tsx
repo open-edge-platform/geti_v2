@@ -27,7 +27,7 @@ export const TransformZoom = ({ children }: { children?: ReactNode }) => {
     const { resetTransform } = useControls();
 
     const ref = useSyncScreenSize();
-    const { setIsPanningDisabled, isPanning, isPanningDisabled, setIsDblClickDisabled, isDblCLickDisabled, zoomState } =
+    const { setIsPanningDisabled, isPanning, isPanningDisabled, setisDblClickDisabled, isDblClickDisabled, zoomState } =
         useZoom();
 
     const style = { '--zoom-level': zoomState.zoom } as CSSProperties;
@@ -50,9 +50,9 @@ export const TransformZoom = ({ children }: { children?: ReactNode }) => {
 
     const handlePointerUp = (event: PointerEvent<HTMLDivElement>): void => {
         if (event.pointerType === PointerType.Pen) {
-            !isDblCLickDisabled && setIsDblClickDisabled(true);
+            !isDblClickDisabled && setisDblClickDisabled(true);
         } else {
-            isDblCLickDisabled && setIsDblClickDisabled(false);
+            isDblClickDisabled && setisDblClickDisabled(false);
         }
     };
 
