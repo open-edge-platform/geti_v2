@@ -15,12 +15,7 @@ interface LabelTreeGroupComponentProps {
     parentLabelId: string | null;
 }
 
-export const LabelTreeGroup = ({
-    labels,
-    save,
-    parentGroupName,
-    parentLabelId,
-}: LabelTreeGroupComponentProps): JSX.Element => {
+export const LabelTreeGroup = ({ labels, save, parentGroupName, parentLabelId }: LabelTreeGroupComponentProps) => {
     const flatProjectItems = getFlattenedItems(labels);
 
     return (

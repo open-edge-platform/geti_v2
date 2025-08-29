@@ -16,7 +16,7 @@ export const AnomalyMediaHeaderInformation = ({
     countElements,
     description,
     headerText,
-}: AnomalyMediaHeaderInformationProps): JSX.Element => {
+}: AnomalyMediaHeaderInformationProps) => {
     return (
         <Flex direction={'column'} flex={1}>
             <Flex gap='size-100' alignItems='center'>

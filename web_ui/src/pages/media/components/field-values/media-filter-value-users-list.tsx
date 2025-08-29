@@ -15,10 +15,7 @@ interface MediaFilterValueUsersListProps {
     onSelectionChange: (key: SearchRuleValue) => void;
 }
 
-export const MediaFilterValueUsersList = ({
-    value,
-    onSelectionChange,
-}: MediaFilterValueUsersListProps): JSX.Element => {
+export const MediaFilterValueUsersList = ({ value, onSelectionChange }: MediaFilterValueUsersListProps) => {
     const { organizationId } = useOrganizationIdentifier();
     const { useGetUsersQuery } = useUsers();
     const { project } = useProject();

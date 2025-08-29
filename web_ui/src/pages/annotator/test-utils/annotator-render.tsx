@@ -23,7 +23,7 @@ interface AnnotatorProvidersProps {
     datasetIdentifier: DatasetIdentifier;
 }
 
-export const AnnotatorProviders = ({ children, datasetIdentifier }: AnnotatorProvidersProps): JSX.Element => {
+export const AnnotatorProviders = ({ children, datasetIdentifier }: AnnotatorProvidersProps) => {
     return (
         <ProjectProvider
             projectIdentifier={{

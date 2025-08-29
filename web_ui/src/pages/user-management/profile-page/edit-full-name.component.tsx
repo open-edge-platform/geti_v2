@@ -22,7 +22,7 @@ export const EditFullName = ({
     setFirstName,
     setLastName,
     ...textFielProps
-}: EditFullNameProps): JSX.Element => {
+}: EditFullNameProps) => {
     return (
         <Flex gap={'size-400'}>
             <TextField

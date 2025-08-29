@@ -29,7 +29,7 @@ interface EditableProjectTaskLabelsProps {
 
 type ProjectTaskLabelsProps = EditableProjectTaskLabelsProps | ReadonlyProjectTaskLabelsProps;
 
-export const ProjectTaskLabels = ({ task, isTaskChainProject, ...props }: ProjectTaskLabelsProps): JSX.Element => {
+export const ProjectTaskLabels = ({ task, isTaskChainProject, ...props }: ProjectTaskLabelsProps) => {
     const { labels, relation, domain } = task;
     const isInEdition = 'isInEdition' in props ? props.isInEdition : false;
     const editLabels = 'editLabels' in props ? props.editLabels : noop;

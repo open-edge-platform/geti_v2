@@ -20,7 +20,7 @@ import classes from './sidebar-panel.module.scss';
 type SidebarPanelProps = SidebarCommonProps;
 
 interface OverlayPanelProps extends StyleProps {
-    icon: JSX.Element;
+    icon: ReactNode;
     children: ReactNode;
     ariaLabel?: string;
     padding?: Responsive<DimensionValue> | undefined;

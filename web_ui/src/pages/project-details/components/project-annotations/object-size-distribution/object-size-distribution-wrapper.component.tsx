@@ -24,10 +24,7 @@ interface ObjectSizeDistributionProps extends ProjectGridArea {
     objectSizeDistribution: ObjectSizeDistribution[];
 }
 
-export const ObjectSizeDistributionWrapper = ({
-    gridArea,
-    objectSizeDistribution,
-}: ObjectSizeDistributionProps): JSX.Element => {
+export const ObjectSizeDistributionWrapper = ({ gridArea, objectSizeDistribution }: ObjectSizeDistributionProps) => {
     const labels = useMemo(() => getDistributionLabels(objectSizeDistribution), [objectSizeDistribution]);
     const [selectedLabelKey, setSelectedLabelKey] = useState<string>(labels[0].name);
 

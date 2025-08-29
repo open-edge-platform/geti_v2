@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 export type MenuOption =
     | MenuOptionCommon
     | MenuOptionIcon
@@ -21,7 +23,7 @@ interface MenuOptionCommon {
 }
 
 interface MenuOptionOnlyIcon extends MenuOptionCommon {
-    icon: JSX.Element;
+    icon: ReactNode;
 }
 
 interface MenuOptionLink extends MenuOptionOnlyIcon {
@@ -36,7 +38,7 @@ interface MenuOptionLinkText extends MenuOptionCommon {
 }
 
 interface MenuOptionPopover extends MenuOptionOnlyIcon {
-    popover: JSX.Element;
+    popover: ReactNode;
     messagesNumber?: number;
 }
 

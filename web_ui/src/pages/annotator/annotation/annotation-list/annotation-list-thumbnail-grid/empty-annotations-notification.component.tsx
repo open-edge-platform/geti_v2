@@ -13,7 +13,7 @@ import { NOTIFICATION_MESSAGE } from '../utils';
 
 import classes from './annotation-list-thumbnail-grid.module.scss';
 
-export const EmptyAnnotationsNotification = (): JSX.Element => {
+export const EmptyAnnotationsNotification = () => {
     const { previousTask, selectedTask, setSelectedTask } = useTask();
     const shouldShowEmptyAnnotationsWarning = useShouldShowEmptyAnnotationsWarning();
 

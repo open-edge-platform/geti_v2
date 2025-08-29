@@ -1,8 +1,8 @@
 {
   "name": "geti-ui",
   "engines": {
-    "node": "22.12.0",
-    "npm": "10.9.0"
+    "node": "24.2.0",
+    "npm": "11.3.0"
   },
   "type": "module",
   "private": true,
@@ -27,7 +27,6 @@
     "@tanstack/react-query": "^5.74.11",
     "@tanstack/react-query-devtools": "^5.74.11",
     "@wessberg/pointer-events": "^1.0.9",
-    "allotment": "^1.20.3",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
     "comlink": "^4.4.2",
@@ -52,8 +51,8 @@
     "react-dom": "^18.3.1",
     "react-error-boundary": "^3.1.4",
     "react-hotkeys-hook": "^4.6.1",
-    "react-notifications-component": "^4.0.1",
     "react-oidc-context": "^2.3.1",
+    "react-resizable-panels": "^3.0.4",
     "react-router-dom": "^6.30.0",
     "react-stately": "^3.40.0",
     "react-webcam": "^7.2.0",
@@ -117,7 +116,7 @@
     "@geti/config": "*",
     "@ianvs/prettier-plugin-sort-imports": "^4.5.1",
     "@mjackson/headers": "^0.10.0",
-    "@playwright/test": "^1.51.1",
+    "@playwright/test": "^1.55.0",
     "@rsbuild/core": "^1.4.14",
     "@rsbuild/plugin-react": "^1.3.5",
     "@rsbuild/plugin-sass": "^1.3.4",

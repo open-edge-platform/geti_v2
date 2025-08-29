@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key, MutableRefObject, useEffect, useRef, useState } from 'react';
+import { Key, MutableRefObject, ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Flex, Item, Menu, Overlay, Section, Text } from '@geti/ui';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -18,7 +18,7 @@ export interface MenuPosition {
 }
 
 interface MenuItem {
-    icon: JSX.Element;
+    icon: ReactNode;
     title: string;
     shortcut?: string;
 }
@@ -48,7 +48,7 @@ export const ContextMenu = ({
     menuPosition,
     disabledKeys,
     getContextMenuPosition,
-}: ContextMenuProps): JSX.Element => {
+}: ContextMenuProps) => {
     const overlayRef = useRef(null);
     const viewRef = useRef<HTMLDivElement | null>(null);
     const [adjustedContextMenuPosition, setAdjustedContextMenuPosition] = useState<MenuPosition>(menuPosition);

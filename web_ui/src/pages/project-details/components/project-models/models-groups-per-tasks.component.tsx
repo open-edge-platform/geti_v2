@@ -41,7 +41,7 @@ const useGetModelsGroupsGroupedByTask = (
     }, [inputModelsGroups, tasks]);
 };
 
-export const ModelsGroupsPerTasks = memo(({ modelsGroups, tasks }: ModelsPerTaskProps): JSX.Element => {
+export const ModelsGroupsPerTasks = memo(({ modelsGroups, tasks }: ModelsPerTaskProps) => {
     const modelsGroupedByTask = useGetModelsGroupsGroupedByTask(modelsGroups, tasks);
 
     return (

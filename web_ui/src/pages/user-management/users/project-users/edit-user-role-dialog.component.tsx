@@ -20,7 +20,7 @@ interface EditUserRoleDialogProps {
     dismiss: () => void;
 }
 
-export const EditUserRoleDialog = ({ user, activeUser, dismiss }: EditUserRoleDialogProps): JSX.Element => {
+export const EditUserRoleDialog = ({ user, activeUser, dismiss }: EditUserRoleDialogProps) => {
     const { useUpdateUserRoles, useUpdateMemberRole } = useUsers();
     const { organizationId, workspaceId, projectId } = useProjectIdentifier();
 

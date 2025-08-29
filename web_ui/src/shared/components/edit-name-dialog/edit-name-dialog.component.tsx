@@ -41,7 +41,7 @@ export const EditNameDialog = ({
     defaultName,
     isLoading = false,
     nameLimitations = {},
-}: EditWorkspaceDialogProps): JSX.Element => {
+}: EditWorkspaceDialogProps) => {
     const [updatedName, setUpdatedName] = useState<string>(defaultName);
     const id = idMatchingFormat(title);
 

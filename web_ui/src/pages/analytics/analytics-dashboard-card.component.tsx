@@ -11,7 +11,7 @@ import { openNewTab } from '../../shared/utils';
 
 import classes from './analytics.module.scss';
 
-export const AnalyticsDashboardCard = (): JSX.Element => {
+export const AnalyticsDashboardCard = () => {
     const { router } = useApplicationServices();
 
     const handleOnPress = (): void => {

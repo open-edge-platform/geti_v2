@@ -59,7 +59,7 @@ export const MediaDropBox = ({
     dropBoxHeader,
     children,
     disableUploadButton = false,
-}: MediaDropBoxProps): JSX.Element => {
+}: MediaDropBoxProps) => {
     const { data: status } = useStatus();
 
     const isUploadMediaDisabled = disableUploadButton || isBelowTooLowFreeDiskSpace(status?.freeSpace ?? 0);

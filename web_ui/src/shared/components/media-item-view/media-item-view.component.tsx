@@ -32,7 +32,7 @@ export const MediaItemView = ({
     mediaItem,
     shouldShowAnnotationIndicator,
     shouldShowVideoIndicator = true,
-}: MediaItemViewProps): JSX.Element => {
+}: MediaItemViewProps) => {
     const [isImageLoaded, setImageLoaded] = useState<boolean>(false);
     const [thumbnailError, setThumbnailError] = useState<boolean>(false);
 

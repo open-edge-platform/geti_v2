@@ -9,8 +9,8 @@ interface UploadStatusErrorDialogProps {
     item: ErrorListItem;
 }
 
-export const UploadStatusErrorDialog = ({ item }: UploadStatusErrorDialogProps): JSX.Element => {
-    const getErrorText = (errorItem: ErrorListItem): JSX.Element => {
+export const UploadStatusErrorDialog = ({ item }: UploadStatusErrorDialogProps) => {
+    const getErrorText = (errorItem: ErrorListItem) => {
         if (errorItem.errors && errorItem.errors.length > 0)
             return (
                 <>

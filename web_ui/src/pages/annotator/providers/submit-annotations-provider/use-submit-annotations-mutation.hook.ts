@@ -49,7 +49,7 @@ export const useSubmitAnnotationsMutation = (
     const unfinishedShapesCallback = useRef<UnfinishedShapesCallback>(null);
 
     const client = useQueryClient();
-    const afterSaving = useRef<() => Promise<void>>();
+    const afterSaving = useRef<() => Promise<void>>(undefined);
     const projectIdentifier = useProjectIdentifier();
     const ensureAnnotationsAreValid = useEnsureAnnotationsAreValid();
     const { collectPredictionsMetric, collectToolsFrequencyMetric } = useCollectAnnotatorMetrics();

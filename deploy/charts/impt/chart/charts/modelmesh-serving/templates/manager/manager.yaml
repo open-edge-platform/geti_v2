@@ -84,7 +84,7 @@ spec:
                   \"root_prefix\": \"modelmesh-etcd\"\
                 }\
               " |
-              base64 --wrap=0 - |
+              base64 -w 0 - |
               { read output; kubectl -n ${POD_NAMESPACE} patch secret model-serving-etcd -p="{\"data\":{\"etcd_connection\": \"$output\"}}"; }
         - name: wait-for-etcd
           image: "{{ .Values.global.busybox.registry }}/{{ if .Values.global.busybox.repository }}{{ .Values.global.busybox.repository }}/{{ end }}{{ .Values.global.busybox.name }}"

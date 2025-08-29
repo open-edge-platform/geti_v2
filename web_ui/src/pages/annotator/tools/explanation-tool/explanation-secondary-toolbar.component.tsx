@@ -11,7 +11,7 @@ import { ExplanationToolbar } from './explanation-toolbar.component';
 
 export const KEYPOINT_DISABLE_MESSAGE = 'Explanation maps are not available for keypoint detection tasks.';
 
-export const ExplanationSecondaryToolbar = (): JSX.Element => {
+export const ExplanationSecondaryToolbar = () => {
     const { tasks, selectedTask } = useTask();
     const { isPlaying } = useStreamingVideoPlayer();
     const { explanations } = usePrediction();

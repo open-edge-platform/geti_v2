@@ -18,7 +18,7 @@ interface TabPanelItemProps {
     handleToggleFeature: (isEnabled: boolean, feature: FEATURES_KEYS) => void;
 }
 
-export const TabPanelItem = ({ label, config, settingKey, handleToggleFeature }: TabPanelItemProps): JSX.Element => {
+export const TabPanelItem = ({ label, config, settingKey, handleToggleFeature }: TabPanelItemProps) => {
     const featureConfig = config[settingKey] as SettingsFeature;
 
     return (

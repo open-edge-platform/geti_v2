@@ -8,7 +8,7 @@ interface DomainNameProps {
     domain: DOMAIN;
 }
 
-export const DomainName = ({ domain }: DomainNameProps): JSX.Element => {
+export const DomainName = ({ domain }: DomainNameProps) => {
     if (isAnomalyDomain(domain)) {
         return <>{DOMAIN.ANOMALY_DETECTION}</>;
     }

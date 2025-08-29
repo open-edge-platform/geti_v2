@@ -51,7 +51,7 @@ const useOnRemoveLabels = (annotation: Annotation) => {
     };
 };
 
-export const AnnotationActions = ({ annotation, setEditLabels }: LabelActionsProps): JSX.Element => {
+export const AnnotationActions = ({ annotation, setEditLabels }: LabelActionsProps) => {
     const onRemoveLabels = useOnRemoveLabels(annotation);
 
     const onEditLabels = () => {

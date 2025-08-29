@@ -10,7 +10,7 @@ import { useToggleButton } from 'react-aria';
 
 import classes from './toggle-sidebar.module.scss';
 
-export const ToggleSidebarButton = (props: ToggleProps): JSX.Element => {
+export const ToggleSidebarButton = (props: ToggleProps) => {
     const ref = useRef<HTMLButtonElement>(null);
     const state = useToggleState(props);
     const { buttonProps } = useToggleButton(props, state, ref);

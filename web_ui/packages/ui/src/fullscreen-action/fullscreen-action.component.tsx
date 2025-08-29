@@ -26,7 +26,7 @@ interface FullscreenActionProps {
     id?: string;
 }
 
-export const FullscreenAction = ({ children, title, actionButton, id }: FullscreenActionProps): JSX.Element => {
+export const FullscreenAction = ({ children, title, actionButton, id }: FullscreenActionProps) => {
     const container = useRef(null);
 
     return (

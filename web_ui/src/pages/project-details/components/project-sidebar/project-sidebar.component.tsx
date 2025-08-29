@@ -29,7 +29,7 @@ interface ProjectSidebarProps {
     project: ProjectProps;
 }
 
-export const ProjectSidebar = ({ project }: ProjectSidebarProps): JSX.Element => {
+export const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
     const datasetIdentifier = useDatasetIdentifier();
     const canEditProjectName = useCheckPermission(
         [OPERATION.PROJECT_NAME_EDITION],

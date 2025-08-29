@@ -48,7 +48,7 @@ const initialState: GrabcutState = {
     activeTool: GrabcutToolType.InputTool,
 };
 
-export const GrabcutStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const GrabcutStateProvider = ({ children }: StateProviderProps) => {
     const loadingRect = useRef<Rect | null>(null);
     const { setIsDrawing } = useAnnotationScene();
 

@@ -54,7 +54,7 @@ const formatWithTaskMetadata = (metadata: TaskMetadata | null) => (task: Keypoin
     return task;
 };
 
-export const ProjectTemplate = (): JSX.Element => {
+export const ProjectTemplate = () => {
     const { project } = useProject();
     const [isDirty, setIsDirty] = useState(false);
     const { editProjectMutation } = useProjectActions();

@@ -16,7 +16,7 @@ interface LabelPickerProps {
     handleSelectLabel: (key: Key) => void;
 }
 
-export const LabelPicker = ({ availableLabels, backgroundLabel, handleSelectLabel }: LabelPickerProps): JSX.Element => {
+export const LabelPicker = ({ availableLabels, backgroundLabel, handleSelectLabel }: LabelPickerProps) => {
     return (
         <Picker
             label='Select label'

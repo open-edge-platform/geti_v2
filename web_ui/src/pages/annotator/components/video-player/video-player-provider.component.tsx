@@ -24,11 +24,7 @@ interface VideoPlayerProviderProps {
     selectVideoFrame: (videoFrame: VideoFrame) => void;
 }
 
-export const VideoPlayerProvider = ({
-    children,
-    videoFrame,
-    selectVideoFrame,
-}: VideoPlayerProviderProps): JSX.Element => {
+export const VideoPlayerProvider = ({ children, videoFrame, selectVideoFrame }: VideoPlayerProviderProps) => {
     const [step, setStep] = useStep(videoFrame);
 
     // If the currently selected video frame is not part of the available video frames,

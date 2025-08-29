@@ -20,7 +20,7 @@ interface ProjectProviderProps {
     projectIdentifier: ProjectIdentifier;
 }
 
-export const ProjectProvider = ({ projectIdentifier, children }: ProjectProviderProps): JSX.Element => {
+export const ProjectProvider = ({ projectIdentifier, children }: ProjectProviderProps) => {
     const { useSuspenseGetProject } = useProjectActions();
     const { data: project, error: ProjectError, refetch } = useSuspenseGetProject(projectIdentifier);
     const isTaskChainProject = Boolean(project && project.tasks.length > 1);

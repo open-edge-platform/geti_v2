@@ -30,7 +30,7 @@ export const MediaItemFactory = memo(
         shouldShowAnnotationIndicator,
         mediaSelection,
         toggleItemInMediaSelection,
-    }: MediaItemFactoryProps): JSX.Element => {
+    }: MediaItemFactoryProps) => {
         const datasetIdentifier = useDatasetIdentifier();
         const navigate = useNavigateToAnnotatorRoute();
 

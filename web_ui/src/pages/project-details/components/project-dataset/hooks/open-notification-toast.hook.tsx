@@ -40,10 +40,10 @@ const isDeprecated = ({ lifecycleStage }: ModelGroupsAlgorithmDetails) => lifecy
 const isObsolete = ({ lifecycleStage }: ModelGroupsAlgorithmDetails) => lifecycleStage === LifecycleStage.OBSOLETE;
 
 // eslint-disable-next-line max-len
-const deprecatedText = `You can still train this model, but support for this model training inside the Intel® Geti™ platform will stop soon.
+const deprecatedText = `You can still train this model, but support for this model training inside the Geti™ platform will stop soon.
 Train model using new architectures.`;
 // eslint-disable-next-line max-len
-const obsoleteText = `Previously trained models are still shown in the Intel® Geti™ platform and they can be used for inference, testing and deployment.
+const obsoleteText = `Previously trained models are still shown in the Geti™ platform and they can be used for inference, testing and deployment.
 However, it is no longer possible to train new models with this architecture: try one of the new algorithms instead.`;
 
 export const useOpenNotificationToast = () => {

@@ -28,10 +28,7 @@ const ActionTooltip = () => {
     );
 };
 
-export const ProjectAnnotationsObjects = ({
-    objectsPerLabel,
-    gridArea,
-}: ProjectAnnotationsObjectsProps): JSX.Element => {
+export const ProjectAnnotationsObjects = ({ objectsPerLabel, gridArea }: ProjectAnnotationsObjectsProps) => {
     const reorderedObjectsLabels = reorderObjectsLabels(objectsPerLabel);
     const data = formatToChartData(reorderedObjectsLabels);
 

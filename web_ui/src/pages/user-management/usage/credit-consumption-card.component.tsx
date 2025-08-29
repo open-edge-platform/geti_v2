@@ -42,7 +42,7 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
     }
 };
 
-export const CreditConsumptionCard = (props: ViewProps<5>): JSX.Element => {
+export const CreditConsumptionCard = (props: ViewProps<5>) => {
     const { organizationId } = useOrganizationIdentifier();
     const { useGetOrganizationBalanceQuery, useCreditsQuery } = useCreditsQueries();
     const { data: organizationBalance } = useGetOrganizationBalanceQuery({ organizationId });

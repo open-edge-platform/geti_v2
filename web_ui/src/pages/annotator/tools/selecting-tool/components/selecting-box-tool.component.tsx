@@ -39,7 +39,7 @@ export const SelectingBoxTool = ({
     showLabels,
     annotationToolContext,
     selectableAnnotations,
-}: SelectingBoxToolProps): JSX.Element => {
+}: SelectingBoxToolProps) => {
     const { hotkeys } = useAnnotatorHotkeys();
     const {
         scene: { unselectAllAnnotations, setSelectedAnnotations },

@@ -21,7 +21,7 @@ interface ExplanationProps {
 
 const DEFAULT_SIZE = 0;
 
-export const ExplanationMap = ({ explanation, opacity, enabled }: ExplanationProps): JSX.Element => {
+export const ExplanationMap = ({ explanation, opacity, enabled }: ExplanationProps) => {
     const url =
         explanation === undefined
             ? undefined

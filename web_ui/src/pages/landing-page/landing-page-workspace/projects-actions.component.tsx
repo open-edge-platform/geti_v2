@@ -32,7 +32,7 @@ export const ProjectsActions = ({
     setQueryOptions,
     shouldShowProjectActions,
     datasetImportDialogTrigger,
-}: ProjectActionsProps): JSX.Element => {
+}: ProjectActionsProps) => {
     const [filterText, setFilterText] = useState<string>('');
 
     const handleQueryOptions = useDebouncedCallback((projectName: string) => {

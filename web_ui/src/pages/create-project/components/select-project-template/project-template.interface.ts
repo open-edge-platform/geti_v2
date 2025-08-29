@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { FC, SVGProps } from 'react';
+import { FC, ReactNode, SVGProps } from 'react';
 
 import { LabelsRelationType } from '../../../../core/labels/label.interface';
 import { DOMAIN } from '../../../../core/projects/core.interface';
@@ -26,7 +26,7 @@ export interface DomainCardsMetadata {
     subDomain: SUBDOMAIN;
     relation: LabelsRelationType;
     TaskTypeIcon: FC<SVGProps<SVGSVGElement>> | string;
-    imgBoxes?: JSX.Element;
+    imgBoxes?: ReactNode;
     description: string;
     disabled?: boolean;
 }

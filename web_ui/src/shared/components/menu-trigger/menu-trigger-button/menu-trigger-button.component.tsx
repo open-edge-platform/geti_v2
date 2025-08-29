@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ComponentProps, ReactNode } from 'react';
+import { ComponentProps, Key, ReactNode } from 'react';
 
 import { Button, Text } from '@geti/ui';
 import { MoreMenu } from '@geti/ui/icons';
@@ -16,13 +16,14 @@ import classes from '../menu-trigger.module.scss';
 interface MenuTriggerButtonProps extends Omit<MenuTriggerProps, 'children'> {
     title?: string;
     isQuiet?: boolean;
-    icon?: JSX.Element;
+    icon?: ReactNode;
     variant?: ComponentProps<typeof Button>['variant'];
     ariaLabel?: string;
     isDisabled?: boolean;
     customTriggerContent?: ReactNode;
     menuTriggerClasses?: string;
     tooltipPlacement?: Placement;
+    grayedOutKeys?: Key[];
 }
 
 export const MenuTriggerButton = ({
@@ -42,7 +43,8 @@ export const MenuTriggerButton = ({
     customTriggerContent,
     isDisabled,
     tooltipPlacement = 'bottom',
-}: MenuTriggerButtonProps): JSX.Element => {
+    grayedOutKeys,
+}: MenuTriggerButtonProps) => {
     return (
         <MenuTrigger
             id={id}
@@ -53,6 +55,7 @@ export const MenuTriggerButton = ({
             disabledKeys={disabledKeys}
             onOpenChange={onOpenChange}
             ariaLabel={ariaLabel}
+            grayedOutKeys={grayedOutKeys}
         >
             <ButtonWithSpectrumTooltip
                 id={id}

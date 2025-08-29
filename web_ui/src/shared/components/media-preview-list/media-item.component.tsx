@@ -58,7 +58,7 @@ export const MediaItem = ({
     onSelectLabel,
     topLeftElement,
     topRightElement,
-}: MediaItemProps): JSX.Element => {
+}: MediaItemProps) => {
     const { tasks } = useTask();
     const containerRef = useRef(null);
     const [url, setUrl] = useState(initUrl);

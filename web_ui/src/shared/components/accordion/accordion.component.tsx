@@ -13,7 +13,7 @@ interface AccordionProps extends ComponentProps<typeof View> {
     header: ReactNode;
     idPrefix: string;
     children: ReactNode;
-    dockIcon?: JSX.Element;
+    dockIcon?: ReactNode;
     isDisabled?: boolean;
     isFullHeight?: boolean;
     hasFoldButton?: boolean;
@@ -21,7 +21,7 @@ interface AccordionProps extends ComponentProps<typeof View> {
     justifyContentHeader?: ComponentProps<typeof Flex>['justifyContent'];
 }
 
-export const Accordion = (props: AccordionProps): JSX.Element => {
+export const Accordion = (props: AccordionProps) => {
     const {
         header,
         children,

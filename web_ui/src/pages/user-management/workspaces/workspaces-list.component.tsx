@@ -10,7 +10,7 @@ interface WorkspacesListProps {
     workspaces: WorkspaceEntity[];
 }
 
-export const WorkspacesList = ({ workspaces }: WorkspacesListProps): JSX.Element => {
+export const WorkspacesList = ({ workspaces }: WorkspacesListProps) => {
     return (
         <Grid
             columns={repeat('auto-fit', 'size-3400')}

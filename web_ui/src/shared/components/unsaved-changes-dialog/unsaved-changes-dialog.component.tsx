@@ -9,7 +9,7 @@ interface UnsavedChangesDialogProps {
     onPrimaryAction: () => void;
 }
 
-export const UnsavedChangesDialog = ({ open, setOpen, onPrimaryAction }: UnsavedChangesDialogProps): JSX.Element => (
+export const UnsavedChangesDialog = ({ open, setOpen, onPrimaryAction }: UnsavedChangesDialogProps) => (
     <CustomAlertDialog
         open={open}
         setOpen={setOpen}

@@ -16,7 +16,7 @@ interface RunTestButtonProps {
     modelsGroups: ModelsGroups[];
 }
 
-export const RunTestButton = ({ modelsGroups }: RunTestButtonProps): JSX.Element => {
+export const RunTestButton = ({ modelsGroups }: RunTestButtonProps) => {
     const [isRunTestDialogOpen, setIsRunTestDialogOpen] = useState<boolean>(false);
 
     const hasModels = modelsGroups?.some((group) => hasActiveModels(group) || isVisualPromptModelGroup(group));

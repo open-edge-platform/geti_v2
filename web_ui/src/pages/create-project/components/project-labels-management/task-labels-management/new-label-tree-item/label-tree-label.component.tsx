@@ -69,7 +69,7 @@ export const LabelTreeLabel = forwardRef(
             parentGroupName = null,
         }: NewLabelProps,
         ref: ForwardedRef<never>
-    ): JSX.Element => {
+    ) => {
         const isSingleLabelTree = type === LABEL_TREE_TYPE.SINGLE;
 
         const { labels, domain, relation } = taskMetadata;

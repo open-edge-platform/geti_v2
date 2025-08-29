@@ -22,7 +22,7 @@ const useResetSelection = () => {
     }, [selectedMediaItem]);
 };
 
-export const AnnotationListAccordion = (): JSX.Element => {
+export const AnnotationListAccordion = () => {
     const { selectedTask } = useTask();
     const isKeypointTask = selectedTask && isKeypointDetection(selectedTask.domain);
 

@@ -22,7 +22,7 @@ import { VideoFrames } from './video-frames/video-frames.component';
 import { useVideoPlayer } from './video-player-provider.component';
 import { VideoPlayerSlider } from './video-player-slider/video-player-slider.component';
 
-export const VideoPlayer = (): JSX.Element => {
+export const VideoPlayer = () => {
     const [isExpanded, setIsExpanded] = useState(true);
 
     const { isInActiveMode } = useDataset();

@@ -18,7 +18,7 @@ import { CreditAccountsTable } from './organization-credit-accounts-table.compon
 
 import classes from './organization.module.scss';
 
-export const OrganizationCreditAccounts = (): JSX.Element => {
+export const OrganizationCreditAccounts = () => {
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
     const { organizationId } = useOrganization();
     const { useGetOrganizationBalanceQuery, useCreditsQuery, useCreateCreditAccountMutation } = useCreditsQueries();

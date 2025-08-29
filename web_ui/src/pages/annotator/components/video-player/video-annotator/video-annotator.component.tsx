@@ -32,7 +32,7 @@ const useTaskLabels = () => {
     }, [tasks, labels]);
 };
 
-export const VideoAnnotator = ({ selectFrame }: VideoAnnotatorProps): JSX.Element => {
+export const VideoAnnotator = ({ selectFrame }: VideoAnnotatorProps) => {
     const labels = useTaskLabels();
 
     return (

@@ -70,13 +70,7 @@ interface LoadingProps extends SpectrumProgressCircleProps {
  * @param props - The component props
  * @returns A loading component with progress circle
  */
-export const Loading = ({
-    mode = 'fullscreen',
-    size = 'L',
-    style = {},
-    className,
-    ...rest
-}: LoadingProps): JSX.Element => {
+export const Loading = ({ mode = 'fullscreen', size = 'L', style = {}, className, ...rest }: LoadingProps) => {
     if (mode === 'inline') {
         return (
             <Flex alignItems={'center'} justifyContent={'center'} UNSAFE_style={style} UNSAFE_className={className}>

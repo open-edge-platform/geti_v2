@@ -28,7 +28,7 @@ export const TestMediaItemDetailsCard = ({
     labelScore,
     shouldShowAnnotationIndicator,
     selectMediaItem,
-}: TestMediaItemDetailsCardProps): JSX.Element => {
+}: TestMediaItemDetailsCardProps) => {
     const id = getMediaId(mediaItem.media);
     const scoreId = `${id}-score-id`;
     const isVideoItem = isVideo(mediaItem.media);

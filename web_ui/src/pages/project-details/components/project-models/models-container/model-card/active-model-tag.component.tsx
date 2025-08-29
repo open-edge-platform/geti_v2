@@ -12,7 +12,7 @@ interface ActiveModelTagProps {
     className?: string;
 }
 
-export const ActiveModelTag = ({ id, className = '' }: ActiveModelTagProps): JSX.Element => {
+export const ActiveModelTag = ({ id, className = '' }: ActiveModelTagProps) => {
     return (
         <Tag
             withDot={false}

@@ -14,7 +14,7 @@ interface TrainingModelTextChartProps extends TrainingModelChartConfig {
     header: string;
 }
 
-const ModelTextChart = ({ value }: Pick<TrainingModelTextChartProps, 'value'>): JSX.Element => {
+const ModelTextChart = ({ value }: Pick<TrainingModelTextChartProps, 'value'>) => {
     return (
         <Flex direction={'column'} gap={'size-65'} alignItems={'center'} justifyContent={'center'} height={'100%'}>
             <Text UNSAFE_className={classes.textChartValue}>{value}</Text>
@@ -24,7 +24,7 @@ const ModelTextChart = ({ value }: Pick<TrainingModelTextChartProps, 'value'>): 
 
 const DownloadableModelTextChart = withDownloadableHtml(ModelTextChart);
 
-export const TrainingModelTextChart = ({ value, header }: TrainingModelTextChartProps): JSX.Element => {
+export const TrainingModelTextChart = ({ value, header }: TrainingModelTextChartProps) => {
     return (
         <CardContent
             title={header}

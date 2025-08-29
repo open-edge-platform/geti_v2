@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM golang:1.23.11@sha256:080fb3462a60d926829ddcf0626acf0533eeeee934fea6c160d85565281ddc0a
+FROM golang:1.23.12@sha256:60deed95d3888cc5e4d9ff8a10c54e5edc008c6ae3fba6187be6fb592e19e8c0
 
 RUN apt update \
     && apt --no-install-recommends -y install \

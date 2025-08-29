@@ -2,15 +2,13 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { View } from '@geti/ui';
-import { Allotment } from 'allotment';
 
 import { SelectedMediaItem } from '../../providers/selected-media-item-provider/selected-media-item.interface';
 import { AnnotationListAccordion } from './annotations/annotation-list-accordion.component';
 import { AnnotationListCounting } from './annotations/annotation-list-counting.component';
 import { DatasetAccordion } from './dataset/dataset-accordion.component';
 import { SidebarCommonProps } from './sidebar.interface';
-
-import 'allotment/dist/style.css';
+import { Panel, PanelGroup, PanelResizeHandle } from './split-pane/split-pane.component';
 
 /*
     Outer pane = Top list section + Bottom dataset section
@@ -52,21 +50,33 @@ export const SidebarSplitPanel = ({
             backgroundColor='gray-200'
             data-testid='sidebar-split-panel'
         >
-            <Allotment vertical>
+            <PanelGroup direction={'vertical'}>
                 {selectedMediaItem !== undefined && showCountingPanel && (
-                    <Allotment.Pane snap>
-                        <AnnotationListCounting annotationToolContext={annotationToolContext} />
-                    </Allotment.Pane>
+                    <>
+                        <Panel minSize={3} order={1}>
+                            <AnnotationListCounting annotationToolContext={annotationToolContext} />
+                        </Panel>
+                        <PanelResizeHandle />
+                    </>
                 )}
 
-                {selectedMediaItem !== undefined && showAnnotationPanel && <AnnotationListAccordion />}
+                {selectedMediaItem !== undefined && showAnnotationPanel && (
+                    <>
+                        <Panel minSize={3} order={2}>
+                            <AnnotationListAccordion />
+                        </Panel>
+                        <PanelResizeHandle />
+                    </>
+                )}
 
                 {showDatasetPanel && (
-                    <Allotment.Pane snap>
-                        <DatasetAccordion viewMode={datasetViewMode} setViewMode={setDatasetViewMode} />
-                    </Allotment.Pane>
+                    <>
+                        <Panel minSize={3} order={3}>
+                            <DatasetAccordion viewMode={datasetViewMode} setViewMode={setDatasetViewMode} />
+                        </Panel>
+                    </>
                 )}
-            </Allotment>
+            </PanelGroup>
         </View>
     );
 };

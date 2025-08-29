@@ -29,7 +29,7 @@ export const DatasetListItem = ({
     datasetItemMenu,
     shouldShowAnnotationIndicator,
     shouldShowVideoIndicator = true,
-}: DatasetListItemProps): JSX.Element => {
+}: DatasetListItemProps) => {
     const selectedProps = isSelected ? SELECTED_PROPS : {};
     const id = getMediaId(mediaItem);
 

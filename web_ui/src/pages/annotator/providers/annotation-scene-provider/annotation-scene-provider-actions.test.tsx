@@ -36,7 +36,7 @@ describe('Annotation scene provider - annotation list actions', (): void => {
         );
     };
 
-    const HideAllApp = (): JSX.Element => {
+    const HideAllApp = () => {
         const scene = useAnnotationScene();
         const hideAllHandler = () => {
             scene.setHiddenAnnotations((_annotation) => true);
@@ -49,7 +49,7 @@ describe('Annotation scene provider - annotation list actions', (): void => {
         );
     };
 
-    const SelectAllApp = ({ isSelected = false }: { isSelected?: boolean }): JSX.Element => {
+    const SelectAllApp = ({ isSelected = false }: { isSelected?: boolean }) => {
         const scene = useAnnotationScene();
         const selectUnselectHandler = () => {
             scene.setSelectedAnnotations((_annotation) => isSelected);
@@ -64,7 +64,7 @@ describe('Annotation scene provider - annotation list actions', (): void => {
         );
     };
 
-    const ToggleLockSelected = ({ isLocked }: { isLocked: boolean }): JSX.Element => {
+    const ToggleLockSelected = ({ isLocked }: { isLocked: boolean }) => {
         const scene = useAnnotationScene();
         const toggleLockHandler = () => {
             scene.setLockedAnnotations((annotation) => (annotation.isSelected ? isLocked : annotation.isLocked));
@@ -79,7 +79,7 @@ describe('Annotation scene provider - annotation list actions', (): void => {
         );
     };
 
-    const SelectAnnotation = ({ annotationId }: { annotationId: string }): JSX.Element => {
+    const SelectAnnotation = ({ annotationId }: { annotationId: string }) => {
         const scene = useAnnotationScene();
         const unselectHandler = () => {
             scene.unselectAnnotation(annotationId);
@@ -110,7 +110,7 @@ describe('Annotation scene provider - annotation list actions', (): void => {
         isHidden: boolean;
         fromSelected?: boolean;
         annotationId?: string;
-    }): JSX.Element => {
+    }) => {
         const scene = useAnnotationScene();
 
         const toggleVisibilityHandler = () => {
@@ -140,7 +140,7 @@ describe('Annotation scene provider - annotation list actions', (): void => {
         );
     };
 
-    const ToggleLockApp = ({ annotationId = '' }: { annotationId?: string }): JSX.Element => {
+    const ToggleLockApp = ({ annotationId = '' }: { annotationId?: string }) => {
         const scene = useAnnotationScene();
 
         const toggleLock = () => {

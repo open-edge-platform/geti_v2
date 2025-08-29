@@ -25,7 +25,7 @@ export const SelectDomainButton = ({
     isDone = false,
     taskNumber,
     ...props
-}: SelectDomainButtonProps): JSX.Element => {
+}: SelectDomainButtonProps) => {
     return (
         <Flex direction={'column'} alignItems={'center'} height={'100%'}>
             <Flex height={'100%'} alignItems={'center'}>

@@ -12,7 +12,7 @@ import { drawingStyles, isShapeWithinRoi } from '../utils';
 import { useCircleState } from './circle-state-provider.component';
 import { DrawingCircle } from './drawing-circle.component';
 
-export const CircleTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const CircleTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { defaultLabel } = useTask();
     const { scene, updateToolSettings } = annotationToolContext;
     const {

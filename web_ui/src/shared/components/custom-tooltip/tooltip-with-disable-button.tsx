@@ -20,9 +20,9 @@ export const TooltipWithDisableButton = ({
     activeTooltip,
     disabledTooltip,
     ...props
-}: TooltipWithDisableButtonProps): JSX.Element => {
+}: TooltipWithDisableButtonProps) => {
     const showDisabledTooltip =
-        'isDisabled' in children.props ? children.props.isDisabled : 'disabled' in children.props;
+        'isDisabled' in children['props'] ? children.props.isDisabled : 'disabled' in children.props;
 
     const Element = (
         <TooltipTrigger placement={placement} isDisabled={isEmpty(activeTooltip)}>

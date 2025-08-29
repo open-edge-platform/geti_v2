@@ -142,7 +142,7 @@ interface SelectedMediaItemProviderProps {
     children: ReactNode;
 }
 
-export const SelectedMediaItemProvider = ({ children }: SelectedMediaItemProviderProps): JSX.Element => {
+export const SelectedMediaItemProvider = ({ children }: SelectedMediaItemProviderProps) => {
     const datasetIdentifier = useDatasetIdentifier();
     const { annotationService, router } = useApplicationServices();
     const mediaIdentifierFromRoute = useMediaIdentifierFromRoute();

@@ -27,7 +27,7 @@ interface AnnotatorProps {
     children: ReactNode;
 }
 
-export const Annotator = ({ children }: AnnotatorProps): JSX.Element => {
+export const Annotator = ({ children }: AnnotatorProps) => {
     return (
         <MediaProvider>
             <ZoomProvider>

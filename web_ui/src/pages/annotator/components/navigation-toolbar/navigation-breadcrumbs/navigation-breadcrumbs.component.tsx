@@ -7,7 +7,7 @@ import { useSubmitAnnotations } from '../../../providers/submit-annotations-prov
 import { useTask } from '../../../providers/task-provider/task-provider.component';
 import { TasksBreadcrumbs } from './tasks-breadcrumbs.component';
 
-export const NavigationBreadcrumbs = (): JSX.Element => {
+export const NavigationBreadcrumbs = () => {
     const { setSelectedTask, selectedTask, tasks } = useTask();
     const { confirmSaveAnnotations } = useSubmitAnnotations();
     const { toggleToolOnTaskChange } = useAnnotationToolContext();

@@ -21,7 +21,7 @@ interface ProjectMediaAnnotationStatusListProps {
 export const ProjectMediaFilterStatusList = ({
     selected,
     onSelectionChange,
-}: ProjectMediaAnnotationStatusListProps): JSX.Element => {
+}: ProjectMediaAnnotationStatusListProps) => {
     const { isTaskChainProject } = useProject();
 
     const statusList: StatusItem[] = [

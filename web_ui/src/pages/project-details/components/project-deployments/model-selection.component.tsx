@@ -24,7 +24,7 @@ import { ModelInfo } from './model-info.component';
 
     It calculates the optimization models list depending on the user's choice
 */
-export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSelectionProps): JSX.Element => {
+export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSelectionProps) => {
     const projectIdentifier = useProjectIdentifier();
     const { useModelQuery } = useModels();
     const { data: supportedAlgorithms, isPending: isPendingSupportedAlgorithms } =

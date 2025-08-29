@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { ActionButton, ButtonGroup } from '@geti/ui';
 import { Pause, Play, StepBackward, StepForward } from '@geti/ui/icons';
 import { isFunction } from 'lodash-es';
@@ -17,7 +19,7 @@ interface ControlsProps {
         play: boolean;
         pause: boolean;
     };
-    PlayIcon?: () => JSX.Element;
+    PlayIcon?: () => ReactNode;
     playTooltip?: string | undefined;
 }
 
@@ -33,7 +35,7 @@ export const Controls = ({
     PlayIcon = () => <Play />,
     isDisabled = { next: false, previous: false, play: false, pause: false },
     playTooltip = TOOLTIP.play,
-}: ControlsProps): JSX.Element => {
+}: ControlsProps) => {
     const hasPlayAndPause = isFunction(videoControls.play) && isFunction(videoControls.pause);
     useVideoKeyboardShortcuts(videoControls);
 

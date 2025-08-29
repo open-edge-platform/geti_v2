@@ -39,7 +39,7 @@ export const NotEnoughCreditsDialog = ({
     creditsAvailable,
     creditsToConsume,
     onClose,
-}: NotEnoughCreditsDialogProps): JSX.Element => {
+}: NotEnoughCreditsDialogProps) => {
     return (
         <DialogContainer type={'modal'} onDismiss={noop}>
             {isOpen && (

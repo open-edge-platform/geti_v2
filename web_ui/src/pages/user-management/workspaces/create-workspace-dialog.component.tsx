@@ -21,7 +21,7 @@ import { useOrganizationIdentifier } from '../../../hooks/use-organization-ident
 import { useWorkspaces } from '../../../providers/workspaces-provider/workspaces-provider.component';
 import { MAX_LENGTH_OF_WORKSPACE_NAME, MIN_LENGTH_OF_WORKSPACE_NAME } from './utils';
 
-export const CreateWorkspaceDialog = (): JSX.Element => {
+export const CreateWorkspaceDialog = () => {
     const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState<boolean>(false);
     const [workspaceName, setWorkspaceName] = useState<string>('');
     const { organizationId } = useOrganizationIdentifier();

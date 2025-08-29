@@ -11,7 +11,7 @@ interface CPSelectableItemProps<T extends string | number> {
     handleOptionChange: (selectedOption: T) => void;
 }
 
-export const CPSelectableItem = <T extends string | number>(props: CPSelectableItemProps<T>): JSX.Element => {
+export const CPSelectableItem = <T extends string | number>(props: CPSelectableItemProps<T>) => {
     const { id, value, handleOptionChange, selectedOption } = props;
 
     const { pressProps } = usePress({

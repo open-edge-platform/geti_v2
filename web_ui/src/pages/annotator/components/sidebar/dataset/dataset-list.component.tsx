@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 import { Flex, Loading, ViewModes } from '@geti/ui';
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
@@ -28,7 +28,7 @@ interface DatasetListProps {
     viewMode: ViewModes;
     isInActiveMode?: boolean;
     isMediaFilterEmpty?: boolean;
-    getItemTooltip?: (item: MediaItem) => JSX.Element;
+    getItemTooltip?: (item: MediaItem) => ReactNode;
     isReadOnly: boolean;
     shouldShowAnnotationIndicator: boolean;
     hasTooltip?: boolean;
@@ -51,7 +51,7 @@ export const DatasetList = ({
     isInActiveMode = false,
     isMediaFilterEmpty = false,
     shouldShowAnnotationIndicator,
-}: DatasetListProps): JSX.Element => {
+}: DatasetListProps) => {
     const { hasNextPage, isPending: isMediaItemsLoading, isFetchingNextPage, fetchNextPage, data } = mediaItemsQuery;
 
     const mediaItems = useMemo(() => data?.pages?.flatMap(({ media }) => media) ?? [], [data?.pages]);

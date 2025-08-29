@@ -38,7 +38,7 @@ export const PageLayoutWithTabs = ({
     tabsTopMargin,
     onSelectionChange,
     tabContentTopMargin,
-}: PageLayoutProps): JSX.Element => {
+}: PageLayoutProps) => {
     return (
         <Flex id={`page-layout-id`} direction='column' height='100%'>
             <Tabs

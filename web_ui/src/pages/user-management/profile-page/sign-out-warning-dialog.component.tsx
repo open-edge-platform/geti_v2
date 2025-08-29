@@ -10,7 +10,7 @@ interface SignOutWarningDialogProps {
     button: ReactElement;
 }
 
-export const SignOutWarningDialog = ({ handleSignOut, button }: SignOutWarningDialogProps): JSX.Element => {
+export const SignOutWarningDialog = ({ handleSignOut, button }: SignOutWarningDialogProps) => {
     return (
         <DialogTrigger>
             {button}

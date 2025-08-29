@@ -38,7 +38,7 @@ export const EditRotatedBoundingBox = ({
     annotation,
     disablePoints = false,
     disableTranslation = false,
-}: EditRotatedBoundingBoxProps): JSX.Element => {
+}: EditRotatedBoundingBoxProps) => {
     const [shape, setShape] = useState(annotation.shape);
 
     useEffect(() => setShape(annotation.shape), [annotation.shape]);

@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useMemo } from 'react';
 
 import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import { User, UsersQueryParams } from '@geti/core/src/users/users.interface';
@@ -41,7 +41,7 @@ interface UsersTableProps {
     getNextPage: () => Promise<void>;
     usersQueryParams: UsersQueryParams;
     setUsersQueryParams: Dispatch<SetStateAction<UsersQueryParams>>;
-    UserActions: (props: { activeUser: User; user: User; users: User[] }) => JSX.Element;
+    UserActions: (props: { activeUser: User; user: User; users: User[] }) => ReactNode;
     ignoredColumns?: USERS_TABLE_COLUMNS[];
     resourceId: string | undefined;
     workspaces: Workspace[];
@@ -64,7 +64,7 @@ export const UsersTable = ({
     isProjectUsersTable,
     workspaces,
     getNextPage,
-}: UsersTableProps): JSX.Element => {
+}: UsersTableProps) => {
     const shouldShowNotFound = hasFilters && isEmpty(users);
 
     const columns = useMemo(() => {
@@ -100,7 +100,7 @@ export const UsersTable = ({
                 dataKey: USERS_TABLE_COLUMNS.EMAIL_ADDRESS,
                 width: 240,
                 isSortable: true,
-                component: (data: TableCellProps): JSX.Element => {
+                component: (data: TableCellProps) => {
                     return <CasualCell {...data} />;
                 },
             },
@@ -149,7 +149,7 @@ export const UsersTable = ({
                 dataKey: USERS_TABLE_COLUMNS.MORE_ACTIONS,
                 width: 50,
                 isSortable: false,
-                component: ({ rowData }: TableCellProps): JSX.Element => {
+                component: ({ rowData }: TableCellProps) => {
                     return <UserActions activeUser={activeUser} user={rowData} users={users} />;
                 },
             },

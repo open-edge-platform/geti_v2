@@ -67,7 +67,7 @@ export const areAnnotationsIdentical = (prevAnnotations: Annotation[], currAnnot
 };
 
 export const calcRelativePoint =
-    (zoom: number, element?: RefObject<SVGRectElement>) =>
+    (zoom: number, element?: RefObject<SVGRectElement | null>) =>
     <T>(callback: (point: Point) => T) =>
     (event: PointerEvent<SVGSVGElement>): void | T => {
         if (element?.current) {

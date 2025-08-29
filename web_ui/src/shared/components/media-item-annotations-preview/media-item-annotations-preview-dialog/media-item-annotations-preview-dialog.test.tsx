@@ -74,7 +74,7 @@ describe('MediaItemAnnotationsPreviewDialogComponent', () => {
         render(
             <MediaItemAnnotationsPreviewDialog
                 close={close}
-                additionalButtons={[<ActionButton key={'test'}>Test</ActionButton>]}
+                additionalButtons={<ActionButton key={'test'}>Test</ActionButton>}
                 title={'Test title'}
                 subTitle={'test subtitle'}
                 datasetPreview={<></>}

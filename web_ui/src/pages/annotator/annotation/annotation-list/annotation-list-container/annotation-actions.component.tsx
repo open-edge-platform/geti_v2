@@ -15,10 +15,7 @@ interface AnnotationActionsProps {
     isTaskChainSelectedClassification: boolean;
 }
 
-export const AnnotationActions = ({
-    children,
-    isTaskChainSelectedClassification,
-}: AnnotationActionsProps): JSX.Element => {
+export const AnnotationActions = ({ children, isTaskChainSelectedClassification }: AnnotationActionsProps) => {
     const isSceneBusy = useIsSceneBusy();
 
     return (

@@ -12,7 +12,7 @@ import { MediaNameAndResolution } from './media-name-and-resolution.component';
 
 import classes from './annotator-footer.module.scss';
 
-export const MediaItemVideoMetadata = ({ mediaItem }: { mediaItem: Video | VideoFrame }): JSX.Element => {
+export const MediaItemVideoMetadata = ({ mediaItem }: { mediaItem: Video | VideoFrame }) => {
     const { width, height } = mediaItem.metadata;
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
 

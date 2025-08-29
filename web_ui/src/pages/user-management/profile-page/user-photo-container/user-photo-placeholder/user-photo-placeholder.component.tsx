@@ -25,7 +25,7 @@ export const UserPhotoPlaceholder = ({
     width = 'size-1600',
     height = 'size-1600',
     disableUpload = false,
-}: UserPhotoPlaceholderProps): JSX.Element => {
+}: UserPhotoPlaceholderProps) => {
     const isPressable = disableUpload || isNil(handleUploadClick);
 
     const { pressProps } = usePress({

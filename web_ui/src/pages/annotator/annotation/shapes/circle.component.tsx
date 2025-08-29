@@ -3,6 +3,6 @@
 
 import { CircleProps } from './shape.interface';
 
-export const Circle = ({ shape, styles, ariaLabel, ...rest }: CircleProps): JSX.Element => {
+export const Circle = ({ shape, styles, ariaLabel, ...rest }: CircleProps) => {
     return <circle cx={shape.x} cy={shape.y} r={shape.r} {...styles} aria-label={ariaLabel} {...rest} />;
 };

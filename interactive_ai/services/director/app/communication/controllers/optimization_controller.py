@@ -4,7 +4,6 @@
 """This module contains the OptimizationController"""
 
 from collections.abc import Sequence
-from typing import cast
 
 from communication.exceptions import (
     ModelAlreadyOptimizedException,
@@ -18,12 +17,11 @@ from service.job_submission import ModelOptimizationJobSubmitter
 
 from geti_fastapi_tools.exceptions import ModelNotFoundException, ProjectNotFoundException
 from geti_types import ID
-from iai_core.configuration.elements.optimization_parameters import POTOptimizationParameters
 from iai_core.entities.model import Model, ModelDeprecationStatus, ModelOptimizationType, NullModel
 from iai_core.entities.model_storage import ModelStorageIdentifier
 from iai_core.entities.project import NullProject, Project
 from iai_core.entities.subset import Subset
-from iai_core.repos import ConfigurableParametersRepo, ModelRepo, ProjectRepo
+from iai_core.repos import ModelRepo, ProjectRepo
 
 
 class OptimizationController:
@@ -106,32 +104,15 @@ class OptimizationController:
         :return: ID for the submitted optimization job
         :raises: ModelAlreadyOptimizedException if model is already optimized with POT
         """
-        config_params_repo = ConfigurableParametersRepo(project.identifier)
-        repo_config_data = config_params_repo.get_or_create_hyper_parameters(model_storage=model.model_storage).data
-        if hasattr(repo_config_data, "pot_parameters"):
-            repo_pot_parameters = cast(
-                "POTOptimizationParameters",
-                repo_config_data.pot_parameters,  # type: ignore[attr-defined]
-            )
-        else:
-            repo_pot_parameters = POTOptimizationParameters()
-
         # Check if model is already POT optimized with same parameter
         if optimized_models is not None:
             for opt_model in optimized_models:
-                if opt_model.optimization_type != ModelOptimizationType.POT:
-                    continue
-                pot_setting = cast(
-                    "POTOptimizationParameters",
-                    opt_model.configuration.configurable_parameters.pot_parameters,  # type: ignore[attr-defined]
-                )
-                if pot_setting.stat_subset_size == repo_pot_parameters.stat_subset_size:
+                if opt_model.optimization_type == ModelOptimizationType.POT:
                     raise ModelAlreadyOptimizedException(
                         model_id=model.id_,
                         optimization_type=ModelOptimizationType.POT,
                     )
 
-        model.configuration.configurable_parameters.pot_parameters = repo_pot_parameters  # type: ignore[attr-defined]
         job_submitter = ModelOptimizationJobSubmitter(JobsClient().jobs_client)
         return job_submitter.execute(
             project=project,

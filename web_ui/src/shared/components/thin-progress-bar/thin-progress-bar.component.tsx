@@ -22,7 +22,7 @@ export const ThinProgressBar = ({
     trackColor = 'gray-400',
     id,
     ...otherProps
-}: ThinProgressBarProps): JSX.Element => {
+}: ThinProgressBarProps) => {
     const { styleProps } = useStyleProps(otherProps);
 
     return (

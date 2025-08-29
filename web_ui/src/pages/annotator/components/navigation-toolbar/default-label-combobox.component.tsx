@@ -19,7 +19,7 @@ interface DefaultLabelComboboxProps {
     setDefaultLabel: (label: Label | null) => void;
 }
 
-export const DefaultLabelCombobox = ({ defaultLabel, setDefaultLabel }: DefaultLabelComboboxProps): JSX.Element => {
+export const DefaultLabelCombobox = ({ defaultLabel, setDefaultLabel }: DefaultLabelComboboxProps) => {
     const triggerRef = useRef(null);
     const { tasks, selectedTask } = useTask();
     const [searchInput, setSearchInput] = useState('');

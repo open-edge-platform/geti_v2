@@ -68,10 +68,7 @@ interface ActiveLearningConfigurationProps {
     selectedTask: Task | null;
 }
 
-export const ActiveLearningConfiguration = ({
-    isDarkMode = false,
-    selectedTask,
-}: ActiveLearningConfigurationProps): JSX.Element => {
+export const ActiveLearningConfiguration = ({ isDarkMode = false, selectedTask }: ActiveLearningConfigurationProps) => {
     const { project, projectIdentifier } = useProject();
     const { autoTrainingTasks, isPending } = useActiveLearningConfiguration(projectIdentifier, project.tasks);
 

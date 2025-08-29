@@ -26,7 +26,7 @@ const isRadialBarWithManyValues = (modelStatistics: TrainingModelStatisticsGroup
     return modelStatistics.type === 'radial_bar' && modelStatistics.value.length > 6;
 };
 
-export const ModelStatistics = (): JSX.Element => {
+export const ModelStatistics = () => {
     const container = useRef(null);
     const unwrappedContainer = useUnwrapDOMRef(container);
 

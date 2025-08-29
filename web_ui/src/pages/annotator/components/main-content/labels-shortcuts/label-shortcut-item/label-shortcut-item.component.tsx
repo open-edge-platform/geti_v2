@@ -17,7 +17,7 @@ interface LabelShortcutItemProps {
     isDisabled: boolean;
 }
 
-export const LabelShortcutItem = ({ label, isLast, onClick, isDisabled }: LabelShortcutItemProps): JSX.Element => {
+export const LabelShortcutItem = ({ label, isLast, onClick, isDisabled }: LabelShortcutItemProps) => {
     const labelRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

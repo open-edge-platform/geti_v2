@@ -1,14 +1,16 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { View } from '@adobe/react-spectrum';
 
 interface CornerIndicatorProps {
     isActive: boolean;
-    children: JSX.Element;
+    children: ReactNode;
 }
 
-export const CornerIndicator = ({ isActive, children }: CornerIndicatorProps): JSX.Element => {
+export const CornerIndicator = ({ isActive, children }: CornerIndicatorProps) => {
     return (
         <View position='relative'>
             <View

@@ -3,7 +3,7 @@
 
 import { RectangleProps } from './shape.interface';
 
-export const Rectangle = ({ shape, styles, ariaLabel }: RectangleProps): JSX.Element => {
+export const Rectangle = ({ shape, styles, ariaLabel }: RectangleProps) => {
     const { x, y, width, height } = shape;
 
     return <rect x={x} y={y} width={width} height={height} {...styles} aria-label={ariaLabel} />;

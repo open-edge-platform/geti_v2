@@ -105,7 +105,7 @@ export const useTrainStateValue = (): UseTrainProcessHandler => {
         [isManualConfigurationSelected]
     );
 
-    const renderCurrentStep = (step: TrainingSteps): JSX.Element => {
+    const renderCurrentStep = (step: TrainingSteps) => {
         switch (step) {
             case TrainingSteps.MODEL_TEMPLATE_SELECTION: {
                 return (

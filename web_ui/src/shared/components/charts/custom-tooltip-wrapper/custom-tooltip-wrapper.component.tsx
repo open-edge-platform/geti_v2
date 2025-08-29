@@ -11,6 +11,6 @@ interface CustomTooltipWrapperProps {
     children: ReactNode;
 }
 
-export const CustomTooltipWrapper = ({ children }: CustomTooltipWrapperProps): JSX.Element => {
+export const CustomTooltipWrapper = ({ children }: CustomTooltipWrapperProps) => {
     return <View UNSAFE_className={classes.customTooltipWrapper}>{children}</View>;
 };

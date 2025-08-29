@@ -25,7 +25,7 @@ export const UsersHeader = ({
     hasFilterOptions,
     setUsersQueryParams,
     isProjectUsersTable = false,
-}: WorkspaceUsersHeaderProps): JSX.Element => {
+}: WorkspaceUsersHeaderProps) => {
     const [searchInput, setSearchInput] = useState<string>('');
     const [roleFilter, setRoleFilter] = useState<USER_ROLE | undefined>();
 

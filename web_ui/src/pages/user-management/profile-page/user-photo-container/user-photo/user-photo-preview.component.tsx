@@ -15,7 +15,7 @@ interface UserPhotoPreviewProps {
     height: ComponentProps<typeof View>['height'];
 }
 
-export const UserPhotoPreview = ({ userPhoto, width, height }: UserPhotoPreviewProps): JSX.Element => {
+export const UserPhotoPreview = ({ userPhoto, width, height }: UserPhotoPreviewProps) => {
     const wrapperRef = useRef<DOMRefValue<HTMLElement>>(null);
     const unwrapRef = useUnwrapDOMRef(wrapperRef);
     const canvasRef = useRef<HTMLCanvasElement>(null);

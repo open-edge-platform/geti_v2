@@ -1,6 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-
+import logging
 from collections.abc import Callable, Sequence
 
 from geti_configuration_tools.training_configuration import (
@@ -23,9 +23,12 @@ from storage.mappers.partial_training_configuration_mapper import PartialTrainin
 
 from geti_types import ID, ProjectIdentifier, Session
 from iai_core.entities.task_node import TaskNode
+from iai_core.repos import TaskNodeRepo
 from iai_core.repos.base import ProjectBasedSessionRepo
 from iai_core.repos.mappers import IDToMongo
 from iai_core.repos.mappers.cursor_iterator import CursorIterator
+
+logger = logging.getLogger(__name__)
 
 
 class PartialTrainingConfigurationRepo(ProjectBasedSessionRepo[PartialTrainingConfiguration]):
@@ -70,16 +73,39 @@ class PartialTrainingConfigurationRepo(ProjectBasedSessionRepo[PartialTrainingCo
             cursor=mongo_cursor, mapper=PartialTrainingConfigurationToMongo, parameter=None
         )
 
-    def get_task_only_configuration(self, task_id: ID) -> PartialTrainingConfiguration:
+    @staticmethod
+    def _task_only_filter(task_id: ID) -> dict:
+        """
+        Returns a filter dictionary to find task-level configurations without an associated model manifest ID.
+
+        :param task_id: The task ID to search for.
+        :return: A dictionary representing the filter
+        """
+        return {"task_id": IDToMongo.forward(instance=task_id), "model_manifest_id": {"$exists": False}}
+
+    def get_or_create_task_only_configuration(self, task_id: ID) -> PartialTrainingConfiguration:
         """
         Get a partial training configuration that is only applied to the specified task ID.
         This returns task-level configuration that does not have an associated model manifest ID.
 
+        If task-level configuration does not exist, but the task exists, a default configuration is created.
+
         :param task_id: The task ID to search for.
         :return: A partial training configuration object if found, otherwise NullTrainingConfiguration.
         """
-        task_filter = {"task_id": IDToMongo.forward(instance=task_id), "model_manifest_id": {"$exists": False}}
-        return self.get_one(extra_filter=task_filter)
+        task_filter = self._task_only_filter(task_id=task_id)
+        task_level_config = self.get_one(extra_filter=task_filter)
+        # create default configuration in case the task exists but has no training configuration yet
+        if isinstance(task_level_config, NullTrainingConfiguration) and TaskNodeRepo(self.identifier).exists(task_id):
+            sanitized_task_id = str(task_id).replace("\r", "").replace("\n", "").replace("\t", "")
+            logger.warning(
+                f"Task training configuration for project `{self.identifier.project_id}` and task "
+                f"`{sanitized_task_id}` not found, creating default training configuration."
+            )
+            task = TaskNodeRepo(self.identifier).get_by_id(task_id)
+            self.create_default_task_only_configuration(task)
+            task_level_config = self.get_or_create_task_only_configuration(task_id)
+        return task_level_config
 
     def get_by_model_manifest_id(self, model_manifest_id: str) -> PartialTrainingConfiguration:
         """
@@ -100,7 +126,8 @@ class PartialTrainingConfigurationRepo(ProjectBasedSessionRepo[PartialTrainingCo
 
         :param task: The task for which to create a configuration
         """
-        exists = not isinstance(self.get_task_only_configuration(task_id=task.id_), NullTrainingConfiguration)
+        task_filter = self._task_only_filter(task_id=task.id_)
+        exists = not isinstance(self.get_one(extra_filter=task_filter), NullTrainingConfiguration)
         if exists:
             return
 

@@ -24,11 +24,7 @@ interface SecondaryToolbarProps {
     isUploadAllowed?: boolean;
 }
 
-export const SecondaryToolbar = ({
-    labels,
-    shouldShowExplanation,
-    isUploadAllowed = true,
-}: SecondaryToolbarProps): JSX.Element => {
+export const SecondaryToolbar = ({ labels, shouldShowExplanation, isUploadAllowed = true }: SecondaryToolbarProps) => {
     const {
         isDisabled,
         explanation,

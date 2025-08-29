@@ -13,7 +13,7 @@ interface TrainModelProps {
     models: ModelGroupsAlgorithmDetails[];
 }
 
-export const TrainModel = ({ models }: TrainModelProps): JSX.Element => {
+export const TrainModel = ({ models }: TrainModelProps) => {
     const hasModels = !isEmpty(models);
     const [isTrainingDialogOpen, setIsTrainingDialogOpen] = useState<boolean>(false);
 

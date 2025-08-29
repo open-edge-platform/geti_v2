@@ -7,7 +7,7 @@ import { biggerThanQuery } from '@geti/ui/theme';
 
 import { Video, VideoFrame } from '../../../../core/media/video.interface';
 
-export const FPS = ({ mediaItem, className }: { mediaItem: Video | VideoFrame; className?: string }): JSX.Element => {
+export const FPS = ({ mediaItem, className }: { mediaItem: Video | VideoFrame; className?: string }) => {
     const formatter = useNumberFormatter({
         style: 'decimal',
         minimumFractionDigits: 2,

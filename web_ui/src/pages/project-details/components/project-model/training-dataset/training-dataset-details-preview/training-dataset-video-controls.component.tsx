@@ -14,7 +14,7 @@ export const TrainingDatasetVideoControls = ({
     frameNumber,
     frames,
     selectFrame,
-}: TrainingDatasetVideoControlsProps): JSX.Element => {
+}: TrainingDatasetVideoControlsProps) => {
     const canSelectPrevious = checkIfCanSelectPrevious(frameNumber, frames);
 
     const canSelectNext = checkIfCanSelectNext(frameNumber, frames);

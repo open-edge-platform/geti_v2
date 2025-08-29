@@ -24,7 +24,7 @@ export const NameProject = ({
     updateProjectState,
     goToNextStep,
     animationDirection,
-}: NameProjectProps): JSX.Element => {
+}: NameProjectProps) => {
     const { name } = metadata;
 
     const [projectName, setProjectName] = useState<string>(name);

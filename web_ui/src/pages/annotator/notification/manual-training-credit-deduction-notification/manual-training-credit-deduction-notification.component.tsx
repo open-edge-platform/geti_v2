@@ -71,7 +71,7 @@ const useManualTrainingCreditDeductionNotificationJobs = () => {
     }, [queryEnabled, jobsQuery.isSuccess, jobsQuery.data, handleSuccess]);
 };
 
-export const ManualTrainingCreditDeductionNotification = (): JSX.Element => {
+export const ManualTrainingCreditDeductionNotification = () => {
     useManualTrainingCreditDeductionNotificationJobs();
 
     return <></>;

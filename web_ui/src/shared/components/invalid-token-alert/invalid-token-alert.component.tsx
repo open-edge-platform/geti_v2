@@ -15,7 +15,7 @@ interface InvalidTokenAlertProps {
     styles?: Omit<ComponentProps<typeof InlineAlert>, 'variant' | 'width' | 'children'>;
 }
 
-export const InvalidTokenAlert = ({ isVisible, message, styles }: InvalidTokenAlertProps): JSX.Element => {
+export const InvalidTokenAlert = ({ isVisible, message, styles }: InvalidTokenAlertProps) => {
     return (
         <AnimatePresence>
             {isVisible && (
