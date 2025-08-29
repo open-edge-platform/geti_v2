@@ -8,7 +8,7 @@ spec:
   ##
   ## The service name is being set to leverage the service headlessly.
   ## https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
-  serviceName: {{ include "etcd.fullname" . }}
+  serviceName: {{ include "etcd.fullname" . }}-headless
   ##
   ## If you are increasing the replica count of an existing cluster, you should
   ## also update the --initial-cluster-state flag as noted further down in the
@@ -50,7 +50,7 @@ spec:
         ## the DNS name. It must match the service name created for the etcd
         ## cluster. The choice to place it in an annotation instead of the env
         ## settings is because there should only be 1 service per etcd cluster.
-        serviceName: {{ include "etcd.fullname" . }}
+        serviceName: {{ include "etcd.fullname" . }}-headless
     spec:
       serviceAccountName: {{ include "etcd.fullname" . }}
       ##
