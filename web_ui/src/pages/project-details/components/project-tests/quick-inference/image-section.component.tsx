@@ -17,7 +17,6 @@ import {
 import { useAnnotatorCanvasSettings } from '../../../../annotator/providers/annotator-canvas-settings-provider/annotator-canvas-settings-provider.component';
 import { useSelectedMediaItem } from '../../../../annotator/providers/selected-media-item-provider/selected-media-item-provider.component';
 import { filterForExplanation } from '../../../../annotator/utils';
-import { SyncZoomState, SyncZoomTarget } from '../../../../annotator/zoom/sync-zoom-state.component';
 import { TransformZoomAnnotation } from '../../../../annotator/zoom/transform-zoom-annotation.component';
 import { useZoom, ZoomProvider } from '../../../../annotator/zoom/zoom-provider.component';
 import { useQuickInference } from './quick-inference-provider.component';
@@ -75,9 +74,6 @@ export const ImageSection = () => {
 
     return (
         <ZoomProvider>
-            <SyncZoomState />
-            <SyncZoomTarget />
-
             <AnnotationToolProvider>
                 <TransformZoomAnnotation>
                     <AnnotatorCanvasSettings>

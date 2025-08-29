@@ -12,6 +12,7 @@ jest.mock('react-zoom-pan-pinch', () => ({
     ...jest.requireActual('react-zoom-pan-pinch'),
     useControls: jest.fn(() => ({
         resetTransform: jest.fn(),
+        setTransform: jest.fn(),
         zoomIn: jest.fn(),
         zoomOut: jest.fn(),
     })),
@@ -41,6 +42,7 @@ describe('zoom level', () => {
         // @ts-expect-error we mock only resetTransform, zoomIn and zoomOut functions
         jest.mocked(useControls).mockImplementation(() => ({
             resetTransform: mockResetTransform,
+            setTransform: jest.fn(),
             zoomIn: mockZoomIn,
             zoomOut: mockZoomOut,
         }));

@@ -25,7 +25,7 @@ export const useZoomIntoAnnotation = (): void => {
         [taskAnnotations]
     );
 
-    const zoomIntoAnnotation = useCallback(() => {
+    const zoomIntoAnnotation = useCallback((): ZoomTarget => {
         // Suppose we are in a Detection -> Classification or Detection -> Segmentation task, then
         // we want to zoom into selected annotations if the user selected the Classification,
         // or Segmentation tasks
@@ -36,14 +36,10 @@ export const useZoomIntoAnnotation = (): void => {
             return;
         }
 
-        const boundingBox = getShapesBoundingBox(shapes);
-
-        setZoomTarget((oldTarget) => {
-            return isEqual(oldTarget, boundingBox) ? oldTarget : boundingBox;
-        });
+        return getShapesBoundingBox(shapes);
     }, [selectedAnnotations, setZoomTarget]);
 
-    const resetZoom = useCallback(() => {
+    const resetZoom = useCallback((): ZoomTarget => {
         if (!selectedMediaItem) {
             return;
         }
@@ -54,11 +50,7 @@ export const useZoomIntoAnnotation = (): void => {
         // We need to compare the image target (which is the initial target) with the current zoomTarget
         const imageTargetConfig = { x: 0, y: 0, width, height } as ZoomTarget;
 
-        const targetChanged = !isEqual(imageTargetConfig, zoomTarget);
-
-        if (targetChanged) {
-            setZoomTarget(imageTargetConfig);
-        }
+        return imageTargetConfig;
     }, [zoomTarget, selectedMediaItem, setZoomTarget]);
 
     // If the user changes to from a global to a local task we zoom into the annotation
@@ -66,11 +58,11 @@ export const useZoomIntoAnnotation = (): void => {
     useEffect(() => {
         const previousTaskWasLocalTask = !isNil(previousTask) || (isNil(previousTask) && tasks.length === 2);
 
-        if (previousTaskWasLocalTask && selectedAnnotations.length) {
-            zoomIntoAnnotation();
-        } else {
-            resetZoom();
-        }
+        const newTarget = previousTaskWasLocalTask && selectedAnnotations.length ? zoomIntoAnnotation() : resetZoom();
+
+        setZoomTarget((oldTarget) => {
+            return isEqual(oldTarget, newTarget) ? oldTarget : newTarget;
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [previousTask, selectedAnnotations.length, tasks.length, zoomIntoAnnotation]);
 };

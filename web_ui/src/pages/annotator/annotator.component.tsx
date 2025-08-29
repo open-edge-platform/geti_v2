@@ -11,7 +11,6 @@ import { DatasetProvider } from './providers/dataset-provider/dataset-provider.c
 import { RegionOfInterestProvider } from './providers/region-of-interest-provider/region-of-interest-provider.component';
 import { SelectedMediaItemProvider } from './providers/selected-media-item-provider/selected-media-item-provider.component';
 import { TaskProvider } from './providers/task-provider/task-provider.component';
-import { SyncZoomState, SyncZoomTarget } from './zoom/sync-zoom-state.component';
 import { ZoomProvider } from './zoom/zoom-provider.component';
 
 // This hook is called in an empty component so that any of its state updates won't
@@ -34,8 +33,6 @@ export const Annotator = ({ children }: AnnotatorProps) => {
                 <TaskProvider>
                     <DatasetProvider>
                         <SelectedMediaItemProvider>
-                            <SyncZoomState />
-                            <SyncZoomTarget />
                             <AnnotatorProvider>
                                 <RegionOfInterestProvider>
                                     <MediaItemProvider>
