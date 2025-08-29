@@ -146,7 +146,7 @@ spec:
         ## count is increased. If set incorrectly, etcd makes an attempt to
         ## start but fail safely.
         - name: ETCD_INITIAL_CLUSTER_STATE
-          value: {{ ternary "new" "existing" .Release.IsInstall }}
+          value: "new"
         {{- if .Values.maxProcs }}
         - name: GOMAXPROCS
           value: "{{ .Values.maxProcs }}"
