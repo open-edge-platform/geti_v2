@@ -34,7 +34,7 @@ export const Users = ({
     UserActions = () => <></>,
     ignoredColumns = [],
     isProjectUsersTable = false,
-}: UsersProps): JSX.Element => {
+}: UsersProps) => {
     const { organizationId } = useOrganizationIdentifier();
     const { workspaces } = useWorkspaces();
     const [usersQueryParams, setUsersQueryParams] = useState<UsersQueryParams>({

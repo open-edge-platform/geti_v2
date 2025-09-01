@@ -30,7 +30,7 @@ interface UserPhotoContainerProps {
     userPhoto: string | null;
 }
 
-export const UserPhotoContainer = ({ userId, userName, userPhoto, email }: UserPhotoContainerProps): JSX.Element => {
+export const UserPhotoContainer = ({ userId, userName, userPhoto, email }: UserPhotoContainerProps) => {
     const uploadRef = useRef<HTMLInputElement>(null);
     const { organizationId } = useOrganizationIdentifier();
 

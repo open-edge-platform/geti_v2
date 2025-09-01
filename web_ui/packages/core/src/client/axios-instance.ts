@@ -7,7 +7,7 @@ import { CSRF_HEADERS } from '../services/security';
 import { getErrorMessageByStatusCode } from '../services/utils';
 
 /*
-    Axios instance used for Intel® Geti™ requests
+    Axios instance used for Geti™ requests
 */
 
 export const apiClient = axios.create({

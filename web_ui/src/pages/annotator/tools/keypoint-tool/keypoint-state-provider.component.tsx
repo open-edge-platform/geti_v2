@@ -24,7 +24,7 @@ export interface KeypointStateContextProps {
 
 const KeypointStateContext = createContext<KeypointStateContextProps | undefined>(undefined);
 
-export const KeypointStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const KeypointStateProvider = ({ children }: StateProviderProps) => {
     const { project } = useProject();
     const [cursorDirection, setCursorDirection] = useState(CursorDirection.SouthEast);
     const [currentBoundingBox, setCurrentBoundingBox, undoRedoActions] = useUndoRedoState<RegionOfInterest | null>(

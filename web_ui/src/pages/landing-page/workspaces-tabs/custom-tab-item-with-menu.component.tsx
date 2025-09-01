@@ -39,7 +39,7 @@ export const CustomTabItemWithMenu = ({
     workspaces,
     dispatchWorkspaces,
     selectWorkspace,
-}: CustomTabItemWithMenuProps): JSX.Element => {
+}: CustomTabItemWithMenuProps) => {
     const { organizationId } = useOrganizationIdentifier();
     const { useGetProjectNames } = useProjectActions();
     const projectsNamesQuery = useGetProjectNames({ organizationId, workspaceId: workspace.id });

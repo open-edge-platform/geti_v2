@@ -19,7 +19,7 @@ import { useSelectingState } from '../selecting-state-provider.component';
 // there is array of the annotations), but we don't handle all edge cases for it. In the future we will have to change
 // the logic of pasting and the rest should work out of the box.
 
-export const StampTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const StampTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { stampAnnotations, centerOfTheStampAnnotations } = useSelectingState();
     const { scene } = annotationToolContext;
     const stampToolContainerRef = useRef<SVGRectElement>(null);

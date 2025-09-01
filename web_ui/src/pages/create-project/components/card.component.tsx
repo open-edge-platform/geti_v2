@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { FC, SVGProps } from 'react';
+import { FC, ReactNode, SVGProps } from 'react';
 
 import { dimensionValue, Heading, Image, Radio, RadioGroup, Text, View } from '@geti/ui';
 import { clsx } from 'clsx';
@@ -23,13 +23,13 @@ interface CardCommonProps {
 }
 
 interface CardWithTitleProps extends CardCommonProps {
-    titleComponent: JSX.Element;
+    titleComponent: ReactNode;
 }
 
 interface CardWithImageProps extends CardCommonProps {
     alt: string;
     TaskTypeIcon: FC<SVGProps<SVGSVGElement>> | string;
-    imgBoxes?: JSX.Element;
+    imgBoxes?: ReactNode;
 }
 
 export const Card = ({
@@ -41,7 +41,7 @@ export const Card = ({
     isDisabled = false,
     isLargeSize = true,
     ...headerProps
-}: CardProps): JSX.Element => {
+}: CardProps) => {
     const hasImage = 'TaskTypeIcon' in headerProps;
 
     const { pressProps } = usePress({

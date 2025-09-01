@@ -21,7 +21,7 @@ interface TaskLabelTreeSearchProps {
     onClick: (label: Label) => void;
     suffix?: SearchLabelTreeItemSuffix;
     prefix?: SearchLabelTreeItemSuffix;
-    ResultWrapper?: (props: { children: ReactNode }) => JSX.Element;
+    ResultWrapper?: (props: { children: ReactNode }) => ReactNode;
 }
 
 const NoopResultWrapper = ({ children }: { children: ReactNode }) => {
@@ -38,7 +38,7 @@ export const TaskLabelTreeSearch = ({
     prefix,
     onClick,
     ResultWrapper = NoopResultWrapper,
-}: TaskLabelTreeSearchProps): JSX.Element => {
+}: TaskLabelTreeSearchProps) => {
     const [input, setInput] = useState(textFieldProps.value ?? '');
 
     const results = useFilteredTaskMetadata({ input, tasks, selectedTask, includesEmptyLabels });

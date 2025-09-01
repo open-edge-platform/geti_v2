@@ -38,7 +38,7 @@ const getFloatingPointStep = (minValue: number, maxValue: number): number => {
     return 1 / Math.pow(10, exponent + 3);
 };
 
-export const CPNumber = ({ id, parameter, updateParameter }: CPNumberProps): JSX.Element => {
+export const CPNumber = ({ id, parameter, updateParameter }: CPNumberProps) => {
     const { value, defaultValue, minValue, maxValue, id: parameterId, name } = parameter;
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
 

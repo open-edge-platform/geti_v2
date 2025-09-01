@@ -16,10 +16,7 @@ interface SelectedMediaItemProviderProps {
     selectedMediaItem?: SelectedMediaItem;
 }
 
-export const DefaultSelectedMediaItemProvider = ({
-    children,
-    selectedMediaItem,
-}: SelectedMediaItemProviderProps): JSX.Element => {
+export const DefaultSelectedMediaItemProvider = ({ children, selectedMediaItem }: SelectedMediaItemProviderProps) => {
     // This is an artificial query: we already have the selected media item,
     // so we don't need to query it, however some annotator components rely
     // on reading this query's (loading, success etc) status

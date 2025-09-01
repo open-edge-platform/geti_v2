@@ -14,7 +14,7 @@ export const LabelTreeViewItemPrefix = ({
     isOpen,
     onOpenClickHandler,
     childrenLength,
-}: LabelTreeViewItemPrefixProps): JSX.Element => {
+}: LabelTreeViewItemPrefixProps) => {
     return childrenLength > 0 ? (
         <ActionButton id='toggle-label-item' data-testid='toggle-label-item' isQuiet onPress={onOpenClickHandler}>
             {isOpen ? <ChevronDownSmallLight /> : <ChevronRightSmallLight />}

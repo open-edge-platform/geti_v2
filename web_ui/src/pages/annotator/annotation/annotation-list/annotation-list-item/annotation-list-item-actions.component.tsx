@@ -25,7 +25,7 @@ export const AnnotationListItemActions = ({
     annotationId,
     changeLock,
     showAnnotation,
-}: AnnotationListItemActionsProps): JSX.Element => {
+}: AnnotationListItemActionsProps) => {
     const colorMode = isHidden ? TOGGLE_VISIBILITY_COLOR_MODE.ALWAYS_GRAYED_OUT : undefined;
 
     return (

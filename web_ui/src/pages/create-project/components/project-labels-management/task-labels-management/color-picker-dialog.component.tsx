@@ -31,7 +31,7 @@ export const ColorPickerDialog = ({
         /**/
     },
     gridArea,
-}: ColorPickerDialogProps): JSX.Element => {
+}: ColorPickerDialogProps) => {
     const [selectedColor, setSelectedColor] = useState<string | undefined>(color);
     const [inputColor, setInputColor] = useState<string | undefined>(color);
 

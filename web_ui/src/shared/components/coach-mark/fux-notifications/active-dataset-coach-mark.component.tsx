@@ -8,7 +8,7 @@ import { FUX_NOTIFICATION_KEYS } from '../../../../core/user-settings/dtos/user-
 import { useTutorialEnablement } from '../../../hooks/use-tutorial-enablement.hook';
 import { CoachMark } from '../coach-mark.component';
 
-export const ActiveDatasetCoachMark = (): JSX.Element => {
+export const ActiveDatasetCoachMark = () => {
     const { isOpen } = useTutorialEnablement(FUX_NOTIFICATION_KEYS.ANNOTATOR_ACTIVE_SET);
 
     // When the sidebar is collapsed we do not render the dataset-picker so the element with this id

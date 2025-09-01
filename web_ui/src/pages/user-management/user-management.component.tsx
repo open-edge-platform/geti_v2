@@ -81,7 +81,7 @@ const useDecorateCheckPermission = (operations: OPERATION[]) => {
     return isWorkspaceAdmin;
 };
 
-export const UserManagement = (): JSX.Element => {
+export const UserManagement = () => {
     const handleSignOut = useHandleSignOut();
     const { organizationId } = useOrganizationIdentifier();
     const { isUploadInProgress } = useMediaUpload();

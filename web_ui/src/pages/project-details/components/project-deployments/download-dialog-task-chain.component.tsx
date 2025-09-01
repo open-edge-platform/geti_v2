@@ -38,7 +38,7 @@ export const DownloadDialogTaskChain = ({
     modelsGroups,
     tasks,
     projectIdentifier,
-}: DownloadDialogTaskChainProps): JSX.Element => {
+}: DownloadDialogTaskChainProps) => {
     const [modelSelection, setModelSelection] = useState<DeployModelByTask>({});
 
     const {

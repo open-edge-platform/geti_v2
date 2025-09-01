@@ -15,7 +15,7 @@ export const ReplaceOrMergeUserAnnotationsDialog = ({
     merge,
     replace,
     close,
-}: ReplaceOrMergeUserAnnotationsDialogProps): JSX.Element => {
+}: ReplaceOrMergeUserAnnotationsDialogProps) => {
     const { enableMergingPredictionsPredicate } = usePrediction();
     const hideMerge = !enableMergingPredictionsPredicate();
 

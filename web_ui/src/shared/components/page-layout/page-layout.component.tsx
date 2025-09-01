@@ -11,12 +11,12 @@ import { TutorialCardBuilder } from '../tutorial-card/tutorial-card-builder.comp
 import classes from './page-layout.module.scss';
 
 interface PageLayoutProps extends BreadcrumbsProps {
-    children: JSX.Element;
+    children: ReactNode;
     header?: ReactNode;
     tutorialCardKey?: TUTORIAL_CARD_KEYS;
 }
 
-export const PageLayout = ({ children, breadcrumbs, header, tutorialCardKey }: PageLayoutProps): JSX.Element => {
+export const PageLayout = ({ children, breadcrumbs, header, tutorialCardKey }: PageLayoutProps) => {
     return (
         <Flex id={`page-layout-id`} direction='column' height='100%'>
             {tutorialCardKey && (

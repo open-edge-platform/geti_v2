@@ -23,7 +23,7 @@ const DOT_SIZES: Record<Sizes, string> = {
     M: 'var(--spectrum-global-dimension-size-50)',
 };
 
-export const ThreeDotsFlashing = ({ variant = 'dark', size = 'M', className }: ThreeDotsFlashingProps): JSX.Element => {
+export const ThreeDotsFlashing = ({ variant = 'dark', size = 'M', className }: ThreeDotsFlashingProps) => {
     const dotColor = DOT_COLORS[variant];
     const dotSize = DOT_SIZES[size];
 

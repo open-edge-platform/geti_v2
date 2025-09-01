@@ -64,7 +64,7 @@ export const BarHorizontalChart = ({
     allowDecimals = true,
     formatTooltipMessage = displayMessage,
     onCellClick,
-}: BarHorizontalChartProps): JSX.Element => {
+}: BarHorizontalChartProps) => {
     const [labelColors, setLabelColors] = useState<Colors[]>(colors || []);
     const [margin, setMargin] = useState<number>(0);
     const container = useRef<HTMLDivElement | null>(null);

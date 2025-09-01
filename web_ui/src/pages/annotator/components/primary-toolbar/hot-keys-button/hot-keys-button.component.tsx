@@ -8,7 +8,7 @@ import { Tabs } from '../../../../../shared/components/tabs/tabs.component';
 import { TabItem } from '../../../../../shared/components/tabs/tabs.interface';
 import { HotKeysList } from './hot-keys-list/hot-keys-list.component';
 
-export const HotKeysButton = (): JSX.Element => {
+export const HotKeysButton = () => {
     const ITEMS: TabItem[] = [
         {
             id: 'hotkeys',

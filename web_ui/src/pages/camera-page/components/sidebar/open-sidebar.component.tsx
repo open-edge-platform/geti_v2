@@ -17,7 +17,7 @@ interface OpenSidebarProps {
     screenshots: Screenshot[];
 }
 
-export const OpenSidebar = ({ labels, screenshots }: OpenSidebarProps): JSX.Element => {
+export const OpenSidebar = ({ labels, screenshots }: OpenSidebarProps) => {
     const allLabelIds = screenshots.flatMap((screenshot) => screenshot.labelIds);
     const countedLabels = countBy(allLabelIds, identity);
 

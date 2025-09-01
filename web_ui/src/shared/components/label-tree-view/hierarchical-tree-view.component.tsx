@@ -18,7 +18,7 @@ export const HierarchicalTreeView = ({
     domains,
     treeValidationErrors,
     setValidationError,
-}: HierarchicalLabelTreeViewProps): JSX.Element => {
+}: HierarchicalLabelTreeViewProps) => {
     return (
         <ul
             className={`spectrum-TreeView ${isEditable ? 'spectrum-TreeView--thumbnail' : ''} ${classes.item}`}

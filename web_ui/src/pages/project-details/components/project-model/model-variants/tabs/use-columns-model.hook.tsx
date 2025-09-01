@@ -25,7 +25,7 @@ interface useColumnsModelProps {
     setSelectedModel: (value: PreselectedModel | undefined) => void;
 }
 
-const AccuracyCell = ({ accuracy }: { accuracy: number }): JSX.Element => {
+const AccuracyCell = ({ accuracy }: { accuracy: number }) => {
     return <>{useFormatModelAccuracy(accuracy)}</>;
 };
 

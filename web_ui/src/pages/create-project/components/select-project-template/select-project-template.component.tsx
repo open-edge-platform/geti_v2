@@ -45,7 +45,7 @@ export const SelectProjectTemplate = ({
     metadata,
     updateProjectState,
     setValidationError,
-}: SelectProjectTemplateProps): JSX.Element => {
+}: SelectProjectTemplateProps) => {
     const { selectedDomains, selectedTab, projectTypeMetadata } = metadata;
     const { FEATURE_FLAG_KEYPOINT_DETECTION } = useFeatureFlags();
 

@@ -36,7 +36,7 @@ export const MediaFilterOperator = ({
     onSelectionChange,
     isAnomalyProject = false,
     isDatasetAccordion = false,
-}: MediaFilterOperatorProps): JSX.Element => {
+}: MediaFilterOperatorProps) => {
     const filteredItems = useMemo(() => {
         return field === '' ? [] : OPERATOR_OPTIONS.filter(({ fields }) => fields.includes(field));
     }, [field]);

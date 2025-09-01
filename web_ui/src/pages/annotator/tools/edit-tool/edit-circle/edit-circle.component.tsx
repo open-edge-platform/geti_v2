@@ -69,7 +69,7 @@ export const EditCircle = ({
     annotation,
     disablePoints = false,
     disableTranslation = false,
-}: EditCircleProps): JSX.Element => {
+}: EditCircleProps) => {
     const { scene } = annotationToolContext;
     const {
         zoomState: { zoom },

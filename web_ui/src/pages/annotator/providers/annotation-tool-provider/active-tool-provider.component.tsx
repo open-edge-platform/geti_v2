@@ -14,7 +14,7 @@ interface ActiveToolProviderProps extends ToolAnnotationContextProps {
     children: ReactNode;
 }
 
-export const ActiveToolProvider = ({ children, annotationToolContext }: ActiveToolProviderProps): JSX.Element => {
+export const ActiveToolProvider = ({ children, annotationToolContext }: ActiveToolProviderProps) => {
     const tool = useActiveTool(annotationToolContext);
     const { selectedTask } = useTask();
     const { selectedMediaItem } = useSelectedMediaItem();

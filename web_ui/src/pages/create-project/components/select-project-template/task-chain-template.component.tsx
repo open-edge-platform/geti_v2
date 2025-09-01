@@ -17,11 +17,7 @@ import taskChainClasses from './project-template.module.scss';
 
 const joinDomains = (domains: DOMAIN[]) => domains.join('-');
 
-export const TaskChainTemplate = ({
-    setSelectedDomains,
-    selectedDomains,
-    subDomains,
-}: TaskChainTemplateProps): JSX.Element => {
+export const TaskChainTemplate = ({ setSelectedDomains, selectedDomains, subDomains }: TaskChainTemplateProps) => {
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
 
     useEffect(() => {

@@ -82,7 +82,7 @@ const BuildTree = ({
     isLabelIndeterminate,
     onColorChange,
     onToggleLabelSelection,
-}: BuildTreeProps): JSX.Element => {
+}: BuildTreeProps) => {
     const [isHidden, setIsHidden] = useState(labelsInitiallyCollapsed);
 
     const name: string = (obj.label ?? obj.group) as string;
@@ -181,7 +181,7 @@ export const DatasetImportToNewProjectLabels = ({
     datasetImportItem,
     patchDatasetImport,
     labelsInitiallyCollapsed = false,
-}: DatasetImportToNewProjectLabelsProps): JSX.Element => {
+}: DatasetImportToNewProjectLabelsProps) => {
     const { id, labels, labelsToSelect, firstChainLabels, labelColorMap, taskType } = datasetImportItem;
 
     const [labelColorMapSnapshot, setLabelColorMapSnapshot] = useState<Record<string, string>>(labelColorMap);

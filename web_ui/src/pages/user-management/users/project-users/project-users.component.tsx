@@ -14,7 +14,7 @@ import { Users } from '../users.component';
 import { Header } from './header.component';
 import { ProjectUserActions } from './project-user-actions.component';
 
-export const ProjectUsers = (): JSX.Element => {
+export const ProjectUsers = () => {
     const {
         projectIdentifier: { organizationId, projectId },
     } = useProject();

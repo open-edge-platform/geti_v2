@@ -57,7 +57,7 @@ export const TestMediaContainer = ({
     modelInfo,
     selectedLabelId,
     onLabelChange,
-}: TestMediaContainerProps): JSX.Element => {
+}: TestMediaContainerProps) => {
     const {
         project: { tasks, domains },
         isTaskChainProject,

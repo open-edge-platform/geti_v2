@@ -63,7 +63,7 @@ describe('jobs filtering', (): void => {
         jest.clearAllMocks();
     });
 
-    const App = ({ projectId, userId, jobTypes, users }: AppProps): JSX.Element => {
+    const App = ({ projectId, userId, jobTypes, users }: AppProps) => {
         // @ts-expect-error we only mock useGetUsersQuery
         jest.mocked(useUsers).mockImplementation(() => ({
             useGetUsersQuery: () => {

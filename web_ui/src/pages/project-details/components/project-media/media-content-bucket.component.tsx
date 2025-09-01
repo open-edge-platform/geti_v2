@@ -90,7 +90,7 @@ export const MediaContentBucket = ({
     showExportImportButton,
     isLoadingOverlayVisible,
     handleUploadMediaCallback,
-}: MediaContentBucketProps): JSX.Element => {
+}: MediaContentBucketProps) => {
     const { project } = useProject();
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const [viewMode, setViewMode] = useViewMode(mediaBucket);

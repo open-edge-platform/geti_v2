@@ -23,7 +23,7 @@ interface WorkspaceCardProps {
     workspaces: WorkspaceEntity[];
 }
 
-export const WorkspaceCard = ({ workspace, workspaces }: WorkspaceCardProps): JSX.Element => {
+export const WorkspaceCard = ({ workspace, workspaces }: WorkspaceCardProps) => {
     const navigate = useNavigate();
     const { organizationId } = useOrganizationIdentifier();
     const { useGetProjectNames } = useProjectActions();

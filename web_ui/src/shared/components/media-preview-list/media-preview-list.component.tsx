@@ -33,7 +33,7 @@ export const MediaPreviewList = <T extends FileItem>({
     topLeftElement,
     topRightElement,
     onSelectionChange,
-}: MediaPreviewListProps<T>): JSX.Element => {
+}: MediaPreviewListProps<T>) => {
     return (
         <MediaItemsList
             height={height}

@@ -30,7 +30,7 @@ export const ToolToggleButton = ({
     placement = 'right',
     isDisabled = false,
     children,
-}: ToolButtonProps): JSX.Element => {
+}: ToolButtonProps) => {
     useDrawingToolsKeyboardShortcut(type, onSelect, isDisabled);
 
     return (

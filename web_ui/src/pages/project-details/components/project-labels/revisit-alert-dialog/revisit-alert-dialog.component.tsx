@@ -13,7 +13,7 @@ interface RevisitAlertDialogProps {
     save: (shouldRevisit: boolean) => void;
 }
 
-export const RevisitAlertDialog = ({ flattenNewLabels, save }: RevisitAlertDialogProps): JSX.Element => {
+export const RevisitAlertDialog = ({ flattenNewLabels, save }: RevisitAlertDialogProps) => {
     const url = useDocsUrl();
 
     const changedLabelsNames = flattenNewLabels.map(({ name }) => `"${name}"`).join(', ');

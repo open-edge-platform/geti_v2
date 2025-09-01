@@ -8,8 +8,8 @@ export const useSingleStackFn = <
 >(
     fn: Callback
 ) => {
-    const resolveRef = useRef<() => void>();
-    const rejectRef = useRef<() => void>();
+    const resolveRef = useRef<() => void>(undefined);
+    const rejectRef = useRef<() => void>(undefined);
     const isProcessing = useRef(false);
 
     const wrappedFn = useCallback(

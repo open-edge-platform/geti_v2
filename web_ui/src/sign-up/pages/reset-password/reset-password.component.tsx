@@ -24,7 +24,7 @@ import { handleErrorMessageState } from '../registration/utils';
 import sharedClasses from '../../../shared/shared.module.scss';
 import classes from './reset-password.module.scss';
 
-export const ResetPassword = (): JSX.Element => {
+export const ResetPassword = () => {
     const emailToken = useEmailToken();
     const [password, setPassword] = useState<PasswordState>(defaultPasswordState);
     const [confirmPassword, setConfirmPassword] = useState<PasswordState>(defaultPasswordState);

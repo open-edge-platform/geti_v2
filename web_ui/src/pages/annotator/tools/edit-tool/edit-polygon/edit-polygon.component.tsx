@@ -38,7 +38,7 @@ export const EditPolygon = ({
     annotation,
     disablePoints = false,
     disableTranslation = false,
-}: EditPolygonProps): JSX.Element => {
+}: EditPolygonProps) => {
     const isAddPoint = useRef(false);
     const [shape, setShape] = useState(annotation.shape);
 

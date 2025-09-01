@@ -28,7 +28,7 @@ import {
 import { useWatershedState } from './watershed-state-provider.component';
 import { WatershedLabel } from './watershed-tool.interface';
 
-export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { tasks } = useTask();
     const { setIsDrawing } = useAnnotationScene();
     const { image } = useROI();

@@ -40,9 +40,7 @@ interface DatasetImportToNewProjectDialogContentProps {
     setActiveDatasetImportId: Dispatch<SetStateAction<string | undefined>>;
 }
 
-const DatasetImportToNewProjectDialogContentTabs = ({
-    children,
-}: DatasetImportToNewProjectDialogContentTabsProps): JSX.Element => {
+const DatasetImportToNewProjectDialogContentTabs = ({ children }: DatasetImportToNewProjectDialogContentTabsProps) => {
     return (
         <Tabs aria-label='Dataset import tabs' height={'100%'}>
             <TabList>
@@ -87,7 +85,7 @@ export const DatasetImportToNewProjectDialogContent = ({
     prepareDataset,
     patchDatasetImport,
     setActiveDatasetImportId,
-}: DatasetImportToNewProjectDialogContentProps): JSX.Element => {
+}: DatasetImportToNewProjectDialogContentProps) => {
     if (isNil(datasetImportItem)) {
         return (
             <DatasetImportToNewProjectDialogContentTabs>

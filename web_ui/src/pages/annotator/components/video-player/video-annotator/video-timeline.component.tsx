@@ -31,7 +31,7 @@ interface VideoTimelineProps {
 const MemoVideoFrameSegment = memo(VideoFrameSegment);
 const FRAMES_BEFORE_NEXT_TICK = 6;
 
-export const VideoTimeline = ({ selectFrame, labels }: VideoTimelineProps): JSX.Element => {
+export const VideoTimeline = ({ selectFrame, labels }: VideoTimelineProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const size = useSize(ref);
 

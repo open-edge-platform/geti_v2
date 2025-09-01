@@ -18,7 +18,7 @@ export const CreateProjectButton = ({
     buttonText,
     handleOpenDialog,
     openImportDatasetDialog,
-}: CreateProjectButtonProps): JSX.Element => {
+}: CreateProjectButtonProps) => {
     return (
         <Flex alignItems={'center'} gap={'size-10'}>
             <Button

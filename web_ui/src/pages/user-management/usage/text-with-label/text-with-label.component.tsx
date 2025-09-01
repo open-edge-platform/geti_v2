@@ -12,7 +12,7 @@ interface TextWithLabelProps<C extends ColorVersion> extends ViewProps<C> {
     label: string;
 }
 
-export const TextWithLabel = <C extends ColorVersion>(props: TextWithLabelProps<C>): JSX.Element => {
+export const TextWithLabel = <C extends ColorVersion>(props: TextWithLabelProps<C>) => {
     const { children, label, ...rest } = props;
 
     return (

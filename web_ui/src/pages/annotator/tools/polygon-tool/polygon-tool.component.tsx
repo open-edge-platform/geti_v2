@@ -63,7 +63,7 @@ const getToolIcon = (polygonMode: PolygonMode | null) => {
     return TOOL_ICON[polygonMode];
 };
 
-export const PolygonTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const PolygonTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { scene } = annotationToolContext;
 
     const { defaultLabel } = useTask();

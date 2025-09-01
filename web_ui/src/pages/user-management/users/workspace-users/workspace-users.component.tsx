@@ -13,7 +13,7 @@ interface WorkspaceUsersProps {
     workspaceId: string | undefined;
 }
 
-export const WorkspaceUsers = ({ activeUser, workspaceId }: WorkspaceUsersProps): JSX.Element => {
+export const WorkspaceUsers = ({ activeUser, workspaceId }: WorkspaceUsersProps) => {
     const isSaasEnv = useIsSaasEnv();
 
     return (

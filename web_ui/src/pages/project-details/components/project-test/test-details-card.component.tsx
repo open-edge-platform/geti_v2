@@ -34,7 +34,7 @@ export const TestDetailsCard = ({
     numberOfImages,
     numberOfFrames,
     taskName,
-}: TestDetailsCardProps): JSX.Element => {
+}: TestDetailsCardProps) => {
     return (
         <CardContent title={'Details'} gridArea={'details'}>
             <Grid columns={repeat(2, '1fr')} height={'100%'} gap={'size-200'}>

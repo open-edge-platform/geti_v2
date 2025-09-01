@@ -17,7 +17,7 @@ import { useGrabcutState } from './grabcut-state-provider.component';
 import { GrabcutToolType } from './grabcut-tool.enums';
 import { calcStrokeWidth, sensitivityConfig, sensitivityOptions } from './util';
 
-export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { scene, getToolSettings, updateToolSettings } = annotationToolContext;
     const { image } = useROI();
     const { toolsState, setToolsState, rejectAnnotation, resetConfig, isLoading, loadingRect, runGrabcut } =

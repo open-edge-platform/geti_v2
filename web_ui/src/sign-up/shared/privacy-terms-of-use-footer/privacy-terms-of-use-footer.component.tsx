@@ -5,7 +5,7 @@ import { Text } from '@geti/ui';
 
 import classes from '../../pages/registration/registration.module.scss';
 
-export const PrivacyTermsOfUseFooter = (): JSX.Element => (
+export const PrivacyTermsOfUseFooter = () => (
     <Text marginTop={'size-600'} UNSAFE_className={classes.termsOfUseFooter}>
         By signing up, you agree to our{' '}
         <a

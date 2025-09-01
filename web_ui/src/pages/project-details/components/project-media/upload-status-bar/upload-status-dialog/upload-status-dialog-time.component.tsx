@@ -6,7 +6,7 @@ import { Divider, Flex, Text, View } from '@geti/ui';
 import { getElapsedTimeText } from '../../../../../../providers/media-upload-provider/utils';
 import { useDatasetMediaUpload } from '../../../project-dataset/hooks/dataset-media-upload';
 
-export const UploadStatusDialogTime = (): JSX.Element => {
+export const UploadStatusDialogTime = () => {
     const {
         mediaUploadState: { timeUploadStarted },
     } = useDatasetMediaUpload();

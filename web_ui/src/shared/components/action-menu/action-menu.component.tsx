@@ -35,9 +35,8 @@ export const ActionMenu = <T extends string>({
     ariaLabel = 'action menu',
     tooltipMessage = 'More',
     grayedOutKeys,
-}: ActionMenuProps<T>): JSX.Element => {
+}: ActionMenuProps<T>) => {
     const isGrayedOut = (name: string) => grayedOutKeys?.includes(name);
-
     return (
         <SpectrumMenuTrigger>
             <TooltipTrigger placement={'bottom'}>

@@ -21,7 +21,7 @@ const MAX_DATE = parseDateTime('9999-11-30');
 const TODAY = today(getLocalTimeZone());
 const replaceAllInBrackets = (text: string) => text.replace(/([\[(])(.+?)([\])])/g, '');
 
-export const MediaFilterValueDate = ({ value: initVal, onSelectionChange }: MediaFilterValueDateProps): JSX.Element => {
+export const MediaFilterValueDate = ({ value: initVal, onSelectionChange }: MediaFilterValueDateProps) => {
     const [value, setValue] = useState<DateValue | undefined>(undefined);
 
     useEffect(() => {

@@ -22,7 +22,7 @@ export const ToggleLockButton = ({
     isLocked,
     isDisabled = false,
     colorMode = TOGGLE_VISIBILITY_COLOR_MODE.STANDARD,
-}: ToggleLockButtonProps): JSX.Element => {
+}: ToggleLockButtonProps) => {
     const style = colorMode === TOGGLE_VISIBILITY_COLOR_MODE.ALWAYS_GRAYED_OUT ? classes.hiddenAnnotation : '';
     return (
         <ActionButton

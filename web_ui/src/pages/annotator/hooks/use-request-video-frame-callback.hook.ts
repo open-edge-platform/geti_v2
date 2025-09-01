@@ -8,7 +8,7 @@ export const useRequestVideoFrameCallback = (
     fps: number,
     callback: (frameNumber: number) => void
 ) => {
-    const animationFrameId = useRef<number>();
+    const animationFrameId = useRef<number>(undefined);
 
     const savedCallback = useRef(callback);
 

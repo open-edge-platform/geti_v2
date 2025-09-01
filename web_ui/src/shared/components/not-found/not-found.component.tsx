@@ -11,7 +11,7 @@ interface NotFoundProps {
     content?: ReactNode;
 }
 
-export const NotFound = ({ heading = 'No results', content = 'Try another search' }: NotFoundProps): JSX.Element => (
+export const NotFound = ({ heading = 'No results', content = 'Try another search' }: NotFoundProps) => (
     <IllustratedMessage>
         <NotFoundSpectrum />
         <Heading>{heading}</Heading>

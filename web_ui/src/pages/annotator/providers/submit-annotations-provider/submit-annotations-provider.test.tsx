@@ -76,7 +76,7 @@ describe('Saving annotations', () => {
         annotations: [],
     };
 
-    const render = async (app: JSX.Element, annotations: Annotation[], withoutSelectedMediaItem = false) => {
+    const render = async (app: ReactNode, annotations: Annotation[], withoutSelectedMediaItem = false) => {
         const setSelectedMediaItem = jest.fn();
         const saveAnnotations = jest.fn();
         const discardAnnotations = jest.fn();

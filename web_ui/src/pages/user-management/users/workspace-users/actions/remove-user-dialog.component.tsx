@@ -18,7 +18,7 @@ interface UserActionsProps {
     activeUser: User | undefined;
     onDeleting?: () => void;
 }
-export const RemoveUserDialog = ({ organizationId, user, activeUser, onDeleting }: UserActionsProps): JSX.Element => {
+export const RemoveUserDialog = ({ organizationId, user, activeUser, onDeleting }: UserActionsProps) => {
     const handleSignOut = useHandleSignOut();
     const { useDeleteUser } = useUsers();
     const deleteUser = useDeleteUser();

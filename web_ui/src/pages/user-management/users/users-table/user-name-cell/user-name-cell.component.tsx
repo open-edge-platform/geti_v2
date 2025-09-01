@@ -20,15 +20,7 @@ interface EmailCellProps {
     isOrgAdmin: boolean;
 }
 
-export const UserNameCell = ({
-    cellData,
-    dataKey,
-    id,
-    userPhoto,
-    fullName,
-    email,
-    isOrgAdmin,
-}: EmailCellProps): JSX.Element => {
+export const UserNameCell = ({ cellData, dataKey, id, userPhoto, fullName, email, isOrgAdmin }: EmailCellProps) => {
     return (
         <Flex alignItems='center' gap='size-200' id={`${id}-${dataKey}`} width={'100%'}>
             <TooltipTrigger placement={'bottom'}>

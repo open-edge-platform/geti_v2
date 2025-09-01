@@ -16,7 +16,7 @@ interface LabelResultPanelProps {
     prefix?: SearchLabelTreeItemSuffix;
 }
 
-export const LabelResultPanel = ({ suffix, prefix, onSelected, labelsTree }: LabelResultPanelProps): JSX.Element => {
+export const LabelResultPanel = ({ suffix, prefix, onSelected, labelsTree }: LabelResultPanelProps) => {
     const hasLabels = !isEmpty(labelsTree);
 
     return (

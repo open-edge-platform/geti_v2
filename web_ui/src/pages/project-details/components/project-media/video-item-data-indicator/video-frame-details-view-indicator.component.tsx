@@ -8,10 +8,7 @@ interface VideoFrameDetailsVideIndicatorProps {
     frames: number;
     tooltip: string;
 }
-export const VideoFrameDetailsViewIndicator = ({
-    frames,
-    tooltip,
-}: VideoFrameDetailsVideIndicatorProps): JSX.Element => {
+export const VideoFrameDetailsViewIndicator = ({ frames, tooltip }: VideoFrameDetailsVideIndicatorProps) => {
     const frameText = useFramesText(frames);
 
     return (

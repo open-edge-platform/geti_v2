@@ -19,10 +19,7 @@ interface AnnotationListThumbnailGridProps {
     onSelectAnnotation: (annotationId: string) => (isSelected: boolean) => void;
 }
 
-export const AnnotationListThumbnailGrid = ({
-    annotations,
-    onSelectAnnotation,
-}: AnnotationListThumbnailGridProps): JSX.Element => {
+export const AnnotationListThumbnailGrid = ({ annotations, onSelectAnnotation }: AnnotationListThumbnailGridProps) => {
     const { image } = useROI();
 
     const thumbnails = useMemo(

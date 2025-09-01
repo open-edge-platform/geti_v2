@@ -28,7 +28,7 @@ export const ImageOverlay = <T extends FileItem>({
     dialogState,
     defaultIndex,
     onDeleteItem,
-}: ImageOverlayProps<T>): JSX.Element => {
+}: ImageOverlayProps<T>) => {
     const container = useRef(null);
     const overlayRef = useRef(null);
 

@@ -21,7 +21,7 @@ export const WorkspaceRolesContainer = ({
     setWorkspaceRoles,
     workspaces,
     isOrgAdmin,
-}: WorkspaceRolesProps): JSX.Element => {
+}: WorkspaceRolesProps) => {
     const { canAddNewRole, availableWorkspaces } = useUserRoles(workspaces, workspaceRoles);
 
     const deleteWorkspaceRole = (index: number) => {

@@ -28,7 +28,7 @@ export const AcceptRejectButtonGroup = ({
     acceptDeps = [],
     rejectDeps = [],
     id,
-}: AcceptRejectButtonGroupProps): JSX.Element => {
+}: AcceptRejectButtonGroupProps) => {
     const { hotkeys } = useAnnotatorHotkeys();
 
     useAcceptRejectShortcut(

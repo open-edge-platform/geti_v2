@@ -9,7 +9,7 @@ import { redirectTo } from '../../../shared/utils';
 
 import classes from '../../../pages/errors/error-layout/error-layout.module.scss';
 
-export const UserNotFound = (): JSX.Element => {
+export const UserNotFound = () => {
     const handleLoginRedirect = (): void => {
         redirectTo(paths.root({}));
     };
@@ -36,7 +36,7 @@ export const UserNotFound = (): JSX.Element => {
             </Heading>
             <Text id={`${id}-text-id`}>User does not exist, it may have been deleted by an administrator.</Text>
             <Button id={`${id}-button-id`} variant={'primary'} marginTop={'size-250'} onPress={handleLoginRedirect}>
-                Go to Intel® Geti™
+                Go to Geti™
             </Button>
         </ErrorLayout>
     );

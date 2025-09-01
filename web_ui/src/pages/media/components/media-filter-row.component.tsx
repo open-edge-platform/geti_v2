@@ -57,7 +57,7 @@ export const MediaFilterRow = ({
     onRemove,
     disabledFilterRules = [],
     isDatasetAccordion = false,
-}: MediaFilterRowProps): JSX.Element => {
+}: MediaFilterRowProps) => {
     const { isSingleDomainProject } = useProject();
     const isAnomalyProject = isSingleDomainProject(isAnomalyDomain);
     const [field, setField] = useState<SearchRuleField | ''>(rule.field);

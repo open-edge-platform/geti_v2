@@ -33,7 +33,7 @@ export const UploadMediaLink = ({
     multiple = true,
     isDisabled = false,
     uploadCallback,
-}: UploadMediaLinkProps): JSX.Element => {
+}: UploadMediaLinkProps) => {
     const { onFileInputChange } = useOnFileInputChange({ uploadCallback });
 
     const fileInputRef = useRef<HTMLInputElement>({} as HTMLInputElement);

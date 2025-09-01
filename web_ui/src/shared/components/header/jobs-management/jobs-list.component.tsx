@@ -39,7 +39,7 @@ export const JobsList = ({
     sortDirection,
     setSortDirection,
     gap = 10,
-}: JobsListProps): JSX.Element => {
+}: JobsListProps) => {
     const discardType: DISCARD_TYPE | undefined = JOB_STATE_TO_DISCARD_TYPE[jobState];
     const [selected, setSelected] = useState<Selection>(new Set([]));
 

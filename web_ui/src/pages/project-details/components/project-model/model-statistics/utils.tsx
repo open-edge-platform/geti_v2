@@ -18,7 +18,7 @@ import { TrainingModelTextChart } from './training-model-text-chart/training-mod
 export const getModelStatisticPresentation = (
     statistic: TrainingModelStatistic | TrainingModelStatisticsGroup,
     options?: TrainingModelChartConfig
-): JSX.Element => {
+) => {
     switch (statistic.type) {
         case 'text':
             return <TrainingModelTextChart value={statistic.value} header={statistic.header} {...options} />;

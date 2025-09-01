@@ -27,10 +27,7 @@ interface AnomalyProjectPerformanceProps {
     projectIdentifier: ProjectIdentifier;
 }
 
-export const AnomalyProjectPerformance = ({
-    performance,
-    projectIdentifier,
-}: AnomalyProjectPerformanceProps): JSX.Element => {
+export const AnomalyProjectPerformance = ({ performance, projectIdentifier }: AnomalyProjectPerformanceProps) => {
     return (
         <DialogTrigger type='popover' hideArrow>
             <TooltipTrigger placement={'bottom'}>

@@ -26,7 +26,7 @@ export const BrushCircleTool = ({
     brushSize,
     isPointerDown = false,
     isInsidePolygon = false,
-}: BrushCircleToolProps): JSX.Element => {
+}: BrushCircleToolProps) => {
     const ref = useRef<SVGRectElement>(null);
     const [circle, setCircle] = useState<CircleInterface | null>(null);
     const [isActive, setIsActive] = useState(false);

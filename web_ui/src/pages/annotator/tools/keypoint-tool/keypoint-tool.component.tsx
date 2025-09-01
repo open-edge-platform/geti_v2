@@ -26,7 +26,7 @@ import {
     MIN_BOUNDING_BOX_SIZE,
 } from './utils';
 
-export const KeypointTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const KeypointTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { zoomState } = useZoom();
     const { image, roi } = useROI();
     const visibleAnnotations = useVisibleAnnotations();

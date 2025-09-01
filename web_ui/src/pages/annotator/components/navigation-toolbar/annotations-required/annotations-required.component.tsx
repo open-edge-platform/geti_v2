@@ -62,7 +62,7 @@ const useIsTaskTraining = (projectIdentifier: ProjectIdentifier) => {
     );
 };
 
-export const AnnotationsRequired = ({ id, selectedTask }: AnnotationsRequiredProps): JSX.Element => {
+export const AnnotationsRequired = ({ id, selectedTask }: AnnotationsRequiredProps) => {
     const { projectIdentifier, project } = useProject();
     const containerRef = useRef<HTMLDivElement>({} as HTMLDivElement);
     const isTaskTraining = useIsTaskTraining(projectIdentifier);

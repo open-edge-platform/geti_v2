@@ -44,12 +44,7 @@ const ITEMS = [
     { name: ProjectActions.Rename, id: ProjectActions.Rename },
 ];
 
-export const ProjectActionMenu = ({
-    project,
-    onExportProject,
-    onDeleteProject,
-    isExporting,
-}: ActionMenuProps): JSX.Element => {
+export const ProjectActionMenu = ({ project, onExportProject, onDeleteProject, isExporting }: ActionMenuProps) => {
     const { workspaceId, organizationId } = useWorkspaceIdentifier();
     const canEditProject = useCheckPermission(
         [OPERATION.PROJECT_NAME_EDITION],

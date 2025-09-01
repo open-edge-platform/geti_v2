@@ -27,7 +27,7 @@ const colors = {
     },
 };
 
-export const CrosshairLine = ({ zoom, direction, point }: CrosshairLineProps): JSX.Element => {
+export const CrosshairLine = ({ zoom, direction, point }: CrosshairLineProps) => {
     const attributes =
         direction === CROSSHAIR_LINE_DIRECTION.HORIZONTAL
             ? {

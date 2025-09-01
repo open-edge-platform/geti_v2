@@ -18,7 +18,7 @@ interface SidebarThumbnailProps {
     isCloseSidebar?: boolean;
 }
 
-export const SidebarThumbnail = ({ screenshots, isCloseSidebar = false }: SidebarThumbnailProps): JSX.Element => {
+export const SidebarThumbnail = ({ screenshots, isCloseSidebar = false }: SidebarThumbnailProps) => {
     const { deleteMany } = useCameraStorage();
     const { defaultLabelId, hasDefaultLabel, ...identifier } = useCameraParams();
 

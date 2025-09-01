@@ -138,7 +138,7 @@ interface MediaUploadContextProps {
 
 const MediaUploadContext = createContext<MediaUploadContextProps | undefined>(undefined);
 
-export const MediaUploadProvider = ({ children }: MediaUploadProviderProps): JSX.Element => {
+export const MediaUploadProvider = ({ children }: MediaUploadProviderProps) => {
     const [mediaUploadState, dispatch] = useMediaUploadState();
 
     const abortControllers = useRef<Map<string, AbortController>>(new Map());

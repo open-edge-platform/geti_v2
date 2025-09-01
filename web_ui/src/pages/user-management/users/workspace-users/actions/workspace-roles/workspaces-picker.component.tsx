@@ -16,7 +16,7 @@ export const WorkspacesPicker = ({
     workspaces,
     changeWorkspace,
     ...styleProps
-}: WorkspacesPickerProps): JSX.Element => {
+}: WorkspacesPickerProps) => {
     const onSelectionChange = (key: Key) => {
         const newWorkspace = workspaces.find((item) => item.id === key);
         newWorkspace && changeWorkspace(newWorkspace);

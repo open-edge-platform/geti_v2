@@ -36,11 +36,7 @@ const isNotAnomalousNorExclusive = (label: Label) => !isAnomalous(label) && !isE
 const hasNotAnomalousNorLocalLabels = (annotation: Annotation) =>
     annotation.labels.every((label) => !isAnomalous(label) && !isLocal(label));
 
-export const LabelsShortcuts = ({
-    labels,
-    annotationToolContext,
-    isDisabled = false,
-}: LabelsShortcutsProps): JSX.Element => {
+export const LabelsShortcuts = ({ labels, annotationToolContext, isDisabled = false }: LabelsShortcutsProps) => {
     const { selectedTask, tasks, setDefaultLabel } = useTask();
     const { projectId } = useProjectIdentifier();
     const {

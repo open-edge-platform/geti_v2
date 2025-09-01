@@ -17,7 +17,7 @@ interface HotKeysItemProps {
     disabled?: boolean;
 }
 
-export const HotKeysItem = ({ title, shortcut, disabled = false }: HotKeysItemProps): JSX.Element => {
+export const HotKeysItem = ({ title, shortcut, disabled = false }: HotKeysItemProps) => {
     const isDisabledClass = disabled ? classes.hotKeysKeyboardDisabled : '';
 
     return (

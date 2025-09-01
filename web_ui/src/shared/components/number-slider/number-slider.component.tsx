@@ -43,7 +43,7 @@ export const NumberSlider = ({
     isDisabled = false,
     UNSAFE_className,
     isInputEditable = false,
-}: NumberSliderProps): JSX.Element => {
+}: NumberSliderProps) => {
     const valueToDisplay = displayText(value).toString();
 
     return (

@@ -14,7 +14,7 @@ import { DrawingBox } from '../drawing-box/drawing-box.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
 import { convertToolShapeToGetiShape, drawingStyles, isShapeWithinRoi } from '../utils';
 
-export const BoundingBoxTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const BoundingBoxTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { scene } = annotationToolContext;
     const { roi, image } = useROI();
     const { defaultLabel, activeDomains } = useTask();

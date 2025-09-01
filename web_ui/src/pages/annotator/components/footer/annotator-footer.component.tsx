@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { Flex, Footer as FooterView, View, type FooterProps } from '@geti/ui';
 import { clsx } from 'clsx';
 
@@ -19,15 +21,10 @@ import classes from './annotator-footer.module.scss';
 interface CustomFooterProps extends Omit<FooterProps, 'children'> {
     selectedItem: MediaItem | undefined;
     areActionsDisabled?: boolean;
-    children?: JSX.Element;
+    children?: ReactNode;
 }
 
-export const Footer = ({
-    selectedItem,
-    areActionsDisabled = false,
-    children,
-    ...footerProps
-}: CustomFooterProps): JSX.Element => {
+export const Footer = ({ selectedItem, areActionsDisabled = false, children, ...footerProps }: CustomFooterProps) => {
     const {
         zoomState: { zoom },
     } = useZoom();

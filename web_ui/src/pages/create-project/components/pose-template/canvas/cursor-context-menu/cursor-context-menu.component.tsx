@@ -16,7 +16,7 @@ export interface CursorContextMenuProps {
     children: ReactNode;
     onOpen: () => void;
     isValidTrigger: (element: Element) => boolean;
-    triggerRef: RefObject<Element>;
+    triggerRef: RefObject<Element | null>;
 }
 
 export const X_PADDING = 10;

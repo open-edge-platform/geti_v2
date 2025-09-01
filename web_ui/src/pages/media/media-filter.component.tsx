@@ -101,7 +101,7 @@ export const MediaFilter = ({
     isDatasetAccordion = false,
     disabledFilterRules,
     id,
-}: MediaFilterProps): JSX.Element => {
+}: MediaFilterProps) => {
     const canCallFilter = useRef<boolean>(false);
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const filterButtonRef = useRef<FocusableRefValue<HTMLButtonElement>>(null);

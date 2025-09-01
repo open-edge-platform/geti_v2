@@ -83,7 +83,7 @@ interface MainContentProps extends ToolAnnotationContextProps {
     labels: Label[];
 }
 
-export const MainContent = ({ labels, annotationToolContext }: MainContentProps): JSX.Element => {
+export const MainContent = ({ labels, annotationToolContext }: MainContentProps) => {
     const mainContentRef = useRef<DOMRefValue>(null);
     const { isActiveLearningMode } = useAnnotatorMode();
     const unwrappedMainContentRef = useUnwrapDOMRef(mainContentRef);

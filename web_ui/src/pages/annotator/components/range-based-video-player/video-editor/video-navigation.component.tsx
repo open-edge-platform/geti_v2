@@ -10,7 +10,7 @@ import { VideoControls } from '../../../../../pages/annotator/components/video-p
 import { useDurationText } from '../../../../../shared/hooks/data-format/use-duration-text.hook';
 import { useUndoRedo } from '../../../tools/undo-redo/undo-redo-provider.component';
 
-const UndoRedoButtons = (): JSX.Element => {
+const UndoRedoButtons = () => {
     const { undo, canUndo, redo, canRedo } = useUndoRedo();
 
     return (
