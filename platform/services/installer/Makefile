@@ -37,3 +37,9 @@ list-image:
 
 lint-chart:
 	@echo "Not applicable"
+
+publish-image:
+	@echo "Not applicable"
+
+publish-chart:
+	@echo "Not applicable"
