@@ -34,7 +34,6 @@ export const OpenVinoTabModels: FC<OpenvinoTabModelsProps> = ({
     const openVinoModels = models.filter((model) => model.modelFormat !== ModelFormat.ONNX);
 
     const firstOptimizedModel = openVinoModels.filter(isNotBaselineModel).at(0);
-    //todo
     const emptyPOTModel: OptimizedModel | undefined =
         firstOptimizedModel === undefined
             ? undefined
