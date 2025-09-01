@@ -4,7 +4,7 @@
 import {
     createContext,
     Dispatch,
-    MutableRefObject,
+    RefObject,
     SetStateAction,
     useCallback,
     useContext,
@@ -31,7 +31,7 @@ interface SelectingStateContextProps {
     isBrushSizePreviewVisible: boolean;
     activeTool: SelectingToolType;
     setBrushSize: Dispatch<SetStateAction<number>>;
-    foregroundMarkers: MutableRefObject<Point[][]>;
+    foregroundMarkers: RefObject<Point[][]>;
     setActiveTool: (tool: SelectingToolType) => void;
     setIsBrushSizePreviewVisible: Dispatch<SetStateAction<boolean>>;
     stampAnnotations: Annotation[];

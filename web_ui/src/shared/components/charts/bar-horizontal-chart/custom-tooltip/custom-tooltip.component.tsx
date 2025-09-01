@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Dispatch, MutableRefObject, ReactNode, SetStateAction, useEffect } from 'react';
+import { Dispatch, ReactNode, RefObject, SetStateAction, useEffect } from 'react';
 
 import { ChartData, Colors } from '../../chart.interface';
 import { CustomTooltipWrapper } from '../../custom-tooltip-wrapper/custom-tooltip-wrapper.component';
@@ -12,7 +12,7 @@ interface CustomTooltipChartProps {
     }[];
     active?: boolean;
     label?: string;
-    prevHoveredLabel: MutableRefObject<string | null>;
+    prevHoveredLabel: RefObject<string | null>;
     defaultColors: Colors[];
     setLabelColors: Dispatch<SetStateAction<Colors[]>>;
     data: ChartData[];

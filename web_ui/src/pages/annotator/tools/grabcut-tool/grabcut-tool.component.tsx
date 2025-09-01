@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 
 import { Point, Polygon, Shape } from '../../../../core/annotations/shapes.interface';
 import { isRect } from '../../../../core/annotations/utils';
@@ -89,7 +89,7 @@ export const GrabcutTool = ({ annotationToolContext }: ToolAnnotationContextProp
         }
     };
 
-    const onStrokeComplete = (marker: MutableRefObject<Point[][]>) => (newMarker: Marker) => {
+    const onStrokeComplete = (marker: RefObject<Point[][]>) => (newMarker: Marker) => {
         marker.current.push(newMarker.points);
         runGrabcut(image, strokeWidth, sensitivity);
     };

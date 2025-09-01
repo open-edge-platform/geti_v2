@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MutableRefObject, ReactNode, useRef, useState } from 'react';
+import { ReactNode, RefObject, useRef, useState } from 'react';
 
 import { Flex, Overlay, View, type DimensionValue, type Responsive, type StyleProps } from '@geti/ui';
 import { Datasets, Edit, Manifest } from '@geti/ui/icons';
@@ -49,7 +49,7 @@ const OverlayPanel = ({ icon, children, ariaLabel = '', ...props }: OverlayPanel
             </QuietToggleButton>
 
             <Overlay
-                nodeRef={overlayRef as unknown as MutableRefObject<HTMLElement>}
+                nodeRef={overlayRef as unknown as RefObject<HTMLElement>}
                 isOpen={dialogState.isOpen}
                 onExiting={() =>
                     setPanelAnimationClasses((prev) => prev.filter((name) => name !== classes.panelOpened))

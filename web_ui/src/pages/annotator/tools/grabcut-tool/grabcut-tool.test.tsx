@@ -3,7 +3,7 @@
 
 import '@wessberg/pointer-events';
 
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 
 import { fireEvent, screen } from '@testing-library/react';
 
@@ -108,9 +108,9 @@ interface GrabcutStateImplementation {
     runGrabcut?: jest.Mock;
     toolsState?: GrabcutState;
     activeTool?: GrabcutToolType;
-    loadingRect?: MutableRefObject<Rect>;
-    backgroundMarkers?: MutableRefObject<Point[][]>;
-    foregroundMarkers?: MutableRefObject<Point[][]>;
+    loadingRect?: RefObject<Rect>;
+    backgroundMarkers?: RefObject<Point[][]>;
+    foregroundMarkers?: RefObject<Point[][]>;
 }
 
 const updateGrabcutStateImplementation = (data: GrabcutStateImplementation): GrabcutStateContextProps => {
