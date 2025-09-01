@@ -25,7 +25,7 @@ export const useZoomIntoAnnotation = (): void => {
         [taskAnnotations]
     );
 
-    const zoomIntoAnnotation = useCallback((): ZoomTarget => {
+    const getSelectedAnnotationZoomTarget = useCallback((): ZoomTarget => {
         // Suppose we are in a Detection -> Classification or Detection -> Segmentation task, then
         // we want to zoom into selected annotations if the user selected the Classification,
         // or Segmentation tasks
@@ -39,7 +39,7 @@ export const useZoomIntoAnnotation = (): void => {
         return getShapesBoundingBox(shapes);
     }, [selectedAnnotations, setZoomTarget]);
 
-    const resetZoom = useCallback((): ZoomTarget => {
+    const getImageZoomTarget = useCallback((): ZoomTarget => {
         if (!selectedMediaItem) {
             return;
         }
@@ -58,11 +58,14 @@ export const useZoomIntoAnnotation = (): void => {
     useEffect(() => {
         const previousTaskWasLocalTask = !isNil(previousTask) || (isNil(previousTask) && tasks.length === 2);
 
-        const newTarget = previousTaskWasLocalTask && selectedAnnotations.length ? zoomIntoAnnotation() : resetZoom();
+        const newTarget =
+            previousTaskWasLocalTask && selectedAnnotations.length
+                ? getSelectedAnnotationZoomTarget()
+                : getImageZoomTarget();
 
         setZoomTarget((oldTarget) => {
             return isEqual(oldTarget, newTarget) ? oldTarget : newTarget;
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [previousTask, selectedAnnotations.length, tasks.length, zoomIntoAnnotation]);
+    }, [previousTask, selectedAnnotations.length, tasks.length, getSelectedAnnotationZoomTarget]);
 };
