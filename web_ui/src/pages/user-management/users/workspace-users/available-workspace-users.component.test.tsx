@@ -87,13 +87,14 @@ const renderAvailableWorkspaceUsers = (options: {
         onUpdateMemberRole({ _orgId, _memberId, _role });
     };
 
-    render(
-        <AvailableWorkspaceUsers workspaceId={workspaceId} activeUser={makeActiveUser(activeUserRoles)} />,
-        {
-            services: { usersService },
-            featureFlags: { FEATURE_FLAG_MANAGE_USERS_ROLES: manageUsersRoles },
-        }
-    );
+    render(<AvailableWorkspaceUsers workspaceId={workspaceId} activeUser={makeActiveUser(activeUserRoles)} />, {
+        services: { usersService },
+        featureFlags: {
+            FEATURE_FLAG_MANAGE_USERS: true,
+            FEATURE_FLAG_WORKSPACE_ACTIONS: true,
+            FEATURE_FLAG_MANAGE_USERS_ROLES: manageUsersRoles,
+        },
+    });
 
     return { usersService, onUpdateRoles, onUpdateMemberRole };
 };
@@ -152,7 +153,7 @@ describe('AvailableWorkspaceUsers', () => {
     });
 
     it('does not render the Add action when user lacks permission', async () => {
-    renderAvailableWorkspaceUsers({ activeUserRoles: onlyOrgContributorRoles, manageUsersRoles: true });
+        renderAvailableWorkspaceUsers({ activeUserRoles: onlyOrgContributorRoles, manageUsersRoles: true });
 
         expect(
             await screen.findByRole('heading', { name: /available users to add to this workspace/i })
