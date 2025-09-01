@@ -34,3 +34,6 @@ clean:
 
 list-image:
 	@echo "Not applicable"
+
+lint-chart:
+	@echo "Not applicable"
