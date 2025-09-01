@@ -10,7 +10,7 @@ import { labelFromUser } from '../../../../core/annotations/utils';
 import { PoseEdges } from '../../annotation/shapes/pose-edges.component';
 import { PoseKeypoints } from '../../annotation/shapes/pose-keypoints.component';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { TranslateShape } from '../edit-tool/translate-shape.component';
 import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from '../edit-tool/utils';
 import { SvgToolCanvas } from '../svg-tool-canvas.component';
@@ -26,7 +26,7 @@ import {
 } from './utils';
 
 export const KeypointTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const { image, roi } = useROI();
     const { templateLabels, templatePoints, currentBoundingBox, setCurrentBoundingBox, setCursorDirection } =
         useKeypointState();

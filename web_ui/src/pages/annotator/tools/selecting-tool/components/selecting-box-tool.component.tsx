@@ -18,7 +18,7 @@ import { useAnnotatorHotkeys } from '../../../hooks/use-hotkeys-configuration.ho
 import { useVisibleAnnotations } from '../../../hooks/use-visible-annotations.hook';
 import { HOTKEY_OPTIONS } from '../../../hot-keys/utils';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import { SvgToolCanvas } from '../../svg-tool-canvas.component';
 import { ToolAnnotationContextProps } from '../../tools.interface';
 import { SELECT_ANNOTATION_STYLES } from '../../utils';
@@ -58,9 +58,7 @@ export const SelectingBoxTool = ({
     );
     const localCopyOfLastSelectedAnnotations = useRef<AnnotationInterface[] | null>(null);
 
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const handlePointerDown = (event: PointerEvent<SVGSVGElement>): void => {
         const { button, buttons, clientY, clientX, currentTarget, pointerId, shiftKey } = event;

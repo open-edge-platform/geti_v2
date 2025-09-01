@@ -10,7 +10,7 @@ import { CircleSizePreview } from '../../components/circle-size-preview/circle-s
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useAddUnfinishedShape } from '../../hooks/use-add-unfinished-shape.hook';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { MarkerTool } from '../marker-tool/marker-tool.component';
 import { Marker } from '../marker-tool/marker-tool.interface';
 import { ToolAnnotationContextProps } from '../tools.interface';
@@ -23,9 +23,7 @@ const MIN_NUMBER_OF_REQUIRED_UNIQUE_MARKERS = 2;
 
 export const WatershedTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { getToolSettings, scene } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
     const { roi, image } = useROI();
 
     const { shapes, onComplete, runWatershed, reset, setShapes, brushSize, isBrushSizePreviewVisible } =

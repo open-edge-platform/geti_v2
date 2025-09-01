@@ -8,7 +8,7 @@ import { isFunction } from 'lodash-es';
 
 import { KeypointNode } from '../../../../../core/annotations/shapes.interface';
 import { getRelativePoint } from '../../../../utils';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 
 interface ClosestPointProps extends Omit<HTMLProps<SVGSVGElement>, 'children'> {
     nodes: KeypointNode[];
@@ -17,7 +17,7 @@ interface ClosestPointProps extends Omit<HTMLProps<SVGSVGElement>, 'children'> {
 }
 
 export const ClosestKeypoint = ({ children, nodes, onClosestElement, ...svgProps }: ClosestPointProps) => {
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const containerRef = useRef<SVGSVGElement | null>(null);
     const [closestElement, setClosestElement] = useState<KeypointNode | null>(null);
 

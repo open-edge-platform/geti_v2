@@ -22,7 +22,6 @@ interface ZoomState {
 }
 
 interface ZoomContextProps {
-    zoomState: ZoomState;
     setScreenSize: Dispatch<SetStateAction<{ width: number; height: number } | undefined>>;
 
     zoomTarget: ZoomTarget;
@@ -144,8 +143,6 @@ export const ZoomProvider = ({ children }: ZoomProviderProps) => {
     const maxScale = Math.round(Math.max(screenSize?.height ?? 1, screenSize?.width ?? 1) / 25);
 
     const value: ZoomContextProps = {
-        zoomState: defaultZoomState,
-
         zoomTarget,
         setZoomTarget,
         setScreenSize,
@@ -188,14 +185,20 @@ export const ZoomProvider = ({ children }: ZoomProviderProps) => {
 
 export const useZoom = (): ZoomContextProps => {
     const context = useContext(ZoomContext);
-    const zoomStateContext = useContext(ZoomStateContext);
 
-    if (context === undefined || zoomStateContext === undefined) {
+    if (context === undefined) {
         throw new MissingProviderError('useZoom', 'ZoomProvider');
     }
 
-    return {
-        ...context,
-        zoomState: zoomStateContext,
-    };
+    return context;
+};
+
+export const useZoomState = (): ZoomState => {
+    const zoomStateContext = useContext(ZoomStateContext);
+
+    if (zoomStateContext === undefined) {
+        throw new MissingProviderError('useZoomState', 'ZoomStateProvider');
+    }
+
+    return zoomStateContext;
 };

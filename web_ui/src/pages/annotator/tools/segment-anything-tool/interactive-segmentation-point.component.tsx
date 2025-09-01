@@ -3,7 +3,7 @@
 
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { Circle } from '../../annotation/shapes/circle.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { InteractiveAnnotationPoint } from './segment-anything.interface';
 
 interface InteractiveSegmentationPointProps extends InteractiveAnnotationPoint {
@@ -11,9 +11,7 @@ interface InteractiveSegmentationPointProps extends InteractiveAnnotationPoint {
 }
 
 export const InteractiveSegmentationPoint = ({ x, y, positive, isLoading }: InteractiveSegmentationPointProps) => {
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const fill = positive ? 'var(--brand-moss)' : 'var(--brand-coral-cobalt)';
     const radius = 1 / zoom;

@@ -10,7 +10,7 @@ import { Labels } from '../../../annotation/labels/labels.component';
 import { AnnotationScene } from '../../../core/annotation-scene.interface';
 import { AnnotationToolContext, ToolType } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import { SelectingToolType } from '../../selecting-tool/selecting-tool.enums';
 import { isPolygonValid, removeOffLimitPointsPolygon } from '../../utils';
 import { TranslateShape } from '../translate-shape.component';
@@ -47,9 +47,7 @@ export const EditPolygon = ({
     const { roi, image } = useROI();
 
     const { scene, tool, getToolSettings } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     // "removeOffLimitPoints" not only remove offlimit points but also in-between ones,
     // a new point is considered "in-between," and so it gets removed,

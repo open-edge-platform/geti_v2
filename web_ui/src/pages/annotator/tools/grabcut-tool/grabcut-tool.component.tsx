@@ -12,7 +12,7 @@ import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useAddUnfinishedShape } from '../../hooks/use-add-unfinished-shape.hook';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { DrawingBox } from '../drawing-box/drawing-box.component';
 import { MarkerTool } from '../marker-tool/marker-tool.component';
 import { Marker } from '../marker-tool/marker-tool.interface';
@@ -55,9 +55,7 @@ export const GrabcutTool = ({ annotationToolContext }: ToolAnnotationContextProp
     const { image } = useROI();
     const { scene, getToolSettings } = annotationToolContext;
     const { sensitivity } = getToolSettings(ToolType.GrabcutTool);
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const {
         toolsState,

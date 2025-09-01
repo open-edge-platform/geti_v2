@@ -18,14 +18,14 @@ import { useAnnotatorCanvasSettings } from '../../../../annotator/providers/anno
 import { useSelectedMediaItem } from '../../../../annotator/providers/selected-media-item-provider/selected-media-item-provider.component';
 import { filterForExplanation } from '../../../../annotator/utils';
 import { TransformZoomAnnotation } from '../../../../annotator/zoom/transform-zoom-annotation.component';
-import { useZoom, ZoomProvider } from '../../../../annotator/zoom/zoom-provider.component';
+import { useZoomState, ZoomProvider } from '../../../../annotator/zoom/zoom-provider.component';
 import { useQuickInference } from './quick-inference-provider.component';
 
 import classes from './quick-inference.module.scss';
 
 const RawCanvas = () => {
     const annotationToolContext = useAnnotationToolContext();
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
 
     const { selectedMediaItem } = useSelectedMediaItem();
 

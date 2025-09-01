@@ -26,7 +26,7 @@ import { useROI } from '../../providers/region-of-interest-provider/region-of-in
 import { useTask } from '../../providers/task-provider/task-provider.component';
 import { isShapePartiallyWithinROI, removeOffLimitPoints, translateAnnotation } from '../../tools/utils';
 import { createAnnotation } from '../../utils';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { useAnnotatorHotkeys } from '../use-hotkeys-configuration.hook';
 import { getTranslateVector, hasValidLabelsAndStructure } from './utils';
 
@@ -54,9 +54,7 @@ export const useCopyPasteAnnotation = ({
     const { selectedTask } = useTask();
     const { organizationId } = useOrganizationIdentifier();
 
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const isNotClassificationTask = !(selectedTask && isClassificationDomain(selectedTask.domain));
     // Todo: This will be removed once support for multiple keypoint annotations is implemented

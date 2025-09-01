@@ -7,13 +7,14 @@ import { TransformComponent } from 'react-zoom-pan-pinch';
 
 import { MediaItem } from '../../../../core/media/media.interface';
 import { useSyncScreenSize } from '../../zoom/use-sync-screen-size.hook';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoom, useZoomState } from '../../zoom/zoom-provider.component';
 
 import zoomClasses from '../../zoom/transform-zoom-annotation.module.scss';
 
 export const TransformZoom: FC<PropsWithChildren<{ mediaItem: MediaItem }>> = ({ children, mediaItem }) => {
     const ref = useSyncScreenSize();
-    const { isPanning, isPanningDisabled, setZoomTarget, zoomState } = useZoom();
+    const { isPanning, isPanningDisabled, setZoomTarget } = useZoom();
+    const zoomState = useZoomState();
 
     const style = { '--zoom-level': zoomState.zoom } as CSSProperties;
     const enableDragCursorIcon = !isPanningDisabled && isPanning;

@@ -8,7 +8,7 @@ import { getTheTopShapeAt } from '../../../../core/annotations/utils';
 import { isEraserButton } from '../../../buttons-utils';
 import { getRelativePoint } from '../../../utils';
 import { AnnotationScene } from './../../core/annotation-scene.interface';
-import { useZoom } from './../../zoom/zoom-provider.component';
+import { useZoomState } from './../../zoom/zoom-provider.component';
 import { PointerType } from './..//tools.interface';
 
 interface ErasableCanvasProps {
@@ -19,9 +19,7 @@ interface ErasableCanvasProps {
 }
 
 export const EraserTool = ({ canvasRef, annotations, children, scene }: ErasableCanvasProps) => {
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const onPointerMove = (event: PointerEvent<SVGSVGElement>): void => {
         if (canvasRef.current === null) {
