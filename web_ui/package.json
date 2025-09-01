@@ -36,7 +36,7 @@
     "framer-motion": "^12.9.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
-    "jspdf": "^3.0.1",
+    "jspdf": "^3.0.2",
     "jwt-decode": "^4.0.0",
     "localforage": "^1.10.0",
     "lodash-es": "^4.17.21",
