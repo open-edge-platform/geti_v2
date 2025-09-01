@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { forwardRef, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { ActionButton, Button, Tooltip, TooltipTrigger, type ButtonProps } from '@geti/ui';
 import { clsx } from 'clsx';
@@ -18,7 +18,7 @@ interface ButtonWithSpectrumTooltip extends Partial<ButtonProps> {
     tooltip?: ReactNode | ReactNode[];
 }
 
-export const ButtonWithSpectrumTooltip = forwardRef((props: ButtonWithSpectrumTooltip, ref: ButtonProps['ref']) => {
+export const ButtonWithSpectrumTooltip = (props: ButtonWithSpectrumTooltip) => {
     const {
         variant = 'secondary',
         buttonClasses,
@@ -35,7 +35,6 @@ export const ButtonWithSpectrumTooltip = forwardRef((props: ButtonWithSpectrumTo
     return (
         <TooltipTrigger placement={tooltipPlacement} isDisabled={isNil(tooltip)}>
             <ButtonComponent
-                ref={ref}
                 variant={variant}
                 isQuiet={isQuiet}
                 UNSAFE_className={clsx(buttonClasses, !isClickable ? classes.tooltipBtn : '')}
@@ -46,4 +45,4 @@ export const ButtonWithSpectrumTooltip = forwardRef((props: ButtonWithSpectrumTo
             <Tooltip>{tooltip}</Tooltip>
         </TooltipTrigger>
     );
-});
+};

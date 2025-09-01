@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { forwardRef, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { paths } from '@geti/core';
 import { ActionButton, Tooltip, TooltipTrigger, type FocusableRef } from '@geti/ui';
@@ -29,6 +29,7 @@ interface CreditBalanceButtonProps {
     isDarkMode: boolean;
     onPress?: () => void;
     UNSAFE_className?: string;
+    ref?: FocusableRef<HTMLButtonElement>;
 }
 
 export const CreditBalanceButton = ({ isDarkMode }: { isDarkMode: boolean }) => {
@@ -41,39 +42,37 @@ export const CreditBalanceButton = ({ isDarkMode }: { isDarkMode: boolean }) => 
     return <CreditBalanceButtonFuxNotification isDarkMode={isDarkMode} />;
 };
 
-const CreditBalanceButtonDefault = forwardRef(
-    ({ onPress, isDarkMode, UNSAFE_className }: CreditBalanceButtonProps, ref: FocusableRef<HTMLButtonElement>) => {
-        const { useGetOrganizationBalanceQuery } = useCreditsQueries();
-        const { organizationId } = useOrganizationIdentifier();
-        const { data: organizationBalance } = useGetOrganizationBalanceQuery(
-            { organizationId },
-            { refetchInterval: ONE_MINUTE }
-        );
+const CreditBalanceButtonDefault = ({ onPress, isDarkMode, UNSAFE_className, ref }: CreditBalanceButtonProps) => {
+    const { useGetOrganizationBalanceQuery } = useCreditsQueries();
+    const { organizationId } = useOrganizationIdentifier();
+    const { data: organizationBalance } = useGetOrganizationBalanceQuery(
+        { organizationId },
+        { refetchInterval: ONE_MINUTE }
+    );
 
-        return (
-            <TooltipTrigger placement={'bottom'}>
-                <ActionButton
-                    isQuiet
-                    ref={ref}
-                    width={15}
-                    zIndex={1}
-                    id={'credit-balance-button'}
-                    aria-label={'credit balance status'}
-                    onPress={onPress}
-                    UNSAFE_className={UNSAFE_className}
-                    colorVariant={isDarkMode ? 'dark' : 'light'}
-                >
-                    {organizationBalance && isBalanceLow(organizationBalance) && (
-                        <div className={classes.cornerIndicator} aria-label={`low credit indicator`}></div>
-                    )}
+    return (
+        <TooltipTrigger placement={'bottom'}>
+            <ActionButton
+                isQuiet
+                ref={ref}
+                width={15}
+                zIndex={1}
+                id={'credit-balance-button'}
+                aria-label={'credit balance status'}
+                onPress={onPress}
+                UNSAFE_className={UNSAFE_className}
+                colorVariant={isDarkMode ? 'dark' : 'light'}
+            >
+                {organizationBalance && isBalanceLow(organizationBalance) && (
+                    <div className={classes.cornerIndicator} aria-label={`low credit indicator`}></div>
+                )}
 
-                    <CreditCard />
-                </ActionButton>
-                <Tooltip>Credit balance</Tooltip>
-            </TooltipTrigger>
-        );
-    }
-);
+                <CreditCard />
+            </ActionButton>
+            <Tooltip>Credit balance</Tooltip>
+        </TooltipTrigger>
+    );
+};
 
 const CreditBalanceButtonFuxNotification = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const triggerRef = useRef(null);

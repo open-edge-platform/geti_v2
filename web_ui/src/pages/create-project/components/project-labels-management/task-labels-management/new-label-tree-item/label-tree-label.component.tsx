@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { FormEvent, ForwardedRef, forwardRef, useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 
 import { Button, Flex, Form, TextField, TextFieldRef } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
@@ -52,244 +52,232 @@ interface NewLabelProps {
     parentGroupName?: string | null;
 }
 
-export const LabelTreeLabel = forwardRef(
-    (
-        {
-            type,
-            addLabel,
-            color,
-            name,
-            hotkey,
-            projectLabels,
-            withLabel = false,
-            setDialogValidationError,
-            domains,
-            shouldFocus,
-            taskMetadata,
-            parentGroupName = null,
-        }: NewLabelProps,
-        ref: ForwardedRef<never>
-    ) => {
-        const isSingleLabelTree = type === LABEL_TREE_TYPE.SINGLE;
+export const LabelTreeLabel = ({
+    type,
+    addLabel,
+    color,
+    name,
+    hotkey,
+    projectLabels,
+    withLabel = false,
+    setDialogValidationError,
+    domains,
+    shouldFocus,
+    taskMetadata,
+    parentGroupName = null,
+}: NewLabelProps) => {
+    const isSingleLabelTree = type === LABEL_TREE_TYPE.SINGLE;
 
-        const { labels, domain, relation } = taskMetadata;
+    const { labels, domain, relation } = taskMetadata;
 
-        const [newColor, setNewColor] = useState<string | undefined>(color || getNextColor(labels));
-        const [newName, setNewName] = useState<string>(name);
-        const [newHotkey, setNewHotkey] = useState<string | undefined>(hotkey);
-        const [validationErrors, setValidationErrors] = useState<LabelFieldsErrors>(DEFAULT_LABEL_INPUT_ERRORS);
-        const [isDirty, setDirty] = useState<LabelFieldsDirty>(DEFAULT_LABEL_INPUT_DIRTY);
-        const usedAnnotatorHotkeys = useUsedAnnotatorHotkeys(domains);
+    const [newColor, setNewColor] = useState<string | undefined>(color || getNextColor(labels));
+    const [newName, setNewName] = useState<string>(name);
+    const [newHotkey, setNewHotkey] = useState<string | undefined>(hotkey);
+    const [validationErrors, setValidationErrors] = useState<LabelFieldsErrors>(DEFAULT_LABEL_INPUT_ERRORS);
+    const [isDirty, setDirty] = useState<LabelFieldsDirty>(DEFAULT_LABEL_INPUT_DIRTY);
+    const usedAnnotatorHotkeys = useUsedAnnotatorHotkeys(domains);
 
-        const inputRef = useRef<TextFieldRef>(null);
+    const inputRef = useRef<TextFieldRef>(null);
 
-        const validateName = (changedName: string): boolean => {
-            try {
-                const currentLabelId = isSingleLabelTree && labels.length >= 1 ? labels[0].id : undefined;
+    const validateName = (changedName: string): boolean => {
+        try {
+            const currentLabelId = isSingleLabelTree && labels.length >= 1 ? labels[0].id : undefined;
 
-                newLabelNameSchema(
-                    changedName,
-                    currentLabelId,
-                    getFlattenedLabels(projectLabels),
-                    LabelItemType.LABEL
-                ).validateSync({ name: changedName }, { abortEarly: false });
+            newLabelNameSchema(
+                changedName,
+                currentLabelId,
+                getFlattenedLabels(projectLabels),
+                LabelItemType.LABEL
+            ).validateSync({ name: changedName }, { abortEarly: false });
 
-                validationErrors.name &&
-                    setValidationErrors(() => ({ ...validationErrors, name: DEFAULT_LABEL_INPUT_ERRORS.name }));
+            validationErrors.name &&
+                setValidationErrors(() => ({ ...validationErrors, name: DEFAULT_LABEL_INPUT_ERRORS.name }));
 
-                return true;
-            } catch (errors: unknown) {
-                if (isYupValidationError(errors)) {
-                    setValidationErrors({ ...validationErrors, name: errors.errors[0] });
-                }
-
-                return false;
+            return true;
+        } catch (errors: unknown) {
+            if (isYupValidationError(errors)) {
+                setValidationErrors({ ...validationErrors, name: errors.errors[0] });
             }
-        };
 
-        const handleColorChange = (c: string) => {
-            setNewColor(c);
-        };
+            return false;
+        }
+    };
 
-        const formHasError = Object.values(validationErrors).some(Boolean);
+    const handleColorChange = (c: string) => {
+        setNewColor(c);
+    };
 
-        useEffect(() => {
-            if (isSingleLabelTree && !!setDialogValidationError && (isDirty.name || isDirty.hotkey)) {
-                setDialogValidationError(formHasError ? 'Fix all the errors before moving forward' : undefined);
+    const formHasError = Object.values(validationErrors).some(Boolean);
+
+    useEffect(() => {
+        if (isSingleLabelTree && !!setDialogValidationError && (isDirty.name || isDirty.hotkey)) {
+            setDialogValidationError(formHasError ? 'Fix all the errors before moving forward' : undefined);
+        }
+    }, [isSingleLabelTree, setDialogValidationError, isDirty.name, isDirty.hotkey, formHasError]);
+
+    const cleanForm = (newLabel: LabelTreeLabelProps) => {
+        setNewName('');
+        setNewHotkey('');
+        handleColorChange(getNextColor([...labels, newLabel]));
+
+        shouldFocus && inputRef.current && inputRef.current.focus();
+
+        validateName('');
+        setDirty(DEFAULT_LABEL_INPUT_DIRTY);
+    };
+
+    const confirmNewLabel = (shouldGoNext = true, labelValue?: Partial<LabelTreeLabelProps>): LabelTreeLabelProps => {
+        const defaultGroupName = getDefaultGroupName(domain, parentGroupName);
+        const groupName = getGroupBasedOnRelationType(relation, defaultGroupName, newName);
+        const defaultLabel = DEFAULT_LABEL({
+            name: newName.trim(),
+            color: newColor || color || getNextColor(labels),
+            groupName,
+            relation,
+            inEditMode: false,
+            parentLabelId: null,
+            state: LabelItemEditionState.IDLE,
+            hotkey: newHotkey,
+        });
+        const newLabel = { ...defaultLabel, ...labelValue };
+
+        addLabel(newLabel, shouldGoNext);
+
+        return newLabel;
+    };
+
+    const handleOnSubmit = (event: FormEvent) => {
+        if (!formHasError) {
+            const newLabel = confirmNewLabel();
+
+            if (!isSingleLabelTree) {
+                shouldFocus && inputRef.current && inputRef.current.focus();
+                cleanForm(newLabel);
             }
-        }, [isSingleLabelTree, setDialogValidationError, isDirty.name, isDirty.hotkey, formHasError]);
+        }
 
-        const cleanForm = (newLabel: LabelTreeLabelProps) => {
-            setNewName('');
-            setNewHotkey('');
-            handleColorChange(getNextColor([...labels, newLabel]));
+        event.preventDefault();
+    };
 
-            shouldFocus && inputRef.current && inputRef.current.focus();
+    const validateHotkey = (changedHotkey: string | undefined): boolean => {
+        try {
+            const currentLabelId = isSingleLabelTree && labels.length >= 1 ? labels[0].id : undefined;
 
-            validateName('');
-            setDirty(DEFAULT_LABEL_INPUT_DIRTY);
-        };
-
-        const confirmNewLabel = (
-            shouldGoNext = true,
-            labelValue?: Partial<LabelTreeLabelProps>
-        ): LabelTreeLabelProps => {
-            const defaultGroupName = getDefaultGroupName(domain, parentGroupName);
-            const groupName = getGroupBasedOnRelationType(relation, defaultGroupName, newName);
-            const defaultLabel = DEFAULT_LABEL({
-                name: newName.trim(),
-                color: newColor || color || getNextColor(labels),
-                groupName,
-                relation,
-                inEditMode: false,
-                parentLabelId: null,
-                state: LabelItemEditionState.IDLE,
-                hotkey: newHotkey,
+            newLabelHotkeySchema(currentLabelId, getFlattenedLabels(projectLabels), usedAnnotatorHotkeys).validateSync({
+                hotkey: changedHotkey,
             });
-            const newLabel = { ...defaultLabel, ...labelValue };
 
-            addLabel(newLabel, shouldGoNext);
+            validationErrors.hotkey &&
+                setValidationErrors(() => ({ ...validationErrors, hotkey: DEFAULT_LABEL_INPUT_ERRORS.hotkey }));
 
-            return newLabel;
-        };
-
-        const handleOnSubmit = (event: FormEvent) => {
-            if (!formHasError) {
-                const newLabel = confirmNewLabel();
-
-                if (!isSingleLabelTree) {
-                    shouldFocus && inputRef.current && inputRef.current.focus();
-                    cleanForm(newLabel);
-                }
+            return true;
+        } catch (errors: unknown) {
+            if (isYupValidationError(errors)) {
+                setValidationErrors({ ...validationErrors, hotkey: errors.errors[0] });
             }
 
-            event.preventDefault();
-        };
+            return false;
+        }
+    };
 
-        const validateHotkey = (changedHotkey: string | undefined): boolean => {
-            try {
-                const currentLabelId = isSingleLabelTree && labels.length >= 1 ? labels[0].id : undefined;
+    const handleNameChange = (value: string) => {
+        setDirtyOnChange('name');
+        setNewName(value);
 
-                newLabelHotkeySchema(
-                    currentLabelId,
-                    getFlattenedLabels(projectLabels),
-                    usedAnnotatorHotkeys
-                ).validateSync({
-                    hotkey: changedHotkey,
-                });
+        const nameValid = validateName(value);
 
-                validationErrors.hotkey &&
-                    setValidationErrors(() => ({ ...validationErrors, hotkey: DEFAULT_LABEL_INPUT_ERRORS.hotkey }));
+        if (isSingleLabelTree && nameValid) {
+            confirmNewLabel(false, { name: value });
+        }
+    };
 
-                return true;
-            } catch (errors: unknown) {
-                if (isYupValidationError(errors)) {
-                    setValidationErrors({ ...validationErrors, hotkey: errors.errors[0] });
-                }
+    const setDirtyOnChange = (key: 'name' | 'hotkey') => {
+        if (!isDirty[key]) {
+            setDirty({ ...isDirty, [key]: true });
+        }
+    };
 
-                return false;
-            }
-        };
+    const handleHotkeyChange = (value: string | undefined) => {
+        setDirtyOnChange('hotkey');
 
-        const handleNameChange = (value: string) => {
-            setDirtyOnChange('name');
-            setNewName(value);
+        const hotkeyValid = validateHotkey(value);
 
-            const nameValid = validateName(value);
+        setNewHotkey(value);
 
-            if (isSingleLabelTree && nameValid) {
-                confirmNewLabel(false, { name: value });
-            }
-        };
+        if (isSingleLabelTree && hotkeyValid) {
+            confirmNewLabel(false, { hotkey: value });
+        }
+    };
 
-        const setDirtyOnChange = (key: 'name' | 'hotkey') => {
-            if (!isDirty[key]) {
-                setDirty({ ...isDirty, [key]: true });
-            }
-        };
+    useEffect(() => {
+        // Set focus on name field on mounting
+        inputRef.current && inputRef.current.focus();
+    }, []);
 
-        const handleHotkeyChange = (value: string | undefined) => {
-            setDirtyOnChange('hotkey');
+    return (
+        <Form onSubmit={handleOnSubmit}>
+            <Flex direction={'column'} marginBottom={'size-100'}>
+                {withLabel && <Label htmlFor={'project-label-name-input-id'}>Label</Label>}
+                <LabelEditionFieldsWrapper>
+                    <ColorPickerDialog
+                        color={newColor}
+                        id={'change-color-button'}
+                        data-testid={'change-color-button'}
+                        onColorChange={handleColorChange}
+                        size={'S'}
+                        gridArea={'color'}
+                        ariaLabelPrefix={newName}
+                    />
 
-            const hotkeyValid = validateHotkey(value);
+                    <ValidationErrorMsg
+                        errorMsg={isDirty.name ? validationErrors.name : ''}
+                        gridArea={'nameError'}
+                        inheritHeight
+                    />
 
-            setNewHotkey(value);
+                    <TextField
+                        maxLength={100}
+                        ref={inputRef}
+                        width={'100%'}
+                        value={newName}
+                        onChange={handleNameChange}
+                        placeholder={'Label name'}
+                        id={'project-label-name-input-id'}
+                        aria-label={'Project label name input'}
+                        gridArea={'name'}
+                    />
 
-            if (isSingleLabelTree && hotkeyValid) {
-                confirmNewLabel(false, { hotkey: value });
-            }
-        };
+                    <HotkeyNameField
+                        text={'+ Add hotkey'}
+                        value={newHotkey}
+                        onChange={handleHotkeyChange}
+                        error={isDirty.hotkey ? validationErrors.hotkey : ''}
+                        gridArea={'hotkey'}
+                    />
 
-        useEffect(() => {
-            // Set focus on name field on mounting
-            inputRef.current && inputRef.current.focus();
-        }, []);
+                    <ValidationErrorMsg
+                        errorMsg={isDirty.hotkey ? validationErrors.hotkey : ''}
+                        gridArea={'hotkeyError'}
+                        inheritHeight
+                    />
 
-        return (
-            <Form onSubmit={handleOnSubmit}>
-                <Flex direction={'column'} ref={ref} marginBottom={'size-100'}>
-                    {withLabel && <Label htmlFor={'project-label-name-input-id'}>Label</Label>}
-                    <LabelEditionFieldsWrapper>
-                        <ColorPickerDialog
-                            color={newColor}
-                            id={'change-color-button'}
-                            data-testid={'change-color-button'}
-                            onColorChange={handleColorChange}
-                            size={'S'}
-                            gridArea={'color'}
-                            ariaLabelPrefix={newName}
-                        />
-
-                        <ValidationErrorMsg
-                            errorMsg={isDirty.name ? validationErrors.name : ''}
-                            gridArea={'nameError'}
-                            inheritHeight
-                        />
-
-                        <TextField
-                            maxLength={100}
-                            ref={inputRef}
-                            width={'100%'}
-                            value={newName}
-                            onChange={handleNameChange}
-                            placeholder={'Label name'}
-                            id={'project-label-name-input-id'}
-                            aria-label={'Project label name input'}
-                            gridArea={'name'}
-                        />
-
-                        <HotkeyNameField
-                            text={'+ Add hotkey'}
-                            value={newHotkey}
-                            onChange={handleHotkeyChange}
-                            error={isDirty.hotkey ? validationErrors.hotkey : ''}
-                            gridArea={'hotkey'}
-                        />
-
-                        <ValidationErrorMsg
-                            errorMsg={isDirty.hotkey ? validationErrors.hotkey : ''}
-                            gridArea={'hotkeyError'}
-                            inheritHeight
-                        />
-
-                        {isSingleLabelTree ? (
-                            <></>
-                        ) : (
-                            <Button
-                                variant={'secondary'}
-                                isDisabled={formHasError || isEmpty(newName)}
-                                type='submit'
-                                data-testid={'add-label-button'}
-                                id={'add-label-button'}
-                                gridArea={'actionButtons'}
-                                UNSAFE_style={{ whiteSpace: 'nowrap' }}
-                            >
-                                Create label
-                            </Button>
-                        )}
-                    </LabelEditionFieldsWrapper>
-                </Flex>
-            </Form>
-        );
-    }
-);
+                    {isSingleLabelTree ? (
+                        <></>
+                    ) : (
+                        <Button
+                            variant={'secondary'}
+                            isDisabled={formHasError || isEmpty(newName)}
+                            type='submit'
+                            data-testid={'add-label-button'}
+                            id={'add-label-button'}
+                            gridArea={'actionButtons'}
+                            UNSAFE_style={{ whiteSpace: 'nowrap' }}
+                        >
+                            Create label
+                        </Button>
+                    )}
+                </LabelEditionFieldsWrapper>
+            </Flex>
+        </Form>
+    );
+};

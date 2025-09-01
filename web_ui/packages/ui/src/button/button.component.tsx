@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ComponentProps, forwardRef, Ref } from 'react';
+import { ComponentProps, Ref } from 'react';
 
 import {
     ActionButton as SpectrumActionButton,
@@ -27,10 +27,17 @@ export interface ButtonProps extends Omit<SpectrumButtonProps, 'variant'> {
 // this used so that it can be used as `elementTYpe={LinkBuilder(href)}` in a react/spectrum
 // button component, which does not forward an href for custom element types
 type LinkProps = ComponentProps<typeof Link>;
-function LinkBuilder({ href, target, rel }: { href: string; target?: LinkProps['target']; rel: LinkProps['rel'] }) {
-    return forwardRef((props: LinkProps, ref: LinkProps['ref']) => {
-        return <Link {...props} ref={ref} target={target} rel={rel} to={href} />;
-    });
+
+interface LinkBuilderProps {
+    href: string;
+    target?: LinkProps['target'];
+    rel: LinkProps['rel'];
+}
+
+function LinkBuilder({ href, target, rel }: LinkBuilderProps) {
+    return (props: LinkProps) => {
+        return <Link {...props} target={target} rel={rel} to={href} />;
+    };
 }
 
 export interface ActionButtonProps extends SpectrumActionButtonProps {
@@ -50,18 +57,18 @@ const getActionButtonClass = (colorVariant: ActionButtonColorVariant = 'dark') =
     return COLOR_VARIANTS[colorVariant];
 };
 
-export const Button = forwardRef((props: ButtonProps, ref: ButtonProps['ref']) => {
+export const Button = (props: ButtonProps) => {
     const elementType =
         props.href === undefined
             ? props.elementType
             : LinkBuilder({ href: props.href, target: props.target, rel: props.rel });
 
-    return <SpectrumButton {...props} elementType={elementType} variant={props.variant ?? 'accent'} ref={ref} />;
-});
+    return <SpectrumButton {...props} elementType={elementType} variant={props.variant ?? 'accent'} />;
+};
 
-export const ActionButton = forwardRef((props: ActionButtonProps, ref: ActionButtonProps['ref']) => {
+export const ActionButton = (props: ActionButtonProps) => {
     const { colorVariant, UNSAFE_className, ...rest } = props;
     const buttonClass = getActionButtonClass(colorVariant);
 
-    return <SpectrumActionButton {...rest} ref={ref} UNSAFE_className={clsx(buttonClass, UNSAFE_className)} />;
-});
+    return <SpectrumActionButton {...rest} UNSAFE_className={clsx(buttonClass, UNSAFE_className)} />;
+};
