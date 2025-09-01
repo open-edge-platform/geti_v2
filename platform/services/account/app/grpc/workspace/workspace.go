@@ -285,7 +285,7 @@ func GetAvailableWorkspaces(userID string) (string) {
 	    if i > 0 {
 		    builder.WriteString(",")
 	    }
-	    builder.WriteString(relationship.Resource.ObjectId)
+	    builder.WriteString("'"+relationship.Resource.ObjectId+"'")
     }
 
     return builder.String()
