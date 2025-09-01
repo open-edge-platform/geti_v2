@@ -34,12 +34,12 @@ export const OpenVinoTabModels: FC<OpenvinoTabModelsProps> = ({
     const openVinoModels = models.filter((model) => model.modelFormat !== ModelFormat.ONNX);
 
     const firstOptimizedModel = openVinoModels.filter(isNotBaselineModel).at(0);
-
+    //todo
     const emptyPOTModel: OptimizedModel | undefined =
         firstOptimizedModel === undefined
             ? undefined
             : getMockedOptimizedModel({
-                  modelName: firstOptimizedModel.modelName.replace(/FP.*/, 'INT8') ?? '',
+                  modelName: firstOptimizedModel.modelName.replace(/OpenVINO.*/, 'INT8') ?? '',
                   optimizationType: 'POT',
                   hasExplainableAI: false,
                   modelSize: '',
