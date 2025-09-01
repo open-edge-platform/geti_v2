@@ -2,7 +2,6 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { createInMemoryUsersService } from '@geti/core/src/users/services/in-memory-users-service';
-import { UsersService } from '@geti/core/src/users/services/users-service.interface';
 import {
     RESOURCE_TYPE,
     ResourceTypeDTO,
@@ -54,51 +53,59 @@ const onlyOrgContributorRoles: User['roles'] = [
     { role: USER_ROLE.ORGANIZATION_CONTRIBUTOR, resourceId: organizationId, resourceType: RESOURCE_TYPE.ORGANIZATION },
 ];
 
-const buildUsersService = (options: {
+const renderAvailableWorkspaceUsers = (options: {
     activeUserRoles: User['roles'];
+    manageUsersRoles?: boolean;
     onUpdateRoles?: jest.Mock;
     onUpdateMemberRole?: jest.Mock;
-}): UsersService => {
-    const { activeUserRoles, onUpdateRoles = jest.fn(), onUpdateMemberRole = jest.fn() } = options;
+    orgUsers?: User[];
+    workspaceUsers?: User[];
+}) => {
+    const {
+        activeUserRoles,
+        manageUsersRoles = true,
+        onUpdateRoles = jest.fn(),
+        onUpdateMemberRole = jest.fn(),
+        orgUsers = makeOrgUsers(),
+        workspaceUsers: wsUsers = makeWorkspaceUsers(),
+    } = options;
 
-    const service = createInMemoryUsersService();
+    const usersService = createInMemoryUsersService();
 
-    service.getActiveUser = async () => makeActiveUser(activeUserRoles);
-    service.getUser = async () => makeActiveUser(activeUserRoles);
-    service.getUsers = async (_orgId: string, queryParams: UsersQueryParamsDTO) => {
+    usersService.getActiveUser = async () => makeActiveUser(activeUserRoles);
+    usersService.getUser = async () => makeActiveUser(activeUserRoles);
+    usersService.getUsers = async (_orgId: string, queryParams: UsersQueryParamsDTO) => {
         if (queryParams?.resourceType === ResourceTypeDTO.WORKSPACE && queryParams?.resourceId === workspaceId) {
-            return usersResponse(makeWorkspaceUsers());
+            return usersResponse(wsUsers);
         }
-        return usersResponse(makeOrgUsers());
+        return usersResponse(orgUsers);
     };
-    service.updateRoles = async (_orgId, _userId, _roles) => {
+    usersService.updateRoles = async (_orgId, _userId, _roles) => {
         onUpdateRoles({ _orgId, _userId, _roles });
     };
-    service.updateMemberRole = async (_orgId, _memberId, _role) => {
+    usersService.updateMemberRole = async (_orgId, _memberId, _role) => {
         onUpdateMemberRole({ _orgId, _memberId, _role });
     };
 
-    return service;
+    render(
+        <AvailableWorkspaceUsers workspaceId={workspaceId} activeUser={makeActiveUser(activeUserRoles)} />,
+        {
+            services: { usersService },
+            featureFlags: { FEATURE_FLAG_MANAGE_USERS_ROLES: manageUsersRoles },
+        }
+    );
+
+    return { usersService, onUpdateRoles, onUpdateMemberRole };
 };
 
 describe('AvailableWorkspaceUsers', () => {
-    it('shows available users and adds via legacy roles API when FEATURE_FLAG_MANAGE_USERS_ROLES is false', async () => {
+    it('shows available users and new one when FEATURE_FLAG_MANAGE_USERS_ROLES is false', async () => {
         const onUpdateRoles = jest.fn();
-        const usersService: UsersService = buildUsersService({
+        renderAvailableWorkspaceUsers({
             activeUserRoles: wsAdminOrgContributorRoles,
             onUpdateRoles,
+            manageUsersRoles: false,
         });
-
-        render(
-            <AvailableWorkspaceUsers
-                workspaceId={workspaceId}
-                activeUser={makeActiveUser(wsAdminOrgContributorRoles)}
-            />,
-            {
-                services: { usersService },
-                featureFlags: { FEATURE_FLAG_MANAGE_USERS_ROLES: false },
-            }
-        );
 
         expect(
             await screen.findByRole('heading', { name: /available users to add to this workspace/i })
@@ -125,23 +132,13 @@ describe('AvailableWorkspaceUsers', () => {
         );
     });
 
-    it('adds via new roles API when FEATURE_FLAG_MANAGE_USERS_ROLES is true', async () => {
+    it('adds via roles API when FEATURE_FLAG_MANAGE_USERS_ROLES is true', async () => {
         const onUpdateMemberRole = jest.fn();
-        const usersService: UsersService = buildUsersService({
+        renderAvailableWorkspaceUsers({
             activeUserRoles: wsAdminOrgContributorRoles,
             onUpdateMemberRole,
+            manageUsersRoles: true,
         });
-
-        render(
-            <AvailableWorkspaceUsers
-                workspaceId={workspaceId}
-                activeUser={makeActiveUser(wsAdminOrgContributorRoles)}
-            />,
-            {
-                services: { usersService },
-                featureFlags: { FEATURE_FLAG_MANAGE_USERS_ROLES: true },
-            }
-        );
 
         const addBtn = await screen.findByRole('button', { name: /add u2@intel.com to workspace/i });
         await userEvent.click(addBtn);
@@ -155,15 +152,7 @@ describe('AvailableWorkspaceUsers', () => {
     });
 
     it('does not render the Add action when user lacks permission', async () => {
-        const usersService: UsersService = buildUsersService({ activeUserRoles: onlyOrgContributorRoles });
-
-        render(
-            <AvailableWorkspaceUsers workspaceId={workspaceId} activeUser={makeActiveUser(onlyOrgContributorRoles)} />,
-            {
-                services: { usersService },
-                featureFlags: { FEATURE_FLAG_MANAGE_USERS_ROLES: true },
-            }
-        );
+    renderAvailableWorkspaceUsers({ activeUserRoles: onlyOrgContributorRoles, manageUsersRoles: true });
 
         expect(
             await screen.findByRole('heading', { name: /available users to add to this workspace/i })
@@ -172,21 +161,11 @@ describe('AvailableWorkspaceUsers', () => {
     });
 
     it('renders nothing when there are no available users', async () => {
-        const usersService: UsersService = createInMemoryUsersService();
-        usersService.getActiveUser = async () => makeActiveUser(wsAdminOrgContributorRoles);
-        usersService.getUser = async () => makeActiveUser(wsAdminOrgContributorRoles);
-        usersService.getUsers = async (_orgId: string, _queryParams: UsersQueryParamsDTO) =>
-            usersResponse(makeWorkspaceUsers());
-
-        render(
-            <AvailableWorkspaceUsers
-                workspaceId={workspaceId}
-                activeUser={makeActiveUser(wsAdminOrgContributorRoles)}
-            />,
-            {
-                services: { usersService },
-            }
-        );
+        renderAvailableWorkspaceUsers({
+            activeUserRoles: wsAdminOrgContributorRoles,
+            orgUsers: makeWorkspaceUsers(),
+            workspaceUsers: makeWorkspaceUsers(),
+        });
 
         expect(
             screen.queryByRole('heading', { name: /available users to add to this workspace/i })
