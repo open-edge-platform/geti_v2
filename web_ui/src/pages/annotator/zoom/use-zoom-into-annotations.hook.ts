@@ -13,7 +13,7 @@ import { useTask } from '../providers/task-provider/task-provider.component';
 import { useZoom, ZoomTarget } from './zoom-provider.component';
 
 export const useZoomIntoAnnotation = (): void => {
-    const { setZoomTarget, zoomTarget } = useZoom();
+    const { setZoomTarget } = useZoom();
     const { selectedMediaItem } = useSelectedMediaItem();
     const { tasks, selectedTask, previousTask } = useTask();
     const { annotations } = useAnnotationScene();
@@ -37,7 +37,7 @@ export const useZoomIntoAnnotation = (): void => {
         }
 
         return getShapesBoundingBox(shapes);
-    }, [selectedAnnotations, setZoomTarget]);
+    }, [selectedAnnotations]);
 
     const getImageZoomTarget = useCallback((): ZoomTarget => {
         if (!selectedMediaItem) {
@@ -51,7 +51,7 @@ export const useZoomIntoAnnotation = (): void => {
         const imageTargetConfig = { x: 0, y: 0, width, height } as ZoomTarget;
 
         return imageTargetConfig;
-    }, [zoomTarget, selectedMediaItem, setZoomTarget]);
+    }, [selectedMediaItem]);
 
     // If the user changes to from a global to a local task we zoom into the annotation
     // Otherwise we reset the zoomTarget

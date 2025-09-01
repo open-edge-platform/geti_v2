@@ -58,7 +58,7 @@ interface ResetInitialZoomProps {
 // The goal of this component is to override the initial props that are passed to the TransformWrapper component.
 // TransformWrapper does not change the props when initialZoomState changes. This component fixes that behaviour.
 const ResetInitialZoom = ({ initialZoomState }: ResetInitialZoomProps) => {
-    const { resetTransform, setTransform } = useControls();
+    const { setTransform } = useControls();
 
     const previousInitialState = usePrevious(initialZoomState);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
