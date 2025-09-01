@@ -38,7 +38,7 @@ export const OpenVinoTabModels: FC<OpenvinoTabModelsProps> = ({
         firstOptimizedModel === undefined
             ? undefined
             : getMockedOptimizedModel({
-                  modelName: firstOptimizedModel.modelName.replace(/OpenVINO.*/, 'INT8') ?? '',
+                  modelName: firstOptimizedModel.modelName.replace(/OpenVINO.*/, 'OpenVINO INT8') ?? '',
                   optimizationType: 'POT',
                   hasExplainableAI: false,
                   modelSize: '',
