@@ -30,6 +30,7 @@ on:
         description: "Container image URI (repository, name and tag) (e.g. ghcr.io/open-edge-platform/my-image:latest)"
         required: true
         type: string
+
   repository_dispatch:
     types: [sign-artifacts]
 
@@ -52,18 +53,6 @@ jobs:
         uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2
         with:
           cosign-release: v2.5.3
-
-      - name: Install Crane
-        run: |
-          VERSION=v0.20.6
-          OS=Linux
-          ARCH=x86_64
-          curl -sL "https://github.com/google/go-containerregistry/releases/download/${VERSION}/go-containerregistry_${OS}_${ARCH}.tar.gz" > go-containerregistry.tar.gz
-          tar -zxvf go-containerregistry.tar.gz -C /usr/local/bin/ crane
-
-      - name: Login crane to ghcr.io
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN  }}" | crane auth login ghcr.io -u "dummy" --password-stdin
 
       - name: Get image digest
         env:
