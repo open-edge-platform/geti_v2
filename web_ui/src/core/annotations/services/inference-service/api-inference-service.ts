@@ -30,8 +30,13 @@ import {
     PipelineServerStatusDTO,
 } from '../../dtos/prediction.interface';
 import { Rect } from '../../shapes.interface';
-import { ExplanationResult, InferenceResult, InferenceService } from '../inference-service.interface';
-import { InferenceServerStatusResult, PredictionCache, PredictionMode } from '../prediction-service.interface';
+import {
+    ExplanationResult,
+    InferenceResult,
+    InferenceServerStatusResult,
+    InferenceService,
+} from '../inference-service.interface';
+import { PredictionCache, PredictionMode } from '../prediction-service.interface';
 import {
     buildPredictionParams,
     getExplanations as convertExplanations,

@@ -118,6 +118,13 @@ const getSelectedMediaItemQueryKeys = () => {
             taskId?: string,
             roiId?: string
         ) => [...commonKey(mediaIdentifier), taskId, roiId, `${prefix}-predictions`, predictionCache],
+
+        EXPLANATIONS: (
+            datasetIdentifier: DatasetIdentifier,
+            mediaIdentifier: MediaIdentifier | undefined,
+            taskId?: string
+        ) => [...commonKey(mediaIdentifier), 'explanations', datasetIdentifier, mediaIdentifier, taskId],
+
         SELECTED: (mediaIdentifier: MediaIdentifier | undefined, taskId?: string) => [
             ...commonKey(mediaIdentifier),
             taskId,

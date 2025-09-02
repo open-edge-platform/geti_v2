@@ -109,7 +109,7 @@ export const AnnotatorProvider = ({ children }: AnnotatorProviderProps) => {
                                     settings={userProjectSettings}
                                     userAnnotationScene={userAnnotationScene}
                                     initPredictions={initialPredictionAnnotations}
-                                    explanations={selectedMediaItem?.predictions?.maps || EMPTY_EXPLANATION}
+                                    explanations={selectedMediaItem?.explanations || EMPTY_EXPLANATION}
                                 >
                                     <SubmitAnnotationsProvider
                                         settings={userProjectSettings}

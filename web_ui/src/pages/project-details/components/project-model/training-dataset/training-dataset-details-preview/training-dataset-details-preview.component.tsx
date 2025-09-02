@@ -31,6 +31,7 @@ import { DatasetList } from '../../../../../annotator/components/sidebar/dataset
 import { ANNOTATOR_MODE } from '../../../../../annotator/core/annotation-tool-context.interface';
 import { AnnotationToolProvider } from '../../../../../annotator/providers/annotation-tool-provider/annotation-tool-provider.component';
 import { useAnnotationsQuery } from '../../../../../annotator/providers/selected-media-item-provider/use-annotations-query.hook';
+import { useExplanationsQuery } from '../../../../../annotator/providers/selected-media-item-provider/use-explanation-query.hook';
 import { useLoadImageQuery } from '../../../../../annotator/providers/selected-media-item-provider/use-load-image-query.hook';
 import { usePredictionsQuery } from '../../../../../annotator/providers/selected-media-item-provider/use-predictions-query.hook';
 import { useProject } from '../../../../providers/project-provider/project-provider.component';
@@ -97,9 +98,14 @@ export const TrainingDatasetDetailsPreview = ({
         enabled: isPredictionsEnabled,
         predictionId: isVisualPrompt ? PredictionMode.VISUAL_PROMPT : undefined,
     });
+    const { data: explanations } = useExplanationsQuery({
+        mediaItem: selectedPreviewItem,
+        datasetIdentifier,
+        taskId,
+        enabled: isPredictionsEnabled,
+    });
 
     const predictions = useVisibleAnnotations(predictionsQuery.data?.annotations ?? []);
-    const explanations = predictionsQuery.data?.maps;
 
     const annotations = useVisibleAnnotations(annotationsQuery.data ?? []);
 

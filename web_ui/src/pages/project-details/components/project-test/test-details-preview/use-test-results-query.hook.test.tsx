@@ -80,7 +80,8 @@ describe('useTestResultsQuery', () => {
         await waitFor(() => {
             expect(mockedInferenceService.getExplanations).toHaveBeenCalled();
             expect(mockedInferenceService.getTestPredictions).toHaveBeenCalled();
-            expect(result.current.predictionsQuery.data).toEqual({ annotations: [mockAnnotation], maps: [] });
+            expect(result.current.predictionsQuery.data).toEqual({ annotations: [mockAnnotation] });
+            expect(result.current.explanationsQuery.data).toEqual([]);
         });
     });
 
@@ -103,7 +104,8 @@ describe('useTestResultsQuery', () => {
         await waitFor(() => {
             expect(mockedInferenceService.getExplanations).toHaveBeenCalled();
             expect(mockedInferenceService.getTestPredictions).toHaveBeenCalled();
-            expect(result.current.predictionsQuery.data).toEqual({ annotations: [], maps: [mockedExplanation] });
+            expect(result.current.predictionsQuery.data).toEqual({ annotations: [] });
+            expect(result.current.explanationsQuery.data).toEqual([mockedExplanation]);
         });
     });
 });

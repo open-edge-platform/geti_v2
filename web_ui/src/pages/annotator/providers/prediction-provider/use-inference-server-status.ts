@@ -6,7 +6,7 @@ import { useApplicationServices } from '@geti/core/src/services/application-serv
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { InferenceServerStatusResult } from '../../../../core/annotations/services/prediction-service.interface';
+import { InferenceServerStatusResult } from '../../../../core/annotations/services/inference-service.interface';
 import { ProjectIdentifier } from '../../../../core/projects/core.interface';
 import { useTask } from '../task-provider/task-provider.component';
 

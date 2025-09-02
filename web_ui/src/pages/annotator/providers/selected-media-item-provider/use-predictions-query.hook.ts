@@ -21,7 +21,6 @@ import { MEDIA_TYPE } from '../../../../core/media/base-media.interface';
 import { MediaItem } from '../../../../core/media/media.interface';
 import { isVideoFrame } from '../../../../core/media/video.interface';
 import { DatasetIdentifier } from '../../../../core/projects/dataset.interface';
-import { isKeypointDetection } from '../../../../core/projects/domains';
 import { useTask } from '../task-provider/task-provider.component';
 import { updateVideoTimelineQuery } from './utils';
 
@@ -55,11 +54,7 @@ export const usePredictionsQuery = ({
     const isTaskChainProject = tasks.length > 1;
     const predictionCache = getPredictionCache(predictionId);
     const isPredictionCacheAuto = predictionCache === PredictionCache.AUTO;
-    const isPredictionCacheNever = predictionCache === PredictionCache.NEVER;
     const isQueryEnabled = enabled && mediaItem !== undefined;
-
-    const isKeypointDetectionTask = selectedTask !== null && isKeypointDetection(selectedTask.domain);
-    const shouldFetchExplanations = isPredictionCacheNever && !isKeypointDetectionTask;
 
     const queryKey: QueryKey = [
         ...QUERY_KEYS.SELECTED_MEDIA_ITEM.PREDICTIONS(mediaItem?.identifier, 'initial', predictionCache, taskId),
@@ -69,7 +64,6 @@ export const usePredictionsQuery = ({
     const handleSuccessRef = useRef(onSuccess);
     const handleErrorRef = useRef(onError);
 
-    // TODO: extract explanations
     const predictionsQuery = useQuery<PredictionResult, AxiosError>({
         queryKey,
         queryFn: async ({ signal }) => {
@@ -85,24 +79,12 @@ export const usePredictionsQuery = ({
                     taskId ?? tasks[0].id,
                     signal
                 );
-
                 return {
-                    maps: [],
                     annotations,
                 };
             }
 
-            const explainPromise = shouldFetchExplanations
-                ? inferenceService.getExplanations(
-                      datasetIdentifier,
-                      mediaItem,
-                      isTaskChainProject ? taskId : undefined,
-                      undefined,
-                      signal
-                  )
-                : Promise.resolve([]);
-
-            const predictionsPromise = inferenceService.getPredictions(
+            const annotations = await inferenceService.getPredictions(
                 datasetIdentifier,
                 coreLabels,
                 mediaItem,
@@ -112,14 +94,8 @@ export const usePredictionsQuery = ({
                 signal
             );
 
-            const [annotationsResponse, explanationResponse] = await Promise.allSettled([
-                predictionsPromise,
-                explainPromise,
-            ]);
-
             return {
-                maps: explanationResponse.status === 'fulfilled' ? explanationResponse.value : [],
-                annotations: annotationsResponse.status === 'fulfilled' ? annotationsResponse.value : [],
+                annotations,
             };
         },
         enabled: isQueryEnabled,

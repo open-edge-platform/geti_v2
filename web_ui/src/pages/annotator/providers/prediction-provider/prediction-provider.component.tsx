@@ -326,7 +326,7 @@ export const PredictionProvider = ({
         selectedInput,
         taskId: String(selectedTask?.id),
         enabled: isPredictionsQueryEnabled,
-        onSuccess: runWhenNotDrawing(({ annotations: newRawPredictions, maps: newMaps }: PredictionResult) => {
+        onSuccess: runWhenNotDrawing(({ annotations: newRawPredictions }: PredictionResult) => {
             const selectedPredictions = selectAnnotations(newRawPredictions, userSceneSelectedInputs);
 
             if (isEmpty(userAnnotations)) {
@@ -348,7 +348,6 @@ export const PredictionProvider = ({
                 canUpdatePrediction && userAnnotationScene.updateAnnotation(newPrediction);
             }
 
-            setExplanations(newMaps);
             setRawPredictions(selectedPredictions);
 
             // Optionally update video timeline predictions

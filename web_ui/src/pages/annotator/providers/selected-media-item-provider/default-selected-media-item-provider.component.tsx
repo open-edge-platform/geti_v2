@@ -7,6 +7,7 @@ import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { noop } from 'lodash-es';
 
+import { ExplanationResult } from '../../../../core/annotations/services/inference-service.interface';
 import { PredictionResult } from '../../../../core/annotations/services/prediction-service.interface';
 import { SelectedMediaItemContext, SelectedMediaItemProps } from './selected-media-item-provider.component';
 import { SelectedMediaItem } from './selected-media-item.interface';
@@ -37,6 +38,7 @@ export const DefaultSelectedMediaItemProvider = ({ children, selectedMediaItem }
         selectedMediaItemQuery,
         setSelectedMediaItem: noop,
         predictionsQuery: { isLoading: false } as UseQueryResult<PredictionResult>,
+        explanationsQuery: { isLoading: false } as UseQueryResult<ExplanationResult>,
     };
 
     return <SelectedMediaItemContext.Provider value={value}>{children}</SelectedMediaItemContext.Provider>;

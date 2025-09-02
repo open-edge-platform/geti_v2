@@ -2,15 +2,9 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { Annotation } from '../annotation.interface';
-import { Explanation } from '../prediction.interface';
 
 export interface PredictionResult {
     annotations: ReadonlyArray<Annotation>;
-    maps: Explanation[];
-}
-
-export interface InferenceServerStatusResult {
-    isInferenceServerReady: boolean;
 }
 
 export enum PredictionMode {

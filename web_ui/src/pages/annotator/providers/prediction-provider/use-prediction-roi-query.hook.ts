@@ -9,11 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import { TaskChainInput } from '../../../../core/annotations/annotation.interface';
-import {
-    PredictionCache,
-    PredictionMode,
-    PredictionResult,
-} from '../../../../core/annotations/services/prediction-service.interface';
+import { PredictionMode, PredictionResult } from '../../../../core/annotations/services/prediction-service.interface';
 import { getPredictionCache } from '../../../../core/annotations/services/utils';
 import { usePrevious } from '../../../../hooks/use-previous/use-previous.hook';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
@@ -45,20 +41,16 @@ export const usePredictionsRoiQuery = ({
     const { inferenceService } = useApplicationServices();
 
     const isValidRoi = roiId !== undefined && prevRoi !== roiId;
-
     const isQueryEnabled = enabled && isValidRoi;
 
     const predictionMode = isActiveLearningMode ? PredictionMode.AUTO : PredictionMode.ONLINE;
     const predictionCache = getPredictionCache(predictionMode);
-    const isPredictionCacheNever = predictionCache === PredictionCache.NEVER;
 
     const handleSuccessRef = useRef(onSuccess);
 
     useLayoutEffect(() => {
         handleSuccessRef.current = onSuccess;
     }, [onSuccess]);
-
-    // TODO: extract explanation, combine with other prediction query
 
     const query = useQuery<PredictionResult, AxiosError>({
         queryKey: QUERY_KEYS.SELECTED_MEDIA_ITEM.PREDICTIONS(
@@ -69,39 +61,25 @@ export const usePredictionsRoiQuery = ({
             roiId
         ),
         queryFn: async ({ signal }) => {
-            if (isQueryEnabled === false) {
-                return { maps: [], annotations: [] };
+            if (!isQueryEnabled || !selectedMediaItem) {
+                return { annotations: [] };
             }
 
-            if (selectedMediaItem === undefined) {
-                return { maps: [], annotations: [] };
-            }
+            const annotations = await inferenceService.getPredictions(
+                datasetIdentifier,
+                project.labels,
+                selectedMediaItem,
+                predictionCache,
+                taskId,
+                selectedInput,
+                signal
+            );
 
-            const explainPromise = isPredictionCacheNever
-                ? inferenceService.getExplanations(datasetIdentifier, selectedMediaItem, taskId, selectedInput, signal)
-                : Promise.resolve([]);
+            handleSuccessRef.current?.({ annotations });
 
-            return Promise.allSettled([
-                inferenceService.getPredictions(
-                    datasetIdentifier,
-                    project.labels,
-                    selectedMediaItem,
-                    predictionCache,
-                    taskId,
-                    selectedInput,
-                    signal
-                ),
-                explainPromise,
-            ]).then(([annotationsResponse, mapsResponse]) => {
-                const maps = mapsResponse.status === 'fulfilled' ? mapsResponse.value : [];
-                const annotations = annotationsResponse.status === 'fulfilled' ? annotationsResponse.value : [];
-
-                handleSuccessRef.current !== undefined && handleSuccessRef.current({ annotations, maps });
-
-                return { annotations, maps };
-            });
+            return { annotations };
         },
-        initialData: { maps: [], annotations: [] },
+        initialData: { annotations: [] },
         enabled: isQueryEnabled,
     });
 

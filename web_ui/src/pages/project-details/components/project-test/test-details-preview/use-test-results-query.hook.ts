@@ -15,6 +15,7 @@ import { TestMediaItem } from '../../../../../core/tests/test-media.interface';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
 import { isNonEmptyString } from '../../../../../shared/utils';
 import { useAnnotationsQuery } from '../../../../annotator/providers/selected-media-item-provider/use-annotations-query.hook';
+import { useExplanationsQuery } from '../../../../annotator/providers/selected-media-item-provider/use-explanation-query.hook';
 import { useLoadImageQuery } from '../../../../annotator/providers/selected-media-item-provider/use-load-image-query.hook';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 
@@ -71,27 +72,33 @@ export const useTestResultsQuery = (
 
     const predictionsQuery = useQuery<PredictionResult, AxiosError>({
         queryKey: QUERY_KEYS.TEST_PREDICTIONS(projectIdentifier, testId, String(testResult?.predictionId)),
-        queryFn: () =>
-            Promise.allSettled([
-                inferenceService.getTestPredictions(
+        queryFn: async () => {
+            try {
+                const predictions = await inferenceService.getTestPredictions(
                     datasetIdentifier,
                     labels,
                     testId,
                     String(testResult?.predictionId)
-                ),
-                inferenceService.getExplanations(datasetIdentifier, mediaItem),
-            ]).then(([predictions, explanations]) => {
-                // @ts-expect-error PromiseSettledResult type is not exported
-                // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
-                return { annotations: predictions.value ?? [], maps: explanations.value ?? [] };
-            }),
+                );
+
+                return { annotations: predictions ?? [] };
+            } catch (_error) {
+                return { annotations: [] };
+            }
+        },
         enabled: isNonEmptyString(testResult?.predictionId),
+    });
+
+    const explanationsQuery = useExplanationsQuery({
+        datasetIdentifier,
+        mediaItem,
     });
 
     return {
         imageQuery,
         annotationsQuery,
         predictionsQuery,
+        explanationsQuery,
         testResult,
     };
 };

@@ -61,6 +61,7 @@ describe('LayersFactory', () => {
             selectedMediaItem,
             selectedMediaItemQuery: { isLoading: false },
             predictionsQuery: { data: undefined },
+            explanationsQuery: { data: undefined },
         } as SelectedMediaItemProps);
 
         const response = await annotatorRender(

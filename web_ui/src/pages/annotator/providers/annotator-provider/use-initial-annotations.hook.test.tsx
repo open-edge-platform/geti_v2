@@ -33,7 +33,8 @@ const geSelectedMediaItem = (predictions: Annotation[] = [], annotations: Annota
     ...getMockedImageMediaItem({}),
     image: getMockedImage(),
     annotations,
-    predictions: { annotations: predictions, maps: [] },
+    predictions: { annotations: predictions },
+    explanations: [],
 });
 const getInitialPredictionConfig = (isEnabled = true) => ({
     [FEATURES_KEYS.INITIAL_PREDICTION]: {

@@ -7,11 +7,15 @@ import { ProjectIdentifier } from '../../projects/core.interface';
 import { DatasetIdentifier } from '../../projects/dataset.interface';
 import { Annotation, TaskChainInput } from '../annotation.interface';
 import { Explanation } from '../prediction.interface';
-import { InferenceServerStatusResult, PredictionCache, PredictionMode } from './prediction-service.interface';
+import { PredictionCache, PredictionMode } from './prediction-service.interface';
 import { VideoPaginationOptions } from './video-pagination-options.interface';
 
 export type InferenceResult = ReadonlyArray<Annotation>;
 export type ExplanationResult = Explanation[];
+
+export interface InferenceServerStatusResult {
+    isInferenceServerReady: boolean;
+}
 
 export interface InferenceService {
     getTestPredictions: (

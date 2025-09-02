@@ -135,7 +135,7 @@ describe('usePredictionsRoiQuery', () => {
         });
 
         await waitFor(() => {
-            expect(result.current.data).toEqual({ annotations: [], maps: [] });
+            expect(result.current.data).toEqual({ annotations: [] });
         });
     });
 
@@ -149,7 +149,6 @@ describe('usePredictionsRoiQuery', () => {
         await waitFor(() => {
             expect(result.current.data).toEqual({
                 annotations: [],
-                maps: [],
             });
         });
 
@@ -181,11 +180,9 @@ describe('usePredictionsRoiQuery', () => {
                 expect.anything()
             );
         });
-
-        expect(mockedInferenceService.getExplanations).not.toHaveBeenCalled();
     });
 
-    describe('PredictionMode.ONLINE is sent as PredictionCache.NEVER, calls "getPredictions" and "getExplanations"', () => {
+    describe('PredictionMode.ONLINE is sent as PredictionCache.NEVER, calls "getPredictions"', () => {
         it('successful responses', async () => {
             jest.mocked(useAnnotatorMode).mockImplementation(() => ({
                 isActiveLearningMode: false,
@@ -210,15 +207,6 @@ describe('usePredictionsRoiQuery', () => {
                     expect.anything()
                 );
             });
-
-            expect(mockedInferenceService.getExplanations).toHaveBeenLastCalledWith(
-                datasetIdentifier,
-                selectedMediaItem,
-                taskId,
-                selectedInput,
-                // AbortController
-                expect.anything()
-            );
         });
 
         it('rejected requests are handle as empty', async () => {
@@ -227,7 +215,6 @@ describe('usePredictionsRoiQuery', () => {
                 currentMode: ANNOTATOR_MODE.PREDICTION,
             }));
             jest.mocked(mockedInferenceService.getPredictions).mockRejectedValue('test error');
-            jest.mocked(mockedInferenceService.getExplanations).mockRejectedValue('test error');
 
             const { result } = renderPredictionsRoiQuery({
                 selectedInput,
@@ -236,7 +223,7 @@ describe('usePredictionsRoiQuery', () => {
             });
 
             await waitFor(() => {
-                expect(result.current.data).toEqual({ annotations: [], maps: [] });
+                expect(result.current.data).toEqual({ annotations: [] });
             });
         });
     });

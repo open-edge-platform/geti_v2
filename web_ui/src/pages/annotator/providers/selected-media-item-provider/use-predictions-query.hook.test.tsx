@@ -49,7 +49,6 @@ describe('usePredictionsQuery', (): void => {
 
     beforeEach(() => {
         mockedInferenceService.getPredictions = jest.fn();
-        mockedInferenceService.getExplanations = jest.fn();
     });
 
     it('task-chain projects call the service with taskId ', async (): Promise<void> => {
@@ -69,15 +68,6 @@ describe('usePredictionsQuery', (): void => {
             expect(result.current).toBeDefined();
         });
 
-        expect(mockedInferenceService.getExplanations).toHaveBeenCalledWith(
-            datasetIdentifier,
-            mediaItem,
-            taskId,
-            undefined,
-
-            // AbortController
-            expect.anything()
-        );
         expect(mockedInferenceService.getPredictions).toHaveBeenCalledWith(
             datasetIdentifier,
             coreLabels,
@@ -97,7 +87,6 @@ describe('usePredictionsQuery', (): void => {
         });
 
         await waitFor(() => {
-            expect(mockedInferenceService.getExplanations).not.toHaveBeenCalled();
             expect(mockedInferenceService.getPredictions).toHaveBeenCalledWith(
                 datasetIdentifier,
                 coreLabels,
@@ -111,7 +100,7 @@ describe('usePredictionsQuery', (): void => {
         });
     });
 
-    it('PredictionMode LATEST is handle as PredictionCache.ALWAYS', async (): Promise<void> => {
+    it('PredictionMode LATEST is handled as PredictionCache.ALWAYS', async (): Promise<void> => {
         const onSuccess = jest.fn();
 
         renderHookWithProviders(
@@ -126,7 +115,6 @@ describe('usePredictionsQuery', (): void => {
             expect(onSuccess).toHaveBeenCalled();
         });
 
-        expect(mockedInferenceService.getExplanations).not.toHaveBeenCalled();
         expect(mockedInferenceService.getPredictions).toHaveBeenCalledWith(
             datasetIdentifier,
             coreLabels,
@@ -139,9 +127,11 @@ describe('usePredictionsQuery', (): void => {
         );
     });
 
-    it('PredictionMode.ONLINE is sent as PredictionCache.NEVER, getExplanations is called', async (): Promise<void> => {
+    it('PredictionMode.ONLINE is handled as PredictionCache.NEVER', async (): Promise<void> => {
+        const onSuccess = jest.fn();
+
         renderHookWithProviders(
-            () => usePredictionsQuery({ ...predictionArguments, predictionId: PredictionMode.ONLINE }),
+            () => usePredictionsQuery({ ...predictionArguments, onSuccess, predictionId: PredictionMode.ONLINE }),
             {
                 wrapper,
                 providerProps: { ...initialProps },
@@ -149,14 +139,7 @@ describe('usePredictionsQuery', (): void => {
         );
 
         await waitFor(() => {
-            expect(mockedInferenceService.getExplanations).toHaveBeenCalledWith(
-                datasetIdentifier,
-                mediaItem,
-                undefined,
-                undefined,
-                // AbortController
-                expect.anything()
-            );
+            expect(onSuccess).toHaveBeenCalled();
         });
 
         expect(mockedInferenceService.getPredictions).toHaveBeenCalledWith(
@@ -169,26 +152,5 @@ describe('usePredictionsQuery', (): void => {
             // AbortController
             expect.anything()
         );
-    });
-
-    it('does not call "getExplanations" for keypoint detection projects', async (): Promise<void> => {
-        const mockedProjectService = createInMemoryProjectService();
-
-        mockedProjectService.getProject = async () =>
-            getMockedProject({ tasks: [getMockedTask({ domain: DOMAIN.KEYPOINT_DETECTION })] });
-
-        renderHookWithProviders(
-            () => usePredictionsQuery({ ...predictionArguments, predictionId: PredictionMode.ONLINE }),
-            {
-                wrapper,
-                providerProps: { ...initialProps, projectService: mockedProjectService },
-            }
-        );
-
-        await waitFor(() => {
-            expect(mockedInferenceService.getPredictions).toHaveBeenCalled();
-        });
-
-        expect(mockedInferenceService.getExplanations).not.toHaveBeenCalled();
     });
 });
