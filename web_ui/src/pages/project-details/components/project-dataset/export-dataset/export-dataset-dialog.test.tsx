@@ -233,7 +233,6 @@ describe('ExportDatasetDialog', () => {
         );
     });
 
-    // eslint-disable-next-line max-len
     it('if there are less than 2 available export formats, Select dataset export format radio group is hidden and the default format is selected ', async () => {
         // Anomaly detection project supports only Datumaro format
         await renderApp({ domains: [DOMAIN.ANOMALY_DETECTION] });
