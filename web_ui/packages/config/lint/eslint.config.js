@@ -187,18 +187,6 @@ export default [
                 },
             ],
 
-            'header/header': [
-                'warn',
-                'line',
-                [
-                    {
-                        pattern: ' Copyright \\(C\\) 2022-\\d{4} Intel Corporation',
-                        template: ' Copyright (C) 2022-2025 Intel Corporation',
-                    },
-                    ' LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE',
-                ],
-            ],
-
             '@typescript-eslint/no-shadow': [
                 'warn',
                 {
