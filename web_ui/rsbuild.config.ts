@@ -33,6 +33,14 @@ export default defineConfig({
             },
         }),
     ],
+    output: {
+        copy: [
+            {
+                from: 'node_modules/onnxruntime-web/dist',
+                to: 'onnxruntime-web',
+            },
+        ],
+    },
     environments: {
         dev: {
             source: {
