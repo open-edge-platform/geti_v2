@@ -29,7 +29,7 @@ export const DownloadDialogSingleTask = ({
     modelsGroups,
     task,
     projectIdentifier,
-}: DownloadDialogSingleTaskProps): JSX.Element => {
+}: DownloadDialogSingleTaskProps) => {
     const firstDeployModel: DeployModel = {
         modelGroupId: modelsGroups[0].groupId,
         modelId: modelsGroups[0].modelVersions[0].id,

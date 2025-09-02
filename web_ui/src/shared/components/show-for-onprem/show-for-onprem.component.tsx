@@ -9,7 +9,7 @@ interface ShowForOnPremProps {
     children: ReactNode;
 }
 
-export const ShowForOnPrem = ({ children }: ShowForOnPremProps): JSX.Element => {
+export const ShowForOnPrem = ({ children }: ShowForOnPremProps) => {
     const isSaasEnv = useIsSaasEnv();
 
     if (isSaasEnv) {

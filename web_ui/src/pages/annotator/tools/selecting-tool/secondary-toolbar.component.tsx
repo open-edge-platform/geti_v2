@@ -21,7 +21,7 @@ import { SelectingToolLabel, SelectingToolType } from './selecting-tool.enums';
 import { StampToolButton } from './stamp-tool/stamp-tool-button.component';
 import { getSelectedPolygonAnnotations } from './utils';
 
-export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { tasks, selectedTask } = useTask();
     const {
         scene: { annotations },

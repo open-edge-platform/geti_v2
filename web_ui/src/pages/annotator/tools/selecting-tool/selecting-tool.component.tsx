@@ -20,7 +20,7 @@ import { PointerEvents, ToolAnnotationContextProps } from '../tools.interface';
 import { SelectingBoxTool } from './components/selecting-box-tool.component';
 import { areAnnotationsIdentical, pointInShape } from './utils';
 
-const useClickWithoutDragging = (ref: RefObject<SVGSVGElement>, onClick: (event: PointerEvent) => void) => {
+const useClickWithoutDragging = (ref: RefObject<SVGSVGElement | null>, onClick: (event: PointerEvent) => void) => {
     const [isDragging, setIsDragging] = useState(false);
     const handleClick = useCallback(
         (event: PointerEvent): void => {
@@ -40,7 +40,7 @@ const useClickWithoutDragging = (ref: RefObject<SVGSVGElement>, onClick: (event:
     useEventListener(PointerEvents.PointerMove, () => setIsDragging(true), ref);
 };
 
-export const SelectingTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const SelectingTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { selectedTask, tasks } = useTask();
     const {
         scene: { setSelectedAnnotations },

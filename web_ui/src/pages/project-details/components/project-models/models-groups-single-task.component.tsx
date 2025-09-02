@@ -38,7 +38,7 @@ const ModelsHeader: FC<{
     );
 };
 
-export const ModelsGroupsSingleTask = ({ modelsGroups, taskName }: ModelsGroupsSingleTaskProps): JSX.Element => {
+export const ModelsGroupsSingleTask = ({ modelsGroups, taskName }: ModelsGroupsSingleTaskProps) => {
     const [selectedSortingOption, setSelectedSortingOption] = useState<ModelsSortingOptions>(
         ModelsSortingOptions.ACTIVE_MODEL_ASC
     );

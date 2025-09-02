@@ -17,7 +17,7 @@ interface OrganizationsContextProps {
     children: ReactNode;
 }
 
-export const OrganizationsContext = ({ children }: OrganizationsContextProps): JSX.Element => {
+export const OrganizationsContext = ({ children }: OrganizationsContextProps) => {
     const isSaaS = useIsSaasEnv();
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
     const { selectedOrganization, organizations, hasMultipleOrganizations, setSelectedOrganization } =

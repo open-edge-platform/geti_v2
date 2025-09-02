@@ -43,7 +43,7 @@ const initSSIMState: SSIMState = {
 
 const SSIMStateContext = createContext<SSIMStateContextProps | undefined>(undefined);
 
-export const SSIMStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const SSIMStateProvider = ({ children }: StateProviderProps) => {
     const { worker: ssim } = useLoadAIWebworker(AlgorithmType.SSIM);
 
     const { activeDomains } = useTask();

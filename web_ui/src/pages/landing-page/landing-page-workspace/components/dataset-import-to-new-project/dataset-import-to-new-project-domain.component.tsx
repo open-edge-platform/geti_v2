@@ -34,7 +34,7 @@ const DEFAULT_PROJECT_NAME = 'Project';
 export const DatasetImportToNewProjectDomain = ({
     datasetImportItem,
     patchDatasetImport,
-}: DatasetImportToNewProjectDomainProps): JSX.Element => {
+}: DatasetImportToNewProjectDomainProps) => {
     const { id, supportedProjectTypes, projectName, taskType } = datasetImportItem;
 
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);

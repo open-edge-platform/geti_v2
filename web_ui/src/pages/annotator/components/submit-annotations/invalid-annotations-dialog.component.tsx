@@ -51,7 +51,7 @@ export const InvalidAnnotationsDialog = ({
     cancel,
     submitAnnotationsMutation,
     saveOnlyValidAnnotations,
-}: SaveAnnotationsDialogProps): JSX.Element => {
+}: SaveAnnotationsDialogProps) => {
     return (
         <DialogContainer onDismiss={doNothing} isDismissable={false}>
             <AlertDialog

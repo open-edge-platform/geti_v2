@@ -19,13 +19,7 @@ interface ThumbnailPreviewProps {
     x: number;
 }
 
-export const ThumbnailPreview = ({
-    mediaItem,
-    videoFrame: frameNumber,
-    width,
-    height,
-    x,
-}: ThumbnailPreviewProps): JSX.Element => {
+export const ThumbnailPreview = ({ mediaItem, videoFrame: frameNumber, width, height, x }: ThumbnailPreviewProps) => {
     const constructVideoFrame = useConstructVideoFrame(mediaItem);
     const videoFrame = constructVideoFrame(frameNumber) as VideoFrame;
 

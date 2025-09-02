@@ -24,7 +24,7 @@ interface ProfilePageProps {
     isSaaSEnv: boolean;
 }
 
-export const ProfilePage = ({ activeUser, organizationId, isSaaSEnv }: ProfilePageProps): JSX.Element => {
+export const ProfilePage = ({ activeUser, organizationId, isSaaSEnv }: ProfilePageProps) => {
     const { useUpdateUser } = useUsers();
     const updateUser = useUpdateUser();
     const queryClient = useQueryClient();

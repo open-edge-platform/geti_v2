@@ -59,7 +59,7 @@ export const ModelTemplatesSelection = ({
 
     modelConfigurationOption,
     setModelConfigurationOption,
-}: ModelTemplatesSelectionProps): JSX.Element => {
+}: ModelTemplatesSelectionProps) => {
     const { project, isTaskChainProject } = useProject();
     const { tasks } = project;
 

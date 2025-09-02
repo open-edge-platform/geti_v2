@@ -1,8 +1,8 @@
-# Contributing to Intel® Geti™
+# Contributing to Geti™
 
 ## Welcome! 🌟
 
-Thank you for your interest in contributing to Intel® Geti™. This guide will help you understand our project structure,
+Thank you for your interest in contributing to Geti™. This guide will help you understand our project structure,
 development workflow, and contribution guidelines.
 
 ## Table of Contents
@@ -27,7 +27,7 @@ Read the [`Security Policy`](SECURITY.md).
 
 ### Contribute Code Changes
 
-If you'd like to help improve Intel® Geti™, pick one of the issues listed in [GitHub
+If you'd like to help improve Geti™, pick one of the issues listed in [GitHub
 Issues](https://github.com/open-edge-platform/geti/issues) and submit
 a [Pull Request](https://github.com/open-edge-platform/geti/pulls) to address it.
 Note: Before you start working on it, please make sure the change hasn’t already been implemented.
@@ -61,7 +61,7 @@ Before submitting a pull request, ensure you follow these guidelines:
 
 ### Project Overview
 
-Intel® Geti™ project is a monorepo designed to support independent development and release of multiple related
+Geti™ project is a monorepo designed to support independent development and release of multiple related
 subprojects while maintaining a cohesive platform. Our architecture allows for flexible and modular development across
 different components.
 
@@ -211,5 +211,5 @@ commit automatically with `git commit -s`.
 
 ## License
 
-Intel® Geti™ is licensed under the terms in [LICENSE](LICENSE). By contributing to the project, you agree
+Geti™ is licensed under the terms in [LICENSE](LICENSE). By contributing to the project, you agree
 to the license and copyright terms therein and release your contribution under these terms.

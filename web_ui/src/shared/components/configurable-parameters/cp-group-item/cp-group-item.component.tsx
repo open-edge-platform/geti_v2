@@ -20,7 +20,7 @@ interface CPGroupItemProps extends ConfigParameterItemProp {
     isExpandable: boolean;
 }
 
-export const CPGroupItem = ({ group, isExpandable, updateParameter }: CPGroupItemProps): JSX.Element => {
+export const CPGroupItem = ({ group, isExpandable, updateParameter }: CPGroupItemProps) => {
     const { header, parameters } = group;
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);

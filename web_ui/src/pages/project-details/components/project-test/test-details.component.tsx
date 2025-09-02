@@ -38,7 +38,7 @@ const getThresholdTooltip = (labelName: string) => {
 
 const TEST_GRID = ['details model-accuracy', 'media media'];
 
-export const TestDetails = ({ test }: TestDetailsProps): JSX.Element => {
+export const TestDetails = ({ test }: TestDetailsProps) => {
     const [selectedLabel, setSelectedLabel] = useState({ id: 'null', name: 'All labels' });
     const { modelInfo, datasetsInfo, creationTime, testName, scoreDescription, scores } = test;
     const {

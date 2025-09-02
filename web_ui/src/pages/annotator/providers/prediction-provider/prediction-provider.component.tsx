@@ -255,7 +255,7 @@ export const PredictionProvider = ({
     initPredictions,
     userAnnotationScene,
     explanations: initExplanations,
-}: PredictionProviderProps): JSX.Element => {
+}: PredictionProviderProps) => {
     const { inputs } = useTaskChain();
     const { isActiveLearningMode } = useAnnotatorMode();
     const { isTaskChainSecondTask, isTaskChainDomainSelected, tasks, selectedTask } = useTask();

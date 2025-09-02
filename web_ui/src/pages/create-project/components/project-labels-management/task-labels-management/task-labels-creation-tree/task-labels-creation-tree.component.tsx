@@ -13,7 +13,7 @@ export const TaskLabelsCreationTree = ({
     isHierarchicalMode,
     projectLabels,
     setValidationError,
-}: TaskLabelsCreationTreeProps): JSX.Element => {
+}: TaskLabelsCreationTreeProps) => {
     return (
         <LabelTreeView
             labelsTree={labelsTree}

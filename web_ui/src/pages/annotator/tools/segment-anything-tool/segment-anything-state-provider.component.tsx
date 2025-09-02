@@ -43,7 +43,7 @@ interface SegmentAnythingStateContextProps {
 
 const SegmentAnythingStateContext = createContext<SegmentAnythingStateContextProps | undefined>(undefined);
 
-export const SegmentAnythingStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const SegmentAnythingStateProvider = ({ children }: StateProviderProps) => {
     const [state, setState, undoRedoActions] = useUndoRedoState<SegmentAnythingState>({
         points: [],
     });

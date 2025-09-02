@@ -15,7 +15,7 @@ export const VisualPromptReferenceDataset = ({
     modelLabels,
     taskId,
     isActive,
-}: TrainingDatasetProps): JSX.Element => {
+}: TrainingDatasetProps) => {
     const projectIdentifier = useProjectIdentifier();
 
     const subsetsCommonProps = {

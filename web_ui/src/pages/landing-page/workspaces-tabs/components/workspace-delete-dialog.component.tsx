@@ -13,12 +13,7 @@ interface DeleteDialogProps {
     isWorkspaceEmpty: boolean;
 }
 
-export const WorkspaceDeleteDialog = ({
-    triggerState,
-    onAction,
-    name,
-    isWorkspaceEmpty,
-}: DeleteDialogProps): JSX.Element => {
+export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, isWorkspaceEmpty }: DeleteDialogProps) => {
     const deleteDialog: ReactNode = (
         <AlertDialog
             title={'Delete workspace'}

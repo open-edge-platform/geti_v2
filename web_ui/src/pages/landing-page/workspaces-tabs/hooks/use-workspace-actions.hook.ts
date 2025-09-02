@@ -3,15 +3,18 @@
 
 import { Key } from 'react';
 
+import { RESOURCE_TYPE } from '@geti/core/src/users/users.interface';
 import { useWorkspacesApi } from '@geti/core/src/workspaces/hooks/use-workspaces.hook';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
+import { useCheckPermission } from '../../../../shared/components/has-permission/has-permission.component';
+import { OPERATION } from '../../../../shared/components/has-permission/has-permission.interface';
 import { WorkspaceMenuActions } from '../utils';
 
 const MIN_NUMBER_OF_REQUIRED_WORKSPACES = 1;
 
-export const useWorkspaceActions = (numberOfWorkspaces: number, isWorkspaceEmpty: boolean) => {
+export const useWorkspaceActions = (numberOfWorkspaces: number, isWorkspaceEmpty: boolean, workspaceId?: string) => {
     const editWorkspaceDialogState = useOverlayTriggerState({});
     const deleteWorkspaceDialogState = useOverlayTriggerState({});
 
@@ -20,6 +23,13 @@ export const useWorkspaceActions = (numberOfWorkspaces: number, isWorkspaceEmpty
 
     const editWorkspaceMutation = useEditWorkspaceMutation();
     const deleteWorkspaceMutation = useDeleteWorkspaceMutation();
+
+    const canEditWorkspacePermission = useCheckPermission(
+        [OPERATION.WORKSPACE_MANAGEMENT],
+        [{ type: RESOURCE_TYPE.WORKSPACE, id: workspaceId || '' }]
+    );
+
+    const canEditWorkspace = workspaceId ? canEditWorkspacePermission : false;
 
     const menuItems = (() => {
         const items: WorkspaceMenuActions[] = [WorkspaceMenuActions.EDIT];
@@ -31,7 +41,9 @@ export const useWorkspaceActions = (numberOfWorkspaces: number, isWorkspaceEmpty
         return items;
     })();
 
-    const grayedOutKeys = !isWorkspaceEmpty ? [WorkspaceMenuActions.DELETE] : [];
+    const grayedOutKeys = [...(!isWorkspaceEmpty ? [WorkspaceMenuActions.DELETE] : [])];
+
+    const disabledKeys = [...(!canEditWorkspace ? [WorkspaceMenuActions.EDIT] : [])];
 
     const handleMenuAction = (key: Key) => {
         switch (key.toString().toLocaleLowerCase()) {
@@ -63,5 +75,6 @@ export const useWorkspaceActions = (numberOfWorkspaces: number, isWorkspaceEmpty
             editWorkspaceMutation,
         },
         grayedOutKeys,
+        disabledKeys,
     };
 };

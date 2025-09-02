@@ -27,7 +27,7 @@ export interface ProjectDatasetTabActionsProps {
     dataset: Dataset;
 }
 
-export const ProjectDatasetTabActions = ({ dataset }: ProjectDatasetTabActionsProps): JSX.Element => {
+export const ProjectDatasetTabActions = ({ dataset }: ProjectDatasetTabActionsProps) => {
     const { media } = useMedia();
     const { project, isTaskChainProject } = useProject();
     const { FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE } = useFeatureFlags();

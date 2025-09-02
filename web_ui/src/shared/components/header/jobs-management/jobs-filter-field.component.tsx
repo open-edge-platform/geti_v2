@@ -25,7 +25,7 @@ export const JobsFilterField = ({
     dataTestId,
     ariaLabel,
     id,
-}: JobsFilterFieldProps): JSX.Element => {
+}: JobsFilterFieldProps) => {
     return (
         <ComboBox
             id={id}

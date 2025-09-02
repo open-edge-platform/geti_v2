@@ -39,7 +39,7 @@ export const TaskLabelTreeSearchPopover = ({
     prefix,
     onClick,
     onClose,
-}: TaskLabelTreeSearchPopoverProps): JSX.Element => {
+}: TaskLabelTreeSearchPopoverProps) => {
     const triggerRef = useRef(null);
     const [searchInput, setSearchInput] = useState('');
 

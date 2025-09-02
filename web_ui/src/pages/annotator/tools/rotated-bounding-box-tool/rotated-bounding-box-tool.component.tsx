@@ -8,7 +8,7 @@ import { ToolAnnotationContextProps } from '../tools.interface';
 import { drawingStyles } from '../utils';
 import { RotatedDrawingBox } from './rotated-drawing-box.component';
 
-export const RotatedBoundingBoxTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const RotatedBoundingBoxTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { defaultLabel } = useTask();
     const { scene } = annotationToolContext;
     const { image } = useROI();

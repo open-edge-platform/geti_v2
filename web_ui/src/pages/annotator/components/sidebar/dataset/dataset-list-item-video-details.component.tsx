@@ -12,11 +12,7 @@ interface DatasetListItemVideoDetailsProps {
     frames: number | undefined;
     duration: number;
 }
-export const DatasetListItemVideoDetails = ({
-    className,
-    frames,
-    duration,
-}: DatasetListItemVideoDetailsProps): JSX.Element => {
+export const DatasetListItemVideoDetails = ({ className, frames, duration }: DatasetListItemVideoDetailsProps) => {
     const framesText = useFramesText(frames);
     const durationText = useDurationText(duration);
 

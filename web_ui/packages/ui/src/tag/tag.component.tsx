@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { CSSProperties } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
 import { Flex, Text, Tooltip, TooltipTrigger } from '@adobe/react-spectrum';
 import { isEmpty } from 'lodash-es';
@@ -13,8 +13,8 @@ import classes from './tag.module.scss';
 interface TagProps {
     id?: string;
     text: string;
-    prefix?: JSX.Element;
-    suffix?: JSX.Element;
+    prefix?: ReactNode;
+    suffix?: ReactNode;
     withDot?: boolean;
     className?: string;
     tooltip?: string;
@@ -27,17 +27,7 @@ interface TagProps {
     This can be disabled by setting `withDot` to false.
     It also supports prefix or suffix elements
 */
-export const Tag = ({
-    id,
-    text,
-    prefix,
-    suffix,
-    className,
-    withDot = true,
-    tooltip,
-    darkMode,
-    ...rest
-}: TagProps): JSX.Element => {
+export const Tag = ({ id, text, prefix, suffix, className, withDot = true, tooltip, darkMode, ...rest }: TagProps) => {
     const hasPrefix = !!(withDot || prefix);
 
     return (

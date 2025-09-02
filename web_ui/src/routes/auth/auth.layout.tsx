@@ -19,7 +19,7 @@ const useOnboardingTokenSearchParam = (): string | null => {
     return onboardingToken;
 };
 
-export const AuthenticationLayout = (): JSX.Element => {
+export const AuthenticationLayout = () => {
     const auth = useAuth();
     const [userIsLoggedIn, setIsUserLoggedIn] = useState(false);
     const onboardingToken = useOnboardingTokenSearchParam();

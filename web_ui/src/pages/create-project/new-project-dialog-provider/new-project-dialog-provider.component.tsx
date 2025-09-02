@@ -13,7 +13,7 @@ interface NewProjectDialogProviderProps {
 
 const NewProjectDialogContext = createContext<NewProjectDialogContextProps | undefined>(undefined);
 
-export const NewProjectDialogProvider = ({ children }: NewProjectDialogProviderProps): JSX.Element => {
+export const NewProjectDialogProvider = ({ children }: NewProjectDialogProviderProps) => {
     const {
         component,
         hasNextStep,

@@ -15,15 +15,15 @@ export class OnboardingPage {
     }
 
     getRegistrationHeading() {
-        return this.page.getByRole('heading', { name: /Let's complete your registration to Intel® Geti™!/ });
+        return this.page.getByRole('heading', { name: /Let's complete your registration to Geti™!/ });
     }
 
     getRequestedAccessHeading() {
-        return this.page.getByRole('heading', { name: 'Intel® Geti™ registration completed' });
+        return this.page.getByRole('heading', { name: 'Geti™ registration completed' });
     }
 
     getRequestAccessContent() {
-        return this.page.getByRole('heading', { name: 'Thank you for your interest in Intel® Geti™.' });
+        return this.page.getByRole('heading', { name: 'Thank you for your interest in Geti™.' });
     }
 
     async submit() {
@@ -43,7 +43,7 @@ export class OnboardingPage {
     }
 
     getRequestAccessReasonField() {
-        return this.page.getByRole('textbox', { name: /for what use case do you plan to use intel® geti™\?/i });
+        return this.page.getByRole('textbox', { name: /for what use case do you plan to use geti™\?/i });
     }
 
     async fillRequestAccessReason(reason: string) {

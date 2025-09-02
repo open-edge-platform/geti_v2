@@ -22,7 +22,7 @@ import { AdjustmentsList } from './adjustments-list.component';
 
 import classes from './canvas-adjustments.module.scss';
 
-export const CanvasAdjustments = (): JSX.Element => {
+export const CanvasAdjustments = () => {
     const [isTooltipDisabled, setIsTooltipDisabled] = useState(false);
     const { canvasSettingsState, handleSaveConfig } = useAnnotatorCanvasSettings();
 
@@ -41,7 +41,7 @@ export const CanvasAdjustments = (): JSX.Element => {
                 <ActionButton isQuiet aria-label={'Canvas adjustments'}>
                     <Adjustments />
                 </ActionButton>
-                {(close): JSX.Element => (
+                {(close) => (
                     <Dialog height={'36rem'} width={'32rem'} UNSAFE_className={classes.canvasDialog}>
                         <Heading>
                             <Flex justifyContent={'space-between'} alignItems={'center'}>

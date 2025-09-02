@@ -36,6 +36,8 @@ import { VideoPlayerErrorReason } from './streaming-video-player.interface';
 import { useBufferStreamingQueries } from './use-buffer-streaming-queries.hook';
 import { BufferRange } from './utils';
 
+// Copyright (C) 2022-2025 Intel Corporation
+// LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 export interface VideoPlayerPlayerContextProps {
     videoRef: RefObject<HTMLVideoElement>;
     isPlaying: boolean;

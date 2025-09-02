@@ -18,7 +18,7 @@ interface AnnotationStateIndicatorProps {
     id: string;
 }
 
-export const AnnotationStateIndicator = ({ state, id }: AnnotationStateIndicatorProps): JSX.Element => {
+export const AnnotationStateIndicator = ({ state, id }: AnnotationStateIndicatorProps) => {
     const { isTaskChainProject } = useProject();
 
     return (

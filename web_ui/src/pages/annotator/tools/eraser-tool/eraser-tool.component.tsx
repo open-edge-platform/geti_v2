@@ -14,7 +14,7 @@ import { PointerType } from './..//tools.interface';
 interface ErasableCanvasProps {
     annotations: ReadonlyArray<Annotation>;
     scene: AnnotationScene;
-    canvasRef: RefObject<SVGSVGElement>;
+    canvasRef: RefObject<SVGSVGElement | null>;
     children: ReactNode;
 }
 

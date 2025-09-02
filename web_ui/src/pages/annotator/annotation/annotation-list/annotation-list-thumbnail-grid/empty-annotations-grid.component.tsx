@@ -7,7 +7,7 @@ import { Info } from '@geti/ui/icons';
 import { useTask } from '../../../providers/task-provider/task-provider.component';
 import { NOTIFICATION_MESSAGE } from '../utils';
 
-export const EmptyAnnotationsGrid = (): JSX.Element => {
+export const EmptyAnnotationsGrid = () => {
     const { setSelectedTask, previousTask, selectedTask } = useTask();
 
     const handleSelectPreviousTask = () => {

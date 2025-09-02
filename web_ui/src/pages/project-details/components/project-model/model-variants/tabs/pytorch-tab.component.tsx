@@ -18,13 +18,7 @@ interface PytorchTabProps {
     modelDetails: ModelDetails;
 }
 
-export const PytorchTab = ({
-    taskId,
-    version,
-    groupName,
-    modelTemplateName,
-    modelDetails,
-}: PytorchTabProps): JSX.Element => {
+export const PytorchTab = ({ taskId, version, groupName, modelTemplateName, modelDetails }: PytorchTabProps) => {
     const [selectedModel, setSelectedModel] = useState<PreselectedModel | undefined>(undefined);
 
     const getModelColumns = useColumnsModel({

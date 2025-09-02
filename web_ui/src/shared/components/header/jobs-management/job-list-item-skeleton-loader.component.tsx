@@ -7,13 +7,7 @@ import { Divider, Flex, Skeleton, View } from '@geti/ui';
 
 import classes from './job-list-item-skeleton-loader.module.scss';
 
-export const JobListItemSkeletonLoader = ({
-    itemCount = 3,
-    style,
-}: {
-    itemCount: number;
-    style?: CSSProperties;
-}): JSX.Element => {
+export const JobListItemSkeletonLoader = ({ itemCount = 3, style }: { itemCount: number; style?: CSSProperties }) => {
     return (
         <div data-testid='job-item-loader-list' role='progressbar' className={classes.skeletonContainer} style={style}>
             {[...Array(itemCount)].map((_elem, index) => (

@@ -22,7 +22,7 @@ const imageStyle = {
     fillOpacity: 0.38,
 };
 
-export const ImagePreviewControl = ({ type, onClick }: ImagePreviewControlProps): JSX.Element => {
+export const ImagePreviewControl = ({ type, onClick }: ImagePreviewControlProps) => {
     const position =
         type === ControlType.NEXT
             ? {

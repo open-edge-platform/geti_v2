@@ -10,7 +10,7 @@ import { useProjectIdentifier } from '../../../../hooks/use-project-identifier/u
 import { PageLayout } from '../../../../shared/components/page-layout/page-layout.component';
 import { TestDetails } from './test-details.component';
 
-export const ProjectTest = (): JSX.Element => {
+export const ProjectTest = () => {
     const projectIdentifier = useProjectIdentifier();
     const { testId } = useParams<{ testId: string }>();
 

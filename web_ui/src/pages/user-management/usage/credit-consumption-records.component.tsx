@@ -34,7 +34,7 @@ import classes from './usage.module.scss';
 
 const getMilliseconds = (date: DateValue) => String(date.toDate(getLocalTimeZone()).getTime());
 
-export const CreditConsumptionRecords = (): JSX.Element => {
+export const CreditConsumptionRecords = () => {
     const { organizationId, workspaceId } = useFirstWorkspaceIdentifier();
     const { useGetTransactions } = useTransactionsQueries();
     const [filterByDate, setFilterByDate] = useState<undefined | { fromDate: string; toDate: string }>(undefined);

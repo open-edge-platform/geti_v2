@@ -69,7 +69,7 @@ export const ModelCardMenu = ({
     modelTemplateId,
     projectIdentifier,
     isMenuOptionsDisabled,
-}: ModelCardMenuProps): JSX.Element => {
+}: ModelCardMenuProps) => {
     const { useGetOrganizationBalanceQuery } = useCreditsQueries();
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
     const { getCreditPrice, isLoading: isCreditsToConsumeLoading } = useTotalCreditPrice();

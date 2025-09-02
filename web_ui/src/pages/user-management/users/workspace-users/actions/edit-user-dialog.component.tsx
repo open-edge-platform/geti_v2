@@ -87,7 +87,7 @@ export const EditUserDialog = ({
     closeDialog,
     isSaasEnvironment,
     users,
-}: EditUserDialogProps): JSX.Element => {
+}: EditUserDialogProps) => {
     const { workspaces } = useWorkspaces();
     const isOrgAdmin = isOrganizationAdmin(activeUser, organizationId);
     const { useUpdateUser, useUpdateUserRoles, useUpdateMemberRole } = useUsers();

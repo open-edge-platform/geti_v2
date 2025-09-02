@@ -17,7 +17,7 @@ export const SvgToolCanvas: FC<PropsWithChildren<CanvasProps>> = ({
     canvasRef,
     onPointerDown,
     ...props
-}): JSX.Element => {
+}) => {
     const roi = roiFromImage(image);
 
     return (

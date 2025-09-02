@@ -22,7 +22,7 @@ jest.mock('../../../../hooks/use-history-block/use-history-block.hook', () => ({
     useHistoryBlock: jest.fn(),
 }));
 
-const App = ({ projectId }: { projectId: string }): JSX.Element => {
+const App = ({ projectId }: { projectId: string }) => {
     const navigate = useNavigate();
     const mockedProjectIdentifier = getMockedProjectIdentifier({ projectId, workspaceId: 'default' });
 

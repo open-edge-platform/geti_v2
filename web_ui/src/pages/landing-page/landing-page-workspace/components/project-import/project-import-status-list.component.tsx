@@ -12,7 +12,7 @@ import { ProjectImportStatus } from './project-import-status.component';
 
 import classes from './project-import.module.scss';
 
-export const ProjectImportStatusList = (): JSX.Element => {
+export const ProjectImportStatusList = () => {
     const { importItems } = useProjectsImportProvider();
 
     return (

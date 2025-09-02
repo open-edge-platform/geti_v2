@@ -65,7 +65,7 @@ export const TestMediaItemsList = ({
     shouldShowAnnotationIndicator,
     loadNextMedia,
     selectMediaItem,
-}: TestMediaItemsListProps): JSX.Element => {
+}: TestMediaItemsListProps) => {
     const { isLoading: isMediaItemsLoading, isFetchingNextPage, data } = mediaItemsQuery;
     const mediaItems = useMemo(() => data?.pages?.flatMap(({ media }) => media) ?? [], [data?.pages]);
 

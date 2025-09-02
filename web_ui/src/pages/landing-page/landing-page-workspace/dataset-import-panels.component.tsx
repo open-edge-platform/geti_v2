@@ -95,10 +95,7 @@ const DatasetImportJobStatus = ({
     return <></>;
 };
 
-export const DatasetImportPanels = ({
-    areProjectsLoading,
-    datasetImportDialogTrigger,
-}: DatasetImportPanelsProps): JSX.Element => {
+export const DatasetImportPanels = ({ areProjectsLoading, datasetImportDialogTrigger }: DatasetImportPanelsProps) => {
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
     const { useCancelJob } = useJobs({ organizationId, workspaceId });
     const datasetImportDeletionDialogTrigger = useOverlayTriggerState({});

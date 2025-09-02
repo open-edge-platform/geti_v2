@@ -24,7 +24,7 @@ export const AnnotationSceneProvider = ({
     children,
     annotations: initialAnnotations,
     activeUserId,
-}: AnnotationsProviderProps): JSX.Element => {
+}: AnnotationsProviderProps) => {
     const { undoRedoActions, ...annotationScene } = useAnnotationSceneState(initialAnnotations, labels, activeUserId);
 
     return (

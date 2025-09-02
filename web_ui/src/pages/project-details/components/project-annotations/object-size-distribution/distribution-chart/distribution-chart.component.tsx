@@ -31,7 +31,7 @@ interface DistributionChartProps {
 }
 const DownloadableScatterChart = withDownloadableSvg(ScatterChart);
 
-export const DistributionChart = ({ title, objectSizeDistribution, legend }: DistributionChartProps): JSX.Element => {
+export const DistributionChart = ({ title, objectSizeDistribution, legend }: DistributionChartProps) => {
     const { sizeDistribution, clusterWidthHeight, clusterCenter, aspectRatioThresholdWide, aspectRatioThresholdTall } =
         objectSizeDistribution;
     const [rx, ry] = clusterWidthHeight;

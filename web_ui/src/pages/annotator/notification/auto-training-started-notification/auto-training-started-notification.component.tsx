@@ -44,7 +44,7 @@ const useAutoTrainingStartedNotificationJobs = ({
     }, [enabled, jobsQuery.isSuccess, jobsQuery.data]);
 };
 
-export const AutoTrainingStartedNotification = ({ settings }: AutoTrainingStartedNotificationProps): JSX.Element => {
+export const AutoTrainingStartedNotification = ({ settings }: AutoTrainingStartedNotificationProps) => {
     const openedNotification = useRef(new Set<string>());
 
     const { project, projectIdentifier } = useProject();

@@ -5,7 +5,7 @@ import { Breadcrumb } from './breadcrumb/breadcrumb.component';
 import { BreadcrumbItemProps } from './breadcrumb/breadcrumb.interface';
 import { BreadcrumbsProps } from './breadcrumbs.interface';
 
-export const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps): JSX.Element => {
+export const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
     return (
         <nav aria-label='Breadcrumbs'>
             {breadcrumbs.map(({ id, breadcrumb, href }: BreadcrumbItemProps, index: number) => (

@@ -9,7 +9,7 @@ interface PinLabelButtonProps {
     labelId: string;
 }
 
-export const PinLabelButton = ({ pinLabel, labelId }: PinLabelButtonProps): JSX.Element => {
+export const PinLabelButton = ({ pinLabel, labelId }: PinLabelButtonProps) => {
     return (
         <ActionButton isQuiet onPress={() => pinLabel(labelId)} width='size-225' height='size-225'>
             <Pin aria-label={`${labelId}-pin-icon`} id={'pin-icon'} />

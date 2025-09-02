@@ -15,7 +15,7 @@ interface BackgroundLayoutProps {
     className?: ComponentProps<typeof View>['UNSAFE_className'];
 }
 
-export const BackgroundLayout = ({ children, height, className }: BackgroundLayoutProps): JSX.Element => (
+export const BackgroundLayout = ({ children, height, className }: BackgroundLayoutProps) => (
     <View UNSAFE_className={classes.backgroundLayout} minHeight={'100vh'} height={'100%'}>
         <View
             backgroundColor={'gray-50'}

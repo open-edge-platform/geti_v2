@@ -53,7 +53,7 @@ interface ExportAnalyticsDataProps {
     exportType: ExportAnalyticsType;
 }
 
-export const ExportAnalyticsData = ({ urls, exportType }: ExportAnalyticsDataProps): JSX.Element => {
+export const ExportAnalyticsData = ({ urls, exportType }: ExportAnalyticsDataProps) => {
     const { router } = useApplicationServices();
     const exportName = exportType.toLocaleLowerCase();
 

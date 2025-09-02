@@ -31,7 +31,7 @@ export const ProjectSorting = <T, K>({
     dateKey,
     setSortingOptions,
     sortingOptions,
-}: ProjectSortingProps<T, K>): JSX.Element => {
+}: ProjectSortingProps<T, K>) => {
     const handlerAction = (key: Key) => {
         const selectedAction = sortingActions.find((action: MenuAction) => action.key === key);
         selectedAction && selectedAction.action();

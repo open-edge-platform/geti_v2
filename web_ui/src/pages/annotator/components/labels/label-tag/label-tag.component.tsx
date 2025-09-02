@@ -14,7 +14,7 @@ interface LabelTagProps {
     isPointer?: boolean;
 }
 
-export const LabelTag = ({ id, label, onClick, isPointer }: LabelTagProps): JSX.Element => {
+export const LabelTag = ({ id, label, onClick, isPointer }: LabelTagProps) => {
     return (
         <Flex alignItems='center' gap='size-75'>
             <LabelColorThumb label={label} size={7} id={`${id}-color`} />

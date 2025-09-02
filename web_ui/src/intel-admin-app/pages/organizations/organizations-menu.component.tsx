@@ -17,7 +17,7 @@ interface OrganizationsMenuProps {
     organization: Organization;
 }
 
-export const OrganizationsMenu = ({ organization }: OrganizationsMenuProps): JSX.Element => {
+export const OrganizationsMenu = ({ organization }: OrganizationsMenuProps) => {
     const actionItems = getItemActions(organization.status);
     const { useUpdateOrganizationMutation } = useOrganizationsApi();
     const updateOrganization = useUpdateOrganizationMutation();
@@ -42,7 +42,7 @@ export const OrganizationsMenu = ({ organization }: OrganizationsMenuProps): JSX
         }
     };
 
-    const renderItem = (item: string): JSX.Element => {
+    const renderItem = (item: string) => {
         return (
             <Flex alignItems={'center'} gap={'size-50'}>
                 {item === OrganizationsMenuItems.DELETE ? (

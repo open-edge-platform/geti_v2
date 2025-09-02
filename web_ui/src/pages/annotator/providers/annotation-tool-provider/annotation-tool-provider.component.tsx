@@ -153,7 +153,7 @@ export const useActiveTool = () => {
     return [activeTool, toggleTool, toggleToolOnTaskChange, toolsSettingsContext] as const;
 };
 
-export const AnnotationToolProvider = ({ children }: AnnotationToolProviderProps): JSX.Element => {
+export const AnnotationToolProvider = ({ children }: AnnotationToolProviderProps) => {
     const scene: AnnotationScene = useAnnotationScene();
 
     const [activeTool, toggleTool, toggleToolOnTaskChange, { toolsSettings, getToolSettings, updateToolSettings }] =

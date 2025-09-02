@@ -50,7 +50,7 @@ export const TaskLabelsManagement = ({
     taskMetadata,
     projectLabels,
     domains,
-}: LabelsManagementProps): JSX.Element => {
+}: LabelsManagementProps) => {
     const { labels, relation, domain } = taskMetadata;
 
     const singleLabel: LabelTreeLabelProps | undefined =

@@ -39,7 +39,7 @@ export const AnomalyMediaContent = ({
     mediaUploadState,
     dispatch,
     onUploadMedia,
-}: AnomalyMediaContentProps): JSX.Element => {
+}: AnomalyMediaContentProps) => {
     const navigate = useNavigate();
     const datasetIdentifier = useDatasetIdentifier();
 
@@ -181,7 +181,7 @@ type MediaContentBucketWrapperProps = Omit<
     'contentBucketBodyClass' | 'contentBucketClass'
 >;
 
-function MediaContentBucketWrapper(props: MediaContentBucketWrapperProps): JSX.Element {
+function MediaContentBucketWrapper(props: MediaContentBucketWrapperProps) {
     const { media } = useMedia();
     const hasMediaItems = !isEmpty(media);
 

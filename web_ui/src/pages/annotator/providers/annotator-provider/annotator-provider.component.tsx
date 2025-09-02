@@ -54,7 +54,7 @@ interface AnnotatorProviderProps {
     children: ReactNode;
 }
 
-export const AnnotatorProvider = ({ children }: AnnotatorProviderProps): JSX.Element => {
+export const AnnotatorProvider = ({ children }: AnnotatorProviderProps) => {
     const { useActiveUser } = useUsers();
     const saveAnnotations = useSaveAnnotations();
     const { project, projectIdentifier } = useProject();
@@ -138,7 +138,7 @@ export const AnnotatorProvider = ({ children }: AnnotatorProviderProps): JSX.Ele
     );
 };
 
-export const MediaItemProvider = ({ children }: { children: ReactNode }): JSX.Element => {
+export const MediaItemProvider = ({ children }: { children: ReactNode }) => {
     const { selectedMediaItem, setSelectedMediaItem } = useSelectedMediaItem();
 
     const isFrame = selectedMediaItem !== undefined && isVideoFrame(selectedMediaItem);

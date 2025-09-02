@@ -16,7 +16,7 @@ jest.mock('react-router-dom', () => ({
     useLocation: () => jest.fn(),
 }));
 
-const wrapper = ({ children }: { children: ReactNode }): JSX.Element => {
+const wrapper = ({ children }: { children: ReactNode }) => {
     const datasetIdentifier = {
         workspaceId: 'workspace-id',
         projectId: 'project-id',

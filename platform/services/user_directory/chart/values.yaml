@@ -84,7 +84,7 @@ endpoints:
 
 # more info about escaping {{ in helm templates: https://github.com/helm/helm/issues/2798
 templates:
-  InvitationMailTopic: You have been invited to join Intel® Geti™
+  InvitationMailTopic: You have been invited to join Geti™
   InvitationMailMessage: |
     <div style="width:80%; margin:auto;background-color:white;font-family:tahoma,Helvetica,Arial,sans-serif;">
     <div style="width:16px; background-color:#00A3F6;float:left;height:100px;position: absolute;"></div>

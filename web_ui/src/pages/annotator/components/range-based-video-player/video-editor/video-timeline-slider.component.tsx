@@ -16,7 +16,7 @@ import classes from './video-player.module.scss';
 interface ThumbProps {
     state: SliderState;
     index: number;
-    trackRef: RefObject<HTMLDivElement>;
+    trackRef: RefObject<HTMLDivElement | null>;
 }
 const Thumb = ({ state, trackRef, index }: ThumbProps) => {
     const inputRef = useRef(null);

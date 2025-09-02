@@ -16,7 +16,7 @@ interface ModelLabelsProps {
     domain?: DOMAIN;
 }
 
-export const ModelLabels = ({ labels, domain }: ModelLabelsProps): JSX.Element => {
+export const ModelLabels = ({ labels, domain }: ModelLabelsProps) => {
     const { project, isTaskChainProject } = useProject();
 
     const filteredLabels = filterOutEmptyLabel(labels);

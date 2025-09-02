@@ -34,7 +34,7 @@ import { handleErrorMessageState } from './utils';
 
 import classes from './registration.module.scss';
 
-export const Registration = (): JSX.Element => {
+export const Registration = () => {
     const emailToken = useEmailToken();
     const [firstName, setFirstName] = useState<string>('');
     const [secondName, setSecondName] = useState<string>('');

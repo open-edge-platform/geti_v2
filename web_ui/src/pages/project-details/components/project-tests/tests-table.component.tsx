@@ -51,7 +51,7 @@ const ShowDotsFlashing = ({ isFlashing, children }: { isFlashing: boolean; child
     );
 };
 
-export const NoTests = (): JSX.Element => {
+export const NoTests = () => {
     const projectIdentifier = useProjectIdentifier();
 
     return (
@@ -73,7 +73,7 @@ export const NoTests = (): JSX.Element => {
     );
 };
 
-export const TestsTable = ({ tests, isLoading }: TestsTableProps): JSX.Element => {
+export const TestsTable = ({ tests, isLoading }: TestsTableProps) => {
     const collator = useCollator({});
     const { useDeleteTestMutation } = useTests();
     const { isSingleDomainProject, isTaskChainProject } = useProject();

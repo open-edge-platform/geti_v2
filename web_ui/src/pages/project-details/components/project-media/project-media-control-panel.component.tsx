@@ -43,7 +43,7 @@ export const ProjectMediaControlPanel = ({
     setViewMode,
     onCameraSelected,
     uploadMediaCallback,
-}: ProjectMediaControlPanelProps): JSX.Element => {
+}: ProjectMediaControlPanelProps) => {
     const { sortingOptions, setSortingOptions } = useSortingParams();
 
     const {

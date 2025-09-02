@@ -18,7 +18,7 @@ export const ModelVariantsMenuActions = ({
     modelId,
     downloadUrl,
     handleOpenRunTest,
-}: ModelVariantsMenuActionsProps): JSX.Element => {
+}: ModelVariantsMenuActionsProps) => {
     const { router } = useApplicationServices();
 
     const downloadHandler = () => {

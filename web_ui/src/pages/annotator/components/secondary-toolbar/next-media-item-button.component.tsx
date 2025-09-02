@@ -15,7 +15,7 @@ interface NextMediaItemButtonProps {
     selectMediaItem: (mediaItem: MediaItem) => void;
     selectedMediaItem: MediaItem | undefined;
 }
-export const NextMediaItemButton = ({ selectMediaItem, selectedMediaItem }: NextMediaItemButtonProps): JSX.Element => {
+export const NextMediaItemButton = ({ selectMediaItem, selectedMediaItem }: NextMediaItemButtonProps) => {
     // Use context to select annotation
     const annotationToolContext = useAnnotationToolContext();
     const nextMediaItem = useNextMediaItem(

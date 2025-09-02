@@ -21,7 +21,7 @@ import classes from './transform-zoom.module.scss';
     - Update the zoom state if the target or screenSize change
 */
 
-export const TransformZoom = ({ children }: { children?: ReactNode }): JSX.Element => {
+export const TransformZoom = ({ children }: { children?: ReactNode }) => {
     const { hotkeys } = useAnnotatorHotkeys();
 
     const { resetTransform } = useControls();

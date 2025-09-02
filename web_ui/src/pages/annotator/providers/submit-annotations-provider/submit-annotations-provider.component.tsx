@@ -44,7 +44,7 @@ export const SubmitAnnotationsProvider = ({
     discardAnnotations,
     currentMediaItem: mediaItem,
     annotations: userAnnotations,
-}: SubmitAnnotationsProviderProps): JSX.Element => {
+}: SubmitAnnotationsProviderProps) => {
     const [showFailDialog, setShowFailDialog] = useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
     const { resetToolPerAnnotation } = useAnalyticsAnnotationTools();

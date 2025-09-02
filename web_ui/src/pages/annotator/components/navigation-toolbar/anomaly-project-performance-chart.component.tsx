@@ -20,7 +20,7 @@ export const AnomalyProjectPerformanceChart = ({
     projectIdentifier,
     score,
     label,
-}: AnomalyProjectPerformanceChartProps): JSX.Element => {
+}: AnomalyProjectPerformanceChartProps) => {
     if (score === null) {
         return (
             <Heading width='size-1250' UNSAFE_style={{ fontWeight: 'bold', textAlign: 'center' }}>

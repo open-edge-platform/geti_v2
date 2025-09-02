@@ -24,7 +24,7 @@ enum LandingPageMenuOptions {
     USERS = 'Users',
 }
 
-export const LandingPageSidebar = (): JSX.Element => {
+export const LandingPageSidebar = () => {
     const { organizationId, workspaceId } = useFirstWorkspaceIdentifier();
 
     const { FEATURE_FLAG_STORAGE_SIZE_COMPUTATION } = useFeatureFlags();

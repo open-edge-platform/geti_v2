@@ -63,7 +63,7 @@ export const MediaItemsList = <T extends object>({
     idFormatter,
     getTextValue,
     onSelectionChange,
-}: MediaItemsListProps<T>): JSX.Element => {
+}: MediaItemsListProps<T>) => {
     const config = viewModeSettings[viewMode];
     const isDetails = viewMode === ViewModes.DETAILS;
     const layout = isDetails ? 'stack' : 'grid';

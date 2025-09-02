@@ -42,7 +42,7 @@ const DEFAULT_JOBS_COUNT: JobCount = {
     numberOfFailedJobs: null,
 };
 
-export const JobsDialog = ({ isFullScreen, onClose, setIsFullScreen }: JobsDialogProps): JSX.Element => {
+export const JobsDialog = ({ isFullScreen, onClose, setIsFullScreen }: JobsDialogProps) => {
     const RANGE_FILTER_TOOLTIP =
         'This component filters jobs by creation date. For example if you select a range' +
         ' between yesterday and today it will show jobs started yesterday or today. ';

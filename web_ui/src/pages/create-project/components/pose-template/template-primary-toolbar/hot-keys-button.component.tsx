@@ -29,7 +29,7 @@ const HotKeysItem = ({ text, children }: HotKeysItemProps) => {
         </Flex>
     );
 };
-export const HotKeysButton = (): JSX.Element => {
+export const HotKeysButton = () => {
     return (
         <DialogTrigger type={'popover'} mobileType={'modal'} placement={'right top'} hideArrow>
             <ActionButton isQuiet aria-label='Show dialog with hotkeys'>

@@ -11,7 +11,7 @@ export const AdjustmentImage = ({
     handleValueChange,
     defaultValue,
     formatOptions,
-}: AdjustmentHeaderProps): JSX.Element => {
+}: AdjustmentHeaderProps) => {
     return (
         <View>
             <AdjustmentHeader

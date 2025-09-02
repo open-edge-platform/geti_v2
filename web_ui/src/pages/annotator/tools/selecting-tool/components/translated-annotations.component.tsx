@@ -29,7 +29,7 @@ export const TranslatedAnnotations = ({
     translatedAnnotations,
     annotationToolContext,
     setTranslatedAnnotations,
-}: TranslatedAnnotationsProps): JSX.Element => {
+}: TranslatedAnnotationsProps) => {
     const {
         scene: { updateAnnotation },
     } = annotationToolContext;

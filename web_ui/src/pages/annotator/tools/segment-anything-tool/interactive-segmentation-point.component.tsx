@@ -10,12 +10,7 @@ interface InteractiveSegmentationPointProps extends InteractiveAnnotationPoint {
     isLoading: boolean;
 }
 
-export const InteractiveSegmentationPoint = ({
-    x,
-    y,
-    positive,
-    isLoading,
-}: InteractiveSegmentationPointProps): JSX.Element => {
+export const InteractiveSegmentationPoint = ({ x, y, positive, isLoading }: InteractiveSegmentationPointProps) => {
     const {
         zoomState: { zoom },
     } = useZoom();

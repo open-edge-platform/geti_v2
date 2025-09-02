@@ -40,7 +40,7 @@ const getGhostPolygon = (polygon: GhostPolygon | null, annotation: Annotation): 
     return { shape: annotation?.shape as Polygon, annotationId: annotation?.id };
 };
 
-export const BrushTool = ({ annotationToolContext, brushSize, showCirclePreview }: BrushToolProps): JSX.Element => {
+export const BrushTool = ({ annotationToolContext, brushSize, showCirclePreview }: BrushToolProps) => {
     const { tasks, selectedTask } = useTask();
     const { scene } = annotationToolContext;
     const {

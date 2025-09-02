@@ -3,7 +3,7 @@
 
 import { RotatedRectangleProps } from './shape.interface';
 
-export const RotatedRectangle = ({ shape, styles, className = '', ariaLabel }: RotatedRectangleProps): JSX.Element => {
+export const RotatedRectangle = ({ shape, styles, className = '', ariaLabel }: RotatedRectangleProps) => {
     const { x, y, width, height, angle } = shape;
 
     return (

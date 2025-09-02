@@ -10,10 +10,7 @@ interface ProjectStorageToggleButtonProps {
     isProjectsListViewVisible: boolean;
 }
 
-export const ProjectStorageToggleButton = ({
-    onPress,
-    isProjectsListViewVisible,
-}: ProjectStorageToggleButtonProps): JSX.Element => {
+export const ProjectStorageToggleButton = ({ onPress, isProjectsListViewVisible }: ProjectStorageToggleButtonProps) => {
     return (
         <ButtonWithSpectrumTooltip
             isQuiet

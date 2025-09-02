@@ -32,7 +32,7 @@ const TEXT_SECOND_LINE = 'you are ready to download and deploy your solution.';
 
     It renders the main screen plus 2 download dialogs, depending on the project type
 */
-export const ProjectDeployments = (): JSX.Element => {
+export const ProjectDeployments = () => {
     const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState<boolean>(false);
 
     const {

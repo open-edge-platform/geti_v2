@@ -20,7 +20,7 @@ interface EditLabelsProps {
     annotation: Annotation;
 }
 
-export const EditLabels = ({ annotation, setEditLabels }: EditLabelsProps): JSX.Element => {
+export const EditLabels = ({ annotation, setEditLabels }: EditLabelsProps) => {
     const { roi } = useROI();
     const { tasks, selectedTask } = useTask();
     const {

@@ -45,7 +45,7 @@ const SelectingStateContext = createContext<SelectingStateContextProps | undefin
 const INITIAL_ACTIVE_TOOL = SelectingToolType.SelectionTool;
 const INITIAL_POINT: Point = { x: 0, y: 0 };
 
-export const SelectingStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const SelectingStateProvider = ({ children }: StateProviderProps) => {
     const { getToolSettings, updateToolSettings } = useAnnotationToolContext();
     const selectionSettings = getToolSettings(ToolType.SelectTool);
 

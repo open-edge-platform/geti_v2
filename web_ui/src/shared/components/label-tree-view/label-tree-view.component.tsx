@@ -17,7 +17,7 @@ import { getIds, hasEqualId } from '../../utils';
 import { FlatTreeView } from './flat-tree-view.component';
 import { HierarchicalTreeView } from './hierarchical-tree-view.component';
 
-export const LabelTreeView = (props: LabelsTreeViewProps): JSX.Element => {
+export const LabelTreeView = (props: LabelsTreeViewProps) => {
     const { type, labelsTree, actions, domains = [], projectLabels = labelsTree, options } = props;
     const isEditable = type === Readonly.NO ? props.isInEditMode : false;
     const setLabelsValidationError = type === Readonly.NO ? props.setValidationError : false;

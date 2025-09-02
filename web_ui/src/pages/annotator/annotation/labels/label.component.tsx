@@ -54,15 +54,7 @@ export const SourceTooltip = ({ label }: { label: AnnotationLabel }) => {
     );
 };
 
-export const Label = ({
-    id,
-    label,
-    handleEditLabels,
-    hasChildren,
-    slots = 1,
-    zIndex,
-    maxWidth,
-}: LabelProps): JSX.Element => {
+export const Label = ({ id, label, handleEditLabels, hasChildren, slots = 1, zIndex, maxWidth }: LabelProps) => {
     const { selectedTask } = useTask();
     const pressHandler = { onPress: handleEditLabels };
     const { pressProps } = usePress({ ...pressHandler });

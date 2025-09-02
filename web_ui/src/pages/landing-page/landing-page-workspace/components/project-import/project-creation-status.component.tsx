@@ -21,7 +21,7 @@ interface ProjectCreationStatusProps {
     importItem: ProjectCreatingStatus & ProjectImportBase;
 }
 
-export const ProjectCreationStatus = ({ importItem }: ProjectCreationStatusProps): JSX.Element => {
+export const ProjectCreationStatus = ({ importItem }: ProjectCreationStatusProps) => {
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
     const queryClient = useQueryClient();
 

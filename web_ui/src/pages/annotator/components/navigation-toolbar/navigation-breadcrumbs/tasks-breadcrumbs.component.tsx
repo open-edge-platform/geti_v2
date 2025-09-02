@@ -26,7 +26,7 @@ export const TasksBreadcrumbs = ({
     selectedTask,
     allTasks = true,
     position = 'center',
-}: TasksBreadcrumbsProps): JSX.Element => {
+}: TasksBreadcrumbsProps) => {
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const isSceneBusy = useIsSceneBusy();
     const { setExplanationVisible } = usePrediction();

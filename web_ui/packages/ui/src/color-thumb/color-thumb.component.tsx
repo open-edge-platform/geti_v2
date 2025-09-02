@@ -11,7 +11,7 @@ export interface ColorThumbProps extends StyleProps {
     borderRadius?: ViewProps<5>['borderRadius'];
 }
 
-export const ColorThumb = ({ color, id, size = 10, ...viewProps }: ColorThumbProps): JSX.Element => {
+export const ColorThumb = ({ color, id, size = 10, ...viewProps }: ColorThumbProps) => {
     return (
         <View
             id={id}

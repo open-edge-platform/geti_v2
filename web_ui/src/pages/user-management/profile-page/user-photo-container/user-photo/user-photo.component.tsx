@@ -18,12 +18,7 @@ interface UserPhotoProps {
     isLoading: boolean;
 }
 
-export const UserPhoto = ({
-    userPhoto,
-    handleUploadClick,
-    handleDeleteUserPhoto,
-    isLoading,
-}: UserPhotoProps): JSX.Element => {
+export const UserPhoto = ({ userPhoto, handleUploadClick, handleDeleteUserPhoto, isLoading }: UserPhotoProps) => {
     const { pressProps } = usePress({ onPress: handleUploadClick });
     const width = 'size-1600';
     const height = 'size-1600';

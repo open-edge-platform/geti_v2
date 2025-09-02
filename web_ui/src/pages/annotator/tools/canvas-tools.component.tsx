@@ -4,7 +4,7 @@
 import { ToolAnnotationContextProps } from './tools.interface';
 import useActiveTool from './use-active-tool';
 
-export const CanvasTools = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const CanvasTools = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const activeTool = useActiveTool(annotationToolContext);
 
     if (activeTool === undefined) return <></>;

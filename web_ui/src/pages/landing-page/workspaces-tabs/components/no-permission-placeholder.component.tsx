@@ -14,7 +14,7 @@ export const NoPermissionPlaceholder = (): JSX.Element => {
                 minHeight={'size-3400'}
                 margin={0}
                 id='no-permission-area'
-                data-testid={'no-permission-to-tab'}
+                role='region'
                 aria-label='No permission to view workspace'
                 isSelectable={false}
                 flex={'1'}

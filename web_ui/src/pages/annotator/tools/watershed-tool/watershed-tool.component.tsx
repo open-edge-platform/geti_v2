@@ -21,7 +21,7 @@ import { useWatershedState } from './watershed-state-provider.component';
 
 const MIN_NUMBER_OF_REQUIRED_UNIQUE_MARKERS = 2;
 
-export const WatershedTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const WatershedTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { getToolSettings, scene } = annotationToolContext;
     const {
         zoomState: { zoom },

@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { DOMAIN } from '../../../core/projects/core.interface';
 import { TaskMetadata } from '../../../core/projects/task.interface';
 
@@ -12,7 +14,7 @@ export interface NewProjectDialogContextProps {
     goToNextStep: (() => void | null) | undefined;
     goToPreviousStep: (() => void | null) | undefined;
     resetSteps: () => void;
-    content: JSX.Element;
+    content: ReactNode;
     validationError?: { tree: string | undefined; labels: boolean };
 }
 
@@ -36,7 +38,7 @@ interface ProjectLabelsManagementProps {
 export type ProjectMetadata = SelectProjectTemplateProps & ProjectLabelsManagementProps;
 
 export interface StepInterface {
-    component: JSX.Element;
+    component: ReactNode;
     next: STEPS | null;
     previous: STEPS | null;
     key: STEPS;

@@ -20,10 +20,7 @@ interface WorkspaceUsersPanelProps {
     setSelectedWorkspace: (key: string | undefined) => void;
 }
 
-export const WorkspaceUsersPanel = ({
-    selectedWorkspace,
-    setSelectedWorkspace,
-}: WorkspaceUsersPanelProps): JSX.Element => {
+export const WorkspaceUsersPanel = ({ selectedWorkspace, setSelectedWorkspace }: WorkspaceUsersPanelProps) => {
     const { workspaces } = useWorkspaces();
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
     const items = [ALL_WORKSPACES, ...workspaces.map(({ id, name }) => ({ id, text: name }))];

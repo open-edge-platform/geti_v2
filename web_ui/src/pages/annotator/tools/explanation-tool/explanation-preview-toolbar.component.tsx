@@ -12,10 +12,7 @@ export interface ExplanationPreviewToolbarProps {
     selectedExplanation?: Explanation;
 }
 
-export const ExplanationPreviewToolbar = ({
-    explanations,
-    selectedExplanation,
-}: ExplanationPreviewToolbarProps): JSX.Element => {
+export const ExplanationPreviewToolbar = ({ explanations, selectedExplanation }: ExplanationPreviewToolbarProps) => {
     const { setSelectedExplanation } = usePrediction();
 
     useEffect(() => {

@@ -22,7 +22,7 @@ interface OrganizationsPickerProps {
     isLargeSize: boolean;
 }
 
-export const OrganizationsPicker = ({ isLargeSize }: OrganizationsPickerProps): JSX.Element => {
+export const OrganizationsPicker = ({ isLargeSize }: OrganizationsPickerProps) => {
     const triggerRef = useRef(null);
 
     const onboardUserMutation = useOnboardUserMutation();

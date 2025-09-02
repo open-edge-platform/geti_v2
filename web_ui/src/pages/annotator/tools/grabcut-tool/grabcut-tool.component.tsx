@@ -31,7 +31,7 @@ interface Markers {
     ariaLabel: string;
 }
 
-const ShowMarkers = ({ markers, strokeWidth }: { markers: [Markers, Markers]; strokeWidth: number }): JSX.Element => (
+const ShowMarkers = ({ markers, strokeWidth }: { markers: [Markers, Markers]; strokeWidth: number }) => (
     <>
         {markers?.map(({ marker, color, ariaLabel }) =>
             marker?.map((points, idx) => {
@@ -50,7 +50,7 @@ const ShowMarkers = ({ markers, strokeWidth }: { markers: [Markers, Markers]; st
     </>
 );
 
-export const GrabcutTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const GrabcutTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { defaultLabel } = useTask();
     const { image } = useROI();
     const { scene, getToolSettings } = annotationToolContext;

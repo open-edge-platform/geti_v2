@@ -13,7 +13,7 @@ interface CPSelectableProps<T extends string | number> extends ResetButtonHandle
     parameter: SelectableGroupParams<T, ConfigGroupParametersDataTypesDTO>;
 }
 
-export const CPSelectableList = <T extends string | number>(props: CPSelectableProps<T>): JSX.Element => {
+export const CPSelectableList = <T extends string | number>(props: CPSelectableProps<T>) => {
     const { id, parameter, updateParameter } = props;
     const { value, options, id: parameterId } = parameter;
 

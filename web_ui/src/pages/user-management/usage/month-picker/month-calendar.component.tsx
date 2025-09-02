@@ -23,7 +23,7 @@ import { range } from 'lodash-es';
 
 import { CalendarCell } from './calendar-cell.component';
 
-export const MonthCalendar = (props: CalendarProps<DateValue> & StyleProps): JSX.Element => {
+export const MonthCalendar = (props: CalendarProps<DateValue> & StyleProps) => {
     const { locale } = useLocale();
     const state = useCalendarState({ ...props, locale, createCalendar, visibleDuration: { years: 1 } });
     const ref = useRef<DOMRefValue>(null);

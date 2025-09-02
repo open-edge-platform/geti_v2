@@ -12,10 +12,7 @@ import { useZoom } from '../../zoom/zoom-provider.component';
 
 import zoomClasses from '../../zoom/transform-zoom-annotation.module.scss';
 
-export const TransformZoom: FC<PropsWithChildren<{ mediaItem: MediaItem }>> = ({
-    children,
-    mediaItem,
-}): JSX.Element => {
+export const TransformZoom: FC<PropsWithChildren<{ mediaItem: MediaItem }>> = ({ children, mediaItem }) => {
     const { resetTransform } = useControls();
     const ref = useSyncScreenSize();
     const { isPanning, isPanningDisabled, zoomTarget, screenSize, setZoomTargetOnRoi, zoomState } = useZoom();

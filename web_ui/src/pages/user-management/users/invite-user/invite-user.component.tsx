@@ -32,7 +32,7 @@ interface InviteUserProps extends WorkspaceIdentifier {
     id: string;
     isAdmin: boolean;
 }
-export const InviteUser = ({ isAdmin, id, organizationId, workspaceId }: InviteUserProps): JSX.Element => {
+export const InviteUser = ({ isAdmin, id, organizationId, workspaceId }: InviteUserProps) => {
     const roles = isAdmin
         ? [USER_ROLE.WORKSPACE_CONTRIBUTOR, USER_ROLE.WORKSPACE_ADMIN]
         : [USER_ROLE.WORKSPACE_CONTRIBUTOR];

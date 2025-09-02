@@ -33,7 +33,7 @@ const useReopenSideBar = (isLargeSize: boolean): { isOpen: boolean; setIsOpen: D
     return { isOpen, setIsOpen };
 };
 
-export const Sidebar = ({ annotationToolContext, settings }: SidebarProps): JSX.Element => {
+export const Sidebar = ({ annotationToolContext, settings }: SidebarProps) => {
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const { selectedMediaItem } = useSelectedMediaItem();
     const { isOpen, setIsOpen } = useReopenSideBar(isLargeSize);

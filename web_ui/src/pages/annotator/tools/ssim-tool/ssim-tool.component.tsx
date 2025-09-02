@@ -23,7 +23,7 @@ import { convertRectToShape } from './util';
 
 import classes from './ssim-tool.module.scss';
 
-export const SSIMTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const SSIMTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { defaultLabel } = useTask();
     const { scene, getToolSettings } = annotationToolContext;
     const {

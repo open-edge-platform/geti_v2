@@ -61,7 +61,7 @@ const useAnnotations = (annotationToolContext: AnnotationToolContext) => {
     return isActiveLearningMode ? annotations : predictionAnnotations;
 };
 
-export const AnnotationListCounting = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const AnnotationListCounting = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const annotations = useAnnotations(annotationToolContext);
 
     const { tasks } = useTask();

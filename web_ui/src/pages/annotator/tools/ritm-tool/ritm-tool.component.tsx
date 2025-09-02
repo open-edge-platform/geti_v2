@@ -36,7 +36,7 @@ import classes from './ritm.module.scss';
 // Adding 1 to prevent template_size, and box size being exact same size, causing some issues.
 const MINIMUM_MARGIN = RITM_TEMPLATE_SIZE / 2 + 1;
 
-export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { defaultLabel, activeDomains } = useTask();
     const { getToolSettings } = annotationToolContext;
     const {
@@ -147,7 +147,7 @@ export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps):
         execute(clampBox(currentBox, ROI), points, outputShape);
     };
 
-    const renderResult = ({ shape }: RITMResult): JSX.Element => {
+    const renderResult = ({ shape }: RITMResult) => {
         if (shape === undefined || isPoseShape(shape)) {
             return <></>;
         }
@@ -171,7 +171,7 @@ export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps):
         }
     };
 
-    const renderPoint = ({ x, y, positive }: RITMPoint, index: number): JSX.Element => {
+    const renderPoint = ({ x, y, positive }: RITMPoint, index: number) => {
         const fill = positive ? 'green' : 'red';
 
         return (
@@ -184,7 +184,7 @@ export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps):
         );
     };
 
-    const renderLoadingPoint = ({ x, y, positive }: RITMPoint): JSX.Element => {
+    const renderLoadingPoint = ({ x, y, positive }: RITMPoint) => {
         const fill = positive ? 'green' : 'red';
 
         return (

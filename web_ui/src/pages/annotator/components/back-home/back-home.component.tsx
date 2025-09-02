@@ -70,7 +70,7 @@ const getSortingParams = (searchParams: URLSearchParams, hasFilter: boolean): st
     return `${separator}sortBy=${sortBy}&sortDirection=${sortDirection}`;
 };
 
-export const BackHome = (): JSX.Element => {
+export const BackHome = () => {
     const navigate = useNavigate();
     const datasetIdentifier = useDatasetIdentifier();
     const { confirmSaveAnnotations } = useSubmitAnnotations();

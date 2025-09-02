@@ -10,7 +10,7 @@ interface EmptyDataTrainingProgressProps {
     tasks: Task[];
 }
 
-export const EmptyDataTrainingProgress = ({ isTaskChain, tasks }: EmptyDataTrainingProgressProps): JSX.Element => {
+export const EmptyDataTrainingProgress = ({ isTaskChain, tasks }: EmptyDataTrainingProgressProps) => {
     if (isTaskChain) {
         return (
             <>

@@ -24,7 +24,7 @@ export const WorkspaceRoleRow = ({
     changeRole,
     workspaces,
     deletable = false,
-}: WorkspaceRoleProps): JSX.Element => {
+}: WorkspaceRoleProps) => {
     const { workspace, role } = workspaceRole;
 
     return (

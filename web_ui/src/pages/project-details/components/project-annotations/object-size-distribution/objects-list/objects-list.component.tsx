@@ -19,12 +19,7 @@ interface ObjectsListProps {
     setSelectedLabelKey: Dispatch<SetStateAction<string>>;
 }
 
-export const ObjectsList = ({
-    labels,
-    objectSizes,
-    selectedLabelKey,
-    setSelectedLabelKey,
-}: ObjectsListProps): JSX.Element => {
+export const ObjectsList = ({ labels, objectSizes, selectedLabelKey, setSelectedLabelKey }: ObjectsListProps) => {
     const handleLabelChange = (label: Key): void => {
         setSelectedLabelKey(String(label));
     };

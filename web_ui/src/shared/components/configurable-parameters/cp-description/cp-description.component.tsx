@@ -8,7 +8,7 @@ interface CPDescriptionProps {
     id: string;
 }
 
-export const CPDescription = ({ description, id }: CPDescriptionProps): JSX.Element => {
+export const CPDescription = ({ description, id }: CPDescriptionProps) => {
     return (
         <>
             <Flex marginY={'size-100'} id={id}>
