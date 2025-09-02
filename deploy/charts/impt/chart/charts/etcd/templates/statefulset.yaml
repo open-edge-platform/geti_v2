@@ -13,7 +13,7 @@ spec:
   ## If you are increasing the replica count of an existing cluster, you should
   ## also update the --initial-cluster-state flag as noted further down in the
   ## container configuration.
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   ##
   ## For initialization, the etcd pods must be available to eachother before
   ## they are "ready" for traffic. The "Parallel" policy makes this possible.
