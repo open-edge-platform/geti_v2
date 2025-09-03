@@ -1,3 +1,3 @@
-include ../../../../../libs/Makefile.shared-python-libs
+include ../../../../../../Makefile.shared
 
 #TODO: add possibility to regenerate .py files based on proto
