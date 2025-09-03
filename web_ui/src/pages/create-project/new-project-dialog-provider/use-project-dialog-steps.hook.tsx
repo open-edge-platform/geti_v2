@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { SetValidationProps, ValidationErrorType } from '../../../core/labels/label-tree-view.interface';
 import { DOMAIN } from '../../../core/projects/core.interface';
@@ -30,7 +30,7 @@ interface UseProjectDialogSteps {
     goToNextStep: () => void;
     goToPreviousStep: () => void;
     resetSteps: () => void;
-    component: JSX.Element;
+    component: ReactNode;
     validationError: { tree: string | undefined; labels: boolean };
 }
 

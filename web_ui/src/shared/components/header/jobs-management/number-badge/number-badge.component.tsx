@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { Loading, Text, useNumberFormatter, View, type StyleProps, type ViewProps } from '@geti/ui';
 
 import classes from './number-badge.module.scss';
@@ -14,12 +16,12 @@ interface NumberBadgeProps {
 }
 
 interface CircleBadgeProps extends StyleProps {
-    children: JSX.Element;
+    children: ReactNode;
     id?: string;
     backgroundColor?: ViewProps<5>['backgroundColor'];
 }
 
-const CircleBadge = ({ children, ...viewProps }: CircleBadgeProps): JSX.Element => {
+const CircleBadge = ({ children, ...viewProps }: CircleBadgeProps) => {
     return (
         <View {...viewProps} borderRadius={'large'} width={'size-200'} height={'size-200'}>
             {children}
@@ -43,7 +45,7 @@ export const NumberBadge = ({
     isPending,
     isSelected = false,
     isAccented = false,
-}: NumberBadgeProps): JSX.Element => {
+}: NumberBadgeProps) => {
     const formatter = useNumberFormatter({ notation: 'compact' });
 
     if (isPending || jobsNumber === null) {

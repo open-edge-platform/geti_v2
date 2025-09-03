@@ -11,7 +11,7 @@ interface PropagateAnnotationsButtonProps {
     onPress?: () => void;
 }
 
-export const PropagateAnnotationsButton = ({ isDisabled, onPress }: PropagateAnnotationsButtonProps): JSX.Element => {
+export const PropagateAnnotationsButton = ({ isDisabled, onPress }: PropagateAnnotationsButtonProps) => {
     return (
         <TooltipWithDisableButton
             placement={'top'}

@@ -67,7 +67,7 @@ import { UsersRoute } from './users/index.route';
 // https://www.robinwieruch.de/react-router-lazy-loading/
 // https://github.com/remix-run/react-router/discussions/9393
 
-const AppProviders = (): JSX.Element => {
+const AppProviders = () => {
     const isSaaS = useIsSaasEnv();
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
 

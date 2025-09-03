@@ -26,7 +26,7 @@ export const insufficientStorageMessage =
 
 const datasetPagePath = (datasetIdentifier: DatasetIdentifier) => paths.project.dataset.index(datasetIdentifier);
 
-export const AcceptButton = ({ isDisabled, navigate }: AcceptButtonProps): JSX.Element => {
+export const AcceptButton = ({ isDisabled, navigate }: AcceptButtonProps) => {
     const { ...datasetIdentifier } = useCameraParams();
     const { mediaUploadState, onUploadMedia } = useDatasetMediaUpload();
     const { savedFilesQuery, updateMany, deleteMany } = useCameraStorage();

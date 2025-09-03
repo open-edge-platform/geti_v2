@@ -38,7 +38,7 @@ export const MediaFilterValueLabel = ({
     value = '',
     isDisabled = false,
     onSelectionChange,
-}: MediaFilterValueLabelProps): JSX.Element => {
+}: MediaFilterValueLabelProps) => {
     const {
         project: { labels, tasks },
     } = useProject();

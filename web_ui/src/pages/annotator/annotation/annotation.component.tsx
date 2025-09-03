@@ -21,13 +21,7 @@ interface AnnotationProps {
 }
 
 export const Annotation = memo(
-    ({
-        maskId,
-        annotation,
-        isPredictionMode = false,
-        selectedTask = null,
-        isOverlap = false,
-    }: AnnotationProps): JSX.Element => {
+    ({ maskId, annotation, isPredictionMode = false, selectedTask = null, isOverlap = false }: AnnotationProps) => {
         const isHovered = useIsHovered(annotation.id);
         const { isSelected, id, labels } = annotation;
 

@@ -15,7 +15,7 @@ interface MonthPickerProps extends CalendarProps<DateValue> {
     isButtonQuiet?: boolean;
 }
 
-export const MonthPicker = (props: MonthPickerProps): JSX.Element => {
+export const MonthPicker = (props: MonthPickerProps) => {
     const ref = useRef(null);
     const state = useOverlayTriggerState({});
     return (

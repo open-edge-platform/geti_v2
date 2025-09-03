@@ -16,7 +16,7 @@ interface ProjectPerformanceDetailsProps {
     id: string;
 }
 
-const ProjectPerformanceDetails = ({ score, title, id }: ProjectPerformanceDetailsProps): JSX.Element => {
+const ProjectPerformanceDetails = ({ score, title, id }: ProjectPerformanceDetailsProps) => {
     if (score === null) {
         return <></>;
     }
@@ -31,7 +31,7 @@ const ProjectPerformanceDetails = ({ score, title, id }: ProjectPerformanceDetai
     );
 };
 
-export const ProjectPerformance = ({ performance }: ProjectPerformanceProps): JSX.Element => {
+export const ProjectPerformance = ({ performance }: ProjectPerformanceProps) => {
     if (performance.score === null) {
         return <></>;
     }

@@ -33,7 +33,7 @@ interface LabelTreeViewItemMenuProps {
     itemId: string;
 }
 
-export const LabelTreeViewItemMenu = ({ isAvailable, actions, itemId }: LabelTreeViewItemMenuProps): JSX.Element => {
+export const LabelTreeViewItemMenu = ({ isAvailable, actions, itemId }: LabelTreeViewItemMenuProps) => {
     return (
         <Flex
             minWidth={`${LABEL_ITEM_MENU_PLACEHOLDER_WIDTH}rem`}

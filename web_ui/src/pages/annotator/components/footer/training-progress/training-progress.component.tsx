@@ -18,7 +18,7 @@ interface TrainingProgressProps {
     training: TrainingDetails;
 }
 
-export const TrainingProgress = ({ training }: TrainingProgressProps): JSX.Element => {
+export const TrainingProgress = ({ training }: TrainingProgressProps) => {
     const formatter = useNumberFormatter({ style: 'percent', maximumFractionDigits: 0 });
 
     const { message, progress = 0 } = training;

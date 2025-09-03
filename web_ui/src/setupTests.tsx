@@ -86,14 +86,12 @@ jest.mock('@opentelemetry/core/build/src/platform/node/timer-util.js', () => ({ 
 
 jest.mock('react-aria-components', () => {
     const { Virtualizer, ...rest } = jest.requireActual('react-aria-components');
-    const { forwardRef } = jest.requireActual('react');
 
-    const mockVirtualizer = () =>
-        forwardRef((props: Record<string, unknown>, ref: unknown) => {
-            const layoutOptions = props.layoutOptions ?? {};
-            // "rowHeight" is necessary for testing purposes, or the container will render empty
-            return <Virtualizer {...props} layoutOptions={{ ...layoutOptions, rowHeight: 50 }} ref={ref} />;
-        });
+    const mockVirtualizer = () => (props: Record<string, unknown>, ref: unknown) => {
+        const layoutOptions = props.layoutOptions ?? {};
+        // "rowHeight" is necessary for testing purposes, or the container will render empty
+        return <Virtualizer {...props} layoutOptions={{ ...layoutOptions, rowHeight: 50 }} ref={ref} />;
+    };
 
     return { Virtualizer: mockVirtualizer(), ...rest };
 });

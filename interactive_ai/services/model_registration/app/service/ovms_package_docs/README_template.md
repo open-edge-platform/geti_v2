@@ -1,6 +1,6 @@
 # OpenVINO™ Model Server deployment package
 
-This package contains a Intel® Geti™ Model ready to deploy on OpenVINO™ Model Server.
+This package contains a Geti™ Model ready to deploy on OpenVINO™ Model Server.
 After deploying the model on OpenVINO™ Model Server, inference on the model can be performed with easy to use HTTP interface.
 
 ## Prerequisites
@@ -94,7 +94,7 @@ infer("image.jpg").then((response) => {
 Request payload:
 ```json
 {
-  "model": <str; name of the Intel® Geti™ model graph>,
+  "model": <str; name of the Geti™ model graph>,
   "input": {
     "image": <str; input image encoded in base64>
   }

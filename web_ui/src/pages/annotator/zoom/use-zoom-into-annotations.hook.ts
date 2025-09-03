@@ -13,7 +13,7 @@ import { useTask } from '../providers/task-provider/task-provider.component';
 import { useZoom, ZoomTarget } from './zoom-provider.component';
 
 export const useZoomIntoAnnotation = (): void => {
-    const { setZoomTarget, zoomTarget } = useZoom();
+    const { setZoomTarget } = useZoom();
     const { selectedMediaItem } = useSelectedMediaItem();
     const { tasks, selectedTask, previousTask } = useTask();
     const { annotations } = useAnnotationScene();
@@ -25,7 +25,7 @@ export const useZoomIntoAnnotation = (): void => {
         [taskAnnotations]
     );
 
-    const zoomIntoAnnotation = useCallback(() => {
+    const getSelectedAnnotationZoomTarget = useCallback((): ZoomTarget => {
         // Suppose we are in a Detection -> Classification or Detection -> Segmentation task, then
         // we want to zoom into selected annotations if the user selected the Classification,
         // or Segmentation tasks
@@ -36,14 +36,10 @@ export const useZoomIntoAnnotation = (): void => {
             return;
         }
 
-        const boundingBox = getShapesBoundingBox(shapes);
+        return getShapesBoundingBox(shapes);
+    }, [selectedAnnotations]);
 
-        setZoomTarget((oldTarget) => {
-            return isEqual(oldTarget, boundingBox) ? oldTarget : boundingBox;
-        });
-    }, [selectedAnnotations, setZoomTarget]);
-
-    const resetZoom = useCallback(() => {
+    const getImageZoomTarget = useCallback((): ZoomTarget => {
         if (!selectedMediaItem) {
             return;
         }
@@ -54,23 +50,22 @@ export const useZoomIntoAnnotation = (): void => {
         // We need to compare the image target (which is the initial target) with the current zoomTarget
         const imageTargetConfig = { x: 0, y: 0, width, height } as ZoomTarget;
 
-        const targetChanged = !isEqual(imageTargetConfig, zoomTarget);
-
-        if (targetChanged) {
-            setZoomTarget(imageTargetConfig);
-        }
-    }, [zoomTarget, selectedMediaItem, setZoomTarget]);
+        return imageTargetConfig;
+    }, [selectedMediaItem]);
 
     // If the user changes to from a global to a local task we zoom into the annotation
     // Otherwise we reset the zoomTarget
     useEffect(() => {
         const previousTaskWasLocalTask = !isNil(previousTask) || (isNil(previousTask) && tasks.length === 2);
 
-        if (previousTaskWasLocalTask && selectedAnnotations.length) {
-            zoomIntoAnnotation();
-        } else {
-            resetZoom();
-        }
+        const newTarget =
+            previousTaskWasLocalTask && selectedAnnotations.length
+                ? getSelectedAnnotationZoomTarget()
+                : getImageZoomTarget();
+
+        setZoomTarget((oldTarget) => {
+            return isEqual(oldTarget, newTarget) ? oldTarget : newTarget;
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [previousTask, selectedAnnotations.length, tasks.length, zoomIntoAnnotation]);
+    }, [previousTask, selectedAnnotations.length, tasks.length, getSelectedAnnotationZoomTarget]);
 };

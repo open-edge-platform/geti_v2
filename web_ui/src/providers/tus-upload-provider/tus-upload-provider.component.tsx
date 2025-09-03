@@ -31,7 +31,7 @@ interface TusUploadProps {
     children: ReactNode;
 }
 
-export const TusUploadProvider = ({ children }: TusUploadProps): JSX.Element => {
+export const TusUploadProvider = ({ children }: TusUploadProps) => {
     const [activeUploads, setActiveUploads] = useState<Map<string, Upload>>(new Map());
 
     const setActiveUpload = (id: string, upload: Upload): void => {

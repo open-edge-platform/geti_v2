@@ -15,7 +15,7 @@ interface SelectableTabProps extends Pick<ConfigurableParametersMany, 'setSelect
     component: ConfigurableParametersComponents;
 }
 
-export const SelectableTab = ({ component, isSelected, setSelectedComponentId }: SelectableTabProps): JSX.Element => {
+export const SelectableTab = ({ component, isSelected, setSelectedComponentId }: SelectableTabProps) => {
     // TODO: remove this after backend capitalises the strings on the server side
     const capitalizedHeader = component.header
         .split(' ')

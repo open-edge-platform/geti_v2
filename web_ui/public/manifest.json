@@ -1,11 +1,11 @@
 {
-  "short_name": "Intel® Geti™",
-  "name": "Intel® Geti™",
+  "short_name": "Geti™",
+  "name": "Geti™",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff",
-  "description": "Intel® Geti™",
+  "description": "Geti™",
   "icons": [
     {
       "src": "geti-favicon-32.png",

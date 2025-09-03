@@ -14,7 +14,7 @@ interface RecommendedModelTagProps {
     performanceCategory: PerformanceCategory;
 }
 
-export const RecommendedModelTag = ({ id, performanceCategory }: RecommendedModelTagProps): JSX.Element => {
+export const RecommendedModelTag = ({ id, performanceCategory }: RecommendedModelTagProps) => {
     return (
         <Tag
             withDot={false}

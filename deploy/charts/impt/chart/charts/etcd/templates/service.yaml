@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "etcd.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.service.type }}
+  clusterIP: None
+  selector:
+    {{- include "etcd.selectorLabels" .| nindent 4 }}
+  ##
+  ## Ideally we would use SRV records to do peer discovery for initialization.
+  ## Unfortunately discovery will not work without logic to wait for these to
+  ## populate in the container. This problem is relatively easy to overcome by
+  ## making changes to prevent the etcd process from starting until the records
+  ## have populated. The documentation on statefulsets briefly talk about it.
+  ##   https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id
+  publishNotReadyAddresses: true
+  ##
+  ## The naming scheme of the client and server ports match the scheme that etcd
+  ## uses when doing discovery with SRV records.
+  ports:
+  - name: etcd-client
+    port: {{ .Values.service.port.client }}
+  - name: etcd-server
+    port: {{ .Values.service.port.server }}
+  - name: etcd-metrics
+    port: {{ .Values.service.port.metrics }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "etcd.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "etcd.selectorLabels" .| nindent 4 }}
+  ##
+  ## Ideally we would use SRV records to do peer discovery for initialization.
+  ## Unfortunately discovery will not work without logic to wait for these to
+  ## populate in the container. This problem is relatively easy to overcome by
+  ## making changes to prevent the etcd process from starting until the records
+  ## have populated. The documentation on statefulsets briefly talk about it.
+  ##   https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id
+  publishNotReadyAddresses: true
+  ##
+  ## The naming scheme of the client and server ports match the scheme that etcd
+  ## uses when doing discovery with SRV records.
+  ports:
+  - name: etcd-client
+    port: {{ .Values.service.port.client }}
+  - name: etcd-server
+    port: {{ .Values.service.port.server }}
+  - name: etcd-metrics
+    port: {{ .Values.service.port.metrics }}

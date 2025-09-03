@@ -33,7 +33,7 @@ jest.mock('../../../providers/region-of-interest-provider/region-of-interest-pro
 }));
 
 jest.mock('./../../../zoom/zoom-provider.component', () => ({
-    useZoom: jest.fn(() => ({ zoomState: { zoom: 1.0, translation: { x: 0, y: 0 } } })),
+    useZoomState: jest.fn(() => ({ zoom: 1.0, translation: { x: 0, y: 0 } })),
 }));
 
 const renderApp = async (

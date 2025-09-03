@@ -12,7 +12,7 @@ import { downloadFile, hasEqualId } from '../../shared/utils';
 import { FacingMode, Screenshot, UserCameraPermission, UserCameraPermissionError } from './camera.interface';
 
 export interface UseCameraProps {
-    webcamRef: RefObject<Webcam>;
+    webcamRef: RefObject<Webcam | null>;
 
     handleDownloadImage: (screenshotId: string) => void;
     handleDownloadVideo: () => void;

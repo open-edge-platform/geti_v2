@@ -24,7 +24,7 @@ interface JobsListItemStatusProps {
     onExpandChange?: () => void;
 }
 
-export const JobsListItemStatus = ({ expanded = false, job, onExpandChange }: JobsListItemStatusProps): JSX.Element => {
+export const JobsListItemStatus = ({ expanded = false, job, onExpandChange }: JobsListItemStatusProps) => {
     const [jobStepsExpanded, setJobStepsExpanded] = useState<boolean>(expanded);
 
     const onExpandHandler = () => {

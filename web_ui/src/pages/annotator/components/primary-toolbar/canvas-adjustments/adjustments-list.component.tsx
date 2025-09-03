@@ -14,7 +14,7 @@ interface AdjustmentsListProps {
     canvasSettingsConfig: UseCanvasSettingsState;
 }
 
-export const AdjustmentsList = ({ canvasSettingsConfig }: AdjustmentsListProps): JSX.Element => {
+export const AdjustmentsList = ({ canvasSettingsConfig }: AdjustmentsListProps) => {
     const [canvasSettings, handleCanvasSetting] = canvasSettingsConfig;
 
     const labelOpacity = Number(canvasSettings[CANVAS_ADJUSTMENTS_KEYS.LABEL_OPACITY].value);

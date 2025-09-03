@@ -29,7 +29,7 @@ export const RotationElement = ({
     setShape,
     sideAnchorLocations,
     roi,
-}: RotationElementProps): JSX.Element => {
+}: RotationElementProps) => {
     const [isRotating, setIsRotating] = useState<boolean>(false);
     const [rotationDirection, setRotationDirection] = useState<Direction>(getDirection(sideAnchorLocations, roi));
     const shapePosition = { x: shape.x, y: shape.y };

@@ -14,7 +14,7 @@ import { AnnotationList } from '../annotation-list.component';
 import { AnnotationActions } from './annotation-actions.component';
 import { AnnotationListActions } from './annotation-list-actions.component';
 
-export const AnnotationListContainer = (): JSX.Element => {
+export const AnnotationListContainer = () => {
     const { predictions, isFetching } = useLocalPredictions();
     const localAnnotations = useLocalAnnotations();
     const { isActiveLearningMode } = useAnnotatorMode();

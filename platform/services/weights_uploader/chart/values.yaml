@@ -8,5 +8,5 @@ global:
     no_proxy: ""
   kubectl:
     registry: docker.io
-    repository: bitnamilegacy
-    name: kubectl:1.31.0
+    repository: alpine
+    name: k8s:1.31.12

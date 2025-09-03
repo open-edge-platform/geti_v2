@@ -20,7 +20,7 @@ import classes from './usage.module.scss';
 const MIN_DATE = parseDate('2024-01-01');
 const MAX_DATE = today(getLocalTimeZone());
 
-export const Usage = (): JSX.Element => {
+export const Usage = () => {
     const timeZone = getLocalTimeZone();
     const [projectsConsumptionDate, setProjectsConsumptionDate] = useState<DateValue>(today(timeZone).set({ day: 1 }));
     const [timeConsumptionDate, setTimeConsumptionDate] = useState<DateValue>(today(timeZone).set({ day: 1 }));

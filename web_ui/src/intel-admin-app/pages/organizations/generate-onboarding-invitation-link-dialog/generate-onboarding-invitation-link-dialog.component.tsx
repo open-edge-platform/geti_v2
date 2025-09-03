@@ -99,7 +99,7 @@ const GenerateOnboardingTokenDialog: FC<GenerateOnboardingTokenDialogProps> = ({
     );
 };
 
-export const GenerateOnboardingTokenDialogContainer = (): JSX.Element => {
+export const GenerateOnboardingTokenDialogContainer = () => {
     const { isOpen, setOpen } = useOverlayTriggerState({});
 
     const handleOpenDialog = () => {

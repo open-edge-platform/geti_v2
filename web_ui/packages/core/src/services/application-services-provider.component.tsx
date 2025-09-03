@@ -33,7 +33,7 @@ export const ApplicationServicesProvider = ({
     children,
     useInMemoryEnvironment = false,
     ...mockedServices
-}: ApplicationServicesProviderProps): JSX.Element => {
+}: ApplicationServicesProviderProps) => {
     const router = useApiRouter();
 
     const services = useMemo((): ApplicationServicesContextProps => {

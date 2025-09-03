@@ -19,7 +19,7 @@ export const DatasetImportDeletionDialog = ({
     trigger,
     onPrimaryAction,
     onDismiss,
-}: DatasetImportDeletionDialogProps): JSX.Element => {
+}: DatasetImportDeletionDialogProps) => {
     return (
         <DialogContainer
             onDismiss={() => {

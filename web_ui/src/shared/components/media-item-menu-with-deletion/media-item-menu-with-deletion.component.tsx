@@ -27,7 +27,7 @@ export const MediaItemMenuWithDeletion = ({
     handleDelete,
     isAnomalyVideo,
     mediaItemName,
-}: MediaItemMenuWithDeletionProps): JSX.Element => {
+}: MediaItemMenuWithDeletionProps) => {
     const question = `Are you sure you want to delete "${mediaItemName}"?`;
 
     return (

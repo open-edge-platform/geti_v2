@@ -23,7 +23,7 @@ export const AcceptPredictionButton = ({
     onSuccess,
     children,
     isDisabled = false,
-}: AcceptPredictionButtonProps): JSX.Element => {
+}: AcceptPredictionButtonProps) => {
     const isPredictionRejected = useIsPredictionRejected();
     const { acceptPrediction, userAnnotationsExist } = usePrediction();
 

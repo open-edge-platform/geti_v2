@@ -23,7 +23,7 @@ import { getGlobalAnnotations, getPreviousTask } from '../../providers/task-chai
 import { useTask } from '../../providers/task-provider/task-provider.component';
 import { filterForExplanation, filterForSelectedTask, filterHidden, isPredictionAnnotation } from '../../utils';
 import { TransformZoomAnnotation } from '../../zoom/transform-zoom-annotation.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { ExplanationWithOpacity } from '../explanation/explanation.component';
 
 import classes from './preview-canvas-content.module.scss';
@@ -43,7 +43,7 @@ export const PreviewCanvasContent = ({
 }: PreviewCanvasContentProps) => {
     const { image, roi } = useROI();
     const { inputs } = useTaskChain();
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const { tasks, selectedTask } = useTask();
     const { canvasSettingsState } = useAnnotatorCanvasSettings();
     const { showOverlapAnnotations } = useExplanationOpacity();

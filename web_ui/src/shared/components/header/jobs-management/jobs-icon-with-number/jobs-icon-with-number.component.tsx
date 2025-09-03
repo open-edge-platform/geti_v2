@@ -13,7 +13,7 @@ interface JobsIconsWithNumberProps {
     isDarkMode?: boolean;
 }
 
-export const JobsIconWithNumber = ({ runningJobs, isDarkMode = false }: JobsIconsWithNumberProps): JSX.Element => {
+export const JobsIconWithNumber = ({ runningJobs, isDarkMode = false }: JobsIconsWithNumberProps) => {
     return (
         <>
             <Bell

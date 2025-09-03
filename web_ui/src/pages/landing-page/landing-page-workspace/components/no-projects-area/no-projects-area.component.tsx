@@ -17,7 +17,7 @@ interface NoProjectsAreaProps {
     openImportDatasetDialog: OverlayTriggerState;
 }
 
-export const NoProjectArea = ({ openImportDatasetDialog }: NoProjectsAreaProps): JSX.Element => {
+export const NoProjectArea = ({ openImportDatasetDialog }: NoProjectsAreaProps) => {
     const TITLE = 'Create your first project';
     const DESCRIPTION = 'Create new project to leverage AI to automate your Computer Vision task';
 

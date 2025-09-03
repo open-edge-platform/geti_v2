@@ -10,7 +10,7 @@ interface LabelColorThumbProps extends Omit<ColorThumbProps, 'color'> {
     label: Label;
 }
 
-export const LabelColorThumb = ({ label, ...rest }: LabelColorThumbProps): JSX.Element => {
+export const LabelColorThumb = ({ label, ...rest }: LabelColorThumbProps) => {
     if (isEmptyOrBackgroundLabel(label)) {
         return <></>;
     }

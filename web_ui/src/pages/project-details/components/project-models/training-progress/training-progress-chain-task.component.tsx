@@ -12,7 +12,7 @@ interface TrainingProgressChainTaskProps {
     task: Task;
     isFirstTask: boolean;
 }
-export const TrainingProgressChainTask = ({ task, isFirstTask }: TrainingProgressChainTaskProps): JSX.Element => {
+export const TrainingProgressChainTask = ({ task, isFirstTask }: TrainingProgressChainTaskProps) => {
     const trainingData = useTrainingProgress(task.id);
 
     if (!trainingData.showTrainingProgress) {

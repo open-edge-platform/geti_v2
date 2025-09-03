@@ -47,9 +47,8 @@ global:
     name: curl:8.15.0
   kubectl:
     registry: docker.io
-    repository: bitnamilegacy
-    name: kubectl:1.31.0
-
+    repository: alpine
+    name: k8s:1.31.12
 jobs:
   backoffLimit: 10
   serviceAccount:

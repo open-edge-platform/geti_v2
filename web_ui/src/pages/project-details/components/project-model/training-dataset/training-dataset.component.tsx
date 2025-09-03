@@ -17,7 +17,7 @@ export const TrainingDataset = ({
     modelLabels,
     taskId,
     isActive,
-}: TrainingDatasetProps): JSX.Element => {
+}: TrainingDatasetProps) => {
     const projectIdentifier = useProjectIdentifier();
     const { data, isSuccess, isLoading } = useTrainingDatasetRevisionData(projectIdentifier, storageId, revisionId);
     const formatter = useNumberFormatter({ style: 'percent', maximumFractionDigits: 0 });

@@ -11,7 +11,7 @@ interface TooltipWithDisableButtonProps {
     activeTooltip?: ReactElement | string;
     disabledTooltip?: ReactElement | string;
     placement?: Placement;
-    children: ReactElement;
+    children: ReactElement<{ isDisabled?: boolean; disabled?: boolean }>;
 }
 
 export const TooltipWithDisableButton = ({
@@ -20,7 +20,7 @@ export const TooltipWithDisableButton = ({
     activeTooltip,
     disabledTooltip,
     ...props
-}: TooltipWithDisableButtonProps): JSX.Element => {
+}: TooltipWithDisableButtonProps) => {
     const showDisabledTooltip =
         'isDisabled' in children.props ? children.props.isDisabled : 'disabled' in children.props;
 

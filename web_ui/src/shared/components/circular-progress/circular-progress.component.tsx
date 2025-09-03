@@ -31,7 +31,7 @@ export const CircularProgress = ({
     checkMarkSize = 50,
     checkMarkOnComplete = true,
     checkMarkColor = '--energy-blue-shade',
-}: CircularProgressProps): JSX.Element => {
+}: CircularProgressProps) => {
     const progress = Math.max(0, Math.min(100, percentage)) | 0;
 
     const viewBox = useMemo<string>((): string => `0 0 ${size} ${size}`, [size]);

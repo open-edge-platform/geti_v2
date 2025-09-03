@@ -24,7 +24,7 @@ enum FrameMode {
     ONE_FRAME = '1/1',
 }
 
-export const FrameStep = ({ isDisabled, step, setStep, defaultFps }: FrameStepProps): JSX.Element => {
+export const FrameStep = ({ isDisabled, step, setStep, defaultFps }: FrameStepProps) => {
     const isAllMode = step === FRAME_STEP_TO_DISPLAY_ALL_FRAMES;
 
     const handleFpsToggle = () => {

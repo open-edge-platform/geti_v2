@@ -13,13 +13,13 @@ import { isKeypointTask } from '../../../../core/projects/utils';
 import { useStatus } from '../../../../core/status/hooks/use-status.hook';
 import { isBelowTooLowFreeDiskSpace } from '../../../../core/status/hooks/utils';
 import { useDataset } from '../../../../providers/dataset-provider/dataset-provider.component';
-import { CustomTabItemWithMenu } from '../../../../shared/components/custom-tab-item/custom-tab-item-with-menu.component';
 import { CustomTabItem } from '../../../../shared/components/custom-tab-item/custom-tab-item.component';
 import { DeleteDialog } from '../../../../shared/components/delete-dialog/delete-dialog.component';
 import { EditNameDialog } from '../../../../shared/components/edit-name-dialog/edit-name-dialog.component';
 import { useMedia } from '../../../media/providers/media-provider.component';
 import { useProject } from '../../providers/project-provider/project-provider.component';
 import { useExportImportDatasetDialogStates } from './export-dataset/export-import-dataset-dialog-provider.component';
+import { TabItemWithMenu } from './tab-item-with-menu.component';
 import { useSelectedDataset } from './use-selected-dataset/use-selected-dataset.hook';
 import { DatasetTabActions, getDatasetTabActions } from './utils';
 
@@ -27,7 +27,7 @@ export interface ProjectDatasetTabActionsProps {
     dataset: Dataset;
 }
 
-export const ProjectDatasetTabActions = ({ dataset }: ProjectDatasetTabActionsProps): JSX.Element => {
+export const ProjectDatasetTabActions = ({ dataset }: ProjectDatasetTabActionsProps) => {
     const { media } = useMedia();
     const { project, isTaskChainProject } = useProject();
     const { FEATURE_FLAG_KEYPOINT_DETECTION_DATASET_IE } = useFeatureFlags();
@@ -83,7 +83,7 @@ export const ProjectDatasetTabActions = ({ dataset }: ProjectDatasetTabActionsPr
     return (
         <Flex>
             {isSelectedAndHasMenu ? (
-                <CustomTabItemWithMenu
+                <TabItemWithMenu
                     name={dataset.name}
                     isMoreIconVisible={isSelectedAndHasMenu}
                     items={menuActions}

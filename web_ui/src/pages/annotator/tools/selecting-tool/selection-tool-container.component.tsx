@@ -8,7 +8,7 @@ import { SelectingTool } from './selecting-tool.component';
 import { SelectingToolType } from './selecting-tool.enums';
 import { StampTool } from './stamp-tool/stamp-tool.component';
 
-export const SelectionToolContainer = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const SelectionToolContainer = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { activeTool, brushSize, isBrushSizePreviewVisible } = useSelectingState();
 
     return (

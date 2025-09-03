@@ -15,13 +15,7 @@ interface AccuracyContainerProps {
     isDisabled?: boolean;
 }
 
-export const AccuracyContainer = ({
-    tooltip = <></>,
-    value,
-    id,
-    heading,
-    isDisabled,
-}: AccuracyContainerProps): JSX.Element => {
+export const AccuracyContainer = ({ tooltip = <></>, value, id, heading, isDisabled }: AccuracyContainerProps) => {
     return (
         <TooltipTrigger placement={'bottom'}>
             <PressableElement>

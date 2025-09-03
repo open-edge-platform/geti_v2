@@ -20,7 +20,7 @@ interface ProjectImportInterruptedProps {
     importItem: ProjectImportBase;
 }
 
-export const ProjectImportInterrupted = ({ importItem }: ProjectImportInterruptedProps): JSX.Element => {
+export const ProjectImportInterrupted = ({ importItem }: ProjectImportInterruptedProps) => {
     const { data: status } = useStatus();
     const isTryAgainButtonDisabled = isBelowTooLowFreeDiskSpace(status?.freeSpace);
 

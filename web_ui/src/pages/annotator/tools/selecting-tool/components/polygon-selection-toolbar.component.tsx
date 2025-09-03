@@ -19,10 +19,7 @@ import { getBrushMaxSize, MIN_BRUSH_SIZE } from '../utils';
 
 import classes from '../selecting-tool.module.scss';
 
-const PolygonSelectionToolbar = ({
-    annotationToolContext,
-    polygonAnnotations,
-}: PolygonSelectionToolbarProps): JSX.Element => {
+const PolygonSelectionToolbar = ({ annotationToolContext, polygonAnnotations }: PolygonSelectionToolbarProps) => {
     const { updateToolSettings, getToolSettings } = annotationToolContext;
     const { activeTool, brushSize, setBrushSize, setIsBrushSizePreviewVisible } = useSelectingState();
     const { roi } = useROI();

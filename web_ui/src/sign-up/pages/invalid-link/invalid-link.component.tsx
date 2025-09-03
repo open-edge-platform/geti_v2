@@ -10,7 +10,7 @@ import { redirectTo } from '../../../shared/utils';
 
 import classes from '../../../pages/errors/error-layout/error-layout.module.scss';
 
-export const InvalidLink = (): JSX.Element => {
+export const InvalidLink = () => {
     const handleLoginRedirect = (): void => {
         redirectTo(paths.root({}));
     };
@@ -23,7 +23,7 @@ export const InvalidLink = (): JSX.Element => {
             </Heading>
             <Text>It has already been used or expired.</Text>
             <Button variant={'primary'} marginTop={'size-250'} onPress={handleLoginRedirect}>
-                Go to Intel® Geti™
+                Go to Geti™
             </Button>
         </ErrorLayout>
     );

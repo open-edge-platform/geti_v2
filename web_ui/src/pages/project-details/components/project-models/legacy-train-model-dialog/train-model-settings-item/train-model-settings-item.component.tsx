@@ -24,7 +24,7 @@ export const TrainModelSettingsItem: FC<TrainModelSettingsItemProps> = ({
     isSelected,
     isDisabled = false,
     handleIsSelected,
-}): JSX.Element => {
+}) => {
     return (
         <Flex gap={'size-100'} alignItems={'center'}>
             <Checkbox

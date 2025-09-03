@@ -28,7 +28,7 @@ export const ModelVariants = ({
     groupName,
     taskId,
     version,
-}: ModelVariantsProps): JSX.Element => {
+}: ModelVariantsProps) => {
     const navigate = useNavigate();
     const { workspaceId, projectId, groupId, modelId, organizationId } = useModelIdentifier();
     const match = useMatch(paths.project.models.model.modelVariants.index.path(':activeTab').pattern);

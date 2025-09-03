@@ -17,9 +17,7 @@ const attrs = {
     itemLabel: { classes: 'spectrum-TreeView-itemLabel' },
 };
 
-export const LabelPresentationMode = ({
-    item: label,
-}: TreeItemPresentationModeProps<LabelTreeLabelProps>): JSX.Element => {
+export const LabelPresentationMode = ({ item: label }: TreeItemPresentationModeProps<LabelTreeLabelProps>) => {
     const { name, hotkey } = label;
 
     return (

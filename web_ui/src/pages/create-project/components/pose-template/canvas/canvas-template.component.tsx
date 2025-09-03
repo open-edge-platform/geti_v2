@@ -15,7 +15,7 @@ import { useSelected } from '../../../../../providers/selected-provider/selected
 import { KeyMap } from '../../../../../shared/keyboard-events/keyboard.interface';
 import { getIds, hasDifferentId } from '../../../../../shared/utils';
 import { ClosestKeypoint } from '../../../../annotator/tools/edit-tool/edit-keypoint/closest-keypoint.component';
-import { useZoom } from '../../../../annotator/zoom/zoom-provider.component';
+import { useZoomState } from '../../../../annotator/zoom/zoom-provider.component';
 import { EdgeLine, getPointInRoi, TemplateState, TemplateStateWithHistory } from '../../../../utils';
 import {
     getDefaultLabelStructure,
@@ -50,7 +50,7 @@ export const CanvasTemplate = ({
     isLabelOptionsEnabled = true,
     onStateUpdate,
 }: CanvasTemplateProps) => {
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const { setSelected, isSelected } = useSelected();
     const [visibleLabelId, setVisibleLabelId] = useState<null | string>(null);
     const nextPointName = useRef(points.length + 1);

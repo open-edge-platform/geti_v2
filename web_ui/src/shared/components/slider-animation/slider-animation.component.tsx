@@ -13,7 +13,7 @@ interface SliderAnimationProps {
     style?: CSSProperties;
 }
 
-export const SliderAnimation = ({ children, animationDirection, style }: SliderAnimationProps): JSX.Element => (
+export const SliderAnimation = ({ children, animationDirection, style }: SliderAnimationProps) => (
     <AnimatePresence mode='wait'>
         <motion.div
             variants={ANIMATION_PARAMETERS.SLIDER}

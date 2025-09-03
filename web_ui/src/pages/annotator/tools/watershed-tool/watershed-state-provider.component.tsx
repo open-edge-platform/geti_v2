@@ -84,7 +84,7 @@ const useWatershedUndoRedoState = (): [
     return [shapesWithConstrainedPolygons, setShapes, undoRedoActions];
 };
 
-export const WatershedStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const WatershedStateProvider = ({ children }: StateProviderProps) => {
     const { worker: watershed } = useLoadAIWebworker(AlgorithmType.WATERSHED);
 
     const wsInstance = useRef<Remote<Watershed> | null>(null);

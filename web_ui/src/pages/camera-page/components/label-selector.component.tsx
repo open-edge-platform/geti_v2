@@ -36,7 +36,7 @@ export const LabelSelector = ({
     onSelectLabel,
     selectedLabels,
     ...buttonStyles
-}: LabelSelectorProps): JSX.Element => {
+}: LabelSelectorProps) => {
     const triggerRef = useRef(null);
 
     const { tasks } = useTask();

@@ -42,7 +42,7 @@ interface DatasetProviderProps {
     children: ReactNode;
 }
 
-export const DatasetProvider = ({ children }: DatasetProviderProps): JSX.Element => {
+export const DatasetProvider = ({ children }: DatasetProviderProps) => {
     const { mediaService } = useApplicationServices();
     const isInActiveMode = useIsInActiveMode();
     const { sortingOptions } = useSortingParams();

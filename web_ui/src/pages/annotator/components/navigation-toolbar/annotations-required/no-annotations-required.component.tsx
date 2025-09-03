@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { forwardRef } from 'react';
+import { RefObject } from 'react';
 
 import { Button, Flex, Text, Tooltip, TooltipTrigger, View } from '@geti/ui';
 
@@ -9,13 +9,14 @@ import classes from './annotations-required.module.scss';
 
 interface NoAnnotationsRequiredProps {
     id?: string;
+    ref: RefObject<HTMLDivElement | null>;
 }
 
-export const NoAnnotationsRequired = forwardRef<HTMLDivElement, NoAnnotationsRequiredProps>((props, ref) => {
+export const NoAnnotationsRequired = ({ id, ref }: NoAnnotationsRequiredProps) => {
     return (
         <div ref={ref}>
             <TooltipTrigger placement={'bottom'}>
-                <Flex id={props.id} alignItems='center' gap='size-100'>
+                <Flex id={id} alignItems='center' gap='size-100'>
                     <Text id='annotations-required-id' UNSAFE_className={classes.text}>
                         Annotations required:
                     </Text>
@@ -39,4 +40,4 @@ export const NoAnnotationsRequired = forwardRef<HTMLDivElement, NoAnnotationsReq
             </TooltipTrigger>
         </div>
     );
-});
+};

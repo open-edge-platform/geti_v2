@@ -34,7 +34,7 @@ export const OptimizedModelTab: FC<OptimizedModelTabProps> = ({
     columns,
     selectedModel,
     setSelectedModel,
-}: OptimizedModelTabProps): JSX.Element => {
+}: OptimizedModelTabProps) => {
     const baselineModelsData = !hasBaselineModels ? [] : models.filter(isBaselineModel);
     const optimizedModelsData = !hasBaselineModels ? models : models.filter(isNotBaselineModel);
 

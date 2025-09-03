@@ -28,7 +28,7 @@ export const HierarchicalLabelView = ({
     resetHandler,
     panelClickHandler,
     isPointer = false,
-}: HierarchicalLabelViewProps): JSX.Element => {
+}: HierarchicalLabelViewProps) => {
     const labelAsTreeItem = useMemo((): LabelTreeItem => {
         return fetchLabelsTree([...findLabelParents(labels, label), label])[0];
     }, [label, labels]);

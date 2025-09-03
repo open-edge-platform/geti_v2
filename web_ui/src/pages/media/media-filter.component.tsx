@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { CSSProperties, Dispatch, MutableRefObject, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { CSSProperties, Dispatch, RefObject, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
 import {
     ActionButton,
@@ -57,7 +57,7 @@ const useSetFilterByName = (
     filterOptions: AdvancedFilterOptions,
     state: AdvancedFilterOptions,
     dispatch: Dispatch<SearchOptionsActions>,
-    canCallFilter: MutableRefObject<boolean>
+    canCallFilter: RefObject<boolean>
 ) => {
     useEffect(() => {
         const searchByNameRule = getRuleByField(filterOptions.rules, SearchRuleField.MediaName);
@@ -101,7 +101,7 @@ export const MediaFilter = ({
     isDatasetAccordion = false,
     disabledFilterRules,
     id,
-}: MediaFilterProps): JSX.Element => {
+}: MediaFilterProps) => {
     const canCallFilter = useRef<boolean>(false);
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const filterButtonRef = useRef<FocusableRefValue<HTMLButtonElement>>(null);

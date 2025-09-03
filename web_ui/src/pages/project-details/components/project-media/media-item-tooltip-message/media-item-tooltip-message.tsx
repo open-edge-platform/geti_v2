@@ -40,7 +40,7 @@ export type MediaItemTooltipMessageProps =
     | MediaItemTooltipMessageVideoProps
     | MediaItemTooltipMessageVideoFrameProps;
 
-export const MediaItemTooltipMessage = (props: MediaItemTooltipMessageProps): JSX.Element => {
+export const MediaItemTooltipMessage = (props: MediaItemTooltipMessageProps) => {
     const { fileName, uploaderId, uploadTime, id, type, fileSize, lastAnnotatorId } = props;
 
     const { organizationId } = useOrganizationIdentifier();

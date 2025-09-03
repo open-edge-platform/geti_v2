@@ -26,7 +26,7 @@ interface DatasetImportToNewProjectDialogProps {
 export const DatasetImportToNewProjectDialog = ({
     trigger,
     deleteDialogTrigger,
-}: DatasetImportToNewProjectDialogProps): JSX.Element => {
+}: DatasetImportToNewProjectDialogProps) => {
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
     const { useCancelJob } = useJobs({ organizationId, workspaceId });
 

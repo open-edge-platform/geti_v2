@@ -10,7 +10,7 @@ interface DeleteItemButtonProps extends Omit<ActionButtonProps, 'isQuiet'> {
     onDeleteItem: (id: string) => void;
 }
 
-export const DeleteItemButton = ({ id, onDeleteItem, ...styleProps }: DeleteItemButtonProps): JSX.Element => {
+export const DeleteItemButton = ({ id, onDeleteItem, ...styleProps }: DeleteItemButtonProps) => {
     const alertDialogState = useOverlayTriggerState({});
 
     return (

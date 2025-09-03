@@ -12,7 +12,7 @@ interface PropagateAnnotationsDialogProps {
 export const PropagateAnnotationsDialog = ({
     propagateAnnotationsMutation,
     close,
-}: PropagateAnnotationsDialogProps): JSX.Element => {
+}: PropagateAnnotationsDialogProps) => {
     const isDisabled = propagateAnnotationsMutation.isPending;
 
     const onReplace = () => {

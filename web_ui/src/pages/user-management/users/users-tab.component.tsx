@@ -30,7 +30,7 @@ interface UsersTabProps {
     activeUser: User | undefined;
 }
 
-export const UsersTab = ({ activeUser }: UsersTabProps): JSX.Element => {
+export const UsersTab = ({ activeUser }: UsersTabProps) => {
     const { organizationId } = useOrganizationIdentifier();
     const [selectedWorkspace, setSelectedWorkspace] = useState<string>();
 

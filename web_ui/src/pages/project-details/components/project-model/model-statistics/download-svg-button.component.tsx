@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useState } from 'react';
+import { RefObject, useState } from 'react';
 
 import {
     ActionButton,
@@ -29,7 +29,7 @@ interface DownloadSvgButtonProps extends ActionButtonProps {
     text?: string;
     tooltip?: string;
     fileName: string;
-    container: React.RefObject<HTMLElement>;
+    container: RefObject<HTMLElement | null>;
     graphBackgroundColor: BackgroundColorValue;
 }
 

@@ -94,6 +94,7 @@ export {
     type Key,
     type DimensionValue,
     type SpectrumRangeCalendarProps,
+    type CellProps,
 } from '@adobe/react-spectrum';
 
 export { dimensionValue, useStyleProps, useUnwrapDOMRef, useMediaQuery } from '@react-spectrum/utils';

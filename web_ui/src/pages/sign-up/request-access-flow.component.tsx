@@ -38,12 +38,12 @@ export const RequestAccessFlow: FC<RequestAccessDialogProps> = ({
     const [requestAccessReason, setRequestAccessReason] = useState<string>('');
 
     return (
-        <Container title={"Let's complete your registration to Intel® Geti™!"} isOpen={isOpen}>
+        <Container title={"Let's complete your registration to Geti™!"} isOpen={isOpen}>
             <Form onSubmit={onSubmit(requestAccessReason)}>
                 <Flex direction={'column'} gap={'size-200'}>
                     <Heading level={3} margin={0} marginBottom={'size-200'} UNSAFE_className={classes.heading}>
-                        You are trying to access Intel® Geti™ but you are not a registered user. Would you like to
-                        request access?
+                        You are trying to access Geti™ but you are not a registered user. Would you like to request
+                        access?
                     </Heading>
 
                     <Heading level={6} margin={0}>
@@ -54,7 +54,7 @@ export const RequestAccessFlow: FC<RequestAccessDialogProps> = ({
 
                     <TextField
                         width={'100%'}
-                        label={'For what use case do you plan to use Intel® Geti™?'}
+                        label={'For what use case do you plan to use Geti™?'}
                         value={requestAccessReason}
                         onChange={setRequestAccessReason}
                         placeholder={'Please describe your use case (optional)'}

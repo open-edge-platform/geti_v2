@@ -9,7 +9,7 @@ interface ConfirmationDialogProps {
     onClearFilter: () => Promise<void>;
 }
 
-export const SubmitDialog = ({ onCancel, onSubmit, onClearFilter }: ConfirmationDialogProps): JSX.Element => {
+export const SubmitDialog = ({ onCancel, onSubmit, onClearFilter }: ConfirmationDialogProps) => {
     return (
         <DialogContainer onDismiss={onCancel} isDismissable={false}>
             <Dialog size='M'>

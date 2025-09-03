@@ -25,7 +25,7 @@ export interface PolygonStateContextProps {
 
 const PolygonStateContext = createContext<PolygonStateContextProps | undefined>(undefined);
 
-export const PolygonStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const PolygonStateProvider = ({ children }: StateProviderProps) => {
     const { getToolSettings, updateToolSettings } = useAnnotationToolContext();
     const { mode } = getToolSettings(ToolType.PolygonTool);
     const [segments, setSegments, undoRedoActions] = useUndoRedoState<Point[][]>([]);

@@ -17,7 +17,7 @@ interface CPParamsListProps extends ConfigParameterItemProp {
     header: string;
 }
 
-export const CPParamsList = ({ parameters, updateParameter, header }: CPParamsListProps): JSX.Element => {
+export const CPParamsList = ({ parameters, updateParameter, header }: CPParamsListProps) => {
     const resetParameter = (parameter: ConfigurableParametersParams) => {
         updateParameter && updateParameter(parameter.id, parameter.defaultValue);
     };

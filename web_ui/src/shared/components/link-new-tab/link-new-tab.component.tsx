@@ -10,7 +10,7 @@ interface LinkNewTabProps {
     ariaLabel?: string;
 }
 
-export const LinkNewTab = ({ text, url, className, ariaLabel }: LinkNewTabProps): JSX.Element => {
+export const LinkNewTab = ({ text, url, className, ariaLabel }: LinkNewTabProps) => {
     return (
         <Link
             aria-label={ariaLabel}

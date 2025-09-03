@@ -26,7 +26,7 @@ export const DatasetListItemDetails = ({
     datasetItemMenu,
     selectMediaItem,
     shouldShowAnnotationIndicator,
-}: ComponentProps<typeof DatasetListItem>): JSX.Element => {
+}: ComponentProps<typeof DatasetListItem>) => {
     const { pressProps } = usePress({ onPress: selectMediaItem });
     const {
         name,

@@ -66,7 +66,7 @@ export const TrainingDatasetDetailsPreview = ({
     modelInformation,
     title,
     mediaItemsQuery,
-}: TrainingDatasetDetailsPreviewProps): JSX.Element => {
+}: TrainingDatasetDetailsPreviewProps) => {
     const { project } = useProject();
     const [mode, setMode] = useState<ANNOTATOR_MODE>(ANNOTATOR_MODE.ACTIVE_LEARNING);
     const [selectedPreviewItem, setSelectedPreviewItem] = useState<MediaItem>(selectedMediaItem);
@@ -120,13 +120,13 @@ export const TrainingDatasetDetailsPreview = ({
             <AnnotationToolProvider>
                 <MediaItemAnnotationsPreviewDialog
                     close={close}
-                    additionalButtons={[
+                    additionalButtons={
                         <EditAnnotationsButton
                             key={'training-dataset-edit-predictions'}
                             datasetIdentifier={datasetIdentifier}
                             mediaItem={selectedPreviewItem}
-                        />,
-                    ]}
+                        />
+                    }
                     title={title}
                     subTitle={modelInformation}
                     selectedPreviewItem={selectedPreviewItem}

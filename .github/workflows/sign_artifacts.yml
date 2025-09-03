@@ -16,7 +16,7 @@
 #
 # Inputs:
 # - `image_uri`: The container image to sign.
-# 
+#
 # Example usage:
 # 1. Call this workflow manually from Github Actions page
 # 2. Create a `repository_dispatch` event to trigger this workflow
@@ -27,7 +27,7 @@ on:
   workflow_dispatch:
     inputs:
       image_uri:
-        description: 'Container image URI (repository, name and tag) (e.g. ghcr.io/open-edge-platform/my-image:latest)'
+        description: "Container image URI (repository, name and tag) (e.g. ghcr.io/open-edge-platform/my-image:latest)"
         required: true
         type: string
   repository_dispatch:
@@ -43,6 +43,11 @@ jobs:
       id-token: write # needed for keyless signing
       packages: write # needed for ghcr.io access
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+
       - name: Install Cosign
         uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2
         with:

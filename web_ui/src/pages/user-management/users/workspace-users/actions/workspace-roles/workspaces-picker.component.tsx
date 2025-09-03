@@ -11,11 +11,7 @@ interface WorkspacesPickerProps {
     workspaces: WorkspaceEntity[];
     changeWorkspace: (workspace: WorkspaceEntity) => void;
 }
-export const WorkspacesPicker = ({
-    selectedWorkspace,
-    workspaces,
-    changeWorkspace,
-}: WorkspacesPickerProps): JSX.Element => {
+export const WorkspacesPicker = ({ selectedWorkspace, workspaces, changeWorkspace }: WorkspacesPickerProps) => {
     const onSelectionChange = (key: Key) => {
         const newWorkspace = workspaces.find((item) => item.id === key);
         newWorkspace && changeWorkspace(newWorkspace);

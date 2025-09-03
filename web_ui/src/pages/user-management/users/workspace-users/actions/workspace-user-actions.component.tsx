@@ -31,7 +31,7 @@ interface UserActionsProps {
     users: User[];
 }
 
-export const WorkspaceUserActions = ({ activeUser, user, users }: UserActionsProps): JSX.Element => {
+export const WorkspaceUserActions = ({ activeUser, user, users }: UserActionsProps) => {
     const { organizationId, workspaceId } = useFirstWorkspaceIdentifier();
     const isSaasEnvironment = useIsSaasEnv();
 

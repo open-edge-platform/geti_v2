@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { PressableElement, Tooltip, TooltipTrigger, ViewModes } from '@geti/ui';
 
 import { MediaItem } from '../../../../../core/media/media.interface';
@@ -16,7 +18,7 @@ interface DatasetItemFactoryProps {
     mediaItem: MediaItem;
     selectedMediaItem: MediaItem | undefined;
     selectMediaItem: (mediaItem: MediaItem) => void;
-    tooltip: JSX.Element | undefined;
+    tooltip: ReactNode;
     shouldShowAnnotationIndicator: boolean;
     shouldShowVideoIndicator?: boolean;
 }
@@ -30,7 +32,7 @@ export const DatasetItemFactory = ({
     selectMediaItem,
     shouldShowAnnotationIndicator,
     shouldShowVideoIndicator = true,
-}: DatasetItemFactoryProps): JSX.Element => {
+}: DatasetItemFactoryProps) => {
     const isMediaSelected = isSelected(mediaItem, selectedMediaItem);
 
     return (

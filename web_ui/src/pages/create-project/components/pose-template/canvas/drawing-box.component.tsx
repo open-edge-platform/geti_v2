@@ -5,7 +5,7 @@ import { useRef } from 'react';
 
 import { KeypointNode, Point } from '../../../../../core/annotations/shapes.interface';
 import { allowPanning } from '../../../../annotator/tools/utils';
-import { useZoom } from '../../../../annotator/zoom/zoom-provider.component';
+import { useZoomState } from '../../../../annotator/zoom/zoom-provider.component';
 import { getRelativePoint, leftMouseButtonHandler } from '../../../../utils';
 import { getDefaultLabelStructure } from '../util';
 
@@ -17,7 +17,7 @@ interface DrawingBoxProps {
 
 export const DrawingBox = ({ nextPointName, onAddPoint, onPointerMove }: DrawingBoxProps) => {
     const canvasRef = useRef<SVGRectElement>(null);
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
 
     const onPointerDown = leftMouseButtonHandler((event) => {
         event.currentTarget.setPointerCapture(event.pointerId);

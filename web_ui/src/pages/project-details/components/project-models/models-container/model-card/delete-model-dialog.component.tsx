@@ -15,13 +15,7 @@ interface DeleteModelDialogProps {
     overlayState: OverlayTriggerState;
 }
 
-export const DeleteModelDialog = ({
-    overlayState,
-    version,
-    groupId,
-    modelId,
-    modelName,
-}: DeleteModelDialogProps): JSX.Element => {
+export const DeleteModelDialog = ({ overlayState, version, groupId, modelId, modelName }: DeleteModelDialogProps) => {
     const { useArchiveModelMutation } = useModels();
     const archiveModelMutation = useArchiveModelMutation();
     const projectIdentifier = useProjectIdentifier();

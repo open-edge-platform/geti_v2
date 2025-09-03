@@ -23,7 +23,7 @@ interface HeaderMenuProps {
     isAnomalyProject?: boolean;
 }
 
-export const HeaderActions = ({ isDarkMode, isProject, isAnomalyProject }: HeaderMenuProps): JSX.Element => {
+export const HeaderActions = ({ isDarkMode, isProject, isAnomalyProject }: HeaderMenuProps) => {
     const isCreditAccountEnabled = useIsCreditAccountEnabled();
     const { isPWAReady, handlePromptInstallApp } = useProgressiveWebApp();
 

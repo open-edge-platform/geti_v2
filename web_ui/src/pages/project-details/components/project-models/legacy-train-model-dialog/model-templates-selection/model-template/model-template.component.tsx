@@ -27,7 +27,7 @@ export const ModelTemplate = ({
     selectedModelTemplateId,
     activeModelTemplateIdPerTask,
     handleSelectedTemplateId,
-}: ModelTemplateProps): JSX.Element => {
+}: ModelTemplateProps) => {
     const { name, modelSize, modelTemplateId, performanceCategory, gigaflops, description, license } = template;
     const isSelected = selectedModelTemplateId === modelTemplateId;
     const shouldShowActiveTag = modelTemplateId === activeModelTemplateIdPerTask;

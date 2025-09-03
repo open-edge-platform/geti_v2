@@ -13,7 +13,6 @@ import { getMockedLabel, mockedLongLabels } from '../../../../../../../test-util
 import { getMockedProject } from '../../../../../../../test-utils/mocked-items-factory/mocked-project';
 import { getMockedTask } from '../../../../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { projectListRender as render } from '../../../../../../../test-utils/projects-list-providers-render';
-import { getById } from '../../../../../../../test-utils/utils';
 import { GETI_CAMERA_INDEXEDDB_INSTANCE_NAME } from '../../../../../../camera-support/camera.interface';
 import { Project } from './project.component';
 
@@ -33,9 +32,9 @@ describe('Project', () => {
             id: '1111',
             domains: [DOMAIN.CLASSIFICATION, DOMAIN.DETECTION],
         });
-        const { container } = await render(<Project project={mockProject} />);
+        await render(<Project project={mockProject} />);
 
-        const projectNameContainer = getById(container, 'project-name-test-project-1');
+        const projectNameContainer = screen.getByTestId('project-name-test-project-1');
         const projectName = projectNameContainer?.textContent;
 
         expect(projectName).toBe(`Test project 1`);
@@ -43,9 +42,9 @@ describe('Project', () => {
 
     it('check name and domain string when there is one domain', async () => {
         const mockProject = getMockedProject({ id: '2222', domains: [DOMAIN.CLASSIFICATION] });
-        const { container } = await render(<Project project={mockProject} />);
+        await render(<Project project={mockProject} />);
 
-        const projectNameContainer = getById(container, 'project-name-test-project-1');
+        const projectNameContainer = screen.getByTestId('project-name-test-project-1');
         const projectName = projectNameContainer?.textContent;
 
         expect(projectName).toBe(`Test project 1`);

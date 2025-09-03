@@ -15,7 +15,7 @@ import { SelectableCustomizedTabs } from './selectable-customized-tabs/selectabl
 import { SelectableManyTasks } from './selectable-many-tasks/selectable-many-tasks.component';
 import { isLearningParametersTab } from './utils';
 
-export const ConfigurableParameters = (props: ConfigurableParametersProps): JSX.Element => {
+export const ConfigurableParameters = (props: ConfigurableParametersProps) => {
     if (props.type === ConfigurableParametersType.MANY_CONFIG_PARAMETERS) {
         const {
             configParametersData,

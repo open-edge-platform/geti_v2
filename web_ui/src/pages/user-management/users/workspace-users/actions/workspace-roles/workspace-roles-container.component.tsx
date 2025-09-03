@@ -15,11 +15,7 @@ interface WorkspaceRolesProps {
     workspaces: WorkspaceEntity[];
 }
 
-export const WorkspaceRolesContainer = ({
-    workspaceRoles,
-    setWorkspaceRoles,
-    workspaces,
-}: WorkspaceRolesProps): JSX.Element => {
+export const WorkspaceRolesContainer = ({ workspaceRoles, setWorkspaceRoles, workspaces }: WorkspaceRolesProps) => {
     const { canAddNewRole, availableWorkspaces } = useUserRoles(workspaces, workspaceRoles);
 
     const deleteWorkspaceRole = (index: number) => {

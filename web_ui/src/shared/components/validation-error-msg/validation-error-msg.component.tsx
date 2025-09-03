@@ -16,7 +16,7 @@ export const ValidationErrorMsg = ({
     inheritHeight = false,
     maxWidth,
     gridArea,
-}: ValidationErrorMsgProps): JSX.Element => {
+}: ValidationErrorMsgProps) => {
     if (isEmpty(errorMsg)) {
         return <></>;
     }

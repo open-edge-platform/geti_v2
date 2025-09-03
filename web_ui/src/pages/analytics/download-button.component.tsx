@@ -13,7 +13,7 @@ interface DownloadButtonProps {
     handlePress?: () => void;
 }
 
-export const DownloadButton = ({ exportName, handlePress }: DownloadButtonProps): JSX.Element => {
+export const DownloadButton = ({ exportName, handlePress }: DownloadButtonProps) => {
     return (
         <ActionButton
             isQuiet

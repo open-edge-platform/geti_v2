@@ -57,7 +57,7 @@ export const ExplanationToolbar = ({
     isDisabled = false,
     explanations,
     disabledTooltip = '',
-}: ExplanationSecondaryToolbarProps): JSX.Element => {
+}: ExplanationSecondaryToolbarProps) => {
     const { scene } = useAnnotationToolContext();
     const { canvasSettingsState } = useAnnotatorCanvasSettings();
     const { tasks, isTaskChainSecondTask } = useTask();

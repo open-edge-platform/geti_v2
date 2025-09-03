@@ -25,7 +25,7 @@ export const PredictionButton: FunctionComponent<PropsWithChildren<PredictionBut
     userAnnotationsExist,
     isDisabled,
     styles,
-}): JSX.Element => {
+}) => {
     if (userAnnotationsExist) {
         return (
             <DialogTrigger>
@@ -39,9 +39,7 @@ export const PredictionButton: FunctionComponent<PropsWithChildren<PredictionBut
                     {children}
                 </Button>
 
-                {(close): JSX.Element => (
-                    <ReplaceOrMergeUserAnnotationsDialog close={close} merge={merge} replace={replace} />
-                )}
+                {(close) => <ReplaceOrMergeUserAnnotationsDialog close={close} merge={merge} replace={replace} />}
             </DialogTrigger>
         );
     }

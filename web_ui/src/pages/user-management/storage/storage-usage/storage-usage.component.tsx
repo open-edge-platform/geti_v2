@@ -12,7 +12,7 @@ import classes from './storage-usage.module.scss';
 
 const COLOR = `var(--energy-blue)`;
 
-export const StorageUsage = (): JSX.Element => {
+export const StorageUsage = () => {
     const { data } = useStatus();
 
     if (isNil(data)) {

@@ -53,7 +53,7 @@ export const ProjectLabelsManagement = ({
     id = '',
     setLabelsValidity,
     parentLabel,
-}: ProjectLabelsManagementProps): JSX.Element => {
+}: ProjectLabelsManagementProps) => {
     const isAnomalyProject = !isTaskChainProject && isAnomalyDomain(domains[0]);
 
     const saveHandler = (editedLabel?: LabelTreeItem, oldId?: string) => {

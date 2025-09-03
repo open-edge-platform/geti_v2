@@ -10,7 +10,7 @@ interface PreviewTitleProps {
     subTitle: string;
 }
 
-export const PreviewTitle = ({ title, subTitle }: PreviewTitleProps): JSX.Element => {
+export const PreviewTitle = ({ title, subTitle }: PreviewTitleProps) => {
     return (
         <Heading id={'preview-title'} data-testid={'preview-title'}>
             <p className={classes.title}>{title}</p>

@@ -10,7 +10,7 @@ interface UsersCountProps {
     id?: string;
 }
 
-export const UsersCount = ({ totalMatchedCount, totalCount, hasFilters, id }: UsersCountProps): JSX.Element => {
+export const UsersCount = ({ totalMatchedCount, totalCount, hasFilters, id }: UsersCountProps) => {
     return (
         <Text UNSAFE_style={{ fontSize: dimensionValue('size-130') }} data-testid={id} id={id}>
             {hasFilters ? `${totalMatchedCount} out of ${totalCount} users` : `${totalCount} users`}

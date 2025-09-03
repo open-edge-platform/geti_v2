@@ -29,7 +29,7 @@ export const ToggleTrainingButton = ({
     runningTaskJobs,
     isAutotraining,
     projectIdentifier,
-}: ToggleTrainingButtonProps): JSX.Element => {
+}: ToggleTrainingButtonProps) => {
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
 
     const job = head(runningTaskJobs.filter(isJobTrain));

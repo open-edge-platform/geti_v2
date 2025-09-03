@@ -45,7 +45,7 @@ export const UploadMediaButton = ({
     isDisabled = false,
     uploadCallback,
     onCameraSelected,
-}: UploadMediaButtonProps): JSX.Element => {
+}: UploadMediaButtonProps) => {
     const { data: status } = useStatus();
     const fileInputRef = useRef<HTMLInputElement>({} as HTMLInputElement);
 

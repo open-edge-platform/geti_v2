@@ -13,7 +13,7 @@ interface LabelsHotkeysProps {
     hotkeyHandler: (label: Label) => void;
 }
 
-export const LabelsHotkeys = ({ annotationToolContext, labels, hotkeyHandler }: LabelsHotkeysProps): JSX.Element => {
+export const LabelsHotkeys = ({ annotationToolContext, labels, hotkeyHandler }: LabelsHotkeysProps) => {
     return (
         <>
             {/* filtering out labels with empty/undefined hotkeys we are sure we always have labels with hotkeys */}

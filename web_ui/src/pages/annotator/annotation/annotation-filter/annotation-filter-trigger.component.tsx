@@ -15,7 +15,7 @@ interface AnnotationsFilterTriggerProps {
     isDisabled: boolean;
 }
 
-export const AnnotationsFilterTrigger = ({ isDisabled }: AnnotationsFilterTriggerProps): JSX.Element => {
+export const AnnotationsFilterTrigger = ({ isDisabled }: AnnotationsFilterTriggerProps) => {
     const [filters] = useAnnotationFilters();
     const isAnnotationsFilterEmpty = isEmpty(filters);
 

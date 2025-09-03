@@ -12,7 +12,7 @@ interface EditAnnotationsButtonProps {
     mediaItem: MediaItem;
 }
 
-export const EditAnnotationsButton = ({ datasetIdentifier, mediaItem }: EditAnnotationsButtonProps): JSX.Element => {
+export const EditAnnotationsButton = ({ datasetIdentifier, mediaItem }: EditAnnotationsButtonProps) => {
     const href = useAnnotatorRoutePath()({ datasetIdentifier, mediaItem });
 
     return (

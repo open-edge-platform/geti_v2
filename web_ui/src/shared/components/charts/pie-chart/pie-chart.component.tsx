@@ -22,7 +22,7 @@ interface PieChartProps {
 
 const DownloadablePieChart = withDownloadableSvg(RePieChart);
 
-export const PieChart = ({ title, data, legend, ariaLabel }: PieChartProps): JSX.Element => {
+export const PieChart = ({ title, data, legend, ariaLabel }: PieChartProps) => {
     const totalSum = data.reduce<number>((prev, curr) => prev + curr.value, 0);
     const formatter = useNumberFormatter({ notation: 'compact', compactDisplay: 'short' });
     const isNoObject = !isEmpty(data) && data[0].name === null;

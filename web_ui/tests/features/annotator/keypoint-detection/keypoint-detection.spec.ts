@@ -103,7 +103,6 @@ test.describe(`keypoint detection`, () => {
 
         await page.mouse.move(300, 300, { steps: 20 });
         await page.mouse.up({ button: 'left' });
-        await page.getByLabel('accept new keypoint annotation').click();
 
         const updatedHeadPosition = await templateManagerPage.getPosition(
             page.getByLabel(`Resize keypoint ${labels.head.name} anchor`)
@@ -188,5 +187,23 @@ test.describe(`keypoint detection`, () => {
         expect(await page.getByRole('listitem').count()).toBe(7);
         await page.keyboard.press('Delete');
         expect(await page.getByRole('listitem').count()).toBe(0);
+    });
+
+    test('Retain previous annotation until mouse release on the next one', async ({ page, templateManagerPage }) => {
+        await page.goto(annotatorUrl);
+        await page.getByLabel('Keypoint tool').click();
+
+        const firstHeadPosition = await templateManagerPage.getPosition(page.getByLabel(`label ${labels.head.name}`));
+
+        // Draw second annotation
+        await page.mouse.move(600, 500);
+        await page.mouse.down({ button: 'left' });
+        await page.mouse.move(900, 800, { steps: 20 });
+        await page.mouse.up();
+
+        // If annotations are replaced, the position should change
+        const newHeadPosition = await templateManagerPage.getPosition(page.getByLabel(`label ${labels.head.name}`));
+
+        expect(newHeadPosition).not.toEqual(firstHeadPosition);
     });
 });

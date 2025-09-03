@@ -64,8 +64,8 @@ global:
     name: curl:8.15.0
   kubectl:
     registry: docker.io
-    repository: bitnamilegacy
-    name: kubectl:1.31.0
+    repository: alpine
+    name: k8s:1.31.12
 
 # To meet Intel crypto compliance,
 # use ECDSA P-521 for the CA and P-384 for the leafs.

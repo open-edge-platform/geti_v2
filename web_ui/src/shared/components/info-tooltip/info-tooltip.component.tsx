@@ -12,7 +12,7 @@ interface InfoTooltipProps {
     className?: string;
 }
 
-export const InfoTooltip = ({ tooltipText, id, iconColor, className }: InfoTooltipProps): JSX.Element => {
+export const InfoTooltip = ({ tooltipText, id, iconColor, className }: InfoTooltipProps) => {
     const style = iconColor ? ({ '--spectrum-alias-icon-color': iconColor } as CSSProperties) : {};
 
     return (

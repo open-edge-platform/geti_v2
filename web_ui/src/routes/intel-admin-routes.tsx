@@ -28,7 +28,7 @@ import {
     RedirectToUserOverview,
 } from './intel-admin/redirect.component';
 
-export const intelAdminRoutes = (): JSX.Element => {
+export const intelAdminRoutes = () => {
     return (
         <Route
             element={

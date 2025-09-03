@@ -12,7 +12,7 @@ interface ReorderMenuButtonProps extends MenuButtonProps {
     isEnabled: boolean;
 }
 
-export const ReorderMenuButton = ({ action, id, type, isEnabled }: ReorderMenuButtonProps): JSX.Element => {
+export const ReorderMenuButton = ({ action, id, type, isEnabled }: ReorderMenuButtonProps) => {
     const reorderButtonId = `reorder-${type}-label-button`;
 
     return (

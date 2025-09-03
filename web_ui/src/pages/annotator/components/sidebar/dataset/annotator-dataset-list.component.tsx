@@ -13,7 +13,7 @@ interface AnnotatorDatasetListProps {
     viewMode: ViewModes;
 }
 
-export const AnnotatorDatasetList = ({ viewMode }: AnnotatorDatasetListProps): JSX.Element => {
+export const AnnotatorDatasetList = ({ viewMode }: AnnotatorDatasetListProps) => {
     const { selectedMediaItem, setSelectedMediaItem } = useSelectedMediaItem();
     const previouslySelectedMediaItem = usePrevious(selectedMediaItem);
     const selectWithSavingConfirmation = useSelectMediaItemWithSaveConfirmation(setSelectedMediaItem);

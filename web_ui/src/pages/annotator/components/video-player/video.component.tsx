@@ -20,7 +20,7 @@ const useVideoSrc = (videoFrame: VideoFrame) => {
 };
 
 interface VideoProps extends DetailedHTMLProps<VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement> {
-    videoRef: RefObject<HTMLVideoElement>;
+    videoRef: RefObject<HTMLVideoElement | null>;
     videoFrame: VideoFrame;
     onPlay: () => void;
     onPause: () => void;

@@ -13,12 +13,7 @@ import { ConfusionMatrixZoom } from './confusion-matrix-zoom/confusion-matrix-zo
 
 type TrainingModelMatrixProps = TrainModelStatisticsConfusionMatrix & ModelStatisticsBase & StyleProps;
 
-export const TrainingModelMatrix = ({
-    value,
-    header,
-    gridColumn,
-    gridRow,
-}: TrainingModelMatrixProps & StyleProps): JSX.Element => {
+export const TrainingModelMatrix = ({ value, header, gridColumn, gridRow }: TrainingModelMatrixProps & StyleProps) => {
     const { matrixData, columnHeader, rowHeader } = value;
 
     const [selectedConfusionMatrixKey, setSelectedConfusionMatrix] = useState<string>(matrixData[0].key);
@@ -64,14 +59,15 @@ export const TrainingModelMatrix = ({
                 <Flex>
                     {pickerComponent}
                     <FullscreenAction
-                        actionButton={
+                        actionButton={(menuRef) => (
                             <DownloadGraphMenu
+                                ref={menuRef}
                                 fileName={'confusion-matrix'}
                                 data={{ type: 'matrix', data: confusionMatrixData }}
                                 tooltip={'Download graph'}
                                 graphBackgroundColor={'gray-100'}
                             />
-                        }
+                        )}
                         title={header}
                     >
                         <ConfusionMatrixZoom

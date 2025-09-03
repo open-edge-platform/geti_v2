@@ -54,6 +54,7 @@ jest.mock('./providers/task-provider/task-provider.component', () => ({
 
 jest.mock('./zoom/zoom-provider.component', () => ({
     useZoom: jest.fn(),
+    useZoomState: jest.fn(() => ({ zoom: 1.0, translation: { x: 0, y: 0 } })),
 }));
 
 jest.mock('./hooks/use-annotator-scene-interaction-state.hook', () => ({
@@ -178,7 +179,6 @@ describe('Annotator canvas', (): void => {
     beforeEach(() => {
         (useZoom as jest.Mock).mockImplementation(() => ({
             setZoomTarget: jest.fn(),
-            zoomState: { zoom: 1.0, translation: { x: 0, y: 0 } },
         }));
 
         jest.mocked(useTaskChain).mockImplementation(() => ({

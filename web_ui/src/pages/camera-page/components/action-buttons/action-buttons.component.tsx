@@ -85,7 +85,7 @@ const DiscardAllButton = ({ isDisabled, datasetIdentifier, navigate, deleteAllIt
     );
 };
 
-export const ActionButtons = ({ isDisabled, canGoToCameraPage }: ActionButtonsProps): JSX.Element => {
+export const ActionButtons = ({ isDisabled, canGoToCameraPage }: ActionButtonsProps) => {
     const navigate = useNavigate();
 
     const { ...datasetIdentifier } = useCameraParams();

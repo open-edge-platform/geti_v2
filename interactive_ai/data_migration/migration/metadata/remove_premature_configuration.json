@@ -1,0 +1,9 @@
+{
+  "description": "Remove premature configuration that should not exist prior to Geti 2.12.0",
+  "supports_downgrade": true,
+  "skip_on_project_import": false,
+  "new_collections": [],
+  "updated_collections": [],
+  "deprecated_collections": ["project_configuration", "training_configuration"],
+  "affects_binary_data": false
+}

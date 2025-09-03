@@ -3,9 +3,7 @@
 
 import React, { ReactNode } from 'react';
 
-import { Allotment } from 'allotment';
-
-import 'allotment/dist/style.css';
+import { Panel, PanelGroup, PanelResizeHandle } from '../components/sidebar/split-pane/split-pane.component';
 
 interface PaneListProps {
     itemsList: ReactNode;
@@ -15,15 +13,22 @@ interface PaneListProps {
 
 export const PaneList = ({ itemsList, listActions, thumbnailGrid = null }: PaneListProps) => {
     return (
-        <Allotment vertical>
-            {thumbnailGrid}
+        <PanelGroup direction={'vertical'}>
+            {thumbnailGrid && (
+                <>
+                    <Panel minSize={5} order={1}>
+                        {thumbnailGrid}
+                    </Panel>
+                    <PanelResizeHandle />
+                </>
+            )}
 
-            <Allotment.Pane>
+            <Panel minSize={5} order={2}>
                 <div style={{ height: 'calc(100% - var(--spectrum-global-dimension-size-675))' }}>
                     {listActions}
                     {itemsList}
                 </div>
-            </Allotment.Pane>
-        </Allotment>
+            </Panel>
+        </PanelGroup>
     );
 };

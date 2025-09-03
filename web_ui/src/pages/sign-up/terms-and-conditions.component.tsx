@@ -34,9 +34,9 @@ export const TermsAndConditions: FC<TermsAndConditionsProps> = ({ isChecked, onC
             <Checkbox isSelected={isChecked} onChange={onCheckedChange} id={'accept-terms-checkbox-input'} />
             <label htmlFor={'accept-terms-checkbox-input'}>
                 I acknowledge that I have read and understood the{' '}
-                <TermsAndConditionsLink>Terms and Conditions</TermsAndConditionsLink> for use of Intel® Geti™ and I
-                agree my use of Intel® Geti™ will at all times comply with the{' '}
-                <TermsAndConditionsLink>Terms and Conditions</TermsAndConditionsLink> for Intel® Geti™.
+                <TermsAndConditionsLink>Terms and Conditions</TermsAndConditionsLink> for use of Geti™ and I agree my
+                use of Geti™ will at all times comply with the{' '}
+                <TermsAndConditionsLink>Terms and Conditions</TermsAndConditionsLink> for Geti™.
             </label>
         </Flex>
     );

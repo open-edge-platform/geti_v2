@@ -12,7 +12,7 @@ interface MediaNameAndResolutionProps {
     lastAnnotatorId: string;
 }
 
-export const LastAnnotator = ({ lastAnnotatorId, isLargeSize }: MediaNameAndResolutionProps): JSX.Element => {
+export const LastAnnotator = ({ lastAnnotatorId, isLargeSize }: MediaNameAndResolutionProps) => {
     const paddingX = isLargeSize ? 'size-200' : 'size-100';
 
     return (

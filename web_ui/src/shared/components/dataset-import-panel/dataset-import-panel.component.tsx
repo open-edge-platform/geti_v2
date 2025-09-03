@@ -47,7 +47,7 @@ interface DatasetImportPanelProps {
     primaryActionName?: string;
 }
 
-const StatusIcon = ({ datasetImportItem }: { datasetImportItem: DatasetImportItem }): JSX.Element => {
+const StatusIcon = ({ datasetImportItem }: { datasetImportItem: DatasetImportItem }) => {
     if (isUploadingStatus(datasetImportItem)) {
         return <Loading mode='inline' size={'S'} />;
     }

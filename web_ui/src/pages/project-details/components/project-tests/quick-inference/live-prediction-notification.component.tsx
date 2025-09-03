@@ -16,10 +16,7 @@ interface LivePredictionNotificationProps {
     inferenceMode: LiveInferenceMode;
 }
 
-export const LivePredictionNotification = ({
-    settings,
-    inferenceMode,
-}: LivePredictionNotificationProps): JSX.Element => {
+export const LivePredictionNotification = ({ settings, inferenceMode }: LivePredictionNotificationProps) => {
     const handleDismissTutorial = async () => {
         await dismissTutorial(TUTORIAL_CARD_KEYS.LIVE_PREDICTION_NOTIFICATION, settings);
     };

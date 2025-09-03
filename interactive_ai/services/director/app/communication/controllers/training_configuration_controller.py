@@ -84,16 +84,7 @@ class TrainingConfigurationRESTController:
             return rest_view
 
         training_configuration_repo = PartialTrainingConfigurationRepo(project_identifier)
-        task_level_config = training_configuration_repo.get_task_only_configuration(task_id)
-        # create default configuration in case the task exists but has no training configuration yet
-        if isinstance(task_level_config, NullTrainingConfiguration):
-            logger.warning(
-                f"Task training configuration for project `{project_identifier.project_id}` and task `{task_id}` "
-                f"not found, creating default training configuration."
-            )
-            task = task_node_repo.get_by_id(task_id)
-            training_configuration_repo.create_default_task_only_configuration(task)
-            task_level_config = training_configuration_repo.get_task_only_configuration(task_id)
+        task_level_config = training_configuration_repo.get_or_create_task_only_configuration(task_id)
 
         dataset_size = cls._get_dataset_size(
             project_identifier=project_identifier,
@@ -156,7 +147,7 @@ class TrainingConfigurationRESTController:
 
         # configuration is saved as "task level"
         if not update_configuration.model_manifest_id:
-            task_config = training_configuration_repo.get_task_only_configuration(task_id)
+            task_config = training_configuration_repo.get_or_create_task_only_configuration(task_id)
             new_config = ConfigurationOverlayTools.overlay_training_configurations(
                 task_config, update_configuration, validate_full_config=False
             )

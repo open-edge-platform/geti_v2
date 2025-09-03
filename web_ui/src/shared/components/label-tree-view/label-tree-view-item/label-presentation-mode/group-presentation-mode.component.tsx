@@ -13,10 +13,7 @@ import { ItemEditionState } from '../item-edition-state/item-edition-state.compo
 
 import classes from './label-presentation-mode.module.scss';
 
-export const GroupPresentationMode = ({
-    item: group,
-    newTree,
-}: TreeItemPresentationModeProps<LabelTreeGroupProps>): JSX.Element => {
+export const GroupPresentationMode = ({ item: group, newTree }: TreeItemPresentationModeProps<LabelTreeGroupProps>) => {
     const { name, relation, state } = group;
     const DOT_SIGN = '∙';
     const prefix = relation === LabelsRelationType.SINGLE_SELECTION ? DOT_SIGN : `${DOT_SIGN}${DOT_SIGN}`;

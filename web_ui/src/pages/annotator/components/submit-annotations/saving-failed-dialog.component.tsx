@@ -18,11 +18,7 @@ const doNothing = () => {
     // are assumed to close the dialog so we don't want to dismiss it as well
 };
 
-export const SavingFailedDialog = ({
-    submitAnnotationsMutation,
-    cancel,
-    retry,
-}: SavingFailedDialogProps): JSX.Element => {
+export const SavingFailedDialog = ({ submitAnnotationsMutation, cancel, retry }: SavingFailedDialogProps) => {
     if (submitAnnotationsMutation.error === null) {
         return <></>;
     }
