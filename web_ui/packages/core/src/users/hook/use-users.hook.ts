@@ -293,17 +293,6 @@ export const useUsers = (): UseUsers => {
         return query;
     };
 
-    // const useActiveUser: UseUsers['useActiveUser'] = (organizationId) => {
-    //     const key = QUERY_KEYS.ACTIVE_USER(organizationId);
-
-    //     return useQuery<User, AxiosError>({
-    //         queryKey: key,
-    //         queryFn: () => {
-    //             return usersService.getActiveUser(organizationId);
-    //         },
-    //     });
-    // };
-
     const useUpdateUserRoles: UseUsers['useUpdateUserRoles'] = () => {
         return useMutation({
             mutationFn: async ({ organizationId, userId, newRoles }) => {
