@@ -39,5 +39,3 @@ tests/e2e/.auth
 
 public/openapi-spec.json
 .nx/
-
-/public/onnxruntime-web/
