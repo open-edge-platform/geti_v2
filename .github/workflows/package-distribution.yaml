@@ -89,5 +89,5 @@ jobs:
         env:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
         run: |
-          tar -czf platform_installer.tar.gz platform_installer
+          tar -czf platform_installer.tar.gz platform_$TAG
           aws s3 cp platform_installer.tar.gz s3://$S3_BUCKET_NAME/v$TAG/
