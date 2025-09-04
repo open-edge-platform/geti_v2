@@ -44,7 +44,7 @@ export const RangeParameterField: FC<RangeParameterFieldProps> = ({
     };
 
     const handleRangeChange = (inputValue: RangeValue<number>): void => {
-        let { start, end } = inputValue;
+        const { start, end } = inputValue;
         // Prevent start and end from being equal
         if (end - start > fieldStep) {
             setParameterValue({ start, end });
