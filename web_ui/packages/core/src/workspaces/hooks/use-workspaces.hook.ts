@@ -14,8 +14,8 @@ import { AxiosError } from 'axios';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
 import { getErrorMessage } from '../../services/utils';
-import { User } from '../../users/users.interface';
 import { WorkspaceEntity } from '../services/workspaces.interface';
+import { useUsers } from '../../users/hook/use-users.hook';
 
 interface UseWorkspacesApi {
     useWorkspacesQuery: () => UseSuspenseQueryResult<WorkspaceEntity[], AxiosError>;
@@ -25,7 +25,7 @@ interface UseWorkspacesApi {
 }
 
 export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
-    const { workspacesService, usersService } = useApplicationServices();
+    const { workspacesService } = useApplicationServices();
 
     const queryClient = useQueryClient();
 
@@ -39,14 +39,13 @@ export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
     };
 
     const useCreateWorkspaceMutation: UseWorkspacesApi['useCreateWorkspaceMutation'] = () => {
+        const { useActiveUser } = useUsers();
+        const activeUserQuery = useActiveUser(organizationId);
+        const activeUserId = activeUserQuery.data?.id;
+
         return useMutation({
             mutationFn: async ({ name }) => {
-                let activeUser = queryClient.getQueryData<User>(QUERY_KEYS.ACTIVE_USER(organizationId));
-                if (!activeUser) {
-                    activeUser = await usersService.getActiveUser(organizationId);
-                }
-                const adminId = activeUser?.id;
-                return workspacesService.createWorkspace(organizationId, name, adminId);
+                return workspacesService.createWorkspace(organizationId, name, activeUserId);
             },
             onSuccess: async () => {
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.WORKSPACES(organizationId) });
