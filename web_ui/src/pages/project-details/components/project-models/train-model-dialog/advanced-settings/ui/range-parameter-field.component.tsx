@@ -36,6 +36,14 @@ export const RangeParameterField: FC<RangeParameterFieldProps> = ({
         start: value[0],
         end: value[1],
     });
+
+    useEffect(() => {
+        setParameterValue({
+            start: value[0],
+            end: value[1],
+        });
+    }, [value]);
+
     const fieldStep = getStep({ step, maxValue: defaultValue[1], minValue: defaultValue[0] });
     const decimalPlaces = (fieldStep.toString().split('.')[1] || '').length;
 
@@ -58,13 +66,6 @@ export const RangeParameterField: FC<RangeParameterFieldProps> = ({
             onChange([start, end]);
         }
     };
-
-    useEffect(() => {
-        setParameterValue({
-            start: value[0],
-            end: value[1],
-        });
-    }, [value]);
 
     return (
         <Flex gap={'size-100'}>
