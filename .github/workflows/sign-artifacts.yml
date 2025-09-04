@@ -24,6 +24,7 @@
 # 2. Create a `repository_dispatch` event to trigger this workflow
 
 name: Sign artifacts created for release
+run-name: Sign artifacts ${{ github.event.client_payload.correlation_id || '' }}
 
 on:
   workflow_dispatch:
@@ -61,8 +62,16 @@ jobs:
           VERSION=v0.20.6
           OS=Linux
           ARCH=x86_64
-          curl -sL "https://github.com/google/go-containerregistry/releases/download/${VERSION}/go-containerregistry_${OS}_${ARCH}.tar.gz" > crane.tar.gz
-          tar -zxvf crane.tar.gz -C /usr/local/bin/ crane
+          BASE_URL="https://github.com/google/go-containerregistry/releases/download/${VERSION}"
+          curl -sL "${BASE_URL}/go-containerregistry_${OS}_${ARCH}.tar.gz" > go-containerregistry_${OS}_${ARCH}.tar.gz
+          curl -sL "${BASE_URL}/checksums.txt" | grep -E "  go-containerregistry_${OS}_${ARCH}\\.tar\\.gz$" > checkSum.txt
+          if [ -s checkSum.txt ]; then
+            sha256sum -c checkSum.txt
+          else
+            echo "Checksum file not found or empty";
+            exit 1;
+          fi
+          tar -zxvf go-containerregistry_${OS}_${ARCH}.tar.gz -C /usr/local/bin/ crane
           echo "Crane $(crane version) installed successfully"
 
       - name: Login crane to ghcr.io
