@@ -92,8 +92,10 @@ jobs:
           DIGEST: ${{ env.DIGEST }}
           IMAGE: ${{ inputs.image_uri || github.event.client_payload.image_uri }}
         run: |
-          echo "Signing ${IMAGE}@${DIGEST}"
-          cosign sign --yes "${IMAGE}@${DIGEST}"
+          set -euo pipefail
+          echo "Signing ${IMAGE}@${DIGEST} with:"
+          echo "$(cosign version)"
+          cosign sign --yes --certificate-oidc-issuer=https://token.actions.githubusercontent.com "${IMAGE}@${DIGEST}"
 
       - name: Verify the signature
         env:
