@@ -368,25 +368,20 @@ allow if {
 
 # Restrict access to GET, POST, DELETE /api/<api_ver>/organizations/<org_id>/membership/<user_id>/roles endpoint to workspace_admin
 allow if {
-	["api", api_ver, "organizations", org_id, "membership", accessed_uid, "roles"] = parsed_path
-	http_request.method in ["GET", "POST", "DELETE"]
+        ["api", api_ver, "organizations", org_id, "membership", accessed_uid, "roles"] = parsed_path
+        http_request.method in ["GET", "POST", "DELETE"]
 
-	is_valid_api_version(api_ver)
+        is_valid_api_version(api_ver)
 
-    user_id := resolve_user_id(http_request.headers)
-    body := replace(http_request.body, "\\\"", "")
-    unmarshaled_body = json.unmarshal(body)
+        user_id := resolve_user_id(http_request.headers)
+        body := replace(http_request.body, "\\\"", "")
+        unmarshaled_body = json.unmarshal(body)
 
-    print("input :", unmarshaled_body)
-    every _, role in unmarshaled_body.roles {
-        print("resourceType: ", role.role.resourceType, " operation :", role.operation, " resourceId :", role.role.resourceId)
-        role.role.resourceType == "workspace"
-        role.operation in ["CREATE", "DELETE"]
-        check_authorization(spicedb_key, "workspace", role.role.resourceId, "can_manage", user_id)
-   }
+        unmarshaled_body.role in ["workspace_admin", "workspace_contributor"]
+        check_authorization(spicedb_key, "workspace", unmarshaled_body.resourceId, "can_manage", user_id)
 
-   check_authorization(spicedb_key, "organization", org_id, "can_contribute", user_id)
-   check_authorization(spicedb_key, "organization", org_id, "can_contribute", base64.encode(accessed_uid))
+        check_authorization(spicedb_key, "organization", org_id, "can_contribute", user_id)
+        check_authorization(spicedb_key, "organization", org_id, "can_contribute", base64.encode(accessed_uid))
 }
 
 # Restrict access to GET /api/<api_ver>/organizations/<org_id>/users/<user_id>/roles endpoint to organization_admin
