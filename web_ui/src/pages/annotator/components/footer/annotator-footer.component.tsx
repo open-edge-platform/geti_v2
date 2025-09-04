@@ -9,7 +9,7 @@ import { clsx } from 'clsx';
 import { MediaItem } from '../../../../core/media/media.interface';
 import { isVideo, isVideoFrame } from '../../../../core/media/video.interface';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { FitImageToScreenButton } from '../fit-image-to-screen-button/fit-image-to-screen-button.component';
 import { MediaItemImageMetadata } from './media-item-image-metadata.component';
 import { MediaItemVideoMetadata } from './media-item-video-metadata.component';
@@ -25,9 +25,7 @@ interface CustomFooterProps extends Omit<FooterProps, 'children'> {
 }
 
 export const Footer = ({ selectedItem, areActionsDisabled = false, children, ...footerProps }: CustomFooterProps) => {
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const { project, isTaskChainProject } = useProject();
 

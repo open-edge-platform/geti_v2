@@ -13,7 +13,7 @@ import { RotatedRectangle } from '../../annotation/shapes/rotated-rectangle.comp
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { DrawingCircle } from '../circle-tool/drawing-circle.component';
 import { DrawingBox } from '../drawing-box/drawing-box.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
@@ -26,9 +26,7 @@ import classes from './ssim-tool.module.scss';
 export const SSIMTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { defaultLabel } = useTask();
     const { scene, getToolSettings } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
     const { roi, image } = useROI();
 
     const { runSSIM, toolState, previewThreshold } = useSSIMState();

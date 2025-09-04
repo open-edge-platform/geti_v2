@@ -64,7 +64,6 @@ export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContex
             label,
         })),
     ];
-
     const settings = getToolSettings(ToolType.WatershedTool);
 
     const handleSelectLabel = (key: Key): void => {

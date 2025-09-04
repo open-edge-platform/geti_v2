@@ -13,7 +13,7 @@ import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { getGlobalAnnotations } from '../../providers/task-chain-provider/utils';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { SelectingToolType } from '../selecting-tool/selecting-tool.enums';
 import { ToolAnnotationContextProps } from '../tools.interface';
 import { EditBoundingBox as EditBoundingBoxTool } from './edit-bounding-box/edit-bounding-box.component';
@@ -37,9 +37,7 @@ const EditAnnotationToolFactory = ({
     const { tasks, selectedTask } = useTask();
     const task = selectedTask ?? tasks[0];
     const { scene } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const globalAnnotations = getGlobalAnnotations(scene.annotations, roi, task);
 

@@ -6,7 +6,7 @@ import { CircleSizePreview } from '../../components/circle-size-preview/circle-s
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
 import { drawingStyles, isShapeWithinRoi } from '../utils';
 import { useCircleState } from './circle-state-provider.component';
@@ -15,9 +15,7 @@ import { DrawingCircle } from './drawing-circle.component';
 export const CircleTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { defaultLabel } = useTask();
     const { scene, updateToolSettings } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
     const { roi, image } = useROI();
     const styles = drawingStyles(defaultLabel);
     const { isBrushSizePreviewVisible, circleRadiusSize, setCircleRadiusSize, maxCircleRadius } = useCircleState();

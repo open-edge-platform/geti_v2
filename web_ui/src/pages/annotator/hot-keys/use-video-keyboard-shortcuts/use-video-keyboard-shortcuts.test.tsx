@@ -3,7 +3,7 @@
 
 import { ReactNode } from 'react';
 
-import { waitFor } from '@testing-library/react';
+import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { renderHookWithProviders } from '../../../../test-utils/render-hook-with-providers';
@@ -27,14 +27,18 @@ const wrapper = ({ children }: { children: ReactNode }) => {
     return <AnnotatorProviders datasetIdentifier={datasetIdentifier}>{children}</AnnotatorProviders>;
 };
 
-const renderVideoKeyboardShortcuts = (mockedVideoControls: ReturnType<typeof getMockedVideoControls>) => {
-    return renderHookWithProviders(() => useVideoKeyboardShortcuts(mockedVideoControls), { wrapper });
+const renderVideoKeyboardShortcuts = async (mockedVideoControls: ReturnType<typeof getMockedVideoControls>) => {
+    const result = renderHookWithProviders(() => useVideoKeyboardShortcuts(mockedVideoControls), { wrapper });
+
+    await waitForElementToBeRemoved(screen.getByRole('progressbar'));
+
+    return result;
 };
 
 describe('useVideoKeyboardShortcuts', () => {
     it('should invoke play callback correctly', async () => {
         const mockedVideoControls = getMockedVideoControls({});
-        renderVideoKeyboardShortcuts(mockedVideoControls);
+        await renderVideoKeyboardShortcuts(mockedVideoControls);
 
         await userEvent.keyboard('k');
 
@@ -45,7 +49,7 @@ describe('useVideoKeyboardShortcuts', () => {
 
     it('should invoke pause callback correctly', async () => {
         const mockedVideoControls = getMockedVideoControls({ isPlaying: true });
-        renderVideoKeyboardShortcuts(mockedVideoControls);
+        await renderVideoKeyboardShortcuts(mockedVideoControls);
 
         await userEvent.keyboard('k');
 
@@ -56,7 +60,7 @@ describe('useVideoKeyboardShortcuts', () => {
 
     it('should invoke nextFrame callback correctly', async () => {
         const mockedVideoControls = getMockedVideoControls({ canSelectNext: true });
-        renderVideoKeyboardShortcuts(mockedVideoControls);
+        await renderVideoKeyboardShortcuts(mockedVideoControls);
 
         await userEvent.keyboard('{arrowright}');
 
@@ -67,7 +71,7 @@ describe('useVideoKeyboardShortcuts', () => {
 
     it('should invoke previousFrame callback correctly', async () => {
         const mockedVideoControls = getMockedVideoControls({ canSelectPrevious: true });
-        renderVideoKeyboardShortcuts(mockedVideoControls);
+        await renderVideoKeyboardShortcuts(mockedVideoControls);
 
         await userEvent.keyboard('{arrowleft}');
 
@@ -82,7 +86,7 @@ describe('useVideoKeyboardShortcuts', () => {
             canSelectNext: false,
             isPlaying: false,
         });
-        renderVideoKeyboardShortcuts(mockedVideoControls);
+        await renderVideoKeyboardShortcuts(mockedVideoControls);
 
         await userEvent.keyboard('k');
 

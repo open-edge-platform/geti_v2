@@ -32,7 +32,7 @@ def _check_curl_installed_via_snap():
     logger.debug("Checking if curl is installed by snap.")
     command = "snap list | cut -d ' ' -f 1"
     try:
-        output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)  # noqa: S602
+        output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)  # noqa: S602  # nosec: B602
         if "curl" in output.decode("utf-8"):
             logger.debug("curl is installed by snap.")
             raise SnapCheckError(ToolsChecksTexts.curl_installed_by_snap)

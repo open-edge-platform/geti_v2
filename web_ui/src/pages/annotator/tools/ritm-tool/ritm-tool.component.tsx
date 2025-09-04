@@ -21,7 +21,7 @@ import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useTaskChain } from '../../providers/task-chain-provider/task-chain-provider.component';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { DrawingBox } from '../drawing-box/drawing-box.component';
 import { SvgToolCanvas } from '../svg-tool-canvas.component';
 import { PointerType, ToolAnnotationContextProps } from '../tools.interface';
@@ -39,9 +39,7 @@ const MINIMUM_MARGIN = RITM_TEMPLATE_SIZE / 2 + 1;
 export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { defaultLabel, activeDomains } = useTask();
     const { getToolSettings } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const hasRotatedBoundingBoxDomain = activeDomains.includes(DOMAIN.DETECTION_ROTATED_BOUNDING_BOX);
     const outputShape = hasRotatedBoundingBoxDomain ? ShapeType.RotatedRect : ShapeType.Polygon;

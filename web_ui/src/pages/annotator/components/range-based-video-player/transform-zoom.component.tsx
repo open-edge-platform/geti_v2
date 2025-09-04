@@ -3,19 +3,18 @@
 
 import { CSSProperties, FC, PropsWithChildren, useEffect } from 'react';
 
-import { TransformComponent, useControls } from 'react-zoom-pan-pinch';
+import { TransformComponent } from 'react-zoom-pan-pinch';
 
 import { MediaItem } from '../../../../core/media/media.interface';
-import { SyncZoomState } from '../../zoom/sync-zoom-state.component';
 import { useSyncScreenSize } from '../../zoom/use-sync-screen-size.hook';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoom, useZoomState } from '../../zoom/zoom-provider.component';
 
 import zoomClasses from '../../zoom/transform-zoom-annotation.module.scss';
 
 export const TransformZoom: FC<PropsWithChildren<{ mediaItem: MediaItem }>> = ({ children, mediaItem }) => {
-    const { resetTransform } = useControls();
     const ref = useSyncScreenSize();
-    const { isPanning, isPanningDisabled, zoomTarget, screenSize, setZoomTargetOnRoi, zoomState } = useZoom();
+    const { isPanning, isPanningDisabled, setZoomTarget } = useZoom();
+    const zoomState = useZoomState();
 
     const style = { '--zoom-level': zoomState.zoom } as CSSProperties;
     const enableDragCursorIcon = !isPanningDisabled && isPanning;
@@ -24,14 +23,9 @@ export const TransformZoom: FC<PropsWithChildren<{ mediaItem: MediaItem }>> = ({
         const width = mediaItem.metadata.width;
         const height = mediaItem.metadata.height;
 
-        setZoomTargetOnRoi({ x: 0, y: 0, width, height });
+        setZoomTarget({ x: 0, y: 0, width, height });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [screenSize]);
-
-    useEffect(() => {
-        resetTransform();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [zoomTarget]);
+    }, []);
 
     return (
         <div
@@ -41,7 +35,6 @@ export const TransformZoom: FC<PropsWithChildren<{ mediaItem: MediaItem }>> = ({
             ref={ref}
             className={`${zoomClasses.canvasComponent} ${enableDragCursorIcon ? zoomClasses.isPanning : ''}`}
         >
-            <SyncZoomState />
             <TransformComponent wrapperClass={zoomClasses.transformWrapper} contentClass={zoomClasses.transformContent}>
                 {children}
             </TransformComponent>

@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "etcd.fullname" . }}-jwt-token
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "etcd.labels" . | nindent 4 }}
+type: Opaque
+data:
+  {{- $previous := lookup "v1" "Secret" .Release.Namespace (printf "%s-jwt-token" (include "etcd.fullname" .)) -}}
+  {{- if $previous }}
+  # `index` function is necessary because the property name contains a dash.
+  jwt-token.pem: {{ index $previous.data "jwt-token.pem" }}
+  {{ else }}
+  jwt-token.pem: {{ genPrivateKey "rsa" | b64enc | quote }}
+  {{- end }}

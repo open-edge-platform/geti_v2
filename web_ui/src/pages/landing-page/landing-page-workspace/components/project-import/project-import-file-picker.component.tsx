@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ChangeEvent, forwardRef } from 'react';
+import { ChangeEvent, RefObject } from 'react';
 
 import { toast } from '@geti/ui';
 
@@ -12,7 +12,12 @@ import { isValidFileExtension } from '../../../../../shared/media-utils';
 
 const VALID_EXTENSIONS = ['zip'];
 
-export const ProjectImportFilePicker = forwardRef<HTMLInputElement, { options: ImportOptions }>(({ options }, ref) => {
+interface ProjectImportFilePickerProps {
+    options: ImportOptions;
+    ref: RefObject<HTMLInputElement | null>;
+}
+
+export const ProjectImportFilePicker = ({ options, ref }: ProjectImportFilePickerProps) => {
     const { importProject } = useProjectsImportProvider();
 
     const onFileInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -39,4 +44,4 @@ export const ProjectImportFilePicker = forwardRef<HTMLInputElement, { options: I
             style={{ pointerEvents: 'all' }}
         />
     );
-});
+};

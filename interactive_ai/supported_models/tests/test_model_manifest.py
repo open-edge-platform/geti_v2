@@ -113,7 +113,7 @@ class TestModelManifest:
             "hyperparameters": {
                 "dataset_preparation": {
                     "augmentation": {
-                        "gaussian_blur": {"kernel_size": 2},
+                        "gaussian_blur": {"kernel_size": 5},
                         "tiling": {"adaptive_tiling": True, "tile_size": 100, "tile_overlap": 0.3},
                     }
                 },
@@ -133,7 +133,7 @@ class TestModelManifest:
             # Verify hiyapyco.load was called with the correct paths
             mock_load.assert_called_once_with(
                 *expected_paths,
-                method=hiyapyco.METHOD_MERGE,
+                method=hiyapyco.METHOD_SUBSTITUTE,
                 interpolate=True,
                 failonmissingfiles=True,
                 none_behavior=hiyapyco.NONE_BEHAVIOR_OVERRIDE,

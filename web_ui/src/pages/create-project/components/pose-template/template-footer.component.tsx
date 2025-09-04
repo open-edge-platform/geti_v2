@@ -4,10 +4,10 @@
 import { Content, Divider, Flex, View } from '@geti/ui';
 
 import { ZoomLevel } from '../../../annotator/components/footer/zoom-level/zoom-level.component';
-import { useZoom } from '../../../annotator/zoom/zoom-provider.component';
+import { useZoomState } from '../../../annotator/zoom/zoom-provider.component';
 
 export const TemplateFooter = () => {
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
 
     return (
         <View backgroundColor={'gray-100'}>

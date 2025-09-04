@@ -16,7 +16,7 @@ import { AnnotationToolContext } from '../../core/annotation-tool-context.interf
 import { useAnnotatorContextMenu } from '../../providers/annotator-context-menu-provider/annotator-context-menu-provider.component';
 import { useIsSelectionToolActive } from '../../tools/selecting-tool/selecting-state-provider.component';
 import { SelectingToolType } from '../../tools/selecting-tool/selecting-tool.enums';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { useAnnotationContextMenu } from './use-annotation-context-menu.hook';
 import { useToolContextMenu } from './use-tool-context-menu.hook';
 
@@ -48,9 +48,7 @@ export const AnnotationContextMenu = ({
 
     const { handleShowToolContextMenu } = useToolContextMenu({ annotationToolContext });
 
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const { hideContextMenu, contextConfig } = useAnnotatorContextMenu();
 

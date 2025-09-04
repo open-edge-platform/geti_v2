@@ -9,9 +9,8 @@ import { Point } from '../../../../core/annotations/shapes.interface';
 import { labelFromUser } from '../../../../core/annotations/utils';
 import { PoseEdges } from '../../annotation/shapes/pose-edges.component';
 import { PoseKeypoints } from '../../annotation/shapes/pose-keypoints.component';
-import { useVisibleAnnotations } from '../../hooks/use-visible-annotations.hook';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { TranslateShape } from '../edit-tool/translate-shape.component';
 import { getBoundingBoxInRoi, getBoundingBoxResizePoints, getClampedBoundingBox } from '../edit-tool/utils';
 import { SvgToolCanvas } from '../svg-tool-canvas.component';
@@ -27,9 +26,8 @@ import {
 } from './utils';
 
 export const KeypointTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const { image, roi } = useROI();
-    const visibleAnnotations = useVisibleAnnotations();
     const { templateLabels, templatePoints, currentBoundingBox, setCurrentBoundingBox, setCursorDirection } =
         useKeypointState();
 
@@ -58,11 +56,7 @@ export const KeypointTool = ({ annotationToolContext }: ToolAnnotationContextPro
         // We add a label so that the annotation doesn't get flagged as invalid by `hasInvalidAnnotations`
         // when the user submits it
         const newAnnotation = { ...keypointAnnotation, isSelected: true, labels: [labelFromUser(templateLabels[0])] };
-
-        if (isEmpty(visibleAnnotations)) {
-            annotationToolContext.scene.addAnnotations([newAnnotation]);
-            setCurrentBoundingBox(null);
-        }
+        annotationToolContext.scene.replaceAnnotations([newAnnotation]);
     };
 
     const handleRemoveOldABoundingBox = () => {

@@ -68,8 +68,9 @@ export const ObjectSizeDistributionWrapper = ({ gridArea, objectSizeDistribution
                 title={CHART_TITLE}
                 actions={
                     <FullscreenAction
-                        actionButton={
+                        actionButton={(ref) => (
                             <DownloadGraphMenu
+                                ref={ref}
                                 fileName={CHART_TITLE}
                                 data={{
                                     type: 'default',
@@ -79,7 +80,7 @@ export const ObjectSizeDistributionWrapper = ({ gridArea, objectSizeDistribution
                                 tooltip={'Download graph'}
                                 graphBackgroundColor={'gray-100'}
                             />
-                        }
+                        )}
                         title={CHART_TITLE}
                     >
                         <DistributionChart

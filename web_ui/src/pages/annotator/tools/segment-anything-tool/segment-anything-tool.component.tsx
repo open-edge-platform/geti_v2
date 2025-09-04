@@ -15,7 +15,7 @@ import { ShapeFactory } from '../../annotation/shapes/factory.component';
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useAnnotationToolContext } from '../../providers/annotation-tool-provider/annotation-tool-provider.component';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { SvgToolCanvas } from '../svg-tool-canvas.component';
 import { PointerType } from '../tools.interface';
 import { removeOffLimitPoints, SELECT_ANNOTATION_STYLES } from '../utils';
@@ -43,9 +43,7 @@ const THROTTLE_TIME = 150;
 
 export const SegmentAnythingTool = () => {
     const { image, roi } = useROI();
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const clampPoint = clampPointBetweenImage(image);
 

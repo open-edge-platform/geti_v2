@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ElementRef, MutableRefObject, useRef } from 'react';
+import { ComponentRef, RefObject, useRef } from 'react';
 
 import { useNumberFormatter, VisuallyHidden, type SpectrumSliderProps } from '@geti/ui';
 import { AriaSliderProps, mergeProps, useFocusRing, useSlider, useSliderThumb } from 'react-aria';
@@ -13,7 +13,7 @@ interface ThumbProps {
     index: number;
     state: SliderState;
     trackWidth: string;
-    trackRef: MutableRefObject<HTMLDivElement | null>;
+    trackRef: RefObject<HTMLDivElement | null>;
 }
 
 interface BufferRange {
@@ -52,7 +52,7 @@ export const VideoSlider = ({
     lastFrame,
     ...props
 }: VideoSliderProps) => {
-    const trackRef = useRef<ElementRef<'div'>>(null);
+    const trackRef = useRef<ComponentRef<'div'>>(null);
     const sliderProps = props as unknown as AriaSliderProps<number | number[]>;
 
     const numberFormatter = useNumberFormatter(props.formatOptions);

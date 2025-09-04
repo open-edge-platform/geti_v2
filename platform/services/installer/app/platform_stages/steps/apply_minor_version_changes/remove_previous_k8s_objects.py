@@ -68,6 +68,19 @@ def _remove_deployment():
         logger.debug("Deleted deployment.")
 
 
+def _remove_stateful_set():
+    with kubernetes.client.ApiClient() as api_client:
+        core_api = kubernetes.client.AppsV1Api(api_client)
+        try:
+            logger.debug("Deleting etcd stateful set.")
+            core_api.delete_namespaced_stateful_set(name="impt-etcd", namespace="impt")
+        except kubernetes.client.exceptions.ApiException as ex:
+            if ex.status != 404:
+                logger.error("Error when accessing the Kubernetes API.", exc_info=True)
+                raise RemovePreviousK8SObjectsError from ex
+        logger.debug("Deleted stateful set.")
+
+
 def remove_previous_k8s_objects() -> None:
     """
     Remove previous k8s objects during upgrade
@@ -80,6 +93,7 @@ def remove_previous_k8s_objects() -> None:
         _remove_modelmesh_webhook_conf,
         _remove_secret,
         _remove_deployment,
+        _remove_stateful_set,
     ]
 
     for task in tasks:

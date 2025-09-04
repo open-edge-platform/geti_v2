@@ -11,7 +11,6 @@ import { AnnotatorProvider } from '../../../../annotator/providers/annotator-pro
 import { RegionOfInterestProvider } from '../../../../annotator/providers/region-of-interest-provider/region-of-interest-provider.component';
 import { DefaultSelectedMediaItemProvider } from '../../../../annotator/providers/selected-media-item-provider/default-selected-media-item-provider.component';
 import { SelectedMediaItem } from '../../../../annotator/providers/selected-media-item-provider/selected-media-item.interface';
-import { SyncZoomState, SyncZoomTarget } from '../../../../annotator/zoom/sync-zoom-state.component';
 import { ZoomProvider } from '../../../../annotator/zoom/zoom-provider.component';
 
 interface AnnotatorProvidersProps {
@@ -33,11 +32,7 @@ export const AnnotatorProviders = ({ mediaItem, image, annotations, children }: 
             <AnnotatorProvider>
                 <RegionOfInterestProvider>
                     <AnnotatorCanvasSettings>
-                        <ZoomProvider>
-                            <SyncZoomState />
-                            <SyncZoomTarget />
-                            {children}
-                        </ZoomProvider>
+                        <ZoomProvider>{children}</ZoomProvider>
                     </AnnotatorCanvasSettings>
                 </RegionOfInterestProvider>
             </AnnotatorProvider>

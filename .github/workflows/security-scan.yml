@@ -19,12 +19,16 @@ jobs:
       contents: read
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/anomalib/.github/actions/security/zizmor@3412e9da00bc38b10f2ab4896c72ec3f41e90e4d
+        uses: open-edge-platform/geti-ci/actions/zizmor@db5335076dfe564b039b5a7480b8f6b6ae38370a
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -37,12 +41,16 @@ jobs:
       contents: read
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
       - name: Run Bandit scan
-        uses: open-edge-platform/anomalib/.github/actions/security/bandit@3412e9da00bc38b10f2ab4896c72ec3f41e90e4d
+        uses: open-edge-platform/geti-ci/actions/bandit@db5335076dfe564b039b5a7480b8f6b6ae38370a
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -57,6 +65,10 @@ jobs:
       contents: read
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:

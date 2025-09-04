@@ -59,14 +59,15 @@ export const TrainingModelMatrix = ({ value, header, gridColumn, gridRow }: Trai
                 <Flex>
                     {pickerComponent}
                     <FullscreenAction
-                        actionButton={
+                        actionButton={(menuRef) => (
                             <DownloadGraphMenu
+                                ref={menuRef}
                                 fileName={'confusion-matrix'}
                                 data={{ type: 'matrix', data: confusionMatrixData }}
                                 tooltip={'Download graph'}
                                 graphBackgroundColor={'gray-100'}
                             />
-                        }
+                        )}
                         title={header}
                     >
                         <ConfusionMatrixZoom

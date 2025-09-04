@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ComponentProps, FormEvent, forwardRef, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ComponentProps, FormEvent, ReactNode, RefObject, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TextField, TextFieldRef } from '@geti/ui';
 import { isEmpty, isFunction } from 'lodash-es';
@@ -51,73 +51,71 @@ interface BaseLabelSearchProps {
     suffix?: SearchLabelTreeItemSuffix;
     prefix?: SearchLabelTreeItemSuffix;
     resultWrapperProps?: object;
+    ref?: RefObject<TextFieldRef | null>;
 }
-export const BaseLabelSearch = forwardRef<TextFieldRef, BaseLabelSearchProps>(
-    (
-        {
-            id,
-            labels,
-            onClick,
-            dontFocusOnMount = false,
-            className = undefined,
-            textFieldProps = {},
-            ResultWrapper = NoopResultWrapper,
-            resultWrapperProps,
-            suffix,
-            prefix,
+
+export const BaseLabelSearch = ({
+    id,
+    labels,
+    onClick,
+    dontFocusOnMount = false,
+    className = undefined,
+    textFieldProps = {},
+    ResultWrapper = NoopResultWrapper,
+    resultWrapperProps,
+    suffix,
+    prefix,
+    ref,
+}: BaseLabelSearchProps) => {
+    const [input, setInput] = useState(textFieldProps.value ?? '');
+
+    const results = useFilteredResults(input, labels);
+
+    const treeItemClickHandler = useCallback(
+        (label: Label): void => {
+            onClick(label);
+            setInput('');
         },
-        ref
-    ) => {
-        const [input, setInput] = useState(textFieldProps.value ?? '');
+        [onClick]
+    );
 
-        const results = useFilteredResults(input, labels);
+    const handleInput = (event: FormEvent<HTMLInputElement>) => {
+        setInput(event.currentTarget.value);
+    };
 
-        const treeItemClickHandler = useCallback(
-            (label: Label): void => {
-                onClick(label);
-                setInput('');
-            },
-            [onClick]
-        );
+    useEffect(() => {
+        if (ref && !isFunction(ref) && ref.current && !dontFocusOnMount) {
+            ref.current.focus();
+        }
+    }, [dontFocusOnMount, ref]);
 
-        const handleInput = (event: FormEvent<HTMLInputElement>) => {
-            setInput(event.currentTarget.value);
-        };
+    return (
+        <div className={className}>
+            <TextField
+                id={id ? `${id}-label-search-field-id` : 'label-search-field-id'}
+                onKeyDown={onEscape((event) => {
+                    setInput('');
+                    event.currentTarget.blur();
+                })}
+                {...{
+                    width: '100%',
+                    placeholder: 'Select label',
+                    'aria-label': 'Select label',
+                    ...textFieldProps,
+                }}
+                ref={ref}
+                value={input}
+                onInput={handleInput}
+            />
 
-        useEffect(() => {
-            if (ref && !isFunction(ref) && ref.current && !dontFocusOnMount) {
-                ref.current.focus();
-            }
-        }, [dontFocusOnMount, ref]);
-
-        return (
-            <div className={className}>
-                <TextField
-                    id={id ? `${id}-label-search-field-id` : 'label-search-field-id'}
-                    onKeyDown={onEscape((event) => {
-                        setInput('');
-                        event.currentTarget.blur();
-                    })}
-                    {...{
-                        width: '100%',
-                        placeholder: 'Select label',
-                        'aria-label': 'Select label',
-                        ...textFieldProps,
-                    }}
-                    ref={ref}
-                    value={input}
-                    onInput={handleInput}
+            <ResultWrapper {...resultWrapperProps}>
+                <LabelResultPanel
+                    suffix={suffix}
+                    prefix={prefix}
+                    labelsTree={results}
+                    onSelected={treeItemClickHandler}
                 />
-
-                <ResultWrapper {...resultWrapperProps}>
-                    <LabelResultPanel
-                        suffix={suffix}
-                        prefix={prefix}
-                        labelsTree={results}
-                        onSelected={treeItemClickHandler}
-                    />
-                </ResultWrapper>
-            </div>
-        );
-    }
-);
+            </ResultWrapper>
+        </div>
+    );
+};

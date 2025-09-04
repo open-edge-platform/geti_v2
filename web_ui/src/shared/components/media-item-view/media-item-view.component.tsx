@@ -73,9 +73,7 @@ export const MediaItemView = ({
                     style={{
                         display: showLoadingSpinner ? 'none' : 'block',
                     }}
-                    // @ts-expect-error fetchPriority isn't recognized by react yet
-                    // eslint-disable-next-line react/no-unknown-property
-                    fetchpriority='low'
+                    fetchPriority='low'
                 />
             )}
 

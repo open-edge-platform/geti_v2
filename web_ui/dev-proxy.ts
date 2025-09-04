@@ -66,13 +66,19 @@ export const devProxy: ProxyConfig = [
                 return buffer;
             }
 
-            const originalFeatureFlags = JSON.parse(buffer.toString('utf8'));
+            const content = buffer.toString('utf8');
             try {
-                const featureFlags = JSON.parse(String(fs.readFileSync('./dev-feature-flags.json')));
+                const originalFeatureFlags = JSON.parse(content);
+                try {
+                    const featureFlags = JSON.parse(String(fs.readFileSync('./dev-feature-flags.json')));
 
-                return JSON.stringify({ ...originalFeatureFlags, ...featureFlags });
-            } catch {
-                return JSON.stringify(originalFeatureFlags);
+                    return JSON.stringify({ ...originalFeatureFlags, ...featureFlags });
+                } catch {
+                    return JSON.stringify(originalFeatureFlags);
+                }
+            } catch (e) {
+                console.error('Could not parse feature flags', content, e);
+                return JSON.stringify({});
             }
         }),
     },

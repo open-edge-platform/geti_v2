@@ -9,7 +9,7 @@ import { DOMAIN } from '../../../../core/projects/core.interface';
 import { runWhen } from '../../../../shared/utils';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { DrawingBox } from '../drawing-box/drawing-box.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
 import { convertToolShapeToGetiShape, drawingStyles, isShapeWithinRoi } from '../utils';
@@ -26,9 +26,7 @@ export const BoundingBoxTool = ({ annotationToolContext }: ToolAnnotationContext
         scene.addShapes([convertToolShapeToGetiShape(rect)]);
     });
 
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const styles = drawingStyles(defaultLabel);
 

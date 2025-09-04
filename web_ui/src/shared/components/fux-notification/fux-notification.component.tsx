@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ComponentProps, MutableRefObject, ReactNode } from 'react';
+import { ComponentProps, ReactNode, RefObject } from 'react';
 
 import { ActionButton, Button, CustomPopover, Divider, Flex, Popover, Text, View } from '@geti/ui';
 import { Close } from '@geti/ui/icons';
@@ -19,7 +19,7 @@ interface CustomPopoverProps extends Omit<ComponentProps<typeof Popover>, 'trigg
     settingsKey: FUX_NOTIFICATION_KEYS;
     customDocUrl?: string;
     children?: ReactNode;
-    triggerRef: MutableRefObject<null>;
+    triggerRef: RefObject<null>;
     onClose?: () => void;
 }
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ComponentProps, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react';
+import { ComponentProps, RefObject, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Flex, Text } from '@geti/ui';
 import { isFunction } from 'lodash-es';
@@ -136,7 +136,7 @@ export const BarHorizontalChart = ({
                         animationDuration={0}
                         content={
                             <CustomTooltipChart
-                                prevHoveredLabel={prevHoveredLabel as MutableRefObject<string>}
+                                prevHoveredLabel={prevHoveredLabel as RefObject<string>}
                                 defaultColors={colors || []}
                                 setLabelColors={setLabelColors}
                                 data={data}

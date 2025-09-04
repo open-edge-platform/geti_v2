@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key, MutableRefObject, ReactNode, useEffect, useRef, useState } from 'react';
+import { Key, ReactNode, RefObject, useEffect, useRef, useState } from 'react';
 
 import { Flex, Item, Menu, Overlay, Section, Text } from '@geti/ui';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -84,7 +84,7 @@ export const ContextMenu = ({
 
     return (
         <AnimatePresence>
-            <Overlay isOpen={isVisible} nodeRef={overlayRef as unknown as MutableRefObject<HTMLElement>}>
+            <Overlay isOpen={isVisible} nodeRef={overlayRef as unknown as RefObject<HTMLElement>}>
                 <motion.div
                     variants={ANIMATION_PARAMETERS.FADE_ITEM}
                     initial={'hidden'}

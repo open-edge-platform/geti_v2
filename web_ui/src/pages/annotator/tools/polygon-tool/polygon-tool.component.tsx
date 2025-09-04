@@ -19,7 +19,7 @@ import { usePolygon } from '../../hooks/use-polygon.hook';
 import { useAnnotationScene } from '../../providers/annotation-scene-provider/annotation-scene-provider.component';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { PolygonDraw } from '../polygon-draw.component';
 import { SvgToolCanvas } from '../svg-tool-canvas.component';
 import { ToolAnnotationContextProps } from '../tools.interface';
@@ -70,9 +70,7 @@ export const PolygonTool = ({ annotationToolContext }: ToolAnnotationContextProp
     const { setIsDrawing } = useAnnotationScene();
     const ref = useRef<SVGRectElement>({} as SVGRectElement);
     const isClosing = useRef(false);
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const { roi, image } = useROI();
 

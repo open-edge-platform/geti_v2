@@ -42,8 +42,9 @@ export const TrainingModelLineChart = ({
             downloadableData={{ type: 'lineChart', data: convertedLineData, xLabel: xAxisLabel, yLabel: yAxisLabel }}
             actions={
                 <FullscreenAction
-                    actionButton={
+                    actionButton={(ref) => (
                         <DownloadGraphMenu
+                            ref={ref}
                             fileName={header}
                             data={{
                                 type: 'lineChart',
@@ -54,7 +55,7 @@ export const TrainingModelLineChart = ({
                             tooltip={'Download graph'}
                             graphBackgroundColor={'gray-100'}
                         />
-                    }
+                    )}
                     title={header}
                 >
                     {chartComponent}

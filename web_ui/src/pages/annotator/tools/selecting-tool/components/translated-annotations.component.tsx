@@ -12,7 +12,7 @@ import { getRelativePoint } from '../../../../utils';
 import { Annotation } from '../../../annotation/annotation.component';
 import { Labels } from '../../../annotation/labels/labels.component';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import { ToolAnnotationContextProps } from '../../tools.interface';
 import { translateAnnotation } from '../../utils';
 
@@ -33,9 +33,7 @@ export const TranslatedAnnotations = ({
     const {
         scene: { updateAnnotation },
     } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const { image } = useROI();
     const [startPoint, setStartPoint] = useState<Point | null>(null);

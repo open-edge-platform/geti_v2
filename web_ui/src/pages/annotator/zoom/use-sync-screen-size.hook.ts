@@ -6,7 +6,7 @@ import { RefObject, useEffect, useRef } from 'react';
 import { useSize } from '../../../hooks/use-size/use-size.hook';
 import { useZoom } from './zoom-provider.component';
 
-export const useSyncScreenSize = (): RefObject<HTMLDivElement> => {
+export const useSyncScreenSize = (): RefObject<HTMLDivElement | null> => {
     const { setScreenSize } = useZoom();
     const ref = useRef<HTMLDivElement>(null);
     const screenSize = useSize(ref);

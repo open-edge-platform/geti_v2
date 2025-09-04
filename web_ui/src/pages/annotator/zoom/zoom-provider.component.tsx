@@ -1,24 +1,14 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import {
-    createContext,
-    Dispatch,
-    ReactNode,
-    SetStateAction,
-    useCallback,
-    useContext,
-    useEffect,
-    useState,
-} from 'react';
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useRef, useState } from 'react';
 
-import { TransformWrapper, useTransformContext } from 'react-zoom-pan-pinch';
+import { isEqual } from 'lodash-es';
+import { TransformWrapper, useControls, useTransformContext, useTransformEffect } from 'react-zoom-pan-pinch';
 
-import { RegionOfInterest } from '../../../core/annotations/annotation.interface';
 import { Rect } from '../../../core/annotations/shapes.interface';
 import { usePrevious } from '../../../hooks/use-previous/use-previous.hook';
 import { MissingProviderError } from '../../../shared/missing-provider-error';
-import { runWhenTruthy } from '../../../shared/utils';
 import { getCenterCoordinates } from './utils';
 
 export type ZoomTarget = Omit<Rect, 'shapeType'> | undefined;
@@ -32,30 +22,20 @@ interface ZoomState {
 }
 
 interface ZoomContextProps {
-    zoomState: ZoomState;
-    setZoomState: Dispatch<SetStateAction<ZoomState>>;
+    setScreenSize: Dispatch<SetStateAction<{ width: number; height: number } | undefined>>;
 
     zoomTarget: ZoomTarget;
     setZoomTarget: Dispatch<SetStateAction<ZoomTarget>>;
-    getZoomStateForTarget: (target: Exclude<ZoomTarget, undefined>) => ZoomState;
-
-    setZoomTargetOnRoi: (roi?: RegionOfInterest) => void;
 
     // we disable the double click to zoom out only when we are using pen
-    isDblCLickDisabled: boolean;
-    setIsDblClickDisabled: (disabled: boolean) => void;
+    isDblClickDisabled: boolean;
+    setisDblClickDisabled: (disabled: boolean) => void;
 
     isPanning: boolean;
     isPanningDisabled: boolean;
     setIsPanningDisabled: (disabled: boolean) => void;
 
-    screenSize: { width: number; height: number } | undefined;
-    setScreenSize: Dispatch<SetStateAction<{ width: number; height: number } | undefined>>;
-
     setIsZoomDisabled: Dispatch<SetStateAction<boolean>>;
-
-    minScale: number;
-    maxScale: number;
 }
 
 interface ZoomProviderProps {
@@ -68,6 +48,7 @@ const defaultZoomState: ZoomState = {
 };
 
 const ZoomContext = createContext<ZoomContextProps | undefined>(undefined);
+const ZoomStateContext = createContext<ZoomState | undefined>(undefined);
 
 interface ResetInitialZoomProps {
     initialZoomState: ZoomState;
@@ -76,75 +57,84 @@ interface ResetInitialZoomProps {
 // The goal of this component is to override the initial props that are passed to the TransformWrapper component.
 // TransformWrapper does not change the props when initialZoomState changes. This component fixes that behaviour.
 const ResetInitialZoom = ({ initialZoomState }: ResetInitialZoomProps) => {
-    const instance = useTransformContext();
+    const { setTransform } = useControls();
 
+    const previousInitialState = usePrevious(initialZoomState);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     useEffect(() => {
+        if (isEqual(initialZoomState, previousInitialState)) {
+            return;
+        }
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+
         const {
             translation: { x, y },
             zoom,
         } = initialZoomState;
 
-        instance.props = {
-            ...instance.props,
-            initialPositionX: x,
-            initialPositionY: y,
-            initialScale: zoom,
+        timeoutRef.current = setTimeout(() => {
+            setTransform(x, y, zoom);
+            timeoutRef.current = null;
+        }, 0);
+
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+            }
         };
-    }, [initialZoomState, instance]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [initialZoomState, previousInitialState]);
 
     return <></>;
+};
+
+const ZoomStateProvider = ({ children }: ZoomProviderProps) => {
+    const [_, setX] = useState(0);
+    const { transformState } = useTransformContext();
+
+    // `useTransformContext` will not rerender when react-zoom-pan-pinch changes its
+    // zoom state, so we force a rerender via its useTransformEffect
+    useTransformEffect(() => {
+        setX((x) => x + 1);
+    });
+
+    const zoomState = {
+        zoom: transformState.scale,
+        translation: {
+            x: transformState.positionX,
+            y: transformState.positionY,
+        },
+    };
+
+    return <ZoomStateContext.Provider value={zoomState}>{children}</ZoomStateContext.Provider>;
+};
+
+const getInitialZoomState = (
+    target: ZoomTarget,
+    screenSize: { width: number; height: number } | undefined
+): ZoomState => {
+    if (!screenSize || !target) {
+        return defaultZoomState;
+    }
+    const { scale, x, y } = getCenterCoordinates(screenSize, target);
+
+    return { translation: { x, y }, zoom: scale };
 };
 
 export const ZoomProvider = ({ children }: ZoomProviderProps) => {
     const [isZoomDisabled, setIsZoomDisabled] = useState<boolean>(false);
     const [isPanningDisabled, setIsPanningDisabled] = useState<boolean>(true);
     const [isPanning, setIsPanning] = useState<boolean>(false);
-    const [isDblCLickDisabled, setIsDblClickDisabled] = useState<boolean>(false);
-
-    // Once we set a new scale, it means the zoom bounds (min/max zoom) change
-    // E.g. when we zoom into an annotation the new scale belongs to the annotation's bounding box dimensions,
-    // and not the original image
-    const [initialZoomState, setInitialZoomState] = useState<ZoomState>(defaultZoomState);
-    const [zoomState, setZoomState] = useState<ZoomState>(defaultZoomState);
+    const [isDblClickDisabled, setisDblClickDisabled] = useState<boolean>(false);
 
     const [zoomTarget, setZoomTarget] = useState<ZoomTarget>();
     const [screenSize, setScreenSize] = useState<{ width: number; height: number } | undefined>();
 
-    const getZoomStateForTarget = useCallback(
-        (target: Exclude<ZoomTarget, undefined>): ZoomState => {
-            if (!screenSize || !target) {
-                return zoomState;
-            }
-            const { scale, x, y } = getCenterCoordinates(screenSize, target);
-
-            return { translation: { x, y }, zoom: scale };
-        },
-        [screenSize, zoomState]
-    );
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const setZoomTargetOnRoi = useCallback(
-        runWhenTruthy((roi: RegionOfInterest): void => {
-            // By setting a new target, the `setTransform` from `TransformZoom` will apply the correct zoomState
-
-            setZoomTarget(roi);
-            setInitialZoomState(getZoomStateForTarget(roi));
-        }),
-        [getZoomStateForTarget]
-    );
-
-    const previousZoomTarget = usePrevious(zoomTarget);
-    useEffect(() => {
-        if (zoomTarget === previousZoomTarget) {
-            return;
-        }
-
-        if (zoomTarget !== undefined) {
-            const imageZoomState = getZoomStateForTarget(zoomTarget);
-
-            setInitialZoomState(imageZoomState);
-        }
-    }, [screenSize, getZoomStateForTarget, previousZoomTarget, zoomTarget]);
+    const initialZoomState = getInitialZoomState(zoomTarget, screenSize);
 
     // Allow the user to zoom out twice as much as the original zoom
     const minScale = Math.min(1, initialZoomState.zoom / 2);
@@ -153,55 +143,43 @@ export const ZoomProvider = ({ children }: ZoomProviderProps) => {
     const maxScale = Math.round(Math.max(screenSize?.height ?? 1, screenSize?.width ?? 1) / 25);
 
     const value: ZoomContextProps = {
-        zoomState,
-        setZoomState,
+        zoomTarget,
+        setZoomTarget,
+        setScreenSize,
 
         isPanning,
         isPanningDisabled,
         setIsPanningDisabled,
 
-        isDblCLickDisabled,
-        setIsDblClickDisabled,
-
-        zoomTarget,
-        setZoomTarget,
-        getZoomStateForTarget,
-
-        setZoomTargetOnRoi,
-
-        screenSize,
-        setScreenSize,
-
+        isDblClickDisabled,
+        setisDblClickDisabled,
         setIsZoomDisabled,
-
-        minScale,
-        maxScale,
     };
 
     return (
-        <ZoomContext.Provider value={value}>
-            <TransformWrapper
-                disabled={isZoomDisabled}
-                panning={{
-                    disabled: isPanningDisabled,
-                    velocityDisabled: true,
-                }}
-                smooth
-                // Decrease to allow more zooming out
-                minScale={minScale}
-                maxScale={maxScale}
-                initialScale={initialZoomState.zoom}
-                initialPositionX={initialZoomState.translation.x}
-                initialPositionY={initialZoomState.translation.y}
-                onPanningStart={() => setIsPanning(true)}
-                onPanningStop={() => setIsPanning(false)}
-                limitToBounds={false}
-                doubleClick={{ mode: 'reset', disabled: isDblCLickDisabled }}
-            >
-                {children}
+        <TransformWrapper
+            disabled={isZoomDisabled}
+            panning={{
+                disabled: isPanningDisabled,
+                velocityDisabled: true,
+            }}
+            smooth
+            // Decrease to allow more zooming out
+            minScale={minScale}
+            maxScale={maxScale}
+            initialScale={initialZoomState.zoom}
+            initialPositionX={initialZoomState.translation.x}
+            initialPositionY={initialZoomState.translation.y}
+            onPanningStart={() => setIsPanning(true)}
+            onPanningStop={() => setIsPanning(false)}
+            limitToBounds={false}
+            doubleClick={{ mode: 'reset', disabled: isDblClickDisabled }}
+        >
+            <ZoomContext.Provider value={value}>
+                <ZoomStateProvider>{children}</ZoomStateProvider>
                 <ResetInitialZoom initialZoomState={initialZoomState} />
-            </TransformWrapper>
-        </ZoomContext.Provider>
+            </ZoomContext.Provider>
+        </TransformWrapper>
     );
 };
 
@@ -213,4 +191,14 @@ export const useZoom = (): ZoomContextProps => {
     }
 
     return context;
+};
+
+export const useZoomState = (): ZoomState => {
+    const zoomStateContext = useContext(ZoomStateContext);
+
+    if (zoomStateContext === undefined) {
+        throw new MissingProviderError('useZoomState', 'ZoomStateProvider');
+    }
+
+    return zoomStateContext;
 };

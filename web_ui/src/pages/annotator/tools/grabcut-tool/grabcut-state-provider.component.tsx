@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { createContext, MutableRefObject, useCallback, useContext, useEffect, useRef } from 'react';
+import { createContext, RefObject, useCallback, useContext, useEffect, useRef } from 'react';
 
 import { toast } from '@geti/ui';
 
@@ -20,9 +20,9 @@ import { GrabcutToolType } from './grabcut-tool.enums';
 export interface GrabcutStateContextProps {
     isLoading: boolean;
     toolsState: GrabcutState;
-    loadingRect: MutableRefObject<Rect | null>;
-    foregroundMarkers: MutableRefObject<Point[][]>;
-    backgroundMarkers: MutableRefObject<Point[][]>;
+    loadingRect: RefObject<Rect | null>;
+    foregroundMarkers: RefObject<Point[][]>;
+    backgroundMarkers: RefObject<Point[][]>;
     resetConfig: () => void;
     rejectAnnotation: () => void;
     setDrawingToFalse: () => void;

@@ -11,7 +11,7 @@ import { isKeypointTask } from '../../../../core/projects/utils';
 import { useSelected } from '../../../../providers/selected-provider/selected-provider.component';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
 import { getOuterPaddedBoundingBox, getPointsEdges } from '../../tools/keypoint-tool/utils';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { KeypointProps } from './shape.interface';
 import { svgShadow } from './util';
 
@@ -24,7 +24,7 @@ interface PoseEdgesProps extends KeypointProps {
 
 export const PoseEdges = ({ shape, boundingBox, showBoundingBox = true }: PoseEdgesProps) => {
     const { project } = useProject();
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const { isSelected } = useSelected();
     const keypointTask = project.tasks.find(isKeypointTask);
 

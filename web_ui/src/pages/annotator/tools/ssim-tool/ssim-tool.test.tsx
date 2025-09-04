@@ -50,7 +50,7 @@ jest.mock('../../providers/region-of-interest-provider/region-of-interest-provid
 jest.mock('../../hooks/use-add-unfinished-shape.hook');
 
 jest.mock('./../../zoom/zoom-provider.component', () => ({
-    useZoom: jest.fn(() => ({ zoomState: { zoom: 1.0, translation: { x: 0, y: 0 } } })),
+    useZoomState: jest.fn(() => ({ zoom: 1.0, translation: { x: 0, y: 0 } })),
 }));
 
 jest.mock('../../../../hooks/use-load-ai-webworker/use-load-ai-webworker.hook', () => {

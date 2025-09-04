@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MutableRefObject, useRef, useState } from 'react';
+import { RefObject, useRef, useState } from 'react';
 
 import { ActionButton, Overlay, View } from '@geti/ui';
 import { ChevronLeft, ChevronRight, Close } from '@geti/ui/icons';
@@ -59,7 +59,7 @@ export const ImageOverlay = <T extends FileItem>({
 
     return (
         <Overlay
-            nodeRef={overlayRef as unknown as MutableRefObject<HTMLElement>}
+            nodeRef={overlayRef as unknown as RefObject<HTMLElement>}
             isOpen={dialogState.isOpen}
             onEntered={() => setImageAnimationClasses((prev) => [...prev, classes.thumbnailPreviewImageOpened])}
             onExiting={() =>

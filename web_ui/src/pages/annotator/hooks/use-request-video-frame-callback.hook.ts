@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MutableRefObject, useEffect, useLayoutEffect, useRef } from 'react';
+import { RefObject, useEffect, useLayoutEffect, useRef } from 'react';
 
 export const useRequestVideoFrameCallback = (
-    video: MutableRefObject<HTMLVideoElement | null | undefined>,
+    video: RefObject<HTMLVideoElement | null | undefined>,
     fps: number,
     callback: (frameNumber: number) => void
 ) => {

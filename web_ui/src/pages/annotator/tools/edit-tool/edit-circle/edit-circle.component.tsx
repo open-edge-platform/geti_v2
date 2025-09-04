@@ -12,7 +12,7 @@ import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
 import { Labels } from '../../../annotation/labels/labels.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import { getMaxCircleRadius, MIN_RADIUS } from '../../circle-tool/utils';
 import { isShapeWithinRoi } from '../../utils';
 import { ResizeAnchorType } from '../resize-anchor.enum';
@@ -71,9 +71,7 @@ export const EditCircle = ({
     disableTranslation = false,
 }: EditCircleProps) => {
     const { scene } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
     const { roi, image } = useROI();
     const [shape, setShape] = useState(annotation.shape);
     const [angle, setAngle] = useState(() => getPreferredAnchorPosition(shape, roi));

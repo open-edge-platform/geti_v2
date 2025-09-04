@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MutableRefObject, useCallback, useRef } from 'react';
+import { RefObject, useCallback, useRef } from 'react';
 
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -33,8 +33,8 @@ const getAnnotationsToSave = (
 type UnfinishedShapesCallback = (() => Annotation[]) | null;
 interface UseSubmitAnnotationsMutation {
     submitAnnotationsMutation: UseSubmitAnnotationsMutationResult;
-    afterSaving: MutableRefObject<(() => Promise<void>) | undefined>;
-    unfinishedShapesCallback: MutableRefObject<UnfinishedShapesCallback>;
+    afterSaving: RefObject<(() => Promise<void>) | undefined>;
+    unfinishedShapesCallback: RefObject<UnfinishedShapesCallback>;
     callCallbackAndClear: () => void;
 }
 

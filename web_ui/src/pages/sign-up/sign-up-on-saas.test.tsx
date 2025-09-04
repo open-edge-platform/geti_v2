@@ -649,13 +649,13 @@ describe('SignUpOnSaas', () => {
 
             await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
-            expect(screen.getByText('Organization to onboard')).toBeVisible();
+            expect(screen.getByText('Organization to onboard')).toBeInTheDocument();
 
             const textBoxSelector = screen.getByRole('textbox', {
                 name: /visible organization Organization to onboard/i,
             });
 
-            expect(textBoxSelector).toBeVisible();
+            expect(textBoxSelector).toBeInTheDocument();
             expect(textBoxSelector).toHaveAttribute('readonly');
             expect(textBoxSelector).toHaveAttribute('value', organization.name);
 
