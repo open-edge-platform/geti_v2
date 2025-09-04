@@ -11,7 +11,7 @@ import {
 import { providersRender as render } from '../../../../../../test-utils/required-providers-render';
 import { TrainedModelConfigurationParametersList } from './trained-model-configuration-parameters.component';
 
-const expectParameterToHaveValue = (name: string, value: number | string | boolean) => {
+const expectParameterToHaveValue = (name: string, value: number | string | boolean | number[]) => {
     if (typeof value === 'boolean') {
         expect(screen.getByLabelText(name)).toHaveTextContent(value ? 'On' : 'Off');
     } else {
