@@ -28,12 +28,13 @@ import { WorkspaceRolesContainer } from './workspace-roles/workspace-roles-conta
 
 import classes from './edit-user-dialog.module.scss';
 
-interface EditUserDialogProps extends WorkspaceIdentifier {
+interface EditUserDialogProps extends Omit<WorkspaceIdentifier, 'workspaceId'> {
     user: User;
     activeUser: User;
     users: User[];
     isSaasEnvironment: boolean;
     closeDialog: () => void;
+    workspaceId?: WorkspaceIdentifier['workspaceId'];
 }
 
 const MAP_WORKSPACE_ROLE_TO_ORGANIZATION_ROLE: Record<
@@ -51,7 +52,16 @@ const RolesSelection: FC<{
     onChangeWorkspaceRoles: (roles: WorkspaceRole[]) => void;
     workspaces: WorkspaceEntity[];
     isOrgAdmin: boolean;
-}> = ({ rolesOptions, workspaceRoles, onChangeRoleHandler, onChangeWorkspaceRoles, workspaces, isOrgAdmin }) => {
+    editableWorkspaceIds: string[];
+}> = ({
+    rolesOptions,
+    workspaceRoles,
+    onChangeRoleHandler,
+    onChangeWorkspaceRoles,
+    workspaces,
+    isOrgAdmin,
+    editableWorkspaceIds,
+}) => {
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
     const shouldUseSimpleRolesPicker = !FEATURE_FLAG_WORKSPACE_ACTIONS && workspaces.length === 1;
 
@@ -60,11 +70,13 @@ const RolesSelection: FC<{
     }
 
     if (shouldUseSimpleRolesPicker) {
+        const canEditSimple = isOrgAdmin || editableWorkspaceIds.includes(workspaces[0].id);
         return (
             <RolePicker
                 roles={rolesOptions}
                 selectedRole={workspaceRoles[0].role}
                 setSelectedRole={onChangeRoleHandler}
+                isDisabled={!canEditSimple}
             />
         );
     }
@@ -75,6 +87,7 @@ const RolesSelection: FC<{
             setWorkspaceRoles={onChangeWorkspaceRoles}
             workspaces={workspaces}
             isOrgAdmin={isOrgAdmin}
+            editableWorkspaceIds={editableWorkspaceIds}
         />
     );
 };
@@ -90,6 +103,11 @@ export const EditUserDialog = ({
 }: EditUserDialogProps) => {
     const { workspaces } = useWorkspaces();
     const isOrgAdmin = isOrganizationAdmin(activeUser, organizationId);
+    const adminWorkspaceIds = activeUser.roles
+        .filter(
+            ({ resourceType, role }) => resourceType === RESOURCE_TYPE.WORKSPACE && role === USER_ROLE.WORKSPACE_ADMIN
+        )
+        .map(({ resourceId }) => resourceId);
     const { useUpdateUser, useUpdateUserRoles, useUpdateMemberRole } = useUsers();
     const updateRoles = useUpdateUserRoles();
     const updateUser = useUpdateUser();
@@ -103,12 +121,14 @@ export const EditUserDialog = ({
     );
 
     const isAccountOwner = activeUser.id === user.id;
-    const rolesOptions = getAvailableRoles({
-        activeMember: activeUser,
-        members: users,
-        workspaceId,
-        isAccountOwner,
-    });
+    const rolesOptions = !!workspaceId
+        ? getAvailableRoles({
+              activeMember: activeUser,
+              members: users,
+              workspaceId,
+              isAccountOwner,
+          })
+        : [];
 
     const areRolesEqual = isEqual(workspaceRoles, mapRolesToWorkspaceRoles(user.roles, workspaces));
     const isSaveButtonDisabled = isSaasEnvironment
@@ -144,16 +164,31 @@ export const EditUserDialog = ({
     };
 
     const updateUserRoles = async () => {
-        const editedRoles: RoleResource[] = workspaceRoles.map((role) => ({
-            role: role.role,
-            resourceId: role.workspace.id,
-            resourceType: RESOURCE_TYPE.WORKSPACE,
-        }));
+        const editableIds = isOrgAdmin
+            ? workspaces.map((w) => w.id)
+            : activeUser.roles
+                  .filter(({ resourceType, role }) =>
+                      resourceType === RESOURCE_TYPE.WORKSPACE ? role === USER_ROLE.WORKSPACE_ADMIN : false
+                  )
+                  .map(({ resourceId }) => resourceId);
+
+        const editedRoles: RoleResource[] = workspaceRoles
+            .filter((wr) => editableIds.includes(wr.workspace.id))
+            .map((role) => ({
+                role: role.role,
+                resourceId: role.workspace.id,
+                resourceType: RESOURCE_TYPE.WORKSPACE,
+            }));
 
         const oldRoles: UpdateRolePayload[] = user.roles
-            .filter(({ resourceType }) => resourceType === RESOURCE_TYPE.WORKSPACE)
+            .filter(
+                ({ resourceType, resourceId }) =>
+                    resourceType === RESOURCE_TYPE.WORKSPACE && editableIds.includes(resourceId)
+            )
             .map((role) => getRoleDeletionPayload(role));
         const roles: UpdateRolePayload[] = editedRoles.map((role) => getRoleCreationPayload(role));
+
+        if (oldRoles.length === 0 && roles.length === 0) return;
 
         return updateRoles.mutateAsync({ newRoles: [...oldRoles, ...roles], userId: user.id, organizationId });
     };
@@ -255,7 +290,7 @@ export const EditUserDialog = ({
                             label='First name'
                             id='edit-first-name'
                             width={'100%'}
-                            isDisabled={isSaasEnvironment}
+                            isDisabled={(!isOrgAdmin && activeUser.id !== user.id) || isSaasEnvironment}
                             value={firstName}
                             onChange={setFirstName}
                         />
@@ -263,7 +298,7 @@ export const EditUserDialog = ({
                             label='Last name'
                             id='edit-last-name'
                             width={'100%'}
-                            isDisabled={isSaasEnvironment}
+                            isDisabled={(!isOrgAdmin && activeUser.id !== user.id) || isSaasEnvironment}
                             value={lastName}
                             onChange={setLastName}
                         />
@@ -275,6 +310,7 @@ export const EditUserDialog = ({
                         workspaces={workspaces}
                         workspaceRoles={workspaceRoles}
                         isOrgAdmin={isOrgAdmin}
+                        editableWorkspaceIds={adminWorkspaceIds}
                     />
                     <ButtonGroup align={'end'} marginTop={'size-350'}>
                         <Button variant='secondary' onPress={closeDialog} id={'cancel-edit-user'}>

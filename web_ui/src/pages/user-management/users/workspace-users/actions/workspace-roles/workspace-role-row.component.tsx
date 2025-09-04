@@ -16,6 +16,7 @@ interface WorkspaceRoleProps {
     deleteWorkspaceRole: () => void;
     workspaces: WorkspaceEntity[];
     deletable?: boolean;
+    isEditable?: boolean;
 }
 export const WorkspaceRoleRow = ({
     workspaceRole,
@@ -24,6 +25,7 @@ export const WorkspaceRoleRow = ({
     changeRole,
     workspaces,
     deletable = false,
+    isEditable = true,
 }: WorkspaceRoleProps) => {
     const { workspace, role } = workspaceRole;
 
@@ -34,15 +36,17 @@ export const WorkspaceRoleRow = ({
                 workspaces={[...workspaces, workspace]}
                 changeWorkspace={changeWorkspace}
                 width={'calc(50% - 32px)'}
+                isDisabled={!isEditable}
             />
             <RolePicker
                 roles={[USER_ROLE.WORKSPACE_CONTRIBUTOR, USER_ROLE.WORKSPACE_ADMIN]}
                 selectedRole={role}
                 setSelectedRole={changeRole}
                 width={'calc(50% - 32px)'}
+                isDisabled={!isEditable}
             />
             {deletable && (
-                <ActionButton onPress={deleteWorkspaceRole}>
+                <ActionButton onPress={deleteWorkspaceRole} isDisabled={!isEditable}>
                     <Close />
                 </ActionButton>
             )}

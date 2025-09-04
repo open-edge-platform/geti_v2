@@ -14,6 +14,7 @@ interface WorkspaceRolesProps {
     setWorkspaceRoles: (workspaces: WorkspaceRole[]) => void;
     workspaces: WorkspaceEntity[];
     isOrgAdmin: boolean;
+    editableWorkspaceIds?: string[];
 }
 
 export const WorkspaceRolesContainer = ({
@@ -21,6 +22,7 @@ export const WorkspaceRolesContainer = ({
     setWorkspaceRoles,
     workspaces,
     isOrgAdmin,
+    editableWorkspaceIds = [],
 }: WorkspaceRolesProps) => {
     const { canAddNewRole, availableWorkspaces } = useUserRoles(workspaces, workspaceRoles);
 
@@ -45,12 +47,20 @@ export const WorkspaceRolesContainer = ({
     };
 
     const addWorkspaceRole = () => {
-        setWorkspaceRoles([...workspaceRoles, { workspace: availableWorkspaces[0], role: USER_ROLE.WORKSPACE_ADMIN }]);
+        // Prefer adding a role for a workspace the editor can manage
+        const preferred =
+            availableWorkspaces.find((w) => editableWorkspaceIds.includes(w.id)) ?? availableWorkspaces[0];
+        setWorkspaceRoles([...workspaceRoles, { workspace: preferred, role: USER_ROLE.WORKSPACE_ADMIN }]);
     };
 
     return (
         <>
             {workspaceRoles.map((workspaceRole, index) => {
+                const isEditable = isOrgAdmin || editableWorkspaceIds.includes(workspaceRole.workspace.id);
+                const canDeleteThisRow =
+                    workspaceRoles.length > 1 ||
+                    // allow deleting the only role to remove user from this workspace when editor has rights
+                    (workspaceRoles.length === 1 && isEditable);
                 return (
                     <WorkspaceRoleRow
                         key={`${workspaceRole.workspace.id}-${workspaceRole.role}`}
@@ -59,7 +69,8 @@ export const WorkspaceRolesContainer = ({
                         changeRole={(value) => changeRole(value, index)}
                         deleteWorkspaceRole={() => deleteWorkspaceRole(index)}
                         workspaces={availableWorkspaces}
-                        deletable={workspaceRoles.length > 1}
+                        deletable={canDeleteThisRow}
+                        isEditable={isEditable}
                     />
                 );
             })}
@@ -67,7 +78,10 @@ export const WorkspaceRolesContainer = ({
             <Button
                 variant={'primary'}
                 onPress={addWorkspaceRole}
-                isDisabled={!canAddNewRole || !isOrgAdmin}
+                isDisabled={
+                    !canAddNewRole ||
+                    (!isOrgAdmin && !availableWorkspaces.some((w) => editableWorkspaceIds.includes(w.id)))
+                }
                 marginTop={'size-175'}
             >
                 Add workspace role

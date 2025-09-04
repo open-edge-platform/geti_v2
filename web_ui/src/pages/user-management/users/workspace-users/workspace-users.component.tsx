@@ -16,12 +16,16 @@ interface WorkspaceUsersProps {
 export const WorkspaceUsers = ({ activeUser, workspaceId }: WorkspaceUsersProps) => {
     const isSaasEnv = useIsSaasEnv();
 
+    const Actions = (props: { activeUser: User; user: User; users: User[] }) => (
+        <WorkspaceUserActions {...props} workspaceId={workspaceId} />
+    );
+
     return (
         <Users
             activeUser={activeUser}
             resourceType={RESOURCE_TYPE.WORKSPACE}
             resourceId={workspaceId}
-            UserActions={WorkspaceUserActions}
+            UserActions={Actions}
             ignoredColumns={isSaasEnv ? undefined : [USERS_TABLE_COLUMNS.LAST_LOGIN]}
         />
     );

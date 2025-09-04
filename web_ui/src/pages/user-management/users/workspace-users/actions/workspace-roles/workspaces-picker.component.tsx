@@ -10,11 +10,13 @@ interface WorkspacesPickerProps extends StyleProps {
     selectedWorkspace: WorkspaceEntity;
     workspaces: WorkspaceEntity[];
     changeWorkspace: (workspace: WorkspaceEntity) => void;
+    isDisabled?: boolean;
 }
 export const WorkspacesPicker = ({
     selectedWorkspace,
     workspaces,
     changeWorkspace,
+    isDisabled = false,
     ...styleProps
 }: WorkspacesPickerProps) => {
     const onSelectionChange = (key: Key) => {
@@ -32,6 +34,7 @@ export const WorkspacesPicker = ({
             selectedKey={selectedWorkspace.id}
             placeholder={'Select workspace'}
             onSelectionChange={(key) => key !== null && onSelectionChange(key)}
+            isDisabled={isDisabled}
             {...styleProps}
         >
             {(item) => (
