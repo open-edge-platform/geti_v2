@@ -143,6 +143,13 @@
       matchUpdateTypes: ["major", "minor", "patch"],
     },
 
+    // Restrict uv version used in workflows, it will be updated manually
+    {
+      enabled: false,
+      matchDatasources: ["github-releases"],
+      matchPackageNames: ["astral-sh/uv"],
+    },
+
     // Group GitHub Actions updates
     {
       enabled: true,
