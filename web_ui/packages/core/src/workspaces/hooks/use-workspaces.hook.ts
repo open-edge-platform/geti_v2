@@ -14,8 +14,8 @@ import { AxiosError } from 'axios';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
 import { getErrorMessage } from '../../services/utils';
-import { WorkspaceEntity } from '../services/workspaces.interface';
 import { useUsers } from '../../users/hook/use-users.hook';
+import { WorkspaceEntity } from '../services/workspaces.interface';
 
 interface UseWorkspacesApi {
     useWorkspacesQuery: () => UseSuspenseQueryResult<WorkspaceEntity[], AxiosError>;
