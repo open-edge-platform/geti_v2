@@ -183,7 +183,6 @@ describe('WorkspaceUserActions', () => {
                     activeUser={mockedContributorUser}
                     user={mockedContributorUser2}
                     users={[mockedContributorUser, mockedContributorUser2]}
-                    // workspaceId={workspaceId}
                 />
             );
 
