@@ -3,11 +3,11 @@
         background-color: var(--energy-blue) !important;
     }
 
-    div[class*='spectrum-Slider-handle']{
+    div[class*='spectrum-Slider-handle'] {
         border-color: var(--energy-blue) !important;
     }
 
-    div[class*='spectrum-Slider-handle']:hover{
+    div[class*='spectrum-Slider-handle']:hover {
         border-color: var(--energy-blue-light) !important;
     }
 }

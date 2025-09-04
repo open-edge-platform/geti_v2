@@ -36,7 +36,7 @@ export const RangeParameterField: FC<RangeParameterFieldProps> = ({
         start: value[0],
         end: value[1],
     });
-    const fieldStep = getStep({ step, maxValue: value[1], minValue: value[0] });
+    const fieldStep = getStep({ step, maxValue: defaultValue[1], minValue: defaultValue[0] });
     const decimalPlaces = (fieldStep.toString().split('.')[1] || '').length;
 
     const handleRangeChangeEnd = (): void => {
