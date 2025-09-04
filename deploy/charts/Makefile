@@ -1,1 +1,3 @@
-include ../../Makefile.build
+include ../../../Makefile.shared
+
+COMPONENT_NAME := seaweed-fs
