@@ -26,14 +26,14 @@ KUBELET_CSR_APPROVER_CHART = ChartDefinition(
 )
 CERT_MANAGER_CHART = ChartDefinition(
     name="cert-manager",
-    directory="impt/charts/cert-manager",
+    directory="cert-manager",
     namespace="cert-manager",
     values_file="cert-manager-values.yaml",
     values_template_file="cert-manager-values.yaml.j2",
 )
 CERT_MANAGER_ISTIO_CSR_CHART = ChartDefinition(
     name="cert-manager-istio-csr" if not ambient_mesh else "ambient-istio-cert-manager-istio-csr",
-    directory="impt/charts/cert-manager-istio-csr" if not ambient_mesh else "ambient-istio/cert-manager-istio-csr",
+    directory="cert-manager-istio-csr" if not ambient_mesh else "ambient-istio/cert-manager-istio-csr",
     namespace="cert-manager",
     values_file="cert-manager-istio-csr-values.yaml",
     values_template_file="cert-manager-istio-csr-values.yaml.j2",
@@ -73,7 +73,7 @@ ISTIO_ZTUNNEL_CHART = ChartDefinition(
 )
 OPA_CHART = ChartDefinition(
     name="opa",
-    directory="impt/charts/opa",
+    directory="opa",
     namespace="opa-istio",
     values_file="opa-values.yaml",
     values_template_file="opa-values.yaml.j2",
@@ -87,7 +87,7 @@ INTERNAL_REGISTRY_CHART = ChartDefinition(
 )
 SEAWEED_FS_CHART = ChartDefinition(
     name="seaweed-fs",
-    directory="impt/charts/seaweed-fs",
+    directory="seaweed-fs",
     namespace="impt",
     values_file="seaweed-fs-values.yaml",
     values_template_file="seaweed-values.yaml.j2",

@@ -23,4 +23,4 @@ name: cert-manager-istio-csr
 sources:
 - https://github.com/cert-manager/istio-csr
 type: application
-version: v0.13.0
+version: ${TAG}
