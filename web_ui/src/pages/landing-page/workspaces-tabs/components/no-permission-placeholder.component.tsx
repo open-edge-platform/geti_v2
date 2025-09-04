@@ -6,7 +6,7 @@ import { Flex, Heading, Text, View } from '@geti/ui';
 import { Forbidden } from '../../../../assets/images';
 import { CustomWell } from '../../../../shared/components/custom-well/custom-well.component';
 
-export const NoPermissionPlaceholder = (): JSX.Element => {
+export const NoPermissionPlaceholder = () => {
     return (
         <Flex width={'100%'} height={'100%'} flex={'1'}>
             <CustomWell

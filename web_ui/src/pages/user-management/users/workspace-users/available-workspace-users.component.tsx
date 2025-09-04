@@ -21,7 +21,7 @@ interface AvailableWorkspaceUsersProps {
     activeUser: User;
 }
 
-export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWorkspaceUsersProps): JSX.Element => {
+export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWorkspaceUsersProps) => {
     const { organizationId } = useOrganizationIdentifier();
     const { workspaces } = useWorkspaces();
     const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();

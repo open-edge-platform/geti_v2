@@ -48,7 +48,7 @@ interface UsersTableProps {
     isProjectUsersTable?: boolean;
     organizationId: string;
     tableId?: string;
-    overrideRoleColumn?: (props: TableCellProps) => JSX.Element;
+    overrideRoleColumn?: (props: TableCellProps) => ReactNode;
 }
 
 export const UsersTable = ({
