@@ -263,20 +263,46 @@ func (s *GRPCServer) GetById(_ context.Context, req *pb.WorkspaceIdRequest) (*pb
 	return workspaceToPb(workspace), nil
 }
 
-func GetAvailableWorkspaces(userID string) (string) {
+func IsOrganizationAdmin(userID string, organizationId string) (bool, error) {
+	logger.Debugf("get is organization admin call: %v", userID)
+    rolesMgr, err := roles.NewRolesManager(config.SpiceDBAddress, config.SpiceDBToken)
+
+    if (err!=nil) {
+    	logger.Errorf("error during checking if a user is org admin - roles manager: %v", err)
+		return false, status.Error(codes.Unknown, "unexpected error")
+    }
+
+    relationships, err := rolesMgr.GetUserRelationships(userID, "organization")
+
+    if (err!=nil) {
+    	logger.Errorf("error during checking if a user is org admin - get organization permissions: %v", err)
+		return false, status.Error(codes.Unknown, "unexpected error")
+    }
+
+    for _, relationship := range relationships {
+        if relationship.Relation == "organization_admin" && relationship.Resource.ObjectId == organizationId {
+            return true, nil
+        }
+    }
+
+    return false, nil
+}
+
+
+func GetAvailableWorkspaces(userID string, organizationId string) (string, error) {
 	logger.Debugf("get available workspace call: %v", userID)
     rolesMgr, err := roles.NewRolesManager(config.SpiceDBAddress, config.SpiceDBToken)
 
     if (err!=nil) {
     	logger.Errorf("error during getting available workspaces - roles manager: %v", err)
-		return ""
+		return "", status.Error(codes.Unknown, "unexpected error")
     }
 
     relationships, err := rolesMgr.GetUserRelationships(userID, "workspace")
 
     if (err!=nil) {
-    	logger.Errorf("error during getting available workspaces: %v", err)
-		return ""
+    	logger.Errorf("error during getting available workspaces - get workspace permissions: %v", err)
+		return "", status.Error(codes.Unknown, "unexpected error")
     }
 
     var builder strings.Builder
@@ -288,7 +314,7 @@ func GetAvailableWorkspaces(userID string) (string) {
 	    builder.WriteString("'"+relationship.Resource.ObjectId+"'")
     }
 
-    return builder.String()
+    return builder.String(), nil
 }
 
 func (s *GRPCServer) Find(ctx context.Context, findRequest *pb.FindWorkspaceRequest) (*pb.ListWorkspacesResponse, error) {
@@ -300,13 +326,22 @@ func (s *GRPCServer) Find(ctx context.Context, findRequest *pb.FindWorkspaceRequ
 
 	authTokenData, ok := grpcUtils.GetAuthTokenHeaderData(ctx)
 	if ok {
-        availableWorkspaces := GetAvailableWorkspaces(authTokenData.UserID)
+        isOrgAdmin, err := IsOrganizationAdmin(authTokenData.UserID, findRequest.OrganizationId)
 
-        if availableWorkspaces != "" {
+        if err != nil {
+            logger.Errorf("error during checking organization admin status: %v", err)
+            return nil, err
+        }
+
+        if !isOrgAdmin {
+            availableWorkspaces, err := GetAvailableWorkspaces(authTokenData.UserID, findRequest.OrganizationId)
+
+            if err != nil {
+                logger.Errorf("error during getting available workspaces: %v", err)
+                return nil, err
+            }
+
             statementSession = statementSession.Where("id IN (" + availableWorkspaces + ")")
-        } else {
-            logger.Debugf("lack of available workspaces")
-            return &pb.ListWorkspacesResponse{}, nil
         }
 	}
 
