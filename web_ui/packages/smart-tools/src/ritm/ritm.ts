@@ -346,7 +346,7 @@ class RITM {
 
         // Apply sigmoid function directly: 1 / (1 + e^(-x))
         for (let i = 0; i < data.length; i++) {
-            data[i] = 1 / (1 + Math.exp(-(data[i] as number)));
+            data[i] = 1 / (1 + Math.exp(-data[i]));
         }
     }
 }
