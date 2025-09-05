@@ -35,9 +35,10 @@ jobs:
     
     - name: Get ECR images with specified tag
       id: ecr-images
+      env:
+        TAG: ${{ github.event.inputs.tag }}
       run: |
-        TAG="${{ github.event.inputs.tag }}"
-        # Get the list of repositories that start with the given prefix
+        # Get the list of repositories that start with the geti/ prefix
         REPOS=$(aws ecr describe-repositories --query "repositories[].repositoryName" --output text | tr '\t' '\n' | grep '^geti/' | grep -v '^geti/helm/')
         cat /dev/null > ecr_images.txt
         for REPO in $REPOS; do
