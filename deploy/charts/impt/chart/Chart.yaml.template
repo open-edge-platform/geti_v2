@@ -13,9 +13,6 @@ version: ${TAG}
 appVersion: ${TAG}
 
 dependencies:
-  - name: opa
-    version: 0.0.5
-    condition: enabled.opa
   - name: lgtm-stack
     version: 0.0.3
     condition: enabled.lgtm-stack
@@ -103,9 +100,6 @@ dependencies:
   - name: postgresql
     version: 0.0.3
     condition: enabled.postgresql
-  - name: seaweed-fs
-    version: 0.0.11
-    condition: enabled.seaweed-fs
   - name: opentelemetry-collector
     version: 0.0.4
     condition: enabled.opentelemetry-collector
@@ -121,9 +115,6 @@ dependencies:
   - name: etcd
     version: 0.1.0
     condition: enabled.etcd
-  - name: cert-manager
-    version: 0.1.1
-    condition: enabled.cert-manager
   - name: modelmesh-serving
     version: 0.1.0
     condition: enabled.modelmesh-serving
@@ -131,9 +122,6 @@ dependencies:
     version: ${TAG}
     repository: "file://../../../../../interactive_ai/services/model_registration/.build/chart"
     condition: enabled.modelregistration
-  - name: cert-manager-istio-csr
-    version: v0.13.0
-    condition: enabled.istio-csr
   - name: opa-bundle
     version: ${TAG}
     repository: "file://../../../../../platform/services/opa_bundle/.build/chart"
