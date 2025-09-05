@@ -131,7 +131,12 @@ class ProjectRESTController:
         label_schema_per_task = ProjectRESTController._get_label_schema_per_task(project=project)
         storage_info = {}
         if with_size:
-            storage_info = {"size": compute_project_size(project=project)}
+            size_info = compute_project_size(project=project)
+            storage_info = {
+                "size": size_info.total_storage_size,
+                "size_excluding_models": size_info.total_storage_size_excluding_models,
+                "size_excluding_non_active_models": size_info.total_storage_size_excluding_non_active_models,
+            }
         return ProjectRESTViews.project_to_rest(
             organization_id=organization_id,
             project=project,
@@ -182,7 +187,13 @@ class ProjectRESTController:
         for project in projects:
             label_schema_per_task_per_project.append(ProjectRESTController._get_label_schema_per_task(project=project))
             if query_data.with_size:
-                storage_info_per_project.append({"size": compute_project_size(project=project)})
+                size_info = compute_project_size(project=project)
+                storage_info = {
+                    "size": size_info.total_storage_size,
+                    "size_excluding_models": size_info.total_storage_size_excluding_models,
+                    "size_excluding_non_active_models": size_info.total_storage_size_excluding_non_active_models,
+                }
+                storage_info_per_project.append(storage_info)
             else:
                 storage_info_per_project.append({})
         return ProjectRESTViews.projects_to_rest(
