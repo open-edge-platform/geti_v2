@@ -113,9 +113,9 @@ jobs:
         run: |
           set -euo pipefail
           echo "Verifying signature for ${IMAGE}@${DIGEST}"
-          echo "Using certificate identity: https://github.com/open-edge-platform/geti/.github/workflows/sign_artifacts.yml@refs/heads/main"
+          echo "Using certificate identity: https://github.com/open-edge-platform/geti/.github/workflows/sign-artifacts.yml@refs/heads/main"
           echo "OIDC Issuer: https://token.actions.githubusercontent.com"
           cosign verify \
-          --certificate-identity-regexp=https://github.com/open-edge-platform/geti/.github/workflows/sign_artifacts.yml \
+          --certificate-identity=https://github.com/open-edge-platform/geti/.github/workflows/sign-artifacts.yml@refs/heads/main \
           --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
           "${IMAGE}@${DIGEST}"
