@@ -47,6 +47,8 @@ interface UsersTableProps {
     workspaces: Workspace[];
     isProjectUsersTable?: boolean;
     organizationId: string;
+    tableId?: string;
+    overrideRoleColumn?: (props: TableCellProps) => ReactNode;
 }
 
 export const UsersTable = ({
@@ -64,6 +66,8 @@ export const UsersTable = ({
     isProjectUsersTable,
     workspaces,
     getNextPage,
+    tableId,
+    overrideRoleColumn,
 }: UsersTableProps) => {
     const shouldShowNotFound = hasFilters && isEmpty(users);
 
@@ -110,6 +114,9 @@ export const UsersTable = ({
                 width: 150,
                 isSortable: false,
                 component: (data: TableCellProps) => {
+                    if (overrideRoleColumn) {
+                        return overrideRoleColumn(data);
+                    }
                     return isProjectUsersTable ? (
                         <ProjectRoleCell {...data} roles={data.rowData.roles} projectId={resourceId as string} />
                     ) : (
@@ -156,7 +163,17 @@ export const UsersTable = ({
         ];
 
         return tableColumns.filter(({ dataKey }) => !ignoredColumns.includes(dataKey as USERS_TABLE_COLUMNS));
-    }, [ignoredColumns, resourceId, UserActions, activeUser, isProjectUsersTable, organizationId, workspaces, users]);
+    }, [
+        ignoredColumns,
+        resourceId,
+        UserActions,
+        activeUser,
+        isProjectUsersTable,
+        organizationId,
+        workspaces,
+        users,
+        overrideRoleColumn,
+    ]);
 
     const [sortingOptions, sort] = useSortTable<UsersQueryParams>({
         queryOptions: usersQueryParams,
@@ -164,14 +181,14 @@ export const UsersTable = ({
     });
 
     return (
-        <Flex flex={1} width={'100%'} justifyContent={'center'} alignItems={'center'}>
+        <Flex flex={1} width={'100%'} justifyContent={'center'} alignItems={'start'}>
             {shouldShowNotFound ? (
                 <NotFound />
             ) : (
-                <View height={'100%'} minHeight={0} width={'100%'} data-testid={'users-table-id'}>
+                <View minHeight={0} width={'100%'} data-testid={tableId ?? 'users-table-id'}>
                     <TableView
-                        id='users-table-id'
-                        aria-label='Users table'
+                        id={tableId ?? 'users-table-id'}
+                        aria-label={'Users table'}
                         selectionMode='none'
                         onSortChange={(change) => {
                             sort({

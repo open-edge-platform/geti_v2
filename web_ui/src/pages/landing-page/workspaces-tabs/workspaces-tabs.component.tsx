@@ -16,6 +16,7 @@ import { OPERATION } from '../../../shared/components/has-permission/has-permiss
 import { TabItem } from '../../../shared/components/tabs/tabs.interface';
 import { getUniqueNameFromArray, hasEqualId } from '../../../shared/utils';
 import { LandingPageWorkspace as Workspace } from '../landing-page-workspace/landing-page-workspace.component';
+import { NoPermissionPlaceholder } from './components/no-permission-placeholder.component';
 import { CustomTabItemWithMenu } from './custom-tab-item-with-menu.component';
 import { usePinnedCollapsedWorkspaces } from './hooks/use-pinned-collapsed-workspace.hook';
 import { MAX_NUMBER_OF_DISPLAYED_WORKSPACES } from './utils';
@@ -147,7 +148,7 @@ export const WorkspacesTabs = () => {
                             <HasPermission
                                 operations={[OPERATION.CAN_SEE_WORKSPACE]}
                                 specialCondition={!FEATURE_FLAG_WORKSPACE_ACTIONS || undefined}
-                                Fallback={<div data-testid='no-permission-to-tab'>TODO: no permission</div>}
+                                Fallback={<NoPermissionPlaceholder />}
                             >
                                 {item.children}
                             </HasPermission>

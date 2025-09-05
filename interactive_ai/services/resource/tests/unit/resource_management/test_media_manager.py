@@ -852,7 +852,7 @@ class TestMediaManager:
             dataset_storage_identifier=fxt_dataset_storage.identifier,
             video_id=VIDEO_ID,
         )
-        mock_get_frame_numpy.assert_called_once_with(file_location_getter=ANY, frame_index=FRAME_INDEX)
+        mock_get_frame_numpy.assert_called_once_with(file_location_getter=ANY, frame_index=FRAME_INDEX, fps=ANY)
 
     def test_get_video_thumbnail_frame_by_id_out_of_range(
         self, fxt_dataset_storage, fxt_video_entity, fxt_mongo_id

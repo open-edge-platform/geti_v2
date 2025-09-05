@@ -13,9 +13,17 @@ interface WorkspaceRolesProps {
     workspaceRoles: WorkspaceRole[];
     setWorkspaceRoles: (workspaces: WorkspaceRole[]) => void;
     workspaces: WorkspaceEntity[];
+    isOrgAdmin: boolean;
+    editableWorkspaceIds?: string[];
 }
 
-export const WorkspaceRolesContainer = ({ workspaceRoles, setWorkspaceRoles, workspaces }: WorkspaceRolesProps) => {
+export const WorkspaceRolesContainer = ({
+    workspaceRoles,
+    setWorkspaceRoles,
+    workspaces,
+    isOrgAdmin,
+    editableWorkspaceIds = [],
+}: WorkspaceRolesProps) => {
     const { canAddNewRole, availableWorkspaces } = useUserRoles(workspaces, workspaceRoles);
 
     const deleteWorkspaceRole = (index: number) => {
@@ -39,12 +47,20 @@ export const WorkspaceRolesContainer = ({ workspaceRoles, setWorkspaceRoles, wor
     };
 
     const addWorkspaceRole = () => {
-        setWorkspaceRoles([...workspaceRoles, { workspace: availableWorkspaces[0], role: USER_ROLE.WORKSPACE_ADMIN }]);
+        // Prefer adding a role for a workspace the editor can manage
+        const preferred =
+            availableWorkspaces.find((w) => editableWorkspaceIds.includes(w.id)) ?? availableWorkspaces[0];
+        setWorkspaceRoles([...workspaceRoles, { workspace: preferred, role: USER_ROLE.WORKSPACE_ADMIN }]);
     };
 
     return (
         <>
             {workspaceRoles.map((workspaceRole, index) => {
+                const isEditable = isOrgAdmin || editableWorkspaceIds.includes(workspaceRole.workspace.id);
+                const canDeleteThisRow =
+                    workspaceRoles.length > 1 ||
+                    // allow deleting the only role to remove user from this workspace when editor has rights
+                    (workspaceRoles.length === 1 && isEditable);
                 return (
                     <WorkspaceRoleRow
                         key={`${workspaceRole.workspace.id}-${workspaceRole.role}`}
@@ -53,11 +69,21 @@ export const WorkspaceRolesContainer = ({ workspaceRoles, setWorkspaceRoles, wor
                         changeRole={(value) => changeRole(value, index)}
                         deleteWorkspaceRole={() => deleteWorkspaceRole(index)}
                         workspaces={availableWorkspaces}
+                        deletable={canDeleteThisRow}
+                        isEditable={isEditable}
                     />
                 );
             })}
 
-            <Button variant={'primary'} onPress={addWorkspaceRole} isDisabled={!canAddNewRole} marginTop={'size-175'}>
+            <Button
+                variant={'primary'}
+                onPress={addWorkspaceRole}
+                isDisabled={
+                    !canAddNewRole ||
+                    (!isOrgAdmin && !availableWorkspaces.some((w) => editableWorkspaceIds.includes(w.id)))
+                }
+                marginTop={'size-175'}
+            >
                 Add workspace role
             </Button>
         </>

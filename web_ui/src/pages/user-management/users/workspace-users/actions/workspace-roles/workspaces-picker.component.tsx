@@ -4,14 +4,21 @@
 import { Key } from 'react';
 
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
-import { Item, Picker, Text } from '@geti/ui';
+import { Item, Picker, StyleProps, Text } from '@geti/ui';
 
-interface WorkspacesPickerProps {
+interface WorkspacesPickerProps extends StyleProps {
     selectedWorkspace: WorkspaceEntity;
     workspaces: WorkspaceEntity[];
     changeWorkspace: (workspace: WorkspaceEntity) => void;
+    isDisabled?: boolean;
 }
-export const WorkspacesPicker = ({ selectedWorkspace, workspaces, changeWorkspace }: WorkspacesPickerProps) => {
+export const WorkspacesPicker = ({
+    selectedWorkspace,
+    workspaces,
+    changeWorkspace,
+    isDisabled = false,
+    ...styleProps
+}: WorkspacesPickerProps) => {
     const onSelectionChange = (key: Key) => {
         const newWorkspace = workspaces.find((item) => item.id === key);
         newWorkspace && changeWorkspace(newWorkspace);
@@ -27,6 +34,8 @@ export const WorkspacesPicker = ({ selectedWorkspace, workspaces, changeWorkspac
             selectedKey={selectedWorkspace.id}
             placeholder={'Select workspace'}
             onSelectionChange={(key) => key !== null && onSelectionChange(key)}
+            isDisabled={isDisabled}
+            {...styleProps}
         >
             {(item) => (
                 <Item key={item.id} textValue={item.name}>

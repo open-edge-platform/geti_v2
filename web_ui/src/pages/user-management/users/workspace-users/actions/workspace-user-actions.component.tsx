@@ -3,7 +3,7 @@
 
 import { Key, useState } from 'react';
 
-import { isOrganizationAdmin, isWorkspaceContributor } from '@geti/core/src/users/user-role-utils';
+import { isOrganizationAdmin, isWorkspaceAdmin, isWorkspaceContributor } from '@geti/core/src/users/user-role-utils';
 import { User } from '@geti/core/src/users/users.interface';
 import { DialogContainer } from '@geti/ui';
 import { Delete, Edit } from '@geti/ui/icons';
@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash-es';
 
 import { AccountStatus } from '../../../../../core/organizations/organizations.interface';
 import { useIsSaasEnv } from '../../../../../hooks/use-is-saas-env/use-is-saas-env.hook';
-import { useFirstWorkspaceIdentifier } from '../../../../../providers/workspaces-provider/use-first-workspace-identifier.hook';
+import { useOrganizationIdentifier } from '../../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { ActionMenu } from '../../../../../shared/components/action-menu/action-menu.component';
 import { MenuAction } from '../../../../../shared/components/action-menu/menu-action.interface';
 import { HasPermission } from '../../../../../shared/components/has-permission/has-permission.component';
@@ -29,10 +29,11 @@ interface UserActionsProps {
     activeUser: User;
     user: User;
     users: User[];
+    workspaceId?: string; // selected workspace id from picker
 }
 
-export const WorkspaceUserActions = ({ activeUser, user, users }: UserActionsProps) => {
-    const { organizationId, workspaceId } = useFirstWorkspaceIdentifier();
+export const WorkspaceUserActions = ({ activeUser, user, users, workspaceId }: UserActionsProps) => {
+    const { organizationId } = useOrganizationIdentifier();
     const isSaasEnvironment = useIsSaasEnv();
 
     const [action, setAction] = useState<USER_ACTIONS_OPTIONS | undefined>(undefined);
@@ -43,7 +44,8 @@ export const WorkspaceUserActions = ({ activeUser, user, users }: UserActionsPro
 
     const isOwnAccount = user.id === activeUser?.id;
     const isActiveUserOrgAdmin = isOrganizationAdmin(activeUser, organizationId);
-    const isActiveMemberWorkspaceContributor = isWorkspaceContributor(activeUser, workspaceId);
+    const isActiveMemberWorkspaceContributor = workspaceId ? isWorkspaceContributor(activeUser, workspaceId) : false;
+    const isActiveUserWorkspaceAdmin = workspaceId ? isWorkspaceAdmin(activeUser, workspaceId) : false;
 
     const editAction = {
         id: USER_ACTIONS_OPTIONS.EDIT,
@@ -57,8 +59,9 @@ export const WorkspaceUserActions = ({ activeUser, user, users }: UserActionsPro
         icon: <Delete />,
     };
 
-    const canContributorEdit = isActiveMemberWorkspaceContributor && isOwnAccount;
-    const canEditUserRole = isActiveUserOrgAdmin || canContributorEdit || activeUser.isAdmin;
+    const canContributorEdit = (isOwnAccount && !workspaceId) || (isActiveMemberWorkspaceContributor && isOwnAccount);
+    const canEditUserRole =
+        isActiveUserOrgAdmin || canContributorEdit || activeUser.isAdmin || isActiveUserWorkspaceAdmin;
 
     const canDeleteUser =
         isActiveUserOrgAdmin &&
@@ -77,7 +80,11 @@ export const WorkspaceUserActions = ({ activeUser, user, users }: UserActionsPro
 
     //Note: specialCondition is used to allow user edit/delete him/herself
     return (
-        <HasPermission operations={[OPERATION.MANAGE_USER]} specialCondition={isOwnAccount}>
+        <HasPermission
+            operations={[OPERATION.MANAGE_USER]}
+            // Allow showing the menu for self OR when user is workspace admin of current workspace
+            specialCondition={isOwnAccount || isActiveUserWorkspaceAdmin || (!workspaceId && isActiveUserOrgAdmin)}
+        >
             <ActionMenu
                 items={items}
                 id={`${user.id}-user-action-menu`}

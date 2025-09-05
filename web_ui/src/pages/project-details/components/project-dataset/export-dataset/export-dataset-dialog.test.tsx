@@ -162,7 +162,7 @@ describe('ExportDatasetDialog', () => {
             expect(queryRadioOption(ExportFormats.VOC)).not.toBeInTheDocument();
             expect(queryRadioOption(ExportFormats.COCO)).not.toBeInTheDocument();
             expect(queryRadioOption(ExportFormats.YOLO)).not.toBeInTheDocument();
-            expect(queryRadioOption(ExportFormats.DATUMARO)).toBeEnabled();
+            expect(queryRadioOption(ExportFormats.DATUMARO)).not.toBeInTheDocument();
         });
 
         it('anomaly detection', async () => {
@@ -170,7 +170,7 @@ describe('ExportDatasetDialog', () => {
             expect(queryRadioOption(ExportFormats.VOC)).not.toBeInTheDocument();
             expect(queryRadioOption(ExportFormats.COCO)).not.toBeInTheDocument();
             expect(queryRadioOption(ExportFormats.YOLO)).not.toBeInTheDocument();
-            expect(queryRadioOption(ExportFormats.DATUMARO)).toBeEnabled();
+            expect(queryRadioOption(ExportFormats.DATUMARO)).not.toBeInTheDocument();
         });
 
         it('detection classification', async () => {
@@ -187,19 +187,6 @@ describe('ExportDatasetDialog', () => {
             expect(queryRadioOption(ExportFormats.COCO)).toBeEnabled();
             expect(queryRadioOption(ExportFormats.YOLO)).not.toBeInTheDocument();
             expect(queryRadioOption(ExportFormats.DATUMARO)).toBeEnabled();
-        });
-
-        it.each([
-            DOMAIN.CLASSIFICATION,
-            DOMAIN.DETECTION,
-            DOMAIN.DETECTION_ROTATED_BOUNDING_BOX,
-            DOMAIN.SEGMENTATION,
-            DOMAIN.ANOMALY_CLASSIFICATION,
-            DOMAIN.ANOMALY_DETECTION,
-            DOMAIN.SEGMENTATION_INSTANCE,
-        ])('should render Datumaro export option when project domain is "%s"', async (domain) => {
-            await renderApp({ domains: [domain] });
-            expect(queryRadioOption(ExportFormats.DATUMARO)).toBeVisible();
         });
 
         it('should render Datumaro export option for task chain projects', async () => {
@@ -242,6 +229,24 @@ describe('ExportDatasetDialog', () => {
 
         expect(mockPrepareExportDataset).toHaveBeenCalledWith(
             expect.objectContaining({ saveVideoAsImages: true }),
+            expect.anything()
+        );
+    });
+
+    it('if there are less than 2 available export formats, Select dataset export format radio group is hidden and the default format is selected ', async () => {
+        // Anomaly detection project supports only Datumaro format
+        await renderApp({ domains: [DOMAIN.ANOMALY_DETECTION] });
+
+        expect(screen.queryByText('Select dataset export format')).not.toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Export' }));
+
+        expect(mockPrepareExportDataset).toHaveBeenCalledWith(
+            expect.objectContaining({
+                datasetId: mockDatasetId,
+                workspaceId: mockWorkspaceId,
+                exportFormat: ExportFormats.DATUMARO,
+            }),
             expect.anything()
         );
     });

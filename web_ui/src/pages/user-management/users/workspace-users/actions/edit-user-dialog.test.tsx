@@ -2,7 +2,13 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { createInMemoryUsersService } from '@geti/core/src/users/services/in-memory-users-service';
-import { RESOURCE_TYPE, USER_ROLE } from '@geti/core/src/users/users.interface';
+import {
+    RESOURCE_TYPE,
+    ResourceTypeDTO,
+    RoleOperationDTO,
+    USER_ROLE,
+    UserRoleDTO,
+} from '@geti/core/src/users/users.interface';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
@@ -109,6 +115,70 @@ describe('EditUserDialog', () => {
             expect(screen.getByTestId('edit-workspace-role-Workspace 1')).toBeInTheDocument();
             expect(screen.getByTestId('roles-add-user')).toHaveTextContent('Admin');
             expect(screen.getByRole('button', { name: 'Add workspace role' })).toBeDisabled();
+        });
+
+        describe('roles edition', () => {
+            it('updates workspace roles via updateRoles when WORKSPACE_ACTIONS is enabled', async () => {
+                const usersService = createInMemoryUsersService();
+                usersService.updateRoles = jest.fn();
+
+                await render(
+                    <EditUserDialog
+                        organizationId={mockedWorkspaceIdentifier.organizationId}
+                        workspaceId={mockedWorkspaceIdentifier.workspaceId}
+                        user={mockedAdminUser}
+                        isSaasEnvironment
+                        closeDialog={jest.fn()}
+                        activeUser={mockedAdminUser}
+                        users={[
+                            mockedAdminUser,
+                            getMockedAdminUser({ id: 'user-id-2' }, mockedWorkspaceIdentifier.workspaceId),
+                        ]}
+                    />,
+                    {
+                        featureFlags: {
+                            FEATURE_FLAG_WORKSPACE_ACTIONS: true,
+                            FEATURE_FLAG_MANAGE_USERS_ROLES: true,
+                        },
+                        services: { usersService },
+                    }
+                );
+
+                await userEvent.click(screen.getByTestId('roles-add-user'));
+                await userEvent.selectOptions(
+                    screen.getByRole('listbox', { name: 'Role' }),
+                    screen.getByRole('option', { name: /Contributor/ })
+                );
+
+                await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+                await waitFor(() => {
+                    expect(usersService.updateRoles).toHaveBeenCalledTimes(1);
+                });
+
+                expect(usersService.updateRoles).toHaveBeenCalledWith(
+                    mockedWorkspaceIdentifier.organizationId,
+                    mockedAdminUser.id,
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            operation: RoleOperationDTO.DELETE,
+                            role: expect.objectContaining({
+                                resourceId: mockedWorkspaceIdentifier.workspaceId,
+                                resourceType: ResourceTypeDTO.WORKSPACE,
+                                role: UserRoleDTO.WORKSPACE_ADMIN,
+                            }),
+                        }),
+                        expect.objectContaining({
+                            operation: RoleOperationDTO.CREATE,
+                            role: expect.objectContaining({
+                                resourceId: mockedWorkspaceIdentifier.workspaceId,
+                                resourceType: ResourceTypeDTO.WORKSPACE,
+                                role: UserRoleDTO.WORKSPACE_CONTRIBUTOR,
+                            }),
+                        }),
+                    ])
+                );
+            });
         });
     });
 

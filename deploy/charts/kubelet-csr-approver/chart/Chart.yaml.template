@@ -15,4 +15,4 @@ name: kubelet-csr-approver
 sources:
 - https://github.com/postfinance/kubelet-csr-approver
 type: application
-version: 1.2.2
+version: ${TAG}

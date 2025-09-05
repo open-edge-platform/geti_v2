@@ -169,9 +169,10 @@ export const ExportDatasetDialog = ({ triggerState, datasetName }: ExportDataset
                         <Flex direction='column' gap={'size-200'} alignItems={'start'}>
                             <Text UNSAFE_className={classes.smallHeader}>Dataset summary</Text>
                             <ExportDatasetStatistics />
-                            <Divider size='S' />
+
                             {hasVideos && (
                                 <>
+                                    <Divider size='S' />
                                     <RadioGroup
                                         label={'Choose how to export videos'}
                                         contextualHelp={<ExportVideoFormatContextualHelp />}
@@ -185,36 +186,42 @@ export const ExportDatasetDialog = ({ triggerState, datasetName }: ExportDataset
                                             Convert frames to individual images
                                         </Radio>
                                     </RadioGroup>
-                                    <Divider size='S' UNSAFE_className={classes.divider} />
                                 </>
                             )}
-                            <RadioGroup
-                                label={'Select dataset export format'}
-                                aria-label={'Export formats'}
-                                value={exportFormat}
-                                onChange={(format: string) => setExportFormat(format as ExportFormats)}
-                            >
-                                {availableDatasetFormats.map(({ name, description }: ExportFormatDetails) => {
-                                    const isDisabled = !allowedFormats.some((format) => format.name === name);
 
-                                    return (
-                                        <TooltipTrigger key={name}>
-                                            <Radio value={name} aria-label={name} isDisabled={isDisabled}>
-                                                {formatToLabel(name)}
-                                            </Radio>
-                                            <Tooltip>{description}</Tooltip>
-                                        </TooltipTrigger>
-                                    );
-                                })}
-                            </RadioGroup>
-                            <ActionButton
-                                onPress={() => openNewTab(DOCS_BASE_URL)}
-                                UNSAFE_className={classes.linkButton}
-                                isQuiet
-                            >
-                                Learn more about export formats
-                                <LinkOut size='S' />
-                            </ActionButton>
+                            {availableDatasetFormats.length > 1 && (
+                                <>
+                                    <Divider size='S' UNSAFE_className={classes.divider} />
+                                    <RadioGroup
+                                        label={'Select dataset export format'}
+                                        aria-label={'Export formats'}
+                                        value={exportFormat}
+                                        onChange={(format: string) => setExportFormat(format as ExportFormats)}
+                                    >
+                                        {availableDatasetFormats.map(({ name, description }: ExportFormatDetails) => {
+                                            const isDisabled = !allowedFormats.some((format) => format.name === name);
+
+                                            return (
+                                                <TooltipTrigger key={name}>
+                                                    <Radio value={name} aria-label={name} isDisabled={isDisabled}>
+                                                        {formatToLabel(name)}
+                                                    </Radio>
+                                                    <Tooltip>{description}</Tooltip>
+                                                </TooltipTrigger>
+                                            );
+                                        })}
+                                    </RadioGroup>
+                                    <ActionButton
+                                        onPress={() => openNewTab(DOCS_BASE_URL)}
+                                        UNSAFE_className={classes.linkButton}
+                                        isQuiet
+                                    >
+                                        Learn more about export formats
+                                        <LinkOut size='S' />
+                                    </ActionButton>
+                                </>
+                            )}
+
                             {!isDatumaroFormat(exportFormat) && (
                                 <ExportDatasetMessage
                                     project={project}

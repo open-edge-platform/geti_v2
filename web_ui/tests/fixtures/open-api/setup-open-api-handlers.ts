@@ -8,9 +8,9 @@ import { isString } from 'lodash-es';
 import { DefaultBodyType, ResponseComposition, RestContext } from 'msw';
 import { OpenAPIBackend, type Context, type Document, type Options } from 'openapi-backend';
 
-import definition from './../../../src/core/server/generated/api-spec.json' assert { type: 'json' };
-import { settings, legacySupportedAlgorithms } from './mocks';
 import { getDirname } from '../../utils/get-dirname';
+import definition from './../../../src/core/server/generated/api-spec.json' with { type: 'json' };
+import { legacySupportedAlgorithms, settings } from './mocks';
 
 const SHOW_UNIMPLEMENTED_OPERATIONS = false;
 
