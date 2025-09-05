@@ -252,6 +252,19 @@ export const getParameter = (parameter: ConfigurationParameterDTO): Configuratio
         };
     }
 
+    if (parameter.type === 'array') {
+        const { key, type, name, description, value, default_value } = parameter;
+
+        return {
+            key,
+            type,
+            name,
+            description,
+            value,
+            defaultValue: default_value,
+        };
+    }
+
     throw new Error(`${parameter.type} is not supported.`);
 };
 

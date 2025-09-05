@@ -4,6 +4,7 @@
 """Utility functions that deal with file-system"""
 
 import os
+from dataclasses import dataclass, field
 
 from iai_core.entities.model_storage import ModelStorageIdentifier
 from iai_core.entities.project import Project
@@ -16,6 +17,7 @@ from iai_core.repos.storage.binary_repos import (
     ThumbnailBinaryRepo,
     VideoBinaryRepo,
 )
+from iai_core.services.model_service import ModelService
 from iai_core.utils.feature_flags import FeatureFlagProvider
 from iai_core.utils.timed_lru_cache import timed_lru_cache
 
@@ -38,17 +40,41 @@ MSG_ERR_NOT_ENOUGH_SPACE = (
 )
 
 
+@dataclass
+class ProjectStorageInfo:
+    """
+    Class to store the storage size of different objects in a project
+    """
+
+    total_dataset_storages_size: float = field(default=0.0)
+    total_model_storages_size: float = field(default=0.0)
+    total_code_deployment_size: float = field(default=0.0)
+    active_models_size: float = field(default=0.0)
+
+    @property
+    def total_storage_size(self) -> float:
+        return self.total_dataset_storages_size + self.total_model_storages_size + self.total_code_deployment_size
+
+    @property
+    def total_storage_size_excluding_models(self) -> float:
+        return self.total_dataset_storages_size + self.total_code_deployment_size
+
+    @property
+    def total_storage_size_excluding_non_active_models(self) -> float:
+        return self.total_dataset_storages_size + self.active_models_size + self.total_code_deployment_size
+
+
 @timed_lru_cache(seconds=30)
-def compute_project_size(project: Project) -> float:
+def compute_project_size(project: Project) -> ProjectStorageInfo:
     """
     Computes the size of the data in the project. This includes data such as model
     storages, dataset storages and project storage. Value is only recomputed if it
-    hasn't been computed in the last 5 minutes.
+    hasn't been computed in the last 30 seconds.
 
     :param project: Project to calculate the size for
-    :return: project size in bytes
+    :return: ProjectStorageInfo containing total storage size, and size excluding all models or all non-active models
     """
-    total_size = 0.0
+    project_storage_info = ProjectStorageInfo()
 
     # Add the size of all the dataset storage directories
     for dataset_storage_id in project.dataset_storage_ids:
@@ -57,24 +83,46 @@ def compute_project_size(project: Project) -> float:
             project_id=project.id_,
             dataset_storage_id=dataset_storage_id,
         )
-        total_size += ImageBinaryRepo(dataset_storage_identifier).get_object_storage_size()
-        total_size += VideoBinaryRepo(dataset_storage_identifier).get_object_storage_size()
-        total_size += ThumbnailBinaryRepo(dataset_storage_identifier).get_object_storage_size()
-        total_size += TensorBinaryRepo(dataset_storage_identifier).get_object_storage_size()
+        project_storage_info.total_dataset_storages_size += ImageBinaryRepo(
+            dataset_storage_identifier
+        ).get_object_storage_size()
+        project_storage_info.total_dataset_storages_size += VideoBinaryRepo(
+            dataset_storage_identifier
+        ).get_object_storage_size()
+        project_storage_info.total_dataset_storages_size += ThumbnailBinaryRepo(
+            dataset_storage_identifier
+        ).get_object_storage_size()
+        project_storage_info.total_dataset_storages_size += TensorBinaryRepo(
+            dataset_storage_identifier
+        ).get_object_storage_size()
 
-    # Add the size of all the model storage directories
     for training_task_node in project.get_trainable_task_nodes():
+        # Add the size of all the model storage directories
         model_storages = ModelStorageRepo(project.identifier).get_by_task_node_id(training_task_node.id_)
         for model_storage in model_storages:
             model_storage_identifier = ModelStorageIdentifier(
                 workspace_id=project.workspace_id, project_id=project.id_, model_storage_id=model_storage.id_
             )
-            total_size += ModelBinaryRepo(model_storage_identifier).get_object_storage_size()
+            project_storage_info.total_model_storages_size += ModelBinaryRepo(
+                model_storage_identifier
+            ).get_object_storage_size()
+
+        # Add the size of the active model
+        active_model = ModelService.get_base_active_model(
+            project_identifier=project.identifier, task_node_id=training_task_node.id_
+        )
+        if active_model is not None:
+            active_model_size = ModelService.get_model_size(
+                model=active_model, model_storage_identifier=active_model.model_storage_identifier
+            )
+            project_storage_info.active_models_size += active_model_size
 
     # Add the size of extra project files
-    total_size += CodeDeploymentBinaryRepo(project.identifier).get_object_storage_size()
+    project_storage_info.total_code_deployment_size += CodeDeploymentBinaryRepo(
+        project.identifier
+    ).get_object_storage_size()
 
-    return total_size
+    return project_storage_info
 
 
 def check_free_space_for_upload(

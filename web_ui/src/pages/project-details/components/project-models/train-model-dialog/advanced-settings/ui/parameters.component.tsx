@@ -13,6 +13,7 @@ import {
 import { isBoolEnableParameter } from '../utils';
 import { BooleanParameter } from './boolean-parameter.component';
 import { NumberParameterField } from './number-parameter-field.component';
+import { RangeParameterField } from './range-parameter-field.component';
 import { ResetButton } from './reset-button.component';
 import { Tooltip } from './tooltip.component';
 
@@ -160,6 +161,26 @@ const ParameterField: FC<ParameterFieldProps> = ({ parameter, onChange, isDisabl
                 value={parameter.value}
                 minValue={parameter.minValue}
                 maxValue={parameter.maxValue}
+                onChange={handleChange}
+                type={parameter.type}
+                isDisabled={isDisabled}
+                name={parameter.name}
+            />
+        );
+    }
+
+    if (parameter.type === 'array') {
+        const handleChange = (value: number[]) => {
+            onChange({
+                ...parameter,
+                value,
+            });
+        };
+
+        return (
+            <RangeParameterField
+                value={parameter.value}
+                defaultValue={parameter.defaultValue}
                 onChange={handleChange}
                 type={parameter.type}
                 isDisabled={isDisabled}
