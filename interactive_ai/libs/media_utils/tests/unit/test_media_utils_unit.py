@@ -100,8 +100,7 @@ class TestMediaUtils:
         # Assert
         assert result == expected_result
         patch_get_frame_numpy.assert_called_once_with(
-            file_location_getter=ANY,
-            frame_index=video_frame.frame_index,
+            file_location_getter=ANY, frame_index=video_frame.frame_index, fps=ANY
         )
         assert callable(patch_get_frame_numpy.call_args[1]["file_location_getter"])
 

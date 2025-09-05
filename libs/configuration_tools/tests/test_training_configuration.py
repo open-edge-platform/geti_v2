@@ -7,11 +7,11 @@ from pydantic import ValidationError
 
 from geti_configuration_tools.hyperparameters import (
     AugmentationParameters,
-    CenterCrop,
     DatasetPreparationParameters,
     EarlyStopping,
     EvaluationParameters,
     Hyperparameters,
+    RandomResizeCrop,
     TrainingHyperParameters,
 )
 from geti_configuration_tools.training_configuration import (
@@ -35,7 +35,7 @@ def ftx_hyperparameters():
     yield Hyperparameters(
         dataset_preparation=DatasetPreparationParameters(
             augmentation=AugmentationParameters(
-                center_crop=CenterCrop(enable=True, ratio=0.6),
+                random_resize_crop=RandomResizeCrop(enable=True, crop_ratio_range=[0.1, 0.8]),
             )
         ),
         training=TrainingHyperParameters(

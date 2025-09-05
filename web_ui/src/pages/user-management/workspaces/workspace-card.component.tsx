@@ -30,9 +30,10 @@ export const WorkspaceCard = ({ workspace, workspaces }: WorkspaceCardProps) => 
     const projectsNamesQuery = useGetProjectNames({ organizationId, workspaceId: workspace.id });
 
     const isWorkspaceEmpty = projectsNamesQuery.data?.projects.length === 0;
-    const { items, handleMenuAction, deleteDialog, editDialog, grayedOutKeys } = useWorkspaceActions(
+    const { items, handleMenuAction, deleteDialog, editDialog, grayedOutKeys, disabledKeys } = useWorkspaceActions(
         workspaces.length,
-        isWorkspaceEmpty
+        isWorkspaceEmpty,
+        workspace.id
     );
 
     const workspaceActions = items.map((item) => ({ name: item, id: item }));
@@ -83,6 +84,7 @@ export const WorkspaceCard = ({ workspace, workspaces }: WorkspaceCardProps) => 
                         id={`${workspace.name}-action-menu`}
                         onAction={handleMenuAction}
                         grayedOutKeys={grayedOutKeys}
+                        disabledKeys={disabledKeys}
                     />
                 </HasPermission>
             </Flex>

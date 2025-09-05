@@ -6,6 +6,7 @@ import { FC, FormEvent, useState } from 'react';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { getRoleCreationPayload, getRoleDeletionPayload } from '@geti/core/src/users/services/utils';
+import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import {
     RESOURCE_TYPE,
     RoleResource,
@@ -27,12 +28,13 @@ import { WorkspaceRolesContainer } from './workspace-roles/workspace-roles-conta
 
 import classes from './edit-user-dialog.module.scss';
 
-interface EditUserDialogProps extends WorkspaceIdentifier {
+interface EditUserDialogProps extends Omit<WorkspaceIdentifier, 'workspaceId'> {
     user: User;
     activeUser: User;
     users: User[];
     isSaasEnvironment: boolean;
     closeDialog: () => void;
+    workspaceId?: WorkspaceIdentifier['workspaceId'];
 }
 
 const MAP_WORKSPACE_ROLE_TO_ORGANIZATION_ROLE: Record<
@@ -49,7 +51,17 @@ const RolesSelection: FC<{
     onChangeRoleHandler: (role: WorkspaceRole['role']) => void;
     onChangeWorkspaceRoles: (roles: WorkspaceRole[]) => void;
     workspaces: WorkspaceEntity[];
-}> = ({ rolesOptions, workspaceRoles, onChangeRoleHandler, onChangeWorkspaceRoles, workspaces }) => {
+    isOrgAdmin: boolean;
+    editableWorkspaceIds: string[];
+}> = ({
+    rolesOptions,
+    workspaceRoles,
+    onChangeRoleHandler,
+    onChangeWorkspaceRoles,
+    workspaces,
+    isOrgAdmin,
+    editableWorkspaceIds,
+}) => {
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
     const shouldUseSimpleRolesPicker = !FEATURE_FLAG_WORKSPACE_ACTIONS && workspaces.length === 1;
 
@@ -58,11 +70,13 @@ const RolesSelection: FC<{
     }
 
     if (shouldUseSimpleRolesPicker) {
+        const canEditSimple = isOrgAdmin || editableWorkspaceIds.includes(workspaces[0].id);
         return (
             <RolePicker
                 roles={rolesOptions}
                 selectedRole={workspaceRoles[0].role}
                 setSelectedRole={onChangeRoleHandler}
+                isDisabled={!canEditSimple}
             />
         );
     }
@@ -72,6 +86,8 @@ const RolesSelection: FC<{
             workspaceRoles={workspaceRoles}
             setWorkspaceRoles={onChangeWorkspaceRoles}
             workspaces={workspaces}
+            isOrgAdmin={isOrgAdmin}
+            editableWorkspaceIds={editableWorkspaceIds}
         />
     );
 };
@@ -86,11 +102,17 @@ export const EditUserDialog = ({
     users,
 }: EditUserDialogProps) => {
     const { workspaces } = useWorkspaces();
+    const isOrgAdmin = isOrganizationAdmin(activeUser, organizationId);
+    const adminWorkspaceIds = activeUser.roles
+        .filter(
+            ({ resourceType, role }) => resourceType === RESOURCE_TYPE.WORKSPACE && role === USER_ROLE.WORKSPACE_ADMIN
+        )
+        .map(({ resourceId }) => resourceId);
     const { useUpdateUser, useUpdateUserRoles, useUpdateMemberRole } = useUsers();
     const updateRoles = useUpdateUserRoles();
     const updateUser = useUpdateUser();
     const updateMemberRole = useUpdateMemberRole();
-    const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();
+    const { FEATURE_FLAG_MANAGE_USERS_ROLES, FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
 
     const [firstName, setFirstName] = useState<string>(user.firstName);
     const [lastName, setLastName] = useState<string>(user.lastName);
@@ -99,12 +121,14 @@ export const EditUserDialog = ({
     );
 
     const isAccountOwner = activeUser.id === user.id;
-    const rolesOptions = getAvailableRoles({
-        activeMember: activeUser,
-        members: users,
-        workspaceId,
-        isAccountOwner,
-    });
+    const rolesOptions = !!workspaceId
+        ? getAvailableRoles({
+              activeMember: activeUser,
+              members: users,
+              workspaceId,
+              isAccountOwner,
+          })
+        : [];
 
     const areRolesEqual = isEqual(workspaceRoles, mapRolesToWorkspaceRoles(user.roles, workspaces));
     const isSaveButtonDisabled = isSaasEnvironment
@@ -140,16 +164,31 @@ export const EditUserDialog = ({
     };
 
     const updateUserRoles = async () => {
-        const editedRoles: RoleResource[] = workspaceRoles.map((role) => ({
-            role: role.role,
-            resourceId: role.workspace.id,
-            resourceType: RESOURCE_TYPE.WORKSPACE,
-        }));
+        const editableIds = isOrgAdmin
+            ? workspaces.map((w) => w.id)
+            : activeUser.roles
+                  .filter(({ resourceType, role }) =>
+                      resourceType === RESOURCE_TYPE.WORKSPACE ? role === USER_ROLE.WORKSPACE_ADMIN : false
+                  )
+                  .map(({ resourceId }) => resourceId);
+
+        const editedRoles: RoleResource[] = workspaceRoles
+            .filter((wr) => editableIds.includes(wr.workspace.id))
+            .map((role) => ({
+                role: role.role,
+                resourceId: role.workspace.id,
+                resourceType: RESOURCE_TYPE.WORKSPACE,
+            }));
 
         const oldRoles: UpdateRolePayload[] = user.roles
-            .filter(({ resourceType }) => resourceType === RESOURCE_TYPE.WORKSPACE)
+            .filter(
+                ({ resourceType, resourceId }) =>
+                    resourceType === RESOURCE_TYPE.WORKSPACE && editableIds.includes(resourceId)
+            )
             .map((role) => getRoleDeletionPayload(role));
         const roles: UpdateRolePayload[] = editedRoles.map((role) => getRoleCreationPayload(role));
+
+        if (oldRoles.length === 0 && roles.length === 0) return;
 
         return updateRoles.mutateAsync({ newRoles: [...oldRoles, ...roles], userId: user.id, organizationId });
     };
@@ -199,15 +238,22 @@ export const EditUserDialog = ({
 
     const handleEditMember = async () => {
         if (isSaasEnvironment && !areRolesEqual) {
-            await Promise.all(updateMemberRolesPromises());
-
+            if (!FEATURE_FLAG_WORKSPACE_ACTIONS) {
+                await Promise.all(updateMemberRolesPromises());
+            } else {
+                await updateUserRoles();
+            }
             return;
         }
 
         const editMemberPromises: Promise<void>[] = [];
 
         if (!areRolesEqual) {
-            editMemberPromises.push(...updateMemberRolesPromises());
+            if (!FEATURE_FLAG_WORKSPACE_ACTIONS) {
+                editMemberPromises.push(...updateMemberRolesPromises());
+            } else {
+                editMemberPromises.push(updateUserRoles());
+            }
         }
 
         if (user.firstName !== firstName || user.lastName !== lastName) {
@@ -244,7 +290,7 @@ export const EditUserDialog = ({
                             label='First name'
                             id='edit-first-name'
                             width={'100%'}
-                            isDisabled={isSaasEnvironment}
+                            isDisabled={(!isOrgAdmin && activeUser.id !== user.id) || isSaasEnvironment}
                             value={firstName}
                             onChange={setFirstName}
                         />
@@ -252,7 +298,7 @@ export const EditUserDialog = ({
                             label='Last name'
                             id='edit-last-name'
                             width={'100%'}
-                            isDisabled={isSaasEnvironment}
+                            isDisabled={(!isOrgAdmin && activeUser.id !== user.id) || isSaasEnvironment}
                             value={lastName}
                             onChange={setLastName}
                         />
@@ -263,6 +309,8 @@ export const EditUserDialog = ({
                         onChangeWorkspaceRoles={setWorkspaceRoles}
                         workspaces={workspaces}
                         workspaceRoles={workspaceRoles}
+                        isOrgAdmin={isOrgAdmin}
+                        editableWorkspaceIds={adminWorkspaceIds}
                     />
                     <ButtonGroup align={'end'} marginTop={'size-350'}>
                         <Button variant='secondary' onPress={closeDialog} id={'cancel-edit-user'}>

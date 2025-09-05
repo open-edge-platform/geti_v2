@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = "==3.10.*"
 resolution-markers = [
     "python_version < '0'",
@@ -1872,7 +1872,7 @@ wheels = [
 [[package]]
 name = "otx"
 version = "2.6.0.dev0"
-source = { git = "https://github.com/open-edge-platform/training_extensions.git?branch=develop#4785a748b2a71fda0876b33c04784110ad3e0766" }
+source = { git = "https://github.com/open-edge-platform/training_extensions.git?subdirectory=lib&branch=develop#c432e0c56f130937d3918bc3fd0bbe264c9af0a8" }
 dependencies = [
     { name = "anomalib", extra = ["core"] },
     { name = "datumaro" },
@@ -1934,7 +1934,7 @@ requires-dist = [
     { name = "geti-telemetry-tools", extras = ["telemetry", "kafka"], directory = "../../../../libs/telemetry_tools" },
     { name = "minio", specifier = "~=7.1.0" },
     { name = "numpy", specifier = "==1.26.4" },
-    { name = "otx", git = "https://github.com/open-edge-platform/training_extensions.git?branch=develop" },
+    { name = "otx", git = "https://github.com/open-edge-platform/training_extensions.git?subdirectory=lib&branch=develop" },
     { name = "requests", specifier = "==2.32.4" },
     { name = "tqdm", specifier = "==4.67.1" },
 ]

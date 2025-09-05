@@ -16,7 +16,7 @@ TAG                                ?= $(PRODUCT_VERSION)-$(shell git rev-parse -
 ###
 REGISTRY                          ?= local
 IMAGES_REGISTRY                   ?= ${REGISTRY}/geti
-CHARTS_REGISTRY                   ?= ${REGISTRY}/geti/charts
+CHARTS_REGISTRY                   ?= ${REGISTRY}/geti/helm
 BASE_IMAGES_REGISTRY              ?= ${REGISTRY}/base-images
 
 ###

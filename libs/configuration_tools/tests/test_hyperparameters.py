@@ -5,7 +5,7 @@ from pydantic import ValidationError
 
 from geti_configuration_tools.hyperparameters import (
     AugmentationParameters,
-    CenterCrop,
+    ColorJitter,
     DatasetPreparationParameters,
     EarlyStopping,
     EvaluationParameters,
@@ -14,11 +14,12 @@ from geti_configuration_tools.hyperparameters import (
     PartialHyperparameters,
     RandomAffine,
     RandomHorizontalFlip,
+    RandomIOUCrop,
     RandomResizeCrop,
+    RandomVerticalFlip,
     Tiling,
     TrainingHyperParameters,
 )
-from geti_configuration_tools.hyperparameters.augmentation import ColorJitter, RandomIOUCrop, RandomVerticalFlip
 
 
 class TestHyperparameters:
@@ -57,20 +58,35 @@ class TestHyperparameters:
                 {
                     "dataset_preparation": {
                         "augmentation": {
-                            "center_crop": {"enable": True, "ratio": 0.8},
-                            "random_resize_crop": {"enable": True, "ratio": 0.5},
+                            "random_resize_crop": {
+                                "enable": True,
+                                "crop_ratio_range": [0.2, 1.0],
+                                "aspect_ratio_range": [0.5, 2.0],
+                            },
                             "random_affine": {
                                 "enable": True,
-                                "degrees": 30,
-                                "translate_x": 0.1,
-                                "translate_y": 0.1,
-                                "scale": 0.9,
+                                "max_rotate_degree": 30.0,
+                                "max_translate_ratio": 0.1,
+                                "scaling_ratio_range": [0.5, 1.5],
+                                "max_shear_degree": 2.0,
                             },
-                            "random_horizontal_flip": {"enable": True},
-                            "random_vertical_flip": {"enable": True},
-                            "random_iou_crop": {"enable": True},
-                            "color_jitter": {"enable": True},
-                            "gaussian_blur": {"enable": True, "kernel_size": 3},
+                            "random_horizontal_flip": {"enable": True, "probability": 0.5},
+                            "random_vertical_flip": {"enable": True, "probability": 0.5},
+                            "iou_random_crop": {"enable": True},
+                            "color_jitter": {
+                                "enable": True,
+                                "brightness": [0.875, 1.125],
+                                "contrast": [0.5, 1.5],
+                                "saturation": [0.5, 1.5],
+                                "hue": [-0.05, 0.05],
+                                "probability": 0.5,
+                            },
+                            "gaussian_blur": {
+                                "enable": True,
+                                "kernel_size": 3,
+                                "sigma": [0.1, 2.0],
+                                "probability": 0.5,
+                            },
                             "tiling": {"enable": True, "adaptive_tiling": True, "tile_size": 224, "tile_overlap": 0.15},
                         }
                     },
@@ -87,16 +103,33 @@ class TestHyperparameters:
                 Hyperparameters(
                     dataset_preparation=DatasetPreparationParameters(
                         augmentation=AugmentationParameters(
-                            center_crop=CenterCrop(enable=True, ratio=0.8),
-                            random_resize_crop=RandomResizeCrop(enable=True, ratio=0.5),
-                            random_affine=RandomAffine(
-                                enable=True, degrees=30, translate_x=0.1, translate_y=0.1, scale=0.9
+                            random_resize_crop=RandomResizeCrop(
+                                enable=True, crop_ratio_range=[0.2, 1.0], aspect_ratio_range=[0.5, 2.0]
                             ),
-                            random_horizontal_flip=RandomHorizontalFlip(enable=True),
-                            random_vertical_flip=RandomVerticalFlip(enable=True),
-                            random_iou_crop=RandomIOUCrop(enable=True),
-                            color_jitter=ColorJitter(enable=True),
-                            gaussian_blur=GaussianBlur(enable=True, kernel_size=3),
+                            random_affine=RandomAffine(
+                                enable=True,
+                                max_rotate_degree=30.0,
+                                max_translate_ratio=0.1,
+                                scaling_ratio_range=[0.5, 1.5],
+                                max_shear_degree=2.0,
+                            ),
+                            random_horizontal_flip=RandomHorizontalFlip(enable=True, probability=0.5),
+                            random_vertical_flip=RandomVerticalFlip(enable=True, probability=0.5),
+                            iou_random_crop=RandomIOUCrop(enable=True),
+                            color_jitter=ColorJitter(
+                                enable=True,
+                                brightness=[0.875, 1.125],
+                                contrast=[0.5, 1.5],
+                                saturation=[0.5, 1.5],
+                                hue=[-0.05, 0.05],
+                                probability=0.5,
+                            ),
+                            gaussian_blur=GaussianBlur(
+                                enable=True,
+                                kernel_size=3,
+                                sigma=[0.1, 2.0],
+                                probability=0.5,
+                            ),
                             tiling=Tiling(enable=True, adaptive_tiling=True, tile_size=224, tile_overlap=0.15),
                         )
                     ),
@@ -116,7 +149,7 @@ class TestHyperparameters:
                 {
                     "dataset_preparation": {
                         "augmentation": {
-                            "center_crop": {"enable": True, "ratio": 0.1},
+                            "random_resize_crop": {"enable": True, "crop_ratio_range": [0.1, 1.0]},
                             "random_horizontal_flip": {"enable": False},
                         }
                     },
@@ -133,7 +166,7 @@ class TestHyperparameters:
                 Hyperparameters(
                     dataset_preparation=DatasetPreparationParameters(
                         augmentation=AugmentationParameters(
-                            center_crop=CenterCrop(enable=True, ratio=0.1),
+                            random_resize_crop=RandomResizeCrop(enable=True, crop_ratio_range=[0.1, 1.0]),
                             random_horizontal_flip=RandomHorizontalFlip(enable=False),
                         )
                     ),
@@ -248,18 +281,21 @@ class TestHyperparameters:
 
         # Test with a nested partial configuration
         nested_partial_hyperparams = PartialHyperparameters.model_validate(
-            {"dataset_preparation": {"augmentation": {"center_crop": {"ratio": 0.75}}}}
+            {"dataset_preparation": {"augmentation": {"random_resize_crop": {"crop_ratio_range": [0.2, 0.75]}}}}
         )
 
         # Verify that nested fields are set correctly
-        assert nested_partial_hyperparams.dataset_preparation.augmentation.center_crop.ratio == 0.75
-        assert nested_partial_hyperparams.dataset_preparation.augmentation.center_crop.enable is None
+        assert nested_partial_hyperparams.dataset_preparation.augmentation.random_resize_crop.crop_ratio_range == [
+            0.2,
+            0.75,
+        ]
+        assert nested_partial_hyperparams.dataset_preparation.augmentation.random_resize_crop.enable is None
 
         # Test with a full configuration
         full_hyperparams = Hyperparameters(
             dataset_preparation=DatasetPreparationParameters(
                 augmentation=AugmentationParameters(
-                    center_crop=CenterCrop(enable=True, ratio=0.6),
+                    random_resize_crop=RandomResizeCrop(enable=True, crop_ratio_range=[0.2, 0.6]),
                 )
             ),
             training=TrainingHyperParameters(

@@ -96,6 +96,18 @@ export const useUserRegister = (): UseMutationResult<void, AxiosError, UserRegis
     });
 };
 
+export const useActiveUser: UseUsers['useActiveUser'] = (organizationId) => {
+    const { usersService } = useApplicationServices();
+    const key = QUERY_KEYS.ACTIVE_USER(organizationId);
+
+    return useQuery<User, AxiosError>({
+        queryKey: key,
+        queryFn: () => {
+            return usersService.getActiveUser(organizationId);
+        },
+    });
+};
+
 export const useUsers = (): UseUsers => {
     const { usersService } = useApplicationServices();
 
@@ -279,17 +291,6 @@ export const useUsers = (): UseUsers => {
         }, [query.isSuccess, query.data, organizationId]);
 
         return query;
-    };
-
-    const useActiveUser: UseUsers['useActiveUser'] = (organizationId) => {
-        const key = QUERY_KEYS.ACTIVE_USER(organizationId);
-
-        return useQuery<User, AxiosError>({
-            queryKey: key,
-            queryFn: () => {
-                return usersService.getActiveUser(organizationId);
-            },
-        });
     };
 
     const useUpdateUserRoles: UseUsers['useUpdateUserRoles'] = () => {

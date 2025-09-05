@@ -14,6 +14,7 @@ import { AxiosError } from 'axios';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
 import { getErrorMessage } from '../../services/utils';
+import { useUsers } from '../../users/hook/use-users.hook';
 import { WorkspaceEntity } from '../services/workspaces.interface';
 
 interface UseWorkspacesApi {
@@ -38,9 +39,13 @@ export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
     };
 
     const useCreateWorkspaceMutation: UseWorkspacesApi['useCreateWorkspaceMutation'] = () => {
+        const { useActiveUser } = useUsers();
+        const activeUserQuery = useActiveUser(organizationId);
+        const activeUserId = activeUserQuery.data?.id;
+
         return useMutation({
             mutationFn: async ({ name }) => {
-                return workspacesService.createWorkspace(organizationId, name);
+                return workspacesService.createWorkspace(organizationId, name, activeUserId);
             },
             onSuccess: async () => {
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.WORKSPACES(organizationId) });

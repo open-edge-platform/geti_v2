@@ -33,8 +33,9 @@ export const WorkspaceUsersPanel = ({ selectedWorkspace, setSelectedWorkspace }:
     const workspaceCreateDisabled = workspaces.length === 1 && !FEATURE_FLAG_WORKSPACE_ACTIONS;
 
     useEffect(() => {
-        //Note: First workspace is selected by default if we have don't have option to create new one
-        if (workspaceCreateDisabled && !selectedWorkspace) {
+        // Note: Default to the first workspace only when selection is truly unset (undefined).
+        // Do not override an explicit 'All workspaces' selection (empty string).
+        if (workspaceCreateDisabled && selectedWorkspace === undefined) {
             setSelectedWorkspace(workspaces[0].id);
         }
     }, [workspaceCreateDisabled, setSelectedWorkspace, workspaces, selectedWorkspace]);
