@@ -31,12 +31,26 @@ export const App: FC<AppProps> = ({ routes }) => {
     useFeatureFlags();
 
     const [router] = useState<RouterProviderProps['router']>(() =>
-        createBrowserRouter(createRoutesFromElements(routes.map((routesGroup) => routesGroup())))
+        createBrowserRouter(createRoutesFromElements(routes.map((routesGroup) => routesGroup())), {
+            future: {
+                v7_relativeSplatPath: true,
+                v7_fetcherPersist: true,
+                v7_normalizeFormMethod: true,
+                v7_partialHydration: true,
+                v7_skipActionErrorRevalidation: true,
+            },
+        })
     );
 
     return (
         <ThemeProvider router={router}>
-            <RouterProvider router={router} fallbackElement={<IntelBrandedLoading />} />
+            <RouterProvider
+                router={router}
+                fallbackElement={<IntelBrandedLoading />}
+                future={{
+                    v7_startTransition: true,
+                }}
+            />
             <div id='custom-notification'></div>
         </ThemeProvider>
     );
