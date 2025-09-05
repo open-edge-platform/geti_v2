@@ -3,8 +3,6 @@
 
 from typing import TYPE_CHECKING, Any
 
-from geti_feature_tools import FeatureFlagProvider
-
 from communication.backward_compatibility.configurations import ConfigurationsBackwardCompatibility
 from communication.controllers.project_configuration_controller import ProjectConfigurationRESTController
 from communication.controllers.training_configuration_controller import TrainingConfigurationRESTController
@@ -14,7 +12,6 @@ from communication.views.configuration_rest_views import ConfigurationRESTViews
 from configuration.configuration_manager import ConfigurationManager
 from configuration.configuration_validator import ConfigurationValidator
 from coordination.dataset_manager.subset_manager_config import SubsetManagerConfig
-from features.feature_flag import FeatureFlag
 
 from geti_fastapi_tools.exceptions import BadRequestException, ProjectNotFoundException
 from geti_fastapi_tools.responses import success_response_rest
@@ -241,31 +238,22 @@ class ConfigurationRESTController:
         if subset_manager_config is not None:
             ConfigurationRESTController._rescale_subset_manager_config(subset_manager_config)  # type: ignore
 
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            global_config, _ = ConfigurationManager.get_full_configuration(
-                workspace_id=workspace_id, project_id=project_id
-            )
-            project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+        global_config, _ = ConfigurationManager.get_full_configuration(workspace_id=workspace_id, project_id=project_id)
+        project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+            project_identifier=project.identifier,
+            legacy_global_configuration=global_config,
+            legacy_task_chain_configs=_updated_task_chain_configs,
+        )
+        ProjectConfigurationRESTController.update_configuration(
+            project_identifier=project.identifier,
+            update_configuration=project_configuration,
+        )
+        for training_configuration in training_configurations:
+            TrainingConfigurationRESTController.update_configuration(
                 project_identifier=project.identifier,
-                legacy_global_configuration=global_config,
-                legacy_task_chain_configs=_updated_task_chain_configs,
+                update_configuration=training_configuration,
             )
-            ProjectConfigurationRESTController.update_configuration(
-                project_identifier=project.identifier,
-                update_configuration=project_configuration,
-            )
-            for training_configuration in training_configurations:
-                TrainingConfigurationRESTController.update_configuration(
-                    project_identifier=project.identifier,
-                    update_configuration=training_configuration,
-                )
-        else:
-            # Save once all configs and entity_identifiers are validated
-            ConfigurationManager.save_configuration_list(
-                workspace_id=workspace_id,
-                project_id=project_id,
-                configurable_parameter_list=updated_configs,
-            )
+
         return success_response_rest()
 
     @staticmethod
@@ -323,30 +311,22 @@ class ConfigurationRESTController:
                 )
             )
 
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            _, task_chain_config = ConfigurationManager.get_full_configuration(
-                workspace_id=workspace_id, project_id=project_id
-            )
-            update_project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+        _, task_chain_config = ConfigurationManager.get_full_configuration(
+            workspace_id=workspace_id, project_id=project_id
+        )
+        update_project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+            project_identifier=project.identifier,
+            legacy_global_configuration=updated_configs,
+            legacy_task_chain_configs=task_chain_config,
+        )
+        ProjectConfigurationRESTController.update_configuration(
+            project_identifier=project.identifier,
+            update_configuration=update_project_configuration,
+        )
+        for training_configuration in training_configurations:
+            TrainingConfigurationRESTController.update_configuration(
                 project_identifier=project.identifier,
-                legacy_global_configuration=updated_configs,
-                legacy_task_chain_configs=task_chain_config,
-            )
-            ProjectConfigurationRESTController.update_configuration(
-                project_identifier=project.identifier,
-                update_configuration=update_project_configuration,
-            )
-            for training_configuration in training_configurations:
-                TrainingConfigurationRESTController.update_configuration(
-                    project_identifier=project.identifier,
-                    update_configuration=training_configuration,
-                )
-        else:
-            # Save once all configs and entity_identifiers are validated
-            ConfigurationManager.save_configuration_list(
-                workspace_id=workspace_id,
-                project_id=project_id,
-                configurable_parameter_list=updated_configs,
+                update_configuration=training_configuration,
             )
 
         return success_response_rest()
@@ -411,30 +391,20 @@ class ConfigurationRESTController:
         if subset_manager_config is not None:
             ConfigurationRESTController._rescale_subset_manager_config(subset_manager_config)  # type: ignore
 
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            global_config, _ = ConfigurationManager.get_full_configuration(
-                workspace_id=workspace_id, project_id=project_id
-            )
-            project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
-                project_identifier=project.identifier,
-                legacy_global_configuration=global_config,
-                legacy_task_chain_configs=[{"task": task_node, "configurations": updated_configs}],
-            )
-            ProjectConfigurationRESTController.update_configuration(
-                project_identifier=project.identifier,
-                update_configuration=project_configuration,
-            )
-            TrainingConfigurationRESTController.update_configuration(
-                project_identifier=project.identifier,
-                update_configuration=training_configurations[0],
-            )
-        else:
-            # Save once all configs and entity_identifiers are validated
-            ConfigurationManager.save_configuration_list(
-                workspace_id=workspace_id,
-                project_id=project_id,
-                configurable_parameter_list=updated_configs,
-            )
+        global_config, _ = ConfigurationManager.get_full_configuration(workspace_id=workspace_id, project_id=project_id)
+        project_configuration, training_configurations = ConfigurationsBackwardCompatibility.forward_mapping(
+            project_identifier=project.identifier,
+            legacy_global_configuration=global_config,
+            legacy_task_chain_configs=[{"task": task_node, "configurations": updated_configs}],
+        )
+        ProjectConfigurationRESTController.update_configuration(
+            project_identifier=project.identifier,
+            update_configuration=project_configuration,
+        )
+        TrainingConfigurationRESTController.update_configuration(
+            project_identifier=project.identifier,
+            update_configuration=training_configurations[0],
+        )
 
         return success_response_rest()
 

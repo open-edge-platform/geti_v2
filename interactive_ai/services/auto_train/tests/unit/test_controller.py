@@ -9,7 +9,7 @@ from geti_configuration_tools.training_configuration import TrainingConfiguratio
 from grpc import RpcError
 
 from controller import AUTO_TRAIN_AUTHOR, AutoTrainController, last_job_submission_time
-from entities import AutoTrainActivationRequest, FeatureFlag, NullAutoTrainActivationRequest
+from entities import AutoTrainActivationRequest, NullAutoTrainActivationRequest
 from exceptions import InvalidAutoTrainRequestError, JobSubmissionError
 from job_creation_helpers import TRAIN_JOB_PRIORITY, TrainTaskJobData
 from repos.auto_train_activation_repo import SessionBasedAutoTrainActivationRepo
@@ -178,7 +178,6 @@ class TestAutoTrainController:
 
     def test_submit_train_job_with_new_config_ff(
         self,
-        fxt_enable_feature_flag_name,
         fxt_auto_train_controller,
         fxt_auto_train_activation_request,
         fxt_empty_project,
@@ -187,7 +186,6 @@ class TestAutoTrainController:
         fxt_training_configuration_model_manifest_level,
     ) -> None:
         # Arrange
-        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
         dummy_global_config = MagicMock()
         dummy_train_job_key = "dummy_job_key"
         dummy_train_job_payload = "dummy_job_payload"

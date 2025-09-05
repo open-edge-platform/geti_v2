@@ -7,14 +7,11 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
 from geti_configuration_tools.project_configuration import PartialProjectConfiguration
-from geti_feature_tools import FeatureFlagProvider
 
 from communication.controllers.project_configuration_controller import ProjectConfigurationRESTController
 from communication.views.project_configuration_rest_views import ProjectConfigurationRESTViews
-from features.feature_flag import FeatureFlag
 
 from geti_fastapi_tools.dependencies import get_project_identifier, get_request_json, setup_session_fastapi
-from geti_fastapi_tools.exceptions import GetiBaseException
 from geti_types import ProjectIdentifier
 
 logger = logging.getLogger(__name__)
@@ -41,12 +38,6 @@ def get_project_configuration(
     project_identifier: Annotated[ProjectIdentifier, Depends(get_project_identifier)],
 ) -> dict[str, Any]:
     """Retrieve the configuration for a specific project."""
-    if not FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-        raise GetiBaseException(
-            message="Feature not available",
-            error_code="feature_not_available",
-            http_status=HTTPStatus.FORBIDDEN,
-        )
     return ProjectConfigurationRESTController().get_configuration(project_identifier=project_identifier)
 
 
@@ -56,12 +47,6 @@ def update_project_configuration(
     update_configuration: Annotated[PartialProjectConfiguration, Depends(get_project_configuration_from_request)],
 ) -> None:
     """Update the configuration for a specific project."""
-    if not FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-        raise GetiBaseException(
-            message="Feature not available",
-            error_code="feature_not_available",
-            http_status=HTTPStatus.FORBIDDEN,
-        )
     ProjectConfigurationRESTController.update_configuration(
         project_identifier=project_identifier,
         update_configuration=update_configuration,

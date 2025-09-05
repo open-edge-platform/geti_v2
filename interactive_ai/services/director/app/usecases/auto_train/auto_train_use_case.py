@@ -12,15 +12,12 @@ import os
 from threading import Thread
 from typing import TYPE_CHECKING
 
-from geti_feature_tools import FeatureFlagProvider
 from rx.operators import debounce
 from rx.scheduler import EventLoopScheduler
 from rx.subject import Subject
 
-from coordination.configuration_manager.task_node_config import AnomalyTaskNodeConfig, TaskNodeConfig
 from coordination.dataset_manager.missing_annotations_helper import MissingAnnotationsHelper
 from entities.auto_train_activation import AutoTrainActivation
-from features.feature_flag import FeatureFlag
 from storage.repos.auto_train_activation_repo import ProjectBasedAutoTrainActivationRepo
 from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
@@ -33,10 +30,9 @@ from geti_types import (
     Session,
     session_context,
 )
-from iai_core.configuration.elements.component_parameters import ComponentType
 from iai_core.entities.project import Project
 from iai_core.entities.task_node import TaskNode
-from iai_core.repos import ConfigurableParametersRepo, ProjectRepo, TaskNodeRepo
+from iai_core.repos import ProjectRepo, TaskNodeRepo
 
 if TYPE_CHECKING:
     from geti_types import ID
@@ -219,22 +215,13 @@ class AutoTrainUseCase:
         :param task_node: The task node to check
         :returns: True if auto-training is enabled for the task node, False otherwise.
         """
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            # use revamped project configuration
-            repo = ProjectConfigurationRepo(project_identifier)
-            project_config = repo.get_project_configuration()
-            return (
-                not task_node.task_properties.is_anomaly
-                and project_config.get_task_config(task_id=str(task_node.id_)).auto_training.enable
-            )
-
-        task_configuration_type = AnomalyTaskNodeConfig if task_node.task_properties.is_anomaly else TaskNodeConfig
-        task_configuration = ConfigurableParametersRepo(project_identifier).get_or_create_component_parameters(
-            data_instance_of=task_configuration_type,
-            task_id=task_node.id_,
-            component=ComponentType.TASK_NODE,
+        # use revamped project configuration
+        repo = ProjectConfigurationRepo(project_identifier)
+        project_config = repo.get_project_configuration()
+        return (
+            not task_node.task_properties.is_anomaly
+            and project_config.get_task_config(task_id=str(task_node.id_)).auto_training.enable
         )
-        return task_configuration.auto_training
 
     @classmethod
     def __get_auto_train_ready_tasks(

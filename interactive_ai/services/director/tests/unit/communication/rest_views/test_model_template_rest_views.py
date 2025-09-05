@@ -6,7 +6,6 @@ from geti_supported_models import SupportedModels
 from testfixtures import compare
 
 from communication.views.model_template_rest_views import ModelTemplateRESTViews
-from features.feature_flag import FeatureFlag
 
 
 class TestSCModelTemplateRESTViews:
@@ -28,9 +27,8 @@ class TestSCModelTemplateRESTViews:
 
         compare(result, expected_result, ignore_eq=True)
 
-    def test_model_manifest_to_rest(self, fxt_enable_feature_flag_name) -> None:
+    def test_model_manifest_to_rest(self) -> None:
         # Arrange
-        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
         model_manifest = SupportedModels.get_model_manifest_by_id("Object_Detection_DFine_X")
         expected_result = {
             "model_manifest_id": model_manifest.id,

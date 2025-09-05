@@ -630,10 +630,7 @@ class TestConfigurationRESTController:
         fxt_task_chain_project,
         fxt_configuration_dict,
         fxt_configuration_2,
-        fxt_enable_feature_flag_name,
     ):
-        # Arrange
-        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
         project_id = fxt_task_chain_project.id_
         workspace_id = fxt_task_chain_project.workspace_id
         dummy_return = [[["a", "b"], ["c", "d"]], [["e", "f"], ["g", "h"]]]
@@ -711,10 +708,8 @@ class TestConfigurationRESTController:
         fxt_task_chain_project,
         fxt_configuration_dict,
         fxt_configuration_2,
-        fxt_enable_feature_flag_name,
     ):
         # Arrange
-        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
         project_id = ID("dummy_project_id")
         workspace_id = ID("dummy_workspace_id")
         dummy_return = [["a", "b"], ["c", "d"]]
@@ -792,10 +787,8 @@ class TestConfigurationRESTController:
         fxt_task_chain_project,
         fxt_configuration_dict,
         fxt_configuration_2,
-        fxt_enable_feature_flag_name,
     ):
         # Arrange
-        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
         project_id = fxt_task_chain_project.id_
         workspace_id = fxt_task_chain_project.workspace_id
         task_id = fxt_task_chain_project.task_ids[0]
@@ -883,10 +876,8 @@ class TestConfigurationRESTController:
         configuration_controller,
         fxt_task_chain_project,
         fxt_configuration_dict,
-        fxt_enable_feature_flag_name,
     ):
         # Arrange
-        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
         project_id = ID("dummy_project_id")
         workspace_id = ID("dummy_workspace_id")
 
