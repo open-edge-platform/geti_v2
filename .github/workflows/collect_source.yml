@@ -1,0 +1,68 @@
+name: Collect source for GPL/MPL licensed code
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to filter ECR images"
+        required: true
+      archive-name:
+        description: "File name to store the archived source code"
+        required: true
+      output-dir:
+        description: "Path to store temporarily the downloaded source code"
+        required: false
+        default: "output"
+
+jobs:
+  collect_source:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    secrets:
+      AWS_ROLE: ${{ secrets.AWS_ROLE }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      REGISTRY: ${{ secrets.REGISTRY }}
+    steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE }}
+        role-session-name: Github
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+    
+    - name: Get ECR images with specified tag
+      id: ecr_images
+      run: |
+        TAG="${{ github.event.inputs.tag }}"
+        # Get the list of repositories that start with the given prefix
+        REPOS=$(aws ecr describe-repositories --query "repositories[].repositoryName" --output text | tr '\t' '\n' | grep '^geti/' | grep -v '^geti/helm/')
+        cat /dev/null > ecr_images.txt
+        for REPO in $REPOS; do
+          echo "Processing repository: $REPO"
+          aws ecr describe-images --repository-name $REPO --image-ids imageTag=$TAG > /dev/null 2>&1
+          exit_code="$?"
+          if [ "$exit_code" -eq 0 ]; then
+            IMAGE_URI="${{ secrets.REGISTRY }}/${REPO}:${TAG}"
+            echo "Found image: $IMAGE_URI"
+            echo "$IMAGE_URI" >> ecr_images.txt
+          else
+            echo "No image with tag '${TAG}' found in repository '${REPO}'"
+          fi
+        done
+        echo "ECR images with tag '${TAG}':"
+        cat ecr_images.txt
+        echo "images=$(cat ecr_images.txt | tr '\n' ',' | sed 's/,$//')" >> $GITHUB_OUTPUT
+      outputs:
+        images: ${{ steps.ecr_images.outputs.images }}
+
+    - name: Collect source code
+      uses: open-edge-platform/geti-ci/actions/collect_source@a99c99d09285f5920855ee773031e487ad34fa57
+      with:
+        images: ${{ steps.ecr_images.outputs.images }}
+        archive-name: ${{ github.event.inputs.archive-name }}
+        output-dir: ${{ github.event.inputs.output-dir }}
