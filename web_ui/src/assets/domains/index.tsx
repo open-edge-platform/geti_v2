@@ -8,5 +8,4 @@ export { ReactComponent as ClassificationImg } from './classification-single.svg
 export { ReactComponent as ClassificationHierarchicalImg } from './classification-hierarchical.svg';
 export { ReactComponent as AnomalyClassificationImg } from './anomaly-classification.svg';
 export { ReactComponent as AnomalyDetectionImg } from './anomaly-detection.svg';
-export { ReactComponent as AnomalySegmentationImg } from './anomaly-segmentation.svg';
 export { ReactComponent as KeypointDetectionImg } from './keypoint-detection.svg';

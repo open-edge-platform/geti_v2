@@ -1,16 +1,16 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MutableRefObject, ReactNode } from 'react';
+import { ReactNode, RefObject } from 'react';
 
 import { Grid } from '@geti/ui';
 
 interface LabelEditionFieldsWrapperProps {
     children: ReactNode;
-    wrapperRef?: MutableRefObject<null>;
+    wrapperRef?: RefObject<null>;
 }
 
-export const LabelEditionFieldsWrapper = ({ children, wrapperRef }: LabelEditionFieldsWrapperProps): JSX.Element => {
+export const LabelEditionFieldsWrapper = ({ children, wrapperRef }: LabelEditionFieldsWrapperProps) => {
     const GRID_AREAS = ['color name hotkey actionButtons', '. nameError hotkeyError hotkeyError'];
     const GRID_COLUMNS = ['min-content', '1fr', 'auto', 'min-content'];
 

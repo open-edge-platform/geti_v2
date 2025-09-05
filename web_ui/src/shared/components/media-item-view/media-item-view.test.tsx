@@ -154,6 +154,7 @@ describe('MediaItemView', () => {
         it('should attempt to load thumbnail when preprocessing is finished', async () => {
             const mediaItem = getMockedImageMediaItem({
                 preprocessingStatus: MEDIA_PREPROCESSING_STATUS.FINISHED,
+                thumbnailSrc: 'mockedSrc',
             });
 
             await renderMedia(mediaItem, false, false);

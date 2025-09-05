@@ -24,11 +24,11 @@ interface TemplateSecondaryToolbarProps {
     onStateUpdate: (templateState: TemplateStateWithHistory) => void;
 }
 
-const getPointKey = (selectedPoint: KeypointNode, subfix: string) => {
+const getPointKey = (selectedPoint: KeypointNode, suffix: string) => {
     // By calculating the key point using the name, and position, the HexadecimalColorPicker is reset,
     // and the clamped states are updated to reflect the latest changes
 
-    return `${selectedPoint.x}-${selectedPoint.y}-${selectedPoint.label.id}-${subfix}`;
+    return `${selectedPoint.x}-${selectedPoint.y}-${selectedPoint.label.id}-${suffix}`;
 };
 
 const useDeleteHotkeys = <T,>(data: T | undefined, callback: (data: T) => void) => {

@@ -2,12 +2,11 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { ProjectIdentifier } from '../../projects/core.interface';
 import { UserProjectSettings, UseSettings } from '../services/user-settings.interface';
 import { INITIAL_PROJECT_SETTINGS } from '../utils';
@@ -32,7 +31,6 @@ const useQueryUserProjectSettings = (projectIdentifier: ProjectIdentifier) => {
 
 export const useUserProjectSettings = (projectIdentifier: ProjectIdentifier): UseSettings<UserProjectSettings> => {
     const { userSettingsService } = useApplicationServices();
-    const { addNotification } = useNotification();
 
     const queryClient = useQueryClient();
 
@@ -69,7 +67,7 @@ export const useUserProjectSettings = (projectIdentifier: ProjectIdentifier): Us
 
         onSuccess: async (_data, variables) => {
             const { successMessage } = variables;
-            successMessage && addNotification({ message: successMessage, type: NOTIFICATION_TYPE.INFO });
+            successMessage && toast({ message: successMessage, type: 'info' });
         },
 
         onError: (_, __, context) => {
@@ -79,9 +77,9 @@ export const useUserProjectSettings = (projectIdentifier: ProjectIdentifier): Us
                     () => context.previousSettings
                 );
 
-            addNotification({
+            toast({
                 message: 'Failed to save settings. Please, try again later.',
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         },
 

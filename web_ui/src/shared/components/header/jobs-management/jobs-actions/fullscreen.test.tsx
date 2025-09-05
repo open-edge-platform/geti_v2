@@ -6,16 +6,16 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Fullscreen } from './fullscreen.component';
 
 describe('job scheduler fullscreen', (): void => {
-    it('should properly render collapse icon', (): void => {
+    it('should properly render collapse button', (): void => {
         render(<Fullscreen enabled toggle={jest.fn()} />);
-        expect(screen.getByText('collapse.svg')).toBeInTheDocument();
-        expect(screen.queryByText('expand.svg')).not.toBeInTheDocument();
+
+        expect(screen.getByTestId('job-scheduler-action-collapse')).toBeInTheDocument();
     });
 
-    it('should properly render expand icon', (): void => {
+    it('should properly render expand button', (): void => {
         render(<Fullscreen enabled={false} toggle={jest.fn()} />);
-        expect(screen.getByText('expand.svg')).toBeInTheDocument();
-        expect(screen.queryByText('collapse.svg')).not.toBeInTheDocument();
+
+        expect(screen.getByTestId('job-scheduler-action-expand')).toBeInTheDocument();
     });
 
     it('should trigger toggle callback on press event', (): void => {
@@ -25,7 +25,7 @@ describe('job scheduler fullscreen', (): void => {
         });
 
         render(<Fullscreen enabled toggle={onToggle} />);
-        fireEvent.click(screen.getByTestId('job-scheduler-action-expand'));
+        fireEvent.click(screen.getByTestId('job-scheduler-action-collapse'));
         expect(onToggle).toHaveBeenCalledWith(expect.any(Function));
     });
 });

@@ -68,6 +68,8 @@ class TestEvaluationTask:
             model_id=MODEL_ID,
             optimized_model_id=fxt_optimization_trainer_ctx.model_to_optimize_id,
             min_annotation_size=None,
+            max_annotation_size=None,
+            min_number_of_annotations=None,
             max_number_of_annotations=None,
         )
 

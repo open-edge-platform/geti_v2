@@ -33,7 +33,7 @@ const LegacyModelConfigurableParameters = ({ taskId }: { taskId: string }) => {
     );
 };
 
-export const ModelConfigurableParameters = ({ taskId }: ModelConfigurableParametersProps): JSX.Element => {
+export const ModelConfigurableParameters = ({ taskId }: ModelConfigurableParametersProps) => {
     const { FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
 
     if (FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS) {

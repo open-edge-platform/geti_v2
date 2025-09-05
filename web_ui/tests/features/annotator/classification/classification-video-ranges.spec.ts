@@ -46,10 +46,10 @@ class ClassificationVideoRangesPage extends VideoRangePage {
         super(page, rowId);
     }
 
-    async unassignLabel() {
+    async unassignLabel(label: string) {
         const labelSearchResults = this.getLabelSearchResults();
         if (labelSearchResults) {
-            await labelSearchResults.getByLabel('Assigned label').click();
+            await labelSearchResults.getByText(label).click();
         }
     }
 
@@ -201,7 +201,7 @@ test.describe('Classification video ranges', () => {
             await videoRangePage.openLabelSearch(1);
             await expect(videoRangePage.getLabelAssigned('suit')).toBeVisible();
 
-            await videoRangePage.unassignLabel();
+            await videoRangePage.unassignLabel('suit');
 
             await videoRangePage.openLabelSearch(1);
             await expect(videoRangePage.getLabelAssigned('suit')).toBeHidden();
@@ -407,7 +407,7 @@ test.describe('Classification video ranges', () => {
             await videoRangePage.openLabelSearch(1, 'ranges-item-red-suit-id');
             await expect(videoRangePage.getLabelAssigned('Diamonds')).toBeVisible();
 
-            await videoRangePage.unassignLabel();
+            await videoRangePage.unassignLabel('Diamonds');
 
             await videoRangePage.openLabelSearch(1, 'ranges-item-color-id');
             await expect(videoRangePage.getLabelAssigned('Red')).toBeVisible();
@@ -424,7 +424,7 @@ test.describe('Classification video ranges', () => {
             await videoRangePage.closeLabelSearch();
 
             await videoRangePage.openLabelSearch(1, 'ranges-item-color-id');
-            await videoRangePage.unassignLabel();
+            await videoRangePage.unassignLabel('Red');
 
             await videoRangePage.openLabelSearch(1, 'ranges-item-color-id');
             await expect(videoRangePage.getLabelAssigned('Red')).toBeHidden();

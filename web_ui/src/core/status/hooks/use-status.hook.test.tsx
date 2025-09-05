@@ -7,7 +7,6 @@ import { CustomFeatureFlags } from '@geti/core';
 import { waitFor } from '@testing-library/react';
 
 import { useIsSaasEnv } from '../../../hooks/use-is-saas-env/use-is-saas-env.hook';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { renderHookWithProviders } from '../../../test-utils/render-hook-with-providers';
 import { createInMemoryStatusService } from '../services/in-memory-status-service';
 import { useStatus } from './use-status.hook';
@@ -20,10 +19,10 @@ import {
 
 const mockedGetStatus = jest.fn();
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+const mockToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockToast(params),
 }));
 
 jest.mock('../../../hooks/use-is-saas-env/use-is-saas-env.hook', () => ({
@@ -51,10 +50,10 @@ describe('useStatus', () => {
         renderStatusHook();
 
         await waitFor(() => {
-            expect(mockAddNotification).toHaveBeenCalledWith({
+            expect(mockToast).toHaveBeenCalledWith({
                 message: LOW_FREE_DISK_SPACE_MESSAGE,
-                type: NOTIFICATION_TYPE.WARNING,
-                dismiss: { duration: 0 },
+                type: 'warning',
+                duration: Infinity,
             });
         });
     });
@@ -66,10 +65,10 @@ describe('useStatus', () => {
         renderStatusHook();
 
         await waitFor(() => {
-            expect(mockAddNotification).toHaveBeenCalledWith({
+            expect(mockToast).toHaveBeenCalledWith({
                 message: TOO_LOW_FREE_DISK_SPACE_MESSAGE,
-                type: NOTIFICATION_TYPE.ERROR,
-                dismiss: { duration: 0 },
+                type: 'error',
+                duration: Infinity,
             });
         });
     });
@@ -86,7 +85,7 @@ describe('useStatus', () => {
                 expect(result.current.data).toBeDefined();
             });
 
-            expect(mockAddNotification).not.toHaveBeenCalled();
+            expect(mockToast).not.toHaveBeenCalled();
         });
 
         it('with feature flag off', async () => {
@@ -104,7 +103,7 @@ describe('useStatus', () => {
                 expect(result.current.data).toBeDefined();
             });
 
-            expect(mockAddNotification).not.toHaveBeenCalled();
+            expect(mockToast).not.toHaveBeenCalled();
         });
 
         it('on a saas environment', async () => {
@@ -122,7 +121,7 @@ describe('useStatus', () => {
                 expect(result.current.data).toBeDefined();
             });
 
-            expect(mockAddNotification).not.toHaveBeenCalled();
+            expect(mockToast).not.toHaveBeenCalled();
         });
     });
 });

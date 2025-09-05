@@ -5,7 +5,7 @@ import { Fragment, useMemo, useRef } from 'react';
 
 import { Content, Flex, Grid, Loading, useUnwrapDOMRef } from '@geti/ui';
 import { HttpStatusCode } from 'axios';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isEmpty } from 'lodash-es';
 
 import { useModelStatistics } from '../../../../../core/statistics/hooks/use-model-statistics.hook';
@@ -26,7 +26,7 @@ const isRadialBarWithManyValues = (modelStatistics: TrainingModelStatisticsGroup
     return modelStatistics.type === 'radial_bar' && modelStatistics.value.length > 6;
 };
 
-export const ModelStatistics = (): JSX.Element => {
+export const ModelStatistics = () => {
     const container = useRef(null);
     const unwrappedContainer = useUnwrapDOMRef(container);
 

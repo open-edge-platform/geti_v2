@@ -4,12 +4,12 @@
 import { PointerEvent, useRef, useState } from 'react';
 
 import { usePress } from '@react-aria/interactions';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { KeypointNode, Point } from '../../../../../core/annotations/shapes.interface';
 import { getMockedKeypointNode } from '../../../../../test-utils/mocked-items-factory/mocked-keypoint';
 import { PoseKeypoint } from '../../../../annotator/annotation/shapes/pose-keypoints.component';
-import { useZoom } from '../../../../annotator/zoom/zoom-provider.component';
+import { useZoomState } from '../../../../annotator/zoom/zoom-provider.component';
 import { getRelativePoint, projectPointOnLine } from '../../../../utils';
 
 import classes from './edge.module.scss';
@@ -24,7 +24,7 @@ export interface HiddenEdgeProps {
 }
 
 export const HiddenEdge = ({ to, from, isHovered, isSelected, onSelect, onNewIntermediatePoint }: HiddenEdgeProps) => {
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const containerRef = useRef<SVGRectElement>(null);
     const [ghostPoint, setGhostPoint] = useState<Point | null>(null);
 

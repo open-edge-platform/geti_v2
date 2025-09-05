@@ -1,12 +1,12 @@
 openapi: "3.1.0"
 info:
   version: 2.13.0
-  title: Intel® Geti™ REST API
-  description: REST API documentation for Intel® Geti™.
+  title: Geti™ REST API
+  description: REST API documentation for Geti™.
 
 servers:
   - url: "{Server address}/api/{API version}"
-    description: The base URL of the Intel® Geti™ API
+    description: The base URL of the Geti™ API
     variables:
       Server address:
         default: https://server.ip

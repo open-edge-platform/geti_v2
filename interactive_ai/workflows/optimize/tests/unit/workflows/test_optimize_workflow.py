@@ -34,6 +34,8 @@ class TestOptimize:
                 optimization_type=ModelOptimizationType.POT.name,
                 command=["bash", "-c", "run"],
                 min_annotation_size=None,
+                max_annotation_size=None,
+                min_number_of_annotations=None,
                 max_number_of_annotations=None,
             )
             mock_evaluate.assert_called_once_with(
@@ -42,5 +44,7 @@ class TestOptimize:
                 dataset_storage_id="dataset_storage_id",
                 retain_training_artifacts=False,
                 min_annotation_size=None,
+                max_annotation_size=None,
+                min_number_of_annotations=None,
                 max_number_of_annotations=None,
             )

@@ -73,7 +73,7 @@ const CustomTooltip = <TValue extends number, TName extends string>({
 const xAxisFormatter = (label: number | string | undefined) =>
     isNumber(label) ? dayjs(label).format('MMM DD') : `${label}`;
 
-export const TimeCreditConsumptionCard = (props: TimeCreditConsumptionCardProps): JSX.Element => {
+export const TimeCreditConsumptionCard = (props: TimeCreditConsumptionCardProps) => {
     const ref = useRef(null);
     const unwrappedContainer = useUnwrapDOMRef(ref);
 

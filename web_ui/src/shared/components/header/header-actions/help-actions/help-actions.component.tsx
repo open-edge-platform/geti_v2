@@ -59,7 +59,7 @@ const ActionLink: FC<{ children: ReactNode; to: string }> = ({ children, to }) =
     );
 };
 
-export const HelpActions = ({ isDarkMode }: HelpActionsProps): JSX.Element => {
+export const HelpActions = ({ isDarkMode }: HelpActionsProps) => {
     const docsUrl = useDocsUrl();
     const resetAll = useResetAllTutorials();
     const { organizationId } = useOrganizationIdentifier();

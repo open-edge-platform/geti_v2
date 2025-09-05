@@ -38,7 +38,7 @@ export const MediaItemDetails = ({
     handleDblClick,
     toggleMediaSelection,
     shouldShowAnnotationIndicator,
-}: MediaItemDetailsProps): JSX.Element => {
+}: MediaItemDetailsProps) => {
     const {
         name,
         uploadTime,

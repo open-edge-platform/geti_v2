@@ -65,6 +65,7 @@ class TestCreateTrainDataset:
             task_node=task_node,
             max_training_dataset_size=100,
             reshuffle_subsets=False,
+            training_configuration=train_data.training_configuration,
         )
         patched_command.execute.assert_called_once_with()
 

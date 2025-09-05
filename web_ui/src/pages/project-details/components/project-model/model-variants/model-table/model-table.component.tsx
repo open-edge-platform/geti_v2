@@ -15,7 +15,7 @@ export const ModelTable = ({
     ...tableStyles
 }: ModelTableProps<OptimizedModel | TrainedModel> & {
     emptyModelMessage?: string;
-}): JSX.Element => {
+}) => {
     if (isEmpty(rowData) && isEmpty(emptyModelMessage)) {
         return <></>;
     }

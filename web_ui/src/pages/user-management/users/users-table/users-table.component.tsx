@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useMemo } from 'react';
 
 import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import { User, UsersQueryParams } from '@geti/core/src/users/users.interface';
@@ -41,12 +41,14 @@ interface UsersTableProps {
     getNextPage: () => Promise<void>;
     usersQueryParams: UsersQueryParams;
     setUsersQueryParams: Dispatch<SetStateAction<UsersQueryParams>>;
-    UserActions: (props: { activeUser: User; user: User; users: User[] }) => JSX.Element;
+    UserActions: (props: { activeUser: User; user: User; users: User[] }) => ReactNode;
     ignoredColumns?: USERS_TABLE_COLUMNS[];
     resourceId: string | undefined;
     workspaces: Workspace[];
     isProjectUsersTable?: boolean;
     organizationId: string;
+    tableId?: string;
+    overrideRoleColumn?: (props: TableCellProps) => ReactNode;
 }
 
 export const UsersTable = ({
@@ -64,7 +66,9 @@ export const UsersTable = ({
     isProjectUsersTable,
     workspaces,
     getNextPage,
-}: UsersTableProps): JSX.Element => {
+    tableId,
+    overrideRoleColumn,
+}: UsersTableProps) => {
     const shouldShowNotFound = hasFilters && isEmpty(users);
 
     const columns = useMemo(() => {
@@ -100,7 +104,7 @@ export const UsersTable = ({
                 dataKey: USERS_TABLE_COLUMNS.EMAIL_ADDRESS,
                 width: 240,
                 isSortable: true,
-                component: (data: TableCellProps): JSX.Element => {
+                component: (data: TableCellProps) => {
                     return <CasualCell {...data} />;
                 },
             },
@@ -110,6 +114,9 @@ export const UsersTable = ({
                 width: 150,
                 isSortable: false,
                 component: (data: TableCellProps) => {
+                    if (overrideRoleColumn) {
+                        return overrideRoleColumn(data);
+                    }
                     return isProjectUsersTable ? (
                         <ProjectRoleCell {...data} roles={data.rowData.roles} projectId={resourceId as string} />
                     ) : (
@@ -149,14 +156,24 @@ export const UsersTable = ({
                 dataKey: USERS_TABLE_COLUMNS.MORE_ACTIONS,
                 width: 50,
                 isSortable: false,
-                component: ({ rowData }: TableCellProps): JSX.Element => {
+                component: ({ rowData }: TableCellProps) => {
                     return <UserActions activeUser={activeUser} user={rowData} users={users} />;
                 },
             },
         ];
 
         return tableColumns.filter(({ dataKey }) => !ignoredColumns.includes(dataKey as USERS_TABLE_COLUMNS));
-    }, [ignoredColumns, resourceId, UserActions, activeUser, isProjectUsersTable, organizationId, workspaces, users]);
+    }, [
+        ignoredColumns,
+        resourceId,
+        UserActions,
+        activeUser,
+        isProjectUsersTable,
+        organizationId,
+        workspaces,
+        users,
+        overrideRoleColumn,
+    ]);
 
     const [sortingOptions, sort] = useSortTable<UsersQueryParams>({
         queryOptions: usersQueryParams,
@@ -164,14 +181,14 @@ export const UsersTable = ({
     });
 
     return (
-        <Flex flex={1} width={'100%'} justifyContent={'center'} alignItems={'center'}>
+        <Flex flex={1} width={'100%'} justifyContent={'center'} alignItems={'start'}>
             {shouldShowNotFound ? (
                 <NotFound />
             ) : (
-                <View height={'100%'} minHeight={0} width={'100%'} data-testid={'users-table-id'}>
+                <View minHeight={0} width={'100%'} data-testid={tableId ?? 'users-table-id'}>
                     <TableView
-                        id='users-table-id'
-                        aria-label='Users table'
+                        id={tableId ?? 'users-table-id'}
+                        aria-label={'Users table'}
                         selectionMode='none'
                         onSortChange={(change) => {
                             sort({

@@ -16,7 +16,7 @@ interface CopyPersonalAccessTokenProps {
 export const CopyPersonalAccessToken = ({
     personalAccessToken = '',
     personalAccessTokenId = '',
-}: CopyPersonalAccessTokenProps): JSX.Element => {
+}: CopyPersonalAccessTokenProps) => {
     const { copy } = useClipboard();
 
     return (

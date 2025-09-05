@@ -191,6 +191,19 @@ def fxt_empty_segmentation_label(fxt_mongo_id):
 
 
 @pytest.fixture
+def fxt_background_segmentation_label(fxt_mongo_id):
+    yield Label(
+        name="Empty segmentation label",
+        domain=DummyValues.SEGMENTATION_DOMAIN,
+        color=Color.from_hex_str("#ff0000"),
+        hotkey=DummyValues.LABEL_HOTKEY,
+        is_empty=False,
+        is_background=True,
+        id_=ID(fxt_mongo_id(103)),
+    )
+
+
+@pytest.fixture
 def fxt_label(fxt_mongo_id):
     yield Label(
         name=DummyValues.LABEL_NAME,
@@ -350,6 +363,18 @@ def fxt_segmentation_label_schema_factory(fxt_segmentation_label_factory, fxt_em
         return schema
 
     yield _build_schema
+
+
+@pytest.fixture
+def fxt_segmentation_label_schema_with_background(
+    fxt_segmentation_label_factory, fxt_empty_segmentation_label, fxt_background_segmentation_label
+):
+    """
+    Create a label schema for a segmentation task with a background label
+    """
+    yield label_schema_from_labels(
+        [fxt_segmentation_label_factory(0), fxt_empty_segmentation_label, fxt_background_segmentation_label]
+    )
 
 
 @pytest.fixture

@@ -1,0 +1,28 @@
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "etcd.fullname" . }}-auth-policy
+  labels:
+    {{- if .Values.global.istio_revision_name }}
+    istio.io/rev: "{{ .Values.global.istio_revision_name }}"
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "etcd.selectorLabels" .| nindent 6 }}
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Release.Namespace }}-modelmesh"]
+        namespaces: ["{{ .Release.Namespace }}"]
+    - source:
+        principals: ["cluster.local/ns/{{ .Release.Namespace }}/sa/modelmesh-controller"]
+        namespaces: ["{{ .Release.Namespace }}"]
+    - source:
+        principals: ["cluster.local/ns/{{ .Release.Namespace }}/sa/modelmesh"]
+        namespaces: ["{{ .Release.Namespace }}"]
+    - source:
+        principals: ["cluster.local/ns/{{ .Release.Namespace }}/sa/{{ include "etcd.fullname" . }}"]
+        namespaces: ["{{ .Release.Namespace }}"]

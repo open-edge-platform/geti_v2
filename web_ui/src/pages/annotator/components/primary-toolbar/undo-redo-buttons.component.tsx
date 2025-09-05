@@ -7,7 +7,7 @@ import { Redo, Undo } from '@geti/ui/icons';
 import { useUndoRedoKeyboardShortcuts } from '../../hot-keys/use-undo-redo-keyboard-shortcuts/use-undo-redo-keyboard-shortcuts';
 import { useUndoRedo } from '../../tools/undo-redo/undo-redo-provider.component';
 
-export const UndoRedoButtons = ({ isDisabled }: { isDisabled: boolean }): JSX.Element => {
+export const UndoRedoButtons = ({ isDisabled }: { isDisabled: boolean }) => {
     const { undo, canUndo, redo, canRedo } = useUndoRedo();
 
     useUndoRedoKeyboardShortcuts('undo', canUndo, undo);

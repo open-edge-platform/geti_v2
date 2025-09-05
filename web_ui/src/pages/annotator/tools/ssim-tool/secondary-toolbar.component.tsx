@@ -23,7 +23,7 @@ import { ShapeTypeButton } from './shape-type-button.component';
 import { useSSIMState } from './ssim-state-provider.component';
 import { MAX_NUMBER_ITEMS } from './util';
 
-export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { activeDomains } = useTask();
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const { toolState, reset, rerun, previewThreshold, updateToolState } = useSSIMState();

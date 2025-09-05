@@ -33,7 +33,7 @@ export const GroupEditionMode = ({
     validationErrors,
     setValidationError,
     newTree,
-}: GroupEditionModeProps): JSX.Element => {
+}: GroupEditionModeProps) => {
     const DEFAULT_ERROR = '';
     const nameValidationError = validationErrors ? validationErrors.name : DEFAULT_ERROR;
     const [isMultipleSelectionOn, setIsMultipleSelectionOn] = useState(

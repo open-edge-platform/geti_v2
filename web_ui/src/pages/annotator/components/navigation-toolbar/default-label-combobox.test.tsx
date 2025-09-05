@@ -9,7 +9,6 @@ import { DOMAIN } from '../../../../core/projects/core.interface';
 import { getMockedLabel, labels } from '../../../../test-utils/mocked-items-factory/mocked-labels';
 import { getMockedTask, mockedTaskContextProps } from '../../../../test-utils/mocked-items-factory/mocked-tasks';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
-import { getById } from '../../../../test-utils/utils';
 import { useTask } from '../../providers/task-provider/task-provider.component';
 import { DefaultLabelCombobox } from './default-label-combobox.component';
 
@@ -111,11 +110,9 @@ describe('Default label combobox', () => {
         );
 
         const [firstLabel] = classificationTask.labels;
-        const { container } = render(
-            <DefaultLabelCombobox defaultLabel={firstLabel} setDefaultLabel={mockSetDefaultLabel} />
-        );
+        render(<DefaultLabelCombobox defaultLabel={firstLabel} setDefaultLabel={mockSetDefaultLabel} />);
 
-        const span = getById(container, `label-default-${firstLabel.name}-${firstLabel.name}`) as HTMLElement;
+        const span = screen.getByTestId(`label-default-${firstLabel.name}-${firstLabel.name}`) as HTMLElement;
         await userEvent.click(span);
         const input = screen.getByRole('textbox', { name: 'Select default label' }) as HTMLInputElement;
 

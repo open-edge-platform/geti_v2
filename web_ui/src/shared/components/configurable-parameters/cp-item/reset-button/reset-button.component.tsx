@@ -14,7 +14,7 @@ interface ResetButtonProps {
     id: string;
 }
 
-export const ResetButton = ({ isDisabled, handleResetButton, id }: ResetButtonProps): JSX.Element => {
+export const ResetButton = ({ isDisabled, handleResetButton, id }: ResetButtonProps) => {
     return (
         <TooltipWithDisableButton
             placement={'bottom'}

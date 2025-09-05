@@ -23,7 +23,7 @@ export const LabelTreeViewLabel = ({
     domains,
     setValidationError,
     validationErrors,
-}: LabelTreeViewLabelProps): JSX.Element => {
+}: LabelTreeViewLabelProps) => {
     return (
         <>
             <LabelTreeViewItemPrefix

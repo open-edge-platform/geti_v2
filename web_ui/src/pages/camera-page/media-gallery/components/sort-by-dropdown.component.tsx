@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key } from 'react';
-
 import { Flex, Item, Picker, Text } from '@geti/ui';
 
 import { SortingOptions } from '../../util';
@@ -11,7 +9,7 @@ interface SortByDropdownProps {
     onSelect: (key: SortingOptions) => void;
 }
 
-export const SortByDropdown = ({ onSelect }: SortByDropdownProps): JSX.Element => {
+export const SortByDropdown = ({ onSelect }: SortByDropdownProps) => {
     return (
         <Flex alignItems={'center'} gap={'size-100'}>
             <Text UNSAFE_style={{ fontWeight: 'bold' }}>Sort by: </Text>
@@ -21,7 +19,7 @@ export const SortByDropdown = ({ onSelect }: SortByDropdownProps): JSX.Element =
                 maxWidth={'size-2000'}
                 aria-label='sorting options'
                 defaultSelectedKey={SortingOptions.MOST_RECENT}
-                onSelectionChange={(key: Key) => onSelect(key as SortingOptions)}
+                onSelectionChange={(key) => onSelect(key as SortingOptions)}
             >
                 <Item key={SortingOptions.MOST_RECENT}>Most Recent</Item>
                 <Item key={SortingOptions.LABEL_NAME_A_Z}>Label Name (A-Z)</Item>

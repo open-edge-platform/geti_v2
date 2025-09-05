@@ -54,11 +54,6 @@ const mockDatasetImportDeleteDialogState = {
     close: jest.fn(),
 };
 
-jest.mock('../../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: jest.fn() }),
-}));
-
 jest.mock('../../../../project-details/providers/project-provider/project-provider.component', () => ({
     ...jest.requireActual('../../../../project-details/providers/project-provider/project-provider.component'),
     useProject: jest.fn(() => ({

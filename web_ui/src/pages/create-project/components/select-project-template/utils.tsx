@@ -6,7 +6,6 @@ import { Flex, Grid } from '@geti/ui';
 import {
     AnomalyClassificationImg,
     AnomalyDetectionImg,
-    AnomalySegmentationImg,
     ClassificationHierarchicalImg,
     ClassificationImg,
     DetectionImg,
@@ -23,7 +22,7 @@ import { DomainCardsMetadata, TaskChainMetadata } from './project-template.inter
 
 import classes from './utils.module.scss';
 
-const ImgBoxes = (projectSubdomain: SUBDOMAIN): JSX.Element => {
+const ImgBoxes = (projectSubdomain: SUBDOMAIN) => {
     if (projectSubdomain === SUBDOMAIN.CLASSIFICATION_MULTI_CLASS) {
         return <div className={classes.orangeBox}></div>;
     } else if (projectSubdomain === SUBDOMAIN.CLASSIFICATION_MULTI_LABEL) {
@@ -146,15 +145,6 @@ export const TABS_SINGLE_TEMPLATE: Record<SingleTaskTemplateType, DomainCardsMet
             subDomain: SUBDOMAIN.ANOMALY_DETECTION,
             description: 'Detect and categorize an object as normal or anomalous.',
             id: 'anomaly-detection-card-id',
-            relation: LabelsRelationType.SINGLE_SELECTION,
-        },
-        {
-            TaskTypeIcon: AnomalySegmentationImg,
-            alt: 'anomaly-segmentation',
-            domain: DOMAIN.ANOMALY_SEGMENTATION,
-            subDomain: SUBDOMAIN.ANOMALY_SEGMENTATION,
-            description: 'Segment and categorize an object as normal or anomalous.',
-            id: 'anomaly-segmentation-card-id',
             relation: LabelsRelationType.SINGLE_SELECTION,
         },
     ],

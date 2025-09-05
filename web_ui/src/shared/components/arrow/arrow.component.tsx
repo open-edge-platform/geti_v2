@@ -7,7 +7,7 @@ interface ArrowProps {
     isHidden?: boolean;
 }
 
-export const Arrow = ({ isHidden }: ArrowProps): JSX.Element => {
+export const Arrow = ({ isHidden }: ArrowProps) => {
     if (isHidden) return <></>;
     return <Text marginX={'size-25'}>&#8594;</Text>;
 };

@@ -15,7 +15,7 @@ export const Duration = ({
     mediaItem: Video | VideoFrame;
     className?: string;
     isLargeSize: boolean;
-}): JSX.Element => {
+}) => {
     const endTime = mediaItem.metadata.duration;
     const paddingX = isLargeSize ? 'size-200' : 'size-100';
     const currentTime = isVideoFrame(mediaItem) ? mediaItem.identifier.frameNumber / mediaItem.metadata.fps : 0;

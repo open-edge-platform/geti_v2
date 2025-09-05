@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { Flex, Link, type FlexStyleProps } from '@geti/ui';
 
 import { InfoTooltip } from '../../../../../../../shared/components/info-tooltip/info-tooltip.component';
@@ -11,10 +13,10 @@ interface LinkButtonProps extends FlexStyleProps {
     isOpen: boolean;
     onOpen: () => void;
     info?: string;
-    children: JSX.Element;
+    children: ReactNode;
 }
 
-export const LinkButton = ({ text, info, children, isOpen, onOpen, ...props }: LinkButtonProps): JSX.Element => {
+export const LinkButton = ({ text, info, children, isOpen, onOpen, ...props }: LinkButtonProps) => {
     return (
         <Flex alignItems={'center'} {...props}>
             {isOpen ? (

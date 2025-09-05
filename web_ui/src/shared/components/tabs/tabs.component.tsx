@@ -7,12 +7,7 @@ import { TabItem, TabsProps } from './tabs.interface';
 
 import classes from './tabs.module.scss';
 
-export const Tabs = ({
-    tabPanelsClassName,
-    tabStyles = {},
-    hideSelectionBar = false,
-    ...props
-}: TabsProps): JSX.Element => {
+export const Tabs = ({ tabPanelsClassName, tabStyles = {}, hideSelectionBar = false, ...props }: TabsProps) => {
     const panelOverflowY = props.panelOverflowY ?? 'auto';
 
     return (

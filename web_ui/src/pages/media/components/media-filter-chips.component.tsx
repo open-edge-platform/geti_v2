@@ -182,7 +182,7 @@ export const MediaFilterChips = ({
     setMediaFilterOptions,
     darkMode,
     id,
-}: MediaFilterChipsProps): JSX.Element => {
+}: MediaFilterChipsProps) => {
     const filterRulesWithoutDefaultAnomalyOptions = useMemo(() => {
         return isAnomalyProject
             ? mediaFilterOptions?.rules?.filter(({ field }) => field !== SearchRuleField.LabelId)

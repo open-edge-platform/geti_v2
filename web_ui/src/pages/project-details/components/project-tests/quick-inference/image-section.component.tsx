@@ -17,16 +17,15 @@ import {
 import { useAnnotatorCanvasSettings } from '../../../../annotator/providers/annotator-canvas-settings-provider/annotator-canvas-settings-provider.component';
 import { useSelectedMediaItem } from '../../../../annotator/providers/selected-media-item-provider/selected-media-item-provider.component';
 import { filterForExplanation } from '../../../../annotator/utils';
-import { SyncZoomState, SyncZoomTarget } from '../../../../annotator/zoom/sync-zoom-state.component';
 import { TransformZoomAnnotation } from '../../../../annotator/zoom/transform-zoom-annotation.component';
-import { useZoom, ZoomProvider } from '../../../../annotator/zoom/zoom-provider.component';
+import { useZoomState, ZoomProvider } from '../../../../annotator/zoom/zoom-provider.component';
 import { useQuickInference } from './quick-inference-provider.component';
 
 import classes from './quick-inference.module.scss';
 
 const RawCanvas = () => {
     const annotationToolContext = useAnnotationToolContext();
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
 
     const { selectedMediaItem } = useSelectedMediaItem();
 
@@ -67,7 +66,7 @@ const RawCanvas = () => {
     );
 };
 
-export const ImageSection = (): JSX.Element => {
+export const ImageSection = () => {
     // NOTE: the ImageSection renders the ZoomProvider and AnnotationToolProvider so that
     // it will work both when rendered in the Accordion and in the FullScreenAction.
     // If we had moved these providers into the `PreRequiredAnnotatorProviders`, then
@@ -75,9 +74,6 @@ export const ImageSection = (): JSX.Element => {
 
     return (
         <ZoomProvider>
-            <SyncZoomState />
-            <SyncZoomTarget />
-
             <AnnotationToolProvider>
                 <TransformZoomAnnotation>
                     <AnnotatorCanvasSettings>

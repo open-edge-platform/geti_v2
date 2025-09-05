@@ -1,0 +1,16 @@
+{{- $fullName := include "grafana.fullname" . -}}
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ $fullName }}-destination-rule
+  namespace: {{ .Values.global.istio_ingress_namespace }}
+  labels:
+    {{- if .Values.global.istio_revision_name }}
+    istio.io/rev: "{{ .Values.global.istio_revision_name }}"
+    {{- end }}
+spec:
+  host: {{ $fullName }}.{{ .Release.Namespace }}.svc.cluster.local
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 8000

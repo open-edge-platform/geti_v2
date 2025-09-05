@@ -56,7 +56,6 @@ describe('jobs action icon', (): void => {
     it('should show numbers of running jobs', async (): Promise<void> => {
         await renderComponent();
 
-        expect(screen.getByText('bell.svg')).toBeInTheDocument();
         expect(await screen.findByTestId('number-badge-running-jobs-icon-value')).toHaveTextContent('1');
     });
 

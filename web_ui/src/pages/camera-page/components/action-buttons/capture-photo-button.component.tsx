@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { RefObject } from 'react';
+
 import Webcam from 'react-webcam';
 import { v4 as uuid } from 'uuid';
 
@@ -10,7 +12,7 @@ import { useCameraStorage } from '../../hooks/use-camera-storage.hook';
 import { CaptureButtonAnimation } from './capture-button-animation.component';
 
 interface CapturePhotoButtonProps {
-    webcamRef: React.RefObject<Webcam>;
+    webcamRef: RefObject<Webcam | null>;
     selectedLabels: Label[];
 }
 

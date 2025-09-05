@@ -23,7 +23,6 @@ export const SegmentAnythingTool: ToolProps = {
         DOMAIN.SEGMENTATION_INSTANCE,
         DOMAIN.DETECTION,
         DOMAIN.DETECTION_ROTATED_BOUNDING_BOX,
-        DOMAIN.ANOMALY_SEGMENTATION,
         DOMAIN.ANOMALY_DETECTION,
     ],
     tooltip: {

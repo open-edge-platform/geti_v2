@@ -5,7 +5,7 @@ import { ReactElement } from 'react';
 
 import classes from './menu-item-image.module.scss';
 
-export const MenuItemImage = ({ children }: { children: ReactElement }): JSX.Element => {
+export const MenuItemImage = ({ children }: { children: ReactElement }) => {
     return (
         <svg viewBox={'0 0 36 36'} role={'img'} className={classes.icon}>
             {children}

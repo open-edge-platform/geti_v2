@@ -15,7 +15,7 @@ interface ErrorLayoutProps {
 
 /* eslint-disable max-len */
 
-export const ErrorLayout = ({ children, resetErrorBoundary }: ErrorLayoutProps): JSX.Element => {
+export const ErrorLayout = ({ children, resetErrorBoundary }: ErrorLayoutProps) => {
     return (
         <View UNSAFE_className={classes.errorContainer} height={'100vh'}>
             <View backgroundColor={'gray-50'}>

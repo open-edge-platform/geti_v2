@@ -24,10 +24,7 @@ interface ObjectSizeDistributionProps extends ProjectGridArea {
     objectSizeDistribution: ObjectSizeDistribution[];
 }
 
-export const ObjectSizeDistributionWrapper = ({
-    gridArea,
-    objectSizeDistribution,
-}: ObjectSizeDistributionProps): JSX.Element => {
+export const ObjectSizeDistributionWrapper = ({ gridArea, objectSizeDistribution }: ObjectSizeDistributionProps) => {
     const labels = useMemo(() => getDistributionLabels(objectSizeDistribution), [objectSizeDistribution]);
     const [selectedLabelKey, setSelectedLabelKey] = useState<string>(labels[0].name);
 
@@ -71,8 +68,9 @@ export const ObjectSizeDistributionWrapper = ({
                 title={CHART_TITLE}
                 actions={
                     <FullscreenAction
-                        actionButton={
+                        actionButton={(ref) => (
                             <DownloadGraphMenu
+                                ref={ref}
                                 fileName={CHART_TITLE}
                                 data={{
                                     type: 'default',
@@ -82,7 +80,7 @@ export const ObjectSizeDistributionWrapper = ({
                                 tooltip={'Download graph'}
                                 graphBackgroundColor={'gray-100'}
                             />
-                        }
+                        )}
                         title={CHART_TITLE}
                     >
                         <DistributionChart

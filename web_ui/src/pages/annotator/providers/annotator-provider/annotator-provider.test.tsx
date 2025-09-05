@@ -111,7 +111,9 @@ describe('Annotator provider', (): void => {
             return (
                 <div>
                     <ul aria-label='annotations'>
-                        {scene.annotations?.map((annotation) => <li key={annotation.id}>{annotation.id}</li>)}
+                        {scene.annotations?.map((annotation) => (
+                            <li key={annotation.id}>{annotation.id}</li>
+                        ))}
                     </ul>
                 </div>
             );

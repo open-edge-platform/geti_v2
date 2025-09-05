@@ -6,7 +6,7 @@ import { Add } from '@geti/ui/icons';
 
 import { MenuButtonProps } from './menu-button.interface';
 
-export const AddLabelMenuButton = ({ action, id }: MenuButtonProps): JSX.Element => {
+export const AddLabelMenuButton = ({ action, id }: MenuButtonProps) => {
     return (
         <TooltipTrigger placement={'bottom'}>
             <ActionButton

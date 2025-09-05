@@ -3,10 +3,9 @@
 
 import { ChangeEvent } from 'react';
 
+import { toast } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { EMPTY_FOLDER_WARNING_MESSAGE } from '../../custom-notification-messages';
 
 interface UseOnFileInputChangeProps {
@@ -20,8 +19,6 @@ interface UseOnFileInputChange {
 const isFile = (value: unknown): value is File => value instanceof File;
 
 export const useOnFileInputChange = ({ uploadCallback }: UseOnFileInputChangeProps): UseOnFileInputChange => {
-    const { addNotification } = useNotification();
-
     const onFileInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const fileList = event.target.files;
 
@@ -30,7 +27,7 @@ export const useOnFileInputChange = ({ uploadCallback }: UseOnFileInputChangePro
         const filteredFileList = Object.values(fileList).filter(isFile);
 
         if (isEmpty(filteredFileList)) {
-            addNotification({ message: EMPTY_FOLDER_WARNING_MESSAGE, type: NOTIFICATION_TYPE.DEFAULT });
+            toast({ message: EMPTY_FOLDER_WARNING_MESSAGE, type: 'neutral' });
         } else {
             uploadCallback(filteredFileList);
         }

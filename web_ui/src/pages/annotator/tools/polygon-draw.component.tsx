@@ -8,13 +8,7 @@ import { getFormattedPoints } from '../utils';
 
 const CIRCLE_STROKE_COLOR = 'var(--energy-blue-shade)';
 
-export const PolygonDraw = ({
-    shape,
-    styles,
-    indicatorRadius,
-    className = '',
-    ariaLabel = '',
-}: PolygonProps): JSX.Element => {
+export const PolygonDraw = ({ shape, styles, indicatorRadius, className = '', ariaLabel = '' }: PolygonProps) => {
     const points = useMemo((): string => getFormattedPoints(shape.points), [shape]);
 
     return (

@@ -10,7 +10,7 @@ interface LinkButtonProps extends StyleProps {
     isDisabled?: boolean;
 }
 
-export const LinkButton = ({ text, onPress, ariaLabel, isDisabled, UNSAFE_style }: LinkButtonProps): JSX.Element => {
+export const LinkButton = ({ text, onPress, ariaLabel, isDisabled, UNSAFE_style }: LinkButtonProps) => {
     return (
         <ActionButton
             onPress={onPress}

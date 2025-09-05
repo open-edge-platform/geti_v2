@@ -15,7 +15,7 @@ import { providersRender as render } from '../../../../test-utils/required-provi
 import { MediaItemAnnotationsPreviewDialog } from './media-item-annotations-preview-dialog.component';
 
 jest.mock('../../../../pages/annotator/zoom/zoom-provider.component', () => ({
-    useZoom: jest.fn(() => ({ zoomState: { zoom: 1.0, translation: { x: 0, y: 0 } } })),
+    useZoomState: jest.fn(() => ({ zoom: 1.0, translation: { x: 0, y: 0 } })),
 }));
 
 jest.mock('../../../../pages/project-details/providers/project-provider/project-provider.component', () => ({
@@ -74,7 +74,7 @@ describe('MediaItemAnnotationsPreviewDialogComponent', () => {
         render(
             <MediaItemAnnotationsPreviewDialog
                 close={close}
-                additionalButtons={[<ActionButton key={'test'}>Test</ActionButton>]}
+                additionalButtons={<ActionButton key={'test'}>Test</ActionButton>}
                 title={'Test title'}
                 subTitle={'test subtitle'}
                 datasetPreview={<></>}

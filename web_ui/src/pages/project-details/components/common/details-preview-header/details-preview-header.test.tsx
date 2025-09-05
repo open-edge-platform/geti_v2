@@ -83,7 +83,7 @@ describe('Header component', () => {
         expect(screen.queryByRole('button', { name: 'Select prediction mode' })).not.toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'Select annotation mode' })).not.toBeInTheDocument();
         expect(
-            screen.getByText('Predictions are only available in the active model. Displaying annotations.')
+            await screen.findByText('Predictions are only available in the active model. Displaying annotations.')
         ).toBeInTheDocument();
     });
 

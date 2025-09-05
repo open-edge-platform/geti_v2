@@ -28,7 +28,7 @@ export const TranslateShape = ({
     onComplete,
     translateShape,
     children = <Annotation annotation={annotation} />,
-}: TranslateShapeProps): JSX.Element => {
+}: TranslateShapeProps) => {
     const [dragFromPoint, setDragFromPoint] = useState<null | Point>(null);
 
     const onPointerDown = (event: PointerEvent<SVGSVGElement>): void => {

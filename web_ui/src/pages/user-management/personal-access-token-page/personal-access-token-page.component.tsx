@@ -14,10 +14,7 @@ interface PersonalAccessTokenPageProps {
     organizationId: string;
 }
 
-export const PersonalAccessTokenPage = ({
-    activeUserId,
-    organizationId,
-}: PersonalAccessTokenPageProps): JSX.Element => {
+export const PersonalAccessTokenPage = ({ activeUserId, organizationId }: PersonalAccessTokenPageProps) => {
     const { useGetPersonalAccessTokensQuery } = usePersonalAccessToken();
     const { data, isPending } = useGetPersonalAccessTokensQuery({ organizationId, userId: activeUserId });
     const createPersonalAccessTokenDialogState = useOverlayTriggerState({});

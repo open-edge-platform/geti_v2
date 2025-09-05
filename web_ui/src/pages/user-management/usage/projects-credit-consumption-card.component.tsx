@@ -59,7 +59,7 @@ interface ProjectsCreditConsumptionCardProps extends StyleProps {
     toDate?: Date;
 }
 
-export const ProjectsCreditConsumptionCard = (props: ProjectsCreditConsumptionCardProps): JSX.Element => {
+export const ProjectsCreditConsumptionCard = (props: ProjectsCreditConsumptionCardProps) => {
     const { fromDate, toDate, ...styleProps } = props;
     const { useGetTransactionsAggregates } = useTransactionsQueries();
     const { organizationId, workspaceId } = useFirstWorkspaceIdentifier();

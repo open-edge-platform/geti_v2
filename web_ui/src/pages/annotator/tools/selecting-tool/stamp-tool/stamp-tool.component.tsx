@@ -9,7 +9,7 @@ import { getRelativePoint } from '../../../../utils';
 import { Annotation } from '../../../annotation/annotation.component';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { createAnnotation } from '../../../utils';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import { SvgToolCanvas } from '../../svg-tool-canvas.component';
 import { ToolAnnotationContextProps } from '../../tools.interface';
 import { isPointWithinRoi, removeOffLimitPoints, translateAnnotation } from '../../utils';
@@ -19,16 +19,14 @@ import { useSelectingState } from '../selecting-state-provider.component';
 // there is array of the annotations), but we don't handle all edge cases for it. In the future we will have to change
 // the logic of pasting and the rest should work out of the box.
 
-export const StampTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const StampTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { stampAnnotations, centerOfTheStampAnnotations } = useSelectingState();
     const { scene } = annotationToolContext;
     const stampToolContainerRef = useRef<SVGRectElement>(null);
     const [translatedAnnotations, setTranslatedAnnotations] = useState<AnnotationInterface[]>(stampAnnotations);
     const { roi, image } = useROI();
 
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const handleOnPointerMove = (event: PointerEvent<SVGSVGElement>): void => {
         if (stampToolContainerRef.current === null) {

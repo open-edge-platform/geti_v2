@@ -33,11 +33,7 @@ const removeAnimationClasses = (videoTag: CaptureButtonAnimationProps['videoTag'
     videoTag?.classList.remove(classes.takeOldCamera);
 };
 
-export const CaptureButtonAnimation = ({
-    videoTag,
-    onPress,
-    ...buttonProps
-}: CaptureButtonAnimationProps): JSX.Element => {
+export const CaptureButtonAnimation = ({ videoTag, onPress, ...buttonProps }: CaptureButtonAnimationProps) => {
     const intervalId = useRef<ReturnType<typeof setInterval> | null>(null);
     const timerId = useRef<ReturnType<typeof setTimeout> | null>(null);
 

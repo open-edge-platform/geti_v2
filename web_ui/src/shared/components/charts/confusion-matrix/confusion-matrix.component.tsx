@@ -27,7 +27,7 @@ export const ConfusionMatrix = ({
     rowNames,
     matrixValues,
     size,
-}: ConfusionMatrixProps): JSX.Element => {
+}: ConfusionMatrixProps) => {
     return (
         <Grid
             width={'100%'}

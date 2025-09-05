@@ -18,6 +18,7 @@ import cv2
 import jsonschema
 import numpy as np
 import pytest
+from geti_supported_models.default_models import DefaultModels
 
 from coordination.configuration_manager.task_node_config import TaskNodeConfig
 
@@ -721,6 +722,7 @@ class DBProjectService:
                 creator_id="",
                 parser_class=RestProjectParser,
                 parser_kwargs=parser_kwargs,
+                default_models_per_task=DefaultModels.get_default_models_per_task(),
             )
 
         return self._project

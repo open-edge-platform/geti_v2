@@ -32,7 +32,7 @@ const isLeftClickNonTouch = (event: PointerEvent<SVGSVGElement>) => {
 
 const onLeftClick = runWhen(isLeftClickNonTouch);
 
-export const CrosshairDrawingBox = ({ onStart, onMove, onComplete, zoom }: CrosshairDrawingBoxProps): JSX.Element => {
+export const CrosshairDrawingBox = ({ onStart, onMove, onComplete, zoom }: CrosshairDrawingBoxProps) => {
     const { roi, image } = useROI();
 
     const ref = useRef<SVGRectElement>(null);

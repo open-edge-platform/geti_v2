@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-import { isEmpty, isNumber } from 'lodash-es';
+import { isEmpty, isEqual, isNumber } from 'lodash-es';
 
 import {
     useTrainingConfigurationMutation,
@@ -25,6 +25,7 @@ import { isNotCropTask } from '../../../../../shared/utils';
 import { useTotalCreditPrice } from '../../../hooks/use-credits-to-consume.hook';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { getTrainingBodyDTO } from '../legacy-train-model-dialog/utils';
+import { areSubsetsSizesValid } from './advanced-settings/data-management/training-subsets/utils';
 
 enum TrainModelMode {
     BASIC = 'Basic',
@@ -97,6 +98,8 @@ const useSelectedModelTemplateId = ({
     return [selectedModelTemplateId, setSelectedModelTemplateId, activeModelTemplateId] as const;
 };
 
+const SAM_MODEL_TEMPLATE_ID = 'visual_prompting_model';
+
 export const useTrainModelState = () => {
     const [mode, setMode] = useState<TrainModelMode>(TrainModelMode.BASIC);
 
@@ -120,6 +123,11 @@ export const useTrainModelState = () => {
     });
 
     const isBasicMode = mode === TrainModelMode.BASIC;
+    const hasSupportedModels =
+        (models ?? []).filter(
+            (modelGroup) =>
+                modelGroup.taskId === selectedTask.id && modelGroup.modelTemplateId !== SAM_MODEL_TEMPLATE_ID
+        ).length > 0;
 
     const [trainingConfiguration, setTrainingConfiguration, defaultTrainingConfiguration] = useTrainingConfiguration({
         projectIdentifier,
@@ -217,14 +225,15 @@ export const useTrainModelState = () => {
 
         const handleTrainModel = (onSuccess?: () => void) => {
             // 1. If we are in basic mode, we can directly train the model, without updating the training configuration.
-            // 2. If we are in advanced settings mode, we need to update the training configuration first.
-            // 2.1. If the training configuration fails, we don't want to train the model.
-            // 2.2. If the training configuration succeeds, we can train the model with the updated configuration.
-            // 3. Train model is called.
-            // 3.1. If train model fails, we revert the training configuration to the default one.
-            // 3.2. If train model succeeds, we call the onSuccess callback if provided.
+            // 2. If we are in basic mode and training configuration is not changed, we can directly train the model.
+            // 3. If we are in advanced settings mode, we need to update the training configuration first.
+            // 3.1. If the training configuration fails, we don't want to train the model.
+            // 3.2. If the training configuration succeeds, we can train the model with the updated configuration.
+            // 4. Train model is called.
+            // 4.1. If train model fails, we revert the training configuration to the default one.
+            // 4.2. If train model succeeds, we call the onSuccess callback if provided.
 
-            if (isBasicMode) {
+            if (isBasicMode || isEqual(trainingConfiguration, defaultTrainingConfiguration)) {
                 trainModelMutation.mutate(
                     {
                         projectIdentifier,
@@ -280,6 +289,31 @@ export const useTrainModelState = () => {
         };
     };
 
+    const isStartTrainingButtonDisabled = () => {
+        if (isBasicMode) {
+            return false;
+        }
+
+        if (trainingConfiguration === undefined || defaultTrainingConfiguration === undefined) {
+            return false;
+        }
+
+        if (isEqual(trainingConfiguration, defaultTrainingConfiguration)) {
+            return false;
+        }
+
+        if (
+            !isEqual(
+                trainingConfiguration.datasetPreparation.subsetSplit,
+                defaultTrainingConfiguration.datasetPreparation.subsetSplit
+            )
+        ) {
+            return !areSubsetsSizesValid(trainingConfiguration.datasetPreparation.subsetSplit);
+        }
+
+        return false;
+    };
+
     return {
         isBasicMode,
         openAdvancedSettingsMode,
@@ -299,5 +333,8 @@ export const useTrainModelState = () => {
         updateTrainingConfiguration: setTrainingConfiguration,
         trainModel: useTrainModel(),
         openBasicMode,
+        hasSupportedModels,
+        isStartTrainingButtonDisabled: isStartTrainingButtonDisabled(),
+        defaultTrainingConfiguration,
     } as const;
 };

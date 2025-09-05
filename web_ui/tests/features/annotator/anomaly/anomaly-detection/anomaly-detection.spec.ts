@@ -40,6 +40,6 @@ test.describe('Anomaly detection', () => {
 
         await button.click();
         await expect(page.getByRole('option', { name: 'Active set' })).toBeHidden();
-        await expect(page.getByRole('option', { name: 'Dataset' })).toBeVisible();
+        await expect(page.getByTestId('popover').getByRole('option', { name: 'Dataset' })).toBeVisible();
     });
 });

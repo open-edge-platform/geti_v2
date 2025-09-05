@@ -9,7 +9,7 @@ interface CrosshairProps {
     zoom: number;
 }
 
-export const Crosshair = ({ location, zoom }: CrosshairProps): JSX.Element => {
+export const Crosshair = ({ location, zoom }: CrosshairProps) => {
     if (location === null) {
         return <g></g>;
     }

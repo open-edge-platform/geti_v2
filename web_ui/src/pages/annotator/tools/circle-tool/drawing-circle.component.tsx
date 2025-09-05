@@ -36,7 +36,7 @@ export const DrawingCircle = ({
     updateRadius,
     maxCircleRadius,
     styles,
-}: DrawingCircleInterface): JSX.Element => {
+}: DrawingCircleInterface) => {
     const ref = useRef<SVGRectElement>(null);
 
     const [startPoint, setStartPoint] = useState<Point | null>(null);

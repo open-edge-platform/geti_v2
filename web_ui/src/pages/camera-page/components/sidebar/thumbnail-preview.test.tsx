@@ -51,16 +51,18 @@ describe('ThumbnailPreview', () => {
         fireEvent.click(screen.getByRole('button', { name: 'open preview' }));
         jest.advanceTimersByTime(1000);
 
-        expect(screen.getByRole('img', { name: `full screen screenshot ${mockedScreenshot.id}` })).toHaveClass(
+        expect(await screen.findByRole('img', { name: `full screen screenshot ${mockedScreenshot.id}` })).toHaveClass(
             'thumbnailPreviewImageOpened'
         );
 
         fireEvent.click(screen.getByRole('button', { name: 'close preview' }));
         jest.advanceTimersByTime(1000);
 
-        expect(
-            screen.queryByRole('img', { name: `full screen screenshot ${mockedScreenshot.id}` })
-        ).not.toBeInTheDocument();
+        await waitFor(() => {
+            expect(
+                screen.queryByRole('img', { name: `full screen screenshot ${mockedScreenshot.id}` })
+            ).not.toBeInTheDocument();
+        });
     });
 
     it('call onDelete', async () => {

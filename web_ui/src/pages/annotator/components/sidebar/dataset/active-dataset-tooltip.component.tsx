@@ -10,7 +10,7 @@ interface ActiveDatasetTooltipProps {
     count: number;
 }
 
-export const ActiveDatasetTooltipComponent = ({ count }: ActiveDatasetTooltipProps): JSX.Element => (
+export const ActiveDatasetTooltipComponent = ({ count }: ActiveDatasetTooltipProps) => (
     <TooltipTrigger placement={'bottom'}>
         <ActionButton isQuiet aria-label='Dataset help' UNSAFE_className={classes.datasetTooltipButton}>
             <InfoOutline width={16} height={16} />

@@ -21,7 +21,7 @@ import { ReconfigureModels } from './reconfigure-models/reconfigure-models.compo
 import { TrainModel } from './train-model-dialog/train-model.component';
 import { addAlgorithmDetails } from './utils';
 
-export const ProjectModels = (): JSX.Element => {
+export const ProjectModels = () => {
     const { useProjectModelsQuery } = useModels();
     const { tasksWithSupportedAlgorithms } = useTasksWithSupportedAlgorithms();
     const isTraining = useIsTraining();

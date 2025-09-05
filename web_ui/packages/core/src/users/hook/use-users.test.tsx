@@ -9,17 +9,11 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { getMockedUser } from '../../../../../src/test-utils/mocked-items-factory/mocked-users';
 import { ApplicationServicesProvider } from '../../services/application-services-provider.component';
 import { createInMemoryUsersService } from '../services/in-memory-users-service';
-import { useUsers } from './use-users.hook';
+import { useActiveUser, useUsers } from './use-users.hook';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: () => ({ workspaceId: 'workspace-id', projectId: 'project-id', organizationId: 'organization-123' }),
-}));
-
-const mockAddNotification = jest.fn();
-jest.mock('../../../../../src/notification/notification.component', () => ({
-    ...jest.requireActual('../../../../../src/notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
 }));
 
 const queryClient = new QueryClient({
@@ -50,14 +44,10 @@ describe('useUsers', () => {
     });
 
     it('gets activeUser', async () => {
-        const { result } = renderHook(() => useUsers(), { wrapper });
-
-        const { result: activeUser } = renderHook(() => result.current.useActiveUser('organization-id'), {
-            wrapper,
-        });
+        const { result } = renderHook(() => useActiveUser('organization-id'), { wrapper });
 
         await waitFor(() => {
-            expect(activeUser.current.data).toStrictEqual(mockedUser);
+            expect(result.current.data).toStrictEqual(mockedUser);
         });
     });
 

@@ -21,7 +21,7 @@ export const AskToResetFilterBeforeSubmittingAnnotations = ({ children }: { chil
     const submitMutationArguments = useRef<{
         callback?: () => Promise<void>;
         annotations: ReadonlyArray<Annotation>;
-    }>();
+    }>(undefined);
     const [filters, setFilters] = useAnnotationFilters();
 
     const submitAnnotationsMutation: ReturnType<typeof useSubmitAnnotations>['submitAnnotationsMutation'] = useMutation<

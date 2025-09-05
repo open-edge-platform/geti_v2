@@ -154,7 +154,7 @@ class DatasetCounterUseCase:
             task_node_id=task_node.id_,
             include_empty=False,
         )
-        task_label_ids = [label.id_ for label in task_labels]
+        task_label_ids = [label.id_ for label in task_labels if not label.is_background]
 
         dataset_item_count_repo = DatasetItemCountRepo(
             dataset_storage_identifier=DatasetStorageIdentifier(

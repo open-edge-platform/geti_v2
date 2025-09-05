@@ -14,7 +14,7 @@ import classes from './../../annotator-canvas.module.scss';
 interface EditToolProps extends ToolAnnotationContextProps {
     disableTranslation?: boolean;
     disablePoints?: boolean;
-    canvasRef?: RefObject<SVGSVGElement>;
+    canvasRef?: RefObject<SVGSVGElement | null>;
 }
 
 export const EditTool = ({
@@ -22,7 +22,7 @@ export const EditTool = ({
     disableTranslation = false,
     disablePoints = false,
     canvasRef,
-}: EditToolProps): JSX.Element => {
+}: EditToolProps) => {
     const { tasks, selectedTask } = useTask();
     const { isActiveLearningMode } = useAnnotatorMode();
 

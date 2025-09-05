@@ -8,7 +8,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 
 import { clearDatasetStorage } from '../../../hooks/use-clear-indexeddb-storage/use-clear-indexeddb-storage.hook';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { getMockedDataset } from '../../../test-utils/mocked-items-factory/mocked-datasets';
 import { CreateDatasetBody, CreateDatasetResponse, DeleteDatasetResponse } from '../dataset.interface';
 import { createInMemoryProjectService } from '../services/in-memory-project-service';
@@ -21,10 +20,10 @@ jest.mock('../../../hooks/use-clear-indexeddb-storage/use-clear-indexeddb-storag
     clearDatasetStorage: jest.fn(() => mockClearDatasetStorage),
 }));
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+const mockedToast = jest.fn();
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 const wrapper = ({
@@ -92,11 +91,11 @@ describe('useProjectDataset', () => {
                 expect(mockInvalidateQueries).toHaveBeenCalled();
             });
 
-            expect(mockAddNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
             expect(projectService.createDataset).toHaveBeenCalledWith(mockCreateDatasetBody);
         });
 
-        it('addNotification is called when the call fails', async () => {
+        it('"toast" is called when the call fails', async () => {
             const error = { message: 'test' };
 
             projectService.createDataset = jest.fn((): Promise<CreateDatasetResponse> => Promise.reject(error));
@@ -109,9 +108,9 @@ describe('useProjectDataset', () => {
 
             await waitFor(() => {
                 expect(projectService.createDataset).toHaveBeenCalledWith(mockCreateDatasetBody);
-                expect(mockAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: error.message,
-                    type: NOTIFICATION_TYPE.ERROR,
+                    type: 'error',
                 });
             });
         });
@@ -136,13 +135,13 @@ describe('useProjectDataset', () => {
 
             await waitFor(() => {
                 expect(mockInvalidateQueries).toHaveBeenCalled();
-                expect(mockAddNotification).not.toHaveBeenCalled();
+                expect(mockedToast).not.toHaveBeenCalled();
                 expect(clearDatasetStorage).toHaveBeenCalledWith('dataset_1');
                 expect(projectService.deleteDataset).toHaveBeenCalledWith(mockDatasetIdentifier);
             });
         });
 
-        it('addNotification is called when the call fails', async () => {
+        it('"toast" is called when the call fails', async () => {
             const error = { message: 'test' };
 
             projectService.deleteDataset = jest.fn((): Promise<DeleteDatasetResponse> => Promise.reject(error));
@@ -155,9 +154,9 @@ describe('useProjectDataset', () => {
 
             await waitFor(() => {
                 expect(projectService.deleteDataset).toHaveBeenCalledWith(mockDatasetIdentifier);
-                expect(mockAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: error.message,
-                    type: NOTIFICATION_TYPE.ERROR,
+                    type: 'error',
                 });
             });
         });
@@ -185,12 +184,12 @@ describe('useProjectDataset', () => {
 
             await waitFor(() => {
                 expect(mockInvalidateQueries).toHaveBeenCalled();
-                expect(mockAddNotification).not.toHaveBeenCalled();
+                expect(mockedToast).not.toHaveBeenCalled();
                 expect(projectService.updateDataset).toHaveBeenCalledWith(mockDatasetIdentifier, mockDataset);
             });
         });
 
-        it('addNotification is called when the call fails', async () => {
+        it('"toast" is called when the call fails', async () => {
             const error = { message: 'test' };
 
             projectService.updateDataset = jest.fn((): Promise<CreateDatasetResponse> => Promise.reject(error));
@@ -206,9 +205,9 @@ describe('useProjectDataset', () => {
 
             await waitFor(() => {
                 expect(projectService.updateDataset).toHaveBeenCalledWith(mockDatasetIdentifier, mockDataset);
-                expect(mockAddNotification).toHaveBeenCalledWith({
+                expect(mockedToast).toHaveBeenCalledWith({
                     message: error.message,
-                    type: NOTIFICATION_TYPE.ERROR,
+                    type: 'error',
                 });
             });
         });

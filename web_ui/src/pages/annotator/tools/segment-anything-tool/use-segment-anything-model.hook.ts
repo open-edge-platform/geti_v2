@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { EncodingOutput, SegmentAnythingModel } from '@geti/smart-tools';
+import { EncodingOutput, SegmentAnythingModel } from '@geti/smart-tools/segment-anything';
 import { useQuery } from '@tanstack/react-query';
 import { Remote } from 'comlink';
 
@@ -94,7 +94,7 @@ const useSegmentAnythingWorker = (
 ) => {
     const { worker } = useLoadAIWebworker(algorithmType);
 
-    const modelRef = useRef<Remote<SegmentAnythingModel>>();
+    const modelRef = useRef<Remote<SegmentAnythingModel>>(undefined);
     const [modelIsLoading, setModelIsLoading] = useState(false);
 
     useEffect(() => {

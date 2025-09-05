@@ -42,7 +42,7 @@ export const TrainConfigurableParameters = ({
     animationDirection,
     isReshufflingSubsetsEnabled,
     onChangeReshuffleSubsets,
-}: TrainConfigurableParametersProps): JSX.Element => {
+}: TrainConfigurableParametersProps) => {
     const projectIdentifier = useProjectIdentifier();
     const { useGetModelConfigParameters } = useConfigParameters(projectIdentifier);
     const { isLoading, data: configParametersData } = useGetModelConfigParameters({

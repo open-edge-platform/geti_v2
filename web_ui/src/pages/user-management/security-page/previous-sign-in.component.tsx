@@ -7,7 +7,7 @@ import { usePreviousSignIn } from '../../../shared/hooks/use-previous-sign-in.ho
 
 import classes from './security-page.module.scss';
 
-export const PreviousSignIn = (): JSX.Element => {
+export const PreviousSignIn = () => {
     const { lastLoginDate } = usePreviousSignIn();
 
     if (!lastLoginDate) {

@@ -4,7 +4,7 @@
 import { Fragment } from 'react';
 
 import { Text } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { NavLink } from 'react-router-dom';
 
 import { MenuOption } from '../menu-option.interface';
@@ -17,7 +17,7 @@ interface SidebarMenuProps {
     className?: React.HTMLAttributes<HTMLElement>['className'];
 }
 
-export const SidebarMenu = ({ id, options, className }: SidebarMenuProps): JSX.Element => {
+export const SidebarMenu = ({ id, options, className }: SidebarMenuProps) => {
     return (
         <nav className={className} id={`sidebar-menu-${id}`}>
             {options.map((optionsChildren, index) => (

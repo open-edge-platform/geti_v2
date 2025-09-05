@@ -193,8 +193,8 @@ test.describe('Quick inference', () => {
             test('Quick inference without an inference server', async ({ page, quickInferencePage }) => {
                 await quickInferencePage.uploadImage(imagePath);
 
-                expect(await quickInferencePage.getAlertMessage()).toContain(
-                    'Retrieving inference results may take some time'
+                await expect(quickInferencePage.getAlertMessage()).toHaveText(
+                    /Retrieving inference results may take some time/
                 );
 
                 await expectAGlobalAnnotationToExist(page);
@@ -204,8 +204,8 @@ test.describe('Quick inference', () => {
                 await quickInferencePage.uploadImage(imagePath);
                 await quickInferencePage.openFullscreen();
 
-                expect(await quickInferencePage.getAlertMessage()).toContain(
-                    'Retrieving inference results may take some time'
+                await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
+                    /Retrieving inference results may take some time/
                 );
 
                 const dialog = page.getByRole('dialog');
@@ -219,8 +219,8 @@ test.describe('Quick inference', () => {
                 await quickInferencePage.uploadImage(imagePath);
                 await quickInferencePage.openFullscreen();
 
-                expect(await quickInferencePage.getAlertMessage()).toContain(
-                    'Retrieving inference results may take some time'
+                await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
+                    /Retrieving inference results may take some time/
                 );
 
                 const dialog = page.getByRole('dialog');
@@ -228,7 +228,10 @@ test.describe('Quick inference', () => {
                 await expectAGlobalAnnotationToExist(dialog);
 
                 // Open canvas adjustments dialog
-                await page.getByRole('button', { name: /canvas adjustments/i }).click();
+                await page
+                    .getByTestId('modal')
+                    .getByRole('button', { name: /canvas adjustments/i })
+                    .click();
 
                 // Change a few settings
                 const hideLabelsSwitch = page.getByRole('switch', { name: /hide labels/i });
@@ -416,8 +419,8 @@ test.describe('Quick inference', () => {
             test('Quick inference without an inference server', async ({ page, quickInferencePage }) => {
                 await quickInferencePage.uploadImage(imagePath);
 
-                expect(await quickInferencePage.getAlertMessage()).toContain(
-                    'Retrieving inference results may take some time'
+                await expect(quickInferencePage.getAlertMessage()).toHaveText(
+                    /Retrieving inference results may take some time/
                 );
 
                 await expectAGlobalAnnotationToExist(page);
@@ -427,8 +430,8 @@ test.describe('Quick inference', () => {
                 await quickInferencePage.uploadImage(imagePath);
                 await quickInferencePage.openFullscreen();
 
-                expect(await quickInferencePage.getAlertMessage()).toContain(
-                    'Retrieving inference results may take some time'
+                await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
+                    /Retrieving inference results may take some time/
                 );
 
                 const dialog = page.getByRole('dialog');
@@ -442,8 +445,8 @@ test.describe('Quick inference', () => {
                 await quickInferencePage.uploadImage(imagePath);
                 await quickInferencePage.openFullscreen();
 
-                expect(await quickInferencePage.getAlertMessage()).toContain(
-                    'Retrieving inference results may take some time'
+                await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
+                    /Retrieving inference results may take some time/
                 );
 
                 const dialog = page.getByRole('dialog');
@@ -451,7 +454,10 @@ test.describe('Quick inference', () => {
                 await expectAGlobalAnnotationToExist(dialog);
 
                 // Open canvas adjustments dialog
-                await page.getByRole('button', { name: /canvas adjustments/i }).click();
+                await page
+                    .getByTestId('modal')
+                    .getByRole('button', { name: /canvas adjustments/i })
+                    .click();
 
                 // Change a few settings
                 const hideLabelsSwitch = page.getByRole('switch', { name: /hide labels/i });

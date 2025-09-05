@@ -12,7 +12,7 @@ interface UseCrosshair {
     onPointerLeave: (event: PointerEvent<SVGSVGElement>) => void;
 }
 
-export const useCrosshair = (canvasRef: RefObject<SVGRectElement>, zoom: number): UseCrosshair => {
+export const useCrosshair = (canvasRef: RefObject<SVGRectElement | null>, zoom: number): UseCrosshair => {
     const [location, setLocation] = useState<Point | null>(null);
 
     const onPointerMove = (event: PointerEvent<SVGSVGElement>) => {

@@ -3,7 +3,7 @@
 
 import { Flex, Text } from '@geti/ui';
 
-export const SecondaryToolbar = (): JSX.Element => {
+export const SecondaryToolbar = () => {
     return (
         <Flex direction='row' alignItems='center' justifyContent='center' gap='size-125'>
             <Text>Bounding Box Tool</Text>

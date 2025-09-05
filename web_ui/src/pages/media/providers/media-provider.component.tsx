@@ -51,11 +51,7 @@ const MediaContext = createContext<MediaContextProps | undefined>(undefined);
     We do not want to make lower components (e.g. MediaFilter) to be aware of required filters (we do not want to
     display them in the dialog). That's why we use them only in the request.
  */
-export const MediaProvider = ({
-    children,
-    filterName = 'filter',
-    requiredFilters = {},
-}: MediaProviderProps): JSX.Element => {
+export const MediaProvider = ({ children, filterName = 'filter', requiredFilters = {} }: MediaProviderProps) => {
     const { sortingOptions } = useSortingParams();
     const datasetIdentifier = useDatasetIdentifier();
     const { mediaService } = useApplicationServices();

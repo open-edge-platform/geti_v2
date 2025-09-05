@@ -15,6 +15,7 @@ interface TrainingProps {
     onTrainFromScratchChange: (trainFromScratch: boolean) => void;
 
     trainingConfiguration: TrainingConfiguration;
+    defaultTrainingConfiguration: TrainingConfiguration;
     onUpdateTrainingConfiguration: (
         updateFunction: (config: TrainingConfiguration | undefined) => TrainingConfiguration | undefined
     ) => void;
@@ -30,6 +31,7 @@ export const Training: FC<TrainingProps> = ({
     onReshufflingSubsetsEnabledChange,
     isReshufflingSubsetsEnabled,
     onUpdateTrainingConfiguration,
+    defaultTrainingConfiguration,
 }) => {
     return (
         <View>
@@ -41,6 +43,7 @@ export const Training: FC<TrainingProps> = ({
             />
             {!isEmpty(trainingConfiguration.training) && (
                 <LearningParameters
+                    defaultParameters={defaultTrainingConfiguration.training}
                     parameters={trainingConfiguration.training}
                     onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
                 />

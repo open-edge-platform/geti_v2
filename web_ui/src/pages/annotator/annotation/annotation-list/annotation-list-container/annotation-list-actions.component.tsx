@@ -22,7 +22,7 @@ import { ToggleLockButton } from '../../toggle-lock-button/toggle-lock-button.co
 import { ToggleVisibilityButton } from '../../toggle-visibility-button/toggle-visibility-button.component';
 import { BulkAssignLabel } from './bulk-assign-labels.component';
 
-export const AnnotationListActions = (): JSX.Element => {
+export const AnnotationListActions = () => {
     const {
         removeAnnotations,
         setSelectedAnnotations,

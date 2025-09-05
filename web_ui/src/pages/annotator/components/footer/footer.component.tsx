@@ -13,7 +13,7 @@ import { useTask } from '../../providers/task-provider/task-provider.component';
 import { Footer as CommonFooter } from './annotator-footer.component';
 import { TrainingProgress } from './training-progress/training-progress.component';
 
-export const Footer = (): JSX.Element => {
+export const Footer = () => {
     const { projectIdentifier } = useProject();
     const { selectedMediaItem } = useSelectedMediaItem();
     const { selectedTask } = useTask();

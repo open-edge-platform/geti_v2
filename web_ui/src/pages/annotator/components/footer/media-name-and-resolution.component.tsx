@@ -17,12 +17,7 @@ interface MediaNameAndResolutionProps {
 const LONG_TEXT_LENGTH = 200;
 const SHORT_TEXT_LENGTH = 14;
 
-export const MediaNameAndResolution = ({
-    isLargeSize,
-    name,
-    width,
-    height,
-}: MediaNameAndResolutionProps): JSX.Element => {
+export const MediaNameAndResolution = ({ isLargeSize, name, width, height }: MediaNameAndResolutionProps) => {
     const paddingX = isLargeSize ? 'size-200' : 'size-100';
     const mediaName = trimText(name, isLargeSize ? LONG_TEXT_LENGTH : SHORT_TEXT_LENGTH);
 

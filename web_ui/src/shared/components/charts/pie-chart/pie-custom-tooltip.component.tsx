@@ -18,7 +18,7 @@ interface PieCustomTooltipProps {
     total: number;
 }
 
-export const PieCustomTooltip = (props: PieCustomTooltipProps): JSX.Element | null => {
+export const PieCustomTooltip = (props: PieCustomTooltipProps) => {
     const { active, payload, total } = props;
     const formatter = useNumberFormatter({ maximumFractionDigits: 2 });
 

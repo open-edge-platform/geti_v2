@@ -37,7 +37,7 @@ export const DrawingBox = ({
     onStart,
     onComplete,
     withCrosshair = true,
-}: DrawingBoxInterface): JSX.Element => {
+}: DrawingBoxInterface) => {
     const { roi } = useROI();
     const [startPoint, setStartPoint] = useState<Point | null>(null);
     const [boundingBox, setBoundingBox] = useState<RectInterface | null>(null);

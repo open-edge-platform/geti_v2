@@ -3,12 +3,12 @@
 
 import '@wessberg/pointer-events';
 
+import { ANCHOR_SIZE } from '@geti/smart-tools';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
 import { fakeAnnotationToolContext } from '../../../../../test-utils/fake-annotator-context';
 import { getMockedImage, getMockedROI } from '../../../../../test-utils/utils';
-import { ANCHOR_SIZE } from '../resize-anchor.component';
 import { EditRotatedBoundingBox as EditRotatedBoundingBoxTool } from './edit-rotated-bounding-box.component';
 
 const mockROI = getMockedROI({ x: 0, y: 0, width: 1000, height: 1000 });
@@ -22,7 +22,7 @@ jest.mock('../../../providers/region-of-interest-provider/region-of-interest-pro
 }));
 
 jest.mock('./../../../zoom/zoom-provider.component', () => ({
-    useZoom: jest.fn(() => ({ zoomState: { zoom: 2.0, translation: { x: 0, y: 0 } } })),
+    useZoomState: jest.fn(() => ({ zoom: 2.0, translation: { x: 0, y: 0 } })),
 }));
 
 describe('EditRectangleTool', (): void => {

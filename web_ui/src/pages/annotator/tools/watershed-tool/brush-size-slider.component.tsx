@@ -9,7 +9,7 @@ interface BrushSizeSliderProps {
     updateBrushSize: (value: number) => void;
 }
 
-export const BrushSizeSlider = ({ updateBrushSize }: BrushSizeSliderProps): JSX.Element => {
+export const BrushSizeSlider = ({ updateBrushSize }: BrushSizeSliderProps) => {
     const { brushSize, setBrushSize, setIsBrushSizePreviewVisible } = useWatershedState();
 
     const handleOnChange = (value: number): void => {

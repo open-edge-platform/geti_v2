@@ -158,7 +158,7 @@ describe('Train model', () => {
                 FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
             });
 
-            fireEvent.click(screen.getByRole('button', { name: 'Train new model' }));
+            fireEvent.click(await screen.findByRole('button', { name: 'Train new model' }));
 
             expect(screen.getByRole('dialog')).toBeInTheDocument();
             expect(screen.getByRole('heading', { name: 'Not enough annotations' })).toBeInTheDocument();
@@ -196,7 +196,7 @@ describe('Train model', () => {
                 FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
             });
 
-            fireEvent.click(screen.getByRole('button', { name: 'Train new model' }));
+            fireEvent.click(await screen.findByRole('button', { name: 'Train new model' }));
 
             expect(screen.getByRole('dialog')).toBeVisible();
 

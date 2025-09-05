@@ -9,6 +9,19 @@ jest.mock('../../utils', () => ({
     downloadFile: jest.fn(),
 }));
 
+jest.mock('jspdf', () => ({
+    // eslint-disable-next-line object-shorthand
+    jsPDF: function () {
+        return {
+            addFileToVFS: () => {},
+            addFont: () => {},
+            setFontSize: () => {},
+            setFont: () => {},
+            output: () => 'data:application/pdf;base64,',
+        };
+    },
+}));
+
 const getMockedSvg = (width: number, height: number): SVGSVGElement => {
     return {
         clientWidth: width,

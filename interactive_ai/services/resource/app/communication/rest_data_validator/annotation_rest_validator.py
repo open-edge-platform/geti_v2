@@ -611,14 +611,6 @@ class AnnotationRestValidator(RestApiValidator):
                 f"{next(iter(non_empty_labels_in_annotation)).id_} for task {task.id_}"
             )
 
-        # Validate that if a background annotation is present, it is not the only annotation in the scene
-        background_labels_in_annotation = {label for label in annotation_labels_current_task if label.is_background}
-        if len(background_labels_in_annotation) > 0 and len(non_empty_labels_in_annotation) == 0:
-            raise BadRequestException(
-                f"Cannot create annotation that has a background label with ID "
-                f"{next(iter(background_labels_in_annotation)).id_} without any other labels for task {task.id_}"
-            )
-
         # Validate that global annotations for the first task use a full box shape
         if previous_task is None and annotation_rest[SHAPE] != AnnotationRESTViews.generate_full_box_rest(
             media_height=media_height, media_width=media_width
@@ -636,7 +628,7 @@ class AnnotationRestValidator(RestApiValidator):
             raise BadRequestException("Annotation for a global task is missing a label for the preceding task.")
 
     @staticmethod
-    def __validate_local_annotation(  # noqa: C901, PLR0913
+    def __validate_local_annotation(  # noqa: C901, PLR0912, PLR0913
         annotation_rest: dict,
         task: TaskNode,
         previous_task: TaskNode | None,
@@ -653,6 +645,7 @@ class AnnotationRestValidator(RestApiValidator):
           be present
         - If the annotation contains an empty label, no other annotation for this task may intersect with the empty
           label.
+        - If the annotation contains a background label, it must also contain a label for the current task
         - If the task is (rotated) detection, shape must be (rotated) rectangle
 
         :param annotation_rest: REST view of the annotation
@@ -668,6 +661,17 @@ class AnnotationRestValidator(RestApiValidator):
         if len(annotation_labels_current_task) == 0:
             # If the annotation contains no labels for this task, return without doing validation for this task
             return
+
+        # Validate that a background label is not the only label in the annotation scene
+        background_label_ids = {label.id_ for label in task_labels if label.is_background}
+        only_background_labels = True
+        for annotation in annotation_scene_rest[ANNOTATIONS]:
+            label_ids = {ID(label_rest[ID_]) for label_rest in annotation[LABELS]}
+            if background_label_ids != label_ids:
+                only_background_labels = False
+                break
+        if only_background_labels:
+            raise BadRequestException("It is not allowed to create an annotation with only background labels.")
 
         # Validate that if the task is a local anomaly task, it contains only one of the labels (it's not allowed to
         # have both the normal and the anomalous label).

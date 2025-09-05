@@ -15,7 +15,7 @@ interface TutorialCardBuilderProps {
 
 const DEFAULT_BOTTOM_MARGIN = 'var(--spectrum-global-dimension-size-150)';
 
-export const TutorialCardBuilder = ({ cardKey, styles }: TutorialCardBuilderProps): JSX.Element => {
+export const TutorialCardBuilder = ({ cardKey, styles }: TutorialCardBuilderProps) => {
     const settings = useUserGlobalSettings();
 
     const currentStyles = {

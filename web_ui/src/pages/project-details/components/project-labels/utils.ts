@@ -8,7 +8,7 @@ import {
     LabelTreeLabelProps,
 } from '../../../../core/labels/label-tree-view.interface';
 import { Label, LabelsRelationType } from '../../../../core/labels/label.interface';
-import { getNotEmptyLabelsFromOneTask } from '../../../../core/labels/utils';
+import { filterNonEmptyOrBackgroundLabels } from '../../../../core/labels/utils';
 import { DOMAIN } from '../../../../core/projects/core.interface';
 import { Task, TaskMetadata } from '../../../../core/projects/task.interface';
 import { isNotCropTask } from '../../../../shared/utils';
@@ -64,7 +64,7 @@ export const getTasksMetadata = (tasks: Task[], keepNoObjectLabels = false): Tas
     const filteredTasks = tasks.filter(isNotCropTask);
 
     return filteredTasks.map((task, index) => {
-        const taskLabels = keepNoObjectLabels ? task.labels : [...getNotEmptyLabelsFromOneTask(task)];
+        const taskLabels = keepNoObjectLabels ? task.labels : filterNonEmptyOrBackgroundLabels(task);
         const parent = !!index ? filteredTasks[index - 1].labels[0] : undefined;
         const parentId = parent ? parent.id : null;
         const parentGroup = parent ? parent.group : null;

@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import { Dispatch, RefObject, SetStateAction } from 'react';
 
 import { Annotation } from '../../../core/annotations/annotation.interface';
 import { Shape } from '../../../core/annotations/shapes.interface';
@@ -11,7 +11,7 @@ export interface AnnotationScene {
     readonly labels: ReadonlyArray<Label>;
     readonly annotations: ReadonlyArray<Annotation>;
     isDrawing: boolean;
-    hasShapePointSelected: MutableRefObject<boolean>;
+    hasShapePointSelected: RefObject<boolean>;
 
     setIsDrawing: Dispatch<SetStateAction<boolean>>;
 

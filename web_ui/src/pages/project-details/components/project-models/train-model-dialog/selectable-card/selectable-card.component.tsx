@@ -28,7 +28,7 @@ export const SelectableCard = ({
     headerContent,
     descriptionContent,
     handleOnPress,
-}: SelectableCardProps): JSX.Element => {
+}: SelectableCardProps) => {
     const { pressProps } = usePress({
         onPress: () => {
             handleOnPress();

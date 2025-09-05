@@ -3,7 +3,7 @@
 
 import { Flex, Text } from '@geti/ui';
 
-export const HotkeyLabel = (): JSX.Element => {
+export const HotkeyLabel = () => {
     return (
         <Flex direction={'column'} alignItems={'start'} justifyContent={'center'}>
             <Text UNSAFE_style={{ width: 'max-content' }}>Keyboard</Text>

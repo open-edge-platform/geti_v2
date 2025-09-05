@@ -18,14 +18,14 @@ export const RequestAccessConfirmation: FC = () => {
     }
 
     return (
-        <Container title={'Intel® Geti™ registration completed!'} isOpen>
+        <Container title={'Geti™ registration completed!'} isOpen>
             <Heading
                 margin={0}
                 UNSAFE_style={{
                     textAlign: 'center',
                 }}
             >
-                Thank you for your interest in Intel® Geti™.
+                Thank you for your interest in Geti™.
             </Heading>
             <Heading
                 UNSAFE_style={{

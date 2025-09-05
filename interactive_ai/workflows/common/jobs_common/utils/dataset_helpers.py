@@ -5,6 +5,7 @@
 import copy
 import os
 
+from geti_configuration_tools.training_configuration import TrainingConfiguration
 from geti_kafka_tools import publish_event
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier, ProjectIdentifier
@@ -26,6 +27,7 @@ from iai_core.utils.iteration import grouper
 from iai_core.utils.media_factory import Media2DFactory
 
 from jobs_common.tasks.utils.progress import report_progress
+from jobs_common.utils.annotation_filter import AnnotationFilter
 from jobs_common.utils.subset_management.subset_manager import TaskSubsetManager
 
 # Maximum recommended size for unannotated datasets
@@ -211,6 +213,7 @@ class DatasetHelpers:
         project_id: ID,
         task_node: TaskNode,
         dataset_storage: DatasetStorage,
+        training_configuration: TrainingConfiguration,
         max_training_dataset_size: int | None = None,
         reshuffle_subsets: bool = False,
     ) -> Dataset:
@@ -225,6 +228,7 @@ class DatasetHelpers:
         :param project_id: ID of the project
         :param task_node: Task node for which the dataset is fetched
         :param dataset_storage: DatasetStorage containing the dataset items
+        :param training_configuration: Training configuration containing dataset preparation parameters
         :param max_training_dataset_size: maximum training dataset size
         :param reshuffle_subsets: Whether to reassign/shuffle all the items to subsets including Test set from scratch
         :return: A copy of the current dataset, split into subsets.
@@ -253,6 +257,7 @@ class DatasetHelpers:
         TaskSubsetManager.split(
             dataset_items=iter(training_dataset_items),
             task_node=task_node,
+            subset_split_config=training_configuration.global_parameters.dataset_preparation.subset_split,
             subsets_to_reset=subsets_to_reset,
         )
         task_dataset_entity.save_subsets(dataset=dataset, dataset_storage_identifier=dataset_storage.identifier)
@@ -284,6 +289,37 @@ class DatasetHelpers:
             label_schema_id=task_label_schema.id_,
             id=DatasetRepo.generate_id(),
         )
+
+        # Apply annotation filters to the training dataset
+        filtering_params = training_configuration.global_parameters.dataset_preparation.filtering
+        min_annotation_size = (
+            filtering_params.min_annotation_pixels.min_annotation_pixels
+            if filtering_params.min_annotation_pixels and filtering_params.min_annotation_pixels.enable
+            else None
+        )
+        max_annotation_size = (
+            filtering_params.max_annotation_pixels.max_annotation_pixels
+            if filtering_params.max_annotation_pixels and filtering_params.max_annotation_pixels.enable
+            else None
+        )
+        min_annotation_objects = (
+            filtering_params.min_annotation_objects.min_annotation_objects
+            if filtering_params.min_annotation_objects and filtering_params.min_annotation_objects.enable
+            else None
+        )
+        max_annotation_objects = (
+            filtering_params.max_annotation_objects.max_annotation_objects
+            if filtering_params.max_annotation_objects and filtering_params.max_annotation_objects.enable
+            else None
+        )
+        AnnotationFilter.apply_annotation_filters(
+            dataset=new_training_dataset,
+            min_number_of_annotations=min_annotation_objects,
+            max_number_of_annotations=max_annotation_objects,
+            min_annotation_size=min_annotation_size,
+            max_annotation_size=max_annotation_size,
+        )
+
         dataset_repo = DatasetRepo(dataset_storage.identifier)
         dataset_repo.save_deep(new_training_dataset)
         return new_training_dataset

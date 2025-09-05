@@ -28,12 +28,7 @@ interface TaskChainProviderProps {
     defaultLabel: Label | null;
 }
 
-export const TaskChainProvider = ({
-    children,
-    tasks,
-    selectedTask,
-    defaultLabel,
-}: TaskChainProviderProps): JSX.Element => {
+export const TaskChainProvider = ({ children, tasks, selectedTask, defaultLabel }: TaskChainProviderProps) => {
     const parentScene = useAnnotationScene();
     const scene = useEnhanceScene(parentScene, tasks, selectedTask, defaultLabel);
     const { inputs, outputs } = useMemo(

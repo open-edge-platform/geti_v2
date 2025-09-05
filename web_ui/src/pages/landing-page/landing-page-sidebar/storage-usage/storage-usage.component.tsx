@@ -17,7 +17,7 @@ import { getFileSize } from '../../../../shared/utils';
 
 import classes from './storage-usage.module.scss';
 
-export const StorageUsage = (): JSX.Element => {
+export const StorageUsage = () => {
     const { data: status } = useStatus();
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
 

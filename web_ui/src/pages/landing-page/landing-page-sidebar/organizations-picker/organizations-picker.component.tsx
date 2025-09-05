@@ -5,13 +5,11 @@ import { useRef } from 'react';
 
 import { getErrorMessage } from '@geti/core/src/services/utils';
 import { useOnboardUserMutation } from '@geti/core/src/users/hook/use-onboard-user-mutation.hook';
-import { CustomPopover, dimensionValue, Flex, Item, ListBox, PhotoPlaceholder, Picker, View } from '@geti/ui';
+import { CustomPopover, dimensionValue, Flex, Item, ListBox, PhotoPlaceholder, Picker, toast, View } from '@geti/ui';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { isNil } from 'lodash-es';
 
 import { useSelectedOrganization } from '../../../../core/organizations/hook/use-selected-organization.hook';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import {
     isInvitedOrganization,
     isOrganizationVisible,
@@ -24,9 +22,9 @@ interface OrganizationsPickerProps {
     isLargeSize: boolean;
 }
 
-export const OrganizationsPicker = ({ isLargeSize }: OrganizationsPickerProps): JSX.Element => {
+export const OrganizationsPicker = ({ isLargeSize }: OrganizationsPickerProps) => {
     const triggerRef = useRef(null);
-    const { addNotification } = useNotification();
+
     const onboardUserMutation = useOnboardUserMutation();
     const organizationsPopoverState = useOverlayTriggerState({});
     const { selectedOrganization, organizations, isLoading, setSelectedOrganization, hasMultipleOrganizations } =
@@ -41,7 +39,7 @@ export const OrganizationsPicker = ({ isLargeSize }: OrganizationsPickerProps): 
             { organizationId, userConsentIsGiven: true },
             {
                 onError: (error) => {
-                    addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                    toast({ message: getErrorMessage(error), type: 'error' });
                 },
                 onSuccess: () => {
                     setSelectedOrganization(organizationId);

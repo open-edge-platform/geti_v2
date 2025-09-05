@@ -17,12 +17,12 @@ export const GrabcutTool: ToolProps = {
     type: ToolType.GrabcutTool,
     label: ToolLabel.GrabcutTool,
     StateProvider: GrabcutStateProvider,
-    supportedDomains: [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE, DOMAIN.ANOMALY_SEGMENTATION],
+    supportedDomains: [DOMAIN.SEGMENTATION, DOMAIN.SEGMENTATION_INSTANCE],
     tooltip: {
         img: QuickSelectionImg,
         url: 'docs/user-guide/geti-fundamentals/annotations/annotation-tools#object-selection-tool',
         title: toolTypeToLabelMapping[ToolType.GrabcutTool],
-        description: `Simply draw a rectangle around the object and Intel® Geti™ will fit a 
+        description: `Simply draw a rectangle around the object and Geti™ will fit a
             polygon to the shape of the object.`,
     },
     Icon: () => <QuickSelection />,

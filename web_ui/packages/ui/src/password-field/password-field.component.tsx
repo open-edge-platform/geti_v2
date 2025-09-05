@@ -21,7 +21,7 @@ interface PasswordFieldProps extends Omit<TextFieldProps, 'label'> {
     label?: string;
 }
 
-export const PasswordField = (props: PasswordFieldProps): JSX.Element => {
+export const PasswordField = (props: PasswordFieldProps) => {
     const { isNewPassword, error, label } = props;
     const [showPassword, setShowPassword] = useState<boolean>(false);
 

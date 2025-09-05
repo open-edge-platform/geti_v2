@@ -16,7 +16,7 @@ interface CustomTooltipLineChartProps {
     formatter: (value: number) => number;
 }
 
-export const CustomTooltipLineChart = (props: CustomTooltipLineChartProps): JSX.Element => {
+export const CustomTooltipLineChart = (props: CustomTooltipLineChartProps) => {
     const { payload, active, xLabel, yLabel, formatter } = props;
 
     return payload && payload.length && active ? (

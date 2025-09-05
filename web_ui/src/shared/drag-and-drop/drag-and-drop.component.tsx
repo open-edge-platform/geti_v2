@@ -2,7 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { DropZone as SpectrumDropZone, type SpectrumDropZoneProps as DropZoneProps } from '@geti/ui';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { GetElementType } from '../../types-utils/types';
 

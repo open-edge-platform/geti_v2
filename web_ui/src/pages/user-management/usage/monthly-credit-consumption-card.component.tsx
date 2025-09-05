@@ -14,7 +14,7 @@ import { useFirstWorkspaceIdentifier } from '../../../providers/workspaces-provi
 import { pluralize } from '../../../shared/utils';
 import { TextWithLabel } from './text-with-label/text-with-label.component';
 
-export const MonthlyCreditConsumptionCard = (props: StyleProps): JSX.Element => {
+export const MonthlyCreditConsumptionCard = (props: StyleProps) => {
     const { useGetTransactionsAggregates } = useTransactionsQueries();
     const { organizationId, workspaceId } = useFirstWorkspaceIdentifier();
     const { data } = useGetTransactionsAggregates(

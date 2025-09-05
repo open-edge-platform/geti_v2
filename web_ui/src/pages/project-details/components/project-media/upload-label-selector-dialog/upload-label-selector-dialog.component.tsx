@@ -34,7 +34,7 @@ export const UploadLabelSelectorDialog = ({
     onSkipAction,
     onCancelUpload,
     onPrimaryAction,
-}: UploadLabelSelectorDialogProps): JSX.Element => {
+}: UploadLabelSelectorDialogProps) => {
     const filteredTask = tasks.filter(isNotCropTask);
     const labels = filteredTask.flatMap(({ labels: taskLabels }) => taskLabels);
     const [selectedLabels, setSelectedLabels] = useState<ReadonlyArray<Label>>([]);

@@ -10,7 +10,7 @@ interface ProgressBarProps extends SpectrumProgressBarProps {
     animationTime?: number;
 }
 
-export const ProgressBar = (props: ProgressBarProps): JSX.Element => {
+export const ProgressBar = (props: ProgressBarProps) => {
     const { value, animationTime = 100 } = props;
     const [animatedValue, setAnimatedValue] = useState<number>(0);
 

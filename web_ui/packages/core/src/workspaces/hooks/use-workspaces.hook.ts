@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { toast } from '@geti/ui';
 import {
     useMutation,
     UseMutationResult,
@@ -10,11 +11,10 @@ import {
 } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { NOTIFICATION_TYPE } from '../../../../../src/notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../src/notification/notification.component';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
 import { getErrorMessage } from '../../services/utils';
+import { useUsers } from '../../users/hook/use-users.hook';
 import { WorkspaceEntity } from '../services/workspaces.interface';
 
 interface UseWorkspacesApi {
@@ -28,7 +28,6 @@ export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
     const { workspacesService } = useApplicationServices();
 
     const queryClient = useQueryClient();
-    const { addNotification } = useNotification();
 
     const useWorkspacesQuery: UseWorkspacesApi['useWorkspacesQuery'] = () => {
         return useSuspenseQuery<WorkspaceEntity[], AxiosError>({
@@ -40,15 +39,19 @@ export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
     };
 
     const useCreateWorkspaceMutation: UseWorkspacesApi['useCreateWorkspaceMutation'] = () => {
+        const { useActiveUser } = useUsers();
+        const activeUserQuery = useActiveUser(organizationId);
+        const activeUserId = activeUserQuery.data?.id;
+
         return useMutation({
             mutationFn: async ({ name }) => {
-                return workspacesService.createWorkspace(organizationId, name);
+                return workspacesService.createWorkspace(organizationId, name, activeUserId);
             },
             onSuccess: async () => {
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.WORKSPACES(organizationId) });
             },
             onError: (error) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
     };
@@ -62,7 +65,7 @@ export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.WORKSPACES(organizationId) });
             },
             onError: (error) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
     };
@@ -76,7 +79,7 @@ export const useWorkspacesApi = (organizationId: string): UseWorkspacesApi => {
                 await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.WORKSPACES(organizationId) });
             },
             onError: (error) => {
-                addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+                toast({ message: getErrorMessage(error), type: 'error' });
             },
         });
     };

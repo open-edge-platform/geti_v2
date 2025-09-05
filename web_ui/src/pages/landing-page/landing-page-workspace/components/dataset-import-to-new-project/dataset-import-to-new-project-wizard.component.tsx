@@ -20,7 +20,7 @@ interface DatasetImportToNewProjectWizardProps {
 export const DatasetImportToNewProjectWizard = ({
     datasetImportItem: uploadItem,
     patchDatasetImport,
-}: DatasetImportToNewProjectWizardProps): JSX.Element => {
+}: DatasetImportToNewProjectWizardProps) => {
     const isCompleted = useCallback(
         (step: string): boolean => {
             if (!uploadItem) return false;
@@ -71,7 +71,7 @@ export const DatasetImportToNewProjectWizard = ({
     );
 
     const getStepNumber = useCallback(
-        (step: string, idx: number): JSX.Element => {
+        (step: string, idx: number) => {
             if (!uploadItem) return <Text UNSAFE_className={getStepNumberClass(step, idx)}>{idx + 1}</Text>;
 
             if (isCompleted(step)) {

@@ -1,0 +1,268 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "etcd.fullname" . }}
+spec:
+  ##
+  ## The service name is being set to leverage the service headlessly.
+  ## https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+  serviceName: {{ include "etcd.fullname" . }}-headless
+  ##
+  ## If you are increasing the replica count of an existing cluster, you should
+  ## also update the --initial-cluster-state flag as noted further down in the
+  ## container configuration.
+  replicas: {{ .Values.replicaCount }}
+  ##
+  ## For initialization, the etcd pods must be available to eachother before
+  ## they are "ready" for traffic. The "Parallel" policy makes this possible.
+  podManagementPolicy: Parallel
+  ##
+  ## To ensure availability of the etcd cluster, the rolling update strategy
+  ## is used. For availability, there must be at least 51% of the etcd nodes
+  ## online at any given time.
+  updateStrategy:
+    type: RollingUpdate
+  ##
+  ## This is label query over pods that should match the replica count.
+  ## It must match the pod template's labels. For more information, see the
+  ## following documentation:
+  ##   https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors
+  selector:
+    matchLabels:
+      {{- include "etcd.selectorLabels" . | nindent 6 }}
+  ##
+  ## Pod configuration template.
+  template:
+    metadata:
+      ##
+      ## The labeling here is tied to the "matchLabels" of this StatefulSet
+      ##
+      ## This example's labeling scheme is fine for one etcd cluster per
+      ## namespace, but should you desire multiple clusters per namespace, you
+      ## will need to update the labeling schema to be unique per etcd cluster.
+      labels:
+        {{- include "etcd.labels" . | nindent 8 }}
+      annotations:
+        ##
+        ## This gets referenced in the etcd container's configuration as part of
+        ## the DNS name. It must match the service name created for the etcd
+        ## cluster. The choice to place it in an annotation instead of the env
+        ## settings is because there should only be 1 service per etcd cluster.
+        serviceName: {{ include "etcd.fullname" . }}-headless
+    spec:
+      serviceAccountName: {{ include "etcd.fullname" . }}
+      ##
+      ## Containers in the pod
+      containers:
+      ## This example only has this etcd container.
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.registry }}/{{ if .Values.image.repository }}{{ .Values.image.repository }}/{{ end }}{{ .Values.image.name }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        ports:
+        - name: etcd-client
+          containerPort: {{ .Values.service.port.client }}
+        - name: etcd-server
+          containerPort: {{ .Values.service.port.server }}
+        - name: etcd-metrics
+          containerPort: {{ .Values.service.port.metrics }}
+        ##
+        ## These probes will fail over TLS for self-signed certificates, so etcd
+        ## is configured to deliver metrics over port 8080 further down.
+        ##
+        ## As mentioned in the "Monitoring etcd" page, /readyz and /livez were
+        ## added in v3.5.12. Prior to this, monitoring required extra tooling
+        ## inside the container to make these probes work.
+        ##
+        ## The values in this readiness probe should be further validated, it
+        ## is only an example configuration.
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 30
+        ## The values in this liveness probe should be further validated, it
+        ## is only an example configuration.
+        livenessProbe:
+          httpGet:
+            path: /livez
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        env:
+        ##
+        ## Environment variables defined here can be used by other parts of the
+        ## container configuration. They are interpreted by Kubernetes, instead
+        ## of in the container environment.
+        ##
+        ## These env vars pass along information about the pod.
+        - name: K8S_NAMESPACE
+          valueFrom:
+            fieldRef:
+             fieldPath: metadata.namespace
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+             fieldPath: metadata.name
+        - name: SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['serviceName']
+        ##
+        ## Configuring etcdctl inside the container to connect to the etcd node
+        ## in the container reduces confusion when debugging.
+        - name: ETCDCTL_ENDPOINTS
+          value: $(HOSTNAME).$(SERVICE_NAME):"{{ .Values.service.port.client }}"
+        ##
+        ## TLS client configuration for etcdctl in the container.
+        ## These files paths are part of the "etcd-client-certs" volume mount.
+        # - name: ETCDCTL_KEY
+        #   value: /etc/etcd/certs/client/tls.key
+        # - name: ETCDCTL_CERT
+        #   value: /etc/etcd/certs/client/tls.crt
+        # - name: ETCDCTL_CACERT
+        #   value: /etc/etcd/certs/client/ca.crt
+        ##
+        ## Use this URI_SCHEME value for non-TLS clusters.
+        - name: URI_SCHEME
+          value: "http"
+        ## TLS: Use this URI_SCHEME for TLS clusters.
+        # - name: URI_SCHEME
+        # value: "https"
+        ##
+        ## This must be set to "new" for initial cluster bootstrapping. To scale
+        ## the cluster up, this should be changed to "existing" when the replica
+        ## count is increased. If set incorrectly, etcd makes an attempt to
+        ## start but fail safely.
+        - name: ETCD_INITIAL_CLUSTER_STATE
+          value: "new"
+        {{- if .Values.maxProcs }}
+        - name: GOMAXPROCS
+          value: "{{ .Values.maxProcs }}"
+        {{- end }}
+        {{- if .Values.auth.token.enabled }}
+        - name: ETCD_AUTH_TOKEN
+          {{- if eq .Values.auth.token.type "jwt" }}
+          value: {{ printf "jwt,priv-key=/opt/etcd/certs/token/%s,sign-method=%s,ttl=%s" .Values.auth.token.privateKey .Values.auth.token.signMethod .Values.auth.token.ttl | quote }}
+          {{- else if eq .Values.auth.token.type "simple" }}
+          value: "simple"
+          {{- end }}
+        {{- end }}
+        ##
+        ## If you're using a different container, the executable may be in a
+        ## different location. This example uses the full path to help remove
+        ## ambiguity to you, the reader.
+        ## Often you can just use "etcd" instead of "/usr/local/bin/etcd" and it
+        ## will work because the $PATH includes a directory containing "etcd".
+        command:
+        - /usr/local/bin/etcd
+        ##
+        ## Arguments used with the etcd command inside the container.
+        args:
+        ##
+        ## Configure the name of the etcd server.
+        - --name=$(HOSTNAME)
+        ##
+        ## Configure etcd to use the persistent storage configured below.
+        - --data-dir={{ .Values.dataDir }}
+        ##
+        ## In this example we're consolidating the WAL into sharing space with
+        ## the data directory. This is not ideal in production environments and
+        ## should be placed in its own volume.
+        - --wal-dir={{ .Values.dataDir }}/wal
+        ##
+        ## URL configurations are parameterized here, and you shouldn't need to
+        ## do anything with these.
+        - --listen-peer-urls=$(URI_SCHEME)://0.0.0.0:2380
+        - --listen-client-urls=$(URI_SCHEME)://0.0.0.0:2379
+        - --advertise-client-urls=$(URI_SCHEME)://$(HOSTNAME).$(SERVICE_NAME):2379
+        ##
+        ## Token used for cluster initialization. The recommendation for this is
+        ## to use a unique token for every cluster. This example parameterized
+        ## to be unique to the namespace, but if you are deploying multiple etcd
+        ## clusters in the same namespace, you should do something extra to
+        ## ensure uniqueness amongst clusters.
+        - --initial-cluster-token=etcd-$(K8S_NAMESPACE)
+        ##
+        ## The initial cluster flag needs to be updated to match the number of
+        ## replicas configured. When combined, these are a little hard to read.
+        ## Here is what a single parameterized peer looks like:
+        ##   etcd-0=$(URI_SCHEME)://etcd-0.$(SERVICE_NAME):2380
+        - --initial-cluster=$(HOSTNAME)=$(URI_SCHEME)://$(HOSTNAME).$(SERVICE_NAME):2380
+        ##
+        ## The peer urls flag should be fine as-is.
+        - --initial-advertise-peer-urls=$(URI_SCHEME)://$(HOSTNAME).$(SERVICE_NAME):2380
+        ##
+        ## This avoids probe failure if you opt to configure TLS.
+        - --listen-metrics-urls=http://0.0.0.0:8080
+        - --log-level={{ .Values.logLevel }}
+        ##
+        ## These are some configurations you may want to consider enabling, but
+        ## should look into further to identify what settings are best for you.
+        # - --auto-compaction-mode=periodic
+        # - --auto-compaction-retention=10m
+        ##
+        ## TLS client configuration for etcd, reusing the etcdctl env vars.
+        # - --client-cert-auth
+        # - --trusted-ca-file=$(ETCDCTL_CACERT)
+        # - --cert-file=$(ETCDCTL_CERT)
+        # - --key-file=$(ETCDCTL_KEY)
+        ##
+        ## TLS server configuration for etcdctl in the container.
+        ## These files paths are part of the "etcd-server-certs" volume mount.
+        # - --peer-client-cert-auth
+        # - --peer-trusted-ca-file=/etc/etcd/certs/server/ca.crt
+        # - --peer-cert-file=/etc/etcd/certs/server/tls.crt
+        # - --peer-key-file=/etc/etcd/certs/server/tls.key
+        ##
+        ## This is the mount configuration.
+        volumeMounts:
+        - name: etcd-data
+          mountPath: {{ .Values.dataDir }}
+        {{- if and (eq .Values.auth.token.enabled true) (eq .Values.auth.token.type "jwt") }}
+        - name: etcd-jwt-token
+          mountPath: /opt/etcd/certs/token/
+          readOnly: true
+        {{- end }}
+        ##
+        ## TLS client configuration for etcdctl
+        # - name: etcd-client-tls
+        #   mountPath: "/etc/etcd/certs/client"
+        #   readOnly: true
+        ##
+        ## TLS server configuration
+        # - name: etcd-server-tls
+        #   mountPath: "/etc/etcd/certs/server"
+        #   readOnly: true
+      volumes:
+        - name: etcd-data
+          emptyDir: {}
+      {{- if and (eq .Values.auth.token.enabled true) (eq .Values.auth.token.type "jwt") }}
+        - name: etcd-jwt-token
+          secret:
+            secretName: {{ include "etcd.fullname" . }}-jwt-token
+            defaultMode: 292
+      {{- end }}
+      ##
+      ## TLS client configuration
+      # - name: etcd-client-tls
+      #   secret:
+      #     secretName: etcd-client-tls
+      #     optional: false
+      ##
+      ## TLS server configuration
+      # - name: etcd-server-tls
+      #   secret:
+      #     secretName: etcd-server-tls
+      #     optional: false

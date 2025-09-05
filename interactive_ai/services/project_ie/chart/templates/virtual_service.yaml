@@ -35,7 +35,7 @@ spec:
 {{ .Values.global.security_headers | indent 10 }}
         remove:
 {{ .Values.global.stripped_headers | indent 8 }}
-    timeout: 900s
+    timeout: 14400s
     route:
     - destination:
         host: {{ $svc_name }}.{{ .Release.Namespace }}.svc.cluster.local

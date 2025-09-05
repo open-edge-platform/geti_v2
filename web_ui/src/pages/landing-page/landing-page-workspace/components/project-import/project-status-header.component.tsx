@@ -15,7 +15,7 @@ interface ProjectStatusHeaderProps {
     menuActions?: ReactNode;
 }
 
-export const ProjectStatusHeader = ({ fileName, fileSize, menuActions }: ProjectStatusHeaderProps): JSX.Element => {
+export const ProjectStatusHeader = ({ fileName, fileSize, menuActions }: ProjectStatusHeaderProps) => {
     return (
         <>
             <Flex>

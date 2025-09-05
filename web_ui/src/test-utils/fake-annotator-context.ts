@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 
 import { Annotation, RegionOfInterest } from '../core/annotations/annotation.interface';
 import { Label } from '../core/labels/label.interface';
@@ -30,7 +30,7 @@ interface Props {
     mode?: ANNOTATOR_MODE;
     tasks?: Task[];
     selectedTask?: Task | null;
-    hasShapePointSelected?: MutableRefObject<boolean>;
+    hasShapePointSelected?: RefObject<boolean>;
     toolsSettings?: Partial<AnnotationToolContext['getToolSettings']>;
     getToolSettings?: AnnotationToolContext['getToolSettings'];
     updateToolSettings?: AnnotationToolContext['updateToolSettings'];

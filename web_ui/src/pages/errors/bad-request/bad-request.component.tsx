@@ -16,7 +16,7 @@ interface BadRequestProps {
     onReset: () => void;
 }
 
-export const BadRequest: FC<BadRequestProps> = ({ onReset }): JSX.Element => {
+export const BadRequest: FC<BadRequestProps> = ({ onReset }) => {
     return (
         <>
             <LinkExpiredImage aria-label={'Bad request'} />

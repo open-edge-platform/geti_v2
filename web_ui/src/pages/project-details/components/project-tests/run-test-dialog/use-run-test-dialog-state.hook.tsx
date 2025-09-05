@@ -5,7 +5,7 @@ import { Key, useEffect, useMemo, useState } from 'react';
 
 import { paths } from '@geti/core';
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
-import { ActionButton } from '@geti/ui';
+import { ActionButton, toast } from '@geti/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { isEmpty, noop } from 'lodash-es';
 import { useNavigate } from 'react-router-dom';
@@ -17,8 +17,6 @@ import { JobInfoStatus } from '../../../../../core/tests/dtos/tests.interface';
 import { useTests } from '../../../../../core/tests/hooks/use-tests.hook';
 import { MetricType, Test } from '../../../../../core/tests/tests.interface';
 import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
-import { NOTIFICATION_TYPE } from '../../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../../notification/notification.component';
 import { getUniqueNameFromArray, hasEqualId, isNotCropTask } from '../../../../../shared/utils';
 import { SelectableOptimizationType } from '../../../project-details.interface';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
@@ -57,7 +55,6 @@ export const useRunTestDialogState = ({ handleClose, preselectedModel, modelsGro
     const { useProjectModelQuery } = useModels();
     const { data: tests } = useTestsListQuery({ workspaceId, projectId, organizationId });
     const runTestMutation = useRunTestMutation();
-    const { addNotification } = useNotification();
 
     const testNames = useMemo(() => tests?.map((test) => test.testName) ?? [], [tests]);
 
@@ -129,8 +126,7 @@ export const useRunTestDialogState = ({ handleClose, preselectedModel, modelsGro
 
     const [selectedMetric, setSelectedMetric] = useState<MetricType | null>(null);
 
-    const shouldShowMetricPicker =
-        project.domains.includes(DOMAIN.ANOMALY_DETECTION) || project.domains.includes(DOMAIN.ANOMALY_SEGMENTATION);
+    const shouldShowMetricPicker = project.domains.includes(DOMAIN.ANOMALY_DETECTION);
 
     const isRunTestDisabled =
         Boolean(errorInTestName) ||
@@ -232,9 +228,9 @@ export const useRunTestDialogState = ({ handleClose, preselectedModel, modelsGro
                     onSuccess: async (_, { projectIdentifier }) => {
                         await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TESTS(projectIdentifier) });
 
-                        addNotification({
+                        toast({
                             message: 'Test has started',
-                            type: NOTIFICATION_TYPE.INFO,
+                            type: 'info',
                             actionButtons: [
                                 <TestButton
                                     key='see-progress-button'

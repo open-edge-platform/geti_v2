@@ -8,7 +8,7 @@ import { ActionButton, Loading, Text } from '@geti/ui';
 import { Delete } from '@geti/ui/icons';
 import { UseMutationResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { Job } from '../../../../core/jobs/jobs.interface';
 import { isJobTrain } from '../../../../core/jobs/utils';
@@ -38,12 +38,7 @@ const ButtonIcon = ({ isLoading, isCancel }: { isLoading: boolean; isCancel: boo
     return <Delete aria-label={'Delete job'} />;
 };
 
-export const JobsDiscardAction = ({
-    job,
-    discardType,
-    useDeleteJob,
-    useCancelJob,
-}: JobsDiscardActionProps): JSX.Element => {
+export const JobsDiscardAction = ({ job, discardType, useDeleteJob, useCancelJob }: JobsDiscardActionProps) => {
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
 
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);

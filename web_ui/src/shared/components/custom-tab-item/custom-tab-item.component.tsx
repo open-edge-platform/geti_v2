@@ -16,7 +16,7 @@ export interface CustomTabItemProps {
     isMoreIconVisible: boolean;
 }
 
-export const CustomTabItem = ({ name, isMoreIconVisible }: CustomTabItemProps): JSX.Element => {
+export const CustomTabItem = ({ name, isMoreIconVisible }: CustomTabItemProps) => {
     return (
         <Flex
             alignItems={'center'}

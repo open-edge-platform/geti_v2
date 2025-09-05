@@ -27,7 +27,7 @@ export const MediaFilterValueAnnotationSceneState = ({
     isTaskChainProject,
     onSelectionChange,
     isMultiselection = false,
-}: MediaFilterValueAnnotationSceneStateProps): JSX.Element => {
+}: MediaFilterValueAnnotationSceneStateProps) => {
     const options = useMemo(() => {
         if (isAnomalyProject) {
             return ANNOTATION_SCENE_OPTIONS.filter(({ key }) => anomalyItems.includes(key));

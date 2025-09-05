@@ -14,12 +14,7 @@ interface WorkspacesRoleCellProps extends Omit<TableCellProps, 'cellData'> {
     cellData: Role[];
 }
 
-export const WorkspacesRoleCell = ({
-    cellData,
-    workspaceId,
-    workspaces,
-    ...rest
-}: WorkspacesRoleCellProps): JSX.Element => {
+export const WorkspacesRoleCell = ({ cellData, workspaceId, workspaces, ...rest }: WorkspacesRoleCellProps) => {
     const workspaceRoles = cellData.filter((role) => role.resourceType === RESOURCE_TYPE.WORKSPACE);
 
     const selectedWorkspaceRoles = capitalize(workspaceRoles.find((role) => role.resourceId === workspaceId)?.role);

@@ -339,7 +339,7 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
                 await goToAnnotatorInActiveMode(page);
 
                 await startTaskTraining(page);
-                await page.getByRole('button', { name: /start/i }).click();
+                await page.getByRole('button', { name: 'Start', exact: true }).click();
 
                 registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(getScheduledTrainingJob())));
                 await expect(page.getByText(manualTrainingCreditSystemToastNotificationRegex)).toBeHidden();
@@ -650,7 +650,7 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
                 await goToAnnotatorInActiveMode(page);
 
                 await startTaskTraining(page);
-                await page.getByRole('button', { name: /start/i }).click();
+                await page.getByRole('button', { name: 'Start', exact: true }).click();
 
                 registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(getScheduledTrainingJob())));
                 await expect(page.getByText(manualTrainingCreditSystemToastNotificationRegex)).toBeHidden();
@@ -692,14 +692,13 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
 
                 await expect(page.getByRole('heading', { name: autoTrainingCreditSystemModalRegex })).toBeVisible();
 
-                await page.getByRole('button', { name: 'Dismiss' }).click();
+                await page.getByRole('button', { name: 'Dismiss', exact: true }).click();
 
                 await expect(
                     page.getByTestId('popover').filter({ hasText: autoTrainingCreditSystemNotificationRegex })
                 ).toBeVisible();
 
-                // first click closes the "The auto-training job has ..." notification that is popover
-                await page.getByTestId('annotatorActiveSet-more-btn-id').click();
+                await page.mouse.click(0, 0);
 
                 await page.getByTestId('annotatorActiveSet-more-btn-id').click();
                 await page.getByRole('menuitem', { name: 'Dismiss all' }).click();
@@ -759,9 +758,9 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
                     registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(getScheduledAutoTrainingCostJob([]))));
 
                     await expect(page.getByRole('heading', { name: autoTrainingCreditSystemModalRegex })).toBeVisible();
-                    await expect(page.getByRole('button', { name: 'Dismiss' })).toBeEnabled();
+                    await expect(page.getByRole('button', { name: 'Dismiss', exact: true })).toBeEnabled();
 
-                    await page.getByRole('button', { name: 'Dismiss' }).click();
+                    await page.getByRole('button', { name: 'Dismiss', exact: true }).click();
 
                     await expect(page.getByRole('heading', { name: autoTrainingCreditSystemModalRegex })).toBeHidden();
                     await expect(page.getByText(autoTrainingCreditSystemNotificationRegex)).toBeVisible();
@@ -853,7 +852,7 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
 
                     await expect(page.getByText(autoTrainingCreditSystemModalRegex)).toBeVisible();
 
-                    await page.getByRole('button', { name: /dismiss/i }).click();
+                    await page.getByRole('button', { name: 'Dismiss', exact: true }).click();
                     await page.reload();
 
                     await expect(page.getByText(autoTrainingCreditSystemModalRegex)).toBeHidden();
@@ -967,14 +966,13 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
 
             await expect(page.getByRole('heading', { name: autoTrainingCreditSystemModalRegex })).toBeVisible();
 
-            await page.getByRole('button', { name: 'Dismiss' }).click();
+            await page.getByRole('button', { name: 'Dismiss', exact: true }).click();
 
             await expect(
                 page.getByTestId('popover').filter({ hasText: autoTrainingCreditSystemNotificationRegex })
             ).toBeVisible();
 
-            // first click closes the "The auto-training job has ..." notification that is popover
-            await page.getByTestId('annotatorActiveSet-more-btn-id').click();
+            await page.mouse.click(0, 0);
 
             await page.getByTestId('annotatorActiveSet-more-btn-id').click();
             await page.getByRole('menuitem', { name: 'Dismiss all' }).click();
@@ -1034,9 +1032,9 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
                 registerApiResponse('GetJobs', (_, res, ctx) => res(ctx.json(getScheduledAutoTrainingCostJob([]))));
 
                 await expect(page.getByRole('heading', { name: autoTrainingCreditSystemModalRegex })).toBeVisible();
-                await expect(page.getByRole('button', { name: 'Dismiss' })).toBeEnabled();
+                await expect(page.getByRole('button', { name: 'Dismiss', exact: true })).toBeEnabled();
 
-                await page.getByRole('button', { name: 'Dismiss' }).click();
+                await page.getByRole('button', { name: 'Dismiss', exact: true }).click();
 
                 await expect(page.getByRole('heading', { name: autoTrainingCreditSystemModalRegex })).toBeHidden();
                 await expect(page.getByText(autoTrainingCreditSystemNotificationRegex)).toBeVisible();
@@ -1124,7 +1122,7 @@ test.describe('Check FUX notifications in Annotator related to training', () => 
 
                 await expect(page.getByText(autoTrainingCreditSystemModalRegex)).toBeVisible();
 
-                await page.getByRole('button', { name: /dismiss/i }).click();
+                await page.getByRole('button', { name: 'Dismiss', exact: true }).click();
                 await page.reload();
 
                 await expect(page.getByText(autoTrainingCreditSystemModalRegex)).toBeHidden();

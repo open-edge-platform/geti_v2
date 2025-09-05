@@ -94,6 +94,7 @@ export {
     type Key,
     type DimensionValue,
     type SpectrumRangeCalendarProps,
+    type CellProps,
 } from '@adobe/react-spectrum';
 
 export { dimensionValue, useStyleProps, useUnwrapDOMRef, useMediaQuery } from '@react-spectrum/utils';
@@ -149,6 +150,10 @@ export { VirtualizedHorizontalGrid } from './src/virtualized-horizontal-grid/vir
 export { ToggleButtons } from './src/toggle-buttons/toggle-buttons.component';
 export { PhotoPlaceholder } from './src/photo-placeholder/photo-placeholder.component';
 export { FullscreenAction } from './src/fullscreen-action/fullscreen-action.component';
+export { MediaViewModes } from './src/view-modes/media-view-modes.component';
+export { ViewModes, INITIAL_VIEW_MODE, VIEW_MODE_LABEL } from './src/view-modes/utils';
+export { useViewMode } from './src/view-modes/use-view-mode.hook';
+export { Toast, toast, removeToasts, removeToast } from './src/toast/toast.component';
 
 export {
     ListBox as AriaComponentsListBox,

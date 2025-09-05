@@ -37,12 +37,7 @@ interface GroupCreationProps {
     parentLabelId: string | null;
 }
 
-export const GroupCreation = ({
-    flatProjectItems,
-    save,
-    parentGroupName,
-    parentLabelId,
-}: GroupCreationProps): JSX.Element => {
+export const GroupCreation = ({ flatProjectItems, save, parentGroupName, parentLabelId }: GroupCreationProps) => {
     const DEFAULT_ERROR = '';
     const [error, setError] = useState<string>(DEFAULT_ERROR);
     const [isDirty, setDirty] = useState<{ name: boolean; mode: boolean }>({ name: false, mode: false });

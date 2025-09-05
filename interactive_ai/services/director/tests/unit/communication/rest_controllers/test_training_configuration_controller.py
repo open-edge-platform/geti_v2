@@ -249,7 +249,7 @@ class TestTrainingConfigurationController:
             )
 
         # Assert
-        updated_config = repo.get_task_only_configuration(
+        updated_config = repo.get_or_create_task_only_configuration(
             task_id=fxt_training_configuration_task_level.task_id,
         )
 

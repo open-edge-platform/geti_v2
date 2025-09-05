@@ -1,0 +1,33 @@
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: gzip
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  workloadSelector:
+    labels:
+      istio: gateway
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+        listener:
+          filterChain:
+            filter:
+              name: envoy.filters.network.http_connection_manager
+              subFilter:
+                name: envoy.filters.http.router
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: envoy.filters.http.compressor
+          typed_config:
+            '@type': type.googleapis.com/envoy.extensions.filters.http.compressor.v3.Compressor
+            compressor_library:
+              name: text_optimized
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.compression.gzip.compressor.v3.Gzip
+            remove_accept_encoding_header: true

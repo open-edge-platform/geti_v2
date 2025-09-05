@@ -8,7 +8,7 @@ import { Header } from './header.component';
 
 import classes from './layout.module.scss';
 
-export const Layout = (): JSX.Element => {
+export const Layout = () => {
     return (
         <Grid
             rows={{ base: ['size-1000', 'size-550', 'auto'], L: ['size-1000', 'size-700', 'auto'] }}

@@ -10,7 +10,7 @@ import { OrganizationSidebar } from './organization-sidebar.component';
 
 import classes from './organization.module.scss';
 
-export const OrganizationLayout = (): JSX.Element => {
+export const OrganizationLayout = () => {
     const { organization } = useOrganization();
 
     return (

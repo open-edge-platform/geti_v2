@@ -1,16 +1,16 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MutableRefObject, RefObject, useCallback } from 'react';
+import { RefObject, useCallback } from 'react';
 
 import { type DOMRefValue } from '@geti/ui';
 
 import { useEventListener } from '../event-listener/event-listener.hook';
 
 interface OutsideClickProps {
-    ref: MutableRefObject<HTMLElement | null>;
+    ref: RefObject<HTMLElement | null>;
     callback: (e: PointerEvent) => void;
-    element?: RefObject<Element>;
+    element?: RefObject<Element | null>;
 }
 
 export const useOutsideClick = ({ ref, callback, element }: OutsideClickProps): void => {

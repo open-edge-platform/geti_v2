@@ -15,7 +15,7 @@ interface DatasetItemDetailsMenuProps {
     isSelected: boolean;
 }
 
-export const DatasetItemGridMenu = ({ mediaItem, isSelected }: DatasetItemDetailsMenuProps): JSX.Element => {
+export const DatasetItemGridMenu = ({ mediaItem, isSelected }: DatasetItemDetailsMenuProps) => {
     const [isMenuOpened, setIsMenuOpened] = useState<boolean>(false);
 
     return (

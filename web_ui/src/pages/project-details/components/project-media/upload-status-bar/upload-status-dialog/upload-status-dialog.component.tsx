@@ -29,7 +29,7 @@ export const UploadStatusDialog = ({
     onUploadMedia,
     abortMediaUploads,
     isUploadInProgress,
-}: UploadStatusDialogProps): JSX.Element => {
+}: UploadStatusDialogProps) => {
     const navigate = useNavigate();
     const datasetIdentifier = useDatasetIdentifier();
     const { isSingleDomainProject } = useProject();

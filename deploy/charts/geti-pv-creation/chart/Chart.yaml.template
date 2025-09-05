@@ -1,6 +1,0 @@
-apiVersion: v2
-name: ${COMPONENT_NAME}
-type: application
-description: system volume based on local storage to create pv and pvc
-version: ${TAG}
-appVersion: ${TAG}

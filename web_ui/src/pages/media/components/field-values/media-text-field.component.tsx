@@ -24,7 +24,7 @@ export const MediaTextField = ({
     placeholder = '',
     onSelectionChange,
     ariaLabel,
-}: MediaTextFieldProps): JSX.Element => {
+}: MediaTextFieldProps) => {
     const [value, setValue] = useState(initVal);
 
     const isValid = useMemo(() => textRegex.test(value), [value]);

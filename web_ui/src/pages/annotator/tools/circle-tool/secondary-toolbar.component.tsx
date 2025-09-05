@@ -8,7 +8,7 @@ import { ToolAnnotationContextProps } from '../tools.interface';
 import { useCircleState } from './circle-state-provider.component';
 import { MIN_RADIUS } from './utils';
 
-export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { updateToolSettings } = annotationToolContext;
     const { setIsBrushSizePreviewVisible, circleRadiusSize, setCircleRadiusSize, maxCircleRadius } = useCircleState();
 

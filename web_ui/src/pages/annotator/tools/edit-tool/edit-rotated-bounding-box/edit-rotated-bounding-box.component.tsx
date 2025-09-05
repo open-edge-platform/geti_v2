@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
 import {
     calculateSizeAndPositionBasedOfCornerAnchor,
     calculateSizeAndPositionOfSideAnchor,
@@ -16,9 +17,8 @@ import { Annotation } from '../../../../../core/annotations/annotation.interface
 import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import { isShapeWithinRoi } from '../../utils';
-import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { ResizeAnchorType } from '../resize-anchor.enum';
 import { TranslateShape } from '../translate-shape.component';
 import { getSideAnchorLocations } from './location';
@@ -38,15 +38,13 @@ export const EditRotatedBoundingBox = ({
     annotation,
     disablePoints = false,
     disableTranslation = false,
-}: EditRotatedBoundingBoxProps): JSX.Element => {
+}: EditRotatedBoundingBoxProps) => {
     const [shape, setShape] = useState(annotation.shape);
 
     useEffect(() => setShape(annotation.shape), [annotation.shape]);
 
     const { scene } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
     const { roi, image } = useROI();
 
     const onComplete = () => {

@@ -49,7 +49,7 @@ enum CREDIT_ACCOUNTS_TABLE_COLUMNS {
     EXPIRES = 'expires',
 }
 
-const renderEmptyState = (): JSX.Element => (
+const renderEmptyState = () => (
     <>
         <Heading UNSAFE_style={{ textAlign: 'center' }}>No results</Heading>
         <Content>No credit accounts found</Content>

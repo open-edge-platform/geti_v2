@@ -17,11 +17,7 @@ interface DetailsDialogProps {
     requiredAnnotations: TaskRequiredAnnotations[];
 }
 
-export const DetailsDialog = ({
-    requiredAnnotations,
-    clientWidth,
-    isAutoTrainingOn,
-}: DetailsDialogProps): JSX.Element => {
+export const DetailsDialog = ({ requiredAnnotations, clientWidth, isAutoTrainingOn }: DetailsDialogProps) => {
     return (
         <Dialog width='100%' minWidth={clientWidth} UNSAFE_className={classes.dialog}>
             <Content UNSAFE_style={{ flex: 1 }}>

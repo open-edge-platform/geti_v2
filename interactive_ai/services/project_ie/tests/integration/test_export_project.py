@@ -50,6 +50,7 @@ class TestProjectExport:
                 "id": str(fxt_project.id_),
                 "name": fxt_project.name,
             },
+            "include_models": include_models,
         }
         mock_load_project.assert_called_once_with(fxt_project.id_)
         mock_submit_job.assert_called_once_with(

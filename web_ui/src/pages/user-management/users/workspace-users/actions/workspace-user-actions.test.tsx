@@ -19,14 +19,16 @@ const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier({ workspaceId: 'w
 const { workspaceId, organizationId } = mockedWorkspaceIdentifier;
 
 const mockedOrgAdminUser = getMockedOrganizationAdminUser({ id: 'user-admin-id' }, workspaceId, organizationId);
-const mockedOrgAdminUser2 = getMockedOrganizationAdminUser({ id: 'user-admin-2-id' }, workspaceId, organizationId);
 const mockedContributorUser = getMockedContributorUser({ id: 'contributor-user-1' }, workspaceId);
 const mockedContributorUser2 = getMockedContributorUser({ id: 'contributor-user-2' }, workspaceId);
-const mockedWorkspaceAdminUser = getMockedAdminUser({
-    firstName: 'Admin',
-    lastName: 'Second',
-    id: 'user-workspace-admin-id',
-});
+const mockedWorkspaceAdminUser = getMockedAdminUser(
+    {
+        firstName: 'Admin',
+        lastName: 'Second',
+        id: 'user-workspace-admin-id',
+    },
+    workspaceId
+);
 const mockedInvitedUser = getMockedUser({
     firstName: 'Jan',
     lastName: 'Kowalski',
@@ -76,12 +78,36 @@ describe('WorkspaceUserActions', () => {
                     activeUser={mockedContributorUser}
                     user={mockedWorkspaceAdminUser}
                     users={[mockedContributorUser, mockedWorkspaceAdminUser]}
+                    workspaceId={workspaceId}
                 />
             );
 
             expect(
-                screen.queryByRole('button', { name: `${mockedOrgAdminUser2.email} action menu` })
+                screen.queryByRole('button', { name: `${mockedWorkspaceAdminUser.email} action menu` })
             ).not.toBeInTheDocument();
+        });
+
+        it('Workspace admin org contributor can edit other workspace member', async () => {
+            const workspaceAdmin = mockedWorkspaceAdminUser;
+            const target = mockedContributorUser;
+            mockedUseActiveUser.mockImplementation(() => ({
+                data: workspaceAdmin,
+                isPending: false,
+            }));
+
+            await render(
+                <WorkspaceUserActions
+                    activeUser={workspaceAdmin}
+                    user={target}
+                    users={[workspaceAdmin, target]}
+                    workspaceId={workspaceId}
+                />
+            );
+
+            const actionsMenu = screen.getByRole('button', { name: `${target.email} action menu` });
+            expect(actionsMenu).toBeInTheDocument();
+            fireEvent.click(actionsMenu);
+            expect(screen.getByText('Edit')).toBeInTheDocument();
         });
 
         it('Workspace contributor can edit themselves (without role edition)', async () => {
@@ -98,7 +124,7 @@ describe('WorkspaceUserActions', () => {
                 />
             );
 
-            fireEvent.click(screen.getByRole('button', { name: `${mockedOrgAdminUser2.email} action menu` }));
+            fireEvent.click(screen.getByRole('button', { name: `${mockedContributorUser.email} action menu` }));
             expect(screen.getByText('Edit')).toBeInTheDocument();
         });
 

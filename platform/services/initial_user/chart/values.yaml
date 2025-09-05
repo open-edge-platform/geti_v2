@@ -26,14 +26,14 @@ global:
   docker_namespace: geti
   running_on_vm: false
   account_service_mode: "setup"
-  debian:
-    registry: docker.io
-    repository: bitnamilegacy
-    name: os-shell:12-debian-12-r42
+  curl:
+    registry: quay.io
+    repository: curl
+    name: curl:8.15.0
   kubectl: 
     registry: docker.io
-    repository: bitnamilegacy
-    name: kubectl:1.31.0
+    repository: alpine
+    name: k8s:1.31.12
   busybox:
     registry: quay.io
     repository: prometheus

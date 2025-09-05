@@ -19,7 +19,7 @@ import { ProjectsList } from './components/projects-list/projects-list.component
 import { DatasetImportPanels } from './dataset-import-panels.component';
 import { ProjectsActions } from './projects-actions.component';
 
-export const LandingPageWorkspace = (): JSX.Element => {
+export const LandingPageWorkspace = () => {
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
     const { importItems } = useProjectsImportProvider();
 

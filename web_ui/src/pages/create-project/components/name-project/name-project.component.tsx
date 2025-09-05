@@ -24,7 +24,7 @@ export const NameProject = ({
     updateProjectState,
     goToNextStep,
     animationDirection,
-}: NameProjectProps): JSX.Element => {
+}: NameProjectProps) => {
     const { name } = metadata;
 
     const [projectName, setProjectName] = useState<string>(name);
@@ -52,7 +52,7 @@ export const NameProject = ({
     };
 
     return (
-        <SliderAnimation animationDirection={animationDirection} style={{ height: '100%' }}>
+        <SliderAnimation animationDirection={animationDirection}>
             <Form marginBottom={'size-300'} onSubmit={handleSubmit}>
                 <TextField
                     id='project-name-input-id'

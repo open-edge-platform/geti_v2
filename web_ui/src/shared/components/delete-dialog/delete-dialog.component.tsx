@@ -11,7 +11,7 @@ interface DeleteDialogProps {
     triggerState: OverlayTriggerState;
 }
 
-export const DeleteDialog = ({ triggerState, onAction, name, title }: DeleteDialogProps): JSX.Element => {
+export const DeleteDialog = ({ triggerState, onAction, name, title }: DeleteDialogProps) => {
     return (
         <DialogContainer onDismiss={() => triggerState.close()}>
             {triggerState.isOpen && (

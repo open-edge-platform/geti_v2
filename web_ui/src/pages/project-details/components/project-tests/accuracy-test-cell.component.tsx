@@ -21,7 +21,7 @@ export const AccuracyTestCell = ({
     testName,
     scoreDescription,
     shouldShowGlobalLocalScore,
-}: AccuracyTestCellProps): JSX.Element => {
+}: AccuracyTestCellProps) => {
     return (
         <Flex alignItems={'center'} direction={'column'} id={`row-${id}-scoreValue-id`} height={'size-400'}>
             <AccuracyHalfDonutChart

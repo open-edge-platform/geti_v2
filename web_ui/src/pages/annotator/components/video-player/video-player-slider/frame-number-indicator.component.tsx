@@ -17,7 +17,7 @@ interface FrameNumberIndicatorProps {
     frameNumber: number;
 }
 
-export const FrameNumberIndicator = ({ frameNumber }: FrameNumberIndicatorProps): JSX.Element => {
+export const FrameNumberIndicator = ({ frameNumber }: FrameNumberIndicatorProps) => {
     const formattedFrames = useFormatFrames(frameNumber);
 
     return (

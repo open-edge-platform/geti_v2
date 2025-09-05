@@ -95,20 +95,18 @@ describe('CameraFactory', () => {
     it('permission denied', async () => {
         await renderApp({ isPermissionDenied: true });
 
-        expect(screen.getAllByText(/camera connection is lost/i)).toHaveLength(2);
+        expect(screen.getByText(/camera connection is lost/i)).toBeVisible();
     });
 
     describe('label selector is visible', () => {
-        it.each([
-            DOMAIN.CLASSIFICATION,
-            DOMAIN.ANOMALY_CLASSIFICATION,
-            DOMAIN.ANOMALY_DETECTION,
-            DOMAIN.ANOMALY_SEGMENTATION,
-        ])('task type: %o', async (taskType) => {
-            await renderApp({ tasks: [getMockedTask({ domain: taskType, labels: [] })] });
+        it.each([DOMAIN.CLASSIFICATION, DOMAIN.ANOMALY_CLASSIFICATION, DOMAIN.ANOMALY_DETECTION])(
+            'task type: %o',
+            async (taskType) => {
+                await renderApp({ tasks: [getMockedTask({ domain: taskType, labels: [] })] });
 
-            expect(screen.getByRole('button', { name: /Select label/i })).toBeVisible();
-        });
+                expect(screen.getByRole('button', { name: /Select label/i })).toBeVisible();
+            }
+        );
     });
 
     describe('label selector', () => {

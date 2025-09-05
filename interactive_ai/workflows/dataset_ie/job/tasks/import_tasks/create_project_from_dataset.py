@@ -9,6 +9,7 @@ from enum import IntEnum, auto
 from typing import TYPE_CHECKING, cast
 
 from geti_spicedb_tools import SpiceDB
+from geti_supported_models.default_models import DefaultModels
 from iai_core.utils.project_builder import PersistedProjectBuilder
 from jobs_common.tasks import flyte_multi_container_task as task
 from jobs_common.tasks.utils.logging import init_logger
@@ -137,6 +138,7 @@ def create_project_from_dataset(
         creator_id=user_id,
         parser_class=DatumaroProjectParser,
         parser_kwargs=parser_kwargs,
+        default_models_per_task=DefaultModels.get_default_models_per_task(),
     )
     logger.info(
         "Created project with id %s; domain %s; labels %s",

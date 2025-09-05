@@ -7,7 +7,7 @@ import IntelAdminBackground from '../../../../assets/images/intel-admin-app-back
 
 import classes from './breadcrumbs.module.scss';
 
-export const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps): JSX.Element => {
+export const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
     return (
         <Flex alignItems={'center'} UNSAFE_className={classes.breadcrumbsContainer}>
             <img

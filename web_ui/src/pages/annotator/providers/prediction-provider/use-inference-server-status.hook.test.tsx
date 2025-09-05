@@ -10,12 +10,6 @@ import { renderHookWithProviders } from '../../../../test-utils/render-hook-with
 import { TaskContextProps, useTask } from '../task-provider/task-provider.component';
 import { useInferenceServerStatus } from './use-inference-server-status';
 
-const mockedAddNotification = jest.fn();
-jest.mock('../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockedAddNotification }),
-}));
-
 jest.mock('../task-provider/task-provider.component', () => ({
     ...jest.requireActual('../task-provider/task-provider.component'),
     useTask: jest.fn(),

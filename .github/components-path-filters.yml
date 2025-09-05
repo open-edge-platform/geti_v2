@@ -76,6 +76,11 @@ platform/services/opa_bundle:
   - platform/services/opa_bundle/**
   - Makefile.shared
   - .github/workflows/component.yml
+platform/services/installer:
+  - platform/services/installer/**
+  - Makefile.shared-python
+  - Makefile.shared
+  - .github/workflows/component.yml
 
 # IAI Services
 interactive_ai/services/auto_train:

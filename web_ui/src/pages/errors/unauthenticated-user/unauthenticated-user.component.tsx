@@ -15,7 +15,7 @@ interface UnauthenticatedUserProps {
     onReset: () => void;
 }
 
-export const UnauthenticatedUser: FC<UnauthenticatedUserProps> = ({ onReset }): JSX.Element => {
+export const UnauthenticatedUser: FC<UnauthenticatedUserProps> = ({ onReset }) => {
     useEffect(() => {
         // For privacy reasons we cannot show the app name as document title for unauthenticated users
         const previousHtmlTitle = document.title;

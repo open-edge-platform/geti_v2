@@ -32,7 +32,7 @@ export const RotatedDrawingBox = ({
     styles = {},
     zoom,
     withCrosshair = true,
-}: DrawingBoxInterface): JSX.Element => {
+}: DrawingBoxInterface) => {
     const [startPoint, setStartPoint] = useState<Point | null>(null);
     const [boundingBox, setBoundingBox] = useState<RectInterface | null>(null);
     const [hasCrossHair, setHasCrossHair] = useState<boolean>(withCrosshair);

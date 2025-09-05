@@ -24,7 +24,7 @@ import classes from './project-dataset.module.scss';
     But if the user adds one more, we will show MAX_NUMBER_OF_DISPLAYED_DATASETS dataset tabs and move the extra
     datasets to the Picker. The new dataset is placed at the end of pinned datasets.
 */
-export const ProjectDataset = (): JSX.Element => {
+export const ProjectDataset = () => {
     const { isSingleDomainProject } = useProject();
     const { pinnedDatasets, handleSelectDataset, selectedDataset } = useDataset();
 

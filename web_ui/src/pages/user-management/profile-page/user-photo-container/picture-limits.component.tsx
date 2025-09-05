@@ -7,7 +7,7 @@ import { useNumberFormatter } from 'react-aria';
 import { getFileSize } from '../../../../shared/utils';
 import { USER_PHOTO_VALIDATION_RULES } from './utils';
 
-const PictureLimitTooltip = (): JSX.Element => {
+const PictureLimitTooltip = () => {
     const formatter = useNumberFormatter({ notation: 'compact' });
 
     return (
@@ -30,7 +30,7 @@ const PictureLimitTooltip = (): JSX.Element => {
     );
 };
 
-export const PictureLimits = (): JSX.Element => {
+export const PictureLimits = () => {
     return (
         <View width={'max-content'} marginTop={'size-200'}>
             <Flex alignItems={'center'} gap={'size-100'}>

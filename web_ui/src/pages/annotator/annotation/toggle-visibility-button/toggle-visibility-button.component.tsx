@@ -33,7 +33,7 @@ export const ToggleVisibilityButton = ({
     mode = ANNOTATOR_MODE.ACTIVE_LEARNING,
     isDisabled = false,
     colorMode = TOGGLE_VISIBILITY_COLOR_MODE.STANDARD,
-}: ToggleVisibilityButtonProps): JSX.Element => {
+}: ToggleVisibilityButtonProps) => {
     const { hotkeys } = useAnnotatorHotkeys();
     const ariaLabel = mode === ANNOTATOR_MODE.ACTIVE_LEARNING ? 'annotations' : 'predictions';
 

@@ -5,7 +5,11 @@ import { WorkspaceEntity, WorkspaceIdentifier } from './workspaces.interface';
 
 export interface WorkspacesService {
     getWorkspaces: (organizationId: string) => Promise<WorkspaceEntity[]>;
-    createWorkspace: (organizationId: string, workspaceName: string) => Promise<WorkspaceEntity>;
+    createWorkspace: (
+        organizationId: string,
+        workspaceName: string,
+        workspaceAdminId?: string
+    ) => Promise<WorkspaceEntity>;
     editWorkspace: (workspaceIdentifier: WorkspaceIdentifier, workspace: WorkspaceEntity) => Promise<WorkspaceEntity>;
     deleteWorkspace: (workspaceIdentifier: WorkspaceIdentifier) => Promise<void>;
 }

@@ -1,0 +1,83 @@
+# Default values for etcd.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  enable_local_image_pull_secret: false
+  kubectl:
+    registry: docker.io
+    repository: alpine
+    name: k8s:1.31.12
+
+# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+replicaCount: 1
+
+# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+image:
+  registry: quay.io
+  repository: coreos
+  name: etcd:v3.6.4
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+
+## @param logLevel Sets the log level for the etcd process. Allowed values: 'debug', 'info', 'warn', 'error', 'panic', 'fatal'
+logLevel: info
+## @param maxProcs Limits the number of operating system threads that can execute user-level
+## Go code simultaneously by setting GOMAXPROCS environment variable
+## ref: https://golang.org/pkg/runtime
+##
+maxProcs: ""
+
+dataDir: /data
+
+auth:
+  token:
+    enabled: false
+    type: "jwt"
+    privateKey: jwt-token.pem
+    signMethod: RS256
+    ttl: 10m
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+#This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 10001
+  capabilities:
+    drop:
+      - ALL
+
+initResources:
+  requests:
+    cpu: 50m
+    memory: 100Mi
+  limits:
+    memory: 100Mi
+
+resources:
+  limits:
+    memory: 400Mi
+  requests:
+    cpu: 100m
+    memory: 400Mi
+
+# This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
+service:
+  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: ClusterIP
+  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+  port:
+    client: 2379
+    server: 2380
+    metrics: 8080

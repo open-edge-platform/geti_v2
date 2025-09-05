@@ -98,8 +98,12 @@ export class CreateProjectPage {
         }
     }
 
+    get createButton() {
+        return this.page.getByRole('button', { name: 'Create', exact: true });
+    }
+
     private async create() {
-        await this.page.getByRole('button', { name: 'Create', exact: true }).click();
+        await this.createButton.click();
         return new ProjectPage(this.page);
     }
 
@@ -281,16 +285,6 @@ export class CreateProjectPage {
         await this.nextStep();
         await this.page.getByRole('tab', { name: /anomaly/i }).click();
         await this.page.getByRole('heading', { name: /anomaly detection/i }).click();
-
-        return await this.create();
-    }
-
-    async anomalySegmentation(name: string) {
-        await this.enterProjectName(name);
-        await this.nextStep();
-
-        await this.page.getByRole('tab', { name: /anomaly/i }).click();
-        await this.page.getByRole('heading', { name: /anomaly segmentation/i }).click();
 
         return await this.create();
     }

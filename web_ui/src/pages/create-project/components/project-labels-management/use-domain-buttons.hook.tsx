@@ -6,7 +6,7 @@ import { DomainStepProps } from './domain-step.interface';
 import { SelectDomainButton } from './select-domain-button.component';
 
 export const useDomainButtons = ({ domains, handleSelection, isValid, selected }: DomainStepProps) => {
-    const getDomainButton = (domain: DOMAIN, isNextEnabled = true): JSX.Element => {
+    const getDomainButton = (domain: DOMAIN, isNextEnabled = true) => {
         switch (domain) {
             case DOMAIN.DETECTION:
                 const isSelected = selected === DOMAIN.DETECTION;

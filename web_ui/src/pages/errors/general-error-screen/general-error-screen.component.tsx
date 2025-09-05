@@ -14,7 +14,7 @@ interface ErrorScreenProps {
     resetErrorBoundary: (...args: unknown[]) => void;
 }
 
-export const ErrorScreen = ({ errorMessage, resetErrorBoundary }: ErrorScreenProps): JSX.Element => {
+export const ErrorScreen = ({ errorMessage, resetErrorBoundary }: ErrorScreenProps) => {
     return (
         <>
             <CloudErrorIcon size='XXL' />

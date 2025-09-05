@@ -1,12 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Flex, Heading, Item, Key, Picker, View } from '@geti/ui';
+import { Flex, Heading, Item, Picker, View } from '@geti/ui';
 import { isEqual, isUndefined } from 'lodash-es';
 
 import { useDeviceSettings } from '../../providers/device-settings-provider.component';
 import { DeviceSettingsCategory } from './device-settings-category.component';
-import { DeviceSettingsDefaultCategory } from './device-settings-default-category.component';
 import { settingsMetadata } from './device-settings-metadata';
 
 const Header = ({ text }: { text: string }) => (
@@ -40,7 +39,7 @@ export const DeviceSettings = () => {
                 aria-label={'devices'}
                 selectedKey={selectedDeviceId}
                 placeholder={'Integrated Camera'}
-                onSelectionChange={(key: Key) => setSelectedDeviceId(String(key))}
+                onSelectionChange={(key) => setSelectedDeviceId(String(key))}
             >
                 {({ deviceId, label }) => <Item key={deviceId}>{label}</Item>}
             </Picker>
@@ -55,7 +54,6 @@ export const DeviceSettings = () => {
                 return <DeviceSettingsCategory name={categoryName} configuration={configuration} key={categoryName} />;
             })}
             <DeviceSettingsCategory name={defaultCategory} configuration={defaultCategoryAttributesKeys} />
-            <DeviceSettingsDefaultCategory deviceConfig={deviceConfig} />
         </View>
     );
 };

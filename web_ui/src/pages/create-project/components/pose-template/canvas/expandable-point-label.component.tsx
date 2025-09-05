@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 
 import { Flex, Text } from '@geti/ui';
 import { AiIcon } from '@geti/ui/icons';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { useHover, useNumberFormatter } from 'react-aria';
 
 import { AnnotationLabel } from '../../../../../core/annotations/annotation.interface';

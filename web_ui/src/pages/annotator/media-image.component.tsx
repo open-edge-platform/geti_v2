@@ -18,7 +18,7 @@ interface MediaImageProps {
 // redownload the image.
 // To avoid this we store the image in a react-query query and draw the image using
 // a canvas element instead
-export const MediaImage = ({ image, selectedMediaItem }: MediaImageProps): JSX.Element => {
+export const MediaImage = ({ image, selectedMediaItem }: MediaImageProps) => {
     const enableVideoPlayerCanvas = useIsStreamingVideoPlayerEnabled(selectedMediaItem);
     const ref = useDrawImageOnCanvas({ image });
 

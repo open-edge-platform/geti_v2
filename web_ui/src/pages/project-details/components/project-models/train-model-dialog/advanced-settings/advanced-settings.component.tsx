@@ -26,6 +26,7 @@ const ContentWrapper: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 interface AdvancedSettingsProps {
+    hasSupportedModels: boolean;
     algorithms: SupportedAlgorithm[];
     selectedModelTemplateId: string | null;
     onChangeSelectedTemplateId: (modelTemplateId: string | null) => void;
@@ -38,6 +39,7 @@ interface AdvancedSettingsProps {
     ) => void;
     trainFromScratch: boolean;
     onTrainFromScratchChange: (trainFromScratch: boolean) => void;
+    defaultTrainingConfiguration: TrainingConfiguration;
 }
 
 interface TabProps {
@@ -46,6 +48,7 @@ interface TabProps {
 }
 
 export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
+    hasSupportedModels,
     algorithms,
     selectedModelTemplateId,
     onChangeSelectedTemplateId,
@@ -56,6 +59,7 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
     onTrainFromScratchChange,
     trainingConfiguration,
     onUpdateTrainingConfiguration,
+    defaultTrainingConfiguration,
 }) => {
     const TABS: TabProps[] = [
         {
@@ -73,8 +77,10 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
             name: 'Data management',
             children: (
                 <DataManagement
+                    hasSupportedModels={hasSupportedModels}
                     trainingConfiguration={trainingConfiguration}
                     onUpdateTrainingConfiguration={onUpdateTrainingConfiguration}
+                    defaultTrainingConfiguration={defaultTrainingConfiguration}
                 />
             ),
         },
@@ -82,6 +88,7 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({
             name: 'Training',
             children: (
                 <Training
+                    defaultTrainingConfiguration={defaultTrainingConfiguration}
                     trainFromScratch={trainFromScratch}
                     onTrainFromScratchChange={onTrainFromScratchChange}
                     isReshufflingSubsetsEnabled={isReshufflingSubsetsEnabled}

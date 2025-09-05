@@ -2,12 +2,11 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { UserGlobalSettings, UseSettings } from '../services/user-settings.interface';
 import { INITIAL_GLOBAL_SETTINGS } from '../utils';
 import { SaveSettingsMutation, SaveSettingsMutationContext, SETTINGS_QUERY_STALE_TIME } from './utils';
@@ -29,7 +28,6 @@ const useQueryUserGlobalSettings = () => {
 
 export const useUserGlobalSettings = (): UseSettings<UserGlobalSettings> => {
     const { userSettingsService } = useApplicationServices();
-    const { addNotification } = useNotification();
     const queryClient = useQueryClient();
 
     const { data } = useQueryUserGlobalSettings();
@@ -58,16 +56,16 @@ export const useUserGlobalSettings = (): UseSettings<UserGlobalSettings> => {
 
         onSuccess: async (_data, variables) => {
             const { successMessage } = variables;
-            successMessage && addNotification({ message: successMessage, type: NOTIFICATION_TYPE.INFO });
+            successMessage && toast({ message: successMessage, type: 'info' });
         },
 
         onError: (_, __, context) => {
             context?.previousSettings !== undefined &&
                 queryClient.setQueryData<UserGlobalSettings>(QUERY_KEYS.SETTINGS_KEY(), () => context.previousSettings);
 
-            addNotification({
+            toast({
                 message: 'Failed to save settings. Please, try again later.',
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'info',
             });
         },
 

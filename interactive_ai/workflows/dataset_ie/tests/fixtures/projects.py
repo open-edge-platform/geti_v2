@@ -6,6 +6,8 @@ This module implements project fixtures
 
 import pytest
 from _pytest.fixtures import FixtureRequest
+from geti_supported_models import SupportedModels
+from geti_supported_models.default_models import DefaultModels
 from geti_types import ID
 from iai_core.algorithms import ModelTemplateList
 from iai_core.entities.color import Color
@@ -42,11 +44,11 @@ supported_task_types = [
     TaskType.KEYPOINT_DETECTION,
 ]
 for task_type in supported_task_types:
-    mock_name = f"mock_{task_type.name.lower()}"
+    default_model_id = DefaultModels.get_default_model(task_type.name.lower())
     model_template = ModelTemplate(
-        model_template_id=mock_name,
+        model_template_id=default_model_id,
         model_template_path="",
-        name=mock_name,
+        name=SupportedModels.get_model_manifest_by_id(default_model_id).name,
         task_type=task_type,
         task_family=TaskFamily.VISION,
         instantiation=InstantiationType.NONE,

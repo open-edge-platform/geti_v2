@@ -14,7 +14,7 @@ export const FlatTreeView = ({
     domains,
     treeValidationErrors,
     setValidationError,
-}: FlatLabelTreeViewProps): JSX.Element => {
+}: FlatLabelTreeViewProps) => {
     const labels =
         treeItems.length > 0 ? (treeItems[0].type === LabelItemType.GROUP ? treeItems[0].children : treeItems) : [];
 

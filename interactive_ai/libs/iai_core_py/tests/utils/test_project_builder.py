@@ -99,6 +99,7 @@ class TestProjectBuilder:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=fxt_detection_classification_project_data,
+                default_models_per_task={},  # not necessary as get_default_model_template_by_task_type is mocked
             )
         detection_label_group = label_schema.get_label_group_by_name("Default Detection")
         classification_label_group = label_schema.get_label_group_by_name("Default Classification")
@@ -127,6 +128,7 @@ class TestProjectBuilder:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=fxt_anomaly_project_data,
+                default_models_per_task={},  # not necessary as get_default_model_template_by_task_type is mocked
             )
 
         anomaly_label_group = label_schema.get_label_group_by_name("default - anomaly")
@@ -176,6 +178,7 @@ class TestProjectBuilder:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=fxt_label_hierarchy_task_chain_project_data,
+                default_models_per_task={},  # not necessary as get_default_model_template_by_task_type is mocked
             )
 
         expected_group_names = {
@@ -213,6 +216,7 @@ class TestProjectBuilder:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=fxt_hierarchy_classification_project_data_2,
+                default_models_per_task={},  # not necessary as get_default_model_template_by_task_type is mocked
             )
 
         expected_group_names = {
@@ -268,6 +272,7 @@ class TestProjectBuilder:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=fxt_binary_classification_project_data,
+                default_models_per_task={},  # not necessary as get_default_model_template_by_task_type is mocked
             )
 
         label_groups = label_schema.get_groups(include_empty=True)
@@ -291,6 +296,7 @@ class TestProjectBuilder:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=fxt_multiclass_classification_project_data,
+                default_models_per_task={},  # not necessary as get_default_model_template_by_task_type is mocked
             )
         label_groups = label_schema.get_groups(include_empty=True)
         labels = label_schema.get_labels(include_empty=True)
@@ -317,6 +323,7 @@ class TestProjectBuilder:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=fxt_multilabel_classification_project_data,
+                default_models_per_task={},  # not necessary as get_default_model_template_by_task_type is mocked
             )
 
         label_groups = label_schema.get_groups(include_empty=True)
@@ -339,7 +346,10 @@ class TestProjectBuilder:
             ],
         ):
             project, label_schema, task_schema = ProjectBuilder.build_full_project(
-                creator_id="Geti", parser_class=CustomTestProjectParser, parser_kwargs=fxt_segmentation_project_data
+                creator_id="Geti",
+                parser_class=CustomTestProjectParser,
+                parser_kwargs=fxt_segmentation_project_data,
+                default_models_per_task={},  # not necessary as get_default_model_template_by_task_type is mocked
             )
 
         label_groups = label_schema.get_groups(include_empty=True)
@@ -391,6 +401,7 @@ class TestProjectBuilder:
                 creator_id="Geti",
                 parser_class=CustomTestProjectParser,
                 parser_kwargs=fxt_detection_to_segmentation_project_data,
+                default_models_per_task={},  # not necessary as get_default_model_template_by_task_type is mocked
             )
         expected_group_names = {
             "Default Detection",

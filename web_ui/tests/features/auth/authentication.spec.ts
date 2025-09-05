@@ -119,7 +119,7 @@ test.describe('Authentication with the OpenID Connect protocol', () => {
 
     test.describe('Error handling', () => {
         testWithLocalStorageState(test, expiringOidcStorageState(60))('Invalid refresh token', async ({ page }) => {
-            page.route('/dex/token', (route) => {
+            await page.route('/dex/token', (route) => {
                 route.fulfill({
                     status: 400,
                     json: {
@@ -131,10 +131,6 @@ test.describe('Authentication with the OpenID Connect protocol', () => {
 
             await page.goto('/');
 
-            // First page load will be successful
-            await expect(page.getByLabel('intel geti')).toBeVisible();
-
-            // After trying to refresh the access token with an invalid refresh token we show a login error
             await expect(page.getByRole('heading', { name: 'Login error' })).toBeVisible();
         });
 

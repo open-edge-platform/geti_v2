@@ -13,7 +13,7 @@ interface DateCellProps {
     direction?: 'column' | 'row';
 }
 
-export const DateCell = ({ id, date, direction = 'column' }: DateCellProps): JSX.Element => {
+export const DateCell = ({ id, date, direction = 'column' }: DateCellProps) => {
     return (
         <Flex id={id} direction={direction}>
             <Text UNSAFE_className={direction === 'row' ? classes.date : ''}>{formatDate(date, 'DD MMM YYYY')}</Text>

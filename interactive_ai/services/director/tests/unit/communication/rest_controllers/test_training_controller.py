@@ -306,7 +306,7 @@ class TestTrainingController:
         # Assert
         patched_get_model_storage.assert_called_once_with(
             task_node=fxt_detection_task,
-            model_template_id=fxt_model_template_detection.model_template_id,
+            model_manifest_id=fxt_model_template_detection.model_template_id,
             project_identifier=fxt_project.identifier,
         )
         mock_training_job_submit.assert_called_once_with(

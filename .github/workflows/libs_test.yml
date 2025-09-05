@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       component-dir:
-        description: 'Dir in root directory'
+        description: "Dir in root directory"
         type: string
         required: true
       ref:
@@ -14,11 +14,11 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'The branch, tag or SHA to checkout'
+        description: "The branch, tag or SHA to checkout"
         required: true
-        default: 'main'
+        default: "main"
       component-dir:
-        description: 'Path to the component (relative to the root of the repository)'
+        description: "Path to the component (relative to the root of the repository)"
         required: true
 
 permissions: {} # No permissions by default on workflow level
@@ -34,6 +34,11 @@ jobs:
       contents: read
     timeout-minutes: 30
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -53,7 +58,7 @@ jobs:
       - name: Setup GO
         uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
-          go-version: '1.23'
+          go-version: "1.23"
 
       - name: Static code analysis
         run: make -C "${COMPONENT_DIR}" static-code-analysis

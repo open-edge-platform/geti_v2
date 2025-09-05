@@ -13,7 +13,7 @@ import {
     userFewAnnotationsResponse,
 } from './../../../mocks/segmentation/mocks';
 
-const getAnnotation = async (page: Page, annotationName: string) => page.locator(`#annotation-${annotationName}`);
+const getAnnotation = async (page: Page, annotationName: string) => page.getByTestId(`annotation-${annotationName}`);
 const toggleAnnotation = async (page: Page) => {
     await page.getByTestId('annotation-all-annotations-toggle-visibility').click();
 };

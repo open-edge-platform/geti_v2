@@ -27,7 +27,7 @@ export const MediaItemMenu = ({
     isAnomalyVideo,
     selectedMediaItemAction,
     onChangeSelectedMediaItemAction,
-}: MediaItemMenuProps): JSX.Element => {
+}: MediaItemMenuProps) => {
     const selectedDataset = useSelectedDataset();
     const { deleteMedia, loadNextMedia } = useMedia();
     const datasetIdentifier = useDatasetIdentifier();

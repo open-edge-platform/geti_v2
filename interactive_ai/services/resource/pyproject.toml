@@ -20,6 +20,7 @@ dependencies = [
     "iai_core",
     "media_utils",
     "grpc_interfaces",
+    "geti-supported-models",
 ]
 
 [tool.uv.sources]
@@ -32,6 +33,7 @@ geti_spicedb_tools = { path = "../../../libs/spicedb_tools", editable = true }
 iai_core = { path = "../../libs/iai_core_py", editable = true }
 media_utils = { path = "../../libs/media_utils", editable = true }
 grpc_interfaces = { path = "../../../libs/grpc_interfaces", editable = true }
+geti-supported-models = { path = "../../supported_models", editable = true }
 
 
 [dependency-groups]
