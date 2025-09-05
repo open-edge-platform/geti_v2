@@ -104,7 +104,7 @@ jobs:
           set -euo pipefail
           echo "Signing ${IMAGE}@${DIGEST} with:"
           echo "$(cosign version)"
-          cosign sign --yes --certificate-oidc-issuer=https://token.actions.githubusercontent.com "${IMAGE}@${DIGEST}"
+          cosign sign --yes --oidc-provider=github-actions "${IMAGE}@${DIGEST}"
 
       - name: Verify the signature
         env:
