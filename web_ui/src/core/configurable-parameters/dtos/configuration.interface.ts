@@ -15,6 +15,12 @@ interface NumberParameterDTO extends ParameterBaseDTO {
     default_value: number;
 }
 
+interface ArrayParameterDTO extends ParameterBaseDTO {
+    type: 'array';
+    value: number[];
+    default_value: number[];
+}
+
 interface BoolParameterDTO extends ParameterBaseDTO {
     type: 'bool';
     value: boolean;
@@ -32,7 +38,11 @@ export interface StaticParameterDTO extends ParameterBaseDTO {
     value: number | boolean;
 }
 
-export type ConfigurationParameterDTO = BoolParameterDTO | NumberParameterDTO | EnumParameterDTO<number>;
+export type ConfigurationParameterDTO =
+    | BoolParameterDTO
+    | NumberParameterDTO
+    | EnumParameterDTO<number>
+    | ArrayParameterDTO;
 
 interface ProjectConfigurationTaskConfigsTrainingDTO {
     constraints: ConfigurationParameterDTO[];
