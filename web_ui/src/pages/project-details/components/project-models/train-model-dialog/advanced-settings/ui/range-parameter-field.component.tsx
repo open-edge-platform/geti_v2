@@ -91,7 +91,7 @@ export const RangeParameterField: FC<RangeParameterFieldProps> = ({
                 flex={1}
                 isDisabled={isDisabled}
                 aria-label={`Change ${name} range value`}
-                UNSAFE_className={classes.rangeSlider}
+                UNSAFE_className={isDisabled ? '' : classes.rangeSlider}
             />
             <NumberField
                 isQuiet
