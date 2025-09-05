@@ -96,6 +96,6 @@ describe('RangeParameterField', () => {
         fireEvent.mouseMove(handle, { clientX: 1000 }); // Move it far to the right
         fireEvent.mouseUp(handle);
 
-        expect(onChange).not.toHaveBeenCalledWith(defaultValue);
+        expect(onChange).not.toHaveBeenCalledWith([1.5, 1.5]);
     });
 });
