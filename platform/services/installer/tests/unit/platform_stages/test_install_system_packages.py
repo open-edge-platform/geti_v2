@@ -157,6 +157,7 @@ def test_install_system_packages(
 ):
     config = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
     config.local_os.value = os_name
+    config.lightweight_installer.value = True
 
     install_system_packages(config)
 
@@ -181,6 +182,7 @@ def test_install_system_packages_failed(
 
     config = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
     config.local_os.value = os_name
+    config.lightweight_installer.value = True
 
     with pytest.raises(DownloadSystemPackagesError):
         install_system_packages(config)
