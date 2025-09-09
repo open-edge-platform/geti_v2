@@ -7,6 +7,7 @@ import { createInMemoryCreditsService } from '../../../../../../core/credits/ser
 import { createInMemoryModelsService } from '../../../../../../core/models/services/in-memory-models-service';
 import { getMockedProjectIdentifier } from '../../../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { providersRender } from '../../../../../../test-utils/required-providers-render';
+import { TaskProvider } from '../../../../../annotator/providers/task-provider/task-provider.component';
 import { useTotalCreditPrice } from '../../../../hooks/use-credits-to-consume.hook';
 import { ProjectProvider } from '../../../../providers/project-provider/project-provider.component';
 import { ActivateModelDialog } from './activate-model-dialog.component';
@@ -15,8 +16,8 @@ jest.mock('../../../../hooks/use-credits-to-consume.hook', () => ({
     useTotalCreditPrice: jest.fn(),
 }));
 
-jest.mock('../../legacy-train-model-dialog/use-training-state-value/use-training-state-value.hook', () => ({
-    ...jest.requireActual('../../legacy-train-model-dialog/use-training-state-value/use-training-state-value.hook'),
+jest.mock('../../hooks/use-training-state-value/use-training-state-value.hook', () => ({
+    ...jest.requireActual('../../hooks/use-training-state-value/use-training-state-value.hook'),
 }));
 
 describe('ActivateModelDialog', () => {
@@ -30,15 +31,17 @@ describe('ActivateModelDialog', () => {
     const render = async ({ featureFlags = { FEATURE_FLAG_CREDIT_SYSTEM: true } }) => {
         providersRender(
             <ProjectProvider projectIdentifier={getMockedProjectIdentifier()}>
-                <ActivateModelDialog
-                    modelName={'test-model'}
-                    isOpen={true}
-                    modelVersion={1}
-                    createdAt={'2024-09-11T09:13:57Z'}
-                    handleDismiss={jest.fn()}
-                    handleActivateModel={jest.fn()}
-                    handleActivateAndRetrainModel={jest.fn()}
-                />
+                <TaskProvider>
+                    <ActivateModelDialog
+                        modelName={'test-model'}
+                        isOpen={true}
+                        modelVersion={1}
+                        createdAt={'2024-09-11T09:13:57Z'}
+                        handleDismiss={jest.fn()}
+                        handleActivateModel={jest.fn()}
+                        handleActivateAndRetrainModel={jest.fn()}
+                    />
+                </TaskProvider>
             </ProjectProvider>,
             {
                 featureFlags,

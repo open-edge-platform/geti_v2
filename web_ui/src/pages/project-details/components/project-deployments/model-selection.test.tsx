@@ -12,7 +12,6 @@ import {
     PerformanceCategory,
 } from '../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { createInMemorySupportedAlgorithmsService } from '../../../../core/supported-algorithms/services/in-memory-supported-algorithms-service';
-import { getLegacyMockedSupportedAlgorithm } from '../../../../core/supported-algorithms/services/test-utils';
 import { getMockedModelsGroup, getMockedModelVersion } from '../../../../test-utils/mocked-items-factory/mocked-model';
 import { getMockedSupportedAlgorithm } from '../../../../test-utils/mocked-items-factory/mocked-supported-algorithms';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
@@ -123,16 +122,6 @@ describe('ModelSelection', () => {
 
     it('render all model architectures and performance categories', async () => {
         const supportedAlgorithmsService = createInMemorySupportedAlgorithmsService();
-        supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms = jest.fn(async () => [
-            getLegacyMockedSupportedAlgorithm({
-                modelTemplateId: 'Custom_Object_Detection_Gen3_SSD',
-                performanceCategory: PerformanceCategory.SPEED,
-            }),
-            getLegacyMockedSupportedAlgorithm({
-                modelTemplateId: 'Custom_Semantic_Segmentation_Lite-HRNet-18-mod2_OCR',
-                performanceCategory: PerformanceCategory.ACCURACY,
-            }),
-        ]);
         supportedAlgorithmsService.getProjectSupportedAlgorithms = jest.fn(async () => [
             getMockedSupportedAlgorithm({
                 modelTemplateId: 'Custom_Object_Detection_Gen3_SSD',
@@ -159,12 +148,6 @@ describe('ModelSelection', () => {
 
     it('does not render performance category if it is OTHER', async () => {
         const supportedAlgorithmsService = createInMemorySupportedAlgorithmsService();
-        supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms = jest.fn(async () => [
-            getLegacyMockedSupportedAlgorithm({
-                modelTemplateId: 'Custom_Object_Detection_Gen3_SSD',
-                performanceCategory: PerformanceCategory.OTHER,
-            }),
-        ]);
         supportedAlgorithmsService.getProjectSupportedAlgorithms = jest.fn(async () => [
             getMockedSupportedAlgorithm({
                 modelTemplateId: 'Custom_Object_Detection_Gen3_SSD',

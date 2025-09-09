@@ -24,8 +24,8 @@ import { useProjectIdentifier } from '../../../../../hooks/use-project-identifie
 import { isNotCropTask } from '../../../../../shared/utils';
 import { useTotalCreditPrice } from '../../../hooks/use-credits-to-consume.hook';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
-import { getTrainingBodyDTO } from '../legacy-train-model-dialog/utils';
 import { areSubsetsSizesValid } from './advanced-settings/data-management/training-subsets/utils';
+import { getTrainingBodyDTO } from './utils';
 
 enum TrainModelMode {
     BASIC = 'Basic',

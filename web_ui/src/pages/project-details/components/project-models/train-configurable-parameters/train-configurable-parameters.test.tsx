@@ -3,10 +3,10 @@
 
 import { fireEvent, screen } from '@testing-library/react';
 
-import { mockedEditableConfigTaskChainData } from '../../../../../../core/configurable-parameters/services/test-utils';
-import { idMatchingFormat } from '../../../../../../test-utils/id-utils';
-import { providersRender as render } from '../../../../../../test-utils/required-providers-render';
-import { RESHUFFLE_SUBSETS_TOOLTIP_MSG } from '../utils';
+import { mockedEditableConfigTaskChainData } from '../../../../../core/configurable-parameters/services/test-utils';
+import { idMatchingFormat } from '../../../../../test-utils/id-utils';
+import { providersRender as render } from '../../../../../test-utils/required-providers-render';
+import { RESHUFFLE_SUBSETS_TOOLTIP_MSG } from '../train-model-dialog/utils';
 import { TrainConfigurableParameters } from './train-configurable-parameters.component';
 
 describe('TrainConfigurableParameters', () => {

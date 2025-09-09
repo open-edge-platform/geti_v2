@@ -5,8 +5,8 @@ import { FC, Key } from 'react';
 
 import { Item, Picker, Text } from '@geti/ui';
 
-import { Task } from '../../../../../../core/projects/task.interface';
-import { idMatchingFormat } from '../../../../../../test-utils/id-utils';
+import { Task } from '../../../../../core/projects/task.interface';
+import { idMatchingFormat } from '../../../../../test-utils/id-utils';
 
 interface TaskSelectionProps {
     tasks: Task[];

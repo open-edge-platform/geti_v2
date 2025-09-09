@@ -9,8 +9,8 @@ import { isFunction } from 'lodash-es';
 
 import { SupportedAlgorithm } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { InfoTooltip } from '../../../../../../shared/components/info-tooltip/info-tooltip.component';
-import { isDeprecatedAlgorithm } from '../../legacy-train-model-dialog/model-templates-selection/utils';
 import { ModelArchitectureTooltipText } from '../../model-architecture-tooltip.component';
+import { isDeprecatedAlgorithm } from '../../model-templates-selection/utils';
 import { ActiveModelTag } from '../../models-container/model-card/active-model-tag.component';
 import { DeprecatedTag } from '../../models-container/model-card/deprecated-model-tag.component';
 import { SelectableCard } from '../selectable-card/selectable-card.component';

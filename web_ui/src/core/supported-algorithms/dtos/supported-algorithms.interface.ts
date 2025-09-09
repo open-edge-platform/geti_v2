@@ -16,18 +16,6 @@ export enum LifecycleStage {
     DEPRECATED = 'deprecated',
 }
 
-export interface LegacySupportedAlgorithmDTO {
-    name: string;
-    model_size: number;
-    gigaflops: number;
-    task_type: TASK_TYPE;
-    model_template_id: string;
-    summary: string;
-    default_algorithm: boolean;
-    lifecycle_stage: LifecycleStage;
-    performance_category: PerformanceCategory;
-}
-
 export type SupportedAlgorithmStatsValues = 1 | 2 | 3;
 
 export interface SupportedAlgorithmDTO {
@@ -58,5 +46,5 @@ export interface SupportedAlgorithmDTO {
 }
 
 export interface SupportedAlgorithmsResponseDTO {
-    supported_algorithms: LegacySupportedAlgorithmDTO[];
+    supported_algorithms: SupportedAlgorithmDTO[];
 }

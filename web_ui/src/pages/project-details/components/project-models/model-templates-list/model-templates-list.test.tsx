@@ -1,71 +1,64 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { fireEvent, render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { DOMAIN } from '../../../../../../../core/projects/core.interface';
-import { getLegacyMockedSupportedAlgorithm } from '../../../../../../../core/supported-algorithms/services/test-utils';
-import { LegacySupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
-import { getMockedProjectIdentifier } from '../../../../../../../test-utils/mocked-items-factory/mocked-identifiers';
-import { providersRender as render } from '../../../../../../../test-utils/required-providers-render';
-import { ProjectProvider } from '../../../../../providers/project-provider/project-provider.component';
+import { DOMAIN } from '../../../../../core/projects/core.interface';
+import { SupportedAlgorithm } from '../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { getMockedProjectIdentifier } from '../../../../../test-utils/mocked-items-factory/mocked-identifiers';
+import { getMockedSupportedAlgorithm } from '../../../../../test-utils/mocked-items-factory/mocked-supported-algorithms';
+import { ProjectProvider } from '../../../providers/project-provider/project-provider.component';
 import { ModelTemplatesList } from './model-templates-list.component';
 
-const getTemplateId = ({ name }: LegacySupportedAlgorithm) => `${name.toLowerCase()}-id`;
+const getTemplateId = ({ name }: SupportedAlgorithm) => `${name.toLowerCase()}-id`;
 const getCardsIds = () => screen.getAllByLabelText(/selected/i).map(({ id }) => id);
 
 describe('ModelTemplatesSelection', () => {
-    const recommendedTemplate = getLegacyMockedSupportedAlgorithm({
+    const recommendedTemplate = getMockedSupportedAlgorithm({
         name: 'SSD',
         domain: DOMAIN.DETECTION,
-        modelSize: 100,
         modelTemplateId: 'detection_ssd',
         gigaflops: 5.4,
         description: 'SSD architecture for detection',
         isDefaultAlgorithm: true,
     });
 
-    const otherRecommendedTemplate = getLegacyMockedSupportedAlgorithm({
+    const otherRecommendedTemplate = getMockedSupportedAlgorithm({
         name: 'SSD-2',
         domain: DOMAIN.DETECTION,
-        modelSize: 100,
         modelTemplateId: 'detection_ssd_2',
         gigaflops: 5.4,
         description: 'SSD-2 architecture for detection',
         isDefaultAlgorithm: true,
     });
-    const smallSizeTemplate = getLegacyMockedSupportedAlgorithm({
+    const smallSizeTemplate = getMockedSupportedAlgorithm({
         name: 'ATTS',
         domain: DOMAIN.DETECTION,
-        modelSize: 5,
         modelTemplateId: 'detection_atts',
         gigaflops: 3,
         isDefaultAlgorithm: true,
         description: 'ATTS architecture for detection',
     });
-    const bigSizeTemplate = getLegacyMockedSupportedAlgorithm({
+    const bigSizeTemplate = getMockedSupportedAlgorithm({
         name: 'YOLO',
         domain: DOMAIN.DETECTION,
-        modelSize: 200,
         modelTemplateId: 'detection_yolo',
         gigaflops: 2.3,
         description: 'YOLO architecture for detection',
     });
 
-    const lowComplexityTemplate = getLegacyMockedSupportedAlgorithm({
+    const lowComplexityTemplate = getMockedSupportedAlgorithm({
         name: 'TINY',
         domain: DOMAIN.DETECTION,
-        modelSize: 100,
         modelTemplateId: 'detection_tiny',
         gigaflops: 0.3,
         description: 'TINY architecture for detection',
     });
 
-    const highComplexityTemplate = getLegacyMockedSupportedAlgorithm({
+    const highComplexityTemplate = getMockedSupportedAlgorithm({
         name: 'TINY-2',
         domain: DOMAIN.DETECTION,
-        modelSize: 100,
         modelTemplateId: 'detection_tiny_2',
         gigaflops: 100.3,
         description: 'TINY-2 architecture for detection',

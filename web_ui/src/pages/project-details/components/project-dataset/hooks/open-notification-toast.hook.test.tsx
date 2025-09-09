@@ -10,7 +10,6 @@ import { DOMAIN } from '../../../../../core/projects/core.interface';
 import { createInMemoryProjectService } from '../../../../../core/projects/services/in-memory-project-service';
 import { LifecycleStage } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { createInMemorySupportedAlgorithmsService } from '../../../../../core/supported-algorithms/services/in-memory-supported-algorithms-service';
-import { getLegacyMockedSupportedAlgorithm } from '../../../../../core/supported-algorithms/services/test-utils';
 import {
     getMockedModelsGroupAlgorithmDetails,
     getMockedModelVersion,
@@ -38,38 +37,6 @@ const obsoleteActiveModel = getMockedModelsGroupAlgorithmDetails({
     lifecycleStage: LifecycleStage.OBSOLETE,
     modelVersions: [getMockedModelVersion({ isActiveModel: true })],
 });
-
-const mockedLegacySupportedAlgorithmsForDetection = [
-    getLegacyMockedSupportedAlgorithm({
-        name: 'YOLOX',
-        domain: DOMAIN.DETECTION,
-        modelSize: 200,
-        modelTemplateId: 'detection_yolo',
-        gigaflops: 1.3,
-        description: 'YOLO architecture for detection',
-        isDefaultAlgorithm: true,
-        lifecycleStage: LifecycleStage.OBSOLETE,
-    }),
-    getLegacyMockedSupportedAlgorithm({
-        name: 'SSD',
-        domain: DOMAIN.DETECTION,
-        modelSize: 100,
-        modelTemplateId: 'detection_ssd',
-        gigaflops: 5.4,
-        description: 'SSD architecture for detection',
-        isDefaultAlgorithm: false,
-    }),
-    getLegacyMockedSupportedAlgorithm({
-        name: 'ATTS',
-        domain: DOMAIN.DETECTION,
-        modelSize: 150,
-        modelTemplateId: 'detection_atts',
-        gigaflops: 3,
-        description: 'ATTS architecture for detection',
-        isDefaultAlgorithm: false,
-        lifecycleStage: LifecycleStage.DEPRECATED,
-    }),
-];
 
 const mockedSupportedAlgorithmsForDetection = [
     getMockedSupportedAlgorithm({
@@ -124,9 +91,6 @@ describe('useOpenNotificationToast', () => {
     const supportedAlgorithmsService = createInMemorySupportedAlgorithmsService();
     const modelsService = createInMemoryModelsService();
     projectService.getProject = jest.fn(async () => mockedSingleTaskProject);
-    supportedAlgorithmsService.getLegacyProjectSupportedAlgorithms = jest.fn(
-        async () => mockedLegacySupportedAlgorithmsForDetection
-    );
     supportedAlgorithmsService.getProjectSupportedAlgorithms = jest.fn(
         async () => mockedSupportedAlgorithmsForDetection
     );

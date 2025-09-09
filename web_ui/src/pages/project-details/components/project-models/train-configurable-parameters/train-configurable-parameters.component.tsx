@@ -5,18 +5,18 @@ import { Dispatch, SetStateAction, useEffect } from 'react';
 
 import { Flex, View } from '@geti/ui';
 
-import { useConfigParameters } from '../../../../../../core/configurable-parameters/hooks/use-config-parameters.hook';
+import { useConfigParameters } from '../../../../../core/configurable-parameters/hooks/use-config-parameters.hook';
 import {
     ConfigurableParametersSingle,
     ConfigurableParametersTaskChain,
     ConfigurableParametersType,
-} from '../../../../../../core/configurable-parameters/services/configurable-parameters.interface';
-import { useProjectIdentifier } from '../../../../../../hooks/use-project-identifier/use-project-identifier';
-import { ConfigParamsPlaceholder } from '../../../../../../shared/components/configurable-parameters/config-params-placeholder/config-params-placeholder.component';
-import { ConfigurableParameters } from '../../../../../../shared/components/configurable-parameters/configurable-parameters.component';
-import { SliderAnimation } from '../../../../../../shared/components/slider-animation/slider-animation.component';
+} from '../../../../../core/configurable-parameters/services/configurable-parameters.interface';
+import { useProjectIdentifier } from '../../../../../hooks/use-project-identifier/use-project-identifier';
+import { ConfigParamsPlaceholder } from '../../../../../shared/components/configurable-parameters/config-params-placeholder/config-params-placeholder.component';
+import { ConfigurableParameters } from '../../../../../shared/components/configurable-parameters/configurable-parameters.component';
+import { SliderAnimation } from '../../../../../shared/components/slider-animation/slider-animation.component';
+import { RESHUFFLE_SUBSETS_TOOLTIP_MSG, TRAIN_FROM_SCRATCH_TOOLTIP_MSG } from '../train-model-dialog/utils';
 import { TrainModelSettingsItem } from '../train-model-settings-item/train-model-settings-item.component';
-import { RESHUFFLE_SUBSETS_TOOLTIP_MSG, TRAIN_FROM_SCRATCH_TOOLTIP_MSG } from '../utils';
 
 interface TrainConfigurableParametersProps {
     modelTemplateId: string;

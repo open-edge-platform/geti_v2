@@ -4,42 +4,39 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { mockedArchitectureModels } from '../../../../../../core/models/services/test-utils';
-import { DOMAIN } from '../../../../../../core/projects/core.interface';
-import { createInMemoryProjectService } from '../../../../../../core/projects/services/in-memory-project-service';
-import { LifecycleStage } from '../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { getLegacyMockedSupportedAlgorithm } from '../../../../../../core/supported-algorithms/services/test-utils';
-import { TaskWithSupportedAlgorithms } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
-import { getMockedProjectIdentifier } from '../../../../../../test-utils/mocked-items-factory/mocked-identifiers';
-import { getMockedProject } from '../../../../../../test-utils/mocked-items-factory/mocked-project';
-import { getMockedTask } from '../../../../../../test-utils/mocked-items-factory/mocked-tasks';
-import { projectRender as render } from '../../../../../../test-utils/project-provider-render';
-import { ProjectProvider } from '../../../../providers/project-provider/project-provider.component';
+import { mockedArchitectureModels } from '../../../../../core/models/services/test-utils';
+import { DOMAIN } from '../../../../../core/projects/core.interface';
+import { createInMemoryProjectService } from '../../../../../core/projects/services/in-memory-project-service';
+import { LifecycleStage } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
+import { TaskWithSupportedAlgorithms } from '../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { getMockedProjectIdentifier } from '../../../../../test-utils/mocked-items-factory/mocked-identifiers';
+import { getMockedProject } from '../../../../../test-utils/mocked-items-factory/mocked-project';
+import { getMockedSupportedAlgorithm } from '../../../../../test-utils/mocked-items-factory/mocked-supported-algorithms';
+import { getMockedTask } from '../../../../../test-utils/mocked-items-factory/mocked-tasks';
+import { projectRender as render } from '../../../../../test-utils/project-provider-render';
+import { ProjectProvider } from '../../../providers/project-provider/project-provider.component';
 import { ModelTemplatesSelection } from './model-templates-selection.component';
 import { ModelConfigurationOption } from './utils';
 
 describe('ModelTemplatesSelection', () => {
     const mockedSupportedAlgorithmsForDetection = [
-        getLegacyMockedSupportedAlgorithm({
+        getMockedSupportedAlgorithm({
             name: 'YOLO',
             domain: DOMAIN.DETECTION,
-            modelSize: 200,
             modelTemplateId: 'detection_yolo',
             gigaflops: 1.3,
             description: 'YOLO architecture for detection',
         }),
-        getLegacyMockedSupportedAlgorithm({
+        getMockedSupportedAlgorithm({
             name: 'SSD',
             domain: DOMAIN.DETECTION,
-            modelSize: 100,
             modelTemplateId: 'detection_ssd',
             gigaflops: 5.4,
             description: 'SSD architecture for detection',
         }),
-        getLegacyMockedSupportedAlgorithm({
+        getMockedSupportedAlgorithm({
             name: 'ATTS',
             domain: DOMAIN.DETECTION,
-            modelSize: 150,
             modelTemplateId: 'detection_atts',
             gigaflops: 3,
             isDefaultAlgorithm: true,
@@ -48,26 +45,23 @@ describe('ModelTemplatesSelection', () => {
     ];
 
     const mockedSupportedAlgorithmsForClassification = [
-        getLegacyMockedSupportedAlgorithm({
+        getMockedSupportedAlgorithm({
             name: 'YOLO Classification',
             domain: DOMAIN.CLASSIFICATION,
-            modelSize: 100,
             modelTemplateId: 'classification_yolo',
             gigaflops: 1.3,
             description: 'YOLO architecture for classification',
         }),
-        getLegacyMockedSupportedAlgorithm({
+        getMockedSupportedAlgorithm({
             name: 'SSD Classification',
             domain: DOMAIN.CLASSIFICATION,
-            modelSize: 100,
             modelTemplateId: 'classification_ssd',
             gigaflops: 6.4,
             description: 'SSD architecture for classification',
         }),
-        getLegacyMockedSupportedAlgorithm({
+        getMockedSupportedAlgorithm({
             name: 'ATTS Classification',
             domain: DOMAIN.CLASSIFICATION,
-            modelSize: 150,
             modelTemplateId: 'classification_atts',
             gigaflops: 3.2,
             description: 'ATTS architecture for classification',
@@ -215,28 +209,25 @@ describe('ModelTemplatesSelection', () => {
 
         const mockTasksWithSupportedAlgorithms: TaskWithSupportedAlgorithms = {
             [selectedDetectionTask.id]: [
-                getLegacyMockedSupportedAlgorithm({
+                getMockedSupportedAlgorithm({
                     name: 'YOLO',
                     domain: DOMAIN.DETECTION,
-                    modelSize: 200,
                     modelTemplateId: 'detection_yolo',
                     gigaflops: 1.3,
                     lifecycleStage: LifecycleStage.OBSOLETE,
                     description: 'YOLO architecture for detection',
                 }),
-                getLegacyMockedSupportedAlgorithm({
+                getMockedSupportedAlgorithm({
                     name: 'SSD',
                     domain: DOMAIN.DETECTION,
-                    modelSize: 100,
                     modelTemplateId: 'detection_ssd',
                     gigaflops: 5.4,
                     lifecycleStage: LifecycleStage.DEPRECATED,
                     description: 'SSD architecture for detection',
                 }),
-                getLegacyMockedSupportedAlgorithm({
+                getMockedSupportedAlgorithm({
                     name: 'ATTS',
                     domain: DOMAIN.DETECTION,
-                    modelSize: 150,
                     modelTemplateId: 'detection_atts',
                     gigaflops: 3,
                     isDefaultAlgorithm: true,

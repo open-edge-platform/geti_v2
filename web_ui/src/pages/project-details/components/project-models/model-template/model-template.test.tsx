@@ -7,20 +7,19 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import {
     LifecycleStage,
     PerformanceCategory,
-} from '../../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { getLegacyMockedSupportedAlgorithm } from '../../../../../../../core/supported-algorithms/services/test-utils';
-import { idMatchingFormat } from '../../../../../../../test-utils/id-utils';
-import { checkTooltip } from '../../../../../../../test-utils/utils';
+} from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
+import { idMatchingFormat } from '../../../../../test-utils/id-utils';
+import { getMockedSupportedAlgorithm } from '../../../../../test-utils/mocked-items-factory/mocked-supported-algorithms';
+import { checkTooltip } from '../../../../../test-utils/utils';
 import { ModelTemplate } from './model-template.component';
 
 describe('ModelTemplate', () => {
     const activeModelTemplateIdPerTask = 'atts-id';
 
-    const defaultTemplate = getLegacyMockedSupportedAlgorithm({
+    const defaultTemplate = getMockedSupportedAlgorithm({
         description: 'Cool template',
         name: 'ATSS',
         gigaflops: 4.3,
-        modelSize: 2,
         modelTemplateId: activeModelTemplateIdPerTask,
     });
 
@@ -117,7 +116,7 @@ describe('ModelTemplate', () => {
     });
 
     it('Displays template metadata', () => {
-        const template = getLegacyMockedSupportedAlgorithm({ license: 'MIT', gigaflops: 4.3, modelSize: 2 });
+        const template = getMockedSupportedAlgorithm({ license: 'MIT', gigaflops: 4.3 });
         renderApp({ template });
 
         expect(screen.getByText('4.3 GFlops')).toBeVisible();

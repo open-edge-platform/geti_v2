@@ -34,13 +34,11 @@ describe('CreditBalanceTrainDialog', (): void => {
         creditsAvailable,
         totalCreditsToConsume,
         onClose = jest.fn(),
-        FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS,
     }: {
         creditFlag?: boolean;
         creditsAvailable?: number;
         totalCreditsToConsume?: number;
         onClose?: jest.Mock;
-        FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS?: boolean;
     }): Promise<void> => {
         const creditsService = createInMemoryCreditsService();
         const projectService = createInMemoryProjectService();
@@ -63,42 +61,37 @@ describe('CreditBalanceTrainDialog', (): void => {
             </ProjectProvider>,
             {
                 services: { creditsService, projectService },
-                featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: creditFlag, FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS },
+                featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: creditFlag },
             }
         );
         await waitForElementToBeRemoved(screen.getByRole('progressbar'));
     };
 
-    describe('when FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS is disabled', () => {
-        it('render TrainModelDialog', async (): Promise<void> => {
-            await renderComponent({
-                totalCreditsToConsume: 10,
-                creditsAvailable: 20,
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            });
-
-            expect(await screen.findByText(/select template/i)).toBeVisible();
+    it('render TrainModelDialog', async (): Promise<void> => {
+        await renderComponent({
+            totalCreditsToConsume: 10,
+            creditsAvailable: 20,
         });
 
-        it('flag is off, render TrainModelDialog', async (): Promise<void> => {
-            await renderComponent({
-                totalCreditsToConsume: 10,
-                creditsAvailable: 9,
-                creditFlag: false,
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            });
+        expect(await screen.findByText(/Train Model/i)).toBeVisible();
+    });
 
-            expect(await screen.findByText(/select template/i)).toBeVisible();
+    it('flag is off, render TrainModelDialog', async (): Promise<void> => {
+        await renderComponent({
+            totalCreditsToConsume: 10,
+            creditsAvailable: 9,
+            creditFlag: false,
         });
 
-        it('render NotEnoughCreditsDialog', async (): Promise<void> => {
-            await renderComponent({
-                totalCreditsToConsume: 10,
-                creditsAvailable: 9,
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            });
+        expect(await screen.findByText(/Train Model/i)).toBeVisible();
+    });
 
-            expect(await screen.findByText(/not enough credits/i)).toBeVisible();
+    it('render NotEnoughCreditsDialog', async (): Promise<void> => {
+        await renderComponent({
+            totalCreditsToConsume: 10,
+            creditsAvailable: 9,
         });
+
+        expect(await screen.findByText(/not enough credits/i)).toBeVisible();
     });
 });

@@ -3,20 +3,20 @@
 
 import { Flex, Heading, Radio, RadioGroup, Text, Tooltip, TooltipTrigger } from '@geti/ui';
 
-import { PerformanceCategory } from '../../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
-import { LegacySupportedAlgorithm } from '../../../../../../../core/supported-algorithms/supported-algorithms.interface';
-import { InfoTooltip } from '../../../../../../../shared/components/info-tooltip/info-tooltip.component';
-import { ModelArchitectureTooltipText } from '../../../model-architecture-tooltip.component';
-import { ActiveModelTag } from '../../../models-container/model-card/active-model-tag.component';
-import { DeprecatedTag } from '../../../models-container/model-card/deprecated-model-tag.component';
-import { RecommendedModelTag } from '../../../models-container/model-card/recommended-model-tag.component';
-import { SelectableCard } from '../../../train-model-dialog/selectable-card/selectable-card.component';
+import { PerformanceCategory } from '../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
+import { SupportedAlgorithm } from '../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { InfoTooltip } from '../../../../../shared/components/info-tooltip/info-tooltip.component';
+import { ModelArchitectureTooltipText } from '../model-architecture-tooltip.component';
+import { ActiveModelTag } from '../models-container/model-card/active-model-tag.component';
+import { DeprecatedTag } from '../models-container/model-card/deprecated-model-tag.component';
+import { RecommendedModelTag } from '../models-container/model-card/recommended-model-tag.component';
+import { SelectableCard } from '../train-model-dialog/selectable-card/selectable-card.component';
 import { isDeprecatedAlgorithm } from '../utils';
 
 import classes from './model-template.module.scss';
 
 interface ModelTemplateProps {
-    template: LegacySupportedAlgorithm;
+    template: SupportedAlgorithm;
     selectedModelTemplateId: string;
     handleSelectedTemplateId: (modelTemplateId: string | null) => void;
     activeModelTemplateIdPerTask: string | undefined;
@@ -28,7 +28,8 @@ export const ModelTemplate = ({
     activeModelTemplateIdPerTask,
     handleSelectedTemplateId,
 }: ModelTemplateProps) => {
-    const { name, modelSize, modelTemplateId, performanceCategory, gigaflops, description, license } = template;
+    const { name, modelTemplateId, performanceCategory, gigaflops, description, license, trainableParameters } =
+        template;
     const isSelected = selectedModelTemplateId === modelTemplateId;
     const shouldShowActiveTag = modelTemplateId === activeModelTemplateIdPerTask;
     const isDeprecated = isDeprecatedAlgorithm(template.lifecycleStage);
@@ -92,7 +93,7 @@ export const ModelTemplate = ({
                 <Flex alignItems={'center'} gap={'size-200'}>
                     <Flex direction={'column'}>
                         <Text UNSAFE_className={classes.subTitle}>Size</Text>
-                        <Text>{modelSize} MB</Text>
+                        <Text>{trainableParameters} MB</Text>
                     </Flex>
                     <Flex direction={'column'}>
                         <Text UNSAFE_className={classes.subTitle}>Complexity</Text>

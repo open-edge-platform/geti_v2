@@ -6,17 +6,17 @@ import { Dispatch, Key, SetStateAction, useEffect, useMemo, useState } from 'rea
 import { Flex, Radio, RadioGroup, View } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
-import { ModelsGroups } from '../../../../../../core/models/models.interface';
-import { isActiveModel } from '../../../../../../core/models/utils';
-import { Task } from '../../../../../../core/projects/task.interface';
+import { ModelsGroups } from '../../../../../core/models/models.interface';
+import { isActiveModel } from '../../../../../core/models/utils';
+import { Task } from '../../../../../core/projects/task.interface';
 import {
-    LegacySupportedAlgorithm,
+    SupportedAlgorithm,
     TaskWithSupportedAlgorithms,
-} from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
-import { InfoTooltip } from '../../../../../../shared/components/info-tooltip/info-tooltip.component';
-import { isNotCropTask } from '../../../../../../shared/utils';
-import { useProject } from '../../../../providers/project-provider/project-provider.component';
-import { ModelTemplatesList } from './model-templates-list/model-templates-list.component';
+} from '../../../../../core/supported-algorithms/supported-algorithms.interface';
+import { InfoTooltip } from '../../../../../shared/components/info-tooltip/info-tooltip.component';
+import { isNotCropTask } from '../../../../../shared/utils';
+import { useProject } from '../../../providers/project-provider/project-provider.component';
+import { ModelTemplatesList } from '../model-templates-list/model-templates-list.component';
 import { TaskSelection } from './task-selection.component';
 import {
     CUSTOM_MODEL_CONFIG_TOOLTIP_TEXT,
@@ -42,8 +42,8 @@ interface ModelTemplatesSelectionProps {
 const getSupportedAlgorithms = (
     tasksWithSupportedAlgorithms: TaskWithSupportedAlgorithms,
     taskId: string
-): LegacySupportedAlgorithm[] => {
-    return (tasksWithSupportedAlgorithms[taskId] ?? []) as LegacySupportedAlgorithm[];
+): SupportedAlgorithm[] => {
+    return (tasksWithSupportedAlgorithms[taskId] ?? []) as SupportedAlgorithm[];
 };
 
 export const ModelTemplatesSelection = ({
@@ -66,7 +66,7 @@ export const ModelTemplatesSelection = ({
     const taskItems = tasks.filter(isNotCropTask);
     const [selectedDomain, setSelectedDomain] = useState<string>(selectedTask.domain);
 
-    const algorithms = useMemo<LegacySupportedAlgorithm[]>(
+    const algorithms = useMemo<SupportedAlgorithm[]>(
         () =>
             getSupportedAlgorithms(tasksWithSupportedAlgorithms, selectedTask.id).filter(
                 ({ lifecycleStage }) => !isObsoleteAlgorithm(lifecycleStage)
@@ -74,10 +74,7 @@ export const ModelTemplatesSelection = ({
         [tasksWithSupportedAlgorithms, selectedTask]
     );
 
-    const getActiveModelTemplateIdPerTask = (
-        inputAlgorithms: LegacySupportedAlgorithm[],
-        inputSelectedTaskId: string
-    ) => {
+    const getActiveModelTemplateIdPerTask = (inputAlgorithms: SupportedAlgorithm[], inputSelectedTaskId: string) => {
         if (isEmpty(inputAlgorithms) || models === undefined) {
             return undefined;
         }
@@ -101,7 +98,7 @@ export const ModelTemplatesSelection = ({
     );
 
     const handleInitialTemplateSelection = (
-        templates: LegacySupportedAlgorithm[],
+        templates: SupportedAlgorithm[],
         activeModelTemplateId: string | undefined = activeModelTemplateIdPerTask
     ): void => {
         if (activeModelTemplateId === undefined) {

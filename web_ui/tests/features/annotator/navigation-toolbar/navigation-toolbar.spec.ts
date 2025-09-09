@@ -96,50 +96,6 @@ const registerProjectConfigurationEndpoints = (registerApiResponse: OpenApiFixtu
     });
 };
 
-// TODO: Remove once FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS is removed
-const registerConfigurationEndpoints = (registerApiResponse: OpenApiFixtures['registerApiResponse']) => {
-    const configuration = clone(taskChainConfiguration);
-
-    registerApiResponse('GetFullConfiguration', (_, res, ctx) => {
-        return res(ctx.json(configuration));
-    });
-
-    registerApiResponse('SetFullConfiguration', (req, res, ctx) => {
-        req.body.task_chain.forEach((task, taskIdx) => {
-            task.components.forEach((component, componentIdx) => {
-                component.parameters?.forEach((parameter, parameterIdx) => {
-                    configuration.task_chain[taskIdx].components[componentIdx].parameters[parameterIdx].value =
-                        !!parameter.value;
-                });
-            });
-        });
-
-        return res(ctx.json(configuration));
-    });
-
-    registerApiResponse('GetProjectStatus', (_, res, ctx) => {
-        return res(
-            // @ts-expect-error Issue ie openapi types
-            ctx.json(
-                getMockedProjectStatusDTO({
-                    tasks: [
-                        getMockedProjectStatusTask({
-                            id: '635fce72fc03e87df9becd10',
-                            title: 'Detection',
-                            ready_to_train: true,
-                        }),
-                        getMockedProjectStatusTask({
-                            id: '635fce72fc03e87df9becd12',
-                            title: 'Segmentation',
-                            ready_to_train: true,
-                        }),
-                    ],
-                })
-            )
-        );
-    });
-};
-
 test.describe('navigation toolbar', () => {
     test.beforeEach(({ registerApiResponse }) => {
         registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(detectionSegmentationProject)));
@@ -204,10 +160,7 @@ test.describe('Active learning configuration', () => {
         page,
         taskNavigation,
         aiLearningConfigurationPage,
-        registerApiResponse,
     }) => {
-        registerConfigurationEndpoints(registerApiResponse);
-
         await page.goto(annotatorUrl);
 
         await expect(page.getByRole('button', { name: 'Detection', exact: true })).toBeVisible();
@@ -249,12 +202,7 @@ test.describe('Active learning configuration', () => {
             registerApiResponse('GetProjectInfo', (_, res, ctx) => res(ctx.json(detectionProject)));
         });
 
-        test('It does not show a picker for single task projects', async ({
-            page,
-            registerApiResponse,
-            aiLearningConfigurationPage,
-        }) => {
-            registerConfigurationEndpoints(registerApiResponse);
+        test('It does not show a picker for single task projects', async ({ page, aiLearningConfigurationPage }) => {
             await page.goto(annotatorUrl);
             await aiLearningConfigurationPage.open();
 

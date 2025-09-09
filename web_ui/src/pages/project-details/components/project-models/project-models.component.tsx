@@ -1,7 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Flex, Loading, View } from '@geti/ui';
 
 import { NoTrainedModels } from '../../../../assets/images';
@@ -17,7 +16,6 @@ import { EmptyDataTrainingProgress } from './empty-data-training-progress.compon
 import { useIsTraining } from './hooks/use-is-training.hook';
 import { ModelsGroupsPerTasks } from './models-groups-per-tasks.component';
 import { ModelsGroupsSingleTask } from './models-groups-single-task.component';
-import { ReconfigureModels } from './reconfigure-models/reconfigure-models.component';
 import { TrainModel } from './train-model-dialog/train-model.component';
 import { addAlgorithmDetails } from './utils';
 
@@ -25,7 +23,6 @@ export const ProjectModels = () => {
     const { useProjectModelsQuery } = useModels();
     const { tasksWithSupportedAlgorithms } = useTasksWithSupportedAlgorithms();
     const isTraining = useIsTraining();
-    const { FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
 
     const {
         project: { tasks },
@@ -44,7 +41,6 @@ export const ProjectModels = () => {
                 breadcrumbs={[{ id: 'models-id', breadcrumb: 'Models' }]}
                 header={
                     <Flex alignItems={'center'} gap={'size-150'}>
-                        {!FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS && <ReconfigureModels />}
                         {!isLoadingModels && <TrainModel models={formattedModelsGroups} />}
                     </Flex>
                 }

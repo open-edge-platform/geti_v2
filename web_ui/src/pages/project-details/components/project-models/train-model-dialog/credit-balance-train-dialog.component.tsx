@@ -9,7 +9,6 @@ import { Task } from '../../../../../core/projects/task.interface';
 import { useTotalCreditPrice } from '../../../hooks/use-credits-to-consume.hook';
 import { useProject } from '../../../providers/project-provider/project-provider.component';
 import { NotEnoughCreditsDialog } from '../../common/not-enough-credits-dialog/not-enough-credits-dialog.component';
-import { TrainModelDialog as LegacyTrainModel } from '../legacy-train-model-dialog/train-model-dialog.component';
 import { TrainModel } from './train-model-dialog.component';
 
 interface CreditBalanceTrainDialogProps {
@@ -21,7 +20,7 @@ interface CreditBalanceTrainDialogProps {
 
 export const CreditBalanceTrainDialog = (props: CreditBalanceTrainDialogProps) => {
     const { projectIdentifier } = useProject();
-    const { FEATURE_FLAG_CREDIT_SYSTEM, FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
+    const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
     const { useGetOrganizationBalanceQuery } = useCreditsQueries();
     const { getCreditPrice } = useTotalCreditPrice();
     const { data: balance } = useGetOrganizationBalanceQuery(
@@ -29,10 +28,9 @@ export const CreditBalanceTrainDialog = (props: CreditBalanceTrainDialogProps) =
         { enabled: FEATURE_FLAG_CREDIT_SYSTEM }
     );
     const { totalCreditsToConsume } = getCreditPrice(props.task?.id);
-    const TrainModelDialog = FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS ? TrainModel : LegacyTrainModel;
 
     if (!FEATURE_FLAG_CREDIT_SYSTEM) {
-        return <TrainModelDialog {...props} />;
+        return <TrainModel {...props} />;
     }
 
     if (isNil(balance) || isNil(totalCreditsToConsume)) {
@@ -40,7 +38,7 @@ export const CreditBalanceTrainDialog = (props: CreditBalanceTrainDialogProps) =
     }
 
     if (balance.available >= totalCreditsToConsume) {
-        return <TrainModelDialog {...props} />;
+        return <TrainModel {...props} />;
     }
 
     return (

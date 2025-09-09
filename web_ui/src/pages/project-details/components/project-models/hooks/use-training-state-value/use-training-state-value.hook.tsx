@@ -16,10 +16,10 @@ import { AnimationDirections } from '../../../../../../shared/animation-paramete
 import { isNotCropTask } from '../../../../../../shared/utils';
 import { useTotalCreditPrice } from '../../../../hooks/use-credits-to-consume.hook';
 import { useProject } from '../../../../providers/project-provider/project-provider.component';
-import { ModelTemplatesSelection } from '../model-templates-selection/model-templates-selection.component';
-import { ModelConfigurationOption } from '../model-templates-selection/utils';
-import { TrainConfigurableParameters } from '../train-configurable-parameters/train-configurable-parameters.component';
-import { getTrainingBodyDTO } from '../utils';
+import { ModelTemplatesSelection } from '../../model-templates-selection/model-templates-selection.component';
+import { TrainConfigurableParameters } from '../../train-configurable-parameters/train-configurable-parameters.component';
+import { getTrainingBodyDTO } from '../../train-model-dialog/utils';
+import { ModelConfigurationOption } from '../../utils';
 import { TrainingProcessState, TrainingSteps, UseTrainProcessHandler } from './use-training-state-value.interface';
 
 export const useTrainStateValue = (): UseTrainProcessHandler => {
