@@ -80,6 +80,8 @@ export {
     ToastContainer,
     StatusLight,
     ToastQueue,
+    Accordion,
+    type SpectrumAccordionProps,
     type SpectrumToastOptions,
     type SpectrumColorPickerProps,
     type SpectrumProgressBarProps,
