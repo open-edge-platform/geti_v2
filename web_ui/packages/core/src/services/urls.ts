@@ -37,8 +37,8 @@ const PREFIX = (url: string) => url;
 
 const WORKSPACES = (organizationId: string): string => {
     const searchOptionsUrl = new URLSearchParams();
-    searchOptionsUrl.set('sortBy', 'createdAt')
-    searchOptionsUrl.set('sortDirection', 'asc')
+    searchOptionsUrl.set('sortBy', 'createdAt');
+    searchOptionsUrl.set('sortDirection', 'asc');
 
     return `${ORGANIZATION(organizationId)}/workspaces?${searchOptionsUrl.toString()}`;
 };
