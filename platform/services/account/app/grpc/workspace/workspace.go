@@ -324,6 +324,8 @@ func (s *GRPCServer) Find(ctx context.Context, findRequest *pb.FindWorkspaceRequ
 	statementSession := s.DB.WithContext(ctx)
 	statementSession = statementSession.Model(&workspaces)
 
+    response := pb.ListWorkspacesResponse{}
+
 	authTokenData, ok := grpcUtils.GetAuthTokenHeaderData(ctx)
 	if ok {
         isOrgAdmin, err := IsOrganizationAdmin(authTokenData.UserID, findRequest.OrganizationId)
@@ -341,6 +343,10 @@ func (s *GRPCServer) Find(ctx context.Context, findRequest *pb.FindWorkspaceRequ
                 return nil, err
             }
 
+            if availableWorkspaces == "" {
+                logger.Debugf("lack of available workspaces for regular user")
+                return &response, nil
+            }
             statementSession = statementSession.Where("id IN (" + availableWorkspaces + ")")
         }
 	}
@@ -410,7 +416,6 @@ func (s *GRPCServer) Find(ctx context.Context, findRequest *pb.FindWorkspaceRequ
 		return nil, status.Errorf(codes.Unknown, "unexpected error")
 	}
 
-	response := pb.ListWorkspacesResponse{}
 	for _, workspaceModel := range workspaces {
 		workspaceData := workspaceToPb(workspaceModel) // function to convert workspace model to protobuf model
 		response.Workspaces = append(response.Workspaces, workspaceData)

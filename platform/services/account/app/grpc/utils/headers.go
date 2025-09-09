@@ -99,6 +99,7 @@ func GetExternalTokenHeaderData(ctx context.Context) (*ExternalTokenData, bool) 
 
 func GetAuthTokenHeaderData(ctx context.Context) (*AuthTokenData, bool) {
 	tokenStr, ok := GetHTTPHeaderFromGRPCContext(ctx, "x-auth-request-access-token")
+
 	if !ok {
 		return nil, false
 	}
@@ -109,10 +110,16 @@ func GetAuthTokenHeaderData(ctx context.Context) (*AuthTokenData, bool) {
 		return nil, false
 	}
 
-	userId, ok := claims["preferred_username"].(string)
+	/* Handle requests coming with Personal Access Tokens - where user id is in owner_id field*/
+	userId, ok := claims["owner_id"].(string)
+
 	if !ok {
-		logger.Warn("user ID missing in JWT claims")
-		return nil, false
+	    userId, ok = claims["preferred_username"].(string)
+
+        if !ok {
+            logger.Warn("user ID missing in JWT claims")
+            return nil, false
+        }
 	}
 
 	orgId, ok := claims["organization_id"].(string)
