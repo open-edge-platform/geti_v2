@@ -500,7 +500,6 @@ test.describe('Dataset tab actions', async () => {
         await expectDatasetMenuItemToBeInvisible(page, DatasetTabActions.UpdateDataset);
     });
 
-    // eslint-disable-next-line max-len
     test('Testing set should have IMPORT DATASET, EXPORT DATASET, UPDATE DATASET and DELETE DATASET actions', async ({
         registerApiResponse,
         datasetPage,

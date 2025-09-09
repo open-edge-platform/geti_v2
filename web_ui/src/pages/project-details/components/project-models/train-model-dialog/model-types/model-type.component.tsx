@@ -10,9 +10,9 @@ import { isFunction } from 'lodash-es';
 import { SupportedAlgorithm } from '../../../../../../core/supported-algorithms/supported-algorithms.interface';
 import { InfoTooltip } from '../../../../../../shared/components/info-tooltip/info-tooltip.component';
 import { ModelArchitectureTooltipText } from '../../model-architecture-tooltip.component';
-import { isDeprecatedAlgorithm } from '../../model-templates-selection/utils';
 import { ActiveModelTag } from '../../models-container/model-card/active-model-tag.component';
 import { DeprecatedTag } from '../../models-container/model-card/deprecated-model-tag.component';
+import { isDeprecatedAlgorithm } from '../../utils';
 import { SelectableCard } from '../selectable-card/selectable-card.component';
 import { AttributeRating, Ratings } from './attribute-rating/attribute-rating.component';
 

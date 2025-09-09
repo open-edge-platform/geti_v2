@@ -8,7 +8,6 @@ import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Heading
 
 import { useTask } from '../../../../../annotator/providers/task-provider/task-provider.component';
 import { useTotalCreditPrice } from '../../../../hooks/use-credits-to-consume.hook';
-import { useTrainStateValue } from '../../hooks/use-training-state-value/use-training-state-value.hook';
 
 import classes from './model-card.module.scss';
 
@@ -24,7 +23,6 @@ interface ActivateModelDialogProps {
 
 const TotalCreditsDeduction = () => {
     const { isLoading, getCreditPrice } = useTotalCreditPrice();
-    // const { selectedTask } = useTrainStateValue();
     const { selectedTask } = useTask();
     const { totalCreditsToConsume } = getCreditPrice(selectedTask?.id);
     const displayCreditDeductionInfo = !isLoading;

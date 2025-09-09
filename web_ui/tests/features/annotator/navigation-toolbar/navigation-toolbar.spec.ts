@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { clone } from 'lodash-es';
-
 import {
     ProjectConfigurationDTO,
     ProjectConfigurationUploadPayloadDTO,
@@ -23,7 +21,7 @@ import {
     userAnnotationsResponse,
 } from './../../../mocks/detection-segmentation/mocks';
 import { project as detectionProject } from './../../../mocks/detection/mocks';
-import { projectConfiguration, taskChainConfiguration } from './mocks';
+import { projectConfiguration } from './mocks';
 
 const registerProjectConfigurationEndpoints = (registerApiResponse: OpenApiFixtures['registerApiResponse']) => {
     const localProjectConfiguration = structuredClone(projectConfiguration);

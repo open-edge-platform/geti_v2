@@ -16,10 +16,6 @@ jest.mock('../../../../hooks/use-credits-to-consume.hook', () => ({
     useTotalCreditPrice: jest.fn(),
 }));
 
-jest.mock('../../hooks/use-training-state-value/use-training-state-value.hook', () => ({
-    ...jest.requireActual('../../hooks/use-training-state-value/use-training-state-value.hook'),
-}));
-
 describe('ActivateModelDialog', () => {
     beforeEach(() => {
         jest.clearAllMocks();
