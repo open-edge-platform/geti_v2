@@ -44,7 +44,3 @@ export interface SupportedAlgorithmDTO {
     is_default_model: boolean;
     task: TASK_TYPE;
 }
-
-export interface SupportedAlgorithmsResponseDTO {
-    supported_algorithms: SupportedAlgorithmDTO[];
-}
