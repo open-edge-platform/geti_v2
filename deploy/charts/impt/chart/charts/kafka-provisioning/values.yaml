@@ -56,13 +56,6 @@ securityContext:
     drop:
       - ALL
 
-resources:
-  limits:
-    memory: 512Mi
-  requests:
-    cpu: 35m
-    memory: 40Mi
-
 ## @section Kafka provisioning parameters
 
 ## Kafka provisioning

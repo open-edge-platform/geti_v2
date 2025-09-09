@@ -23,6 +23,8 @@ spec:
               value: "{{ .Release.Namespace }}-kafka.{{ .Release.Namespace }}.svc.cluster.local"
             - name: "KAFKA_PORT"
               value: "9092"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
         - name: store-credentials
           image: "{{ .Values.global.busybox.registry }}/{{ if .Values.global.busybox.repository }}{{ .Values.global.busybox.repository }}/{{ end }}{{ .Values.global.busybox.name }}"
           command: [ "/bin/sh", "-c" ]
@@ -64,6 +66,8 @@ spec:
               # for connect-plugin-path
               log4j.logger.org.reflections=ERROR
               EOF
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           volumeMounts:
             - name: client-config
               mountPath: /tmp/kafka
@@ -238,6 +242,8 @@ spec:
               {{- if not .Values.global.istio_ambient_mesh }}
               wget --post-data="" -q -O/dev/null 127.0.0.1:15020/quitquitquit;
               {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           env:
             - name: KAFKA_ADDRESS
               value: {{ printf "%s:%d" (.Values.provisioning.kafkaHost) (.Values.service.ports.client | int64) }}
