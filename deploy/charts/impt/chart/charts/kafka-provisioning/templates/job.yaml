@@ -20,7 +20,7 @@ spec:
           command: [ 'sh', '-c', "until nc -w 5 -z $KAFKA_HOST $KAFKA_PORT; do echo wait...; sleep 2; done;" ]
           env:
             - name: "KAFKA_HOST"
-              value: "{{ .Release.Namespace }}-kafka.{{ .Release.Namespace }}.svc.cluster.local"
+              value: "{{ .Values.provisioning.kafkaHost }}"
             - name: "KAFKA_PORT"
               value: "9092"
           securityContext:
@@ -56,7 +56,7 @@ spec:
               EOF
 
               cat - > /tmp/kafka/tools-log4j.properties <<EOF
-              log4j.rootLogger=DEBUG, stderr
+              log4j.rootLogger=INFO, stderr
 
               log4j.appender.stderr=org.apache.log4j.ConsoleAppender
               log4j.appender.stderr.layout=org.apache.log4j.PatternLayout
@@ -75,7 +75,7 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.registry }}/{{ if .Values.image.repository }}{{ .Values.image.repository }}/{{ end }}{{ .Values.image.name }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["/bin/bash", "-xc"]
+          command: ["/bin/bash", "-c"]
           args:
             - |
               echo "Starting Kafka provisioning"

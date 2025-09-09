@@ -61,7 +61,7 @@ securityContext:
 ## Kafka provisioning
 ##
 provisioning:
-  kafkaHost: impt-kafka-0.impt-kafka-headless.impt.svc.cluster.local
+  kafkaHost: impt-kafka
   ## @param provisioning.numPartitions Default number of partitions for topics when unspecified
   ##
   numPartitions: 1
