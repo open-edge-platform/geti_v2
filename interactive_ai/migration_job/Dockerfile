@@ -27,7 +27,7 @@ FROM base AS runtime
 
 # Install ffmpeg and curl
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg=7:5.1.6-0+deb12u1 curl && \
+    apt-get install -y --no-install-recommends ffmpeg=7:5.1.*-0+deb12u1 curl && \
     rm -rf /var/lib/apt/lists/* && \
     useradd -l -u 10001 non-root && \
 	pip3 uninstall -y setuptools pip wheel && \
