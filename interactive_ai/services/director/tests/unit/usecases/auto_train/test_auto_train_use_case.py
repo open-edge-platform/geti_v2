@@ -131,7 +131,6 @@ class TestAutoTrainUseCase:
         fxt_project_identifier,
         fxt_session_ctx,
         fxt_ote_id,
-        feature_flag_config_revamp_on,
     ) -> None:
         task_id_1, task_id_2 = fxt_ote_id(201), fxt_ote_id(202)
         with (
@@ -151,7 +150,7 @@ class TestAutoTrainUseCase:
             ]
         )
 
-    def test_on_configuration_changed(self, fxt_project_identifier, feature_flag_config_revamp_on) -> None:
+    def test_on_configuration_changed(self, fxt_project_identifier) -> None:
         with patch.object(AutoTrainUseCase, "_check_conditions_and_set_auto_train_readiness") as mock_check_conditions:
             AutoTrainUseCase.on_configuration_changed(fxt_project_identifier)
 

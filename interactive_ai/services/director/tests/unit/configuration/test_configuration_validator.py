@@ -71,43 +71,8 @@ class TestConfigurationValidator:
             model_storage_id=fxt_mongo_id(20),
         )
         project_id = fxt_mongo_id(3)
-        task_id = fxt_mongo_id(4)
         project = fxt_project
         project.id_ = project_id
-
-        # test a valid identifier task-level (i.e. model storage belongs to the task)
-        with patch.object(
-            ConfigurationValidator,
-            "_ConfigurationValidator__get_model_storages_by_task_id",
-            return_value=[fxt_model_storage],
-        ) as mock_get_model_storages:
-            ConfigurationValidator._validate_entity_identifier(
-                entity_identifier=entity_identifier,
-                project=project,
-                task_id=task_id,
-            )
-        mock_get_model_storages.assert_called_once_with(
-            project_identifier=ProjectIdentifier(
-                project.workspace_id,
-                project.id_,
-            ),
-            task_id=task_id,
-        )
-
-        # test an invalid identifier task-level (i.e. model storage isn't in the task)
-        with (
-            patch.object(
-                ConfigurationValidator,
-                "_ConfigurationValidator__get_model_storages_by_task_id",
-                return_value=[fxt_model_storage],
-            ),
-            pytest.raises(InvalidEntityIdentifierException),
-        ):
-            ConfigurationValidator._validate_entity_identifier(
-                entity_identifier=invalid_entity_identifier,
-                project=project,
-                task_id=task_id,
-            )
 
         # test a valid identifier project-level (i.e. model storage belongs to project)
         with patch.object(

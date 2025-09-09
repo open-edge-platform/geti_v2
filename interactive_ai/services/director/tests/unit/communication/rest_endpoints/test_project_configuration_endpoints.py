@@ -45,19 +45,6 @@ class TestProjectConfigurationEndpoints:
         assert result.status_code == HTTPStatus.OK
         compare(json.loads(result.content), project_config_dict, ignore_eq=True)
 
-    def test_feature_flag_off(self, fxt_director_app) -> None:
-        # check that endpoints are not available when feature flag is off
-        result = fxt_director_app.get(f"{API_PROJECT_PATTERN}/project_configuration")
-
-        assert result.status_code == HTTPStatus.FORBIDDEN
-
-        result = fxt_director_app.patch(
-            f"{API_PROJECT_PATTERN}/project_configuration",
-            json={},
-        )
-
-        assert result.status_code == HTTPStatus.FORBIDDEN
-
     @pytest.mark.parametrize(
         "rest_input, endpoint_url",
         [

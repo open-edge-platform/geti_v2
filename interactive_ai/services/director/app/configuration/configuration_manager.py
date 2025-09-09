@@ -19,13 +19,13 @@ from geti_fastapi_tools.exceptions import ModelNotFoundException, ProjectNotFoun
 from geti_kafka_tools import publish_event
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier
-from iai_core.configuration.elements.component_parameters import ComponentParameters, ComponentType
+from iai_core.configuration.elements.component_parameters import ComponentParameters
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
 from iai_core.configuration.elements.hyper_parameters import HyperParameters
 from iai_core.configuration.interfaces.configurable_parameters_interface import IConfigurableParameterContainer
 from iai_core.entities.model import Model, NullModel
 from iai_core.entities.model_storage import ModelStorage, ModelStorageIdentifier, NullModelStorage
-from iai_core.entities.project import NullProject, Project
+from iai_core.entities.project import NullProject
 from iai_core.entities.task_node import TaskNode
 from iai_core.repos import ConfigurableParametersRepo, ModelRepo, ModelStorageRepo, ProjectRepo, TaskNodeRepo
 from iai_core.services.model_service import ModelService
@@ -284,38 +284,6 @@ class ConfigurationManager:
         )
 
         return global_configs, task_chain_configs
-
-    @staticmethod
-    def __get_trainable_task_nodes(project: Project) -> list[TaskNode]:
-        """
-        Returns a list of trainable task nodes in the project
-
-        :param project: Project to retrieve the trainable tasks for
-        :return: list of task nodes that are trainable
-        """
-        return [node for node in project.tasks if node.task_properties.is_trainable]
-
-    @staticmethod
-    def __get_per_task_components() -> list[ComponentType]:
-        """
-        Get all components that operate per-task, as opposed to project-wide.
-        """
-        return [
-            component
-            for component in ComponentType
-            if component.metadata.per_task and component is not ComponentType.NULL_COMPONENT
-        ]
-
-    @staticmethod
-    def __get_global_components() -> list[ComponentType]:
-        """
-        Get all components that operate project-wide, as opposed to per-task.
-        """
-        return [
-            component
-            for component in ComponentType
-            if not component.metadata.per_task and component is not ComponentType.NULL_COMPONENT
-        ]
 
     @staticmethod
     @unified_tracing

@@ -61,22 +61,6 @@ class TestTrainingConfigurationEndpoints:
         assert result.status_code == HTTPStatus.OK
         compare(json.loads(result.content), dummy_rest_view, ignore_eq=True)
 
-    def test_get_project_configuration_feature_flag_off(self, fxt_director_app) -> None:
-        # check that endpoint is not available when feature flag is off
-        result = fxt_director_app.get(f"{API_PROJECT_PATTERN}/training_configuration")
-
-        assert result.status_code == HTTPStatus.FORBIDDEN
-
-        result = fxt_director_app.patch(
-            f"{API_PROJECT_PATTERN}/training_configuration",
-            json={
-                "task_id": "dummy_task_id",
-                "model_manifest_id": "dummy_model_manifest_id",
-            },
-        )
-
-        assert result.status_code == HTTPStatus.FORBIDDEN
-
     def test_update_training_configuration(self, fxt_director_app) -> None:
         # Create a sample REST input payload
         rest_input = {
