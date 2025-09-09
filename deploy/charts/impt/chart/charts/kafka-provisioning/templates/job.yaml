@@ -23,10 +23,6 @@ spec:
               value: "{{ .Release.Namespace }}-kafka.{{ .Release.Namespace }}.svc.cluster.local"
             - name: "KAFKA_PORT"
               value: "9092"
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
         - name: store-credentials
           image: "{{ .Values.global.busybox.registry }}/{{ if .Values.global.busybox.repository }}{{ .Values.global.busybox.repository }}/{{ end }}{{ .Values.global.busybox.name }}"
           command: [ "/bin/sh", "-c" ]
@@ -68,8 +64,6 @@ spec:
               # for connect-plugin-path
               log4j.logger.org.reflections=ERROR
               EOF
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: client-config
               mountPath: /tmp/kafka
@@ -77,8 +71,6 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.registry }}/{{ if .Values.image.repository }}{{ .Values.image.repository }}/{{ end }}{{ .Values.image.name }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
           command: ["/bin/bash", "-xc"]
           args:
             - |
@@ -255,8 +247,6 @@ spec:
               value: -Dlog4j.configuration=file:/tmp/kafka/tools-log4j.properties
             - name: KAFKA_ADMIN_USERNAME
               value: admin
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: client-config
               mountPath: /tmp/kafka
