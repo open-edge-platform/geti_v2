@@ -160,7 +160,9 @@ export const WorkspacesTabs = () => {
 
                         {numberOfWorkspaces > effectivePinned.length && collapsedItems.length > 0 && (
                             <CollapsedItemsPicker
-                                key={`collapsed-picker-${collapsedItems.map(item => item.id).join('-')}-${selectedWorkspaceId}`}
+                                key={`collapsed-picker-${collapsedItems
+                                    .map((item) => item.id)
+                                    .join('-')}-${selectedWorkspaceId}`}
                                 hasSelectedPinnedItem={hasSelectedPinnedItem}
                                 numberOfCollapsedItems={collapsedItems.length}
                                 onSelectionChange={handleSelectWorkspaceFromCollapsed}
