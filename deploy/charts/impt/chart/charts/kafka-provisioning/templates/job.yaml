@@ -68,8 +68,6 @@ spec:
               # for connect-plugin-path
               log4j.logger.org.reflections=ERROR
               EOF
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -259,8 +257,6 @@ spec:
               value: -Dlog4j.configuration=file:/tmp/kafka/tools-log4j.properties
             - name: KAFKA_ADMIN_USERNAME
               value: admin
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
