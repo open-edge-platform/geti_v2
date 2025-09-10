@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kafka.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kafka.labels" . | nindent 4 }}
+data:
+  server.sh: |-
+    #!/bin/bash
+    set -xe
+
+    echo allow.everyone.if.no.acl.found=${KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND} >> "${KAFKA_CONF_FILE}"
+    echo authorizer.class.name=${KAFKA_AUTHORIZER_CLASS_NAME} >> "${KAFKA_CONF_FILE}"
+    echo auto.create.topics.enable=${KAFKA_AUTO_CREATE_TOPICS_ENABLE} >> "${KAFKA_CONF_FILE}"
+    echo controller.listener.names=${KAFKA_CONTROLLER_LISTENER_NAMES} >> "${KAFKA_CONF_FILE}"
+    echo controller.quorum.voters=${KAFKA_CONTROLLER_QUORUM_VOTERS} >> "${KAFKA_CONF_FILE}"
+    echo default.replication.factor=${KAFKA_DEFAULT_REPLICATION_FACTOR} >> "${KAFKA_CONF_FILE}"
+    echo delete.topic.enable=${KAFKA_DELETE_TOPIC_ENABLE} >> "${KAFKA_CONF_FILE}"
+    echo inter.broker.listener.name=${KAFKA_INTER_BROKER_LISTENER_NAME} >> "${KAFKA_CONF_FILE}"
+
+  init.sh: |-
+    #!/bin/bash
+    set -xe
+
+    local args=("--config" "${KAFKA_CONF_FILE}" "--ignore-formatted")
+    echo "Initializing KRaft cluster with ID: ${KAFKA_CLUSTER_ID}"
+    args+=("--cluster-id=${KAFKA_CLUSTER_ID}")
+    echo "Adding KRaft SCRAM users at storage bootstrap"
+    read -r -a users <<<"$(tr ',;' ' ' <<<"${KAFKA_CLIENT_USERS}")"
+    read -r -a passwords <<<"$(tr ',;' ' ' <<<"${KAFKA_CLIENT_PASSWORDS}")"
+    if [[ "${KAFKA_CFG_SASL_ENABLED_MECHANISMS}" == *SCRAM-SHA-256* ]]; then
+      for ((i = 0; i < ${#users[@]}; i++)); do
+        args+=("--add-scram" "SCRAM-SHA-256=[name=${users[i]},password=${passwords[i]}]")
+      done
+    fi
+    if [[ "${KAFKA_CFG_SASL_ENABLED_MECHANISMS}" == *SCRAM-SHA-512* ]]; then
+      for ((i = 0; i < ${#users[@]}; i++)); do
+        args+=("--add-scram" "SCRAM-SHA-512=[name=${users[i]},password=${passwords[i]}]")
+      done
+    fi
+    echo "Formatting storage directories to add metadata..."
+    "${KAFKA_HOME}/bin/kafka-storage.sh" format "${args[@]}"

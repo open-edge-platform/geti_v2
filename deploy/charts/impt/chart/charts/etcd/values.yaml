@@ -33,7 +33,7 @@ dataDir: /data
 
 auth:
   token:
-    enabled: false
+    enabled: true
     type: "jwt"
     privateKey: jwt-token.pem
     signMethod: RS256

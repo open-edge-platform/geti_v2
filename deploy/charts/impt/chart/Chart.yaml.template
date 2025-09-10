@@ -37,7 +37,7 @@ dependencies:
   - name: bitnami-common
     version: 1.11.2
   - name: kafka
-    version: 15.3.6
+    version: 0.1.0
     condition: enabled.kafka
   - name: kafka-provisioning
     version: 0.1.0
