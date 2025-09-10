@@ -36,7 +36,7 @@ FROM debian:bookworm-slim@sha256:b1a741487078b369e78119849663d7f1a5341ef2768798f
 
 # Install ffmpeg
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg=7:5.1.6-0+deb12u1 && \
+    apt-get install -y --no-install-recommends ffmpeg=7:5.1.*-0+deb12u1 && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --link --from=build /build/interactive_ai/service/inference_gateway .
