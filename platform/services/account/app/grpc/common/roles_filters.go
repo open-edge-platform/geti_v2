@@ -77,6 +77,7 @@ func FilterRolesByCurrentUserPermissions(currentUserID string, rolesToFilter []*
 	currentUserRoles := RelationshipsToUserRoles(currentUserRelationships)
 
 	for _, role := range rolesToFilter {
+
 		roleResourceType := role.GetResourceType()
 
 		if roleResourceType == "workspace" || roleResourceType == "organization" {
@@ -104,10 +105,6 @@ func FilterRolesByCurrentUserPermissions(currentUserID string, rolesToFilter []*
 				continue
 			}
 
-			if HasRole(currentUserRoles, "workspace_admin", []string{"workspace"}, parentWorkspaceID) {
-				filteredRoles = append(filteredRoles, role)
-			}
-
 			parentOrganizationID, err := rolesMgr.GetWorkspaceParentOrganizationID(parentWorkspaceID)
 			if err != nil {
 				logger.Errorf("unable to get parent organization for the workspace %s: %v", parentWorkspaceID, err)
@@ -116,7 +113,13 @@ func FilterRolesByCurrentUserPermissions(currentUserID string, rolesToFilter []*
 
 			if HasRole(currentUserRoles, "organization_admin", []string{"organization"}, parentOrganizationID) {
 				filteredRoles = append(filteredRoles, role)
+				continue
 			}
+
+			if HasRole(currentUserRoles, "workspace_admin", []string{"workspace"}, parentWorkspaceID) {
+				filteredRoles = append(filteredRoles, role)
+			}
+
 		}
 	}
 
