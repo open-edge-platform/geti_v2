@@ -19,23 +19,31 @@ data:
     echo default.replication.factor=${KAFKA_DEFAULT_REPLICATION_FACTOR} >> "${KAFKA_CONF_FILE}"
     echo delete.topic.enable=${KAFKA_DELETE_TOPIC_ENABLE} >> "${KAFKA_CONF_FILE}"
     echo inter.broker.listener.name=${KAFKA_INTER_BROKER_LISTENER_NAME} >> "${KAFKA_CONF_FILE}"
+    echo log.retention.check.intervals.ms=${KAFKA_LOG_RETENTION_CHECK_INTERVALS_MS} >> "${KAFKA_CONF_FILE}"
+    echo message.max.bytes=${KAFKA_MESSAGE_MAX_BYTES} >> "${KAFKA_CONF_FILE}"
+    echo node.id=${KAFKA_NODE_ID} >> "${KAFKA_CONF_FILE}"
+    echo process.roles=${KAFKA_PROCESS_ROLES} >> "${KAFKA_CONF_FILE}"
+    echo sasl.enabled.mechanisms=${KAFKA_SASL_ENABLED_MECHANISMS} >> "${KAFKA_CONF_FILE}"
+    echo sasl.mechanism.controller.protocol=${KAFKA_SASL_MECHANISM_CONTROLLER_PROTOCOL} >> "${KAFKA_CONF_FILE}"
+    echo sasl.mechanism.inter.broker.protocol=${KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL} >> "${KAFKA_CONF_FILE}"
+    echo super.users=${KAFKA_SUPER_USERS} >> "${KAFKA_CONF_FILE}"
 
   init.sh: |-
     #!/bin/bash
     set -xe
 
-    local args=("--config" "${KAFKA_CONF_FILE}" "--ignore-formatted")
+    args=("--config" "${KAFKA_CONF_FILE}" "--ignore-formatted")
     echo "Initializing KRaft cluster with ID: ${KAFKA_CLUSTER_ID}"
     args+=("--cluster-id=${KAFKA_CLUSTER_ID}")
     echo "Adding KRaft SCRAM users at storage bootstrap"
     read -r -a users <<<"$(tr ',;' ' ' <<<"${KAFKA_CLIENT_USERS}")"
     read -r -a passwords <<<"$(tr ',;' ' ' <<<"${KAFKA_CLIENT_PASSWORDS}")"
-    if [[ "${KAFKA_CFG_SASL_ENABLED_MECHANISMS}" == *SCRAM-SHA-256* ]]; then
+    if [[ "${KAFKA_SASL_ENABLED_MECHANISMS}" == *SCRAM-SHA-256* ]]; then
       for ((i = 0; i < ${#users[@]}; i++)); do
         args+=("--add-scram" "SCRAM-SHA-256=[name=${users[i]},password=${passwords[i]}]")
       done
     fi
-    if [[ "${KAFKA_CFG_SASL_ENABLED_MECHANISMS}" == *SCRAM-SHA-512* ]]; then
+    if [[ "${KAFKA_SASL_ENABLED_MECHANISMS}" == *SCRAM-SHA-512* ]]; then
       for ((i = 0; i < ${#users[@]}; i++)); do
         args+=("--add-scram" "SCRAM-SHA-512=[name=${users[i]},password=${passwords[i]}]")
       done

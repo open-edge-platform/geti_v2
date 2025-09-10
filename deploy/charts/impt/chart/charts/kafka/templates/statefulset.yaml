@@ -23,6 +23,7 @@ spec:
           command: ["/bin/bash", "-c"]
           args:
             - >
+              /etc/kafka/scripts/server.sh &&
               /etc/kafka/scripts/init.sh &&
               /etc/kafka/docker/run
           env:
@@ -144,4 +145,4 @@ spec:
         - name: config
           configMap:
             name: {{ include "kafka.fullname" . }}
-            defaultMode: 292
+            defaultMode: 365
