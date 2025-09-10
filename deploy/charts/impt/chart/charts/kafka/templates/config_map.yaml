@@ -11,6 +11,9 @@ data:
     #!/bin/bash
     set -xe
 
+    echo listeners=${KAFKA_LISTENERS} > "${KAFKA_CONF_FILE}"
+    echo advertised.listeners=${KAFKA_ADVERTISED_LISTENERS} >> "${KAFKA_CONF_FILE}"
+    echo listener.security.protocol.map=${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP} >> "${KAFKA_CONF_FILE}"
     echo allow.everyone.if.no.acl.found=${KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND} >> "${KAFKA_CONF_FILE}"
     echo authorizer.class.name=${KAFKA_AUTHORIZER_CLASS_NAME} >> "${KAFKA_CONF_FILE}"
     echo auto.create.topics.enable=${KAFKA_AUTO_CREATE_TOPICS_ENABLE} >> "${KAFKA_CONF_FILE}"
