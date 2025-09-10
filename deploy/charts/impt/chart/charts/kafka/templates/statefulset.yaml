@@ -144,3 +144,4 @@ spec:
         - name: config
           configMap:
             name: {{ include "kafka.fullname" . }}
+            defaultMode: 292
