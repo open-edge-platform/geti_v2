@@ -1,0 +1,5 @@
+apiVersion: v1
+name: pv-creation
+description: system volume based on local storage to create pv and pvc
+version: ${TAG}
+appVersion: ${TAG}

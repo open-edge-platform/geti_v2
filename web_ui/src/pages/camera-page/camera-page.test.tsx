@@ -80,7 +80,7 @@ describe('CameraPage', () => {
 
         await renderApp({ cameraPermission: UserCameraPermission.GRANTED });
 
-        expect(screen.getByText(TOO_LOW_FREE_STORAGE_MESSAGE)).toBeVisible();
+        expect(await screen.findByText(TOO_LOW_FREE_STORAGE_MESSAGE)).toBeVisible();
     });
 
     it('enough storage', async () => {

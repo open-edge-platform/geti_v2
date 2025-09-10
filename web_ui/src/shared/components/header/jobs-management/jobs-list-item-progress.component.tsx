@@ -51,7 +51,7 @@ const getStepStateColor = (state: string): string => {
     }
 };
 
-const getStepStateIcon = (state: string): JSX.Element => {
+const getStepStateIcon = (state: string) => {
     switch (state) {
         case JobStepState.RUNNING:
             return <Loading mode='inline' size='S' />;

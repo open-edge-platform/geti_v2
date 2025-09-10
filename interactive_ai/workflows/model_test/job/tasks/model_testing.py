@@ -48,6 +48,8 @@ def run_model_test(
     project_id: str,
     model_test_result_id: str,
     min_annotation_size: Optional[int] = None,  # noqa: UP007
+    max_annotation_size: Optional[int] = None,  # noqa: UP007
+    min_number_of_annotations: Optional[int] = None,  # noqa: UP007
     max_number_of_annotations: Optional[int] = None,  # noqa: UP007
 ) -> None:
     """
@@ -58,6 +60,10 @@ def run_model_test(
     :param model_test_result_id: ID of the model test result
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
      ignored during evaluation
+    :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
+     ignored during evaluation
+    :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene. If not None,
+     annotation scenes with fewer annotations than this value will be ignored during evaluation.
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
      annotation scene will be ignored during evaluation.
     """
@@ -66,6 +72,8 @@ def run_model_test(
         project_id=project_id,
         model_test_result_id=model_test_result_id,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
         max_number_of_annotations=max_number_of_annotations,
     )
     report_progress(message="Inferring on testing dataset", progress=10)
@@ -88,6 +96,8 @@ def create_testing_dataset(  # pylint: disable=unused-argument
     project_id: str,
     model_test_result_id: str,
     min_annotation_size: int | None = None,
+    max_annotation_size: int | None = None,
+    min_number_of_annotations: int | None = None,
     max_number_of_annotations: int | None = None,
 ) -> Dataset:
     """
@@ -97,6 +107,10 @@ def create_testing_dataset(  # pylint: disable=unused-argument
     :param model_test_result_id: ID of the model test result
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
      ignored during evaluation
+    :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
+     ignored during evaluation
+    :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene. If not None,
+     annotation scenes with fewer than this number of annotations will be ignored during evaluation.
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
      annotation scene will be ignored during evaluation.
     """
@@ -118,6 +132,8 @@ def create_testing_dataset(  # pylint: disable=unused-argument
         dataset_storage=model_test_result.get_dataset_storages()[0],
         task_node_id=model_storage.task_node_id,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
         max_number_of_annotations=max_number_of_annotations,
     )
     create_dataset_command.execute()

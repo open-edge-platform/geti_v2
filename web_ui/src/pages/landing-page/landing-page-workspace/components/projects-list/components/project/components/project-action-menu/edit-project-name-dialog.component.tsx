@@ -38,7 +38,7 @@ const useEditProjectName = () => {
     return { editProjectName, isLoading: editProjectMutation.isPending };
 };
 
-export const EditProjectNameDialog = ({ onClose, isOpen, project }: EditProjectNameDialogProps): JSX.Element => {
+export const EditProjectNameDialog = ({ onClose, isOpen, project }: EditProjectNameDialogProps) => {
     const [newProjectName, setNewProjectName] = useState(project.name);
     const { editProjectName, isLoading } = useEditProjectName();
     const isSaveButtonDisabled = isEmpty(newProjectName) || newProjectName === project.name || isLoading;

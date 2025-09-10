@@ -14,7 +14,7 @@ export const NumberSliderWithLocalHandler = ({
     isInputEditable,
     changeAdHoc = false,
     ...props
-}: NumberSliderProps & NumberSliderWithLocalHandlerProps): JSX.Element => {
+}: NumberSliderProps & NumberSliderWithLocalHandlerProps) => {
     const [value, setValue] = useState<number>(defaultValue);
 
     const onChangeHandler = (newValue: number) => {

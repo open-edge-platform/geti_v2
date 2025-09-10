@@ -10,10 +10,7 @@ import { CPParamsList } from '../../cp-list/cp-list.component';
 
 type SelectableTabContentProps = Pick<ConfigurableParametersMany, 'selectedComponent' | 'updateParameter'>;
 
-export const SelectableTabContent = ({
-    selectedComponent,
-    updateParameter,
-}: SelectableTabContentProps): JSX.Element => {
+export const SelectableTabContent = ({ selectedComponent, updateParameter }: SelectableTabContentProps) => {
     return (
         <View UNSAFE_style={{ overflowY: 'auto', overflowX: 'hidden' }} flex={1} marginX={'size-250'}>
             {selectedComponent?.description && (

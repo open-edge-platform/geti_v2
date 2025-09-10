@@ -7,6 +7,7 @@ from testfixtures import compare
 
 from communication.model_registration_utils import ModelMapper, ProjectMapper
 from communication.rest_controllers import ModelRESTController
+from communication.rest_views.model_rest_views import ModelRESTViews
 from resource_management.deployment_package_manager import DeploymentPackageManager
 from tests.fixtures.job import do_nothing
 from usecases.statistics import StatisticsUseCase
@@ -187,6 +188,9 @@ class TestModelRESTController:
             patch.object(DatasetRepo, "__init__", new=do_nothing),
             patch.object(DatasetRepo, "count_per_media_type", return_value=fxt_dataset_counts) as mock_dataset_counts,
             patch.object(ModelService, "get_model_size", return_value=1),
+            patch.object(
+                ModelRESTViews, "_get_model_architecture_name", return_value=fxt_model_storage.name
+            ) as mock_get_model_architecture_name,
         ):
             with patch.object(ModelRepo, "get_by_id", return_value=fxt_model):
                 result = ModelRESTController.get_model_detail(
@@ -195,6 +199,7 @@ class TestModelRESTController:
                     model_id=fxt_model.id_,
                 )
 
+                mock_get_model_architecture_name.assert_called_once_with(model_storage=fxt_model_storage)
                 mock_get_project.assert_called_once_with(fxt_project.id_)
                 mock_dataset_counts.assert_called_once_with(dataset_id=fxt_model.train_dataset_id)
                 compare(result, fxt_model_info_rest, ignore_eq=True)

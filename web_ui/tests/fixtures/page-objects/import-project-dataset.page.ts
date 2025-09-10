@@ -8,11 +8,15 @@ export class ImportProjectDatasetPage {
 
     async uploadDataset(datasetPath: string) {
         const [, fileChooser] = await Promise.all([
-            this.page.getByRole('button', { name: /upload/i }).click(),
+            this.page.getByTestId('modal').getByRole('button', { name: 'Upload' }).click(),
             this.page.waitForEvent('filechooser'),
         ]);
         await fileChooser.setFiles([datasetPath]);
 
         await expect(this.page.getByRole('dialog').getByText('Dataset is parsed successfully')).toBeVisible();
+    }
+
+    async import(params: { timeout?: number } = {}) {
+        await this.page.getByTestId('modal').getByRole('button', { name: 'Import' }).click(params);
     }
 }

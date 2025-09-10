@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       component-dir:
-        description: 'Dir in root directory'
+        description: "Dir in root directory"
         type: string
         required: true
       ref:
@@ -14,11 +14,11 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'The branch, tag or SHA to checkout'
+        description: "The branch, tag or SHA to checkout"
         required: true
-        default: 'main'
+        default: "main"
       component-dir:
-        description: 'Path to the component (relative to the root of the repository)'
+        description: "Path to the component (relative to the root of the repository)"
         required: true
 
 permissions: {} # No permissions by default on workflow level
@@ -34,8 +34,13 @@ jobs:
       contents: read
     timeout-minutes: 30
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
           ref: ${{ inputs.ref || '' }}
@@ -46,14 +51,14 @@ jobs:
           sudo -E apt install -y ffmpeg
 
       - name: Install uv
-        uses: astral-sh/setup-uv@e92bafb6253dcd438e0484186d7669ea7a8ca1cc # v6.4.3
+        uses: astral-sh/setup-uv@557e51de59eb14aaaba2ed9621916900a91d50c6 # v6.6.1
         with:
           version: "0.7.13"
 
       - name: Setup GO
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
         with:
-          go-version: '1.23'
+          go-version: "1.23"
 
       - name: Static code analysis
         run: make -C "${COMPONENT_DIR}" static-code-analysis

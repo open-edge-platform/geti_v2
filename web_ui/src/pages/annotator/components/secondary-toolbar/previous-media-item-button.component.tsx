@@ -67,10 +67,7 @@ interface PreviousMediaItemButtonProps {
     selectMediaItem: (mediaItem: MediaItem) => void;
     selectedMediaItem: MediaItem | undefined;
 }
-export const PreviousMediaItemButton = ({
-    selectMediaItem,
-    selectedMediaItem,
-}: PreviousMediaItemButtonProps): JSX.Element => {
+export const PreviousMediaItemButton = ({ selectMediaItem, selectedMediaItem }: PreviousMediaItemButtonProps) => {
     const annotationToolContext = useAnnotationToolContext();
     const nextMediaItem = useNextMediaItem(
         selectedMediaItem,

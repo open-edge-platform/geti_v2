@@ -27,7 +27,7 @@ const getSelectedKey = (isInActiveMode: boolean, selectedDataset: Dataset, train
     return selectedDataset.id;
 };
 
-export const DatasetPicker = (): JSX.Element => {
+export const DatasetPicker = () => {
     const { project, projectIdentifier, isSingleDomainProject } = useProject();
     const { isInActiveMode } = useDataset();
     const navigateToAnnotatorRoute = useNavigateToAnnotatorRoute();
@@ -88,7 +88,7 @@ export const DatasetPicker = (): JSX.Element => {
             isQuiet
             items={datasetItems}
             selectedKey={selectedKey}
-            onSelectionChange={handleChangeDataset}
+            onSelectionChange={(key) => key !== null && handleChangeDataset(key)}
         >
             {(item) => (
                 <Item key={item.key} textValue={item.text}>

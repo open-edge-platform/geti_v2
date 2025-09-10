@@ -8,7 +8,7 @@ import { MenuOption } from '../../../shared/components/menu-option.interface';
 import { Sidebar } from '../../shared/components/sidebar/sidebar.component';
 import { useOrganization } from './hooks/organization.hook';
 
-export const OrganizationSidebar = (): JSX.Element => {
+export const OrganizationSidebar = () => {
     const { organization } = useOrganization();
     const { FEATURE_FLAG_ORG_QUOTAS, FEATURE_FLAG_MANAGE_USERS } = useFeatureFlags();
 

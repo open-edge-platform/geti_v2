@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key, useState } from 'react';
+import { useState } from 'react';
 
 import { Divider, Grid, Item, Picker, View } from '@geti/ui';
 import { isEmpty, orderBy, partition } from 'lodash-es';
@@ -46,7 +46,7 @@ const ModelTemplatesGrid = ({
     selectedModelTemplateId,
     handleSelectedTemplateId,
     activeModelTemplateIdPerTask,
-}: ModelTemplatesGridProps): JSX.Element => {
+}: ModelTemplatesGridProps) => {
     const sortingHandler = sortingHandlers[sortingOption];
 
     return (
@@ -76,7 +76,7 @@ export const ModelTemplatesList = ({
     selectedModelTemplateId,
     handleSelectedTemplateId,
     activeModelTemplateIdPerTask,
-}: TrainModelTemplatesProps): JSX.Element => {
+}: TrainModelTemplatesProps) => {
     const [sortingOption, setSortingOption] = useState<SortingOptions>(SortingOptions.RELEVANCE);
     const [otherTemplates, recommendedTemplates] = partition(templates, [
         'performanceCategory',
@@ -100,7 +100,7 @@ export const ModelTemplatesList = ({
                 labelAlign={'end'}
                 labelPosition={'side'}
                 selectedKey={sortingOption}
-                onSelectionChange={(key: Key) => {
+                onSelectionChange={(key) => {
                     setSortingOption(key as SortingOptions);
                 }}
             >

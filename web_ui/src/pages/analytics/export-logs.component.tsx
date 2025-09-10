@@ -15,13 +15,12 @@ import {
     Heading,
     Radio,
     RadioGroup,
+    toast,
     type RangeValue,
 } from '@geti/ui';
 import { DateValue, getLocalTimeZone, today } from '@internationalized/date';
 import dayjs from 'dayjs';
 
-import { NOTIFICATION_TYPE } from '../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../notification/notification.component';
 import { downloadFile, getDateTimeInISOAndUTCOffsetFormat, getDownloadNotificationMessage } from '../../shared/utils';
 import { idMatchingFormat } from '../../test-utils/id-utils';
 import { DownloadButton } from './download-button.component';
@@ -54,10 +53,10 @@ interface ExportAnalyticsDataProps {
     exportType: ExportAnalyticsType;
 }
 
-export const ExportAnalyticsData = ({ urls, exportType }: ExportAnalyticsDataProps): JSX.Element => {
+export const ExportAnalyticsData = ({ urls, exportType }: ExportAnalyticsDataProps) => {
     const { router } = useApplicationServices();
     const exportName = exportType.toLocaleLowerCase();
-    const { addNotification } = useNotification();
+
     const [selectedExportSubType, setSelectedExportSubType] = useState<ExportAnalyticsSubTypes | undefined>(undefined);
     const shouldShowSubTypes = exportType !== ExportAnalyticsType.TRACES;
 
@@ -97,7 +96,7 @@ export const ExportAnalyticsData = ({ urls, exportType }: ExportAnalyticsDataPro
 
         downloadFile(router.PREFIX(url(startDateTime, endDateTime)));
 
-        addNotification({ message: getDownloadNotificationMessage(exportName), type: NOTIFICATION_TYPE.INFO });
+        toast({ message: getDownloadNotificationMessage(exportName), type: 'info' });
 
         handleClose(close)();
     };

@@ -23,11 +23,7 @@ const initialState: HotkeyEditionFieldState = {
     keys: '',
 };
 
-export const HotkeyEditionField = ({
-    value,
-    onChange,
-    ...props
-}: HotkeyEditionFieldProps & SpectrumTextFieldProps): JSX.Element => {
+export const HotkeyEditionField = ({ value, onChange, ...props }: HotkeyEditionFieldProps & SpectrumTextFieldProps) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const textFieldRef = useRef<TextFieldRef>(null);
     const hotKeysPressed = useRef<string[]>([]);

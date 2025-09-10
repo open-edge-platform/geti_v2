@@ -1,9 +1,9 @@
-FROM python:3.10-slim-bookworm@sha256:81f1cdb3770d54ecfdbddcc52c2125fce674c14a1d976dfd8f65dc0734f9c3c5 AS base
+FROM python:3.10-slim-bookworm@sha256:66a6e8a211a02794515d4e1aa1970fc037ec4dde1429395e1321bdd63af01256 AS base
 
 FROM base AS build
 
 # Install Git and clone the OTX at the specified tag
-ARG OTX_RELEASE_TAG=release/2.5
+ARG OTX_RELEASE_TAG=develop
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -21,6 +21,7 @@ COPY --link --from=common . interactive_ai/workflows/common
 COPY --link --from=libs . libs
 COPY --link --from=iai_core . interactive_ai/libs/iai_core_py
 COPY --link --from=media_utils . interactive_ai/libs/media_utils
+COPY --link --from=supported_models . interactive_ai/supported_models
 
 WORKDIR /interactive_ai/workflows/workflow
 
@@ -48,7 +49,7 @@ RUN apt-get update && \
 
 # Copy the application from the builder
 COPY --link --from=build --chown=10001 /interactive_ai/workflows/workflow /interactive_ai/workflows/workflow
-COPY --link --from=build --chown=10001 /training_extensions/src/otx/tools/templates /model_templates
+COPY --link --from=build --chown=10001 /training_extensions/lib/src/otx/tools/templates /model_templates
 
 ENV MODEL_TEMPLATES_DIR=/model_templates
 

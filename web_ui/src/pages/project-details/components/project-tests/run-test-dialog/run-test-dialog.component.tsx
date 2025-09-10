@@ -6,12 +6,7 @@ import { DialogContainer } from '@geti/ui';
 import { RunTestDialogContent } from './run-test-dialog-content.component';
 import { RunTestDialogProps } from './run-test-dialog.interface';
 
-export const RunTestDialog = ({
-    isOpen,
-    modelsGroups,
-    handleClose,
-    preselectedModel,
-}: RunTestDialogProps): JSX.Element => (
+export const RunTestDialog = ({ isOpen, modelsGroups, handleClose, preselectedModel }: RunTestDialogProps) => (
     <DialogContainer onDismiss={handleClose}>
         {isOpen && (
             <RunTestDialogContent

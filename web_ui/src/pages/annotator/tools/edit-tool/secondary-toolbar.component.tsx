@@ -5,7 +5,7 @@ import { Flex, Text } from '@geti/ui';
 
 import { ToolAnnotationContextProps } from '../tools.interface';
 
-export const SecondaryToolbar = (_annotationToolContext: ToolAnnotationContextProps): JSX.Element => {
+export const SecondaryToolbar = (_annotationToolContext: ToolAnnotationContextProps) => {
     return (
         <Flex>
             <Text>Edit</Text>

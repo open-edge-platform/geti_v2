@@ -22,7 +22,7 @@ export const AdjustmentHeader = ({
     handleValueChange,
     formatOptions,
     defaultValue,
-}: AdjustmentHeaderProps): JSX.Element => {
+}: AdjustmentHeaderProps) => {
     const formatter = useNumberFormatter(formatOptions);
     const { hoverProps, isHovered } = useHover({});
 

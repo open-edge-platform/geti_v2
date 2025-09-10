@@ -47,6 +47,8 @@ def shard_dataset_prepare_models_and_start_optimization(  # noqa: PLR0913
     num_upload_threads: int = 2,
     enable_optimize_from_dataset_shard: bool = False,
     min_annotation_size: Optional[int] = None,  # noqa: UP007
+    max_annotation_size: Optional[int] = None,  # noqa: UP007
+    min_number_of_annotations: Optional[int] = None,  # noqa: UP007
     max_number_of_annotations: Optional[int] = None,  # noqa: UP007
 ) -> OptimizationTrainerContext:
     """
@@ -61,6 +63,9 @@ def shard_dataset_prepare_models_and_start_optimization(  # noqa: PLR0913
     :param num_upload_threads: Number of threads used for uploading shard files
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
     ignored
+    :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
+     ignored during evaluation
+    :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene. If not None,
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
     annotation scene will be ignored
     :param enable_optimize_from_dataset_shard: Whether to enable model optimization from dataset shard
@@ -84,8 +89,10 @@ def shard_dataset_prepare_models_and_start_optimization(  # noqa: PLR0913
         train_dataset = model.get_train_dataset()
         filtered_train_dataset = AnnotationFilter.apply_annotation_filters(
             dataset=train_dataset,
+            min_number_of_annotations=min_number_of_annotations,
             max_number_of_annotations=max_number_of_annotations,
             min_annotation_size=min_annotation_size,
+            max_annotation_size=max_annotation_size,
         )
         label_schema = model.get_label_schema()
 
@@ -106,6 +113,8 @@ def shard_dataset_prepare_models_and_start_optimization(  # noqa: PLR0913
         model_id=model_id,
         compiled_dataset_shards_id=compiled_dataset_shards_id,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
         max_number_of_annotations=max_number_of_annotations,
     )
 

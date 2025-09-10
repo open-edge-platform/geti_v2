@@ -13,7 +13,7 @@ interface ContactSupportLinkProps {
     text?: string;
 }
 
-export const CustomerSupportLink = ({ className, text = 'customer support' }: ContactSupportLinkProps): JSX.Element => {
+export const CustomerSupportLink = ({ className, text = 'customer support' }: ContactSupportLinkProps) => {
     return (
         <Link UNSAFE_className={clsx(classes.link, className)}>
             <a target={'_blank'} rel='noopener noreferrer' href={CONTACT_SUPPORT}>

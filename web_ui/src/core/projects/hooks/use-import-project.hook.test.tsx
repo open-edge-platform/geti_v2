@@ -7,16 +7,16 @@ import { ApplicationServicesProvider } from '@geti/core/src/services/application
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
 import { ProjectImport, ProjectImportIdentifier } from '../project.interface';
 import { createInMemoryProjectService } from '../services/in-memory-project-service';
 import { ProjectService } from '../services/project-service.interface';
 import { useImportProject } from './use-import-project.hook';
 
-const mockAddNotification = jest.fn();
-jest.mock('../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+const mockedToast = jest.fn();
+
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 const wrapper = ({ children, projectService }: { children?: ReactNode; projectService: ProjectService }) => {
@@ -73,7 +73,7 @@ describe('useImportProject', () => {
                 });
             });
 
-            expect(mockAddNotification).toHaveBeenCalledWith({ message: error.message, type: NOTIFICATION_TYPE.ERROR });
+            expect(mockedToast).toHaveBeenCalledWith({ message: error.message, type: 'error' });
         });
 
         it('returns status url and import project id (file id) on success', async () => {

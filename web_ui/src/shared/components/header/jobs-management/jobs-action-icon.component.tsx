@@ -19,7 +19,7 @@ interface JobsActionIconProps {
     isDarkMode?: boolean;
 }
 
-export const JobsActionIcon = ({ isDarkMode = false }: JobsActionIconProps): JSX.Element => {
+export const JobsActionIcon = ({ isDarkMode = false }: JobsActionIconProps) => {
     const settings = useUserGlobalSettings();
     const { organizationId, workspaceId } = useFirstWorkspaceIdentifier();
     const runningJobsQuery = useJobs({ workspaceId, organizationId }).useGetJobs(

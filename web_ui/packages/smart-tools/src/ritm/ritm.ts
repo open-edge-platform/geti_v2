@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import ndarray from 'ndarray';
-import ops from 'ndarray-ops';
 import * as ort from 'onnxruntime-web';
 
 import { OpenCVTypes } from '../opencv/interfaces';
@@ -68,18 +66,6 @@ class RITM {
             if (this.image) {
                 this.mask = new this.CV.Mat.zeros(this.image.rows, this.image.cols, this.CV.CV_32FC1);
             }
-        }
-    }
-
-    cleanMemory() {
-        if (this.image) {
-            this.image.delete();
-            this.image = null;
-        }
-
-        if (this.mask) {
-            this.mask.delete();
-            this.mask = null;
         }
     }
 
@@ -356,14 +342,12 @@ class RITM {
     }
 
     sigmoid(mask: ort.Tensor) {
-        const data = ndarray(mask.data as Float32Array, [...mask.dims]);
-        const ones = ndarray(new Float32Array(mask.data.length), [...mask.dims]);
+        const data = mask.data as Float32Array;
 
-        ops.assigns(ones, 1);
-        ops.mulseq(data, -1);
-        ops.expeq(data);
-        ops.addseq(data, 1);
-        ops.div(data, ones, data);
+        // Apply sigmoid function directly: 1 / (1 + e^(-x))
+        for (let i = 0; i < data.length; i++) {
+            data[i] = 1 / (1 + Math.exp(-data[i]));
+        }
     }
 }
 

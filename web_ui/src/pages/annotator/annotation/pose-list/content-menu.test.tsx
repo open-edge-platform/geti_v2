@@ -13,7 +13,7 @@ describe('ContentMenu', () => {
 
         render(<ContentMenu point={getMockedKeypointNode({ isVisible: true })} onUpdate={mockedOnUpdate} />);
 
-        fireEvent.click(screen.getByLabelText('menu trigger'));
+        fireEvent.click(screen.getByLabelText('Show actions'));
         fireEvent.click(screen.getByRole('menuitem', { name: OPTION_OCCLUDED }));
 
         expect(mockedOnUpdate).toHaveBeenCalledWith(expect.objectContaining({ isVisible: false }));
@@ -24,7 +24,7 @@ describe('ContentMenu', () => {
 
         render(<ContentMenu point={getMockedKeypointNode({ isVisible: false })} onUpdate={mockedOnUpdate} />);
 
-        fireEvent.click(screen.getByLabelText('menu trigger'));
+        fireEvent.click(screen.getByLabelText('Show actions'));
         fireEvent.click(screen.getByRole('menuitem', { name: OPTION_VISIBLE }));
 
         expect(mockedOnUpdate).toHaveBeenCalledWith(expect.objectContaining({ isVisible: true }));

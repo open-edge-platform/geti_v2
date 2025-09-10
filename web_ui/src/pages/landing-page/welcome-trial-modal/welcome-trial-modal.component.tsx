@@ -90,7 +90,7 @@ export const WelcomeTrialModal = () => {
         <DialogContainer onDismiss={dismissModal}>
             {isModalOpen && (
                 <Flex direction={'column'} alignItems={'center'} UNSAFE_className={classes.container}>
-                    <Heading UNSAFE_className={classes.primaryTitle}>Welcome to Intel® Geti™</Heading>
+                    <Heading UNSAFE_className={classes.primaryTitle}>Welcome to Geti™</Heading>
                     <Heading UNSAFE_className={classes.secondaryTitle}>Powerful AI For Everyone</Heading>
                     <Text UNSAFE_className={classes.description}>
                         Start today with exploring the world of computer vision

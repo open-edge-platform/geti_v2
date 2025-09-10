@@ -21,7 +21,7 @@ import classes from './navigation-toolbar.module.scss';
 
 const isPredictionMode = (mode: ANNOTATOR_MODE) => mode === ANNOTATOR_MODE.PREDICTION;
 
-export const AnnotationPredictionToggle = (): JSX.Element => {
+export const AnnotationPredictionToggle = () => {
     const { isTaskChainSecondTask } = useTask();
     const { handleFirstVisitToPredictionMode } = useFuxNotifications();
 

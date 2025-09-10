@@ -72,7 +72,7 @@ export const HasPermission = ({
     resources,
     Fallback = <></>,
     specialCondition = false,
-}: HasPermissionProps): JSX.Element => {
+}: HasPermissionProps) => {
     const isPermitted = useCheckPermission(operations, resources, specialCondition);
 
     if (isPermitted) {

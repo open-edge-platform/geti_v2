@@ -12,7 +12,7 @@ interface NavbarItem {
     name: string;
 }
 
-export const Navbar = (): JSX.Element => {
+export const Navbar = () => {
     const { FEATURE_FLAG_MANAGE_USERS } = useFeatureFlags();
 
     const navbarItems: NavbarItem[] = FEATURE_FLAG_MANAGE_USERS

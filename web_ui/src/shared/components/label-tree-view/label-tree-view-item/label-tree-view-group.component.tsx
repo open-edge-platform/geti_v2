@@ -25,7 +25,7 @@ export const LabelTreeViewGroup = ({
     flatListProjectItems: flatProjectItems,
     setValidationError,
     validationErrors,
-}: LabelTreeViewGroupProps): JSX.Element => {
+}: LabelTreeViewGroupProps) => {
     const flatProjectGroups = filterGroups(flatProjectItems);
 
     return (

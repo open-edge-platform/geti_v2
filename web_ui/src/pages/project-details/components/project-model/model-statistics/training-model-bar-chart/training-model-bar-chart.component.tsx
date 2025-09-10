@@ -18,7 +18,7 @@ const TrainingModelBarChart = ({
     header,
     value,
     inCard = true,
-}: TrainingModelBarRadialChart & TrainingModelChartConfig): JSX.Element => {
+}: TrainingModelBarRadialChart & TrainingModelChartConfig) => {
     const colors: Colors[] = [];
 
     const hasOnlyOneBar = value.length === 1;
@@ -41,14 +41,15 @@ const TrainingModelBarChart = ({
                 title={header}
                 actions={
                     <FullscreenAction
-                        actionButton={
+                        actionButton={(ref) => (
                             <DownloadGraphMenu
+                                ref={ref}
                                 fileName={header}
                                 data={{ type: 'barChart', data: barData }}
                                 tooltip={'Download graph'}
                                 graphBackgroundColor={'gray-100'}
                             />
-                        }
+                        )}
                         title={header}
                     >
                         <BarHorizontalChart title={header} data={barData} barSize={40} colors={colors} />

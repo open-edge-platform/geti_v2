@@ -14,7 +14,7 @@ interface AccessDeniedDialogProps {
     onReset: () => void;
 }
 
-export const AccessDenied = ({ onReset }: AccessDeniedDialogProps): JSX.Element => {
+export const AccessDenied = ({ onReset }: AccessDeniedDialogProps) => {
     const navigate = useNavigate();
 
     const handleGoHome = () => {

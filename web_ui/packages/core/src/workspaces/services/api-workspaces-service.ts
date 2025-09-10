@@ -18,9 +18,14 @@ export const createApiWorkspacesService: CreateApiService<WorkspacesService> = (
         return getWorkspacesEntity(data);
     };
 
-    const createWorkspace = async (organizationId: string, name: string): Promise<WorkspaceEntity> => {
+    const createWorkspace = async (
+        organizationId: string,
+        name: string,
+        workspaceAdminId?: string
+    ): Promise<WorkspaceEntity> => {
         const { data } = await platformInstance.post<WorkspaceDTO>(router.WORKSPACES(organizationId), {
             name,
+            workspace_admin: workspaceAdminId,
         });
 
         return getWorkspaceEntity(data);

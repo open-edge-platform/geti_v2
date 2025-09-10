@@ -12,7 +12,7 @@ interface RenewalDayCellProps {
     rowData: CreditAccount;
 }
 
-export const RenewalDayCell = ({ rowData }: RenewalDayCellProps): JSX.Element => {
+export const RenewalDayCell = ({ rowData }: RenewalDayCellProps) => {
     if (typeof rowData.renewalDayOfMonth !== 'number') {
         return <Text>No</Text>;
     }

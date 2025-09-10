@@ -159,7 +159,7 @@ class VideoFrameReadingError(ValueError):
 
 class _VideoDecoderInterface:
     @abstractmethod
-    def decode(self, file_location: str, frame_index: int) -> np.ndarray:
+    def decode(self, file_location: str, frame_index: int, fps: float | None = None) -> np.ndarray:
         pass
 
     @abstractmethod
@@ -223,12 +223,14 @@ class _VideoDecoderOpenCV(_VideoDecoderInterface, metaclass=Singleton):
                 total_frames=int(video_reader.get(cv2.CAP_PROP_FRAME_COUNT)),
             )
 
-    def decode(self, file_location: str, frame_index: int) -> np.ndarray:
+    def decode(self, file_location: str, frame_index: int, fps: float | None = None) -> np.ndarray:
         """
         Decode the video and return the requested frame in array format
 
         :param file_location: Local storage path or presigned S3 URL pointing to the video
         :param frame_index: Frame index for the requested frame
+        :param fps: Frames per second of the video. Will be used for more accurate seeking in case of a variable frame
+        rate video. If not passed, solely the frame index will be used instead.
         :return: Numpy array for the requested frame
         """
         # Get the frame from the cache, if present
@@ -247,15 +249,20 @@ class _VideoDecoderOpenCV(_VideoDecoderInterface, metaclass=Singleton):
                 raise VideoFrameOutOfRangeInternalException(
                     f"The requested frame index `{frame_index}` is out of bounds."
                 )
-            # For non-sequential reads, seek to the right frame position
-            video_reader_frame_pos = int(video_reader.get(cv2.CAP_PROP_POS_FRAMES))
-            if video_reader_frame_pos != frame_index:
+
+            if fps is not None and fps > 0.0:
+                # Convert frame index to milliseconds using the same formula as Go implementation
+                milliseconds = int((frame_index / fps) * 1000)
+                video_reader.set(cv2.CAP_PROP_POS_MSEC, milliseconds)
+            else:
+                # Fallback to frame-based seeking if fps is not set
                 video_reader.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
+
             # Read the frame at the requested position
             read_success, video_frame_raw = video_reader.read()
             if not read_success:
                 raise VideoFrameReadingError(
-                    f"Failed to read video frame at index {video_reader_frame_pos} for video at {file_location}"
+                    f"Failed to read video frame at index {frame_index} for video at {file_location}"
                 )
         # Post-process the frame (because OpenCV output is BGR)
         video_frame = cv2.cvtColor(video_frame_raw, cv2.COLOR_BGR2RGB)

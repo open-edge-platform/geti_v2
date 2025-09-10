@@ -54,7 +54,7 @@ export const LandingPageHeader = ({
     actionsEnabled = true,
     withBackButton = false,
     isAnomalyProject = false,
-}: LandingPageHeaderProps): JSX.Element => {
+}: LandingPageHeaderProps) => {
     return (
         <>
             <Flex

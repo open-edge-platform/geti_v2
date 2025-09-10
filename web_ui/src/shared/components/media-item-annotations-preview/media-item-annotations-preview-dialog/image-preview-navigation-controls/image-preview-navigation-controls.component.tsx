@@ -26,7 +26,7 @@ export const ImagePreviewNavigationControls = <T extends MediaItem | TestMediaIt
     selectedMediaItem,
     changeSelectedItem,
     showFramesSeparately = false,
-}: ImagePreviewNavigationControlsProps<T>): JSX.Element => {
+}: ImagePreviewNavigationControlsProps<T>) => {
     const allMediaItems: (MediaItem | TestMediaItem)[] = useMemo(() => {
         const { isSuccess, data } = mediaItemsQuery;
 

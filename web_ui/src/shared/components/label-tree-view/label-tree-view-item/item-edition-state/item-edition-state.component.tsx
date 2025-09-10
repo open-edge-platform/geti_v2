@@ -12,7 +12,7 @@ interface ItemEditionStateProps {
     idSuffix: string;
 }
 
-export const ItemEditionState = ({ state, idSuffix }: ItemEditionStateProps): JSX.Element => {
+export const ItemEditionState = ({ state, idSuffix }: ItemEditionStateProps) => {
     let color;
     const editionState = isNewState(state) ? LabelItemEditionState.NEW : state;
 

@@ -1,8 +1,34 @@
-name: Detection workflow
+# Main CI workflow for the Geti project
+#
+# This workflow is triggered on various events such as schedule, pull requests, and pushes to the main branch.
+# It prepares build metadata, runs tests, builds components, and publishes binaries if required.
+# It also generates a summary report of the daily build.
+#
+# Key Features:
+# - Prepares build variables and metadata
+# - Runs tests for libraries and components
+# - Builds and publishes Docker images and Helm charts
+# - Generates a daily build summary report
+#
+# Process Stages:
+# 1. Prepare build metadata
+# 2. Run library tests
+# 3. Run component tests
+# 4. Build and publish web UI
+# 5. Build and publish components
+# 6. Build platform distribution binaries
+# 7. Check status of all builds and generate daily build summary
+#
+# Inputs:
+# - publish_binaries: Enable publishing binaries (default: true)
+# - ref: The branch, tag, or SHA to checkout (default: current ref)
+#
+
+name: Main CI
 
 on:
   schedule:
-    - cron: '0 18 * * *'
+    - cron: "0 18 * * *"
   merge_group:
     branches:
       - main
@@ -24,7 +50,7 @@ on:
         type: boolean
         default: true
       ref:
-        description: 'The branch, tag or SHA to checkout'
+        description: "The branch, tag or SHA to checkout"
         required: true
         default: ""
 
@@ -32,7 +58,7 @@ concurrency:
   group: ${{ github.head_ref || github.ref_name }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-permissions: { } # No permissions by default on workflow level
+permissions: {} # No permissions by default on workflow level
 
 jobs:
   get-vars:
@@ -43,7 +69,8 @@ jobs:
     timeout-minutes: 10
     outputs:
       build_all: ${{ steps.set-vars.outputs.build_all }}
-      build_version: "${{ steps.prepare-build-version.outputs.version }}"
+      build_version: "${{ steps.prepare-build-version.outputs.build_version }}"
+      platform_version: "${{ steps.prepare-build-version.outputs.platform_version }}"
       checkout_ref: ${{ steps.set-vars.outputs.checkout_ref }}
       publish_binaries: ${{ steps.set-vars.outputs.publish_binaries }}
       components-list: ${{ steps.components-list.outputs.paths_list }}
@@ -51,6 +78,11 @@ jobs:
       libs-list: ${{ steps.libs-list.outputs.paths_list }}
 
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+
       - name: Prepare build variables
         id: set-vars
         env:
@@ -60,24 +92,24 @@ jobs:
           DISPATCH_REF: ${{ github.event.inputs.ref }}
         run: |
 
-          is_build_all_event() { 
-            [[ "$EVENT_NAME" == "workflow_dispatch" ]] || 
-            [[ "$EVENT_NAME" == "schedule" ]]; 
+          is_build_all_event() {
+            [[ "$EVENT_NAME" == "workflow_dispatch" ]] ||
+            [[ "$EVENT_NAME" == "schedule" ]];
           }
-          is_publish_event() { 
-            [[ "$EVENT_NAME" == "schedule" ]] || 
-            [[ "$EVENT_NAME" == "workflow_dispatch" && "$DISPATCH_PUB" == "true" ]]; 
+          is_publish_event() {
+            [[ "$EVENT_NAME" == "schedule" ]] ||
+            [[ "$EVENT_NAME" == "workflow_dispatch" && "$DISPATCH_PUB" == "true" ]];
           }
           is_tag() { [[ "$GITHUB_REF" == refs/tags/* ]]; }
-          
+
           # Set defaults
           build_all=false
           publish_binaries=false
-          
+
           # Override defaults when conditions are met
           (is_build_all_event || is_tag) && build_all=true
           (is_publish_event || is_tag) && publish_binaries=true
-          
+
           # CHECKOUT_REF: manual input if provided, else use default ref
           if [[ "$EVENT_NAME" == "workflow_dispatch" && -n "$DISPATCH_REF" ]]; then
             checkout_ref="$DISPATCH_REF"
@@ -88,13 +120,13 @@ jobs:
           echo "build_all=$build_all"               >> $GITHUB_OUTPUT
           echo "publish_binaries=$publish_binaries" >> $GITHUB_OUTPUT
           echo "checkout_ref=$checkout_ref"         >> $GITHUB_OUTPUT
-          
+
           echo "build_all=$build_all"
           echo "publish_binaries=$publish_binaries"
           echo "checkout_ref=$checkout_ref"
 
       - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -201,17 +233,19 @@ jobs:
     with:
       build_all: ${{ fromJSON(needs.get-vars.outputs.build_all) }} # fromJSON is required to cast string to boolean
       build_version: ${{ needs.get-vars.outputs.build_version }}
+      platform_version: ${{ needs.get-vars.outputs.platform_version }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
       ref: ${{ needs.get-vars.outputs.checkout_ref }}
-
     secrets:
       AWS_ROLE: ${{ secrets.AWS_ROLE }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
       REGISTRY: ${{ secrets.REGISTRY }}
+      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
 
   success:
     name: Required status checks
     needs:
+      - get-vars
       - component-workflow
       - web-ui-workflow
       - package-distribution-workflow
@@ -219,7 +253,12 @@ jobs:
     if: ${{ always() && !cancelled() }}
     env:
       CHECKS: ${{ join(needs.*.result, ' ') }}
+      BUILD_VERSION: ${{ needs.get-vars.outputs.build_version }}
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
       - name: Check
         run: |
           for check in ${CHECKS}; do
@@ -229,3 +268,9 @@ jobs:
               exit 1
             fi
           done
+      - name: Create Summary with build version
+        if: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }}
+        run: |
+          echo "## Required status checks passed" >> $GITHUB_STEP_SUMMARY
+          echo "All required status checks have passed successfully." >> $GITHUB_STEP_SUMMARY
+          echo "Packages published with tag: $BUILD_VERSION" >> $GITHUB_STEP_SUMMARY

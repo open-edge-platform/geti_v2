@@ -1,0 +1,39 @@
+# Copyright (C) 2022-2025 Intel Corporation
+# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: reorder-cors-before-jwt
+  namespace: {{ include "gateway.namespace" . }}
+spec:
+  workloadSelector:
+    labels:
+      istio: gateway
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+            subFilter:
+              name: "envoy.filters.http.cors"
+    patch:
+      operation: REMOVE
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+            subFilter:
+              name: "envoy.filters.http.jwt_authn"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: "envoy.filters.http.cors"
+        typed_config:
+          "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"

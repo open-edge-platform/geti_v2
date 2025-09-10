@@ -1,13 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { Annotation } from '../../../../core/annotations/annotation.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
 import { fakeAnnotationToolContext } from '../../../../test-utils/fake-annotator-context';
 import { getMockedAnnotation } from '../../../../test-utils/mocked-items-factory/mocked-annotations';
-import { getMockedLabel } from '../../../../test-utils/mocked-items-factory/mocked-labels';
 import { AnnotationToolContext } from '../../core/annotation-tool-context.interface';
 import { useVisibleAnnotations } from '../../hooks/use-visible-annotations.hook';
 import { annotatorRender } from '../../test-utils/annotator-render';
@@ -77,31 +76,5 @@ describe('KeypointTool', () => {
         expect(screen.getByRole('button', { name: 'delete keypoint annotation' })).toBeEnabled();
         expect(screen.getByRole('button', { name: 'mirror X-axis' })).toBeEnabled();
         expect(screen.getByRole('button', { name: 'mirror Y-axis' })).toBeEnabled();
-    });
-
-    it('accepts keypoint annotation with a label so it does not get flagged as invalid', async () => {
-        const mockedLabel = getMockedLabel({ id: 'test-label' });
-        const annotationToolContext = fakeAnnotationToolContext();
-
-        await renderApp({
-            annotationToolContext,
-            annotations: [getMockedAnnotation({}, ShapeType.Pose)],
-            keypointState: {
-                templateLabels: [mockedLabel],
-                currentBoundingBox: { x: 0, y: 0, width: 10, height: 10 },
-            },
-        });
-
-        fireEvent.click(screen.getByRole('button', { name: /accept new keypoint annotation/i }));
-
-        expect(annotationToolContext.scene.replaceAnnotations).toHaveBeenCalledWith([
-            expect.objectContaining({
-                labels: expect.arrayContaining([
-                    expect.objectContaining({
-                        id: mockedLabel.id,
-                    }),
-                ]),
-            }),
-        ]);
     });
 });

@@ -39,7 +39,7 @@ export const ModelsContainerHeader = ({
     isObsolete,
     isDeprecated,
     modelSummary,
-}: ModelsContainerHeaderProps): JSX.Element => {
+}: ModelsContainerHeaderProps) => {
     const { pressProps } = usePress({ onPress: onClick });
 
     const shouldShowPerformanceCategory = performanceCategory !== PerformanceCategory.OTHER;

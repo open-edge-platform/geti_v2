@@ -8,7 +8,7 @@ interface DistributionEllipseProps extends SVGProps<SVGEllipseElement> {
     maxYValue: number;
 }
 
-export const DistributionEllipse = (props: DistributionEllipseProps): JSX.Element => {
+export const DistributionEllipse = (props: DistributionEllipseProps) => {
     const { maxXValue, maxYValue, height, width, cx, cy, rx, ry, x, y, ...rest } = props;
     const castedHeight = Number(height);
     const castedWidth = Number(width);

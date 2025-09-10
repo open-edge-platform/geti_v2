@@ -23,7 +23,7 @@ describe('Annotations list item actions', () => {
         const lockOpenButton = getById(container, 'annotation-test-annotation-lock-closed-icon');
         expect(lockOpenButton).toBeInTheDocument();
         lockOpenButton && fireEvent.click(lockOpenButton);
-        expect(changeLock).toBeCalled();
+        expect(changeLock).toHaveBeenCalled();
     });
 
     it('Invisible button should be visible when annotation is hidden', () => {
@@ -43,6 +43,6 @@ describe('Annotations list item actions', () => {
         const lockOpenButton = getById(container, `annotation-list-item-${mockAnnotationId}-visibility-off`);
         expect(lockOpenButton).toBeInTheDocument();
         lockOpenButton && fireEvent.click(lockOpenButton);
-        expect(mockShowAnnotation).toBeCalled();
+        expect(mockShowAnnotation).toHaveBeenCalled();
     });
 });

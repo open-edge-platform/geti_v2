@@ -128,6 +128,7 @@ describe('LearningParameters', () => {
         return (
             <LearningParameters
                 parameters={trainingConfiguration?.training ?? props.learningParameters}
+                defaultParameters={props.learningParameters}
                 onUpdateTrainingConfiguration={handleUpdateTrainingConfiguration}
             />
         );

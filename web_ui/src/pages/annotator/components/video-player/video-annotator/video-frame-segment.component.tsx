@@ -10,7 +10,7 @@ import { useVideoTimelineQueries } from '../hooks/use-video-timeline-queries.hoo
 
 import classes from './video-annotator.module.scss';
 
-const SelectedFrameOverlay = (): JSX.Element => {
+const SelectedFrameOverlay = () => {
     return (
         <View
             data-testid='selected'
@@ -24,7 +24,7 @@ const SelectedFrameOverlay = (): JSX.Element => {
         />
     );
 };
-const ActiveFrameOverlay = (): JSX.Element => {
+const ActiveFrameOverlay = () => {
     return <View data-testid='active' UNSAFE_className={classes.activeFrame} />;
 };
 
@@ -48,7 +48,7 @@ interface LabelSegmentProps {
     isLoading: boolean;
     isPrediction?: boolean;
 }
-const LabelSegment = ({ label, striped, isLoading, isPrediction = false }: LabelSegmentProps): JSX.Element => {
+const LabelSegment = ({ label, striped, isLoading, isPrediction = false }: LabelSegmentProps) => {
     if (isLoading) {
         return <View width='100%' height='size-100' UNSAFE_className={classes.loadingGradient} />;
     }
@@ -92,7 +92,7 @@ export const VideoFrameSegment = ({
     colIndex,
     isLastFrame,
     isFirstFrame,
-}: VideoFrameSegmentProps): JSX.Element => {
+}: VideoFrameSegmentProps) => {
     const { tasks } = useTask();
     const { annotationsQuery, predictionsQuery } = useVideoTimelineQueries(frameNumber, tasks.some(isKeypointTask));
 

@@ -14,7 +14,7 @@ interface CasualCellProps extends TableCellProps {
     tooltip?: ReactNode;
 }
 
-export const CasualCell = ({ rowData, cellData, dataKey, tooltip, styles }: CasualCellProps): JSX.Element => {
+export const CasualCell = ({ rowData, cellData, dataKey, tooltip, styles }: CasualCellProps) => {
     let id = dataKey;
 
     if (rowData.id) {

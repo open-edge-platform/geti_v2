@@ -21,7 +21,7 @@ enum ServiceLimitsMenuActions {
 
 const menuItems = [ServiceLimitsMenuActions.EDIT];
 
-const renderItems = (item: string): JSX.Element => {
+const renderItems = (item: string) => {
     return (
         <Flex gap={'size-75'} alignItems={'center'}>
             <Edit />
@@ -30,7 +30,7 @@ const renderItems = (item: string): JSX.Element => {
     );
 };
 
-export const ActionCell = (props: ActionCellProps): JSX.Element => {
+export const ActionCell = (props: ActionCellProps) => {
     const { rowData: quota } = props;
     const { useUpdateQuotaMutation } = useSubscriptions();
     const updateQuota = useUpdateQuotaMutation();

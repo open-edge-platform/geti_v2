@@ -22,7 +22,7 @@ interface MediaContentProps {
     onUploadMedia: (uploadMedia: UploadMedia) => Promise<void>;
 }
 
-export const MediaContent = ({ mediaUploadState, dispatch, onUploadMedia }: MediaContentProps): JSX.Element => {
+export const MediaContent = ({ mediaUploadState, dispatch, onUploadMedia }: MediaContentProps) => {
     const navigate = useNavigate();
     const datasetIdentifier = useDatasetIdentifier();
 

@@ -391,13 +391,15 @@ class StatisticsUseCase:
         - number of annotations including certain labels
         - number of shapes that have certain labels
 
+        If the task is semantic segmentation, then the background label is not included in the statistics.
+
         :param task_node_label_schema: label schema of the task
         :param dataset_storage_identifier: identifier of the dataset storage of interest
         :param include_empty: whether to include the empty label in the stats
         """
         labels = task_node_label_schema.get_labels(include_empty=include_empty)
         ann_scene_repo = AnnotationSceneRepo(dataset_storage_identifier)
-        label_ids = [label.id_ for label in labels]
+        label_ids = [label.id_ for label in labels if not label.is_background]
         (
             obj_sizes_per_label,
             label_count_per_annotation,
@@ -416,6 +418,8 @@ class StatisticsUseCase:
         object_size_distribution_per_label = []
 
         for label in labels:
+            if label.is_background:
+                continue
             count_per_shape = label_count_per_shape.get(label.id_, 0)
             count_per_annotation = label_count_per_annotation.get(label.id_, 0)
             object_size_distribution = computed_size_distribution_per_label[label.id_]

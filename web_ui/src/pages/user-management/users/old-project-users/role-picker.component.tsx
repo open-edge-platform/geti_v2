@@ -40,7 +40,7 @@ export const RolePicker = <T extends USER_ROLE>({
             items={items}
             id='roles-add-user'
             data-testid={testId}
-            onSelectionChange={onSelectionChange}
+            onSelectionChange={(key) => key !== null && onSelectionChange(key)}
             selectedKey={selectedRole ?? ''}
         >
             {(item) => (

@@ -1,11 +1,11 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { createContext, MutableRefObject, useCallback, useContext, useEffect, useRef } from 'react';
+import { createContext, RefObject, useCallback, useContext, useEffect, useRef } from 'react';
+
+import { toast } from '@geti/ui';
 
 import { Point, Polygon, Rect } from '../../../../core/annotations/shapes.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../../notification/notification.component';
 import { MissingProviderError } from '../../../../shared/missing-provider-error';
 import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useGrabcut } from '../../hooks/use-grabcut.hook';
@@ -20,9 +20,9 @@ import { GrabcutToolType } from './grabcut-tool.enums';
 export interface GrabcutStateContextProps {
     isLoading: boolean;
     toolsState: GrabcutState;
-    loadingRect: MutableRefObject<Rect | null>;
-    foregroundMarkers: MutableRefObject<Point[][]>;
-    backgroundMarkers: MutableRefObject<Point[][]>;
+    loadingRect: RefObject<Rect | null>;
+    foregroundMarkers: RefObject<Point[][]>;
+    backgroundMarkers: RefObject<Point[][]>;
     resetConfig: () => void;
     rejectAnnotation: () => void;
     setDrawingToFalse: () => void;
@@ -48,20 +48,17 @@ const initialState: GrabcutState = {
     activeTool: GrabcutToolType.InputTool,
 };
 
-export const GrabcutStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const GrabcutStateProvider = ({ children }: StateProviderProps) => {
     const loadingRect = useRef<Rect | null>(null);
     const { setIsDrawing } = useAnnotationScene();
-    const { addNotification } = useNotification();
+
     const foregroundMarkers = useRef<Point[][]>([]);
     const backgroundMarkers = useRef<Point[][]>([]);
     const [toolsState, setToolsState, undoRedoActions] = useUndoRedoState<GrabcutState>(initialState);
     const { updateToolSettings } = useAnnotationToolContext();
 
     const showNotificationError = () => {
-        addNotification({
-            message: 'Failed to select the shape boundaries, could you please try again?',
-            type: NOTIFICATION_TYPE.ERROR,
-        });
+        toast({ message: 'Failed to select the shape boundaries, could you please try again?', type: 'error' });
         resetConfig();
     };
 

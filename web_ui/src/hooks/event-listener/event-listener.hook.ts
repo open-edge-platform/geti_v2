@@ -4,7 +4,7 @@
 import { RefObject, useEffect, useLayoutEffect, useRef } from 'react';
 
 function determineTargetElement<ElementType extends Element = Element>(
-    element?: RefObject<ElementType> | ElementType | null
+    element?: RefObject<ElementType | null> | ElementType | null
 ): ElementType | (Window & typeof globalThis) | null {
     if (element === undefined) {
         return window;
@@ -27,7 +27,7 @@ export function useEventListener<
     EventName extends keyof EventType,
     Handler extends (event: EventType[EventName]) => void,
     ElementType extends Element = Element,
->(eventName: EventName, handler: Handler, element?: RefObject<ElementType> | ElementType | null): void {
+>(eventName: EventName, handler: Handler, element?: RefObject<ElementType | null> | ElementType | null): void {
     const savedHandler = useRef<Handler>(handler);
 
     useLayoutEffect(() => {

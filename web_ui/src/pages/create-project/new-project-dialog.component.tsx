@@ -101,8 +101,7 @@ const NewProjectDialogInner: FC<NewProjectDialogInnerProps> = ({ onCloseDialog }
 
     return (
         <Dialog
-            minHeight={'52vh'}
-            minWidth={{ base: 'auto', L: '90rem' }}
+            minWidth={{ base: 'auto', L: '90rem', minHeight: currentStep === STEPS.NAME_PROJECT ? undefined : '52vh' }}
             UNSAFE_style={isLargeSize ? paddingStyle : tabletPaddingStyle}
         >
             <Heading id={`${currentStep}-title-id`}>
@@ -178,7 +177,7 @@ const NewProjectDialogInner: FC<NewProjectDialogInnerProps> = ({ onCloseDialog }
     );
 };
 
-export const NewProjectDialog = ({ buttonText, openImportDatasetDialog }: NewProjectDialogProps): JSX.Element => {
+export const NewProjectDialog = ({ buttonText, openImportDatasetDialog }: NewProjectDialogProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const handleOpenDialog = (): void => {

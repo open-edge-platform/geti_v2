@@ -18,7 +18,7 @@ export const ProjectAnnotationsVideos = ({
     annotatedFrames,
     annotatedVideos,
     gridArea,
-}: ProjectAnnotationsVideosProps): JSX.Element => {
+}: ProjectAnnotationsVideosProps) => {
     return (
         <CardContent title='Annotated videos / frames' gridArea={gridArea}>
             <Flex direction={'column'} justifyContent={'center'} height={'100%'} marginStart={'size-130'}>

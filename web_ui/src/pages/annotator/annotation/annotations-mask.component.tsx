@@ -17,12 +17,7 @@ interface AnnotationMaskProps {
     fillOpacity?: number;
 }
 
-export const AnnotationsMask = ({
-    annotations,
-    width,
-    height,
-    fillOpacity = MASK_OPACITY,
-}: AnnotationMaskProps): JSX.Element => {
+export const AnnotationsMask = ({ annotations, width, height, fillOpacity = MASK_OPACITY }: AnnotationMaskProps) => {
     const maskId = useId();
 
     return (

@@ -5,8 +5,15 @@ from unittest.mock import patch
 
 import pytest
 
-from iai_core.repos import BinaryRepo
-from iai_core.utils.filesystem import check_free_space_for_operation, check_free_space_for_upload, compute_project_size
+from iai_core.repos import BinaryRepo, ModelStorageRepo
+from iai_core.repos.storage.binary_repos.model_binary_repo import ModelBinaryRepo
+from iai_core.services.model_service import ModelService
+from iai_core.utils.filesystem import (
+    ProjectStorageInfo,
+    check_free_space_for_operation,
+    check_free_space_for_upload,
+    compute_project_size,
+)
 
 FEATURE_FLAG_STORAGE_SIZE_COMPUTATION = "FEATURE_FLAG_STORAGE_SIZE_COMPUTATION"
 
@@ -104,9 +111,24 @@ def test_check_free_space_for_operation(
             )
 
 
-def test_compute_project_size(fxt_detection_project) -> None:
-    with patch.object(BinaryRepo, "get_object_storage_size", return_value=100):
+def test_compute_project_size(fxt_detection_project, fxt_model, fxt_model_storage) -> None:
+    with (
+        patch.object(BinaryRepo, "get_object_storage_size", return_value=100),
+        patch.object(ModelBinaryRepo, "get_object_storage_size", return_value=75),
+        patch.object(ModelStorageRepo, "get_by_task_node_id", return_value=[fxt_model_storage]),
+        patch.object(ModelService, "get_base_active_model", return_value=fxt_model),
+        patch.object(ModelService, "get_model_size", return_value=25),
+    ):
         project_size = compute_project_size(fxt_detection_project)
 
     # Project contains 5 binary repo's for which size should be computed for, each being 100 bytes.
-    assert project_size == 500.0
+    expected_project_size = ProjectStorageInfo()
+    expected_project_size.total_dataset_storages_size = 400
+    expected_project_size.total_model_storages_size = 150
+    expected_project_size.active_models_size = 50
+    expected_project_size.total_code_deployment_size = 100
+
+    assert project_size == expected_project_size
+    assert project_size.total_storage_size == 650
+    assert project_size.total_storage_size_excluding_models == 500
+    assert project_size.total_storage_size_excluding_non_active_models == 550

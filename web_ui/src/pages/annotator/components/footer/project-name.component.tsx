@@ -11,7 +11,7 @@ import classes from './annotator-footer.module.scss';
 const LONG_TEXT_LENGTH = 140;
 const SHORT_TEXT_LENGTH = 60;
 
-export const ProjectName = ({ name }: { name: string }): JSX.Element => {
+export const ProjectName = ({ name }: { name: string }) => {
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const paddingX = isLargeSize ? 'size-200' : 'size-100';
 

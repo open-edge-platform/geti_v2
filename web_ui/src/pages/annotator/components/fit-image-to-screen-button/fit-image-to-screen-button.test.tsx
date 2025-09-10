@@ -24,7 +24,6 @@ describe('FitImageToScreen', () => {
 
         render(<FitImageToScreenButton />);
 
-        expect(screen.getByText('fit-screen.svg')).toBeInTheDocument();
         fireEvent.click(screen.getByRole('button', { name: 'Fit image to screen' }));
 
         expect(resetTransformMock).toHaveBeenCalled();

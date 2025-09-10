@@ -12,13 +12,13 @@ import {
     SelectionMode,
     Size,
     View,
+    ViewModes,
     Virtualizer,
     type DimensionValue,
     type Responsive,
 } from '@geti/ui';
 import { useLoadMore } from '@react-aria/utils';
 
-import { VIEW_MODE_SETTINGS, ViewModes } from '../media-view-modes/utils';
 import { useGetTargetPosition } from './use-get-target-position.hook';
 
 import classes from './media-items-list.module.scss';
@@ -41,6 +41,13 @@ interface MediaItemsListProps<T> {
     onSelectionChange?: (keys: Selection) => void;
 }
 
+export const VIEW_MODE_SETTINGS = {
+    [ViewModes.LARGE]: { minItemSize: 300, gap: 12, maxColumns: 4 },
+    [ViewModes.MEDIUM]: { minItemSize: 150, gap: 8, maxColumns: 8 },
+    [ViewModes.SMALL]: { minItemSize: 112, gap: 4, maxColumns: 11 },
+    [ViewModes.DETAILS]: { size: 81, gap: 0 },
+};
+
 export const MediaItemsList = <T extends object>({
     id,
     height,
@@ -56,7 +63,7 @@ export const MediaItemsList = <T extends object>({
     idFormatter,
     getTextValue,
     onSelectionChange,
-}: MediaItemsListProps<T>): JSX.Element => {
+}: MediaItemsListProps<T>) => {
     const config = viewModeSettings[viewMode];
     const isDetails = viewMode === ViewModes.DETAILS;
     const layout = isDetails ? 'stack' : 'grid';

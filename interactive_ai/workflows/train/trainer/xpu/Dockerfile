@@ -2,7 +2,7 @@
 # --device /dev/dri          # Intel GPU access
 # -v /dev/dri/by-path:/dev/dri/by-path  # Device path mapping
 
-FROM python:3.10-slim-bookworm@sha256:81f1cdb3770d54ecfdbddcc52c2125fce674c14a1d976dfd8f65dc0734f9c3c5 AS base
+FROM python:3.10-slim-bookworm@sha256:66a6e8a211a02794515d4e1aa1970fc037ec4dde1429395e1321bdd63af01256 AS base
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
@@ -52,7 +52,7 @@ COPY --link download_pretrained_weights.py download_pretrained_weights.py
 # For OTX to install torch with ipex support, else defaults to cpu version
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
 RUN uv pip uninstall torch torchvision
-RUN uv pip install torch==2.7.0 torchvision==0.22.0 --default-index https://download.pytorch.org/whl/xpu
+RUN uv pip install torch==2.8.0 torchvision==0.23.0 --default-index https://download.pytorch.org/whl/xpu
 
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/workflows/train/trainer/.venv/bin:/interactive_ai/workflows/train/trainer:$PATH"

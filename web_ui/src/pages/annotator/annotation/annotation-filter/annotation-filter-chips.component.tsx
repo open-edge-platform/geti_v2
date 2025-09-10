@@ -11,7 +11,7 @@ import { useTaskLabels } from './use-task-labels.hook';
 
 import classes from './annotation-filter-trigger.module.scss';
 
-export const AnnotationsFilterChips = (): JSX.Element => {
+export const AnnotationsFilterChips = () => {
     const [filters, setFilters] = useAnnotationFilters();
     const labels = useTaskLabels();
 

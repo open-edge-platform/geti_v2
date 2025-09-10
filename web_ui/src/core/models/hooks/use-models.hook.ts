@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
+import { toast } from '@geti/ui';
 import {
     useMutation,
     UseMutationResult,
@@ -16,8 +17,6 @@ import { isEmpty } from 'lodash-es';
 import QUERY_KEYS from '../../../../packages/core/src/requests/query-keys';
 import { getErrorMessage } from '../../../../packages/core/src/services/utils';
 import { useProjectIdentifier } from '../../../hooks/use-project-identifier/use-project-identifier';
-import { NOTIFICATION_TYPE } from '../../../notification/notification-toast/notification-type.enum';
-import { useNotification } from '../../../notification/notification.component';
 import { ProjectIdentifier } from '../../projects/core.interface';
 import { useTasksWithSupportedAlgorithms } from '../../supported-algorithms/hooks/use-tasks-with-supported-algorithms';
 import { TrainingBodyDTO } from '../dtos/train-model.interface';
@@ -53,10 +52,8 @@ interface UseTrainModelMutation {
 
 export const useModels = (): UseModels => {
     const { modelsService } = useApplicationServices();
-    const { addNotification } = useNotification();
-
     const onError = (error: AxiosError) => {
-        addNotification({ message: getErrorMessage(error), type: NOTIFICATION_TYPE.ERROR });
+        toast({ message: getErrorMessage(error), type: 'error' });
     };
 
     const useModelQuery = (modelIdentifier: ModelIdentifier): UseQueryResult<ModelDetails, AxiosError> => {

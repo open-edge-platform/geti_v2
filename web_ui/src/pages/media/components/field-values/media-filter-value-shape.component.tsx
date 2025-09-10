@@ -42,7 +42,7 @@ export const MediaFilterValueShape = ({
     isDisabled = false,
     isMultiselection = false,
     onSelectionChange,
-}: mediaFilterValueShapeProps): JSX.Element => {
+}: mediaFilterValueShapeProps) => {
     const triggerRef = useRef(null);
     const savedShapes = useRef<ShapeOption[]>([]);
     const dialogState = useOverlayTriggerState({});

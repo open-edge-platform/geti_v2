@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MutableRefObject, RefObject, useRef } from 'react';
+import { RefObject, useRef } from 'react';
 
 import { pointInRectangle } from '@geti/smart-tools/utils';
 import { Overlay, View } from '@geti/ui';
@@ -16,12 +16,12 @@ import { AnnotationToolContext } from '../../core/annotation-tool-context.interf
 import { useAnnotatorContextMenu } from '../../providers/annotator-context-menu-provider/annotator-context-menu-provider.component';
 import { useIsSelectionToolActive } from '../../tools/selecting-tool/selecting-state-provider.component';
 import { SelectingToolType } from '../../tools/selecting-tool/selecting-tool.enums';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { useAnnotationContextMenu } from './use-annotation-context-menu.hook';
 import { useToolContextMenu } from './use-tool-context-menu.hook';
 
 interface AnnotationContextMenuProps {
-    containerCanvasRef: RefObject<HTMLDivElement>;
+    containerCanvasRef: RefObject<HTMLDivElement | null>;
     annotations: Annotation[];
     annotationToolContext: AnnotationToolContext;
     disableAnnotationContextMenu?: boolean;
@@ -32,7 +32,7 @@ export const AnnotationContextMenu = ({
     containerCanvasRef,
     annotationToolContext,
     disableAnnotationContextMenu = true,
-}: AnnotationContextMenuProps): JSX.Element => {
+}: AnnotationContextMenuProps) => {
     const overlayRef = useRef(null);
     const isStampToolActive = useIsSelectionToolActive(SelectingToolType.StampTool);
     const {
@@ -48,9 +48,7 @@ export const AnnotationContextMenu = ({
 
     const { handleShowToolContextMenu } = useToolContextMenu({ annotationToolContext });
 
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const { hideContextMenu, contextConfig } = useAnnotatorContextMenu();
 
@@ -132,7 +130,7 @@ export const AnnotationContextMenu = ({
     return labelsSearchConfig === null ? (
         <></>
     ) : (
-        <Overlay isOpen nodeRef={overlayRef as unknown as MutableRefObject<HTMLElement>}>
+        <Overlay isOpen nodeRef={overlayRef as unknown as RefObject<HTMLElement>}>
             <View position={'absolute'} top={labelsSearchConfig.position.y} left={labelsSearchConfig.position.x}>
                 <LabelSearch
                     labels={labelsSearchConfig.labels}

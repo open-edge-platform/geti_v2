@@ -5,7 +5,7 @@ import { useLabelsKeyboardShortcut } from '../../../../hot-keys/use-labels-keybo
 
 type LabelHotkeyProps = Parameters<typeof useLabelsKeyboardShortcut>[0];
 
-export const LabelHotkey = ({ label, annotationToolContext, hotkeyHandler }: LabelHotkeyProps): JSX.Element => {
+export const LabelHotkey = ({ label, annotationToolContext, hotkeyHandler }: LabelHotkeyProps) => {
     useLabelsKeyboardShortcut({ label, annotationToolContext, hotkeyHandler });
 
     return <></>;

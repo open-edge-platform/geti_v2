@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import cast
 
 from geti_spicedb_tools import Permissions, SpiceDB
+from geti_supported_models.default_models import DefaultModels
 
 from communication.exceptions import DatasetStorageNotInProjectException, LabelNotFoundException, ProjectLockedException
 from managers.annotation_manager import AnnotationManager
@@ -86,6 +87,7 @@ class ProjectManager:
             creator_id=creator_id,
             parser_class=project_parser,
             parser_kwargs=parser_kwargs,
+            default_models_per_task=DefaultModels.get_default_models_per_task(),
         )
 
         # TODO: CVS-89772 call spicedb before storing a project in database

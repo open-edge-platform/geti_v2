@@ -14,13 +14,7 @@ interface DrawingToolsTooltipProps extends ToolTooltipProps {
     hotkey?: string;
 }
 
-export const DrawingToolsTooltip = ({
-    title,
-    description,
-    url,
-    img,
-    hotkey,
-}: DrawingToolsTooltipProps): JSX.Element => {
+export const DrawingToolsTooltip = ({ title, description, url, img, hotkey }: DrawingToolsTooltipProps) => {
     const docsUrl = useDocsUrl();
 
     return (

@@ -16,7 +16,7 @@ interface CountWithIconProps {
     icon: ReactNode;
 }
 
-export const CountWithIcon = ({ id, icon, count, text }: CountWithIconProps): JSX.Element => {
+export const CountWithIcon = ({ id, icon, count, text }: CountWithIconProps) => {
     const message = count === 1 ? text : text + 's';
 
     return (

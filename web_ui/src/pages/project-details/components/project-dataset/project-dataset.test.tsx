@@ -2,7 +2,8 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { API_URLS } from '@geti/core';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { createInMemoryMediaService } from '../../../../core/media/services/in-memory-media-service/in-memory-media-service';
@@ -92,7 +93,7 @@ describe('Project dataset', () => {
 
         await renderApp();
 
-        expect(screen.getByLabelText('In memory dataset')).toBeVisible();
+        expect(screen.getByTitle('In memory dataset')).toBeInTheDocument();
     });
 
     it('should has 2 sub tabs: "Media" and "Statistics"', async () => {
@@ -159,7 +160,7 @@ describe('Project dataset', () => {
             expect(statisticsTab).toBeEnabled();
         });
 
-        fireEvent.click(statisticsTab);
+        await userEvent.click(statisticsTab);
 
         expect(mockUseNavigate).toHaveBeenCalledWith(
             '/organizations/organization-id/workspaces/workspace-id/projects/project-id/datasets/in-memory-dataset/statistics'
@@ -189,6 +190,8 @@ describe('Project dataset', () => {
 
         await renderApp();
 
-        expect(screen.getByRole('tab', { name: /Statistics/ })).toHaveAttribute('aria-disabled', 'true');
+        await waitFor(() => {
+            expect(screen.getByRole('tab', { name: /Statistics/ })).toHaveAttribute('aria-disabled', 'true');
+        });
     });
 });

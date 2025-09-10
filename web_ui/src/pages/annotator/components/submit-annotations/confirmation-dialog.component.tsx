@@ -38,7 +38,7 @@ export const ConfirmationDialog = ({
     onSubmit,
     onDiscard,
     submitAnnotationsMutation,
-}: ConfirmationDialogProps): JSX.Element => {
+}: ConfirmationDialogProps) => {
     const { selectedMediaItemQuery } = useSelectedMediaItem();
     const isDisabled = submitAnnotationsMutation.isPending || selectedMediaItemQuery.isPending;
 

@@ -78,7 +78,7 @@ const PredictionModeSubmit = ({
     );
 };
 
-export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const SecondaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const activeTool = useActiveTool(annotationToolContext);
     const isLargeSize = useMediaQuery(isLargeSizeQuery);
     const { isDrawing, annotations } = annotationToolContext.scene;

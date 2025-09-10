@@ -15,7 +15,7 @@ import styles from './subsets-distribution-slider.module.scss';
 interface ThumbProps {
     index: number;
     state: SliderState;
-    trackRef: RefObject<HTMLDivElement>;
+    trackRef: RefObject<HTMLDivElement | null>;
     ariaLabel: string;
 }
 

@@ -26,7 +26,7 @@ describe('AdjustmentHeader', () => {
     });
 
     it('Reset button should be visible on hover event', async () => {
-        await render(
+        render(
             <AdjustmentHeader
                 headerText={headerText}
                 value={value}
@@ -42,7 +42,7 @@ describe('AdjustmentHeader', () => {
     });
 
     it('Reset button should reset to default value', async () => {
-        await render(
+        render(
             <AdjustmentHeader
                 headerText={headerText}
                 value={value}
@@ -58,7 +58,7 @@ describe('AdjustmentHeader', () => {
     });
 
     it('Value should be displayed in percentages', async () => {
-        await render(
+        render(
             <AdjustmentHeader
                 headerText={headerText}
                 value={value}
@@ -74,7 +74,7 @@ describe('AdjustmentHeader', () => {
     it('tooltip for reset button should be displayed', async () => {
         jest.useFakeTimers();
 
-        await render(
+        render(
             <AdjustmentHeader
                 headerText={headerText}
                 value={value}

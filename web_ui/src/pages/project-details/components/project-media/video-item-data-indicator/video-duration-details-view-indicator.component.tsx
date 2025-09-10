@@ -8,10 +8,7 @@ interface VideoDurationDetailsVideIndicatorProps {
     duration: number;
     tooltip: string;
 }
-export const VideoDurationDetailsViewIndicator = ({
-    duration,
-    tooltip,
-}: VideoDurationDetailsVideIndicatorProps): JSX.Element => {
+export const VideoDurationDetailsViewIndicator = ({ duration, tooltip }: VideoDurationDetailsVideIndicatorProps) => {
     const durationText = useDurationText(duration);
 
     return (

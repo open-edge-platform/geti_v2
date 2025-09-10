@@ -28,7 +28,7 @@ interface TaskLabelTreeViewProps {
     onClick?: (label: Label) => void;
 }
 
-const TaskLabelTreeView = (props: TaskLabelTreeViewProps): JSX.Element => {
+const TaskLabelTreeView = (props: TaskLabelTreeViewProps) => {
     const { labelTreeItems, level = -1 } = props;
     const currentLevel = level + 1;
 
@@ -45,7 +45,7 @@ const TaskLabelTreeView = (props: TaskLabelTreeViewProps): JSX.Element => {
     );
 };
 
-export const TaskLabelTreeContainer = (props: TaskLabelTreeContainerProps): JSX.Element => {
+export const TaskLabelTreeContainer = (props: TaskLabelTreeContainerProps) => {
     return (
         <div aria-label={props.ariaLabel} style={{ overflow: 'auto', overflowX: 'hidden', width: '100%' }}>
             {isNonEmptyArray(props.tasksMetadata) ? (

@@ -4,7 +4,7 @@ imagePullPolicy: IfNotPresent
 
 resources:
   requests:
-    cpu: 1
+    cpu: 1.5
     memory: 1Gi
   limits:
     memory: 3Gi # To be reduced after media upload revamp (CVS-152302)
@@ -71,8 +71,8 @@ global:
     name: busybox:glibc
   kubectl:
     registry: docker.io
-    repository: bitnamilegacy
-    name: kubectl:1.31.0
+    repository: alpine
+    name: k8s:1.31.12
 
 
 spicedb_log_file_path: "/audit_logs/spicedb.log"

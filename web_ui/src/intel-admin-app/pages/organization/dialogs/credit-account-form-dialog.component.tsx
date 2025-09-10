@@ -53,9 +53,7 @@ interface CreditAccountFormState {
 const MIN_DATE = today(getLocalTimeZone());
 const MAX_DATE = parseDate('9999-11-30');
 
-export const CreditAccountFormDialog = (
-    props: CreditAccountCreateDialogProps | CreditAccountEditDialogProps
-): JSX.Element => {
+export const CreditAccountFormDialog = (props: CreditAccountCreateDialogProps | CreditAccountEditDialogProps) => {
     const { isNew, isOpen, onOpenChange, onSave, isLoading } = props;
     const { organizationId } = useOrganization();
 

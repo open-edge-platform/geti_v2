@@ -144,6 +144,7 @@ export { ReactComponent as RightClick } from './right-click.svg';
 export { ReactComponent as JointConnection } from './joint-connection.svg';
 export { ReactComponent as LineMappingLight } from './line-mapping-light.svg';
 export { ReactComponent as AlertOutlined } from './alert-outlined.svg';
+export { ReactComponent as AddCircle } from './add-circle.svg';
 
 export { default as Checkmark } from '@spectrum-icons/workflow/Checkmark';
 export { default as Calendar } from '@spectrum-icons/workflow/Calendar';

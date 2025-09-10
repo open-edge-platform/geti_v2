@@ -8,7 +8,6 @@ import { ApplicationServicesProvider } from '@geti/core/src/services/application
 import { IntelBrandedLoading } from '@geti/ui';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, RouterProviderProps } from 'react-router-dom';
 
-import { NotificationProvider } from '../notification/notification.component';
 import { ErrorBoundary } from '../pages/errors/error-boundary.component';
 import { AuthProvider } from './auth-provider/auth-provider.component';
 import { ProgressiveWebAppProvider } from './progressive-web-app-provider/progressive-web-app-provider.component';
@@ -47,25 +46,23 @@ export const InfrastructureProviders: FC<InfrastructureProvidersProps> = ({ rout
     return (
         <StrictMode>
             <ProgressiveWebAppProvider>
-                <NotificationProvider>
-                    <QueryClientProvider>
-                        {/*
+                <QueryClientProvider>
+                    {/*
                         The goal of this additional ThemeProvider (the second one in inside the App) is to have proper
                         styles for the ErrorBoundary views that might be triggered by feature flags or deployment config
                         */}
-                        <ThemeProvider>
-                            <ErrorBoundary>
-                                <Suspense fallback={<IntelBrandedLoading />}>
-                                    <ApplicationServicesProvider useInMemoryEnvironment={useInMemoryEnvironment}>
-                                        <AuthProvider isAdmin={isAdminBuild}>
-                                            <App routes={routes} />
-                                        </AuthProvider>
-                                    </ApplicationServicesProvider>
-                                </Suspense>
-                            </ErrorBoundary>
-                        </ThemeProvider>
-                    </QueryClientProvider>
-                </NotificationProvider>
+                    <ThemeProvider>
+                        <ErrorBoundary>
+                            <Suspense fallback={<IntelBrandedLoading />}>
+                                <ApplicationServicesProvider useInMemoryEnvironment={useInMemoryEnvironment}>
+                                    <AuthProvider isAdmin={isAdminBuild}>
+                                        <App routes={routes} />
+                                    </AuthProvider>
+                                </ApplicationServicesProvider>
+                            </Suspense>
+                        </ErrorBoundary>
+                    </ThemeProvider>
+                </QueryClientProvider>
             </ProgressiveWebAppProvider>
         </StrictMode>
     );

@@ -46,7 +46,7 @@ enum CREDIT_ACCOUNTS_TABLE_COLUMNS {
     ACTIONS = 'actions',
 }
 
-const renderEmptyState = (): JSX.Element => (
+const renderEmptyState = () => (
     <IllustratedMessage>
         <NotFound />
         <Heading>No results</Heading>

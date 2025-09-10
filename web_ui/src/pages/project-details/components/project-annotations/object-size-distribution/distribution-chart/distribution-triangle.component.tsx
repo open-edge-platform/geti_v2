@@ -3,6 +3,6 @@
 
 import { SVGProps } from 'react';
 
-export const DistributionTriangle = (props: SVGProps<SVGPolygonElement>): JSX.Element => {
+export const DistributionTriangle = (props: SVGProps<SVGPolygonElement>) => {
     return <polygon {...props} opacity={0.12} />;
 };

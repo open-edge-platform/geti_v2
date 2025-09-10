@@ -27,6 +27,8 @@ def optimize_workflow_pot(  # noqa: PLR0913
     num_image_pulling_threads: int = 10,
     num_upload_threads: int = 2,
     min_annotation_size: Optional[int] = None,  # noqa: UP007
+    max_annotation_size: Optional[int] = None,  # noqa: UP007
+    min_number_of_annotations: Optional[int] = None,  # noqa: UP007
     max_number_of_annotations: Optional[int] = None,  # noqa: UP007
     # Optimize command
     command: list[str] = ["bash", "-c", "run"],
@@ -43,6 +45,14 @@ def optimize_workflow_pot(  # noqa: PLR0913
     :param max_shard_size: Maximum number of dataset items in each shard file
     :param num_image_pulling_threads: Number of threads used for pulling image bytes
     :param num_upload_threads: Number of threads used for uploading shard files
+    :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
+     ignored during evaluation
+    :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
+     ignored during evaluation
+    :param min_number_of_annotations: Minimum number of annotations allowed in one annotation scene. If not None,
+        annotation scenes with fewer than this number of annotations will be ignored during evaluation.
+    :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
+     annotation scene will be ignored during evaluation.
     :param command: Command to be executed on the primary container, e.g., OTX2 trainer pod.
     :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
         It would be useful for debugging.
@@ -59,6 +69,8 @@ def optimize_workflow_pot(  # noqa: PLR0913
         optimization_type=ModelOptimizationType.POT.name,
         command=command,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
         max_number_of_annotations=max_number_of_annotations,
     )
 
@@ -68,5 +80,7 @@ def optimize_workflow_pot(  # noqa: PLR0913
         model_id=model_id,
         retain_training_artifacts=retain_training_artifacts,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
         max_number_of_annotations=max_number_of_annotations,
     )

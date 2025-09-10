@@ -13,7 +13,7 @@ export const TrainingModelRadialChart = ({
     header,
     value,
     inCard = true,
-}: TrainingModelBarRadialChart & TrainingModelChartConfig): JSX.Element => {
+}: TrainingModelBarRadialChart & TrainingModelChartConfig) => {
     const hasOnlyOneRing = value.length === 1;
     const radialData = value.map(({ header: labelHeader, value: labelValue, color }) => ({
         name: labelHeader,

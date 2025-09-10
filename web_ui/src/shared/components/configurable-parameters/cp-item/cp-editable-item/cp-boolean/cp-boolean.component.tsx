@@ -10,7 +10,7 @@ interface CPBooleanProps extends ResetButtonHandler {
     parameter: BooleanGroupParams;
 }
 
-export const CPBoolean = ({ id, parameter, updateParameter }: CPBooleanProps): JSX.Element => {
+export const CPBoolean = ({ id, parameter, updateParameter }: CPBooleanProps) => {
     const { id: parameterId, value } = parameter;
 
     const handleSelectChange = (isSelected: boolean): void => {

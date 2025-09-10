@@ -11,7 +11,7 @@ interface MediaCountProps {
     countMessage: string;
 }
 
-export const MediaCount = ({ selectedItems, countMessage }: MediaCountProps): JSX.Element => {
+export const MediaCount = ({ selectedItems, countMessage }: MediaCountProps) => {
     const hasSelectedItems = selectedItems > 0;
 
     return (

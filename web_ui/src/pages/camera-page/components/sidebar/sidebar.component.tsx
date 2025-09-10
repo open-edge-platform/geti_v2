@@ -18,7 +18,7 @@ interface SidebarProps {
 
 const sortingByMostRecent = getSortingHandler(SortingOptions.MOST_RECENT);
 
-export const Sidebar = ({ labels }: SidebarProps): JSX.Element => {
+export const Sidebar = ({ labels }: SidebarProps) => {
     const [isOpen, setIsOpen] = useState(true);
     const { savedFilesQuery } = useCameraStorage();
 

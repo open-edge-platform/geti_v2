@@ -1,0 +1,4 @@
+apiVersion: v1
+name: telemetry-compression
+description: A Helm chart for the telemetry compression CronJob.
+version: 0.0.1

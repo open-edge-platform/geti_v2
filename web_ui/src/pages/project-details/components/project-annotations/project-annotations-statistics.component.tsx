@@ -23,7 +23,7 @@ import { ProjectAnnotationsObjects } from './project-annotations-objects/project
 import { ProjectAnnotationsVideos } from './project-annotations-videos/project-annotations-videos.component';
 import { TasksList } from './tasks-list/tasks-list.component';
 
-export const ProjectAnnotationsStatistics = (): JSX.Element => {
+export const ProjectAnnotationsStatistics = () => {
     const container = useRef(null);
     const unwrappedContainer = useUnwrapDOMRef(container);
 

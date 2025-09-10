@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Dispatch, MutableRefObject, SetStateAction, useEffect } from 'react';
+import { Dispatch, ReactNode, RefObject, SetStateAction, useEffect } from 'react';
 
 import { ChartData, Colors } from '../../chart.interface';
 import { CustomTooltipWrapper } from '../../custom-tooltip-wrapper/custom-tooltip-wrapper.component';
@@ -12,11 +12,11 @@ interface CustomTooltipChartProps {
     }[];
     active?: boolean;
     label?: string;
-    prevHoveredLabel: MutableRefObject<string | null>;
+    prevHoveredLabel: RefObject<string | null>;
     defaultColors: Colors[];
     setLabelColors: Dispatch<SetStateAction<Colors[]>>;
     data: ChartData[];
-    displayMessage: (props: { value?: number | string; label?: string }) => JSX.Element;
+    displayMessage: (props: { value?: number | string; label?: string }) => ReactNode;
 }
 
 export const CustomTooltipChart = ({
@@ -28,7 +28,7 @@ export const CustomTooltipChart = ({
     setLabelColors,
     data,
     displayMessage,
-}: CustomTooltipChartProps): JSX.Element | null => {
+}: CustomTooltipChartProps) => {
     const value =
         payload && payload.length
             ? typeof payload[0].value === 'number'

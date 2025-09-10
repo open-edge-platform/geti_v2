@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import TYPE_CHECKING, Any, cast
 
+from geti_supported_models import SupportedModels
+
 from communication.rest_views.label_rest_views import LabelRESTViews
 from communication.rest_views.performance_rest_views import PerformanceRESTViews
 
@@ -125,12 +127,13 @@ class ModelRESTViews:
         :return: dictionary with REST representation of the model storage
         """
         models_rest_list: list[dict] = []
+        model_architecture_name = ModelRESTViews._get_model_architecture_name(model_storage=model_storage)
         for model_info in per_model_info:
             model = model_info.model
             models_rest_list.append(
                 {
                     ID_: str(model.id_),
-                    NAME: model.model_storage.name,
+                    NAME: model_architecture_name,
                     CREATION_DATE: model.creation_date.isoformat(),
                     SCORE_UP_TO_DATE: True,  # this field is deprecated, value is always 'True' and should not be used
                     ACTIVE_MODEL: model == active_model,
@@ -151,7 +154,7 @@ class ModelRESTViews:
 
         rest_view = {
             ID_: str(model_storage.id_),
-            NAME: model_storage.name,
+            NAME: model_architecture_name,
             MODEL_TEMPLATE_ID: model_storage.model_template.model_template_id,
             TASK_ID: str(task_node_id),
             MODELS: models_rest_list,
@@ -186,7 +189,7 @@ class ModelRESTViews:
         """
         return {
             ID_: str(model.id_),
-            NAME: model.model_storage.name,
+            NAME: ModelRESTViews._get_model_architecture_name(model_storage=model.model_storage),
             CREATION_DATE: model.creation_date.isoformat(),
             SCORE_UP_TO_DATE: True,  # Note: this field is deprecated, value is always 'True' and should not be used
             ACTIVE_MODEL: model == active_model,
@@ -233,10 +236,11 @@ class ModelRESTViews:
         """
         label_schema = model.configuration.get_label_schema()
         labels = label_schema.get_labels(include_empty=True)
+        model_architecture_name = ModelRESTViews._get_model_architecture_name(model_storage=model.model_storage)
         result = {
             ID_: model.id_,
-            NAME: model.model_storage.name,
-            ARCHITECTURE: model.model_storage.model_template.name,
+            NAME: model_architecture_name,
+            ARCHITECTURE: model_architecture_name,
             VERSION: model.version,
             CREATION_DATE: model.creation_date.isoformat(),
             SIZE: model.size,
@@ -313,7 +317,7 @@ class ModelRESTViews:
             filter(
                 None,
                 [
-                    optimized_model.model_storage.name,
+                    ModelRESTViews._get_model_architecture_name(model_storage=optimized_model.model_storage),
                     model_format,
                     precision_text,
                     with_xai,
@@ -364,3 +368,14 @@ class ModelRESTViews:
             result[OPTIMIZATION_METHODS] = [method.name for method in optimized_model.optimization_methods]
 
         return result
+
+    @staticmethod
+    def _get_model_architecture_name(model_storage: ModelStorage) -> str:
+        """
+        Get the model architecture name from the model storage, based on the model manifests.
+
+        :param model_storage: ModelStorage to get the architecture name from
+        :return: The name of the model architecture
+        """
+        model_manifest = SupportedModels.get_model_manifest_by_id(model_manifest_id=model_storage.model_manifest_id)
+        return model_manifest.name

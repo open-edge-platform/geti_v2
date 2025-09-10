@@ -6,7 +6,7 @@ import { dimensionValue } from '@react-spectrum/utils';
 
 import IntelBrandedLoadingGif from './intel-loading.webp';
 
-export const IntelBrandedLoading = (): JSX.Element => {
+export const IntelBrandedLoading = () => {
     return (
         <Flex justifyContent='center' alignItems='center' height='100vh' direction='column'>
             <img

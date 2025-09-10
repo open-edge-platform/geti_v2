@@ -10,7 +10,7 @@ import { OPERATION } from '../../../shared/components/has-permission/has-permiss
 import { CreateWorkspace } from './create-workspace.component';
 import { WorkspacesList } from './workspaces-list.component';
 
-export const Workspaces = (): JSX.Element => {
+export const Workspaces = () => {
     const { workspaces } = useWorkspaces();
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
 

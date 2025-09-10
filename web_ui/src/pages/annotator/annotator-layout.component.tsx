@@ -78,7 +78,7 @@ interface CopyPasteProps {
     selectedMediaItem: SelectedMediaItem | undefined;
 }
 
-const CopyPaste = ({ labels, scene, selectedMediaItem }: CopyPasteProps): JSX.Element => {
+const CopyPaste = ({ labels, scene, selectedMediaItem }: CopyPasteProps) => {
     const { image } = useROI();
     const visibleAnnotations = useVisibleAnnotations();
     const selectedAnnotations = useSelectedAnnotations(false);
@@ -95,7 +95,7 @@ const CopyPaste = ({ labels, scene, selectedMediaItem }: CopyPasteProps): JSX.El
     return <></>;
 };
 
-export const AnnotatorLayout = (): JSX.Element => {
+export const AnnotatorLayout = () => {
     const { project } = useProject();
     const labels = useLabelShortcuts();
 

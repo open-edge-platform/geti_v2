@@ -27,7 +27,7 @@ import { UploadStatusBar } from './upload-status-bar/upload-status-bar.component
 
 type BucketFiles = Pick<UploadMedia, 'files' | 'labelIds'>;
 
-export const ProjectMedia = (): JSX.Element => {
+export const ProjectMedia = () => {
     const [droppedFiles, setDroppedFiles] = useState<BucketFiles | null>(null);
 
     const selectedDataset = useSelectedDataset();

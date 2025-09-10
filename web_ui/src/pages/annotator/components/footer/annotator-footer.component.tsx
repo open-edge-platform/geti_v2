@@ -1,13 +1,15 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { Flex, Footer as FooterView, View, type FooterProps } from '@geti/ui';
 import { clsx } from 'clsx';
 
 import { MediaItem } from '../../../../core/media/media.interface';
 import { isVideo, isVideoFrame } from '../../../../core/media/video.interface';
 import { useProject } from '../../../project-details/providers/project-provider/project-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { FitImageToScreenButton } from '../fit-image-to-screen-button/fit-image-to-screen-button.component';
 import { MediaItemImageMetadata } from './media-item-image-metadata.component';
 import { MediaItemVideoMetadata } from './media-item-video-metadata.component';
@@ -19,18 +21,11 @@ import classes from './annotator-footer.module.scss';
 interface CustomFooterProps extends Omit<FooterProps, 'children'> {
     selectedItem: MediaItem | undefined;
     areActionsDisabled?: boolean;
-    children?: JSX.Element;
+    children?: ReactNode;
 }
 
-export const Footer = ({
-    selectedItem,
-    areActionsDisabled = false,
-    children,
-    ...footerProps
-}: CustomFooterProps): JSX.Element => {
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+export const Footer = ({ selectedItem, areActionsDisabled = false, children, ...footerProps }: CustomFooterProps) => {
+    const { zoom } = useZoomState();
 
     const { project, isTaskChainProject } = useProject();
 

@@ -1,8 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { fireEvent, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
 import { JobsDialog } from './jobs-dialog.component';
@@ -86,14 +85,16 @@ describe('jobs dialog', (): void => {
         renderComponent();
 
         checkComboBoxValue('Job scheduler filter job type', 'All job types');
-        await userEvent.click(screen.getByLabelText('Job scheduler filter job type'));
-        await userEvent.keyboard('{arrowdown}');
-        await userEvent.keyboard('{arrowdown}');
-        await userEvent.keyboard('{enter}');
+        fireEvent.click(screen.getByLabelText('Job scheduler filter job type'));
+        fireEvent.click(screen.getByRole('option', { name: 'Train' }));
 
         checkComboBoxValue('Job scheduler filter job type', 'Train');
 
-        await userEvent.click(screen.getByLabelText('Reset all filters'));
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: 'Reset all filters' })).toBeEnabled();
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: 'Reset all filters' }));
         checkComboBoxValue('Job scheduler filter job type', 'All job types');
     });
 });

@@ -10,7 +10,7 @@ interface FrameNumberProps {
     className?: string;
 }
 
-export const FrameNumber = ({ mediaItem, className }: FrameNumberProps): JSX.Element => {
+export const FrameNumber = ({ mediaItem, className }: FrameNumberProps) => {
     return (
         <View height='100%' UNSAFE_className={className} paddingX={'size-100'}>
             <span style={{ fontSize: dimensionValue('size-130') }} id='frame-number' aria-label='frame number'>

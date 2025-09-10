@@ -17,7 +17,7 @@ interface ProjectsListProps {
     projectsQuery: ProjectsQueryResult;
 }
 
-export const ProjectsList = ({ projects, projectsQuery }: ProjectsListProps): JSX.Element => {
+export const ProjectsList = ({ projects, projectsQuery }: ProjectsListProps) => {
     const [selected, setSelected] = useState<Selection>(new Set([]));
 
     useEffect(() => {

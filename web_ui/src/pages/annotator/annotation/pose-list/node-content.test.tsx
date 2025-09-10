@@ -129,7 +129,7 @@ describe('NodeContent', () => {
 
             await userEvent.hover(screen.getByRole('listitem'));
 
-            expect(screen.queryByRole('button', { name: 'menu trigger' })).toBeVisible();
+            expect(screen.queryByRole('button', { name: 'Show actions' })).toBeVisible();
         });
 
         it('hidden the menu trigger on PREDICTION mode', async () => {
@@ -142,7 +142,7 @@ describe('NodeContent', () => {
 
             await userEvent.hover(screen.getByRole('listitem'));
 
-            expect(screen.queryByRole('button', { name: 'menu trigger' })).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', { name: 'Show actions' })).not.toBeInTheDocument();
         });
     });
 });

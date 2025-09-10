@@ -19,7 +19,7 @@ interface UserActionsProps {
     dismiss: () => void;
 }
 
-export const RemoveUserFromProjectDialog = ({ user, activeUser, dismiss }: UserActionsProps): JSX.Element => {
+export const RemoveUserFromProjectDialog = ({ user, activeUser, dismiss }: UserActionsProps) => {
     const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();
     const { useUpdateUserRoles, useDeleteMemberRole } = useUsers();
     const { organizationId, workspaceId, projectId } = useProjectIdentifier();

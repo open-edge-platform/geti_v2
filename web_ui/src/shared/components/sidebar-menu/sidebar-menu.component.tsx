@@ -17,7 +17,7 @@ interface SidebarMenuProps {
     className?: React.HTMLAttributes<HTMLElement>['className'];
 }
 
-export const SidebarMenu = ({ id, options, className }: SidebarMenuProps): JSX.Element => {
+export const SidebarMenu = ({ id, options, className }: SidebarMenuProps) => {
     return (
         <nav className={className} id={`sidebar-menu-${id}`}>
             {options.map((optionsChildren, index) => (

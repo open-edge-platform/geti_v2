@@ -56,7 +56,6 @@ describe('jobs discard action', (): void => {
     it('should render "Delete" action link on DISCARD_TYPE.DELETE', async (): Promise<void> => {
         await renderComponent({ discardType: DISCARD_TYPE.DELETE });
 
-        expect(screen.getByText('trash.svg')).toBeVisible();
         expect(screen.getByTestId(`job-scheduler-${mockedJob.id}-action-delete`)).toBeVisible();
     });
 

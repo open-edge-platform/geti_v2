@@ -13,7 +13,7 @@ import { CircleSizePreview } from '../../../components/circle-size-preview/circl
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { getOutputFromTask } from '../../../providers/task-chain-provider/utils';
 import { useTask } from '../../../providers/task-provider/task-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import { pointsToCircle } from '../../circle-tool/utils';
 import { PolygonDraw } from '../../polygon-draw.component';
 import { SvgToolCanvas } from '../../svg-tool-canvas.component';
@@ -40,12 +40,10 @@ const getGhostPolygon = (polygon: GhostPolygon | null, annotation: Annotation): 
     return { shape: annotation?.shape as Polygon, annotationId: annotation?.id };
 };
 
-export const BrushTool = ({ annotationToolContext, brushSize, showCirclePreview }: BrushToolProps): JSX.Element => {
+export const BrushTool = ({ annotationToolContext, brushSize, showCirclePreview }: BrushToolProps) => {
     const { tasks, selectedTask } = useTask();
     const { scene } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const ref = useRef<SVGRectElement>(null);
     const { roi, image } = useROI();

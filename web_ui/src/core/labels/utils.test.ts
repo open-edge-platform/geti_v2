@@ -14,9 +14,11 @@ import {
     getNonEmptyLabelsFromProject,
     getNotEmptyLabelsFromOneTask,
     isAnomalous,
+    isEmptyOrBackgroundLabel,
     isExclusive,
     isGlobal,
     isLocal,
+    isNonEmptyOrBackgroundLabel,
 } from './utils';
 
 it.each([
@@ -261,5 +263,49 @@ describe('filter out exclusive labels', () => {
         const labels: Label[] = [];
 
         expect(filterOutExclusiveLabel(labels)).toHaveLength(0);
+    });
+});
+
+describe('isEmptyOrBackgroundLabel', () => {
+    it('returns true for a label that is empty', () => {
+        const label = { isEmpty: true, behaviour: LABEL_BEHAVIOUR.LOCAL };
+        expect(isEmptyOrBackgroundLabel(label)).toBe(true);
+    });
+
+    it('returns true for a label that is background', () => {
+        const label = { isEmpty: false, behaviour: LABEL_BEHAVIOUR.BACKGROUND };
+        expect(isEmptyOrBackgroundLabel(label)).toBe(true);
+    });
+
+    it('returns true for a label that is both empty and background', () => {
+        const label = { isEmpty: true, behaviour: LABEL_BEHAVIOUR.BACKGROUND };
+        expect(isEmptyOrBackgroundLabel(label)).toBe(true);
+    });
+
+    it('returns false for a label that is neither empty nor background', () => {
+        const label = { isEmpty: false, behaviour: LABEL_BEHAVIOUR.LOCAL };
+        expect(isEmptyOrBackgroundLabel(label)).toBe(false);
+    });
+});
+
+describe('isNonEmptyOrBackgroundLabel', () => {
+    it('returns false for a label that is empty', () => {
+        const label = { isEmpty: true, behaviour: LABEL_BEHAVIOUR.LOCAL };
+        expect(isNonEmptyOrBackgroundLabel(label)).toBe(false);
+    });
+
+    it('returns false for a label that is background', () => {
+        const label = { isEmpty: false, behaviour: LABEL_BEHAVIOUR.BACKGROUND };
+        expect(isNonEmptyOrBackgroundLabel(label)).toBe(false);
+    });
+
+    it('returns false for a label that is both empty and background', () => {
+        const label = { isEmpty: true, behaviour: LABEL_BEHAVIOUR.BACKGROUND };
+        expect(isNonEmptyOrBackgroundLabel(label)).toBe(false);
+    });
+
+    it('returns true for a label that is neither empty nor background', () => {
+        const label = { isEmpty: false, behaviour: LABEL_BEHAVIOUR.LOCAL };
+        expect(isNonEmptyOrBackgroundLabel(label)).toBe(true);
     });
 });

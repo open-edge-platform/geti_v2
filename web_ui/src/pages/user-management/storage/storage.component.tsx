@@ -7,7 +7,7 @@ import { Flex, View } from '@geti/ui';
 import { ProjectsStorage } from './projects-storage/projects-storage.component';
 import { StorageUsage } from './storage-usage/storage-usage.component';
 
-export const Storage = (): JSX.Element => {
+export const Storage = () => {
     const { FEATURE_FLAG_STORAGE_SIZE_COMPUTATION } = useFeatureFlags();
 
     return (

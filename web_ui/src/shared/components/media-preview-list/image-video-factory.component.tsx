@@ -17,7 +17,7 @@ export const ImageVideoFactory = ({
     isVideoFile,
     controls = false,
     ...otherProps
-}: ImageVideoFactoryProps): JSX.Element => {
+}: ImageVideoFactoryProps) => {
     if (!isVideoFile) {
         return <img src={src} alt={alt} style={style} {...otherProps} />;
     }

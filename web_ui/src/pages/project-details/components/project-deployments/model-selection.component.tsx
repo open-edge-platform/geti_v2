@@ -24,7 +24,7 @@ import { ModelInfo } from './model-info.component';
 
     It calculates the optimization models list depending on the user's choice
 */
-export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSelectionProps): JSX.Element => {
+export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSelectionProps) => {
     const projectIdentifier = useProjectIdentifier();
     const { useModelQuery } = useModels();
     const { data: supportedAlgorithms, isPending: isPendingSupportedAlgorithms } =
@@ -166,7 +166,7 @@ export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSele
                     width={'100%'}
                     placeholder={'Select model'}
                     selectedKey={selectedModelVersion?.groupId}
-                    onSelectionChange={handleChangeArchitecture}
+                    onSelectionChange={(key) => key !== null && handleChangeArchitecture(key)}
                 >
                     {(item) => {
                         const algorithm = supportedAlgorithms?.find(
@@ -190,7 +190,7 @@ export const ModelSelection = ({ models, selectedModel, selectModel }: ModelSele
                     id={'select-version-id'}
                     items={validModelVersions || []}
                     selectedKey={selectedVersionId}
-                    onSelectionChange={handleChangeModelVersion}
+                    onSelectionChange={(key) => key !== null && handleChangeModelVersion(key)}
                     isDisabled={!Boolean(selectedModelVersion)}
                 >
                     {(item) => (

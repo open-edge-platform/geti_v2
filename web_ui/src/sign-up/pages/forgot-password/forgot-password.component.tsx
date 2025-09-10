@@ -13,7 +13,7 @@ import { BackgroundLayout } from '../../shared/background-layout/background-layo
 import sharedClasses from '../../../shared/shared.module.scss';
 import classes from './forgot-password.module.scss';
 
-export const ForgotPassword = (): JSX.Element => {
+export const ForgotPassword = () => {
     const [email, setEmail] = useState<string>('');
     const [showForgotPasswordForm, setShowForgotPasswordForm] = useState<boolean>(true);
 

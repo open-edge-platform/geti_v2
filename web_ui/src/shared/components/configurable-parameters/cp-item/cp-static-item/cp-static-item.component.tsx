@@ -8,7 +8,7 @@ interface CPStaticItemProps {
     id: string;
 }
 
-export const CPStaticItem = ({ content, id }: CPStaticItemProps): JSX.Element => {
+export const CPStaticItem = ({ content, id }: CPStaticItemProps) => {
     return (
         <Flex alignItems={'center'} gap={'size-100'}>
             <Text id={id}>{content}</Text>

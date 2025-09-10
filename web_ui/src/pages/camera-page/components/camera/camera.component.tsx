@@ -24,7 +24,7 @@ const VideoTiming = () => {
     return <Text UNSAFE_className={classes.recordingCounter}>{formatToHourMinSec(recordedSeconds)}</Text>;
 };
 
-export const Camera = ({ selectedLabels }: CameraFactoryProps): JSX.Element => {
+export const Camera = ({ selectedLabels }: CameraFactoryProps) => {
     const { isPhotoCaptureMode } = useCameraParams();
     const { webcamRef } = useDeviceSettings();
 

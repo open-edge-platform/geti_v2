@@ -12,6 +12,7 @@ PYDANTIC_BASE_TYPES_MAPPING = {
     "number": "float",
     "boolean": "bool",
     "string": "str",
+    "array": "array",
 }
 PYDANTIC_ANY_OF = "anyOf"
 

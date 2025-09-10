@@ -20,7 +20,7 @@ const getDisplayName = (admin: OrganizationAdmin) => {
     }
 };
 
-export const OrganizationAdminsCell = (props: TableCellProps): JSX.Element => {
+export const OrganizationAdminsCell = (props: TableCellProps) => {
     const organization = props.rowData as Organization;
 
     if (isEmpty(organization.admins)) {

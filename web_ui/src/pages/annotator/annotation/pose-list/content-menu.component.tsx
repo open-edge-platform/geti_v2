@@ -24,7 +24,7 @@ export const ContentMenu = ({ point, onUpdate }: ContentMenuProps) => {
             items={[option]}
             onAction={() => onUpdate({ ...point, isVisible: !point.isVisible })}
         >
-            <ActionButton isQuiet aria-label='menu trigger'>
+            <ActionButton isQuiet aria-label='Show actions'>
                 <MoreMenu />
             </ActionButton>
         </MenuTrigger>

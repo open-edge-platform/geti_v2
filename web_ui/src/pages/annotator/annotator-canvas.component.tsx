@@ -45,7 +45,7 @@ export function AnnotatorCanvas({
     selectedMediaItem,
     annotationToolContext,
     canEditAnnotationLabel,
-}: AnnotatorCanvasProps): JSX.Element {
+}: AnnotatorCanvasProps) {
     const { image } = useROI();
     const { tasks, selectedTask } = useTask();
     const { tool } = annotationToolContext;
@@ -166,7 +166,6 @@ export function AnnotatorCanvas({
                                 <Labels
                                     key={annotation.id}
                                     annotation={annotation}
-                                    annotationToolContext={annotationToolContext}
                                     canEditAnnotationLabel={canEditAnnotationLabel}
                                 />
                             ))}

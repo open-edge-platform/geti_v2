@@ -16,7 +16,7 @@ export const SelectableTabsList = ({
     configurableParameters,
     selectedComponentId,
     setSelectedComponentId,
-}: SelectableTabsListProps): JSX.Element => {
+}: SelectableTabsListProps) => {
     return (
         <Flex direction={'column'} height={'100%'} UNSAFE_style={{ overflowY: 'auto' }} minWidth={'24rem'}>
             {configurableParameters.map(({ taskTitle, taskId, components }, index) => {

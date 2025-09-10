@@ -9,7 +9,7 @@ import { blurActiveInput } from '../utils';
 import { usePolygonState } from './polygon-state-provider.component';
 import { PolygonMode } from './polygon-tool.enum';
 
-export const SecondaryToolbar = (_annotationToolContext: ToolAnnotationContextProps): JSX.Element => {
+export const SecondaryToolbar = (_annotationToolContext: ToolAnnotationContextProps) => {
     const { mode, setMode, isIntelligentScissorsLoaded } = usePolygonState();
     const isDisabled = !isIntelligentScissorsLoaded;
     const isMagneticLasso = !!mode && [PolygonMode.MagneticLasso, PolygonMode.MagneticLassoClose].includes(mode);

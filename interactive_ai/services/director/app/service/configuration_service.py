@@ -1,5 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+import logging
+
 from geti_configuration_tools import ConfigurationOverlayTools
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration, TrainingConfiguration
 from geti_supported_models import NullModelManifest, SupportedModels
@@ -12,6 +14,8 @@ from geti_types import ID, ModelStorageIdentifier, ProjectIdentifier
 from iai_core.entities.model import NullModel
 from iai_core.entities.model_storage import ModelStorage
 from iai_core.repos import ModelRepo, ModelStorageRepo
+
+logger = logging.getLogger(__name__)
 
 
 class ConfigurationService:
@@ -48,7 +52,8 @@ class ConfigurationService:
             }
         )
         training_configuration_repo = PartialTrainingConfigurationRepo(project_identifier)
-        task_level_config = training_configuration_repo.get_task_only_configuration(task_id)
+        task_level_config = training_configuration_repo.get_or_create_task_only_configuration(task_id)
+
         algo_level_config = (
             training_configuration_repo.get_by_model_manifest_id(model_manifest_id) if model_manifest_id else None
         )

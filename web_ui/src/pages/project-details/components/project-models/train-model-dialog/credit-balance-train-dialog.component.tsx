@@ -19,7 +19,7 @@ interface CreditBalanceTrainDialogProps {
     onSuccess?: () => void;
 }
 
-export const CreditBalanceTrainDialog = (props: CreditBalanceTrainDialogProps): JSX.Element => {
+export const CreditBalanceTrainDialog = (props: CreditBalanceTrainDialogProps) => {
     const { projectIdentifier } = useProject();
     const { FEATURE_FLAG_CREDIT_SYSTEM, FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
     const { useGetOrganizationBalanceQuery } = useCreditsQueries();

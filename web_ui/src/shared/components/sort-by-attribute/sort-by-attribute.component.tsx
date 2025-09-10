@@ -26,7 +26,7 @@ export const SortByAttribute = ({
     sortIconId,
     attributeName,
     label = attributeName,
-}: SortByAttributeProps): JSX.Element => {
+}: SortByAttributeProps) => {
     const { pressProps } = usePress({
         onPress: () =>
             setSortDirection((prevState) => (prevState === SortDirection.ASC ? SortDirection.DESC : SortDirection.ASC)),

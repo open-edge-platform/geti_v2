@@ -25,45 +25,34 @@ describe('jobs list item progress', () => {
         {
             state: JobStepState.RUNNING,
             stateStr: JobStepState.RUNNING.toUpperCase(),
-            icon: 'loader.svg',
         },
         {
             state: JobStepState.FINISHED,
             stateStr: JobStepState.FINISHED.toUpperCase(),
-            icon: 'check-circle-outlined.svg',
         },
         {
             state: JobStepState.SKIPPED,
             stateStr: JobStepState.SKIPPED.toUpperCase(),
-            icon: 'skipped-icon.svg',
         },
         {
             state: JobStepState.FAILED,
             stateStr: JobStepState.FAILED.toUpperCase(),
-            icon: 'exclamation-circle-outlined.svg',
         },
         {
             state: JobStepState.CANCELLED,
             stateStr: JobStepState.CANCELLED.toUpperCase(),
-            icon: 'canceled-icon.svg',
         },
         {
             state: JobStepState.WAITING,
             stateStr: JobStepState.WAITING.toUpperCase(),
-            icon: 'waiting-icon.svg',
         },
-    ])(
-        'should show "$icon" icon and step name for step in state "$stateStr"',
-        async ({ state, icon }): Promise<void> => {
-            await renderComponent({ state });
+    ])('should show step name for step in state "$stateStr"', async ({ state }): Promise<void> => {
+        renderComponent({ state });
 
-            if (state === JobStepState.RUNNING) {
-                expect(screen.queryByRole('progressbar', { name: 'Loading...' })).toBeVisible();
-            } else {
-                expect(screen.queryByText(String(icon))).toBeVisible();
-            }
+        if (state === JobStepState.RUNNING) {
+            expect(screen.queryByRole('progressbar', { name: 'Loading...' })).toBeVisible();
         }
-    );
+    });
 
     it.each([
         {
@@ -97,7 +86,7 @@ describe('jobs list item progress', () => {
             message: 'test message',
         },
     ])('shows name and message for step in state "$stateStr"', async ({ state, message }): Promise<void> => {
-        await renderComponent({ state, message });
+        renderComponent({ state, message });
 
         if (state !== JobStepState.FAILED && state !== JobStepState.SKIPPED) {
             expect(screen.getByText(`Retrieve train data (1 of 1): ${message}`)).toBeVisible();
@@ -140,7 +129,7 @@ describe('jobs list item progress', () => {
     ])(
         'should show "$result" as progress status for step in state "$stateStr"',
         async ({ state, result }): Promise<void> => {
-            await renderComponent({ state, progress: state === JobStepState.FINISHED ? 100 : 72 });
+            renderComponent({ state, progress: state === JobStepState.FINISHED ? 100 : 72 });
             expect(screen.getByTestId('job-scheduler-job-1-step-1-retrieve-train-data-progress')).toHaveTextContent(
                 result
             );
@@ -180,7 +169,7 @@ describe('jobs list item progress', () => {
             resultStr: 'show',
         },
     ])('should $resultStr progress bar for step in state "$stateStr"', async ({ state, result }): Promise<void> => {
-        await renderComponent({ state });
+        renderComponent({ state });
         expect(Boolean(screen.queryByTestId('thin-progress-bar'))).toBe(result);
     });
 

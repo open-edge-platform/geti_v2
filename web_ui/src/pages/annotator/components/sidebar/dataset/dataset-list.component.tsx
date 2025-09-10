@@ -1,15 +1,14 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 
-import { Flex, Loading } from '@geti/ui';
+import { Flex, Loading, ViewModes } from '@geti/ui';
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
 import { isEmpty } from 'lodash-es';
 
 import { MediaAdvancedFilterResponse, MediaItem, MediaItemResponse } from '../../../../../core/media/media.interface';
 import { MediaItemsList } from '../../../../../shared/components/media-items-list/media-items-list.component';
-import { ViewModes } from '../../../../../shared/components/media-view-modes/utils';
 import { NotFound } from '../../../../../shared/components/not-found/not-found.component';
 import { useGroupedMediaItems } from '../../../../../shared/hooks/use-grouped-media-items.hook';
 import { useSelectedMediaItemIndex } from '../../../../../shared/hooks/use-selected-media-item-index.hook';
@@ -29,7 +28,7 @@ interface DatasetListProps {
     viewMode: ViewModes;
     isInActiveMode?: boolean;
     isMediaFilterEmpty?: boolean;
-    getItemTooltip?: (item: MediaItem) => JSX.Element;
+    getItemTooltip?: (item: MediaItem) => ReactNode;
     isReadOnly: boolean;
     shouldShowAnnotationIndicator: boolean;
     hasTooltip?: boolean;
@@ -52,7 +51,7 @@ export const DatasetList = ({
     isInActiveMode = false,
     isMediaFilterEmpty = false,
     shouldShowAnnotationIndicator,
-}: DatasetListProps): JSX.Element => {
+}: DatasetListProps) => {
     const { hasNextPage, isPending: isMediaItemsLoading, isFetchingNextPage, fetchNextPage, data } = mediaItemsQuery;
 
     const mediaItems = useMemo(() => data?.pages?.flatMap(({ media }) => media) ?? [], [data?.pages]);

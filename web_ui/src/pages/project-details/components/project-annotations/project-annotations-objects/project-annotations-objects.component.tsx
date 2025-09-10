@@ -28,10 +28,7 @@ const ActionTooltip = () => {
     );
 };
 
-export const ProjectAnnotationsObjects = ({
-    objectsPerLabel,
-    gridArea,
-}: ProjectAnnotationsObjectsProps): JSX.Element => {
+export const ProjectAnnotationsObjects = ({ objectsPerLabel, gridArea }: ProjectAnnotationsObjectsProps) => {
     const reorderedObjectsLabels = reorderObjectsLabels(objectsPerLabel);
     const data = formatToChartData(reorderedObjectsLabels);
 
@@ -47,14 +44,15 @@ export const ProjectAnnotationsObjects = ({
                 titleActions={<ActionTooltip />}
                 actions={
                     <FullscreenAction
-                        actionButton={
+                        actionButton={(ref) => (
                             <DownloadGraphMenu
+                                ref={ref}
                                 fileName={title}
                                 data={{ type: 'barChart', data }}
                                 tooltip={'Download graph'}
                                 graphBackgroundColor={'gray-100'}
                             />
-                        }
+                        )}
                         title='Number of objects per label'
                     >
                         <AnnotationObjectsBarHorizontalChart data={data} colors={colors} barSize={50} title={title} />

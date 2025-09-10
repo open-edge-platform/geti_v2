@@ -10,14 +10,14 @@ import { MenuTriggerButton } from '../menu-trigger/menu-trigger-button/menu-trig
 interface MenuTriggerListProps {
     id: string;
     title?: string;
-    icon?: JSX.Element;
+    icon?: ReactNode;
     tooltip?: ReactNode;
     isDisabled?: boolean;
     ariaLabel?: string;
     options: [string, () => void][];
 }
 
-export const MenuTriggerList = ({ options, ...props }: MenuTriggerListProps): JSX.Element => {
+export const MenuTriggerList = ({ options, ...props }: MenuTriggerListProps) => {
     const ITEMS: string[] = options.map(([key]) => key);
 
     const handleOnAction = (key: Key): void => {

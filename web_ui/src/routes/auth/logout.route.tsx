@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ServiceUnavailableIcon } from '../../assets/images';
 import { ErrorLayout } from '../../pages/errors/error-layout/error-layout.component';
 
-export const LogoutRoute = ({ home }: { home: string }): JSX.Element => {
+export const LogoutRoute = ({ home }: { home: string }) => {
     const navigate = useNavigate();
 
     const handleGoHome = () => {

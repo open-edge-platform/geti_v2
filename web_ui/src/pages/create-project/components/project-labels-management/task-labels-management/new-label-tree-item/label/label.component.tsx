@@ -10,7 +10,7 @@ interface LabelProps {
     children: ReactNode;
 }
 
-export const Label = ({ htmlFor, children }: LabelProps): JSX.Element => {
+export const Label = ({ htmlFor, children }: LabelProps) => {
     return (
         <label htmlFor={htmlFor} className={classes.label}>
             {children}

@@ -13,7 +13,7 @@ interface ToggleModePros {
     mode: ANNOTATOR_MODE;
     setMode: (mode: ANNOTATOR_MODE) => void;
 }
-export const ToggleMode = ({ mode, setMode }: ToggleModePros): JSX.Element => {
+export const ToggleMode = ({ mode, setMode }: ToggleModePros) => {
     const { isExplanationVisible, setExplanationVisible } = usePrediction();
 
     const checkIfAnnotationMode = (m: ANNOTATOR_MODE) => {

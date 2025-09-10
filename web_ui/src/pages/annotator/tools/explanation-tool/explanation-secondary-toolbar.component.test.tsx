@@ -2,7 +2,6 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { Explanation } from '../../../../core/annotations/prediction.interface';
 import { ShapeType } from '../../../../core/annotations/shapetype.enum';
@@ -154,8 +153,6 @@ const noObjectPrediction = getMockedAnnotation(
 
 describe('ExplanationSecondaryToolbar', () => {
     beforeEach(() => {
-        jest.useRealTimers();
-
         jest.mocked(useAnnotationToolContext).mockImplementation(() => fakeAnnotationToolContext({}));
 
         jest.mocked(useAnnotatorCanvasSettings).mockReturnValue({
@@ -303,14 +300,14 @@ describe('ExplanationSecondaryToolbar', () => {
 
             const slider = screen.getByRole('switch', { name: /overlap annotations/ });
             expect(slider).toBeInTheDocument();
-            await userEvent.click(slider);
+            fireEvent.click(slider);
 
             expect(mockedHandleCanvasSetting).toHaveBeenLastCalledWith(
                 CANVAS_ADJUSTMENTS_KEYS.LABEL_OPACITY,
                 OVERLAP_LABEL_OPACITY
             );
 
-            await userEvent.click(slider);
+            fireEvent.click(slider);
             expect(mockedHandleCanvasSetting).toHaveBeenLastCalledWith(
                 CANVAS_ADJUSTMENTS_KEYS.LABEL_OPACITY,
                 initialCanvasConfig[CANVAS_ADJUSTMENTS_KEYS.LABEL_OPACITY].defaultValue

@@ -43,12 +43,14 @@ from job.tasks.helpers import finalize_optimize
     finish_message="Model evaluated",
     failure_message="Model evaluation failed",
 )
-def evaluate_optimized_model_pot(
+def evaluate_optimized_model_pot(  # noqa: PLR0913
     trainer_ctx: OptimizationTrainerContext,
     dataset_storage_id: str,
     model_id: str,
     retain_training_artifacts: bool = False,
     min_annotation_size: Optional[int] = None,  # noqa: UP007
+    max_annotation_size: Optional[int] = None,  # noqa: UP007
+    min_number_of_annotations: Optional[int] = None,  # noqa: UP007
     max_number_of_annotations: Optional[int] = None,  # noqa: UP007
 ) -> None:
     """
@@ -59,7 +61,9 @@ def evaluate_optimized_model_pot(
     :param dataset_storage_id: dataset storage ID
     :param model_id: base model ID
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
-    ignored
+        ignored
+    :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
+        ignored during
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
     annotation scene will be ignored
     :param retain_training_artifacts: If true, do not remove the artifacts in bucket even if training succeeds.
@@ -77,18 +81,22 @@ def evaluate_optimized_model_pot(
         model_id=model_id,
         optimized_model_id=trainer_ctx.model_to_optimize_id,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
         max_number_of_annotations=max_number_of_annotations,
     )
 
 
-def _evaluate_optimized_model(
+def _evaluate_optimized_model(  # noqa: PLR0913
     project_id: str,
     dataset_storage_id: str,
     model_storage_id: str,
     model_id: str,
     optimized_model_id: str,
-    min_annotation_size: int | None = None,
+    min_number_of_annotations: int | None = None,
     max_number_of_annotations: int | None = None,
+    min_annotation_size: int | None = None,
+    max_annotation_size: int | None = None,
 ) -> None:
     """
     Runs an optimized model evaluation task
@@ -99,7 +107,9 @@ def _evaluate_optimized_model(
     :param model_id: base model ID
     :param optimized_model_id: optimized model ID
     :param min_annotation_size: Minimum size of an annotation in pixels. Any annotation smaller than this will be
-    ignored
+        ignored
+    :param max_annotation_size: Maximum size of an annotation in pixels. Any annotation larger than this will be
+        ignored during training
     :param max_number_of_annotations: Maximum number of annotation allowed in one annotation scene. If exceeded, the
     annotation scene will be ignored
     """
@@ -118,8 +128,10 @@ def _evaluate_optimized_model(
     testing_dataset = model.get_train_dataset().get_subset(Subset.TESTING)
     filtered_testing_dataset = AnnotationFilter.apply_annotation_filters(
         dataset=testing_dataset,
-        max_number_of_annotations=max_number_of_annotations,
         min_annotation_size=min_annotation_size,
+        max_annotation_size=max_annotation_size,
+        min_number_of_annotations=min_number_of_annotations,
+        max_number_of_annotations=max_number_of_annotations,
     )
 
     task_node = _find_task_node_for_model(model=model, project=project)

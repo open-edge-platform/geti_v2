@@ -44,7 +44,7 @@ export const DatasetImportToNewProjectDialogButtons = ({
     deletionDialogTrigger,
     abortDatasetImportAction,
     deleteTemporallyDatasetImport,
-}: DatasetImportToNewProjectDialogButtonsProps): JSX.Element => {
+}: DatasetImportToNewProjectDialogButtonsProps) => {
     const { abortActiveUpload } = useTusUpload();
 
     const noLabelsSelected = datasetImportItem?.labels.length === 0;

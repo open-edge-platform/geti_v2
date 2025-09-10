@@ -4,7 +4,7 @@
 import {
     createContext,
     Dispatch,
-    MutableRefObject,
+    RefObject,
     SetStateAction,
     useCallback,
     useContext,
@@ -31,7 +31,7 @@ interface SelectingStateContextProps {
     isBrushSizePreviewVisible: boolean;
     activeTool: SelectingToolType;
     setBrushSize: Dispatch<SetStateAction<number>>;
-    foregroundMarkers: MutableRefObject<Point[][]>;
+    foregroundMarkers: RefObject<Point[][]>;
     setActiveTool: (tool: SelectingToolType) => void;
     setIsBrushSizePreviewVisible: Dispatch<SetStateAction<boolean>>;
     stampAnnotations: Annotation[];
@@ -45,7 +45,7 @@ const SelectingStateContext = createContext<SelectingStateContextProps | undefin
 const INITIAL_ACTIVE_TOOL = SelectingToolType.SelectionTool;
 const INITIAL_POINT: Point = { x: 0, y: 0 };
 
-export const SelectingStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const SelectingStateProvider = ({ children }: StateProviderProps) => {
     const { getToolSettings, updateToolSettings } = useAnnotationToolContext();
     const selectionSettings = getToolSettings(ToolType.SelectTool);
 

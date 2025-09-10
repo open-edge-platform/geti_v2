@@ -18,7 +18,7 @@ interface DatasetImportWarningItemProps {
     warning: DatasetImportWarning;
 }
 
-const DatasetImportWarningItem = ({ warning }: DatasetImportWarningItemProps): JSX.Element => {
+const DatasetImportWarningItem = ({ warning }: DatasetImportWarningItemProps) => {
     const { type, name, description, affectedImages, resolveStrategy } = warning;
 
     return (
@@ -60,7 +60,7 @@ const DatasetImportWarningItem = ({ warning }: DatasetImportWarningItemProps): J
     );
 };
 
-export const DatasetImportWarnings = ({ warnings }: DatasetImportWarningsProps): JSX.Element => {
+export const DatasetImportWarnings = ({ warnings }: DatasetImportWarningsProps) => {
     return (
         <Flex direction='column' height='100%' gap='size-250'>
             <Heading marginBottom={0} level={3} id='dataset-import-warnings-header'>

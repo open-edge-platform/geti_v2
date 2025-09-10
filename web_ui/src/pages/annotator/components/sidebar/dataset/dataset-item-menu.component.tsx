@@ -17,7 +17,7 @@ interface DeleteDatasetItemProps {
     menuProps?: Partial<ComponentProps<typeof MediaItemMenuWithDeletion>['menuProps']>;
 }
 
-export const DatasetItemMenu = ({ mediaItem, isSelected, menuProps }: DeleteDatasetItemProps): JSX.Element => {
+export const DatasetItemMenu = ({ mediaItem, isSelected, menuProps }: DeleteDatasetItemProps) => {
     const { dialogKey, setDialogKey, handleDelete, isAnomalyVideo } = useDeleteDatasetItem({ mediaItem, isSelected });
 
     const onAction = (key: Key) => {

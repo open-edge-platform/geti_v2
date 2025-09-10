@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { ANCHOR_SIZE, ResizeAnchor } from '@geti/smart-tools';
 import { Vec2 } from '@geti/smart-tools/utils';
 
 import { Annotation, RegionOfInterest } from '../../../../../core/annotations/annotation.interface';
@@ -11,10 +12,9 @@ import { ShapeType } from '../../../../../core/annotations/shapetype.enum';
 import { Labels } from '../../../annotation/labels/labels.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import { getMaxCircleRadius, MIN_RADIUS } from '../../circle-tool/utils';
 import { isShapeWithinRoi } from '../../utils';
-import { ANCHOR_SIZE, ResizeAnchor } from '../resize-anchor.component';
 import { ResizeAnchorType } from '../resize-anchor.enum';
 import { TranslateShape } from '../translate-shape.component';
 
@@ -69,11 +69,9 @@ export const EditCircle = ({
     annotation,
     disablePoints = false,
     disableTranslation = false,
-}: EditCircleProps): JSX.Element => {
+}: EditCircleProps) => {
     const { scene } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
     const { roi, image } = useROI();
     const [shape, setShape] = useState(annotation.shape);
     const [angle, setAngle] = useState(() => getPreferredAnchorPosition(shape, roi));
@@ -132,7 +130,7 @@ export const EditCircle = ({
                 />
             </svg>
 
-            <Labels annotation={{ ...annotation, shape }} annotationToolContext={annotationToolContext} />
+            <Labels annotation={{ ...annotation, shape }} />
 
             {disablePoints === false ? (
                 <svg

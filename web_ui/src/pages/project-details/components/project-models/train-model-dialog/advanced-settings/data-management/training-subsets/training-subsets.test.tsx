@@ -136,6 +136,7 @@ describe('TrainingSubsets', () => {
             <TrainingSubsets
                 hasSupportedModels={hasSupportedModels}
                 subsetsParameters={trainingConfiguration?.datasetPreparation.subsetSplit ?? subsetParameters}
+                defaultSubsetParameters={subsetParameters}
                 onUpdateTrainingConfiguration={handleUpdateTrainingConfiguration}
             />
         );
@@ -203,26 +204,6 @@ describe('TrainingSubsets', () => {
         });
     });
 
-    it('ensures that all subsets remain non-empty when updating subset sizes', () => {
-        const iterationCount = Number(validationSubset.value);
-
-        render(<App subsetParameters={subsetsParameters} />);
-
-        for (let i = 0; i < iterationCount; i++) {
-            fireEvent.keyDown(screen.getByLabelText('End range'), { key: 'Left' });
-        }
-
-        const updatedValidationSubsetSize = Math.floor(datasetSize * 0.02);
-        const updatedTestSubsetSize = Math.floor(datasetSize * 0.28);
-        const updatedTrainingSubsetSize = datasetSize - updatedValidationSubsetSize - updatedTestSubsetSize;
-
-        expectSubsetSizes({
-            trainingSize: updatedTrainingSubsetSize,
-            validationSize: updatedValidationSubsetSize,
-            testSize: updatedTestSubsetSize,
-        });
-    });
-
     it('shows warning that training subsets is unavailable when there are not enough media items', () => {
         const mockedSubsetsParameters = [
             getMockedConfigurationParameter({
@@ -287,10 +268,14 @@ describe('TrainingSubsets', () => {
 
         render(<App subsetParameters={mockedSubsetsParameters} />);
 
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+
+        fireEvent.keyDown(screen.getByLabelText('End range'), { key: 'Left' });
+
         const alert = screen.getByRole('alert');
 
         expect(alert).toBeInTheDocument();
-        expect(within(alert).getByRole('heading')).toHaveTextContent('Training subsets configuration unavailable');
+        expect(within(alert).getByRole('heading')).toHaveTextContent('Invalid training subsets configuration');
 
         const validationSize = Math.floor(mockedDatasetSize * (Number(mockedValidationSubset.value) / 100));
         const testSize = Math.floor(mockedDatasetSize * (Number(mockedTestSubset.value) / 100));

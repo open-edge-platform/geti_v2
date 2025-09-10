@@ -9,7 +9,7 @@ import { TransformComponent, useControls } from 'react-zoom-pan-pinch';
 import { useAnnotatorHotkeys } from '../../annotator/hooks/use-hotkeys-configuration.hook';
 import { PointerType } from '../../annotator/tools/tools.interface';
 import { useSyncScreenSize } from '../../annotator/zoom/use-sync-screen-size.hook';
-import { useZoom } from '../../annotator/zoom/zoom-provider.component';
+import { useZoom, useZoomState } from '../../annotator/zoom/zoom-provider.component';
 import { isLeftButton, isWheelButton } from '../../buttons-utils';
 
 import classes from './transform-zoom.module.scss';
@@ -21,16 +21,16 @@ import classes from './transform-zoom.module.scss';
     - Update the zoom state if the target or screenSize change
 */
 
-export const TransformZoom = ({ children }: { children?: ReactNode }): JSX.Element => {
+export const TransformZoom = ({ children }: { children?: ReactNode }) => {
     const { hotkeys } = useAnnotatorHotkeys();
 
     const { resetTransform } = useControls();
 
     const ref = useSyncScreenSize();
-    const { setIsPanningDisabled, isPanning, isPanningDisabled, setIsDblClickDisabled, isDblCLickDisabled, zoomState } =
-        useZoom();
+    const { setIsPanningDisabled, isPanning, isPanningDisabled, setisDblClickDisabled, isDblClickDisabled } = useZoom();
+    const { zoom } = useZoomState();
+    const style = { '--zoom-level': zoom } as CSSProperties;
 
-    const style = { '--zoom-level': zoomState.zoom } as CSSProperties;
     const enableDragCursorIcon = !isPanningDisabled && isPanning;
 
     const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
@@ -50,9 +50,9 @@ export const TransformZoom = ({ children }: { children?: ReactNode }): JSX.Eleme
 
     const handlePointerUp = (event: PointerEvent<HTMLDivElement>): void => {
         if (event.pointerType === PointerType.Pen) {
-            !isDblCLickDisabled && setIsDblClickDisabled(true);
+            !isDblClickDisabled && setisDblClickDisabled(true);
         } else {
-            isDblCLickDisabled && setIsDblClickDisabled(false);
+            isDblClickDisabled && setisDblClickDisabled(false);
         }
     };
 

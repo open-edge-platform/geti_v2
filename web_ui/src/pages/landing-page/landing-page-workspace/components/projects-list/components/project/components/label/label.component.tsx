@@ -8,7 +8,7 @@ import { LabelColorThumb } from '../../../../../../../../../shared/components/la
 import { TruncatedTextWithTooltip } from '../../../../../../../../../shared/components/truncated-text/truncated-text.component';
 import { idMatchingFormat } from '../../../../../../../../../test-utils/id-utils';
 
-export const Label = ({ label, projectName }: { label: LabelInterface; projectName: string }): JSX.Element => {
+export const Label = ({ label, projectName }: { label: LabelInterface; projectName: string }) => {
     return (
         <Flex direction={'row'} alignItems={'center'}>
             <View marginX={'size-100'}>

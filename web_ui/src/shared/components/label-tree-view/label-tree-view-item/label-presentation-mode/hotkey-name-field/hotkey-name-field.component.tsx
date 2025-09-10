@@ -27,7 +27,7 @@ interface HotkeyDisplayFieldProps {
     gridArea?: string;
 }
 
-const HotkeyDisplayField = ({ value, onChange, onClose, error, gridArea }: HotkeyDisplayFieldProps): JSX.Element => {
+const HotkeyDisplayField = ({ value, onChange, onClose, error, gridArea }: HotkeyDisplayFieldProps) => {
     const clearField = () => {
         onChange('', false);
         onClose();
@@ -56,14 +56,7 @@ const HotkeyDisplayField = ({ value, onChange, onClose, error, gridArea }: Hotke
     );
 };
 
-export const HotkeyNameField = ({
-    value,
-    onChange,
-    text,
-    info,
-    error,
-    gridArea,
-}: HotkeyNameFieldProps): JSX.Element => {
+export const HotkeyNameField = ({ value, onChange, text, info, error, gridArea }: HotkeyNameFieldProps) => {
     const [isInEditionMode, setIsInEditionMode] = useState(false);
 
     if (!value?.length) {

@@ -7,7 +7,6 @@ import { waitFor } from '@testing-library/react';
 import { MEDIA_TYPE } from '../../../../core/media/base-media.interface';
 import { createInMemoryMediaService } from '../../../../core/media/services/in-memory-media-service/in-memory-media-service';
 import { MediaService } from '../../../../core/media/services/media-service.interface';
-import { NOTIFICATION_TYPE } from '../../../../notification/notification-toast/notification-type.enum';
 import { getMockedProjectIdentifier } from '../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedImageMediaItem } from '../../../../test-utils/mocked-items-factory/mocked-media';
 import { renderHookWithProviders } from '../../../../test-utils/render-hook-with-providers';
@@ -16,16 +15,16 @@ import { filterPageMedias } from '../../utils';
 import { useDeleteMediaMutation } from './media-delete.hook';
 
 const mockSetQueriesData = jest.fn();
-const mockAddNotification = jest.fn();
+const mockedToast = jest.fn();
 
 jest.mock('../../utils', () => ({
     ...jest.requireActual('../../utils'),
     filterPageMedias: jest.fn(),
 }));
 
-jest.mock('../../../../notification/notification.component', () => ({
-    ...jest.requireActual('../../../../notification/notification.component'),
-    useNotification: () => ({ addNotification: mockAddNotification }),
+jest.mock('@geti/ui', () => ({
+    ...jest.requireActual('@geti/ui'),
+    toast: (params: unknown) => mockedToast(params),
 }));
 
 const mockedImageMedia = getMockedImageMediaItem({
@@ -85,7 +84,7 @@ describe('useDeleteMediaMutation', () => {
         await waitFor(() => {
             expect(filterPageMedias).toHaveBeenCalled();
             expect(mockSetQueriesData).toHaveBeenCalledTimes(1);
-            expect(mockAddNotification).not.toHaveBeenCalled();
+            expect(mockedToast).not.toHaveBeenCalled();
         });
     });
 
@@ -106,9 +105,9 @@ describe('useDeleteMediaMutation', () => {
         await waitFor(() => {
             expect(filterPageMedias).toHaveBeenCalled();
             expect(mockSetQueriesData).toHaveBeenCalledTimes(2);
-            expect(mockAddNotification).toHaveBeenCalledWith({
+            expect(mockedToast).toHaveBeenCalledWith({
                 message: `Media cannot be deleted. ${errorMessage}`,
-                type: NOTIFICATION_TYPE.ERROR,
+                type: 'error',
             });
         });
     });

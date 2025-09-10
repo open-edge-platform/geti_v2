@@ -10,7 +10,7 @@ interface VideoFramesProps {
     totalFramesNumber: number;
 }
 
-export const VideoFrames = ({ currentFrameNumber, totalFramesNumber }: VideoFramesProps): JSX.Element => {
+export const VideoFrames = ({ currentFrameNumber, totalFramesNumber }: VideoFramesProps) => {
     return (
         <Text UNSAFE_className={classes.videoFrameText}>
             <span id='video-current-frame-number' aria-label='Currently selected frame number'>

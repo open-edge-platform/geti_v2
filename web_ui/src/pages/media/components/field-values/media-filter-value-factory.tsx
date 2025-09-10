@@ -23,7 +23,7 @@ interface MediaFilterValueFactoryProps {
     onSelectionChange: (key: SearchRuleValue) => void;
 }
 
-export const MediaFilterValueFactory = (props: MediaFilterValueFactoryProps): JSX.Element => {
+export const MediaFilterValueFactory = (props: MediaFilterValueFactoryProps) => {
     const { isTaskChainProject } = useProject();
 
     switch (props.field) {

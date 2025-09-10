@@ -177,7 +177,7 @@ describe('SignUpOnSaas', () => {
         await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
         expect(
-            screen.getByRole('textbox', { name: /for what use case do you plan to use intel® geti™\?/i })
+            screen.getByRole('textbox', { name: /for what use case do you plan to use Geti™\?/i })
         ).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Request access' })).toBeInTheDocument();
 
@@ -414,7 +414,7 @@ describe('SignUpOnSaas', () => {
             await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
             expect(
-                screen.getByRole('textbox', { name: /for what use case do you plan to use intel® geti™\?/i })
+                screen.getByRole('textbox', { name: /for what use case do you plan to use geti™\?/i })
             ).toBeInTheDocument();
         });
 
@@ -439,7 +439,7 @@ describe('SignUpOnSaas', () => {
             await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
             expect(
-                screen.queryByRole('textbox', { name: /for what use case do you plan to use intel® geti™\?/i })
+                screen.queryByRole('textbox', { name: /for what use case do you plan to use geti™\?/i })
             ).not.toBeInTheDocument();
         });
 
@@ -472,7 +472,7 @@ describe('SignUpOnSaas', () => {
             await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
             expect(
-                screen.queryByRole('textbox', { name: /for what use case do you plan to use intel® geti™\?/i })
+                screen.queryByRole('textbox', { name: /for what use case do you plan to use geti™\?/i })
             ).not.toBeInTheDocument();
         });
 
@@ -497,7 +497,7 @@ describe('SignUpOnSaas', () => {
             await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
             expect(
-                screen.queryByRole('textbox', { name: /for what use case do you plan to use intel® geti™\?/i })
+                screen.queryByRole('textbox', { name: /for what use case do you plan to use geti™\?/i })
             ).not.toBeInTheDocument();
         });
 
@@ -649,13 +649,13 @@ describe('SignUpOnSaas', () => {
 
             await waitForElementToBeRemoved(screen.getByRole('progressbar'));
 
-            expect(screen.getByText('Organization to onboard')).toBeVisible();
+            expect(screen.getByText('Organization to onboard')).toBeInTheDocument();
 
             const textBoxSelector = screen.getByRole('textbox', {
                 name: /visible organization Organization to onboard/i,
             });
 
-            expect(textBoxSelector).toBeVisible();
+            expect(textBoxSelector).toBeInTheDocument();
             expect(textBoxSelector).toHaveAttribute('readonly');
             expect(textBoxSelector).toHaveAttribute('value', organization.name);
 

@@ -23,7 +23,7 @@ export const MediaIntegerField = ({
     ariaLabel,
     isDisabled,
     onSelectionChange,
-}: MediaIntegerFieldProps): JSX.Element => {
+}: MediaIntegerFieldProps) => {
     const [value, setValue] = useState<number | undefined>(initialValue);
 
     const onDebounceSelectionChange = useDebouncedCallback((newValue: number) => {

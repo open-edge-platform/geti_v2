@@ -38,12 +38,7 @@ const ButtonIcon = ({ isLoading, isCancel }: { isLoading: boolean; isCancel: boo
     return <Delete aria-label={'Delete job'} />;
 };
 
-export const JobsDiscardAction = ({
-    job,
-    discardType,
-    useDeleteJob,
-    useCancelJob,
-}: JobsDiscardActionProps): JSX.Element => {
+export const JobsDiscardAction = ({ job, discardType, useDeleteJob, useCancelJob }: JobsDiscardActionProps) => {
     const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
 
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
