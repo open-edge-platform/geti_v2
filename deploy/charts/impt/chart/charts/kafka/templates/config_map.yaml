@@ -11,7 +11,7 @@ data:
     #!/bin/bash
     set -xe
 
-    echo listeners=${KAFKA_LISTENERS} > "${KAFKA_CONF_FILE}"
+    echo listeners=${KAFKA_LISTENERS} >> "${KAFKA_CONF_FILE}"
     echo advertised.listeners=${KAFKA_ADVERTISED_LISTENERS} >> "${KAFKA_CONF_FILE}"
     echo listener.security.protocol.map=${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP} >> "${KAFKA_CONF_FILE}"
     echo allow.everyone.if.no.acl.found=${KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND} >> "${KAFKA_CONF_FILE}"
@@ -31,7 +31,38 @@ data:
     echo sasl.mechanism.inter.broker.protocol=${KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL} >> "${KAFKA_CONF_FILE}"
     echo super.users=${KAFKA_SUPER_USERS} >> "${KAFKA_CONF_FILE}"
     echo listener.name.controller.sasl.enabled.mechanisms=${KAFKA_SASL_MECHANISM_CONTROLLER_PROTOCOL} >> "${KAFKA_CONF_FILE}"
-    echo listener.name.controller.plain.sasl.jaas.config="org.apache.kafka.common.security.plain.PlainLoginModule required username=\"controller_user\" password=\"${KAFKA_INTER_BROKER_PASSWORD}\" user_controller_user=\"${KAFKA_INTER_BROKER_USER}\";" >> "${KAFKA_CONF_FILE}"
+    echo listener.name.controller.plain.sasl.jaas.config="org.apache.kafka.common.security.plain.PlainLoginModule required username=\"controller_user\" password=\"test\" user_controller_user=\"test\";" >> "${KAFKA_CONF_FILE}"
+    read -r -a sasl_mechanisms_arr <<<"$(tr ',' ' ' <<<"$KAFKA_SASL_ENABLED_MECHANISMS")"
+    read -r -a users <<<"$(tr ',;' ' ' <<<"$KAFKA_CLIENT_USERS")"
+    read -r -a passwords <<<"$(tr ',;' ' ' <<<"$KAFKA_CLIENT_PASSWORDS")"
+    # Configure JAAS for each SASL mechanism
+    # ref: https://docs.confluent.io/platform/current/kafka/authentication_sasl/index.html
+    for sasl_mechanism in "${sasl_mechanisms_arr[@]}"; do
+        jaas_content=()
+        # For PLAIN mechanism, only the first username will be used
+        if [[ "$sasl_mechanism" = "PLAIN" ]]; then
+            jaas_content=("org.apache.kafka.common.security.plain.PlainLoginModule required")
+            jaas_content+=(
+                "username=\"${KAFKA_INTER_BROKER_USER}\""
+                "password=\"${KAFKA_INTER_BROKER_PASSWORD}\""
+            )
+            users+=("$KAFKA_INTER_BROKER_USER")
+            passwords+=("$KAFKA_INTER_BROKER_PASSWORD")
+            for ((i = 0; i < ${#users[@]}; i++)); do
+                jaas_content+=("user_${users[i]}=\"${passwords[i]}\"")
+            done
+            # Add semi-colon to the last element of the array
+            jaas_content[${#jaas_content[@]} - 1]="${jaas_content[${#jaas_content[@]} - 1]};"
+        elif [[ "$sasl_mechanism" =~ SCRAM ]]; then
+            jaas_content=(
+                "org.apache.kafka.common.security.scram.ScramLoginModule required"
+                "username=\"${KAFKA_INTER_BROKER_USER}\""
+                "password=\"${KAFKA_INTER_BROKER_PASSWORD}\";"
+            )
+        fi
+        sasl_mechanism_lower="$(echo "$sasl_mechanism" | tr '[:upper:]' '[:lower:]')"
+        echo "listener.name.client.${sasl_mechanism_lower}.sasl.jaas.config=${jaas_content[*]}" >> "${KAFKA_CONF_FILE}"
+    done
 
   init.sh: |-
     #!/bin/bash
