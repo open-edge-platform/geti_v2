@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 export {
+    ActionMenu,
     View,
     Flex,
     Radio,
@@ -84,6 +85,7 @@ export {
     type SpectrumAccordionProps,
     type SpectrumToastOptions,
     type SpectrumColorPickerProps,
+    type SpectrumMenuProps,
     type SpectrumProgressBarProps,
     type SpectrumToggleButtonProps,
     type SpectrumTabsProps,
