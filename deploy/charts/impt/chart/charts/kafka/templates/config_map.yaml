@@ -30,6 +30,8 @@ data:
     echo sasl.mechanism.controller.protocol=${KAFKA_SASL_MECHANISM_CONTROLLER_PROTOCOL} >> "${KAFKA_CONF_FILE}"
     echo sasl.mechanism.inter.broker.protocol=${KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL} >> "${KAFKA_CONF_FILE}"
     echo super.users=${KAFKA_SUPER_USERS} >> "${KAFKA_CONF_FILE}"
+    echo listener.name.controller.sasl.enabled.mechanisms=${KAFKA_SASL_MECHANISM_CONTROLLER_PROTOCOL} >> "${KAFKA_CONF_FILE}"
+    echo listener.name.controller.plain.sasl.jaas.config="org.apache.kafka.common.security.plain.PlainLoginModule required username=\"controller_user\" password=\"${KAFKA_INTER_BROKER_PASSWORD}\" user_controller_user=\"${KAFKA_INTER_BROKER_USER}\";" >> "${KAFKA_CONF_FILE}"
 
   init.sh: |-
     #!/bin/bash
