@@ -32,8 +32,3 @@ export const getTrainingBodyDTO = ({
         max_training_dataset_size: maxTrainingDatasetSize,
     };
 };
-
-export const TRAIN_FROM_SCRATCH_TOOLTIP_MSG = 'Ignore the training history, and retrain using the pre-trained weights.';
-export const RESHUFFLE_SUBSETS_TOOLTIP_MSG =
-    'Reassign all dataset items to train, validation, and test subsets from scratch. Previous splits will not be ' +
-    'retained. Only available when training from scratch is enabled.';
