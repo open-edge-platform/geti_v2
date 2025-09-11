@@ -45,7 +45,7 @@ global:
     allow_credentials: true
 
 enabled:
-  account-service: false
+  account-service: true
   onboarding-service: false
   notifier: false
   credit-system: false
