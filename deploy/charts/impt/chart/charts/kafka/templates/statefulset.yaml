@@ -31,15 +31,15 @@ spec:
             - name: KAFKA_PROCESS_ROLES
               value: {{ .Values.kraft.roles | quote }}
             - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
-              value: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+              value: "CONTROLLER:SASL_PLAINTEXT,CLIENT:SASL_PLAINTEXT"
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://$(MY_POD_NAME).impt-kafka-headless.impt.svc.cluster.local:9092"
+              value: "CLIENT://$(MY_POD_NAME).impt-kafka-headless.impt.svc.cluster.local:9092"
             - name: KAFKA_CONTROLLER_QUORUM_VOTERS
               value: "0@$(MY_POD_NAME).impt-kafka-headless.impt.svc.cluster.local:9093"
             - name: KAFKA_LISTENERS
-              value: 'CONTROLLER://:9093,PLAINTEXT://:9092'
+              value: 'CONTROLLER://:9093,CLIENT://:9092'
             - name: KAFKA_INTER_BROKER_LISTENER_NAME
-              value: 'PLAINTEXT'
+              value: 'CLIENT'
             - name: KAFKA_CONTROLLER_LISTENER_NAMES
               value: 'CONTROLLER'
             - name: CLUSTER_ID
@@ -60,6 +60,8 @@ spec:
               value: '/tmp/kraft-combined-logs'
             - name: KAFKA_SASL_ENABLED_MECHANISMS
               value: "PLAIN,SCRAM-SHA-256,SCRAM-SHA-512"
+            - name: KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL
+              value: 'PLAIN'
           ports:
           - name: broker
             containerPort: {{ .Values.service.broker }}
