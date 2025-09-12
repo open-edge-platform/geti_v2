@@ -20,7 +20,7 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
           # need to use classic PAT, https://github.com/cli/cli/issues/9606
-          GH_TOKEN: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+          GH_TOKEN: ${{ secrets.GETI_GHCR_READ }}
         run: |
           # Get all container images and
           # exclude 'geti/helm/' packages from the list of container packages for source collection
