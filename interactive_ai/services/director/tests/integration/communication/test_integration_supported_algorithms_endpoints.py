@@ -21,16 +21,20 @@ class TestModelRESTEndpoint:
 
         supported_algorithms = [
             {
-                "name": "mock_detection",
-                "task_type": "detection",
-                "model_size": 0,
-                "model_template_id": "detection",
-                "gigaflops": 0,
-                "summary": "",
-                "supports_auto_hpo": False,
-                "default_algorithm": True,
+                "model_manifest_id": "null",
+                "task": "null",
+                "name": "null",
+                "description": "null",
+                "stats": {
+                    "gigaflops": 1.0,
+                    "trainable_parameters": 1.0,
+                    "performance_ratings": {"accuracy": 1, "training_time": 1, "inference_speed": 1},
+                },
+                "support_status": "obsolete",
+                "supported_gpus": {},
+                "capabilities": {"xai": False, "tiling": False},
+                "is_default_model": False,
                 "performance_category": "other",
-                "lifecycle_stage": "active",
             }
         ]
 
@@ -55,31 +59,38 @@ class TestModelRESTEndpoint:
         )
         supported_algorithms = [
             {
-                "name": "mock_detection",
-                "task_type": "detection",
-                "model_size": 0,
-                "model_template_id": "detection",
-                "gigaflops": 0,
-                "summary": "",
-                "supports_auto_hpo": False,
-                "default_algorithm": True,
+                "model_manifest_id": "null",
+                "task": "null",
+                "name": "null",
+                "description": "null",
+                "stats": {
+                    "gigaflops": 1.0,
+                    "trainable_parameters": 1.0,
+                    "performance_ratings": {"accuracy": 1, "training_time": 1, "inference_speed": 1},
+                },
+                "support_status": "obsolete",
+                "supported_gpus": {},
+                "capabilities": {"xai": False, "tiling": False},
+                "is_default_model": False,
                 "performance_category": "other",
-                "lifecycle_stage": "active",
             },
             {
-                "name": "mock_classification",
-                "task_type": "classification",
-                "model_size": 0,
-                "model_template_id": "classification",
-                "gigaflops": 0,
-                "summary": "",
-                "supports_auto_hpo": False,
-                "default_algorithm": True,
+                "model_manifest_id": "null",
+                "task": "null",
+                "name": "null",
+                "description": "null",
+                "stats": {
+                    "gigaflops": 1.0,
+                    "trainable_parameters": 1.0,
+                    "performance_ratings": {"accuracy": 1, "training_time": 1, "inference_speed": 1},
+                },
+                "support_status": "obsolete",
+                "supported_gpus": {},
+                "capabilities": {"xai": False, "tiling": False},
+                "is_default_model": False,
                 "performance_category": "other",
-                "lifecycle_stage": "active",
             },
         ]
-
         result = fxt_director_app.get(endpoint)
 
         assert result.status_code == HTTPStatus.OK
