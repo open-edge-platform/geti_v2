@@ -6,7 +6,6 @@ on:
       tag:
         description: "Image tag to filter images, e.g. '2.13.0-d90fa913'"
         required: true
-        default: 2.13.0-d90fa913
 
 permissions: {} # No permissions by default on workflow level
 
