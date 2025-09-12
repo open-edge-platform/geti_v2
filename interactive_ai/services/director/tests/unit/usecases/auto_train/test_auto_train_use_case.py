@@ -58,33 +58,43 @@ class TestAutoTrainUseCase:
         [True, False],
         ids=["enough annotations", "not enough annotations"],
     )
+    @pytest.mark.parametrize(
+        "project_fixture,auto_train_enabled",
+        [
+            ("fxt_project", True),
+            ("fxt_project_with_anomaly_task", False),
+        ],
+        ids=["Standard Project", "Anomaly Project"],
+    )
     def test_check_conditions_and_set_auto_train_readiness(
         self,
         request,
         feature_flag_config_revamp_on,
         enough_annotations,
         fxt_organization_id,
-        fxt_project,
         fxt_missing_annotations,
         fxt_missing_annotations_zero_missing,
         fxt_enable_feature_flag_name,
+        project_fixture,
+        auto_train_enabled,
     ) -> None:
         """Checks that an auto-training request is submitted if and only if the conditions are met"""
-        dataset_storage = fxt_project.get_training_dataset_storage()
-        task_node = fxt_project.get_trainable_task_nodes()[0]
+        project = request.getfixturevalue(project_fixture)
+        dataset_storage = project.get_training_dataset_storage()
+        task_node = project.get_trainable_task_nodes()[0]
 
         if feature_flag_config_revamp_on:
             fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
-            request.addfinalizer(lambda: ProjectBasedAutoTrainActivationRepo(fxt_project.identifier).delete_all())
-            ProjectConfigurationRepo(fxt_project.identifier).create_default_configuration([task_node.id_])
+            request.addfinalizer(lambda: ProjectBasedAutoTrainActivationRepo(project.identifier).delete_all())
+            ProjectConfigurationRepo(project.identifier).create_default_configuration([task_node.id_])
 
         session = make_session(
             organization_id=fxt_organization_id,
-            workspace_id=fxt_project.identifier.workspace_id,
+            workspace_id=project.identifier.workspace_id,
         )
         with (
             session_context(session),
-            patch.object(ProjectRepo, "get_by_id", return_value=fxt_project) as mock_get_project,
+            patch.object(ProjectRepo, "get_by_id", return_value=project) as mock_get_project,
             patch.object(
                 ProjectBasedAutoTrainActivationRepo,
                 "set_auto_train_readiness_by_task_id",
@@ -97,15 +107,22 @@ class TestAutoTrainUseCase:
             ) as mock_get_missing_annotations,
         ):
             AutoTrainUseCase._check_conditions_and_set_auto_train_readiness(
-                session=session, project_identifier=fxt_project.identifier
+                session=session, project_identifier=project.identifier
             )
 
-            mock_get_project.assert_called_once_with(fxt_project.id_)
+            mock_get_project.assert_called_once_with(project.id_)
             mock_get_missing_annotations.assert_called_once_with(
                 dataset_storage_identifier=dataset_storage.identifier,
                 task_node=task_node,
             )
-            if enough_annotations:
+            if not auto_train_enabled:
+                mock_set_readiness.assert_called_once_with(
+                    task_node_id=task_node.id_,
+                    readiness=False,
+                    bypass_debouncer=True,
+                    raise_exc_on_missing=False,
+                )
+            elif enough_annotations:
                 mock_set_readiness.assert_called_once_with(
                     task_node_id=task_node.id_,
                     readiness=True,

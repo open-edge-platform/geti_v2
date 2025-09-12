@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 export {
+    ActionMenu,
     View,
     Flex,
     Radio,
