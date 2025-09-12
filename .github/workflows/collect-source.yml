@@ -154,7 +154,7 @@ jobs:
         tar -czf "$ARCHIVE_NAME" -C "$OUTPUT_DIR" .
 
     - name: Upload source code archive
-      uses: actions/upload-artifact@v4  # v4
+      uses: actions/upload-artifact@v4
       with:
         name: source-code-archive
         path: source_code.tar.gz
