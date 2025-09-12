@@ -20,6 +20,11 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.registry }}/{{ if .Values.image.repository }}{{ .Values.image.repository }}/{{ end }}{{ .Values.image.name }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["bash", "-c"]
+          args:
+            - >
+              /etc/kafka/scripts/init.sh &&
+              /etc/kafka/docker/run
           env:
             - name: MY_POD_NAME
               valueFrom:
