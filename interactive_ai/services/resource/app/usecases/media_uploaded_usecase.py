@@ -161,9 +161,11 @@ class MediaUploadedUseCase:
                         )
                         # Reset video decoder cache since file has been replaced
                         VideoDecoder.reset_reader(url)
-                        # Update total frames for the converted file
+                        # Update video properties in the database
                         video = VideoRepo(dataset_storage_identifier).get_by_id(video_id)
                         video_information = VideoDecoder.get_video_information(url)
+                        logger.info("Old video information: " + str(video.total_frames))
+                        logger.info("New video information: " + str(video_information.total_frames))
                         video._total_frames = video_information.total_frames
                         VideoRepo(dataset_storage_identifier).save(video)
                         logger.info(f"Successfully converted video {video_id} from VFR to CFR")
