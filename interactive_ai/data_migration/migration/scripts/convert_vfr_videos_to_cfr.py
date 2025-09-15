@@ -23,7 +23,7 @@ class ConvertVFRVideosToCFR(IMigrationScript):
     extract and save every frame, then reconstruct the video using the fps from get_fps method.
     The new constant frame rate video overwrites the old variable framerate video stored in the VideoBinaryRepo.
 
-    This migration is self-contained and does not import from VideoDecoder class.
+    This migration needs to extract very frame to ensure existing annotations still align with the video.
     """
 
     @classmethod
