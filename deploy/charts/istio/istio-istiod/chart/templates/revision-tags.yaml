@@ -29,10 +29,9 @@ a unique prefix to each. */}}
     apiVersions: ["v1"]
     resources: ["pods"]
   failurePolicy: Fail
+  reinvocationPolicy: "{{ .reinvocationPolicy }}"
   admissionReviewVersions: ["v1"]
 {{- end }}
-# Not created if istiod is running remotely
-{{- if not .Values.istiodRemote.enabled }}
 {{- range $tagName := $.Values.revisionTags }}
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
@@ -147,5 +146,4 @@ webhooks:
 
 {{- end }}
 ---
-{{- end }}
 {{- end }}

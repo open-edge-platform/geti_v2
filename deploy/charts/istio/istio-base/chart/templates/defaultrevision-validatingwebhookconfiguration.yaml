@@ -1,5 +1,3 @@
-# moved here from istio/base as it is related to istiod
-# it also introduces issues during upgrade with race conditions
 {{- if not (eq .Values.defaultRevision "") }}
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
