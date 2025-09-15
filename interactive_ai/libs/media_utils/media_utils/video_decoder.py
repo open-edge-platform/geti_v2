@@ -198,6 +198,127 @@ class _VideoDecoderInterface:
         num, denominator = map(int, r_frame_rate.split("/"))
         return num / denominator
 
+    def is_variable_frame_rate(self, file_location: str) -> bool:
+        """
+        Check if a video has variable frame rate by comparing r_frame_rate and avg_frame_rate.=
+
+        :param file_location: Local path or presigned S3 URL pointing to the video
+        :return: True if the video has variable frame rate, False if constant frame rate
+        """
+        try:
+            # Get r_frame_rate
+            r_frame_rate_result = subprocess.run(  # noqa: S603
+                [  # noqa: S607
+                    "ffprobe",
+                    "-v",
+                    "0",
+                    "-select_streams",
+                    "v:0",
+                    "-show_entries",
+                    "stream=r_frame_rate",
+                    "-of",
+                    "csv=p=0",
+                    file_location,
+                ],
+                capture_output=True,
+                check=False,
+                text=True,
+            )
+
+            # Get avg_frame_rate
+            avg_frame_rate_result = subprocess.run(  # noqa: S603
+                [  # noqa: S607
+                    "ffprobe",
+                    "-v",
+                    "0",
+                    "-select_streams",
+                    "v:0",
+                    "-show_entries",
+                    "stream=avg_frame_rate",
+                    "-of",
+                    "csv=p=0",
+                    file_location,
+                ],
+                capture_output=True,
+                check=False,
+                text=True,
+            )
+
+            if r_frame_rate_result.returncode != 0 or avg_frame_rate_result.returncode != 0:
+                logger.warning("ffprobe failed, could not determine frame rate.")
+                return False
+
+            r_frame_rate = r_frame_rate_result.stdout.strip()
+            avg_frame_rate = avg_frame_rate_result.stdout.strip()
+
+            # Convert rates to decimals for comparison (handle fractions like 30000/1001)
+            def fraction_to_decimal(rate_str: str):
+                if "/" in rate_str:
+                    numerator, denominator = map(int, rate_str.split("/"))
+                    return numerator / denominator if denominator != 0 else 0
+                return float(rate_str)
+
+            r_frame_rate_decimal = fraction_to_decimal(r_frame_rate)
+            avg_frame_rate_decimal = fraction_to_decimal(avg_frame_rate)
+
+            # If r_frame_rate and avg_frame_rate are not equal, it's VFR
+            return r_frame_rate_decimal != avg_frame_rate_decimal
+
+        except (ValueError, subprocess.SubprocessError, Exception):
+            # If parsing fails or any error occurs, assume CFR
+            return False
+
+    def convert_vfr_to_cfr(self, input_path: str, output_path: str, target_fps: float) -> bool:
+        """
+        Convert a variable frame rate video to constant frame rate using ffmpeg.
+
+        :param input_path: Path to the input VFR video
+        :param output_path: Path where the converted CFR video will be saved
+        :param target_fps: Target frame rate for the output video
+        :return: True if conversion was successful, False otherwise
+        """
+        try:
+            process = subprocess.run(  # noqa: S603
+                [  # noqa: S607
+                    "ffmpeg",
+                    "-i",
+                    input_path,
+                    "-filter:v",
+                    f"fps={target_fps}",
+                    "-c:v",
+                    "libx264",
+                    "-preset",
+                    "slow",
+                    "-crf",
+                    "18",
+                    "an",
+                    "-map_metadata",
+                    "0",
+                    "-y",
+                    output_path,
+                    "threads",
+                    "1",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=1200,
+                check=False,  # 20 minutes timeout
+            )
+
+            if process.returncode == 0:
+                logger.info(f"Successfully converted VFR video to CFR: {input_path} -> {output_path}")
+                return True
+            logger.error(f"FFmpeg conversion failed with return code {process.returncode}")
+            logger.error(f"FFmpeg stderr: {process.stderr}")
+            return False
+
+        except subprocess.TimeoutExpired:
+            logger.error(f"FFmpeg conversion timed out for {input_path}")
+            return False
+        except Exception as e:
+            logger.error(f"Error during VFR to CFR conversion: {str(e)}")
+            return False
+
 
 class _VideoDecoderOpenCV(_VideoDecoderInterface, metaclass=Singleton):
     """OpenCV-based video decoder"""

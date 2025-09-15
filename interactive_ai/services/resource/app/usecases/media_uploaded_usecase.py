@@ -14,6 +14,7 @@ from iai_core.adapters.binary_interpreters import StreamBinaryInterpreter
 from iai_core.entities.dataset_storage import DatasetStorageIdentifier
 from iai_core.entities.image import Image
 from iai_core.entities.video import Video
+from iai_core.repos import VideoRepo
 from iai_core.repos.storage.binary_repos import ImageBinaryRepo, ThumbnailBinaryRepo, VideoBinaryRepo
 from iai_core.utils.constants import DEFAULT_THUMBNAIL_SIZE
 from iai_core.utils.media_factory import Media2DFactory
@@ -139,6 +140,36 @@ class MediaUploadedUseCase:
             thumbnail_binary_repo = ThumbnailBinaryRepo(dataset_storage_identifier)
             url = video_binary_repo.get_path_or_presigned_url(filename=data_binary_filename)
             video_information = VideoDecoder.get_video_information(url)
+
+            # Check if video has variable frame rate and convert to CFR if needed
+            if VideoDecoder.is_variable_frame_rate(url):
+                logger.info(f"Video {video_id} has variable frame rate, converting to constant frame rate")
+
+                with TemporaryDirectory() as temp_dir:
+                    # Create temporary file for converted video
+                    temp_converted_file = os.path.join(temp_dir, f"cfr_{data_binary_filename}")
+
+                    # Convert VFR to CFR using the fps from video_information
+                    conversion_success = VideoDecoder.convert_vfr_to_cfr(
+                        input_path=url, output_path=temp_converted_file, target_fps=video_information.fps
+                    )
+
+                    if conversion_success:
+                        # Replace the original video file with the converted CFR version
+                        video_binary_repo.save(
+                            data_source=temp_converted_file, dst_file_name=data_binary_filename, overwrite=True
+                        )
+                        # Reset video decoder cache since file has been replaced
+                        VideoDecoder.reset_reader(url)
+                        # Update total frames for the converted file
+                        video = VideoRepo(dataset_storage_identifier).get_by_id(video_id)
+                        video_information = VideoDecoder.get_video_information(url)
+                        video._total_frames = video_information.total_frames
+                        VideoRepo(dataset_storage_identifier).save(video)
+                        logger.info(f"Successfully converted video {video_id} from VFR to CFR")
+                    else:
+                        logger.warning(f"Failed to convert VFR video {video_id} to CFR, proceeding with original")
+
             frame_index = video_information.total_frames // 2
             frame_numpy = VideoFrameReader.get_frame_numpy(
                 file_location_getter=lambda: url,
