@@ -9,7 +9,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"strings"
 
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"go.opentelemetry.io/otel/attribute"
@@ -56,26 +55,31 @@ func (s *FFmpegCLIFrameExtractor) Start(
 		_, span := telemetry.Tracer().Start(ctx, "ffmpeg-extract-frames")
 		defer span.End()
 
-		// Build frame selection string for frame-based extraction
-		var frameSelections []string
-		for frameIndex := start; frameIndex <= end; frameIndex += skip {
-			frameSelections = append(frameSelections, fmt.Sprintf("eq(n\\,%d)", frameIndex))
+		// Convert FPS to millisecond timestamp at which the video should be loaded in
+		inputFlags := ffmpeg.KwArgs{
+			"ss": fmt.Sprintf("%dms", int((float64(start)/video.FPS)*MsPerSecond)),
 		}
-		selectFilter := fmt.Sprintf("select=%s", strings.Join(frameSelections, "+"))
 
-		// Use frame-based seeking without time-based conversions
-		inputFlags := ffmpeg.KwArgs{}
+		// Account for case where batch is smaller than frame skip which combined with vf FPS filter can mean that no
+		// frame is selected within the range. In this case, we set vf FPS to the videos FPS to select the start frame.
+		vfFps := video.FPS / float64(skip)
+		if float64(end-start) < vfFps {
+			vfFps = video.FPS
+		}
 
+		// Building select filter:
+		// vf: The skip is converted to the amount of frames per second that need to be extracted. This is done to
+		// account for the fact that the video may have a variable frame rate.
 		// CRITICAL: Use JPEG quality factor matching OpenCV's default (95) for consistency.
 		// OpenCV quality 95 ≈ FFmpeg -q:v 2. Compression artifacts from different quality settings
 		// can alter pixel values and lead to inconsistent model predictions across processing paths.
 		outputFlags := ffmpeg.KwArgs{
-			"vf":       selectFilter,
+			"vf":       fmt.Sprintf("fps=%f", vfFps),
 			"vsync":    "vfr",        // video sync for variable frame rate
 			"f":        "image2pipe", // outputs to a pipe
 			"c:v":      "mjpeg",
-			"q:v":      "2",          // JPEG quality matching OpenCV default
-			"an":       "",           // disable audio processing
+			"frames:v": (end-start)/skip + 1, // limit number of frames to extract
+			"an":       "",                   // disable audio processing
 		}
 
 		// -format=image2pipe since it outputs frame bytes into pipe writer passed in params

@@ -6,6 +6,7 @@ package frames
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
@@ -33,10 +34,25 @@ func (s FramerReaderImpl) ReadFrameToBuffer(path string, frameNum int) (*bytes.B
 	return buf, nil
 }
 
-// ReadFrameToBufferFps Reads a frame from a video into memory using frame-based selection.
-// The fps parameter is kept for backward compatibility but is no longer used for time-based seeking.
-// Frame selection is now purely index-based for consistency.
+// ReadFrameToBufferFps Reads a frame from a video into memory. FPS is used to determine at which timestamp the video should
+// be loaded to speed up frame reading. If FPS is 0 or negative, it fallbacks to non-optimised version of frame extraction.
 func (s FramerReaderImpl) ReadFrameToBufferFps(path string, frameNum int, fps float64) (*bytes.Buffer, error) {
-	// Use frame-based selection instead of time-based seeking for consistency
-	return s.ReadFrameToBuffer(path, frameNum)
+	if fps <= 0 {
+		return s.ReadFrameToBuffer(path, frameNum)
+	}
+	// Convert FPS to millisecond timestamp at which the video should be loaded in
+	milliSeconds := int((float64(frameNum) / fps) * MsPerSecond)
+	msString := strconv.Itoa(milliSeconds) + "ms"
+
+	buf := bytes.NewBuffer(nil)
+	err := ffmpeg.Input(path, ffmpeg.KwArgs{"ss": msString}).
+		Filter("select", ffmpeg.Args{"eq(n,0)"}).
+		Output("pipe:", ffmpeg.KwArgs{"vframes": 1, "format": "image2", "vcodec": "mjpeg", "q:v": "20"}).
+		Silent(true).
+		WithOutput(buf).
+		Run()
+	if err != nil {
+		return nil, err
+	}
+	return buf, nil
 }
