@@ -19,6 +19,7 @@ import (
 	"geti.com/iai_core/telemetry"
 )
 
+const MsPerSecond = 1000
 
 type CLIFrameExtractor interface {
 	Start(ctx context.Context, video *entities.Video, start, end, skip int, writer io.WriteCloser) <-chan error
@@ -35,27 +36,6 @@ func NewFFmpegCLIFrameExtractor() *FFmpegCLIFrameExtractor {
 		jpegStartMarker: []byte{0xFF, 0xD8},
 		jpegEndMarker:   []byte{0xFF, 0xD9},
 	}
-}
-
-    // calculateAdaptiveBuffer calculates an adaptive buffer time based on frame number and video characteristics
-func (s *FFmpegCLIFrameExtractor) calculateAdaptiveBuffer(frameNum int, fps float64) float64 {
-	// Adaptive buffer calculation:
-	// - Minimum 2 seconds for basic seeking
-	// - Add 10% of target time for variable frame rate tolerance
-	// - Cap at maximum 10 seconds to avoid excessive seeking overhead
-	
-	targetSeconds := float64(frameNum) / fps
-	bufferSeconds := 2.0 // Base buffer
-	
-	// Add percentage-based buffer for VFR tolerance
-	bufferSeconds += targetSeconds * 0.1 // 10% of target time
-	
-	// Cap the buffer at 10 seconds maximum
-	if bufferSeconds > 10.0 {
-		bufferSeconds = 10.0
-	}
-	
-	return bufferSeconds
 }
 
 type FrameData struct {
@@ -83,66 +63,27 @@ func (s *FFmpegCLIFrameExtractor) Start(
 		}
 		selectFilter := fmt.Sprintf("select=%s", strings.Join(frameSelections, "+"))
 
-		// Prepare input arguments with adaptive seeking for high frame numbers
-		var inputArgs ffmpeg.KwArgs
-		var usesSeeking bool = false
-		
-		// For high frame numbers (start > 100), use adaptive temporal seeking to jump close to target frames
-		// This dramatically improves performance for accessing frames later in the video
-		if start > 100 {
-			// Calculate adaptive buffer based on frame number and video characteristics
-			targetSeconds := float64(start) / video.FPS
-			bufferSeconds := s.calculateAdaptiveBuffer(start, video.FPS)
-			seekSeconds := targetSeconds - bufferSeconds
-			
-			if seekSeconds < 0 {
-				seekSeconds = 0
-			}
-			
-			inputArgs = ffmpeg.KwArgs{
-				"ss": fmt.Sprintf("%.3f", seekSeconds),
-				"accurate_seek": "", // Use accurate seeking for better precision
-			}
-			usesSeeking = true
-		} else {
-			// For low frame numbers, direct selection is efficient
-			inputArgs = ffmpeg.KwArgs{}
-		}
+		// Use frame-based seeking without time-based conversions
+		inputFlags := ffmpeg.KwArgs{}
 
 		// CRITICAL: Use JPEG quality factor matching OpenCV's default (95) for consistency.
 		// OpenCV quality 95 ≈ FFmpeg -q:v 2. Compression artifacts from different quality settings
 		// can alter pixel values and lead to inconsistent model predictions across processing paths.
-		err := ffmpeg.Input(video.FilePath, inputArgs).
-			Output("pipe:", ffmpeg.KwArgs{
-				"vf":       selectFilter,
-				"vsync":    "vfr",        // video sync for variable frame rate
-				"f":        "image2pipe", // outputs to a pipe
-				"c:v":      "mjpeg",
-				"q:v":      "2",          // JPEG quality matching OpenCV default
-				"an":       "",           // disable audio processing
-			}).
+		outputFlags := ffmpeg.KwArgs{
+			"vf":       selectFilter,
+			"vsync":    "vfr",        // video sync for variable frame rate
+			"f":        "image2pipe", // outputs to a pipe
+			"c:v":      "mjpeg",
+			"q:v":      "2",          // JPEG quality matching OpenCV default
+			"an":       "",           // disable audio processing
+		}
+
+		// -format=image2pipe since it outputs frame bytes into pipe writer passed in params
+		err := ffmpeg.Input(video.FilePath, inputFlags).
+			Output("pipe:", outputFlags).
 			WithOutput(writer).
 			Silent(true).
 			Run()
-		
-		// Fallback strategy: if seeking failed, retry without seeking
-		if err != nil && usesSeeking {
-			logger.TracingLog(ctx).Warnf("Adaptive seeking failed for frames %d-%d, retrying without seeking: %v", start, end, err)
-			
-			// Retry without seeking
-			err = ffmpeg.Input(video.FilePath).
-				Output("pipe:", ffmpeg.KwArgs{
-					"vf":       selectFilter,
-					"vsync":    "vfr",        // video sync for variable frame rate
-					"f":        "image2pipe", // outputs to a pipe
-					"c:v":      "mjpeg",
-					"q:v":      "2",          // JPEG quality matching OpenCV default
-					"an":       "",           // disable audio processing
-				}).
-				WithOutput(writer).
-				Silent(true).
-				Run()
-		}
 
 		_ = writer.Close()
 		done <- err
