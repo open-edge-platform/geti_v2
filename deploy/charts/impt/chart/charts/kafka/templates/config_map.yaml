@@ -86,3 +86,14 @@ data:
     fi
     echo "Formatting storage directories to add metadata..."
     "${KAFKA_HOME}/bin/kafka-storage.sh" format "${args[@]}"
+
+  kafka_jaas.sh: |-
+    #!/bin/bash
+    set -xe
+
+    echo KafkaServer {
+        org.apache.kafka.common.security.plain.PlainLoginModule required
+        username="${KAFKA_INTER_BROKER_USER}"
+        password="${KAFKA_INTER_BROKER_PASSWORD}"
+        user_"${KAFKA_INTER_BROKER_USER}"="${KAFKA_INTER_BROKER_PASSWORD}";
+    }; > /opt/kafka/config/kafka_server_jaas.conf
