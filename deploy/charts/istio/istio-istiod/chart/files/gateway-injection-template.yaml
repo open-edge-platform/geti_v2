@@ -7,12 +7,8 @@ metadata:
   annotations:
     istio.io/rev: {{ .Revision | default "default" | quote }}
     {{- if ge (len $containers) 1 }}
-    {{- if not (isset .ObjectMeta.Annotations `kubectl.kubernetes.io/default-logs-container`) }}
     kubectl.kubernetes.io/default-logs-container: "{{ index $containers 0 }}"
-    {{- end }}
-    {{- if not (isset .ObjectMeta.Annotations `kubectl.kubernetes.io/default-container`) }}
     kubectl.kubernetes.io/default-container: "{{ index $containers 0 }}"
-    {{- end }}
     {{- end }}
 spec:
   securityContext:
@@ -24,7 +20,7 @@ spec:
       value: "0"
   {{- end }}
   containers:
-  - name: istio-proxy
+  - name: istio-router
   {{- if contains "/" (annotation .ObjectMeta `sidecar.istio.io/proxyImage` .Values.global.proxy.image) }}
     image: "{{ annotation .ObjectMeta `sidecar.istio.io/proxyImage` .Values.global.proxy.image }}"
   {{- else }}
