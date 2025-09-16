@@ -8,7 +8,6 @@ Prepare training data task
 import asyncio
 import logging
 import os
-import time
 import typing
 
 from geti_telemetry_tools.tracing.common import tracer
@@ -218,8 +217,6 @@ def prepare_training_data_model_and_start_training(  # noqa: PLR0913
 
     with tracer.start_as_current_span("otx2_task"):
         otx2_task()
-
-    time.sleep(10)
 
     return TrainWorkflowDataForFlyteTaskTrainer(
         train_data=train_data,
