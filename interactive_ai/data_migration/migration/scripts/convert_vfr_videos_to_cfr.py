@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import tempfile
 
+import cv2
 from bson import ObjectId
 
 from migration.utils import IMigrationScript, MongoDBConnection
@@ -225,8 +226,8 @@ class ConvertVFRVideosToCFR(IMigrationScript):
     @classmethod
     def _extract_all_frames(cls, video_path: str, output_dir: str) -> bool:
         """
-        Extract all frames from a video file using ffmpeg.
-        Based on extract_all_frames from vfr_converter.py but using ffmpeg instead of VideoDecoder.
+        Extract all frames from a video file using the same logic as the opencv video decoder.
+        Based on extract_all_frames from vfr_converter.py using VideoDecoder.
 
         :param video_path: Path to the input video (can be presigned URL)
         :param output_dir: Directory to save extracted frames
@@ -236,35 +237,36 @@ class ConvertVFRVideosToCFR(IMigrationScript):
             # Create output directory if it doesn't exist
             os.makedirs(output_dir, exist_ok=True)
 
-            # Use ffmpeg to extract all frames
-            process = subprocess.run(  # noqa: S603
-                [  # noqa: S607
-                    "ffmpeg",
-                    "-i",
-                    video_path,
-                    "-y",  # Overwrite output files
-                    "-f",
-                    "image2",  # Output format
-                    os.path.join(output_dir, "frame_%06d.png"),  # Output pattern
-                ],
-                capture_output=True,
-                text=True,
-                timeout=1200,
-                check=False,
-            )  # 20 minute timeout
+            # Get video information
+            video_reader = cv2.VideoCapture(video_path, cv2.CAP_FFMPEG)
+            total_frames = int(video_reader.get(cv2.CAP_PROP_FRAME_COUNT))
 
-            if process.returncode == 0:
-                # Count extracted frames to verify
-                frame_files = [f for f in os.listdir(output_dir) if f.endswith(".png")]
-                logger.info(f"Successfully extracted {len(frame_files)} frames to {output_dir}")
-                return len(frame_files) > 0
-            logger.error(f"FFmpeg frame extraction failed with return code {process.returncode}")
-            logger.error(f"FFmpeg stderr: {process.stderr}")
-            return False
+            logger.info(f"Extracting {total_frames} frames from {video_path}")
 
-        except subprocess.TimeoutExpired:
-            logger.error(f"FFmpeg frame extraction timed out for {video_path}")
-            return False
+            # Extract all frames
+            for frame_index in range(total_frames):
+                try:
+                    video_reader_frame_pos = int(video_reader.get(cv2.CAP_PROP_POS_FRAMES))
+                    if video_reader_frame_pos != frame_index:
+                        video_reader.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
+                    read_success, frame_bgr = video_reader.read()
+                    if not read_success:
+                        raise RuntimeError(f"Failed to read frame at index {frame_index}")
+
+                    # Save frame
+                    frame_filename = os.path.join(output_dir, f"frame_{frame_index:06d}.png")
+                    cv2.imwrite(frame_filename, frame_bgr)
+
+                    if (frame_index + 1) % 100 == 0:
+                        logger.info(f"Extracted {frame_index + 1}/{total_frames} frames")
+
+                except Exception as e:
+                    logger.error(f"Error extracting frame {frame_index}: {str(e)}")
+                    continue
+
+            logger.info(f"Successfully extracted all frames to {output_dir}")
+            return True
+
         except Exception as e:
             logger.error(f"Error during frame extraction: {str(e)}")
             return False
@@ -312,14 +314,14 @@ class ConvertVFRVideosToCFR(IMigrationScript):
                     "yuv420p",  # Pixel format for compatibility
                     "-r",
                     str(fps),  # Output framerate
-                    "-an",  # Remove audio because video length will differ
+                    "-an",  # Remove audio because video length might differ
                     output_path,
                 ],
                 capture_output=True,
                 text=True,
                 timeout=1200,
                 check=False,
-            )  # 20 minute timeout
+            )
 
             if process.returncode == 0:
                 logger.info(f"Successfully stitched frames into CFR video: {output_path}")
