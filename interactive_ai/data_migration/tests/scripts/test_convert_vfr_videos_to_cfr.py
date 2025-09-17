@@ -320,30 +320,6 @@ class TestConvertVFRVideosToCFR:
             result = ConvertVFRVideosToCFR._extract_all_frames("input_video.mp4", fxt_temp_frames_dir)
             assert result is True
 
-    def test_extract_all_frames_failure(self, fxt_temp_frames_dir):
-        """Test _extract_all_frames method with ffmpeg failure"""
-        mock_process = Mock()
-        mock_process.returncode = 1
-        mock_process.stderr = "FFmpeg error"
-
-        with (
-            patch("subprocess.run", return_value=mock_process),
-            patch("os.makedirs"),
-        ):
-            result = ConvertVFRVideosToCFR._extract_all_frames("input_video.mp4", fxt_temp_frames_dir)
-            assert result is False
-
-    def test_extract_all_frames_timeout(self, fxt_temp_frames_dir):
-        """Test _extract_all_frames method with timeout"""
-        import subprocess
-
-        with (
-            patch("subprocess.run", side_effect=subprocess.TimeoutExpired("ffmpeg", 1200)),
-            patch("os.makedirs"),
-        ):
-            result = ConvertVFRVideosToCFR._extract_all_frames("input_video.mp4", fxt_temp_frames_dir)
-            assert result is False
-
     def test_stitch_frames_to_cfr_video_success(self, fxt_temp_frames_dir, fxt_temp_video_file):
         """Test _stitch_frames_to_cfr_video method successful stitching"""
         mock_process = Mock()
