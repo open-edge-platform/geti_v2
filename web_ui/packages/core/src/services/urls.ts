@@ -36,11 +36,15 @@ const API_VERSION = 'v1';
 const PREFIX = (url: string) => url;
 
 const WORKSPACES = (organizationId: string): string => {
-    return `${ORGANIZATION(organizationId)}/workspaces`;
+    const searchOptionsUrl = new URLSearchParams();
+    searchOptionsUrl.set('sortBy', 'createdAt');
+    searchOptionsUrl.set('sortDirection', 'asc');
+
+    return `${ORGANIZATION(organizationId)}/workspaces?${searchOptionsUrl.toString()}`;
 };
 
 const WORKSPACE = (workspaceIdentifier: WorkspaceIdentifier): string =>
-    `${WORKSPACES(workspaceIdentifier.organizationId)}/${workspaceIdentifier.workspaceId}`;
+    `${ORGANIZATION(workspaceIdentifier.organizationId)}/workspaces/${workspaceIdentifier.workspaceId}`;
 
 const ORGANIZATIONS = `${API_VERSION}/organizations`;
 

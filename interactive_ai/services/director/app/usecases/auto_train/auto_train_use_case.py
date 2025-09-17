@@ -183,7 +183,6 @@ class AutoTrainUseCase:
             project = ProjectRepo().get_by_id(project_identifier.project_id)
             trainable_tasks_ids = [tn.id_ for tn in project.get_trainable_task_nodes()]
             auto_train_activation_repo = ProjectBasedAutoTrainActivationRepo(project_identifier=project_identifier)
-
             auto_train_ready_tasks_ids = [
                 tn.id_ for tn in AutoTrainUseCase.__get_auto_train_ready_tasks(project=project)
             ]
@@ -224,7 +223,10 @@ class AutoTrainUseCase:
             # use revamped project configuration
             repo = ProjectConfigurationRepo(project_identifier)
             project_config = repo.get_project_configuration()
-            return project_config.get_task_config(task_id=str(task_node.id_)).auto_training.enable
+            return (
+                not task_node.task_properties.is_anomaly
+                and project_config.get_task_config(task_id=str(task_node.id_)).auto_training.enable
+            )
 
         task_configuration_type = AnomalyTaskNodeConfig if task_node.task_properties.is_anomaly else TaskNodeConfig
         task_configuration = ConfigurableParametersRepo(project_identifier).get_or_create_component_parameters(
@@ -260,7 +262,6 @@ class AutoTrainUseCase:
                 task_node=task_node,
             )
             required_annotations_met = missing_annotations.total_missing_annotations_auto_training <= 0
-
             auto_train_enabled = cls.__is_auto_train_enabled_for_task(
                 project_identifier=project.identifier, task_node=task_node
             )

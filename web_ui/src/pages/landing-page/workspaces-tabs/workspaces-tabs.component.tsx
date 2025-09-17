@@ -8,8 +8,6 @@ import { ActionButton, Flex, Item, Loading, TabList, TabPanels, Tabs, Tooltip, T
 import { Add } from '@geti/ui/icons';
 
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { PinnedCollapsedItemsAction } from '../../../hooks/use-pinned-collapsed-items/use-pinned-collapsed-items.interface';
-import { CollapsedItemsPicker } from '../../../shared/components/collapsed-items-picker/collapsed-items-picker.component';
 import { CustomTabItem } from '../../../shared/components/custom-tab-item/custom-tab-item.component';
 import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
@@ -18,39 +16,25 @@ import { getUniqueNameFromArray, hasEqualId } from '../../../shared/utils';
 import { LandingPageWorkspace as Workspace } from '../landing-page-workspace/landing-page-workspace.component';
 import { NoPermissionPlaceholder } from './components/no-permission-placeholder.component';
 import { CustomTabItemWithMenu } from './custom-tab-item-with-menu.component';
-import { usePinnedCollapsedWorkspaces } from './hooks/use-pinned-collapsed-workspace.hook';
-import { MAX_NUMBER_OF_DISPLAYED_WORKSPACES } from './utils';
+import { useWorkspacesTabs } from './hooks/use-pinned-collapsed-workspace.hook';
 
 import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
 
 export const WorkspacesTabs = () => {
     const { organizationId } = useOrganizationIdentifier();
-    const {
-        workspaces,
-        selectWorkspace,
-        dispatchWorkspaces,
-        selectedWorkspaceId,
-        collapsedWorkspaces,
-        pinnedWorkspaces,
-        handleSelectWorkspace,
-        numberOfWorkspaces,
-    } = usePinnedCollapsedWorkspaces();
+    const { workspaces, selectWorkspace, selectedWorkspaceId, handleSelectWorkspace } = useWorkspacesTabs();
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
 
     const { useCreateWorkspaceMutation } = useWorkspacesApi(organizationId);
     const createWorkspace = useCreateWorkspaceMutation();
     const selectedWorkspace = workspaces.find(hasEqualId(selectedWorkspaceId));
 
-    const hasSelectedPinnedItem = pinnedWorkspaces.find(hasEqualId(selectedWorkspaceId)) !== undefined;
-
-    const pinnedItems: TabItem[] = pinnedWorkspaces.map(({ id, name }) => ({
+    const items = workspaces.map(({ id, name }) => ({
         name,
         id: `${id === selectedWorkspaceId ? 'selected-' : ''}workspace-${id}`,
         key: id,
         children: <Workspace />,
     }));
-
-    const collapsedItems = collapsedWorkspaces.map(({ id, name }) => ({ id, name }));
 
     const handleCreateWorkspace = (): void => {
         const uniqueName = getUniqueNameFromArray(
@@ -62,8 +46,6 @@ export const WorkspacesTabs = () => {
             { name: uniqueName },
             {
                 onSuccess: (workspace) => {
-                    dispatchWorkspaces({ type: PinnedCollapsedItemsAction.CREATE, payload: workspace });
-
                     selectWorkspace(workspace.id);
                 },
             }
@@ -74,7 +56,7 @@ export const WorkspacesTabs = () => {
         <Flex id={`page-layout-id`} direction='column' height='100%' UNSAFE_className={classes.componentWrapper}>
             <Tabs
                 selectedKey={selectedWorkspaceId}
-                items={pinnedItems}
+                items={items}
                 aria-label={'Workspaces tabs'}
                 height={'100%'}
                 width={'100%'}
@@ -102,7 +84,6 @@ export const WorkspacesTabs = () => {
                                                     workspace={selectedWorkspace as WorkspaceEntity}
                                                     isMoreIconVisible={item.key === selectedWorkspaceId}
                                                     workspaces={workspaces}
-                                                    dispatchWorkspaces={dispatchWorkspaces}
                                                     selectWorkspace={selectWorkspace}
                                                 />
                                             </HasPermission>
@@ -114,16 +95,6 @@ export const WorkspacesTabs = () => {
                             </Item>
                         )}
                     </TabList>
-
-                    {numberOfWorkspaces > MAX_NUMBER_OF_DISPLAYED_WORKSPACES && (
-                        <CollapsedItemsPicker
-                            hasSelectedPinnedItem={hasSelectedPinnedItem}
-                            numberOfCollapsedItems={collapsedItems.length}
-                            onSelectionChange={handleSelectWorkspace}
-                            items={collapsedItems}
-                            ariaLabel={'Collapsed workspaces'}
-                        />
-                    )}
 
                     {FEATURE_FLAG_WORKSPACE_ACTIONS && (
                         <HasPermission operations={[OPERATION.WORKSPACE_CREATION]}>
