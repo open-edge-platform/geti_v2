@@ -30,7 +30,7 @@ FROM base AS runtime
 
 # Install runtime dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-recommends ffmpeg=7:5.1.*-0+deb12u1 \
     libgl1=1.6.* \
     libglib2.0-0=2.74.* \
     curl && \
