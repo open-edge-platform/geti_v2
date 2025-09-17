@@ -386,7 +386,7 @@ def get_flyte_pod_spec(
 
 def _terminate_istio_proxy(n_trials: int = 10, timeout: float = 1.0, sleep_sec: float = 1.0):
     is_terminated = False
-
+    sleep(5)
     for step in range(1, n_trials + 1):
         try:
             response = requests.post(TERM_ISTIO_PROXY_URL, timeout=timeout)
