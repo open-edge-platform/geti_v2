@@ -44,7 +44,8 @@ TMP_DIR_VOLUME_NAME = "tmp-dir"
 TMP_DIR_MOUNT_PATH = "/tmp"  # noqa: S108 # nosec
 AWS_CONFIG_VOLUME_NAME = "aws-client-config"
 AWS_CONFIG_MOUNT_PATH = "/home/non-root/.aws"
-FLYTE_POD_ANNOTATIONS = {"proxy.istio.io/config": '{ "holdApplicationUntilProxyStarts": true }'}
+FLYTE_POD_ANNOTATIONS = {"proxy.istio.io/config": '{ "holdApplicationUntilProxyStarts": true, '
+                                                  '"terminationDrainDuration": "10s" }'}
 SPICEDB_TLS_SECRETS_VOLUME_NAME = "tls-secrets"
 SPICEDB_TLS_SECRETS_MOUNT_PATH = "/etc/tls-secrets"
 TERM_ISTIO_PROXY_URL = "http://127.0.0.1:15020/quitquitquit"
