@@ -334,7 +334,7 @@ def create_flyte_container_task(  # noqa: PLR0913
             primary_container_name=CONTAINER_NAME,
             annotations={
                 "proxy.istio.io/config": '{ "holdApplicationUntilProxyStarts": true, '
-                                         '"terminationDrainDuration": "10s" }',
+                                         '"terminationDrainDuration": "30s" }',
                 "karpenter.sh/do-not-disrupt": "true",
             },
         ),
