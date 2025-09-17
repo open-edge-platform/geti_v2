@@ -8,6 +8,7 @@ dependencies = [
     "dataclasses-json==0.5.7",
     "pymongo[aws]~=4.10",
     "minio~=7.1",
+    "opencv-python-headless~=4.10",
 ]
 
 [dependency-groups]
