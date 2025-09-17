@@ -333,8 +333,7 @@ def create_flyte_container_task(  # noqa: PLR0913
             pod_spec=pod_spec,
             primary_container_name=CONTAINER_NAME,
             annotations={
-                "proxy.istio.io/config": '{ "holdApplicationUntilProxyStarts": true, '
-                                         '"terminationDrainDuration": "30s" }',
+                "proxy.istio.io/config": '{ "holdApplicationUntilProxyStarts": true }',
                 "karpenter.sh/do-not-disrupt": "true",
             },
         ),
