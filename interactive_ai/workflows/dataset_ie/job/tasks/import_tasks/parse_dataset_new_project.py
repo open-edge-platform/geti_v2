@@ -69,7 +69,7 @@ def _parse_dataset_for_import_to_new_project(import_id: str) -> tuple[list, list
     dataset_dir = import_data_repo.get_dataset_directory(id_=import_id_)
 
     # Load and parse dataset
-    dataset_format = "datumaro"
+    dataset_format = ImportUtils.detect_format(path=dataset_dir)
     dm_dataset, error_collector = ImportUtils.parse_dataset(path=dataset_dir, fmt=dataset_format)
     progress_reporter.finish_step()
 

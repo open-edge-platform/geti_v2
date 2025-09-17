@@ -246,15 +246,23 @@ class ConvertVFRVideosToCFR(IMigrationScript):
             # Extract all frames
             for frame_index in range(total_frames):
                 try:
+                    frame_filename = os.path.join(output_dir, f"frame_{frame_index:06d}.png")
                     video_reader_frame_pos = int(video_reader.get(cv2.CAP_PROP_POS_FRAMES))
                     if video_reader_frame_pos != frame_index:
                         video_reader.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
                     read_success, frame_bgr = video_reader.read()
                     if not read_success:
-                        raise RuntimeError(f"Failed to read frame at index {frame_index}")
+                        if frame_index > 0:
+                            # Copy the last successfully saved frame and update its index
+                            last_frame_filename = os.path.join(output_dir, f"frame_{frame_index - 1:06d}.png")
+                            shutil.copy(last_frame_filename, frame_filename)
+                            logger.warning(
+                                f"Failed to read frame at index {frame_index}, copied previous frame instead"
+                            )
+                            continue
+                        raise RuntimeError(f"Failed to read frame at index {frame_index} and no previous frame to copy")
 
                     # Save frame
-                    frame_filename = os.path.join(output_dir, f"frame_{frame_index:06d}.png")
                     cv2.imwrite(frame_filename, frame_bgr)
 
                     if (frame_index + 1) % 100 == 0:
