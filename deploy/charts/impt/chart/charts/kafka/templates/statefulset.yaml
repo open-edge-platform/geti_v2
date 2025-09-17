@@ -51,6 +51,11 @@ spec:
                 secretKeyRef:
                   key: inter-broker-password
                   name: impt-kafka-jaas
+            - name: KAFKA_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Namespace }}-kafka-jaas
+                  key: system-user-password
             - name: KAFKA_NODE_ID
               value: {{ .Values.kraft.nodeId | quote }}
             - name: KAFKA_PROCESS_ROLES
@@ -97,6 +102,8 @@ spec:
               value: /opt/kafka/config/server.properties
             - name: KAFKA_OPTS
               value: "-Djava.security.auth.login.config=/opt/kafka/config/kafka_server_jaas.conf"
+            - name: KAFKA_AUTHORIZER_CLASS_NAME
+              value: "org.apache.kafka.metadata.authorizer.StandardAuthorizer"
           ports:
           - name: broker
             containerPort: {{ .Values.service.broker }}
@@ -114,3 +121,9 @@ spec:
             defaultMode: 365
         - name: tmp
           emptyDir: {}
+KAFKA_AUTHORIZER_CLASS_NAME=org:
+  apache:
+    kafka:
+      metadata:
+        authorizer:
+          StandardAuthorizer:
