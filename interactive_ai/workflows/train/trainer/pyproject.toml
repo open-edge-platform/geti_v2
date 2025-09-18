@@ -12,6 +12,7 @@ dependencies = [
     "otx",
     "geti-kafka-tools",
     "geti-telemetry-tools[telemetry,kafka]",
+    "setuptools==69.5.1",
 ]
 
 [tool.uv.sources]
