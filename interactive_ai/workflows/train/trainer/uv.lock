@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = "==3.10.*"
 resolution-markers = [
     "sys_platform == 'darwin'",
@@ -1868,7 +1868,7 @@ wheels = [
 [[package]]
 name = "otx"
 version = "2.6.0.dev0"
-source = { git = "https://github.com/open-edge-platform/training_extensions.git?subdirectory=lib&branch=release%2F2.6#bfece5d4506d9edca7fdf2b427771ee9b03d5a99" }
+source = { git = "https://github.com/open-edge-platform/training_extensions.git?subdirectory=lib&branch=release%2F2.6#58f990f5901914b058a4725898c229ad9f56281d" }
 dependencies = [
     { name = "anomalib", extra = ["core"] },
     { name = "datumaro" },

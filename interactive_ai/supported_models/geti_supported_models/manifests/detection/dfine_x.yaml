@@ -44,7 +44,7 @@ hyperparameters:
           - 2.0
         probability: 0.5
       color_jitter:
-        enable: true
+        enable: false
         brightness:
           - 0.875
           - 1.125
