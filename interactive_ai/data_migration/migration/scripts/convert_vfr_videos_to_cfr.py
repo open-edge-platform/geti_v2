@@ -358,7 +358,7 @@ class ConvertVFRVideosToCFR(IMigrationScript):
                 ],
                 capture_output=True,
                 text=True,
-                timeout=1200,
+                timeout=7200,
                 check=False,
             )
 
