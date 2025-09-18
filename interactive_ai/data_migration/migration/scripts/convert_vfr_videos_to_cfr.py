@@ -68,11 +68,11 @@ class ConvertVFRVideosToCFR(IMigrationScript):
         video_collection = db.get_collection("video")
         dataset_storage_collection = db.get_collection("dataset_storage")
 
-        dataset_storages = dataset_storage_collection.find({"project_id": ObjectId(project_id)})
+        dataset_storages = list(dataset_storage_collection.find({"project_id": ObjectId(project_id)}))
 
         for dataset_storage in dataset_storages:
             dataset_storage_id = dataset_storage["_id"]
-            videos = video_collection.find({"dataset_storage_id": dataset_storage_id})
+            videos = list(video_collection.find({"dataset_storage_id": dataset_storage_id}))
             ds_storage_prefix = f"{storage_prefix}/dataset_storages/{dataset_storage_id}"
 
             for video in videos:
