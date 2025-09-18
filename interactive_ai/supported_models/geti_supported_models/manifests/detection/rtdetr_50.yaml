@@ -16,6 +16,6 @@ hyperparameters:
     input_size_width: 640
     input_size_height: 640
   dataset_preparation:
+    augmentation:
       iou_random_crop:
         enable: false
-        
