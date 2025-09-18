@@ -100,4 +100,5 @@
     border-bottom: var(--spectrum-global-dimension-size-10) solid
         var(--spectrum-tabs-rule-color, var(--spectrum-global-color-gray-200)) !important;
     box-sizing: border-box !important;
+    overflow-x: auto;
 }
