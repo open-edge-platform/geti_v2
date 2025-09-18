@@ -59,6 +59,7 @@ class ConvertVFRVideosToCFR(IMigrationScript):
     @classmethod
     def upgrade_project(cls, organization_id: str, workspace_id: str, project_id: str) -> None:
         if not FeatureFlagProvider.is_enabled("FEATURE_FLAG_MIGRATE_VFR_TO_CFR_VIDEOS"):
+            logger.warning("FEATURE_FLAG_MIGRATE_VFR_TO_CFR_VIDEOS not enabled, skipping migration.")
             return
         db = MongoDBConnection().geti_db
         storage_client = MinioStorageClient().client

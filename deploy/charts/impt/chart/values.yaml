@@ -134,6 +134,7 @@ jobs-execution-namespace:
     "FEATURE_FLAG_ASYNCHRONOUS_MEDIA_PREPROCESSING": "true"
     "FEATURE_FLAG_LABELS_REORDERING": "true"
     "FEATURE_FLAG_ANNOTATION_HOLE": "false"
+    "FEATURE_FLAG_MIGRATE_VFR_TO_CFR_VIDEOS": "false"
 
 configuration:
   feature_flags_data:
@@ -171,7 +172,7 @@ configuration:
     "FEATURE_FLAG_USER_ONBOARDING": "false"
     "FEATURE_FLAG_VISUAL_PROMPT_SERVICE": "true"
     "FEATURE_FLAG_WORKSPACE_ACTIONS": "false"
-
+    "FEATURE_FLAG_MIGRATE_VFR_TO_CFR_VIDEOS": "false"
 secrets:
   smtp:
     smtp_enabled: false
