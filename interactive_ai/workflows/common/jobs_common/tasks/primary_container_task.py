@@ -383,25 +383,26 @@ def get_flyte_pod_spec(
         ],
     )
 
+
 def _start_istio_termination(n_trials: int = 10, timeout: float = 1.0, sleep_sec: float = 1.0):
     logger.info("starting terminating the istio-proxy sidecar container")
     sleep(20)
 
     is_terminated = False
     for step in range(1, n_trials + 1):
-       try:
-           response = requests.post(TERM_ISTIO_PROXY_URL, timeout=timeout)
+        try:
+            response = requests.post(TERM_ISTIO_PROXY_URL, timeout=timeout)
 
-           if response.status_code == 200:
-               is_terminated = True
-               break
-       except Exception as e:
-           logger.warning("[%d/%d] Cannot terminate istio proxy: %s", step, n_trials, e)
+            if response.status_code == 200:
+                is_terminated = True
+                break
+        except Exception as e:
+            logger.warning("[%d/%d] Cannot terminate istio proxy: %s", step, n_trials, e)
 
-       sleep(sleep_sec)
+        sleep(sleep_sec)
 
     if not is_terminated:
-       logger.error("Cannot terminate istio proxy")
+        logger.error("Cannot terminate istio proxy")
 
 
 def _terminate_istio_proxy(n_trials: int = 10, timeout: float = 1.0, sleep_sec: float = 1.0):
