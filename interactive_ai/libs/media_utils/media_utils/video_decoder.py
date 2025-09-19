@@ -376,7 +376,7 @@ class _VideoDecoderOpenCV(_VideoDecoderInterface, metaclass=Singleton):
             read_success, video_frame_raw = video_reader.read()
             if not read_success:
                 raise VideoFrameReadingError(
-                    f"Failed to read video frame at index {video_reader_frame_pos} for video at {file_location}"
+                    f"Failed to read video frame at index {frame_index} for video at {file_location}"
                 )
         # Post-process the frame (because OpenCV output is BGR)
         video_frame = cv2.cvtColor(video_frame_raw, cv2.COLOR_BGR2RGB)
