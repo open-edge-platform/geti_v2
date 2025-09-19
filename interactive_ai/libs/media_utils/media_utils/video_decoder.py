@@ -200,7 +200,7 @@ class _VideoDecoderInterface:
 
     def is_variable_frame_rate(self, file_location: str) -> bool:
         """
-        Check if a video has variable frame rate by comparing r_frame_rate and avg_frame_rate.=
+        Check if a video has variable frame rate by comparing r_frame_rate and avg_frame_rate.
 
         :param file_location: Local path or presigned S3 URL pointing to the video
         :return: True if the video has variable frame rate, False if constant frame rate
