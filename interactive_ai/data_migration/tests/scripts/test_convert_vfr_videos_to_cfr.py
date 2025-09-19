@@ -153,6 +153,7 @@ class TestConvertVFRVideosToCFR:
         """Test upgrade_project method when VFR videos are present"""
         mock_db: Database = mongomock.MongoClient(uuidRepresentation="standard").db
         os.environ["S3_CREDENTIALS_PROVIDER"] = "aws"
+        os.environ["FEATURE_FLAG_MIGRATE_VFR_TO_CFR_VIDEOS"] = "true"
 
         video_collection = mock_db.create_collection("video")
         video_collection.insert_many(fxt_videos_before_upgrade)
