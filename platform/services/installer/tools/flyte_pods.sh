@@ -51,4 +51,4 @@ if [[ "${delete_flyte_pods}" == "true" ]]; then
 fi
 
 # cleanup
-rm -rf "${TEMP_K8S_YAML}"
+rm -f "${TEMP_K8S_YAML}"
