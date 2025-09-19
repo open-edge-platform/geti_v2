@@ -36,7 +36,7 @@ JOBS_NAMESPACE="impt-jobs-production"
 echo "Secret '${FLYTE_SECRET_NAME}' will be updated to set delete-resource-on-finalize: ${delete_flyte_pods}"
 kubectl --kubeconfig="${kubeconfig}" get secret "${FLYTE_SECRET_NAME}" -n "${FLYTE_NAMESPACE}" -o jsonpath="{.data.k8s\.yaml}" | base64 --decode > "${TEMP_K8S_YAML}"
 sed -i "s/[[:space:]]*delete-resource-on-finalize: \(true\|false\)/    delete-resource-on-finalize: ${delete_flyte_pods}/g" "${TEMP_K8S_YAML}"
-ENCODED_DATA=$(cat ${TEMP_K8S_YAML} | base64 -w 0)
+ENCODED_DATA=$(cat "${TEMP_K8S_YAML}" | base64 -w 0)
 kubectl --kubeconfig="${kubeconfig}" patch secret "${FLYTE_SECRET_NAME}" -n "${FLYTE_NAMESPACE}" --type='merge' -p "{\"data\":{\"k8s.yaml\":\"${ENCODED_DATA}\"}}"
 echo ""
 
