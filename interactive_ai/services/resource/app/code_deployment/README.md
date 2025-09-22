@@ -12,7 +12,7 @@
 
 This code deployment .zip archive contains:
 
-1. Inference model(s) for your Intel® Geti™ project.
+1. Inference model(s) for your Geti™ project.
 
 2. A sample image or video frame, exported from your project.   
 
@@ -23,7 +23,7 @@ This code deployment .zip archive contains:
 
 The deployment holds one model for each task in your project, so if for example 
 you created a deployment for a `Detection -> Classification` project, it will consist of
-both a detection, and a classification model. The Intel® Geti™ SDK is used to run 
+both a detection, and a classification model. The Geti™ SDK is used to run 
 inference for all models in the project's task chain.
 
 This README describes the steps required to get the code sample up and running on your 

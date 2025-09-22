@@ -263,7 +263,7 @@ def get_video_display(  # noqa: ANN201
 
 
 @media_router.get("/media/videos/{video_id}/frames/{frame_index}/display/{display_type}")
-def video_frame_endpoint(
+async def video_frame_endpoint(
     dataset_storage_identifier: Annotated[DatasetStorageIdentifier, Depends(get_dataset_storage_identifier)],
     video_id: Annotated[ID, Depends(get_video_id)],
     frame_index: int,

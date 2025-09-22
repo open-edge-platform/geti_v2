@@ -42,7 +42,7 @@ export const DatasetImportPanelMenu = ({
     onPrimaryAction,
     setActiveDatasetImportId,
     abortDatasetImportAction,
-}: DatasetImportPanelMenuProps): JSX.Element => {
+}: DatasetImportPanelMenuProps) => {
     const { abortActiveUpload } = useTusUpload();
 
     const disabledMenuItems = useMemo((): string[] => {
@@ -77,7 +77,7 @@ export const DatasetImportPanelMenu = ({
     }, [disabledMenuItems]);
 
     const getMenuItemName = useCallback(
-        (item: Record<string, string>): JSX.Element => {
+        (item: Record<string, string>) => {
             switch (item.name) {
                 case MENU_ITEMS.CANCEL:
                 case MENU_ITEMS.DELETE:

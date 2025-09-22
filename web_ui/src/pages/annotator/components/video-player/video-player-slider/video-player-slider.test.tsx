@@ -129,7 +129,7 @@ describe('Video player slider', () => {
         jest.advanceTimersByTime(1000);
 
         expect(
-            screen.getByRole('img', { name: `Thumbnail for frame ${middleVideoFrame.metadata.frames / 10}` })
+            await screen.findByRole('img', { name: `Thumbnail for frame ${middleVideoFrame.metadata.frames / 10}` })
         ).toBeInTheDocument();
 
         // Simulate unhover

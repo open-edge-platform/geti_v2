@@ -14,7 +14,7 @@ interface SensitivitySliderProps {
     onSelectSensitivity: (value: number) => void;
 }
 
-export const SensitivitySlider = ({ max, value, onSelectSensitivity }: SensitivitySliderProps): JSX.Element => {
+export const SensitivitySlider = ({ max, value, onSelectSensitivity }: SensitivitySliderProps) => {
     const maxSensitivity = useMemo(() => Math.min(SENSITIVITY_SLIDER_CONFIG.max, max), [max]);
     const isSmallSensitivity = maxSensitivity === 1;
 

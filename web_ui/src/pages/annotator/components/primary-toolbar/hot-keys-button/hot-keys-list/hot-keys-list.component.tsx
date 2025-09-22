@@ -16,7 +16,7 @@ import { useAvailabilityOfHotkeys } from '../use-availability-of-hotkeys.hook';
 
 import classes from './hot-keys-list.module.scss';
 
-export const HotKeysList = (): JSX.Element => {
+export const HotKeysList = () => {
     const { hotkeys } = useAnnotatorHotkeys();
     const { activeDomains } = useTask();
     const { selectedMediaItem } = useSelectedMediaItem();

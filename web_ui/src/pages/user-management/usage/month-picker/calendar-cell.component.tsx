@@ -10,7 +10,7 @@ import { clsx } from 'clsx';
 
 import styles from './month-picker.module.scss';
 
-export const CalendarCell = (props: AriaCalendarCellProps & { state: CalendarState; month: number }): JSX.Element => {
+export const CalendarCell = (props: AriaCalendarCellProps & { state: CalendarState; month: number }) => {
     const ref = useRef<HTMLElement>(null);
     const { buttonProps, cellProps, isDisabled, isSelected } = useCalendarCell(props, props.state, ref);
     const monthDateFormatter = useDateFormatter({ month: 'short', timeZone: props.state.timeZone });

@@ -21,7 +21,7 @@ export const SelectOptimization = ({
     selectedOptimizationType,
     setSelectedOptimizationType,
     isLoading,
-}: SelectOptimizationProps): JSX.Element => {
+}: SelectOptimizationProps) => {
     const handleSelectOptimizationModel = (key: Key) => {
         const selectedOption = options.find(hasEqualId(key.toString()));
 

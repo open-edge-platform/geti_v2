@@ -64,7 +64,7 @@ export const AccuracyHalfDonutChart = ({
     id,
     ariaLabel = 'Accuracy half donut chart',
     size = 'L',
-}: AccuracyHalfDonutChartProps): JSX.Element => {
+}: AccuracyHalfDonutChartProps) => {
     const modelAccuracy = Math.round(value * 100);
     const remainingValue = Math.round((1 - value) * 100);
 

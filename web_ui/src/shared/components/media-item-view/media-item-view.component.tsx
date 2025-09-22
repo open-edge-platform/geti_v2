@@ -32,7 +32,7 @@ export const MediaItemView = ({
     mediaItem,
     shouldShowAnnotationIndicator,
     shouldShowVideoIndicator = true,
-}: MediaItemViewProps): JSX.Element => {
+}: MediaItemViewProps) => {
     const [isImageLoaded, setImageLoaded] = useState<boolean>(false);
     const [thumbnailError, setThumbnailError] = useState<boolean>(false);
 
@@ -73,9 +73,7 @@ export const MediaItemView = ({
                     style={{
                         display: showLoadingSpinner ? 'none' : 'block',
                     }}
-                    // @ts-expect-error fetchPriority isn't recognized by react yet
-                    // eslint-disable-next-line react/no-unknown-property
-                    fetchpriority='low'
+                    fetchPriority='low'
                 />
             )}
 

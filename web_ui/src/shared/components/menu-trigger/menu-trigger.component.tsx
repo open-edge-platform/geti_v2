@@ -21,7 +21,7 @@ export const MenuTrigger = ({
     children,
     ariaLabel,
     grayedOutKeys,
-}: MenuTriggerProps): JSX.Element => {
+}: MenuTriggerProps) => {
     const isGrayedOut = (item: string) => grayedOutKeys?.includes(item);
     return (
         <MenuTriggerSpectrum onOpenChange={onOpenChange}>

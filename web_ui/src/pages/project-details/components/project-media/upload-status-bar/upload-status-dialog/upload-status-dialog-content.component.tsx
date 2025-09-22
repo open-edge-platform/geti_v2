@@ -17,7 +17,7 @@ const typeToType = {
     [MediaUploadItemState.SUCCESS]: UploadStatusDialogItemTypes.SUCCESS,
 };
 
-export const UploadStatusDialogContent = (): JSX.Element => {
+export const UploadStatusDialogContent = () => {
     const { mediaUploadState } = useDatasetMediaUpload();
     const { list } = mediaUploadState;
 

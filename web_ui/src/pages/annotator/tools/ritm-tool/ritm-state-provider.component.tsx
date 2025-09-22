@@ -30,7 +30,7 @@ export interface RITMStateContextProps {
 
 const RITMStateContext = createContext<RITMStateContextProps | undefined>(undefined);
 
-export const RITMStateProvider = ({ children }: StateProviderProps): JSX.Element => {
+export const RITMStateProvider = ({ children }: StateProviderProps) => {
     const [box, setBox] = useState<RegionOfInterest | null>(null);
     const [result, setResult, undoRedoActions] = useUndoRedoState<RITMResult | null>(null);
 

@@ -8,7 +8,7 @@ import { BreadcrumbProps } from './breadcrumb.interface';
 
 import classes from './breadcrumb.module.scss';
 
-export const Breadcrumb = ({ breadcrumb, href, currentPage, id }: BreadcrumbProps): JSX.Element => {
+export const Breadcrumb = ({ breadcrumb, href, currentPage, id }: BreadcrumbProps) => {
     return currentPage ? (
         <div className={classes['spectrum-Breadcrumbs-item']} id={id}>
             <div className={classes['spectrum-Breadcrumbs-itemLink']} aria-current='page'>

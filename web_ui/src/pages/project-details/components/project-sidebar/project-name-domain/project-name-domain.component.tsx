@@ -34,7 +34,7 @@ export const ProjectNameDomain = ({
     classname,
     textInRow = false,
     isEditableName = false,
-}: ProjectNameDomainProps): JSX.Element => {
+}: ProjectNameDomainProps) => {
     const { name, domains } = project;
     const [editMode, setEditMode] = useState<boolean>(false);
     const [newName, setNewName] = useState<string>(name);

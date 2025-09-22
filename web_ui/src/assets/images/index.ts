@@ -10,7 +10,6 @@ export { ReactComponent as WorkInProgressIcon } from './work-in-progress.svg';
 export { ReactComponent as DeploymentImg } from './deploymentImg.svg';
 export { ReactComponent as PyTorchLogo } from './pytorch-logo.svg';
 export { ReactComponent as OnnxLogo } from './onnx-logo.svg';
-export { ReactComponent as IntelLogoTransparent } from './intel-logo-transparent.svg';
 export { ReactComponent as AccessDenied } from './access-denied-org.svg';
 export { ReactComponent as Forbidden } from './forbidden.svg';
 export { ReactComponent as ConnectionLost } from './server-connection-lost.svg';

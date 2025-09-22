@@ -7,7 +7,7 @@ import { usePropagateAnnotations } from '../hooks/use-propagate-annotations.hook
 import { PropagateAnnotationsButton } from './propagate-annotations-button.component';
 import { PropagateAnnotationsDialog } from './propagate-annotations-dialog.component';
 
-export const PropagateAnnotations = (): JSX.Element => {
+export const PropagateAnnotations = () => {
     const { isDisabled, propagateAnnotationsMutation, showReplaceOrMergeDialog } = usePropagateAnnotations();
 
     if (!showReplaceOrMergeDialog) {

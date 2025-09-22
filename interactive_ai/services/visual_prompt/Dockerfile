@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm@sha256:66a6e8a211a02794515d4e1aa1970fc037ec4dde1429395e1321bdd63af01256 AS base
+FROM python:3.10-slim-bookworm@sha256:e7eed6c2e7fd1ecc43f0a37da7a115f4c9c9f50f247e9cba086c2f4583412fd9 AS base
 
 FROM base AS build
 
@@ -28,7 +28,7 @@ FROM base AS runtime
 
 # Install ffmpeg
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg=7:5.1.6-0+deb12u1 && \
+    apt-get install -y --no-install-recommends ffmpeg=7:5.1.*-0+deb12u1 && \
     rm -rf /var/lib/apt/lists/* && \
     useradd -l -u 10001 non-root && \
 	pip3 uninstall -y setuptools pip wheel && \

@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key, ReactNode } from 'react';
+import { Key, ReactElement, ReactNode } from 'react';
 
 export interface MenuTriggerProps {
     id: string;
@@ -11,8 +11,8 @@ export interface MenuTriggerProps {
     onAction: (key: Key) => void;
     selectedKey?: Iterable<string>;
     onOpenChange?: (isOpen: boolean) => void;
-    renderContent?: (item: string) => JSX.Element;
-    children: JSX.Element;
+    renderContent?: (item: string) => ReactNode;
+    children: ReactElement;
     ariaLabel?: string;
     grayedOutKeys?: Key[];
 }

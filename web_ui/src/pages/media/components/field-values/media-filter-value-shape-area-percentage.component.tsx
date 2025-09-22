@@ -15,7 +15,7 @@ export const MediaFilterValueShapeAreaPercentage = ({
     value,
     isDisabled,
     onSelectionChange,
-}: MediaFilterValueShapeAreaPercentageProps): JSX.Element => {
+}: MediaFilterValueShapeAreaPercentageProps) => {
     const onDebounceSelectionChange = useDebouncedCallback((newValue: number) => {
         onSelectionChange(newValue);
     }, 500);

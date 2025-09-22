@@ -3,7 +3,7 @@
 
 import { Text, View } from '@geti/ui';
 
-export const ModelStatisticsError = (): JSX.Element => {
+export const ModelStatisticsError = () => {
     return (
         <View>
             <Text id={'models-statistics-unavailable-id'}>

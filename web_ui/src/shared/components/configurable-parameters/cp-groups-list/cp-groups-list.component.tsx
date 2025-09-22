@@ -15,7 +15,7 @@ interface CPGroupsListProps extends ConfigParameterItemProp {
     groups: ConfigurableParametersGroups[];
 }
 
-export const CPGroupsList = ({ groups, updateParameter }: CPGroupsListProps): JSX.Element => {
+export const CPGroupsList = ({ groups, updateParameter }: CPGroupsListProps) => {
     const isExpandable = groups.length > 1;
     return (
         <View>

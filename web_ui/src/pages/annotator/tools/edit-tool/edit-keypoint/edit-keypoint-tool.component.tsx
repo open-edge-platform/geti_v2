@@ -12,7 +12,7 @@ import { useSelected } from '../../../../../providers/selected-provider/selected
 import { PoseEdges } from '../../../annotation/shapes/pose-edges.component';
 import { AnnotationToolContext } from '../../../core/annotation-tool-context.interface';
 import { useROI } from '../../../providers/region-of-interest-provider/region-of-interest-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import {
     getAnnotationInBoundingBox,
     getInnerPaddedBoundingBox,
@@ -37,7 +37,7 @@ interface EditKeypointToolProps {
 
 export const EditKeypointTool = ({ annotation, annotationToolContext }: EditKeypointToolProps) => {
     const isEditing = useRef(false);
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const { image, roi } = useROI();
     const { isSelected, setSelected, removeSelected } = useSelected();
     const [angle, setAngle] = useState(0);

@@ -34,7 +34,7 @@ export const ProjectLabelsManagement = ({
     validationError,
     metadata,
     goToNextStep,
-}: ManageProjectLabelsProps): JSX.Element => {
+}: ManageProjectLabelsProps) => {
     const [selectedTask, setSelectedTask] = useState<DOMAIN>(selectedDomain);
 
     useEffect(() => {

@@ -22,7 +22,7 @@ interface TruncatedTextProps extends StyleProps {
     children: string;
 }
 
-export const TruncatedText = ({ id, children, ...otherProps }: TruncatedTextProps): JSX.Element => {
+export const TruncatedText = ({ id, children, ...otherProps }: TruncatedTextProps) => {
     const { styleProps } = useStyleProps(otherProps);
 
     return (
@@ -49,7 +49,7 @@ export const TruncatedTextWithTooltip = ({
     children,
     placement = 'bottom',
     ...others
-}: TruncatedTextWithTooltipProps): JSX.Element => {
+}: TruncatedTextWithTooltipProps) => {
     return (
         <TooltipTrigger placement={placement}>
             <PressableElement {...others} isTruncated>

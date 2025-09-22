@@ -21,7 +21,7 @@ interface AnnotationLabelListProps {
     labels: readonly Label[];
 }
 
-export const AnnotationLabelList = ({ labels, annotation }: AnnotationLabelListProps): JSX.Element => {
+export const AnnotationLabelList = ({ labels, annotation }: AnnotationLabelListProps) => {
     const { selectedTask } = useTask();
 
     if (isEmpty(labels)) {

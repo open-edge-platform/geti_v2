@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { MouseEventHandler, MutableRefObject, useRef, useState } from 'react';
+import { MouseEventHandler, RefObject, useRef, useState } from 'react';
 
 import { Overlay } from '@geti/ui';
 
@@ -103,7 +103,7 @@ export const RangeSection = ({
                 onContextMenu={handleAssignLabel}
             />
             {isOpen && size !== null && (
-                <Overlay isOpen nodeRef={overlayRef as unknown as MutableRefObject<HTMLElement>}>
+                <Overlay isOpen nodeRef={overlayRef as unknown as RefObject<HTMLElement>}>
                     <div
                         style={{
                             position: 'absolute',

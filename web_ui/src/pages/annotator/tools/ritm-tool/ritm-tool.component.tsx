@@ -21,7 +21,7 @@ import { ToolType } from '../../core/annotation-tool-context.interface';
 import { useROI } from '../../providers/region-of-interest-provider/region-of-interest-provider.component';
 import { useTaskChain } from '../../providers/task-chain-provider/task-chain-provider.component';
 import { useTask } from '../../providers/task-provider/task-provider.component';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { DrawingBox } from '../drawing-box/drawing-box.component';
 import { SvgToolCanvas } from '../svg-tool-canvas.component';
 import { PointerType, ToolAnnotationContextProps } from '../tools.interface';
@@ -36,12 +36,10 @@ import classes from './ritm.module.scss';
 // Adding 1 to prevent template_size, and box size being exact same size, causing some issues.
 const MINIMUM_MARGIN = RITM_TEMPLATE_SIZE / 2 + 1;
 
-export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { defaultLabel, activeDomains } = useTask();
     const { getToolSettings } = annotationToolContext;
-    const {
-        zoomState: { zoom },
-    } = useZoom();
+    const { zoom } = useZoomState();
 
     const hasRotatedBoundingBoxDomain = activeDomains.includes(DOMAIN.DETECTION_ROTATED_BOUNDING_BOX);
     const outputShape = hasRotatedBoundingBoxDomain ? ShapeType.RotatedRect : ShapeType.Polygon;
@@ -147,7 +145,7 @@ export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps):
         execute(clampBox(currentBox, ROI), points, outputShape);
     };
 
-    const renderResult = ({ shape }: RITMResult): JSX.Element => {
+    const renderResult = ({ shape }: RITMResult) => {
         if (shape === undefined || isPoseShape(shape)) {
             return <></>;
         }
@@ -171,7 +169,7 @@ export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps):
         }
     };
 
-    const renderPoint = ({ x, y, positive }: RITMPoint, index: number): JSX.Element => {
+    const renderPoint = ({ x, y, positive }: RITMPoint, index: number) => {
         const fill = positive ? 'green' : 'red';
 
         return (
@@ -184,7 +182,7 @@ export const RITMTool = ({ annotationToolContext }: ToolAnnotationContextProps):
         );
     };
 
-    const renderLoadingPoint = ({ x, y, positive }: RITMPoint): JSX.Element => {
+    const renderLoadingPoint = ({ x, y, positive }: RITMPoint) => {
         const fill = positive ? 'green' : 'red';
 
         return (

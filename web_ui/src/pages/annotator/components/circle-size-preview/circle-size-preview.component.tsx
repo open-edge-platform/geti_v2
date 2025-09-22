@@ -21,7 +21,7 @@ export const CircleSizePreview = ({
     roi,
     isCircleSizePreviewVisible,
     children,
-}: CircleSizePreviewProps): JSX.Element => {
+}: CircleSizePreviewProps) => {
     const circlePreview = useMemo<CircleInterface>(
         () => ({
             shapeType: ShapeType.Circle,

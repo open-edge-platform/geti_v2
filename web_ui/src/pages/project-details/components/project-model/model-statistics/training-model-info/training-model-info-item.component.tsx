@@ -14,7 +14,7 @@ interface TrainingDateProps {
     subText?: ReactNode;
 }
 
-export const TrainingModelInfoItem = ({ value, header, subText, id }: TrainingDateProps): JSX.Element => {
+export const TrainingModelInfoItem = ({ value, header, subText, id }: TrainingDateProps) => {
     return (
         <Flex direction={'column'} gap={'size-60'} data-testid={id}>
             {subText ? (

@@ -11,13 +11,12 @@ interface FullscreenProps {
     toggle: Dispatch<SetStateAction<boolean>>;
 }
 
-export const Fullscreen = ({ enabled, toggle }: FullscreenProps): JSX.Element => {
+export const Fullscreen = ({ enabled, toggle }: FullscreenProps) => {
     return (
         <ActionButton
             isQuiet
             justifySelf='end'
-            id='job-scheduler-action-expand'
-            data-testid='job-scheduler-action-expand'
+            data-testid={`job-scheduler-action-${enabled ? 'collapse' : 'expand'}`}
             aria-label='Job scheduler action expand'
             onPress={() => toggle((prevState: boolean) => !prevState)}
         >

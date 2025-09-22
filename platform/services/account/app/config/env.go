@@ -69,8 +69,8 @@ const (
 	organizationRejectRequestedAccessTopicEnvVarName   = "ORGANIZATION_REJECT_REQUEST_TOPIC"
 	organizationInvitationMailMessageEnvVarName        = "ORGANIZATION_INVITATION_MAIL_MESSAGE"
 	organizationInvitationTopicEnvVarName              = "ORGANIZATION_INVITATION_TOPIC"
-	defaultInvitationMailTopic                         = "You have been invited to join Intel® Geti™"
-	defaultInvitationMailMessage                       = "You have been invited to join Intel® Geti™: {{ .InvitationLink }}"
+	defaultInvitationMailTopic                         = "You have been invited to join Geti™"
+	defaultInvitationMailMessage                       = "You have been invited to join Geti™: {{ .InvitationLink }}"
 	invitationLinkEnvVarName                           = "INVITATION_LINK"
 	invitationLinkDefault                              = "https://geti.com/invitation_link"
 

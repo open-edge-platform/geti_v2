@@ -33,7 +33,7 @@ export const GridMediaItem = ({
     handleDblClick,
     toggleMediaSelection,
     shouldShowAnnotationIndicator,
-}: GridMediaItemProps): JSX.Element => {
+}: GridMediaItemProps) => {
     const triggerRef = useRef(null);
     const [selectedMediaItemAction, setSelectedMediaItemAction] = useState<Key | undefined>(undefined);
 

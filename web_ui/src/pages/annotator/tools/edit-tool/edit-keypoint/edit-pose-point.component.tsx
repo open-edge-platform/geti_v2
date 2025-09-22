@@ -15,7 +15,7 @@ import { getPointInRoi } from '../../../../utils';
 import { PoseKeypointVisibility } from '../../../annotation/shapes/pose-keypoints.component';
 import { useAnnotatorCanvasSettings } from '../../../providers/annotator-canvas-settings-provider/annotator-canvas-settings-provider.component';
 import { useAnnotatorContextMenu } from '../../../providers/annotator-context-menu-provider/annotator-context-menu-provider.component';
-import { useZoom } from '../../../zoom/zoom-provider.component';
+import { useZoomState } from '../../../zoom/zoom-provider.component';
 import { ResizeAnchorType } from '../resize-anchor.enum';
 
 export interface EditPosePointToolProps {
@@ -52,7 +52,7 @@ export const EditPosePoint = ({
     onToggleVisibility,
 }: EditPosePointToolProps) => {
     const isUpdated = useRef(false);
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const containerRef = useRef<SVGGElement | null>(null);
     const { showContextMenu, hideContextMenu, contextConfig } = useAnnotatorContextMenu();
 

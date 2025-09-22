@@ -64,7 +64,7 @@ export const SearchLabelTreeViewItem = ({
     children,
     suffix,
     prefix,
-}: SearchLabelTreeViewItemProps): JSX.Element => {
+}: SearchLabelTreeViewItemProps) => {
     const { name, hotkey } = label;
     const { hoverProps, isHovered } = useHover({});
 

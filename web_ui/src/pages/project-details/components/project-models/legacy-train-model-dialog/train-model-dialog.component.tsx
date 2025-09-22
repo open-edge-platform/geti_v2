@@ -41,7 +41,7 @@ const dialogStyles = {
     '--spectrum-dialog-padding-y': 'var(--spectrum-global-dimension-size-350)',
 } as CSSProperties;
 
-export const TrainModelDialog = ({ isOpen, onClose, onSuccess }: TrainModelDialogProps): JSX.Element => {
+export const TrainModelDialog = ({ isOpen, onClose, onSuccess }: TrainModelDialogProps) => {
     const { useTrainModelMutation } = useModels();
     const trainModel = useTrainModelMutation();
     const projectIdentifier = useProjectIdentifier();

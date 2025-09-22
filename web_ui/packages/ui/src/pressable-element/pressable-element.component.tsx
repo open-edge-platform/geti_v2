@@ -21,18 +21,18 @@ const TruncatedTextStyles: CSSProperties = {
     textOverflow: 'ellipsis',
 };
 
-const viewStyleKeys = [...Object.keys(viewStyleProps), 'UNSAFE_className', 'UNSAFE_style'];
+const propsToOmit = [...Object.keys(viewStyleProps), 'UNSAFE_className', 'UNSAFE_style', 'id'];
 
 export const PressableElement = ({ id, children, isTruncated, onDoubleClick, ...props }: PressableElementProps) => {
     const styles = isTruncated ? TruncatedTextStyles : {};
-    const pressableProps = omit(props, viewStyleKeys);
+    const pressableProps = omit(props, propsToOmit);
     const { styleProps } = useStyleProps(props);
 
     return (
         <Pressable {...pressableProps}>
             <div
-                id={id}
                 {...styleProps}
+                data-testid={id}
                 style={{ ...styles, ...styleProps.style }}
                 onDoubleClick={onDoubleClick}
                 role='button'

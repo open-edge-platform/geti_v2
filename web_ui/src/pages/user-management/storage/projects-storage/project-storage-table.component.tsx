@@ -21,11 +21,11 @@ enum ProjectsColumns {
     ACTION = 'action',
 }
 
-const ProjectNameCell = ({ name }: { name: string }): JSX.Element => {
+const ProjectNameCell = ({ name }: { name: string }) => {
     return <TruncatedText>{name}</TruncatedText>;
 };
 
-const ProjectSizeCell = ({ size }: { size: number }): JSX.Element => {
+const ProjectSizeCell = ({ size }: { size: number }) => {
     return <Text>{getFileSize(size)}</Text>;
 };
 
@@ -60,7 +60,7 @@ export const ProjectStorageTable = ({
     queryOptions,
     onSortChange,
     onLoadMore,
-}: ProjectStorageTableProps): JSX.Element => {
+}: ProjectStorageTableProps) => {
     const { organizationId, workspaceId } = useFirstWorkspaceIdentifier();
 
     return (

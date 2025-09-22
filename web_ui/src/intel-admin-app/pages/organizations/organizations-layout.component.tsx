@@ -6,7 +6,7 @@ import { paths } from '@geti/core';
 import { ContentLayout } from '../../shared/components/content-layout/content-layout.component';
 import { Organizations } from './organizations.component';
 
-export const OrganizationsLayout = (): JSX.Element => {
+export const OrganizationsLayout = () => {
     return (
         <ContentLayout
             breadcrumbs={[

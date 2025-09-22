@@ -14,7 +14,7 @@ export const ShapeFactory = ({
     annotation,
 }: {
     annotation: Pick<Annotation, 'shape' | 'id' | 'isSelected'> & Partial<Annotation>;
-}): JSX.Element => {
+}) => {
     const { shape, id, isSelected } = annotation;
 
     const ariaLabel = `${isSelected ? 'Selected' : 'Not selected'} shape ${id}`;

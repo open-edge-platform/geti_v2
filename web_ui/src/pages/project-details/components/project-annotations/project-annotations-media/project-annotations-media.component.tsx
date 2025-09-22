@@ -14,7 +14,7 @@ interface ProjectAnnotationsMediaProps extends ProjectGridArea {
     videos: number;
 }
 
-export const ProjectAnnotationsMedia = ({ gridArea, images, videos }: ProjectAnnotationsMediaProps): JSX.Element => {
+export const ProjectAnnotationsMedia = ({ gridArea, images, videos }: ProjectAnnotationsMediaProps) => {
     return (
         <CardContent title='Number of media' gridArea={gridArea}>
             <Flex justifyContent='space-around' alignItems='center' height='100%'>

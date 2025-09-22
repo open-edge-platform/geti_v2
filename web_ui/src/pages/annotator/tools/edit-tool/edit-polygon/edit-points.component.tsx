@@ -35,15 +35,7 @@ interface GhostPoint {
 
 const CONTEXT_ID = 'Delete point';
 
-export const EditPoints = ({
-    roi,
-    zoom,
-    shape,
-    addPoint,
-    onComplete,
-    moveAnchorTo,
-    removePoints,
-}: EditPointsProps): JSX.Element => {
+export const EditPoints = ({ roi, zoom, shape, addPoint, onComplete, moveAnchorTo, removePoints }: EditPointsProps) => {
     const containerRef = useRef<SVGGElement | null>(null);
     const ref = useRef<SVGRectElement>(null);
 
@@ -187,7 +179,7 @@ export const EditPoints = ({
 
 interface ResizeAnchorsProps
     extends Pick<EditPointsProps, 'shape' | 'moveAnchorTo' | 'addPoint' | 'onComplete' | 'zoom'> {
-    svgRef: RefObject<SVGRectElement>;
+    svgRef: RefObject<SVGRectElement | null>;
 }
 
 function ResizeAnchorsGhostPoint({ shape, addPoint, moveAnchorTo, zoom, onComplete, svgRef }: ResizeAnchorsProps) {

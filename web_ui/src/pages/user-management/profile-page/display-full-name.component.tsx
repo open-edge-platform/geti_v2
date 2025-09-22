@@ -12,7 +12,7 @@ interface DisplayFullNameProps {
     lastName: string;
 }
 
-export const DisplayFullName = ({ firstName, lastName }: DisplayFullNameProps): JSX.Element => {
+export const DisplayFullName = ({ firstName, lastName }: DisplayFullNameProps) => {
     const fullName = getFullNameFromName(firstName, lastName);
 
     return (

@@ -9,7 +9,7 @@ interface TestDetailsProps {
     test: Test;
 }
 
-export const NoTestResults = ({ test }: TestDetailsProps): JSX.Element => {
+export const NoTestResults = ({ test }: TestDetailsProps) => {
     const testingDatasetWasDeleted = test.datasetsInfo.some(({ isDeleted }) => isDeleted);
 
     return (

@@ -21,7 +21,7 @@ interface CPParamItemProps extends ConfigParameterItemProp {
     parameter: ConfigurableParametersParams;
 }
 
-export const CPParamItem = ({ parameter, updateParameter }: CPParamItemProps): JSX.Element => {
+export const CPParamItem = ({ parameter, updateParameter }: CPParamItemProps) => {
     const { header, description, warning, editable } = parameter;
     const headerId = `${idMatchingFormat(header)}`;
     const isReadOnly = !editable;

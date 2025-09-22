@@ -33,7 +33,7 @@ interface TaskProviderProps {
     children: ReactNode;
 }
 
-export const TaskProvider = ({ children }: TaskProviderProps): JSX.Element => {
+export const TaskProvider = ({ children }: TaskProviderProps) => {
     const { project, isTaskChainProject } = useProject();
 
     const tasks = useMemo(() => {

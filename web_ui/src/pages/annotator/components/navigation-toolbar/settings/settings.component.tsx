@@ -46,7 +46,7 @@ interface SettingsProps {
     isDarkMode?: boolean;
 }
 
-export const Settings = ({ settings, isDarkMode = false }: SettingsProps): JSX.Element => {
+export const Settings = ({ settings, isDarkMode = false }: SettingsProps) => {
     const { saveConfig, isSavingConfig } = settings;
     const { selectedTask, tasks } = useTask();
     const { projectId } = useProjectIdentifier();

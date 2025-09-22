@@ -6,7 +6,7 @@ import { Outlet } from 'react-router-dom';
 import { useProjectIdentifier } from '../../hooks/use-project-identifier/use-project-identifier';
 import { ProjectProvider } from '../../pages/project-details/providers/project-provider/project-provider.component';
 
-export const ProjectProviderLayout = (): JSX.Element => {
+export const ProjectProviderLayout = () => {
     const { workspaceId, projectId, organizationId } = useProjectIdentifier();
 
     return (

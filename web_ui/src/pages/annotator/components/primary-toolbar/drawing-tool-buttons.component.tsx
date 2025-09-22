@@ -29,7 +29,7 @@ const DrawingToggleButtonShortcut = ({
     children: ReactNode;
     type: ToolType;
     onSelect: () => void;
-}): JSX.Element => {
+}) => {
     useDrawingToolsKeyboardShortcut(type, onSelect);
 
     return <> {children} </>;
@@ -41,7 +41,7 @@ export const DrawingToolButtons = ({
     activeTool,
     setActiveTool,
     isDisabled,
-}: DrawingToolButtonsProps): JSX.Element => {
+}: DrawingToolButtonsProps) => {
     const { hotkeys } = useAnnotatorHotkeys();
 
     return (

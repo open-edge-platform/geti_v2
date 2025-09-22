@@ -17,7 +17,7 @@ interface CloseSidebarProps {
     screenshots: Screenshot[];
 }
 
-export const CloseSidebar = ({ screenshots }: CloseSidebarProps): JSX.Element => {
+export const CloseSidebar = ({ screenshots }: CloseSidebarProps) => {
     const triggerRef = useRef(null);
     const settingsPopoverState = useOverlayTriggerState({});
 

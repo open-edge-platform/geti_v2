@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useCameraParams } from '../../hooks/camera-params.hook';
 
-export const TakeShotsButton = (): JSX.Element => {
+export const TakeShotsButton = () => {
     const navigate = useNavigate();
     const { hasDefaultLabel, defaultLabelId, ...datasetIdentifier } = useCameraParams();
 

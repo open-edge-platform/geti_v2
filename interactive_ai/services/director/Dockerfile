@@ -1,9 +1,9 @@
-FROM python:3.10-slim-bookworm@sha256:66a6e8a211a02794515d4e1aa1970fc037ec4dde1429395e1321bdd63af01256 AS base
+FROM python:3.10-slim-bookworm@sha256:e7eed6c2e7fd1ecc43f0a37da7a115f4c9c9f50f247e9cba086c2f4583412fd9 AS base
 
 FROM base AS build
 
 # Install Git and clone the OTX at the specified tag
-ARG OTX_RELEASE_TAG=release/2.5
+ARG OTX_RELEASE_TAG=release/2.6
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -41,7 +41,7 @@ RUN useradd -l -u 10001 non-root && \
 
 # Copy the application from the builder
 COPY --link --from=build --chown=10001 /interactive_ai/services/director /interactive_ai/services/director
-COPY --link --from=build --chown=10001 /training_extensions/src/otx/tools/templates /model_templates
+COPY --link --from=build --chown=10001 /training_extensions/lib/src/otx/tools/templates /model_templates
 COPY --link --from=schemas . /interactive_ai/services/api
 
 ENV MODEL_TEMPLATES_DIR=/model_templates

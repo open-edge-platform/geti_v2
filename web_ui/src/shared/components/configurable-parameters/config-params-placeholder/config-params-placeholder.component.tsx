@@ -3,7 +3,7 @@
 
 import { Flex, Skeleton } from '@geti/ui';
 
-export const ConfigParamsPlaceholder = (): JSX.Element => {
+export const ConfigParamsPlaceholder = () => {
     return (
         <Flex width={'100%'} height={'100%'} gap={32} data-testid={'config-params-placeholder-id'}>
             <Flex flex={1} direction='column' gap={16}>

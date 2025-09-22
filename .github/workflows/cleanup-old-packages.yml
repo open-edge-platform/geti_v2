@@ -1,0 +1,127 @@
+# GHCR cleanup workflow
+#
+# This workflow deletes untagged and old package daily builds from GHCR registry.
+# 
+# Key Features:
+# - Deletes untagged and old package daily builds from GHCR registry
+# - Can be triggered manually or by other workflows
+# - Supports dry run mode to preview changes
+# 
+# Process Stages:
+# 1. Prepare list of package versions to delete
+# 2. Delete old package versions
+# 3. Delete untagged package versions
+#
+# Inputs:
+# - package_name: The name of the package to clean up
+# - min_versions_to_keep: The minimum number of daily builds to keep
+# - dry_run: Perform a dry run without deleting packages
+#
+# Example usage:
+# 1. Call this workflow manually from Github Actions page
+# 2. Trigger this workflow from another workflow using the `workflow_call` event:
+#    uses: ./.github/workflows/cleanup-old-packages.yml
+#    with:
+#      package_name: "your-package-name"
+#      min_versions_to_keep: 5
+#      dry_run: true
+
+name: Cleanup old packages from daily builds
+
+on:
+  workflow_call:
+    inputs:
+      package_name:
+        description: "The name of the package to clean up"
+        type: string
+        required: true
+      min_versions_to_keep:
+        description: The number of latest versions to keep.
+        type: number
+        default: 5
+      dry_run:
+        description: "Perform a dry run without deleting packages"
+        type: boolean
+        default: true
+
+  workflow_dispatch:
+    inputs:
+      package_name:
+        description: "The name of the package to clean up"
+        type: string
+        required: true
+      min_versions_to_keep:
+        description: The number of latest versions to keep.
+        type: number
+        default: 5
+      dry_run:
+        description: "Perform a dry run without deleting packages"
+        type: boolean
+        default: true
+
+permissions: {}
+
+jobs:
+  prepare-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare list of package ids to delete
+        id: prepare-versions
+        env: 
+          MIN_VERSIONS_TO_KEEP: ${{ github.event.inputs.min_versions_to_keep }}
+          PACKAGE_NAME: ${{ github.event.inputs.package_name }}
+          GH_TOKEN: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "Preparing list of package:"$PACKAGE_NAME" ids to delete from ghcr.io..."
+          # Add logic to populate package_version_ids
+
+          # Get all package versions and output them in format:
+          # [
+          #   {
+          #     "id": package_id,
+          #     "tag": package_first_tag,
+          #     "created_at": date_package_was_pushed_to_ghcr
+          #   }
+          # ]
+          PACKAGE_VERSIONS=$(gh api -H "Accept: application/vnd.github+json" /orgs/open-edge-platform/packages/container/${PACKAGE_NAME//\//%2F}/versions?per_page=100 \
+            | jq '[.[] | {id, tag: .metadata.container.tags[0], created_at}]')
+
+          # Filter PACKAGE_VERSIONS to contain only daily packages not release packages
+          DAILY_PACKAGE_VERSIONS=$(echo "$PACKAGE_VERSIONS" | jq '[.[] | select(.tag != null and (.tag | type == "string") 
+            and (.tag | test("^[0-9]\\.[0-9]{1,2}\\.[0-9]-[a-z0-9]{8}$"))) | {id, tag, created_at}]')
+
+          # Validate MIN_VERSIONS_TO_KEEP
+          if ! [[ $MIN_VERSIONS_TO_KEEP =~ ^[0-9]+$ ]]; then echo "Invalid MIN_VERSIONS_TO_KEEP, exiting"; exit 1; fi
+
+          # Sort DAILY_PACKAGE_VERSIONS by created_at desc
+          OLD_DAILY_PACKAGE_VERSIONS=$(echo "$DAILY_PACKAGE_VERSIONS" | jq --argjson min_versions_to_keep "$MIN_VERSIONS_TO_KEEP" 'sort_by
+            (.created_at | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime) | reverse | .[$min_versions_to_keep:]')
+
+          # Output packages to be removed
+          echo "Tags to delete (if not dry run):"
+          echo "$OLD_DAILY_PACKAGE_VERSIONS" | jq -r '.[].tag'
+
+          # Prepare output with packages to be removed
+          package_version_ids=$(echo "$OLD_DAILY_PACKAGE_VERSIONS" | jq -r '.[].id' | paste -sd, -)
+          echo "package_version_ids=$package_version_ids" >> $GITHUB_OUTPUT
+
+          if [ -z "$package_version_ids" ]; then echo "No versions to delete"; fi
+
+      - name: Cleanup old packages
+        if: ${{ !github.event.inputs.dry_run && steps.prepare-versions.outputs.package_version_ids != '' }}
+        uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55  # v5.0.0
+        with:
+          package-name: '${{ github.event.inputs.package_name }}'
+          package-type: 'container'
+          package-version-ids: '${{ steps.prepare-versions.outputs.package_version_ids }}'
+          token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+
+      - name: Cleanup untagged packages
+        if: ${{ !github.event.inputs.dry_run }}
+        uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55  # v5.0.0
+        with:
+          package-name: '${{ github.event.inputs.package_name }}'
+          package-type: 'container'
+          token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+          delete-only-untagged-versions: true

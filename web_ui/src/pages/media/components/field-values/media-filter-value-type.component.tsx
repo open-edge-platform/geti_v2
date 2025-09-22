@@ -16,7 +16,7 @@ export const MediaFilterValueType = ({
     value = '',
     isDisabled = false,
     onSelectionChange,
-}: MediaFilterValueTypeProps): JSX.Element => {
+}: MediaFilterValueTypeProps) => {
     const handleSelectionChange = (key: Key) => {
         onSelectionChange(key);
     };

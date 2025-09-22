@@ -31,7 +31,7 @@ interface ContentContainerProps {
     shouldShowExplanation: boolean;
 }
 
-const ContentContainer = ({ imageWasUploaded, shouldShowExplanation }: ContentContainerProps): JSX.Element => {
+const ContentContainer = ({ imageWasUploaded, shouldShowExplanation }: ContentContainerProps) => {
     // We want to show a warning card to the user when the inference request is not working
     // We will only do this when the request is not successful yet
     const labels = useTaskLabels();
@@ -74,7 +74,7 @@ const LiveFileInference = ({ imageWasUploaded }: { imageWasUploaded: boolean }) 
     );
 };
 
-const QuickInferencePage = (): JSX.Element => {
+const QuickInferencePage = () => {
     const { image, annotations, imageWasUploaded, isDisabled, onResetImage } = useQuickInference();
     const settings = useUserGlobalSettings();
     const isLivePredictionNotificationVisible =
@@ -123,7 +123,7 @@ const QuickInferencePage = (): JSX.Element => {
     );
 };
 
-export const QuickInference = (): JSX.Element => {
+export const QuickInference = () => {
     const { useHasActiveModels } = useModels();
     const { hasActiveModels } = useHasActiveModels();
 

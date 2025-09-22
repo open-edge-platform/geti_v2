@@ -13,7 +13,7 @@ import { CardContent } from '../../../../../../shared/components/card-content/ca
 import { DownloadGraphMenu } from '../../../../../../shared/components/download-graph-menu/download-graph-menu.component';
 import TrainingModelBarChart from '../training-model-bar-chart/training-model-bar-chart.component';
 
-export const TrainingModelGrouped = ({ header, values }: TrainingModelStatisticsGroup): JSX.Element => {
+export const TrainingModelGrouped = ({ header, values }: TrainingModelStatisticsGroup) => {
     const [selectedChart, setSelectedChart] = useState<TrainingModelBarRadialChart>(values[0]);
 
     const onSelectionChange = (key: Key) => {
@@ -55,14 +55,15 @@ export const TrainingModelGrouped = ({ header, values }: TrainingModelStatistics
                         )}
                     </Picker>
                     <FullscreenAction
-                        actionButton={
+                        actionButton={(ref) => (
                             <DownloadGraphMenu
+                                ref={ref}
                                 fileName={header}
                                 data={{ type: 'barChart', data: downloadableData }}
                                 tooltip={'Download graph'}
                                 graphBackgroundColor={'gray-100'}
                             />
-                        }
+                        )}
                         title={header}
                     >
                         <TrainingModelBarChart

@@ -39,7 +39,7 @@ export const AnnotationListItemMenu = ({
     toggleLock,
     remove,
     editLabels,
-}: AnnotationListItemMenuProps): JSX.Element => {
+}: AnnotationListItemMenuProps) => {
     const onAction = (key: Key) => {
         switch (key) {
             case MENU_ACTIONS.HIDE: {

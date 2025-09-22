@@ -51,7 +51,7 @@ export const SubsetBucket = ({
     modelInformation,
     taskId,
     isActive,
-}: SubsetBucketProps): JSX.Element => {
+}: SubsetBucketProps) => {
     const [mediaFilterOptions, setMediaFilterOptions] = useFilterSearchParam<AdvancedFilterOptions>(`filter-${type}`);
     const [sortingOptions, setSortingOptions] = useState<AdvancedFilterSortingOptions>({});
     const [viewMode, setViewMode] = useViewMode(type, ViewModes.SMALL);
@@ -79,7 +79,7 @@ export const SubsetBucket = ({
 
     const { totalMatchedImages = 0, totalMatchedVideos = 0 } = subsetMediaItemsQuery.data?.pages[0] ?? {};
 
-    const getItemTooltip = (item: MediaItem): JSX.Element => {
+    const getItemTooltip = (item: MediaItem) => {
         const tooltipProps = getMediaItemTooltipProps(item);
 
         return <MediaItemTooltipMessage {...tooltipProps} />;

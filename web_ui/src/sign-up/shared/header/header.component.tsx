@@ -5,7 +5,7 @@ import { Flex, View } from '@geti/ui';
 
 import { ReactComponent as Logo } from '../../../assets/geti.svg';
 
-export const Header = (): JSX.Element => {
+export const Header = () => {
     return (
         <>
             <View paddingY={'size-350'} position={'relative'} backgroundColor={'gray-300'}>

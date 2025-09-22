@@ -16,7 +16,7 @@ import { TestsTable } from './tests-table.component';
 
 const TIME_TO_REFETCH_TESTS = 2000;
 
-export const Tests = (): JSX.Element => {
+export const Tests = () => {
     const projectIdentifier = useProjectIdentifier();
     const { useTestsListQuery } = useTests();
 

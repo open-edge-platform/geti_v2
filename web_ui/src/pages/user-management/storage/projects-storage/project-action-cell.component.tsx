@@ -14,7 +14,7 @@ import { useCheckPermission } from '../../../../shared/components/has-permission
 import { OPERATION } from '../../../../shared/components/has-permission/has-permission.interface';
 import { DeleteProjectDialog } from '../../../landing-page/landing-page-workspace/components/projects-list/components/project/components/project-action-menu/delete-project-dialog.component';
 
-export const ProjectActionCell = ({ name, id }: { name: string; id: string }): JSX.Element => {
+export const ProjectActionCell = ({ name, id }: { name: string; id: string }) => {
     const workspaceIdentifier = useFirstWorkspaceIdentifier();
     const [isDeleteAlertVisible, setIsDeleteAlertVisible] = useState<boolean>(false);
     const canDeleteProject = useCheckPermission([OPERATION.PROJECT_DELETION], [{ type: RESOURCE_TYPE.PROJECT, id }]);

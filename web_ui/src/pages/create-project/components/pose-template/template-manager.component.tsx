@@ -12,7 +12,6 @@ import { HoveredProvider } from '../../../../providers/hovered-provider/hovered-
 import { SelectedProvider } from '../../../../providers/selected-provider/selected-provider.component';
 import { ButtonWithSpectrumTooltip } from '../../../../shared/components/button-with-tooltip/button-with-tooltip.component';
 import { denormalizePoint } from '../../../../shared/utils';
-import { SyncZoomState } from '../../../annotator/zoom/sync-zoom-state.component';
 import { ZoomProvider } from '../../../annotator/zoom/zoom-provider.component';
 import { TransformZoom } from '../../../shared/zoom/transform-zoom.component';
 import { TemplateState, TemplateStateWithHistory } from '../../../utils';
@@ -146,7 +145,6 @@ export const TemplateManager = ({
                                 isDeleteNodeEnabled={isLabelOptionsEnabled}
                             />
 
-                            <SyncZoomState />
                             <TransformZoom>
                                 <div
                                     ref={containerRef}

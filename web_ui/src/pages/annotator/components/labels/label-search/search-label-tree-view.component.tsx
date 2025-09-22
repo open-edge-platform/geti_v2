@@ -15,13 +15,7 @@ interface LabelTreeViewProps {
     prefix?: SearchLabelTreeItemSuffix;
 }
 
-export const SearchLabelTreeView = ({
-    labels,
-    itemClickHandler,
-    width,
-    suffix,
-    prefix,
-}: LabelTreeViewProps): JSX.Element => {
+export const SearchLabelTreeView = ({ labels, itemClickHandler, width, suffix, prefix }: LabelTreeViewProps) => {
     return (
         <ul
             className={`${classes['spectrum-TreeView']} ${classes['spectrum-TreeView--thumbnail']}`}

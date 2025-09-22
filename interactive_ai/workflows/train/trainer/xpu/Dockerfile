@@ -2,7 +2,7 @@
 # --device /dev/dri          # Intel GPU access
 # -v /dev/dri/by-path:/dev/dri/by-path  # Device path mapping
 
-FROM python:3.10-slim-bookworm@sha256:66a6e8a211a02794515d4e1aa1970fc037ec4dde1429395e1321bdd63af01256 AS base
+FROM python:3.10-slim-bookworm@sha256:e7eed6c2e7fd1ecc43f0a37da7a115f4c9c9f50f247e9cba086c2f4583412fd9 AS base
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
@@ -53,6 +53,7 @@ COPY --link download_pretrained_weights.py download_pretrained_weights.py
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
 RUN uv pip uninstall torch torchvision
 RUN uv pip install torch==2.8.0 torchvision==0.23.0 --default-index https://download.pytorch.org/whl/xpu
+RUN uv pip install setuptools==69.5.1
 
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/workflows/train/trainer/.venv/bin:/interactive_ai/workflows/train/trainer:$PATH"

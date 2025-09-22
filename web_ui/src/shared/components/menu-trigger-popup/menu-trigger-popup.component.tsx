@@ -31,7 +31,7 @@ export const MenuTriggerPopup = ({
     isButtonDisabled,
     onOpenChange,
     ariaLabel,
-}: MenuTriggerPopupProps): JSX.Element => {
+}: MenuTriggerPopupProps) => {
     const [dialog, setDialog] = useState<Key>();
 
     return (

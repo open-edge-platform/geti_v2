@@ -11,7 +11,7 @@ interface LastLoginCellProps {
     direction?: 'column' | 'row';
 }
 
-export const LastLoginCell = ({ id, lastSuccessfulLogin, direction = 'column' }: LastLoginCellProps): JSX.Element => {
+export const LastLoginCell = ({ id, lastSuccessfulLogin, direction = 'column' }: LastLoginCellProps) => {
     if (lastSuccessfulLogin === null) {
         return <Text id={id}>N/A</Text>;
     }

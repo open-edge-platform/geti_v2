@@ -40,8 +40,8 @@ describe('TrainingDataset component', () => {
 
         expect(await screen.findByTestId('training-subsets-content')).toBeInTheDocument();
 
-        expect(screen.getByTestId('training-subset-title')).toHaveTextContent(`check-shield.svgTraining42%`);
-        expect(screen.getByTestId('testing-subset-title')).toHaveTextContent(`bulb.svgTesting38%`);
-        expect(screen.getByTestId('validation-subset-title')).toHaveTextContent(`document.svgValidation19%`);
+        expect(screen.getByTestId('training-subset-title')).toHaveTextContent(`Training42%`);
+        expect(screen.getByTestId('testing-subset-title')).toHaveTextContent(`Testing38%`);
+        expect(screen.getByTestId('validation-subset-title')).toHaveTextContent(`Validation19%`);
     });
 });

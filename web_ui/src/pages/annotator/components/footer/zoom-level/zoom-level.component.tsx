@@ -31,7 +31,7 @@ const getZoomStep = () => {
     return Math.min(step, 100) / 100;
 };
 
-export const ZoomLevel = ({ zoom }: ZoomLevelProps): JSX.Element => {
+export const ZoomLevel = ({ zoom }: ZoomLevelProps) => {
     const { zoomIn, zoomOut, resetTransform } = useControls();
     const [zoomStep, setZoomStep] = useState(getZoomStep());
 

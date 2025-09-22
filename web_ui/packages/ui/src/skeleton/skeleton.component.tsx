@@ -12,7 +12,7 @@ interface SkeletonProps extends DOMProps, StyleProps, AriaLabelingProps {
     isAspectRatioOne?: boolean;
 }
 
-export const Skeleton = (props: SkeletonProps): JSX.Element => {
+export const Skeleton = (props: SkeletonProps) => {
     const { isCircle, isAspectRatioOne = false, ...rest } = props;
 
     return (

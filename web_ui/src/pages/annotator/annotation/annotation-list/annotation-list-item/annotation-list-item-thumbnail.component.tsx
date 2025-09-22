@@ -38,7 +38,7 @@ export const AnnotationListItemThumbnail = memo(
         width = THUMBNAIL_DIMENSIONS.width,
         height = THUMBNAIL_DIMENSIONS.height,
         status = MEDIA_ANNOTATION_STATUS.NONE,
-    }: AnnotationListItemThumbnailProps): JSX.Element => {
+    }: AnnotationListItemThumbnailProps) => {
         const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
         useEffect(() => {

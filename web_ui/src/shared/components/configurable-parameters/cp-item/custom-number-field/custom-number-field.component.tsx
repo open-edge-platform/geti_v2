@@ -58,7 +58,7 @@ export const CustomNumberField = ({
     TextFieldWidth = 'size-1200',
     UNSAFE_className,
     ...inputProps
-}: CustomNumberFieldProps): JSX.Element => {
+}: CustomNumberFieldProps) => {
     const [inputValue, setInputValue] = useState<number>(value);
     const [displayValue, setDisplayValue] = useState<string>(value.toString());
     const formatter = useNumberFormatter(formatOptions);

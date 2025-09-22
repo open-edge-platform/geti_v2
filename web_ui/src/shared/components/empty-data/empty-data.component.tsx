@@ -14,7 +14,7 @@ interface EmptyDataProps {
     afterText?: ReactNode;
 }
 
-export const EmptyData = ({ title, text, beforeText = null, afterText = null }: EmptyDataProps): JSX.Element => {
+export const EmptyData = ({ title, text, beforeText = null, afterText = null }: EmptyDataProps) => {
     return (
         <Flex justifyContent={'center'} alignItems={'center'} height={'100%'} id='empty-data-id'>
             <Flex direction={'column'} alignItems={'center'}>

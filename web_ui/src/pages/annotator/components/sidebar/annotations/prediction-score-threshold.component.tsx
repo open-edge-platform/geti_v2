@@ -13,7 +13,7 @@ interface PredictionScoreThresholdProps {
     tooltip: { enabled: boolean; description: string };
 }
 
-export const PredictionScoreThreshold = ({ tooltip, isDisabled }: PredictionScoreThresholdProps): JSX.Element => {
+export const PredictionScoreThreshold = ({ tooltip, isDisabled }: PredictionScoreThresholdProps) => {
     const { scoreThreshold, setScoreThreshold } = useAnnotationThreshold();
 
     const hideAndSetScoreThreshold = (newScoreThreshold: number) => {

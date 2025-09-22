@@ -75,7 +75,7 @@ const AnnotationTools = ({ annotationToolContext }: ToolAnnotationContextProps) 
     );
 };
 
-export const PrimaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps): JSX.Element => {
+export const PrimaryToolbar = ({ annotationToolContext }: ToolAnnotationContextProps) => {
     const { isActiveLearningMode } = useAnnotatorMode();
 
     return (

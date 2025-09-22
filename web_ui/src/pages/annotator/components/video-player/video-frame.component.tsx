@@ -15,7 +15,7 @@ export const VideoFrame = ({
     canvasRef,
 }: {
     selectedMediaItem: VideoFrameInterface;
-    canvasRef: RefObject<HTMLCanvasElement>;
+    canvasRef: RefObject<HTMLCanvasElement | null>;
 }) => {
     const { videoRef, isPlaying, setCurrentIndex, isBuffering } = useStreamingVideoPlayer();
 

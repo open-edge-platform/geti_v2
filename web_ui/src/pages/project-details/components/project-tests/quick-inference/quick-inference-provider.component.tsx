@@ -55,7 +55,7 @@ interface QuickInferenceProviderProps {
 
 const QuickInferenceContext = createContext<QuickInferenceContextProps | undefined>(undefined);
 
-export const QuickInferenceProvider = ({ isDisabled, children }: QuickInferenceProviderProps): JSX.Element => {
+export const QuickInferenceProvider = ({ isDisabled, children }: QuickInferenceProviderProps) => {
     const projectIdentifier = useProjectIdentifier();
     const { predictionMutation, explainMutation } = useQuickInferenceMutation();
 

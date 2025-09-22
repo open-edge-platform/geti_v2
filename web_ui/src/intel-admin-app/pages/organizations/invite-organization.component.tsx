@@ -22,7 +22,7 @@ const MAX_ORG_NAME = 50;
 interface InviteOrganizationProps {
     organizationsQueryOptions: GetOrganizationsQueryOptions;
 }
-export const InviteOrganization = ({ organizationsQueryOptions }: InviteOrganizationProps): JSX.Element => {
+export const InviteOrganization = ({ organizationsQueryOptions }: InviteOrganizationProps) => {
     const [isSendInviteOpen, setIsSendInviteOpen] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
     const [organizationName, setOrganizationName] = useState<string>('');

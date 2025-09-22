@@ -6,7 +6,7 @@ import { Delete } from '@geti/ui/icons';
 
 import { MenuButtonProps } from './menu-button.interface';
 
-export const DeleteMenuButton = ({ action, id }: MenuButtonProps): JSX.Element => {
+export const DeleteMenuButton = ({ action, id }: MenuButtonProps) => {
     return (
         <TooltipTrigger placement={'bottom'}>
             <ActionButton

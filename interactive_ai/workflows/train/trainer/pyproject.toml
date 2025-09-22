@@ -12,12 +12,13 @@ dependencies = [
     "otx",
     "geti-kafka-tools",
     "geti-telemetry-tools[telemetry,kafka]",
+    "setuptools==69.5.1",
 ]
 
 [tool.uv.sources]
 geti-kafka-tools = { path = "../../../../libs/kafka_tools" }
 geti-telemetry-tools = { path = "../../../../libs/telemetry_tools" }
-otx = { git = "https://github.com/open-edge-platform/training_extensions.git", branch = "develop" }
+otx = { git = "https://github.com/open-edge-platform/training_extensions.git", branch = "release/2.6", subdirectory = "lib" }
 
 [dependency-groups]
 dev = [

@@ -7,7 +7,7 @@ import { ChevronRightSmallLight } from '@geti/ui/icons';
 import { DomainStepProps } from './domain-step.interface';
 import { useDomainButtons } from './use-domain-buttons.hook';
 
-export const DomainChainSteps = (props: DomainStepProps): JSX.Element => {
+export const DomainChainSteps = (props: DomainStepProps) => {
     const { firstDomainButton, secondDomainButton } = useDomainButtons(props);
 
     return (

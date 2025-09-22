@@ -9,7 +9,7 @@ interface DeletionStatusBarProps {
     visible: boolean;
 }
 
-export const DeletionStatusBar = ({ visible }: DeletionStatusBarProps): JSX.Element => {
+export const DeletionStatusBar = ({ visible }: DeletionStatusBarProps) => {
     const deletingMediasRef = useRef<string | number>('');
 
     useEffect(() => {

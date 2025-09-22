@@ -1,0 +1,54 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "etcd.fullname" . }}-auth
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: {{ include "etcd.fullname" . }}-auth
+      restartPolicy: Never
+      initContainers:
+        - name: kubectl-wait
+          image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
+          command: [ "/bin/bash", "-c" ]
+          args:
+            - >-
+              kubectl wait pods
+              --selector=app={{ include "etcd.name" . }}
+              --timeout=300s
+              --for=condition=Ready
+              --namespace={{ .Release.Namespace }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.initResources | nindent 12 }}
+      containers:
+        - name: "enable-auth"
+          image: "{{ .Values.global.kubectl.registry }}/{{ if .Values.global.kubectl.repository }}{{ .Values.global.kubectl.repository }}/{{ end }}{{ .Values.global.kubectl.name }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ETCD_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "etcd.fullname" . }}
+                  key: etcd-root-password
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.initResources | nindent 12 }}
+          command: ["/bin/bash", "-c"]
+          args:
+            - >
+              kubectl exec -n {{ .Release.Namespace }} {{ include "etcd.fullname" . }}-0 -- etcdctl user add root:$ETCD_ROOT_PASSWORD &&
+              sleep 10 &&
+              kubectl exec -n {{ .Release.Namespace }} {{ include "etcd.fullname" . }}-0 -- etcdctl user grant-role root root &&
+              sleep 10 &&
+              kubectl exec -n {{ .Release.Namespace }} {{ include "etcd.fullname" . }}-0 -- etcdctl auth enable

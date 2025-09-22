@@ -26,7 +26,7 @@ export const MediaSearch = ({
     setMediaFilterOptions,
     isDisabled = false,
     id = '',
-}: MediaSearchProps): JSX.Element => {
+}: MediaSearchProps) => {
     const triggerRef = useRef(null);
     const dialogState = useOverlayTriggerState({});
 

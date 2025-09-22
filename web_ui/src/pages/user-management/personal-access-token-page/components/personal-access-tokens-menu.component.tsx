@@ -32,7 +32,7 @@ const DELETE_ERROR = 'Personal Access Token was not deleted due to an error.';
 const UPDATE_MESSAGE = 'The expiration date has been updated.';
 const UPDATE_ERROR = 'Personal Access Token was not updated due to an error.';
 
-export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps): JSX.Element => {
+export const PersonalAccessTokenMenu = ({ token }: PersonalAccessTokenMenuProps) => {
     const deleteTriggerState = useOverlayTriggerState({});
     const editTriggerState = useOverlayTriggerState({});
     const { deletePersonalAccessTokenMutation, updatePersonalAccessTokenMutation } = usePersonalAccessToken();

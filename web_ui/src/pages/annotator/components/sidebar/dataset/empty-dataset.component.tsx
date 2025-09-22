@@ -12,7 +12,7 @@ interface EmptyDataSetProps {
     isActiveMode?: boolean;
 }
 
-export const EmptyDataSet = ({ isActiveMode = false }: EmptyDataSetProps): JSX.Element => {
+export const EmptyDataSet = ({ isActiveMode = false }: EmptyDataSetProps) => {
     const { datasetIdentifier } = useDataset();
 
     return (

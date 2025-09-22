@@ -25,7 +25,7 @@ import { useReconfigureParametersValue } from './use-reconfigure-parameters-valu
 import sharedClasses from '../../../../../shared/shared.module.scss';
 import classes from './reconfigure-models.module.scss';
 
-export const ReconfigureModels = (): JSX.Element => {
+export const ReconfigureModels = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const {
         configParameters,

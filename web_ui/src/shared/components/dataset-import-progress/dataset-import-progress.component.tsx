@@ -20,7 +20,7 @@ interface DatasetImportProgressProps {
     progressItem: DatasetImportItem;
 }
 
-export const DatasetImportProgress = ({ progressItem }: DatasetImportProgressProps): JSX.Element => {
+export const DatasetImportProgress = ({ progressItem }: DatasetImportProgressProps) => {
     const { name, status, timeRemaining } = progressItem;
 
     const isPreparing = isPreparingJob(progressItem);

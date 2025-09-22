@@ -12,7 +12,7 @@ interface DownloadCellInterface extends ActionButtonProps {
     onDownload: () => void;
 }
 
-export const DownloadCell = ({ id, onDownload, ...props }: DownloadCellInterface): JSX.Element => {
+export const DownloadCell = ({ id, onDownload, ...props }: DownloadCellInterface) => {
     return (
         <ButtonWithSpectrumTooltip
             isQuiet

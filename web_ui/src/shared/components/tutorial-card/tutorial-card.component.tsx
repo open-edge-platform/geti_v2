@@ -22,13 +22,7 @@ interface TutorialCardProps {
     styles?: CSSProperties;
 }
 
-export const TutorialCard = ({
-    id,
-    styles,
-    isLoading,
-    onPressDismiss,
-    onPressDismissAll,
-}: TutorialCardProps): JSX.Element => {
+export const TutorialCard = ({ id, styles, isLoading, onPressDismiss, onPressDismissAll }: TutorialCardProps) => {
     const { header, description, docUrl } = getCardData(id);
     const url = useDocsUrl();
     const newDocUrl = `${url}${docUrl}`;

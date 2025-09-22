@@ -30,7 +30,7 @@ import {
 } from './util';
 
 export interface SettingsContextProps {
-    webcamRef: RefObject<Webcam>;
+    webcamRef: RefObject<Webcam | null>;
     videoDevices: MediaDeviceInfo[];
     selectedDeviceId: string | undefined;
     deviceConfig: DeviceConfiguration[];

@@ -22,7 +22,7 @@ import { DomainCardsMetadata, TaskChainMetadata } from './project-template.inter
 
 import classes from './utils.module.scss';
 
-const ImgBoxes = (projectSubdomain: SUBDOMAIN): JSX.Element => {
+const ImgBoxes = (projectSubdomain: SUBDOMAIN) => {
     if (projectSubdomain === SUBDOMAIN.CLASSIFICATION_MULTI_CLASS) {
         return <div className={classes.orangeBox}></div>;
     } else if (projectSubdomain === SUBDOMAIN.CLASSIFICATION_MULTI_LABEL) {

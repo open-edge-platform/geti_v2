@@ -37,7 +37,7 @@ interface ChangePasswordPopupProps {
     userId: string;
 }
 
-export const ChangePasswordPopup = ({ userId }: ChangePasswordPopupProps): JSX.Element => {
+export const ChangePasswordPopup = ({ userId }: ChangePasswordPopupProps) => {
     const [oldPassword, setOldPassword] = useState<PasswordState>(defaultPassword);
     const [newPassword, setNewPassword] = useState<PasswordState>(defaultPassword);
     const [confirmPassword, setConfirmPassword] = useState<PasswordState>(defaultPassword);

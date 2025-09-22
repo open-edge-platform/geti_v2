@@ -20,7 +20,7 @@ const hasFilters = (filters: GetOrganizationsQueryOptions): boolean => {
     return filters.name !== undefined || filters.status !== undefined;
 };
 
-export const Organizations = (): JSX.Element => {
+export const Organizations = () => {
     const [organizationsQueryOptions, setOrganizationsQueryOptions] = useState<GetOrganizationsQueryOptions>({
         sortBy: 'createdAt',
         sortDirection: SortDirection.DESC,

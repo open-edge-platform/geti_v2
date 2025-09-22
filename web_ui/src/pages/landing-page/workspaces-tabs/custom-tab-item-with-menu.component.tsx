@@ -1,16 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ComponentProps, Dispatch } from 'react';
+import { ComponentProps } from 'react';
 
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
 
 import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import {
-    PinnedCollapsedItemsAction,
-    PinnedCollapsedItemsActions,
-} from '../../../hooks/use-pinned-collapsed-items/use-pinned-collapsed-items.interface';
 import {
     CustomTabItem,
     CustomTabItemProps,
@@ -28,7 +24,6 @@ type CustomTabItemWithMenuProps = Pick<CustomTabItemProps, 'isMoreIconVisible'> 
     Pick<ComponentProps<typeof MenuTriggerButton>, 'ariaLabel'> & {
         workspace: WorkspaceEntity;
         workspaces: WorkspaceEntity[];
-        dispatchWorkspaces: Dispatch<PinnedCollapsedItemsActions<WorkspaceEntity>>;
         selectWorkspace: (workspaceId: string) => void;
     };
 
@@ -37,17 +32,17 @@ export const CustomTabItemWithMenu = ({
     isMoreIconVisible,
     workspace,
     workspaces,
-    dispatchWorkspaces,
     selectWorkspace,
-}: CustomTabItemWithMenuProps): JSX.Element => {
+}: CustomTabItemWithMenuProps) => {
     const { organizationId } = useOrganizationIdentifier();
     const { useGetProjectNames } = useProjectActions();
     const projectsNamesQuery = useGetProjectNames({ organizationId, workspaceId: workspace.id });
     const isWorkspaceEmpty = projectsNamesQuery.data?.projects.length === 0;
 
-    const { items, handleMenuAction, editDialog, deleteDialog, grayedOutKeys } = useWorkspaceActions(
+    const { items, handleMenuAction, editDialog, deleteDialog, grayedOutKeys, disabledKeys } = useWorkspaceActions(
         workspaces.length,
-        isWorkspaceEmpty
+        isWorkspaceEmpty,
+        workspace.id
     );
 
     const otherWorkspacesNames = workspaces.filter(hasDifferentId(workspace.id)).map(({ name }) => name);
@@ -57,11 +52,6 @@ export const CustomTabItemWithMenu = ({
             { ...workspace, name: newName },
             {
                 onSuccess: () => {
-                    dispatchWorkspaces({
-                        type: PinnedCollapsedItemsAction.UPDATE,
-                        payload: { id: workspace.id, name: newName },
-                    });
-
                     editDialog.editWorkspaceDialogState.close();
                 },
             }
@@ -77,12 +67,6 @@ export const CustomTabItemWithMenu = ({
                     if (nextWorkspace) {
                         selectWorkspace(nextWorkspace.id);
                     }
-
-                    dispatchWorkspaces({
-                        type: PinnedCollapsedItemsAction.REMOVE,
-                        payload: { id: workspace.id },
-                    });
-
                     deleteDialog.deleteWorkspaceDialogState.close();
                 },
             }
@@ -98,6 +82,7 @@ export const CustomTabItemWithMenu = ({
                 onAction={handleMenuAction}
                 ariaLabel={ariaLabel}
                 grayedOutKeys={grayedOutKeys}
+                disabledKeys={disabledKeys}
                 customTriggerContent={<CustomTabItem name={workspace.name} isMoreIconVisible={isMoreIconVisible} />}
                 menuTriggerClasses={classes.customTabItemMenuTrigger}
             />

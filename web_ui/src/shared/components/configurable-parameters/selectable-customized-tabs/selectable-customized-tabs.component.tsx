@@ -7,7 +7,7 @@ import { TabItem, TabsProps } from '../../tabs/tabs.interface';
 
 import classes from './selectable-customized-tabs.module.scss';
 
-export const SelectableCustomizedTabs = (props: TabsProps): JSX.Element => {
+export const SelectableCustomizedTabs = (props: TabsProps) => {
     return (
         <Tabs {...props} UNSAFE_className={classes.customizedTabs}>
             <TabList minWidth={{ base: 'auto', L: '24rem' }}>

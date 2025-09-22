@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ElementRef, ReactNode, useRef } from 'react';
+import { ComponentRef, ReactNode, useRef } from 'react';
 
 import { useHover } from '@react-aria/interactions';
 import { useOverlayTriggerState } from '@react-stately/overlays';
@@ -51,7 +51,7 @@ export const Edge = ({
     onResetAndSelect,
     onNewIntermediatePoint,
 }: EdgeProps) => {
-    const triggerRef = useRef<ElementRef<'line'>>(null);
+    const triggerRef = useRef<ComponentRef<'line'>>(null);
     const { hoverProps, isHovered } = useHover({});
     const state = useContextMenuState(isSelected);
 

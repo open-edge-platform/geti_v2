@@ -120,6 +120,9 @@ spec:
         {{- if .Values.global.logAsJson }}
         - --log_as_json
         {{- end }}
+        {{- if .Values.global.proxy.outlierLogPath }}
+        - --outlierLogPath={{ .Values.global.proxy.outlierLogPath }}
+        {{- end}}
         env:
         - name: ISTIO_META_SERVICE_ACCOUNT
           valueFrom:
@@ -197,6 +200,10 @@ spec:
         {{- else if (valueOrDefault .MeshConfig.TrustDomain .Values.global.trustDomain) }}
         - name: ISTIO_META_MESH_ID
           value: "{{ (valueOrDefault .MeshConfig.TrustDomain .Values.global.trustDomain) }}"
+        {{- end }}
+        {{- with (valueOrDefault .MeshConfig.TrustDomain .Values.global.trustDomain) }}
+        - name: TRUST_DOMAIN
+          value: "{{ . }}"
         {{- end }}
         {{- if .Values.global.waypoint.resources }}
         resources:
@@ -280,9 +287,17 @@ spec:
               audience: istio-ca
               expirationSeconds: 43200
               path: istio-token
-      - configMap:
+      - name: istiod-ca-cert
+      {{- if eq (.Values.pilot.env).ENABLE_CLUSTER_TRUST_BUNDLE_API true }}
+        projected:
+          sources:
+          - clusterTrustBundle:
+              name: istio.io:istiod-ca:root-cert
+              path: root-cert.pem
+      {{- else }}
+        configMap:
           name: istio-ca-root-cert
-        name: istiod-ca-cert
+      {{- end }}
       {{- if .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- range .Values.global.imagePullSecrets }}

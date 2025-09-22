@@ -37,7 +37,7 @@ import classes from './add-member-popup.module.scss';
 
 type AddMemberPopupProps = WorkspaceIdentifier;
 
-export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupProps): JSX.Element => {
+export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupProps) => {
     const roles = [USER_ROLE.WORKSPACE_CONTRIBUTOR, USER_ROLE.WORKSPACE_ADMIN];
 
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);

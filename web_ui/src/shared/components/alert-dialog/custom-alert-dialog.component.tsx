@@ -29,7 +29,7 @@ export const CustomAlertDialog = ({
     cancelButtonAriaLabel,
     primaryActionButtonAriaLabel,
     id,
-}: CustomAlertDialogProps): JSX.Element => (
+}: CustomAlertDialogProps) => (
     <Provider isQuiet={false}>
         <DialogContainer
             onDismiss={() => {

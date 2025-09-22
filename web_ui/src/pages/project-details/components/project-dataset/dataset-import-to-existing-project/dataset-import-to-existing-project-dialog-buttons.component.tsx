@@ -33,7 +33,7 @@ export const DatasetImportToExistingProjectDialogButtons = ({
     deletionDialogTriggerState,
     onDialogDismiss,
     onPrimaryAction,
-}: DatasetImportToExistingProjectDialogButtonsProps): JSX.Element => {
+}: DatasetImportToExistingProjectDialogButtonsProps) => {
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
     const { abortActiveUpload } = useTusUpload();
     const { useCancelJob } = useJobs({ organizationId, workspaceId });

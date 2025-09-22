@@ -11,7 +11,7 @@ interface ProjectRoleCellProps extends Omit<TableCellProps, 'cellData'> {
     projectId: string;
 }
 
-export const ProjectRoleCell = ({ roles, projectId, ...rest }: ProjectRoleCellProps): JSX.Element => {
+export const ProjectRoleCell = ({ roles, projectId, ...rest }: ProjectRoleCellProps) => {
     const projectRoles = roles.filter(
         (role) => role.resourceType === RESOURCE_TYPE.PROJECT && role.resourceId === projectId
     );

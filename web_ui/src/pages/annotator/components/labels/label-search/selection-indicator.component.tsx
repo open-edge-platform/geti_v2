@@ -20,13 +20,7 @@ const Wrapper: FC<PropsWithChildren & { ariaLabel?: string }> = ({ children, ari
     );
 };
 
-export const SelectionIndicator = ({
-    isHovered,
-    isSelected,
-}: {
-    isHovered: boolean;
-    isSelected: boolean;
-}): JSX.Element => {
+export const SelectionIndicator = ({ isHovered, isSelected }: { isHovered: boolean; isSelected: boolean }) => {
     if (isSelected) {
         if (isHovered) {
             return (

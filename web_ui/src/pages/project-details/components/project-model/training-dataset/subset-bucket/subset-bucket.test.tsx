@@ -59,7 +59,7 @@ describe('SubSetBucket component', () => {
             { services: { trainingDatasetService } }
         );
 
-        expect(screen.getByTestId('testing-subset-title')).toHaveTextContent('bulb.svgTesting20%');
+        expect(screen.getByTestId('testing-subset-title')).toHaveTextContent('Testing20%');
         expect(screen.getByRole('button', { name: 'Search media by name (regex allowed)' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Filter media' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Sort media' })).toBeInTheDocument();

@@ -8,7 +8,7 @@ interface BackButtonProps {
     onPress: () => void;
 }
 
-export const BackButton = ({ onPress }: BackButtonProps): JSX.Element => {
+export const BackButton = ({ onPress }: BackButtonProps) => {
     return (
         <ActionButton id='go-back-button' data-testid='go-back-button' isQuiet onPress={onPress} aria-label='Back'>
             <Back />

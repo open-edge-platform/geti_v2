@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { ReactNode } from 'react';
+
 import { TrainingBodyDTO } from '../../../../../../core/models/dtos/train-model.interface';
 import { Task } from '../../../../../../core/projects/task.interface';
 
@@ -26,7 +28,7 @@ export interface UseTrainProcessHandler {
     prevAction: () => void;
     trainingBodyDTO: TrainingBodyDTO;
     handleDefaultStateOnClose: () => void;
-    renderCurrentStep: (step: TrainingSteps) => JSX.Element;
+    renderCurrentStep: (step: TrainingSteps) => ReactNode;
     handleChangeSelectedTask: (task: Task) => void;
     tasks: Task[];
 }

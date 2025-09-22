@@ -9,7 +9,7 @@ interface HotkeyProps {
     hotkey: string;
 }
 
-export const Hotkey = ({ hotkey }: HotkeyProps): JSX.Element => {
+export const Hotkey = ({ hotkey }: HotkeyProps) => {
     return (
         <View backgroundColor={'gray-200'} paddingX={'size-100'} paddingY={'size-50'}>
             <Text UNSAFE_className={classes.hotkeyText}>{hotkey.toLocaleUpperCase()}</Text>

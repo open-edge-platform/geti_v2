@@ -11,7 +11,7 @@ interface VideoItemDataIndicatorProps {
     id: string;
 }
 
-export const VideoItemDataIndicator = ({ children, tooltip, id }: VideoItemDataIndicatorProps): JSX.Element => {
+export const VideoItemDataIndicator = ({ children, tooltip, id }: VideoItemDataIndicatorProps) => {
     return (
         <View
             id={id}

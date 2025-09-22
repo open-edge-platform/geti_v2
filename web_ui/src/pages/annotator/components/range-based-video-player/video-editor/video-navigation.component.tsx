@@ -10,20 +10,34 @@ import { VideoControls } from '../../../../../pages/annotator/components/video-p
 import { useDurationText } from '../../../../../shared/hooks/data-format/use-duration-text.hook';
 import { useUndoRedo } from '../../../tools/undo-redo/undo-redo-provider.component';
 
-const UndoRedoButtons = (): JSX.Element => {
+const UndoRedoButtons = () => {
     const { undo, canUndo, redo, canRedo } = useUndoRedo();
 
     return (
         <Flex gap='size-100' alignItems='center' justify-content='center'>
             <TooltipTrigger placement={'bottom'}>
-                <ActionButton id='undo-button' data-testid='undo-button' onPress={undo} isDisabled={!canUndo} isQuiet>
+                <ActionButton
+                    aria-label={'Undo'}
+                    id='undo-button'
+                    data-testid='undo-button'
+                    onPress={undo}
+                    isDisabled={!canUndo}
+                    isQuiet
+                >
                     <Undo />
                 </ActionButton>
                 <Tooltip>Undo</Tooltip>
             </TooltipTrigger>
 
             <TooltipTrigger placement={'bottom'}>
-                <ActionButton id='redo-button' data-testid='redo-button' onPress={redo} isDisabled={!canRedo} isQuiet>
+                <ActionButton
+                    aria-label={'Redo'}
+                    id='redo-button'
+                    data-testid='redo-button'
+                    onPress={redo}
+                    isDisabled={!canRedo}
+                    isQuiet
+                >
                     <Redo />
                 </ActionButton>
                 <Tooltip>Redo</Tooltip>

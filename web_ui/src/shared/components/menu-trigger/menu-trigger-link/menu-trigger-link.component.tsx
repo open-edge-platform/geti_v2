@@ -22,7 +22,7 @@ export const MenuTriggerLink = ({
     ariaLabel,
     text,
     isDisabled,
-}: Omit<MenuTriggerLinkProps, 'children'>): JSX.Element => {
+}: Omit<MenuTriggerLinkProps, 'children'>) => {
     return (
         <MenuTrigger
             id={id}

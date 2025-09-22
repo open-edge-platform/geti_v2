@@ -58,7 +58,7 @@ const useGroupIsActiveLifecycle = (modelIdentifier: ModelIdentifier, modelGroup:
     return group?.lifecycleStage === LifecycleStage.ACTIVE;
 };
 
-const ProjectModel = (): JSX.Element => {
+const ProjectModel = () => {
     const modelIdentifier = useModelIdentifier();
     const {
         project: { tasks },

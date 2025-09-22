@@ -43,7 +43,7 @@ const reducer = (
     ...nextState,
 });
 
-export const AnnotatorContextMenuProvider = ({ children }: AnnotatorContextMenuProviderProps): JSX.Element => {
+export const AnnotatorContextMenuProvider = ({ children }: AnnotatorContextMenuProviderProps) => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [contextConfig, dispatch] = useReducer(reducer, INITIAL_CONTEXT_CONFIG);
     const { setIsZoomDisabled } = useZoom();

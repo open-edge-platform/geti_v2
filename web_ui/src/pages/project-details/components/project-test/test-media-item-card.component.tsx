@@ -29,7 +29,7 @@ export const TestMediaItemCard = ({
     labelScore,
     shouldShowAnnotationIndicator,
     selectMediaItem,
-}: TestMediaItemCardProps): JSX.Element => {
+}: TestMediaItemCardProps) => {
     const isVideoItem = isVideo(mediaItem.media);
     const formatter = useNumberFormatter(SCORE_FORMATTER_OPTIONS);
 

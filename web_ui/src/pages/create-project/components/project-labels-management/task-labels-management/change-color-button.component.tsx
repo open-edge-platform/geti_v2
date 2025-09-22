@@ -11,13 +11,7 @@ interface ChangeColorButtonProps {
     gridArea?: string;
 }
 
-export const ChangeColorButton = ({
-    size,
-    ariaLabelPrefix,
-    id,
-    color,
-    gridArea,
-}: ChangeColorButtonProps): JSX.Element => {
+export const ChangeColorButton = ({ size, ariaLabelPrefix, id, color, gridArea }: ChangeColorButtonProps) => {
     const sizeParameters: { size: string; radius?: Responsive<BorderRadiusValue> } =
         size === 'L' ? { size: 'size-400', radius: 'small' } : { size: 'size-125' };
 

@@ -17,7 +17,7 @@ interface WarningMessageProps extends Omit<ComponentProps<typeof Flex>, 'childre
     id?: string;
 }
 
-export const WarningMessage = ({ isVisible, message, id, ...flexProps }: WarningMessageProps): JSX.Element => {
+export const WarningMessage = ({ isVisible, message, id, ...flexProps }: WarningMessageProps) => {
     return (
         <AnimatePresence>
             {isVisible && (

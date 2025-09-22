@@ -9,7 +9,7 @@ interface VideoFrameIndicatorProps {
     frameNumber: number;
 }
 
-export const VideoFrameNumberIndicator = ({ frameNumber }: VideoFrameIndicatorProps): JSX.Element => {
+export const VideoFrameNumberIndicator = ({ frameNumber }: VideoFrameIndicatorProps) => {
     return (
         <View
             id={'video-frame-indicator-id'}

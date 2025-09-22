@@ -13,7 +13,7 @@ import { UpgradeBanner } from './upgrade-banner/upgrade-banner.component';
 
 import classes from './routes.module.scss';
 
-export const LandingPageLayout = (): JSX.Element => {
+export const LandingPageLayout = () => {
     return (
         <Grid
             height={'100vh'}

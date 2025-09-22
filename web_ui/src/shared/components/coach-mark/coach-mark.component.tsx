@@ -22,7 +22,7 @@ interface CoachMarkProps {
     customDescription?: string;
 }
 
-export const CoachMark = ({ settingsKey, styles, customDescription = '' }: CoachMarkProps): JSX.Element => {
+export const CoachMark = ({ settingsKey, styles, customDescription = '' }: CoachMarkProps) => {
     const settings = useUserGlobalSettings();
     const { close, isOpen, dismissAll, changeTutorial } = useTutorialEnablement(settingsKey);
     const { header, description, docUrl, nextStepId, previousStepId, showDismissAll, tipPosition } =

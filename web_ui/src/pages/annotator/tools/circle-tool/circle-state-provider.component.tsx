@@ -25,7 +25,7 @@ interface CircleStateProviderProps {
     children: ReactNode;
 }
 
-export const CircleStateProvider = ({ children }: CircleStateProviderProps): JSX.Element => {
+export const CircleStateProvider = ({ children }: CircleStateProviderProps) => {
     const { getToolSettings } = useAnnotationToolContext();
     const circleSettings = getToolSettings(ToolType.CircleTool);
 

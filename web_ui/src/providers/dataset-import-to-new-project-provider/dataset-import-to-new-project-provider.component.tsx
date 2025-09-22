@@ -77,7 +77,7 @@ interface DatasetImportToNewProjectProps {
     children: ReactNode;
 }
 
-export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToNewProjectProps): JSX.Element => {
+export const DatasetImportToNewProjectProvider = ({ children }: DatasetImportToNewProjectProps) => {
     const client = useQueryClient();
 
     const { router } = useApplicationServices();

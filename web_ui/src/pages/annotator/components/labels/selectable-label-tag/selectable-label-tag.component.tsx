@@ -16,12 +16,7 @@ interface SelectableLabelTagProps {
     handleOptionChange: (selectedOption: string) => void;
 }
 
-export const SelectableLabelTag = ({
-    selectedOption,
-    value,
-    label,
-    handleOptionChange,
-}: SelectableLabelTagProps): JSX.Element => {
+export const SelectableLabelTag = ({ selectedOption, value, label, handleOptionChange }: SelectableLabelTagProps) => {
     const onPress = () => handleOptionChange(value);
     const { pressProps } = usePress({ onPress });
 

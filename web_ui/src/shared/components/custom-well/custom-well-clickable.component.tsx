@@ -10,13 +10,7 @@ interface CustomWellClickableProps extends CustomWellProps {
     onAuxClick?: () => void;
 }
 
-export const CustomWellClickable = ({
-    children,
-    onPress,
-    flex,
-    onAuxClick,
-    ...props
-}: CustomWellClickableProps): JSX.Element => {
+export const CustomWellClickable = ({ children, onPress, flex, onAuxClick, ...props }: CustomWellClickableProps) => {
     const { pressProps } = usePress({
         onPress,
     });

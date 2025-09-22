@@ -9,7 +9,7 @@ import { KeypointNode } from '../../../../core/annotations/shapes.interface';
 import { useIsHovered } from '../../../../providers/hovered-provider/hovered-provider.component';
 import { useSelected } from '../../../../providers/selected-provider/selected-provider.component';
 import { KEYPOINT_RADIUS } from '../../../utils';
-import { useZoom } from '../../zoom/zoom-provider.component';
+import { useZoomState } from '../../zoom/zoom-provider.component';
 import { KeypointProps } from './shape.interface';
 import { svgShadow } from './util';
 
@@ -44,7 +44,7 @@ export const PoseKeypoints = ({ shape }: KeypointProps) => {
 };
 
 export const PoseKeypointVisibility = ({ point, radius, ...svgProps }: PoseKeypointProps) => {
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const { fill, stroke, isPointActive } = usePointFillAndStroke(point);
 
     const occludedIconSize = 18 / zoomState.zoom;
@@ -67,7 +67,7 @@ export const PoseKeypointVisibility = ({ point, radius, ...svgProps }: PoseKeypo
 };
 
 export const PoseKeypoint = ({ point, radius = KEYPOINT_RADIUS, ...svgProps }: PoseKeypointProps) => {
-    const { zoomState } = useZoom();
+    const zoomState = useZoomState();
     const { isPointActive, fill, stroke } = usePointFillAndStroke(point);
 
     const strokeWidth = radius * 0.4;

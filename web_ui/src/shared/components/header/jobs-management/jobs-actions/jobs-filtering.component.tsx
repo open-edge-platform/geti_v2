@@ -23,7 +23,7 @@ interface JobsFilteringProps {
     onChange: (newFilters: FiltersType) => void;
 }
 
-export const JobsFiltering = ({ values, onChange }: JobsFilteringProps): JSX.Element => {
+export const JobsFiltering = ({ values, onChange }: JobsFilteringProps) => {
     const { organizationId, workspaceId } = useWorkspaceIdentifier();
 
     const { projectId, userId, jobTypes } = values;

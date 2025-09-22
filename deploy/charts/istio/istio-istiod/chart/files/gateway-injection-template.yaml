@@ -4,13 +4,12 @@ metadata:
   labels:
     service.istio.io/canonical-name: {{ index .ObjectMeta.Labels `service.istio.io/canonical-name` | default (index .ObjectMeta.Labels `app.kubernetes.io/name`) | default (index .ObjectMeta.Labels `app`) | default .DeploymentMeta.Name  | quote }}
     service.istio.io/canonical-revision: {{ index .ObjectMeta.Labels `service.istio.io/canonical-revision` | default (index .ObjectMeta.Labels `app.kubernetes.io/version`) | default (index .ObjectMeta.Labels `version`) | default "latest"  | quote }}
-  annotations: {
-    istio.io/rev: {{ .Revision | default "default" | quote }},
-    {{- if eq (len $containers) 1 }}
-    kubectl.kubernetes.io/default-logs-container: "{{ index $containers 0 }}",
-    kubectl.kubernetes.io/default-container: "{{ index $containers 0 }}",
-    {{ end }}
-  }
+  annotations:
+    istio.io/rev: {{ .Revision | default "default" | quote }}
+    {{- if ge (len $containers) 1 }}
+    kubectl.kubernetes.io/default-logs-container: "{{ index $containers 0 }}"
+    kubectl.kubernetes.io/default-container: "{{ index $containers 0 }}"
+    {{- end }}
 spec:
   securityContext:
   {{- if .Values.gateways.securityContext }}
@@ -228,8 +227,16 @@ spec:
           audience: {{ .Values.global.sds.token.aud }}
   {{- if eq .Values.global.pilotCertProvider "istiod" }}
   - name: istiod-ca-cert
+  {{- if eq (.Values.pilot.env).ENABLE_CLUSTER_TRUST_BUNDLE_API true }}
+    projected:
+      sources:
+      - clusterTrustBundle:
+          name: istio.io:istiod-ca:{{ .Values.global.trustBundleName | default "root-cert" }}
+          path: root-cert.pem
+  {{- else }}
     configMap:
       name: istio-ca-root-cert
+  {{- end }}
   {{- end }}
   {{- if .Values.global.mountMtlsCerts }}
   # Use the key and cert mounted to /etc/certs/ for the in-cluster mTLS communications.

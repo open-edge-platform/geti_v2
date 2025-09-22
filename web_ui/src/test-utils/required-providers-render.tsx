@@ -71,7 +71,7 @@ export const RequiredProviders = ({
     profile,
     queryClient,
     ...services
-}: RequiredProvidersProps): JSX.Element => {
+}: RequiredProvidersProps) => {
     const prefilledQueryClient = usePrefilledQueryClient(featureFlags, profile);
 
     return (

@@ -1,0 +1,160 @@
+name: Collect source for GPL/MPL licensed code (combined)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to filter images, e.g. '2.13.0-d90fa913'"
+        required: true
+
+permissions: {} # No permissions by default on workflow level
+
+jobs:
+  collect-images-list:
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.collect-images-list.outputs.images_json }}
+    steps:
+      - name: Prepare list of images from ghcr.io
+        id: collect-images-list
+        env:
+          TAG: ${{ inputs.tag }}
+          # need to use classic PAT, https://github.com/cli/cli/issues/9606
+          GH_TOKEN: ${{ secrets.GETI_GHCR_READ }}
+        run: |
+          # Get all container images and
+          # exclude 'geti/helm/' packages from the list of container packages for source collection
+          PACKAGES=$(gh api -H "Accept: application/vnd.github.v3+json" \
+                            /orgs/open-edge-platform/packages?package_type=container  \
+                            --jq '.[].name' 2>/dev/null | awk '/^geti\// && !/^geti\/helm\//')
+
+          # Retrieve container images with specified input tag
+          for PACKAGE in $PACKAGES; do
+            echo "Processing package: $PACKAGE"
+            TMP_NAME=$(sed 's/\//%2F/g' <<< "$PACKAGE")
+            VERSION=$(gh api -H "Accept: application/vnd.github.v3+json"  \
+                             /orgs/open-edge-platform/packages/container/$TMP_NAME/versions  \
+                             --jq '.[].metadata.container.tags[]' 2>/dev/null | grep -w "$TAG" || true)
+
+            if [ -n "$VERSION" ]; then
+              IMAGE_URI="ghcr.io/open-edge-platform/$PACKAGE:$TAG"
+              echo "Found image: $IMAGE_URI"
+              echo \"$IMAGE_URI\" >> images.txt
+            else
+              echo "No image with tag '$TAG' found in package '$PACKAGE'"
+            fi
+          done
+          echo "Images with tag '$TAG':"
+          cat images.txt
+
+          # Prepare JSON to use in matrix strategy
+          IMAGES=[$(tr '\n' ',' < images.txt | sed 's/,$//')]
+          echo "images_json=$(jq -cn --argjson image "$IMAGES" '{target: $image}')" >> $GITHUB_OUTPUT
+
+  collect-packages-names:
+    needs: collect-images-list
+    timeout-minutes: 660
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.collect-images-list.outputs.images) }}
+      fail-fast: false
+    steps:
+      - name: Scan ${{ matrix.target }}
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          # install Syft
+          curl -sSfL https://get.anchore.io/syft | sudo sh -s -- -b /usr/local/bin
+          NAME=$(echo "$TARGET" | cut -d'/' -f 4 | cut -d':' -f 1)
+          echo "name=$NAME" >> $GITHUB_ENV
+
+          syft "$TARGET" -o json |
+          jq -r '[
+            .artifacts[] |
+            select(.type == "deb" and ((.licenses // [])[]?.value | test("GPL|AGPL|LGPL|EPL|MPL"; "i"))) |
+            .name
+          ] | unique[]' > pkg_list_$NAME.txt
+
+      - name: Upload packages list
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pkg_list_${{ env.name }}
+          path: pkg_list_*
+          retention-days: 5
+
+  get-unique-names:
+    runs-on: ubuntu-latest
+    needs:
+      - collect-images-list
+      - collect-packages-names
+    outputs:
+      unique_package_names_oneline: ${{ steps.transform-list.outputs.unique_package_names_oneline }}
+    steps:
+      # Create directory first
+      - name: Create results directory
+        run: mkdir -p all-pkg_list
+
+      # Download all reports
+      - name: Download all reports
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          pattern: "pkg_list_*"
+          merge-multiple: true
+          path: all-pkg_list
+
+      - name: Get unique names
+        id: transform-list
+        shell: bash
+        run: |
+          cat all-pkg_list/* | sort -u > merged_unique.txt
+          cat merged_unique.txt
+          awk 'ORS=","{print}' merged_unique.txt | sed 's/,$//' > unique_package_names_oneline.txt
+          echo "unique_package_names_oneline=$(cat unique_package_names_oneline.txt)" >> $GITHUB_OUTPUT
+
+  collect-source-code:
+    runs-on: ubuntu-latest
+    needs: get-unique-names
+    container:
+      image: debian:bookworm-slim@sha256:df52e55e3361a81ac1bead266f3373ee55d29aa50cf0975d440c2be3483d8ed3
+    steps:
+    - name: Add apt sources for deb-src
+      shell: bash
+      run: |
+        sed -Ei "s/^Types: deb$/Types: deb deb-src/" /etc/apt/sources.list.d/debian.sources
+        apt-get update
+
+    - name: Find GPL/MPL licensed packages
+      shell: bash
+      env:
+        PACKAGES: ${{ needs.get-unique-names.outputs.unique_package_names_oneline }}
+      run: |
+        OUTPUT_DIR="output"
+        ARCHIVE_NAME="source_code.tar.gz"
+        mkdir -p "$OUTPUT_DIR"
+        cd "$OUTPUT_DIR"
+        # Split comma-separated list into an array
+        IFS=',' read -r -a PACKAGES_ARR <<< "$PACKAGES"
+        # Collect missing packages
+        # Install GNU Parallel for faster downloads
+        apt-get update && apt-get install -y parallel
+
+        # Download sources for GPL/MPL packages in parallel with error handling
+        if [ ${#PACKAGES_ARR[@]} -gt 0 ]; then
+          export OUTPUT_DIR
+          printf "%s\n" "${PACKAGES_ARR[@]}" | parallel --jobs 4 '
+            echo "Downloading source for {}"
+            if ! apt-get source -q --download-only "{}"; then
+              echo "Warning: Source not available for {}" >&2
+            fi
+          '
+        fi
+        cd ..
+        tar -czf "$ARCHIVE_NAME" -C "$OUTPUT_DIR" .
+
+    - name: Upload source code archive
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: source-code-archive
+        path: source_code.tar.gz
+        retention-days: 3

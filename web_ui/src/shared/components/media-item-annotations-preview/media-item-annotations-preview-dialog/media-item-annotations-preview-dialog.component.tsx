@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Fragment } from 'react';
+import { ReactNode } from 'react';
 
 import { Button, ButtonGroup, Content, Dialog, DialogContainer, Flex } from '@geti/ui';
 
@@ -12,14 +12,14 @@ import { PreviewTitle } from '../preview-title/preview-title.component';
 import classes from './media-item-annotations-preview-dialog.module.scss';
 
 interface MediaItemAnnotationsPreviewProps {
-    children: JSX.Element;
+    children: ReactNode;
     close: () => void;
-    additionalButtons?: JSX.Element[];
+    additionalButtons?: ReactNode;
     title: string;
     subTitle: string;
     selectedPreviewItem?: MediaItem;
     selectedMediaItem?: MediaItem;
-    datasetPreview: JSX.Element;
+    datasetPreview: ReactNode;
 }
 
 export const MediaItemAnnotationsPreviewDialog = ({
@@ -31,7 +31,7 @@ export const MediaItemAnnotationsPreviewDialog = ({
     selectedPreviewItem,
     selectedMediaItem,
     datasetPreview,
-}: MediaItemAnnotationsPreviewProps): JSX.Element => {
+}: MediaItemAnnotationsPreviewProps) => {
     return (
         <DialogContainer onDismiss={close} type={'fullscreenTakeover'}>
             <Dialog onDismiss={close} UNSAFE_className={classes.previewDialog}>
@@ -54,9 +54,7 @@ export const MediaItemAnnotationsPreviewDialog = ({
                 </Content>
 
                 <ButtonGroup marginBottom={'size-200'}>
-                    {additionalButtons?.map((button, index) => (
-                        <Fragment key={`additional-button-${index}`}>{button}</Fragment>
-                    ))}
+                    {additionalButtons}
                     <Button
                         onPress={close}
                         key='close'

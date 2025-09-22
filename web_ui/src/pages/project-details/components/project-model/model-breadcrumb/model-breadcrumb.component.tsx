@@ -34,12 +34,7 @@ interface ModelBreadcrumbProps {
     name: string;
 }
 
-export const ModelBreadcrumb = ({
-    selectedModel,
-    handleSelectModel,
-    modelGroup,
-    name,
-}: ModelBreadcrumbProps): JSX.Element => {
+export const ModelBreadcrumb = ({ selectedModel, handleSelectModel, modelGroup, name }: ModelBreadcrumbProps) => {
     const expandButtonRef = useRef<FocusableRefValue<HTMLButtonElement>>(null);
     const selectionMenu = useUnwrapDOMRef(expandButtonRef);
 
