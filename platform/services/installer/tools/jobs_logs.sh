@@ -14,15 +14,14 @@ JOBS_NAMESPACE="impt-jobs-production"
 # k3s related constants
 K3S_CONFIG="/etc/rancher/k3s/k3s.yaml"
 
-removal_flyte_pods="${1}"
-if [[ "${removal_flyte_pods}" == "enable" ]]; then
-  delete_flyte_pods="true"
-elif [[ "${removal_flyte_pods}" == "disable" ]]; then
+if [[ "${1}" == "enable" ]]; then
   delete_flyte_pods="false"
+elif [[ "${1}" == "disable" ]]; then
+  delete_flyte_pods="true"
 else
   echo "Usage: $0 <enable|disable> [kubeconfig]"
-  echo "  enable  - make flyte pods deleted (delete-resource-on-finalize: true)"
-  echo "  disable - make flyte pods visible (delete-resource-on-finalize: false)"
+  echo "  enable  - make flyte pods deleted (delete-resource-on-finalize: false)"
+  echo "  disable - make flyte pods visible (delete-resource-on-finalize: true)"
   exit 1
 fi
 
