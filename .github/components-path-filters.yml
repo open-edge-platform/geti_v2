@@ -223,6 +223,7 @@ interactive_ai/workflows/common:
   - .github/workflows/component.yml
 interactive_ai/workflows/dataset_ie:
   - interactive_ai/workflows/dataset_ie/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/datumaro_conversion
   - interactive_ai/libs/iai_core_py/**
@@ -237,6 +238,7 @@ interactive_ai/workflows/dataset_ie:
   - .github/workflows/component.yml
 interactive_ai/workflows/project_ie:
   - interactive_ai/workflows/project_ie/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/datumaro_conversion
   - interactive_ai/data_migration/**
@@ -252,6 +254,7 @@ interactive_ai/workflows/project_ie:
   - .github/workflows/component.yml
 interactive_ai/workflows/model_test:
   - interactive_ai/workflows/model_test/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/evaluation
   - interactive_ai/libs/iai_core_py/**
@@ -264,6 +267,7 @@ interactive_ai/workflows/model_test:
   - .github/workflows/component.yml
 interactive_ai/workflows/optimize:
   - interactive_ai/workflows/optimize/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/evaluation
   - interactive_ai/workflows/common/jobs_common_extras/shard_dataset
@@ -279,6 +283,7 @@ interactive_ai/workflows/train:
   - interactive_ai/supported_models/**
   - interactive_ai/workflows/train/job/**
   - interactive_ai/workflows/train/tests/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/evaluation
   - interactive_ai/workflows/common/jobs_common_extras/experiments
