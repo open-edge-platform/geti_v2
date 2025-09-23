@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { ActionButton, View, type BorderRadiusValue, type Responsive } from '@geti/ui';
+import { ActionButton, View, type BorderRadiusValue, type Responsive } from '../..';
 
 interface ChangeColorButtonProps {
     size: 'S' | 'M' | 'L';

@@ -3,6 +3,7 @@
 
 import { useEffect, useRef } from 'react';
 
+import { ColorPickerDialog } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
 import {
@@ -12,7 +13,6 @@ import {
     LabelTreeLabelProps,
 } from '../../../../../core/labels/label-tree-view.interface';
 import { getLabelId } from '../../../../../core/labels/utils';
-import { ColorPickerDialog } from '../../../../../pages/create-project/components/project-labels-management/task-labels-management/color-picker-dialog.component';
 import { useUsedAnnotatorHotkeys } from '../../../../../pages/create-project/components/use-used-annotator-hotkeys.hook';
 import { newLabelHotkeySchema, newLabelNameSchema } from '../../../../../pages/create-project/components/utils';
 import { getUnremovedLabels } from '../../../../../pages/project-details/components/project-labels/utils';

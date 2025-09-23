@@ -3,11 +3,11 @@
 
 import { ComponentProps, useState } from 'react';
 
-import { Button, Content, Dialog, DialogTrigger, Flex } from '@geti/ui';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
 
-import { validateColor } from '../utils';
+import { Button, Content, Dialog, DialogTrigger, Flex } from '../..';
 import { ChangeColorButton } from './change-color-button.component';
+import { validateColor } from './utils';
 
 import classes from './color-picker-dialog.module.scss';
 
