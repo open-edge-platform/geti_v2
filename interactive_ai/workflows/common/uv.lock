@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = "==3.10.*"
 resolution-markers = [
     "sys_platform == 'darwin'",
@@ -2503,20 +2503,20 @@ wheels = [
 
 [[package]]
 name = "pyarrow"
-version = "15.0.0"
+version = "17.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b3/1b/bc36a07706f630709bfd5a7936d2875e153e3d084a6d95dae583c3ad9de7/pyarrow-15.0.0.tar.gz", hash = "sha256:876858f549d540898f927eba4ef77cd549ad8d24baa3207cf1b72e5788b50e83", size = 1063077, upload-time = "2024-01-21T15:02:16.899Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/27/4e/ea6d43f324169f8aec0e57569443a38bab4b398d09769ca64f7b4d467de3/pyarrow-17.0.0.tar.gz", hash = "sha256:4beca9521ed2c0921c1023e68d097d0299b62c362639ea315572a58f3f50fd28", size = 1112479, upload-time = "2024-07-17T10:41:25.092Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/33/de/8d8b373d0af779b5866f88ce2ba3774c7c36f712a1d00ed3251263325a2d/pyarrow-15.0.0-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:0a524532fd6dd482edaa563b686d754c70417c2f72742a8c990b322d4c03a15d", size = 27135268, upload-time = "2024-01-21T14:58:49.201Z" },
-    { url = "https://files.pythonhosted.org/packages/af/f0/f2145665535384d7048b60955aff4d90650e342d2131bfc23e27c4c6ea09/pyarrow-15.0.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:60a6bdb314affa9c2e0d5dddf3d9cbb9ef4a8dddaa68669975287d47ece67642", size = 24191267, upload-time = "2024-01-21T14:58:56.592Z" },
-    { url = "https://files.pythonhosted.org/packages/a9/e4/151ac8f5cb3fc51c80dbc8bc091a35674a896893eca97af3ed42ca47759f/pyarrow-15.0.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:66958fd1771a4d4b754cd385835e66a3ef6b12611e001d4e5edfcef5f30391e2", size = 36140271, upload-time = "2024-01-21T14:59:02.414Z" },
-    { url = "https://files.pythonhosted.org/packages/e5/d9/46f20f4ec32211534906eca1cc4156587fb06f6bce99fc73561c8e22a4a6/pyarrow-15.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1f500956a49aadd907eaa21d4fff75f73954605eaa41f61cb94fb008cf2e00c6", size = 38391410, upload-time = "2024-01-21T14:59:09.454Z" },
-    { url = "https://files.pythonhosted.org/packages/5e/db/2c843e78e4e5f66c2a477a4f41989726e26e307e87d383928904f370aa3e/pyarrow-15.0.0-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:6f87d9c4f09e049c2cade559643424da84c43a35068f2a1c4653dc5b1408a929", size = 35634137, upload-time = "2024-01-21T14:59:16.072Z" },
-    { url = "https://files.pythonhosted.org/packages/d4/ca/ef67abb77f9dd51a0d3ff7fcebff58296068a046d7da352b9548070005ed/pyarrow-15.0.0-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:85239b9f93278e130d86c0e6bb455dcb66fc3fd891398b9d45ace8799a871a1e", size = 38313696, upload-time = "2024-01-21T14:59:22.669Z" },
-    { url = "https://files.pythonhosted.org/packages/5d/22/8fa2146c63476c14902c0cbeb34c363fb577745ee1d8bf69bd4a3a42e005/pyarrow-15.0.0-cp310-cp310-win_amd64.whl", hash = "sha256:5b8d43e31ca16aa6e12402fcb1e14352d0d809de70edd185c7650fe80e0769e3", size = 24806824, upload-time = "2024-01-21T14:59:29.801Z" },
+    { url = "https://files.pythonhosted.org/packages/39/5d/78d4b040bc5ff2fc6c3d03e80fca396b742f6c125b8af06bcf7427f931bc/pyarrow-17.0.0-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:a5c8b238d47e48812ee577ee20c9a2779e6a5904f1708ae240f53ecbee7c9f07", size = 28994846, upload-time = "2024-07-16T10:29:13.082Z" },
+    { url = "https://files.pythonhosted.org/packages/3b/73/8ed168db7642e91180330e4ea9f3ff8bab404678f00d32d7df0871a4933b/pyarrow-17.0.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:db023dc4c6cae1015de9e198d41250688383c3f9af8f565370ab2b4cb5f62655", size = 27165908, upload-time = "2024-07-16T10:29:20.362Z" },
+    { url = "https://files.pythonhosted.org/packages/81/36/e78c24be99242063f6d0590ef68c857ea07bdea470242c361e9a15bd57a4/pyarrow-17.0.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:da1e060b3876faa11cee287839f9cc7cdc00649f475714b8680a05fd9071d545", size = 39264209, upload-time = "2024-07-16T10:29:27.621Z" },
+    { url = "https://files.pythonhosted.org/packages/18/4c/3db637d7578f683b0a8fb8999b436bdbedd6e3517bd4f90c70853cf3ad20/pyarrow-17.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:75c06d4624c0ad6674364bb46ef38c3132768139ddec1c56582dbac54f2663e2", size = 39862883, upload-time = "2024-07-16T10:29:34.34Z" },
+    { url = "https://files.pythonhosted.org/packages/81/3c/0580626896c842614a523e66b351181ed5bb14e5dfc263cd68cea2c46d90/pyarrow-17.0.0-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:fa3c246cc58cb5a4a5cb407a18f193354ea47dd0648194e6265bd24177982fe8", size = 38723009, upload-time = "2024-07-16T10:29:41.123Z" },
+    { url = "https://files.pythonhosted.org/packages/ee/fb/c1b47f0ada36d856a352da261a44d7344d8f22e2f7db3945f8c3b81be5dd/pyarrow-17.0.0-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:f7ae2de664e0b158d1607699a16a488de3d008ba99b3a7aa5de1cbc13574d047", size = 39855626, upload-time = "2024-07-16T10:29:49.004Z" },
+    { url = "https://files.pythonhosted.org/packages/19/09/b0a02908180a25d57312ab5919069c39fddf30602568980419f4b02393f6/pyarrow-17.0.0-cp310-cp310-win_amd64.whl", hash = "sha256:5984f416552eea15fd9cee03da53542bf4cddaef5afecefb9aa8d1010c335087", size = 25147242, upload-time = "2024-07-16T10:29:56.195Z" },
 ]
 
 [[package]]
@@ -3492,7 +3492,7 @@ dev = [
     { name = "asynctest", specifier = "==0.13.0" },
     { name = "mypy", specifier = "~=1.15" },
     { name = "pre-commit", specifier = "~=4.1" },
-    { name = "pyarrow", specifier = "==15.0.0" },
+    { name = "pyarrow", specifier = "==17.0.0" },
     { name = "pytest", specifier = "~=8.3" },
     { name = "pytest-freezegun", specifier = "==0.4.2" },
     { name = "requests", specifier = "==2.31" },

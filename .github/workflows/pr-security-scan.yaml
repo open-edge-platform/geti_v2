@@ -15,7 +15,7 @@ jobs:
       contents: read
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
       - name: Checkout code
@@ -23,7 +23,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@a99c99d09285f5920855ee773031e487ad34fa57
+        uses: open-edge-platform/geti-ci/actions/zizmor@c2bb2697178bb2e50014420aef2351a45749b925
         with:
           scan-scope: "changed"
           severity-level: "LOW"
@@ -36,7 +36,7 @@ jobs:
       contents: read
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
       - name: Checkout code
@@ -44,7 +44,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@a99c99d09285f5920855ee773031e487ad34fa57
+        uses: open-edge-platform/geti-ci/actions/bandit@c2bb2697178bb2e50014420aef2351a45749b925
         with:
           scan-scope: "changed"
           severity-level: "HIGH"

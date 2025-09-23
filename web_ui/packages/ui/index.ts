@@ -159,7 +159,7 @@ export { FullscreenAction } from './src/fullscreen-action/fullscreen-action.comp
 export { MediaViewModes } from './src/view-modes/media-view-modes.component';
 export { ViewModes, INITIAL_VIEW_MODE, VIEW_MODE_LABEL } from './src/view-modes/utils';
 export { useViewMode } from './src/view-modes/use-view-mode.hook';
-export { Toast, toast, removeToasts, removeToast } from './src/toast/toast.component';
+export { Toast, toast, removeToasts, removeToast, CustomToast } from './src/toast/toast.component';
 
 export {
     ListBox as AriaComponentsListBox,
