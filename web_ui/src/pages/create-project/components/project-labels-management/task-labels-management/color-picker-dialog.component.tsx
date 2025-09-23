@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 
 import { Button, Content, Dialog, DialogTrigger, Flex } from '@geti/ui';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
@@ -11,12 +11,14 @@ import { ChangeColorButton } from './change-color-button.component';
 
 import classes from './color-picker-dialog.module.scss';
 
+type ChangeColorButtonSize = ComponentProps<typeof ChangeColorButton>['size'];
+
 interface ColorPickerDialogProps {
     id: string;
     color: string | undefined;
     onColorChange: (color: string) => void;
     ariaLabelPrefix?: string;
-    size?: 'S' | 'L';
+    size?: ChangeColorButtonSize;
     onOpenChange?: (isOpen: boolean) => void;
     gridArea?: string;
 }
