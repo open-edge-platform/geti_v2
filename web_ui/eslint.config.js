@@ -74,6 +74,7 @@ export default [
                     ' LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE',
                 ],
             ],
+            // 'react-hooks/refs': 'off',
         },
     },
     ...compat.extends('plugin:playwright/playwright-test').map((config) => ({

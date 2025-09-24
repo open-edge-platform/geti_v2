@@ -22,7 +22,7 @@ import { DomainCardsMetadata, TaskChainMetadata } from './project-template.inter
 
 import classes from './utils.module.scss';
 
-const ImgBoxes = (projectSubdomain: SUBDOMAIN) => {
+const ImgBoxes = ({ projectSubdomain }: { projectSubdomain: SUBDOMAIN }) => {
     if (projectSubdomain === SUBDOMAIN.CLASSIFICATION_MULTI_CLASS) {
         return <div className={classes.orangeBox}></div>;
     } else if (projectSubdomain === SUBDOMAIN.CLASSIFICATION_MULTI_LABEL) {
@@ -51,7 +51,7 @@ export const TABS_SINGLE_TEMPLATE: Record<SingleTaskTemplateType, DomainCardsMet
     Detection: [
         {
             TaskTypeIcon: DetectionImg,
-            imgBoxes: ImgBoxes(SUBDOMAIN.DETECTION_BOUNDING_BOX),
+            imgBoxes: <ImgBoxes projectSubdomain={SUBDOMAIN.DETECTION_BOUNDING_BOX} />,
             alt: 'detection-bounding-box',
             domain: DOMAIN.DETECTION,
             subDomain: SUBDOMAIN.DETECTION_BOUNDING_BOX,
@@ -61,7 +61,7 @@ export const TABS_SINGLE_TEMPLATE: Record<SingleTaskTemplateType, DomainCardsMet
         },
         {
             TaskTypeIcon: DetectionRotatedImg,
-            imgBoxes: ImgBoxes(SUBDOMAIN.DETECTION_ROTATED_BOUNDING_BOX),
+            imgBoxes: <ImgBoxes projectSubdomain={SUBDOMAIN.DETECTION_ROTATED_BOUNDING_BOX} />,
             alt: 'detection-rotated-bounding-box',
             domain: DOMAIN.DETECTION_ROTATED_BOUNDING_BOX,
             subDomain: SUBDOMAIN.DETECTION_ROTATED_BOUNDING_BOX,
@@ -73,7 +73,7 @@ export const TABS_SINGLE_TEMPLATE: Record<SingleTaskTemplateType, DomainCardsMet
     Segmentation: [
         {
             TaskTypeIcon: SegmentationInstanceImg,
-            imgBoxes: ImgBoxes(SUBDOMAIN.SEGMENTATION_INSTANCE),
+            imgBoxes: <ImgBoxes projectSubdomain={SUBDOMAIN.SEGMENTATION_INSTANCE} />,
             alt: 'segmentation-instance',
             domain: DOMAIN.SEGMENTATION_INSTANCE,
             subDomain: SUBDOMAIN.SEGMENTATION_INSTANCE,
@@ -85,7 +85,7 @@ export const TABS_SINGLE_TEMPLATE: Record<SingleTaskTemplateType, DomainCardsMet
         },
         {
             TaskTypeIcon: SegmentationImg,
-            imgBoxes: ImgBoxes(SUBDOMAIN.SEGMENTATION_SEMANTIC),
+            imgBoxes: <ImgBoxes projectSubdomain={SUBDOMAIN.SEGMENTATION_SEMANTIC} />,
             alt: 'segmentation-semantic',
             domain: DOMAIN.SEGMENTATION,
             subDomain: SUBDOMAIN.SEGMENTATION_SEMANTIC,
@@ -99,7 +99,7 @@ export const TABS_SINGLE_TEMPLATE: Record<SingleTaskTemplateType, DomainCardsMet
     Classification: [
         {
             TaskTypeIcon: ClassificationImg,
-            imgBoxes: ImgBoxes(SUBDOMAIN.CLASSIFICATION_MULTI_CLASS),
+            imgBoxes: <ImgBoxes projectSubdomain={SUBDOMAIN.CLASSIFICATION_MULTI_CLASS} />,
             alt: 'classification-multi-class',
             domain: DOMAIN.CLASSIFICATION,
             subDomain: SUBDOMAIN.CLASSIFICATION_MULTI_CLASS,
@@ -109,7 +109,7 @@ export const TABS_SINGLE_TEMPLATE: Record<SingleTaskTemplateType, DomainCardsMet
         },
         {
             TaskTypeIcon: ClassificationImg,
-            imgBoxes: ImgBoxes(SUBDOMAIN.CLASSIFICATION_MULTI_LABEL),
+            imgBoxes: <ImgBoxes projectSubdomain={SUBDOMAIN.CLASSIFICATION_MULTI_LABEL} />,
             alt: 'classification-multi-label',
             domain: DOMAIN.CLASSIFICATION,
             subDomain: SUBDOMAIN.CLASSIFICATION_MULTI_LABEL,
@@ -119,7 +119,7 @@ export const TABS_SINGLE_TEMPLATE: Record<SingleTaskTemplateType, DomainCardsMet
         },
         {
             TaskTypeIcon: ClassificationHierarchicalImg,
-            imgBoxes: ImgBoxes(SUBDOMAIN.CLASSIFICATION_HIERARCHICAL),
+            imgBoxes: <ImgBoxes projectSubdomain={SUBDOMAIN.CLASSIFICATION_HIERARCHICAL} />,
             alt: 'classification-hierarchical',
             domain: DOMAIN.CLASSIFICATION,
             subDomain: SUBDOMAIN.CLASSIFICATION_HIERARCHICAL,
