@@ -5,7 +5,8 @@ description = "Visual prompt service for Geti"
 requires-python = ">=3.10, <3.13"
 
 dependencies = [
-    "fastapi==0.115.2",
+    "fastapi==0.117.1",
+    "starlette>=0.47.2", # Lower bound due to CVEs
     "uvicorn~=0.27.1",
     "openvino-model-api==0.2.5.2",
     "python-multipart~=0.0.18",
