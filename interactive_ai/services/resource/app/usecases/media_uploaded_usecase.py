@@ -126,7 +126,7 @@ class MediaUploadedUseCase:
         return resized_image.crop((x1, y1, x2, y2))
 
     @staticmethod
-    def _convert_vfr_to_cfr_if_needed(
+    def ensure_constant_frame_rate(
         dataset_storage_identifier: DatasetStorageIdentifier,
         video_id: ID,
         data_binary_filename: str,
@@ -195,7 +195,7 @@ class MediaUploadedUseCase:
             thumbnail_binary_repo = ThumbnailBinaryRepo(dataset_storage_identifier)
             url = video_binary_repo.get_path_or_presigned_url(filename=data_binary_filename)
 
-            MediaUploadedUseCase._convert_vfr_to_cfr_if_needed(
+            MediaUploadedUseCase.ensure_constant_frame_rate(
                 dataset_storage_identifier=dataset_storage_identifier,
                 video_id=video_id,
                 data_binary_filename=data_binary_filename,
