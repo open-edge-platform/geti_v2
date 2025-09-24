@@ -4,10 +4,11 @@ version = "1.0.0"
 description = "Migration job for Geti"
 requires-python = ">=3.10, <3.11"
 dependencies = [
-    "boto3==1.28.17",
+    "boto3==1.40.37",
     "psycopg2-binary==2.9.3",
     "pymongo[aws]~=4.10",
     "minio~=7.1.0",
+    "urllib3>=2.5.0", # Lower bound due to CVEs
     "geti-telemetry-tools[telemetry,grpc,logger]",
     "migration",
 ]

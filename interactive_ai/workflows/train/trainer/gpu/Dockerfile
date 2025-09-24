@@ -4,9 +4,9 @@ FROM python:3.10-slim-bookworm@sha256:e7eed6c2e7fd1ecc43f0a37da7a115f4c9c9f50f24
 FROM base AS cuda
 ENV TORCH_EXTENSIONS_DIR=/.torch
 ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs
-ENV NCCL_VERSION=2.17.1
-ENV CUDA_VERSION=12.1.1
-ENV NV_CUDNN_VERSION=8.9.0.131-1
+ENV NCCL_VERSION=2.26.5
+ENV CUDA_VERSION=12.9.1
+ENV NV_CUDNN_VERSION=9.13.0
 ENV NVIDIA_REQUIRE_CUDA=cuda>=12.1 brand=tesla,driver>=470,driver<471 brand=unknown,driver>=470,driver<471 brand=nvidia,driver>=470,driver<471 brand=nvidiartx,driver>=470,driver<471 brand=geforce,driver>=470,driver<471 brand=geforcertx,driver>=470,driver<471 brand=quadro,driver>=470,driver<471 brand=quadrortx,driver>=470,driver<471 brand=titan,driver>=470,driver<471 brand=titanrtx,driver>=470,driver<471 brand=tesla,driver>=525,driver<526 brand=unknown,driver>=525,driver<526 brand=nvidia,driver>=525,driver<526 brand=nvidiartx,driver>=525,driver<526 brand=geforce,driver>=525,driver<526 brand=geforcertx,driver>=525,driver<526 brand=quadro,driver>=525,driver<526 brand=quadrortx,driver>=525,driver<526 brand=titan,driver>=525,driver<526 brand=titanrtx,driver>=525,driver<526
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_VISIBLE_DEVICES=all
@@ -24,8 +24,8 @@ RUN wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_6
 
 RUN apt update \
 	&& apt install -y --no-install-recommends \
-    cuda-libraries-12-6 \
-    cuda-compiler-12-6 \
+    cuda-libraries-12-9 \
+    cuda-compiler-12-9 \
     && apt clean all \
     && rm -rf /var/cache/apt/* \
 	&& echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \

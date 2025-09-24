@@ -6,7 +6,8 @@ requires-python = ">=3.10, <3.11"
 
 dependencies = [
     "flytekit==1.10.2",
-    "fastapi==0.115.2",
+    "fastapi==0.117.1",
+    "starlette>=0.47.2", # Lower bound due to CVEs
     "uvicorn~=0.27",
     "marshmallow-enum==1.5.1",
     "geti-telemetry-tools[telemetry,fastapi,logger,kafka,grpc]",
