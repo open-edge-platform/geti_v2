@@ -2,8 +2,8 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { View } from '@adobe/react-spectrum';
+import { BorderRadiusValue, Responsive } from '@react-types/shared';
 
-import { BorderRadiusValue, Responsive } from '../..';
 import { ActionButton } from '../button/button.component';
 
 interface ChangeColorButtonProps {

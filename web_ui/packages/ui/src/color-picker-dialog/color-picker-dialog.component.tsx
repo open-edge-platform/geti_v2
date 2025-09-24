@@ -3,9 +3,10 @@
 
 import { ComponentProps, useState } from 'react';
 
+import { Content, Dialog, DialogTrigger, Flex } from '@adobe/react-spectrum';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
 
-import { Button, Content, Dialog, DialogTrigger, Flex } from '../..';
+import { Button } from '../button/button.component';
 import { ChangeColorButton } from './change-color-button.component';
 import { validateColor } from './utils';
 
