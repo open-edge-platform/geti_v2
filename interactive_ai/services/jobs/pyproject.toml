@@ -43,7 +43,8 @@ dev = [
     "pytest-freezegun==0.4.2",
     "types-cachetools",
     "types-PyYAML",
-    "grpc-stubs~=1.53.0.5"
+    "grpc-stubs~=1.53.0.5",
+    "pandas~=2.3"
 ]
 
 [tool.ruff]
