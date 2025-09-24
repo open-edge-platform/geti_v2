@@ -116,7 +116,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: get-unique-names
     container:
-      image: debian:12.8
+      image: debian:bookworm-slim@sha256:df52e55e3361a81ac1bead266f3373ee55d29aa50cf0975d440c2be3483d8ed3
     steps:
     - name: Add apt sources for deb-src
       shell: bash

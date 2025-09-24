@@ -3,7 +3,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
 
-import { Button, Flex, Form, TextField, TextFieldRef } from '@geti/ui';
+import { Button, ColorPickerDialog, Flex, Form, TextField, TextFieldRef } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
 import {
@@ -34,7 +34,6 @@ import { isYupValidationError } from '../../../../../user-management/profile-pag
 import { useUsedAnnotatorHotkeys } from '../../../use-used-annotator-hotkeys.hook';
 import { newLabelHotkeySchema, newLabelNameSchema } from '../../../utils';
 import { LABEL_TREE_TYPE } from '../../label-tree-type.enum';
-import { ColorPickerDialog } from '../color-picker-dialog.component';
 import { Label } from './label/label.component';
 
 interface NewLabelProps {

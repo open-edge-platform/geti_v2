@@ -80,7 +80,7 @@ const ToastActionButtons = ({ actionButtons }: { actionButtons?: ReactElement[] 
     );
 };
 
-const CustomToast = ({ message, id, actionButtons, type, hasCloseButton = true, title }: CustomToastProps) => {
+export const CustomToast = ({ message, id, actionButtons, type, hasCloseButton = true, title }: CustomToastProps) => {
     const icon = ICON[type];
 
     if (title === undefined) {

@@ -4,6 +4,7 @@
 """This module defines a wrapper for flyte Task decorator that enables multi-container tasks to work"""
 
 import logging
+import threading
 from collections.abc import Callable
 from functools import wraps
 from time import sleep
@@ -383,9 +384,11 @@ def get_flyte_pod_spec(
     )
 
 
-def _terminate_istio_proxy(n_trials: int = 10, timeout: float = 1.0, sleep_sec: float = 1.0):
-    is_terminated = False
+def _start_istio_termination(n_trials: int = 10, timeout: float = 1.0, sleep_sec: float = 1.0):
+    logger.info("starting terminating the istio-proxy sidecar container")
+    sleep(20)
 
+    is_terminated = False
     for step in range(1, n_trials + 1):
         try:
             response = requests.post(TERM_ISTIO_PROXY_URL, timeout=timeout)
@@ -400,6 +403,16 @@ def _terminate_istio_proxy(n_trials: int = 10, timeout: float = 1.0, sleep_sec: 
 
     if not is_terminated:
         logger.error("Cannot terminate istio proxy")
+
+
+def _terminate_istio_proxy(n_trials: int = 10, timeout: float = 1.0, sleep_sec: float = 1.0):
+    # after upgrade of istio to 1.26.4 istio-proxy sidecar started to be closed too early - not allowing the main
+    # process to store all required data in seaweed-fs. The only solution to postpone this operation - but without
+    # blocking the main thread - appeared to be starting a separate thread that will try to terminate istio-proxy after
+    # 20 seconds - allowing main thread to finish all its operations
+    thread = threading.Thread(target=_start_istio_termination, args=(n_trials, timeout, sleep_sec))
+    thread.daemon = False  # Ensure the thread doesn't exit when the main process exits
+    thread.start()
 
 
 DEFAULT_TASK_CONFIG = Pod(

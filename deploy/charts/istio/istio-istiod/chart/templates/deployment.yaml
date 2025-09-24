@@ -173,15 +173,19 @@ spec:
           # Also, check for an explicit ENV override (legacy approach) and prefer that
           # if present
           {{ $ztTrustedNS := or .Values.trustedZtunnelNamespace .Release.Namespace }}
+          {{ $ztTrustedName := or .Values.trustedZtunnelName "ztunnel" }}
           {{- if not .Values.env.CA_TRUSTED_NODE_ACCOUNTS }}
           - name: CA_TRUSTED_NODE_ACCOUNTS
-            value: "{{ $ztTrustedNS }}/ztunnel"
+            value: "{{ $ztTrustedNS }}/{{ $ztTrustedName }}"
           {{- end }}
           {{- if .Values.env }}
           {{- range $key, $val := .Values.env }}
           - name: {{ $key }}
             value: "{{ $val }}"
           {{- end }}
+          {{- end }}
+          {{- with .Values.envVarFrom }}
+          {{- toYaml . | nindent 10 }}
           {{- end }}
 {{- if .Values.traceSampling }}
           - name: PILOT_TRACE_SAMPLING
@@ -202,6 +206,7 @@ spec:
             valueFrom:
               resourceFieldRef:
                 resource: limits.memory
+                divisor: "1"
           - name: GOMAXPROCS
             valueFrom:
               resourceFieldRef:
@@ -275,10 +280,19 @@ spec:
           secretName: istiod-tls
           optional: true
       - name: istio-csr-ca-configmap
+  {{- if eq (.Values.env).ENABLE_CLUSTER_TRUST_BUNDLE_API true }}
+        projected:
+          sources:
+          - clusterTrustBundle:
+              name: istio.io:istiod-ca:root-cert
+              path: root-cert.pem
+              optional: true
+  {{- else }}
         configMap:
           name: istio-ca-root-cert
           defaultMode: 420
           optional: true
+  {{- end }}
   {{- if .Values.jwksResolverExtraRootCA }}
       - name: extracacerts
         configMap:
