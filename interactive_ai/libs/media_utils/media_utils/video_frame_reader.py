@@ -19,16 +19,12 @@ logger = logging.getLogger(__name__)
 
 class VideoFrameReader:
     @staticmethod
-    def get_frame_numpy(
-        file_location_getter: Callable[[], str], frame_index: int, fps: float | None = None
-    ) -> np.ndarray:
+    def get_frame_numpy(file_location_getter: Callable[[], str], frame_index: int) -> np.ndarray:
         """
         Get frame of a video by its index
 
         :param file_location_getter: Function returning local storage path or presigned URL pointing to the video
         :param frame_index: Frame index (0 for first frame)
-        :param fps: Frames per second of the video. Will be used for more accurate seeking in case of a variable frame
-        rate video. If not passed, solely the frame index will be used instead.
         :raises VideoFrameReadingError: if frame is not read
 
         :return: RGB numpy array
@@ -38,7 +34,7 @@ class VideoFrameReader:
         for i in range(NUM_VIDEO_FRAME_DECODE_RETRIES):
             file_location = file_location_getter()
             try:
-                frame = VideoDecoder.decode(file_location=file_location, frame_index=frame_index, fps=fps)
+                frame = VideoDecoder.decode(file_location=file_location, frame_index=frame_index)
                 break
             except VideoFrameReadingError:
                 logger.warning(

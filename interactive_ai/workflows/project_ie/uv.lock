@@ -1453,6 +1453,7 @@ source = { editable = "../../data_migration" }
 dependencies = [
     { name = "dataclasses-json" },
     { name = "minio" },
+    { name = "opencv-python-headless" },
     { name = "pymongo", extra = ["aws"] },
 ]
 
@@ -1460,6 +1461,7 @@ dependencies = [
 requires-dist = [
     { name = "dataclasses-json", specifier = "==0.5.7" },
     { name = "minio", specifier = "~=7.1" },
+    { name = "opencv-python-headless", specifier = "~=4.10" },
     { name = "pymongo", extras = ["aws"], specifier = "~=4.10" },
 ]
 
