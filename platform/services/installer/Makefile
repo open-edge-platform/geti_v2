@@ -1,7 +1,7 @@
 include ../../../Makefile.shared-python
 
 COMPONENT_NAME := platform-installer
-IMAGE_TAG ?= "$(COMPONENT_NAME):latest"
+IMAGE_TAG ?= "$(COMPONENT_NAME):$(TAG)"
 
 DOCKER_BUILD_CONTEXT := --build-context libs=../../../libs
 publish-chart:
@@ -13,24 +13,22 @@ test-component:
 test-integration:
 	@echo "Not applicable"
 
-build: build-image build-installer
-
-build-installer:
-	$(eval CONTAINER_ID := $(shell docker run -d --rm $(IMAGE_TAG) sleep 10))
-	@sleep 2
-	@mkdir platform_$(TAG)
-	@docker cp $(CONTAINER_ID):/deploy/services/installer/dist/platform_installer platform_$(TAG)/
+build: build-image
 
 build-image:
 	@echo "Building docker image for installer"
+	@mkdir -p platform_$(TAG)
+	TAG=$(TAG) PRODUCT_VERSION=$(PRODUCT_VERSION) envsubst < app/version.yaml.template > app/version.yaml
 	@docker build \
 		${DOCKER_EXTRA_ARGS} \
 		${DOCKER_BUILD_CONTEXT} \
 		-t $(IMAGE_TAG) \
-		-f Dockerfile .
+		-f Dockerfile . \
+		--output type=local,dest=platform_$(TAG) \
+		--target exporter
 
 clean:
-	@rm -rf __pycache__ .cache .pytest_cache .venv .mypy_cache platform_installer platform_logs
+	@rm -rf __pycache__ .cache .pytest_cache .venv .mypy_cache platform_*
 
 list-image:
 	@echo "Not applicable"

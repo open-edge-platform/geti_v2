@@ -117,8 +117,38 @@ Before you begin, ensure you have:
 #### Setup Steps
 
 1. Clone the repository
-2. Set up your local Kubernetes environment (TBD)
-3. Configure local Docker registry (TBD)
+2. Configure local Docker registry
+    ```bash
+    docker run -d -p 5000:5000 --restart=always --name registry registry:3
+    ```
+    Update REGISTRY variable in `Makefile` to point to your local registry (e.g., `localhost:5000`).
+3. Build and push all images to local registry
+    ```bash
+    # from root of the repository
+    make build-image
+    
+    # to push to local registry
+    make publish-image
+    ```
+4. Build and push helm charts
+    ```bash
+    # from root of the repository
+    make build-umbrella-chart
+    
+    # to push to local registry
+    make publish-umbrella-chart
+    ```
+5. Install Geti™ on your local machine
+    ```bash
+    export PLATFORM_REGISTRY_ADDRESS=localhost:5000
+   
+    # copy installer to directory eq. /tmp/geti
+    cp platform/services/installer/platform_<TAG>/platform_installer /tmp/geti
+   
+    # launch installation and follow prompts
+    cd /tmp/geti
+    ./plaform_installer install
+    ```
 
 ### Local Development
 
