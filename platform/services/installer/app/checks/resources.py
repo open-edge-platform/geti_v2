@@ -11,9 +11,9 @@ import subprocess
 from subprocess import CalledProcessError, TimeoutExpired
 
 import click_spinner
+import pynvml
 import rich_click as click
 from geti_k8s_tools.calculate_cluster_resources import k8s_memory_to_kibibytes
-from GPUtil import getGPUs
 from packaging import version
 from psutil import cpu_count, disk_partitions, disk_usage, virtual_memory
 
@@ -56,8 +56,8 @@ PLATFORM_DISK_THRESHOLD = min(PLATFORM_DISK_MIN, (k8s_memory_to_kibibytes("100GB
 # Expressed in GB (1000 ** 3)
 ROOT_DISK_MIN = (k8s_memory_to_kibibytes("40GB") * 1024) // (1000**3)
 # We support GPU cards >= 16 GB of memory, here a little bit less not to reject cards that have slightly less
-# then 16385 MiB, e.g. Tesla T4 reports 15109MiB
-SUPPORTED_GPUS_MEMORY = 15100.0
+# then 16385 MiB, e.g. Tesla T4 reports 15360 MB
+SUPPORTED_GPUS_MEMORY = 15359
 # https://docs.nvidia.com/deeplearning/cudnn/latest/reference/support-matrix.html#gpu-cuda-toolkit-and-cuda-driver-requirements
 SUPPORTED_NVIDIA_DRIVER_VERSION = "525.60.13"
 
@@ -203,6 +203,35 @@ def _get_intel_gpus() -> str:
     return ""
 
 
+def _get_nvidia_gpus():
+    try:
+        pynvml.nvmlInit()
+        device_count = pynvml.nvmlDeviceGetCount()
+        gpus = []
+        for i in range(device_count):
+            handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+            name = pynvml.nvmlDeviceGetName(handle)
+            memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+
+            gpus.append(
+                {
+                    "id": i,
+                    "name": name,
+                    "memory_total": int(memory_info.total / (1024 * 1024)),
+                }
+            )
+        pynvml.nvmlShutdown()
+        return gpus
+    except pynvml.NVMLError as e:
+        logger.error(f"NVML error: {str(e)}")
+    finally:
+        try:
+            pynvml.nvmlShutdown()
+        except pynvml.NVMLError as e:
+            logger.error(f"Error shutting down NVML: {str(e)}")
+    return []
+
+
 def check_local_gpu(config: InstallationConfig):  # noqa: ANN201
     """
     Check GPU card requirements.
@@ -215,7 +244,7 @@ def check_local_gpu(config: InstallationConfig):  # noqa: ANN201
 
     logger.info("Checking GPU card requirements.")
     try:
-        nvidia_gpus = getGPUs()
+        nvidia_gpus = _get_nvidia_gpus()
     except ValueError as err:
         raise ResourcesCheckWarning(ResourcesChecksTexts.gpu_requirements_check_error) from err
 
@@ -235,12 +264,12 @@ def check_local_gpu(config: InstallationConfig):  # noqa: ANN201
     elif nvidia_gpus:
         config.gpu_provider.value = GPU_PROVIDER_NVIDIA
         logger.info(f"GPU provider: {config.gpu_provider.value}")
-        found_gpus = [f"{local_gpu.name}, mem={str(local_gpu.memoryTotal)}MiB" for local_gpu in nvidia_gpus]
+        found_gpus = [f"{local_gpu['name']}, mem={str(local_gpu['memory_total'])}MiB" for local_gpu in nvidia_gpus]
         logger.debug(f"Found GPUs: {', '.join(found_gpus)}")
 
-        unsupported_gpus = [gpu for gpu in nvidia_gpus if gpu.memoryTotal < SUPPORTED_GPUS_MEMORY]
+        unsupported_gpus = [gpu for gpu in nvidia_gpus if gpu["memory_total"] < SUPPORTED_GPUS_MEMORY]
         if unsupported_gpus:
-            unsupported_gpus_str = ", ".join([gpu.name for gpu in unsupported_gpus])
+            unsupported_gpus_str = ", ".join([gpu["name"] for gpu in unsupported_gpus])
             logger.debug(f"Unsupported GPUs: {unsupported_gpus_str}")
             raise UnsupportedGpuWarning(
                 ResourcesChecksTexts.gpu_requirements_check_memory.format(gpus=unsupported_gpus_str)
