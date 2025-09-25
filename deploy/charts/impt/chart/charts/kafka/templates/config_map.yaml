@@ -98,4 +98,4 @@ data:
         user_admin=\"${KAFKA_ADMIN_PASSWORD}\"
         user_broker=\"${KAFKA_ADMIN_PASSWORD}\";
         ;
-    };' > /opt/kafka/config/kafka_server_jaas.conf
+    };" > /opt/kafka/config/kafka_server_jaas.conf
