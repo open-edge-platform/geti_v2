@@ -79,9 +79,10 @@ def get_intel_gpus_mock(mocker):
 
 
 def test_check_local_nvidia_gpu_ok(get_gpus_mock):
-    gpu_mock = {}
-    gpu_mock["name"] = "NVIDIA GeForce RTX 3090"
-    gpu_mock["memory_total"] = 24576
+    gpu_mock = {
+        "name": "NVIDIA GeForce RTX 3090",
+        "memory_total": 24576,
+    }
     get_gpus_mock.return_value = [gpu_mock, gpu_mock]
     install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
     install_config_mock.gpu_support.value = True
@@ -123,12 +124,14 @@ def test_check_local_gpu_not_found(get_gpus_mock, get_intel_gpus_mock):
 
 
 def test_check_local_gpu_not_supported(get_gpus_mock):
-    gpu_mock_1 = {}
-    gpu_mock_1["name"] = "Fake Unsupported GPU"
-    gpu_mock_1["memory_total"] = 15000
-    gpu_mock_2 = {}
-    gpu_mock_2["name"] = "NVIDIA GeForce RTX 3090"
-    gpu_mock_2["memory_total"] = 24576
+    gpu_mock_1 = {
+        "name": "Fake Unsupported GPU",
+        "memory_total": 15000,
+    }
+    gpu_mock_2 = {
+        "name": "NVIDIA GeForce RTX 3090",
+        "memory_total": 24576,
+    }
     get_gpus_mock.return_value = [gpu_mock_1, gpu_mock_2]
     with pytest.raises(UnsupportedGpuWarning):
         install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
