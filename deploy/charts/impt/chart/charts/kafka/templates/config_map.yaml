@@ -91,9 +91,11 @@ data:
     #!/bin/bash
     set -xe
 
-    echo 'KafkaServer {
+    echo "KafkaServer {
         org.apache.kafka.common.security.plain.PlainLoginModule required
         username=admin
-        password="${KAFKA_ADMIN_PASSWORD}"
-        user_admin="${KAFKA_ADMIN_PASSWORD}";
+        password=\"${KAFKA_ADMIN_PASSWORD}\"
+        user_admin=\"${KAFKA_ADMIN_PASSWORD}\"
+        user_broker=\"${KAFKA_ADMIN_PASSWORD}\";
+        ;
     };' > /opt/kafka/config/kafka_server_jaas.conf

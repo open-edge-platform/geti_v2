@@ -60,6 +60,8 @@ spec:
               value: {{ .Values.kraft.nodeId | quote }}
             - name: KAFKA_PROCESS_ROLES
               value: {{ .Values.kraft.roles | quote }}
+            - name: KAFKA_SUPER_USERS
+              value: "User:admin"
             - name: KAFKA_CLUSTER_ID
               value: {{ .Values.kraft.clusterId | quote }}
             - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
