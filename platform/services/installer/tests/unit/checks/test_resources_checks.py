@@ -3,7 +3,7 @@
 
 import math
 from collections import namedtuple
-from unittest.mock import MagicMock, Mock, mock_open
+from unittest.mock import MagicMock, mock_open
 
 import pytest
 

@@ -662,11 +662,11 @@ dependencies = [
     { name = "ifaddr" },
     { name = "jinja2" },
     { name = "kubernetes" },
+    { name = "nvidia-ml-py" },
     { name = "packaging" },
     { name = "parse" },
     { name = "psutil" },
     { name = "pyinstaller" },
-    { name = "pynvml" },
     { name = "pytz" },
     { name = "pyyaml" },
     { name = "rich-click" },
@@ -698,11 +698,11 @@ requires-dist = [
     { name = "ifaddr", specifier = "==0.2.0" },
     { name = "jinja2", specifier = "==3.1.6" },
     { name = "kubernetes", specifier = "==24.2.0" },
+    { name = "nvidia-ml-py", specifier = "==13.580.82" },
     { name = "packaging", specifier = "==24.1" },
     { name = "parse", specifier = "==1.19.0" },
     { name = "psutil", specifier = "==5.9.1" },
     { name = "pyinstaller", specifier = "==6.6.0" },
-    { name = "pynvml", specifier = "==13.0.1" },
     { name = "pytz", specifier = "==2022.5" },
     { name = "pyyaml", specifier = "==6.0.1" },
     { name = "rich-click", specifier = "==1.4" },
@@ -875,18 +875,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/71/d6/e5b378b7d4add8c879295c531309b0320e9c07a70458665d091760ffdc87/pyinstaller_hooks_contrib-2025.8.tar.gz", hash = "sha256:3402ad41dfe9b5110af134422e37fc5d421ba342c6cb980bd67cb30b7415641c", size = 164214, upload-time = "2025-07-27T16:37:31.943Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/48/34/1d973d0dae849683e53fbcda84443ce016f315e6f4dc7605ede4f56a28c3/pyinstaller_hooks_contrib-2025.8-py3-none-any.whl", hash = "sha256:8d0b8cfa0cb689a619294ae200497374234bd4e3994b3ace2a4442274c899064", size = 442346, upload-time = "2025-07-27T16:37:30.268Z" },
-]
-
-[[package]]
-name = "pynvml"
-version = "13.0.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "nvidia-ml-py" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/5c/57/da7dc63a79f59e082e26a66ac02d87d69ea316b35b35b7a00d82f3ce3d2f/pynvml-13.0.1.tar.gz", hash = "sha256:1245991d9db786b4d2f277ce66869bd58f38ac654e38c9397d18f243c8f6e48f", size = 35226, upload-time = "2025-09-05T20:33:25.377Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d7/4a/cac76c174bb439a0c46c9a4413fcbea5c6cabfb01879f7bbdb9fdfaed76c/pynvml-13.0.1-py3-none-any.whl", hash = "sha256:e2b20e0a501eeec951e2455b7ab444759cf048e0e13a57b08049fa2775266aa8", size = 28810, upload-time = "2025-09-05T20:33:24.13Z" },
 ]
 
 [[package]]
