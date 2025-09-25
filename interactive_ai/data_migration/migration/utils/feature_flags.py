@@ -11,19 +11,6 @@ logger = logging.getLogger(__name__)
 class FeatureFlagProvider:
     @staticmethod
     def _str2bool(text: str) -> bool:
-        """
-        Converts a string to a boolean based on common true/false representations.
-        Recognizes the following as True: {"y", "yes", "t", "true", "on", "1"}
-        Recognizes the following as False: {"n", "no", "f", "false", "off", "0"}
-        Raises ValueError for any other inputs.
-        This is similar to the behavior of distutils.util.strtobool.
-
-        :param text: string to convert to boolean
-        :return: boolean of the input string
-        :raises ValueError: if the logical value cannot be determined
-
-        """
-
         true_set = {"y", "yes", "t", "true", "on", "1"}
         false_set = {"n", "no", "f", "false", "off", "0"}
         buf_input = text.lower()

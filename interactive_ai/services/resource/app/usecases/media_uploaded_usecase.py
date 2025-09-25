@@ -3,6 +3,7 @@
 import logging
 import os
 import tempfile
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
 
@@ -12,8 +13,11 @@ from geti_kafka_tools import publish_event
 from geti_types import CTX_SESSION_VAR, ID
 from iai_core.adapters.binary_interpreters import StreamBinaryInterpreter
 from iai_core.entities.dataset_storage import DatasetStorageIdentifier
+from iai_core.entities.dataset_storage_filter_data import DatasetStorageFilterData
 from iai_core.entities.image import Image
 from iai_core.entities.video import Video
+from iai_core.repos import VideoRepo
+from iai_core.repos.dataset_storage_filter_repo import DatasetStorageFilterRepo
 from iai_core.repos.storage.binary_repos import ImageBinaryRepo, ThumbnailBinaryRepo, VideoBinaryRepo
 from iai_core.utils.constants import DEFAULT_THUMBNAIL_SIZE
 from iai_core.utils.media_factory import Media2DFactory
@@ -122,6 +126,58 @@ class MediaUploadedUseCase:
         return resized_image.crop((x1, y1, x2, y2))
 
     @staticmethod
+    def ensure_constant_frame_rate(
+        dataset_storage_identifier: DatasetStorageIdentifier,
+        video_id: ID,
+        data_binary_filename: str,
+        url: Path | str,
+    ) -> None:
+        """
+        Check if video has variable frame rate and convert to constant frame rate if needed.
+
+        :param dataset_storage_identifier: Identifier of the dataset storage containing the dataset
+        :param video_id: video ID
+        :param data_binary_filename: uploaded binary filename
+        :param url: video URL or path
+        """
+        if VideoDecoder.is_variable_frame_rate(url):
+            logger.info(f"Video {video_id} has variable frame rate, converting to constant frame rate")
+
+            video_information = VideoDecoder.get_video_information(url)
+            with TemporaryDirectory() as temp_dir:
+                # Create temporary file for converted video
+                temp_converted_file = os.path.join(temp_dir, f"cfr_{data_binary_filename}")
+
+                # Convert VFR to CFR using the fps from video_information
+                conversion_success = VideoDecoder.convert_vfr_to_cfr(
+                    input_path=url, output_path=temp_converted_file, target_fps=video_information.fps
+                )
+
+                if conversion_success:
+                    # Replace the original video file with the converted CFR version
+                    VideoBinaryRepo(dataset_storage_identifier).save(
+                        data_source=temp_converted_file, dst_file_name=data_binary_filename, overwrite=True
+                    )
+                    # Reset video decoder cache since file has been replaced
+                    VideoDecoder.reset_reader(url)
+                    # Update video properties in the database
+                    video = VideoRepo(dataset_storage_identifier).get_by_id(video_id)
+                    video_information = VideoDecoder.get_video_information(url)
+                    video._total_frames = video_information.total_frames
+                    VideoRepo(dataset_storage_identifier).save(video)
+
+                    # Update filter data with new video properties
+                    filter_repo = DatasetStorageFilterRepo(dataset_storage_identifier)
+                    updated_filter_data = DatasetStorageFilterData.create_dataset_storage_filter_data(
+                        media_identifier=video.media_identifier, preprocessing=video.preprocessing.status, media=video
+                    )
+                    filter_repo.upsert_dataset_storage_filter_data(updated_filter_data)
+
+                    logger.info(f"Successfully converted video {video_id} from VFR to CFR")
+                else:
+                    logger.warning(f"Failed to convert VFR video {video_id} to CFR, proceeding with original")
+
+    @staticmethod
     def on_video_uploaded(
         dataset_storage_identifier: DatasetStorageIdentifier,
         video_id: ID,
@@ -138,6 +194,14 @@ class MediaUploadedUseCase:
             video_binary_repo = VideoBinaryRepo(dataset_storage_identifier)
             thumbnail_binary_repo = ThumbnailBinaryRepo(dataset_storage_identifier)
             url = video_binary_repo.get_path_or_presigned_url(filename=data_binary_filename)
+
+            MediaUploadedUseCase.ensure_constant_frame_rate(
+                dataset_storage_identifier=dataset_storage_identifier,
+                video_id=video_id,
+                data_binary_filename=data_binary_filename,
+                url=url,
+            )
+
             video_information = VideoDecoder.get_video_information(url)
             frame_index = video_information.total_frames // 2
             frame_numpy = VideoFrameReader.get_frame_numpy(
