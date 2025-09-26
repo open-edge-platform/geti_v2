@@ -121,7 +121,6 @@ Before you begin, ensure you have:
     ```bash
     docker run -d -p 5000:5000 --restart=always --name registry registry:3
     ```
-    Update REGISTRY variable in `Makefile` to point to your local registry (e.g., `localhost:5000`).
 3. Build and push all images to local registry
     ```bash
     # from root of the repository
@@ -145,7 +144,7 @@ Before you begin, ensure you have:
    
     # launch installation and follow prompts
     cd /tmp/geti
-    ./plaform_installer install
+    ./platform_installer install
     ```
 
 ### Local Development
