@@ -1,10 +1,10 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { RequiredProviders } from '../../../../../../../test-utils/required-providers-render';
+import { providersRender as render } from '../../../../../../../test-utils/required-providers-render';
 import { RangeParameterField } from './range-parameter-field.component';
 
 describe('RangeParameterField', () => {
@@ -18,17 +18,15 @@ describe('RangeParameterField', () => {
 
     const renderApp = ({ value = defaultValue, isDisabled = false }: { value?: number[]; isDisabled?: boolean }) => {
         return render(
-            <RequiredProviders featureFlags={{ FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true }}>
-                <RangeParameterField
-                    defaultValue={defaultValue}
-                    value={value}
-                    onChange={onChange}
-                    name={name}
-                    type={'array'}
-                    isDisabled={isDisabled}
-                    step={0.001}
-                />
-            </RequiredProviders>
+            <RangeParameterField
+                defaultValue={defaultValue}
+                value={value}
+                onChange={onChange}
+                name={name}
+                type={'array'}
+                isDisabled={isDisabled}
+                step={0.001}
+            />
         );
     };
 
