@@ -97,4 +97,10 @@ data:
         password=\"${KAFKA_ADMIN_PASSWORD}\"
         user_admin=\"${KAFKA_ADMIN_PASSWORD}\"
         user_broker=\"${KAFKA_ADMIN_PASSWORD}\";
+
+        org.apache.kafka.common.security.scram.ScramLoginModule required
+        username=admin
+        password=\"${KAFKA_ADMIN_PASSWORD}\"
+        user_admin=\"${KAFKA_ADMIN_PASSWORD}\"
+        user_broker=\"${KAFKA_ADMIN_PASSWORD}\";
     };" > /opt/kafka/config/kafka_server_jaas.conf
