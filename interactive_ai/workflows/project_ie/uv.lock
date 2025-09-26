@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = "==3.10.*"
 resolution-markers = [
     "sys_platform == 'darwin'",
@@ -1453,6 +1453,7 @@ source = { editable = "../../data_migration" }
 dependencies = [
     { name = "dataclasses-json" },
     { name = "minio" },
+    { name = "opencv-python-headless" },
     { name = "pymongo", extra = ["aws"] },
 ]
 
@@ -1460,6 +1461,7 @@ dependencies = [
 requires-dist = [
     { name = "dataclasses-json", specifier = "==0.5.7" },
     { name = "minio", specifier = "~=7.1" },
+    { name = "opencv-python-headless", specifier = "~=4.10" },
     { name = "pymongo", extras = ["aws"], specifier = "~=4.10" },
 ]
 
@@ -2683,7 +2685,7 @@ requires-dist = [
     { name = "geti-kafka-tools", editable = "../../../libs/kafka_tools" },
     { name = "geti-telemetry-tools", extras = ["telemetry", "grpc", "kafka", "logger"], editable = "../../../libs/telemetry_tools" },
     { name = "geti-types", editable = "../../../libs/types" },
-    { name = "grpc-interfaces", editable = "../../../libs/grpc_interfaces" },
+    { name = "grpc-interfaces", extras = ["job-update"], editable = "../../../libs/grpc_interfaces" },
     { name = "iai-core", editable = "../../libs/iai_core_py" },
     { name = "kubernetes-asyncio", specifier = "==29.0.0" },
     { name = "media-utils", marker = "extra == 'datumaro-conversion'", editable = "../../libs/media_utils" },

@@ -726,6 +726,11 @@ dependencies = [
     { name = "grpcio" },
 ]
 
+[package.optional-dependencies]
+model-registration = [
+    { name = "protobuf" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "geti-types", marker = "extra == 'job-submission'", editable = "../../../libs/types" },
@@ -1886,7 +1891,7 @@ dependencies = [
     { name = "geti-supported-models" },
     { name = "geti-telemetry-tools", extra = ["fastapi", "grpc", "kafka", "logger", "telemetry"] },
     { name = "geti-types" },
-    { name = "grpc-interfaces" },
+    { name = "grpc-interfaces", extra = ["model-registration"] },
     { name = "iai-core" },
     { name = "jsonschema" },
     { name = "media-utils" },
@@ -1924,7 +1929,7 @@ requires-dist = [
     { name = "geti-supported-models", editable = "../../supported_models" },
     { name = "geti-telemetry-tools", extras = ["telemetry", "fastapi", "logger", "kafka", "grpc"], editable = "../../../libs/telemetry_tools" },
     { name = "geti-types", editable = "../../../libs/types" },
-    { name = "grpc-interfaces", editable = "../../../libs/grpc_interfaces" },
+    { name = "grpc-interfaces", extras = ["model-registration"], editable = "../../../libs/grpc_interfaces" },
     { name = "iai-core", editable = "../../libs/iai_core_py" },
     { name = "jsonschema", specifier = ">=4.18.0a10" },
     { name = "media-utils", editable = "../../libs/media_utils" },

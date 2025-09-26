@@ -14,7 +14,7 @@ dependencies = [
     "geti-telemetry-tools[telemetry,grpc,kafka,logger]",
     "geti-k8s-tools",
     "geti-types",
-    "grpc_interfaces",
+    "grpc_interfaces[job_update]",
     "iai-core",
     "geti-configuration-tools",
 ]

@@ -7,6 +7,8 @@ platform/services/auth_proxy:
   - .github/workflows/component.yml
 platform/services/credit:
   - platform/services/credit/**
+  - libs/kafka_tools/**
+  - libs/telemetry_tools/**
   - libs/grpc_interfaces/pyproject.toml
   - libs/grpc_interfaces/credit_system/**
   - libs/grpc_interfaces/account_service/**
@@ -15,6 +17,7 @@ platform/services/credit:
   - .github/workflows/component.yml
 platform/services/observability:
   - platform/services/observability/**
+  - libs/telemetry_tools/**
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
@@ -29,11 +32,14 @@ platform/services/onboarding:
   - .github/workflows/component.yml
 platform/services/notifier:
   - platform/services/notifier/**
+  - libs/kafka_tools/**
+  - libs/telemetry_tools/**
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
 platform/services/user_directory:
   - platform/services/user_directory/**
+  - platform/libs/users_handler/**
   - libs/telemetry_tools/**
   - libs/spicedb_tools/**
   - libs/grpc_interfaces/pyproject.toml
@@ -78,6 +84,7 @@ platform/services/opa_bundle:
   - .github/workflows/component.yml
 platform/services/installer:
   - platform/services/installer/**
+  - libs/k8s_tools/**
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
@@ -87,9 +94,12 @@ interactive_ai/services/auto_train:
   - interactive_ai/services/auto_train/**
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/supported_models/**
+  - libs/grpc_interfaces/pyproject.toml
+  - libs/grpc_interfaces/job_submission/**
   - libs/types/**
   - libs/telemetry_tools/**
   - libs/feature_tools/**
+  - libs/configuration_tools/**
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
@@ -178,6 +188,9 @@ interactive_ai/services/resource:
   - interactive_ai/services/resource/**
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**
+  - interactive_ai/supported_models/**
+  - libs/grpc_interfaces/pyproject.toml
+  - libs/grpc_interfaces/model_registration/**
   - libs/types/**
   - libs/telemetry_tools/**
   - libs/feature_tools/**
@@ -218,11 +231,14 @@ interactive_ai/workflows/common:
   - libs/kafka_tools/**
   - libs/telemetry_tools/**
   - libs/types/**
+  - libs/grpc_interfaces/pyproject.toml
+  - libs/grpc_interfaces/job_update/**
   - Makefile.shared-python
   - Makefile.shared
   - .github/workflows/component.yml
 interactive_ai/workflows/dataset_ie:
   - interactive_ai/workflows/dataset_ie/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/datumaro_conversion
   - interactive_ai/libs/iai_core_py/**
@@ -237,6 +253,7 @@ interactive_ai/workflows/dataset_ie:
   - .github/workflows/component.yml
 interactive_ai/workflows/project_ie:
   - interactive_ai/workflows/project_ie/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/datumaro_conversion
   - interactive_ai/data_migration/**
@@ -252,6 +269,7 @@ interactive_ai/workflows/project_ie:
   - .github/workflows/component.yml
 interactive_ai/workflows/model_test:
   - interactive_ai/workflows/model_test/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/evaluation
   - interactive_ai/libs/iai_core_py/**
@@ -264,12 +282,14 @@ interactive_ai/workflows/model_test:
   - .github/workflows/component.yml
 interactive_ai/workflows/optimize:
   - interactive_ai/workflows/optimize/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/evaluation
   - interactive_ai/workflows/common/jobs_common_extras/shard_dataset
   - interactive_ai/libs/iai_core_py/**
   - interactive_ai/libs/media_utils/**
   - libs/k8s_tools/**
+  - libs/kafka_tools/**
   - libs/telemetry_tools/**
   - libs/types/**
   - Makefile.shared-python
@@ -279,6 +299,7 @@ interactive_ai/workflows/train:
   - interactive_ai/supported_models/**
   - interactive_ai/workflows/train/job/**
   - interactive_ai/workflows/train/tests/**
+  - interactive_ai/workflows/common/pyproject.toml
   - interactive_ai/workflows/common/jobs_common
   - interactive_ai/workflows/common/jobs_common_extras/evaluation
   - interactive_ai/workflows/common/jobs_common_extras/experiments

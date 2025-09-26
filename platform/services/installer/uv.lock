@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = "==3.10.*"
 
 [[package]]
@@ -353,12 +353,6 @@ wheels = [
 ]
 
 [[package]]
-name = "gputil"
-version = "1.4.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ed/0e/5c61eedde9f6c87713e89d794f01e378cfd9565847d4576fa627d758c554/GPUtil-1.4.0.tar.gz", hash = "sha256:099e52c65e512cdfa8c8763fca67f5a5c2afb63469602d5dcb4d296b3661efb9", size = 5545, upload-time = "2018-12-18T09:12:13.63Z" }
-
-[[package]]
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -603,6 +597,15 @@ wheels = [
 ]
 
 [[package]]
+name = "nvidia-ml-py"
+version = "13.580.82"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/dd/6c/4a533f2c0185027c465adb6063086bc3728301e95f483665bfa9ebafb2d3/nvidia_ml_py-13.580.82.tar.gz", hash = "sha256:0c028805dc53a0e2a6985ea801888197765ac2ef8f1c9e29a7bf0d3616a5efc7", size = 47999, upload-time = "2025-09-11T16:44:56.267Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7f/96/d6d25a4c307d6645f4a9b91d620c0151c544ad38b5e371313a87d2761004/nvidia_ml_py-13.580.82-py3-none-any.whl", hash = "sha256:4361db337b0c551e2d101936dae2e9a60f957af26818e8c0c3a1f32b8db8d0a7", size = 49008, upload-time = "2025-09-11T16:44:54.915Z" },
+]
+
+[[package]]
 name = "oauthlib"
 version = "3.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -656,10 +659,10 @@ dependencies = [
     { name = "click-spinner" },
     { name = "cryptography" },
     { name = "geti-k8s-tools" },
-    { name = "gputil" },
     { name = "ifaddr" },
     { name = "jinja2" },
     { name = "kubernetes" },
+    { name = "nvidia-ml-py" },
     { name = "packaging" },
     { name = "parse" },
     { name = "psutil" },
@@ -692,10 +695,10 @@ requires-dist = [
     { name = "click-spinner", specifier = "==0.1.10" },
     { name = "cryptography", specifier = "==44.0.1" },
     { name = "geti-k8s-tools", editable = "../../../libs/k8s_tools" },
-    { name = "gputil", specifier = "==1.4.0" },
     { name = "ifaddr", specifier = "==0.2.0" },
     { name = "jinja2", specifier = "==3.1.6" },
     { name = "kubernetes", specifier = "==24.2.0" },
+    { name = "nvidia-ml-py", specifier = "==13.580.82" },
     { name = "packaging", specifier = "==24.1" },
     { name = "parse", specifier = "==1.19.0" },
     { name = "psutil", specifier = "==5.9.1" },
@@ -703,7 +706,7 @@ requires-dist = [
     { name = "pytz", specifier = "==2022.5" },
     { name = "pyyaml", specifier = "==6.0.1" },
     { name = "rich-click", specifier = "==1.4" },
-    { name = "setuptools", specifier = "==75.1.0" },
+    { name = "setuptools", specifier = "==78.1.1" },
     { name = "tenacity", specifier = "==8.2.1" },
 ]
 
@@ -1094,11 +1097,11 @@ wheels = [
 
 [[package]]
 name = "setuptools"
-version = "75.1.0"
+version = "78.1.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/27/b8/f21073fde99492b33ca357876430822e4800cdf522011f18041351dfa74b/setuptools-75.1.0.tar.gz", hash = "sha256:d59a21b17a275fb872a9c3dae73963160ae079f1049ed956880cd7c09b120538", size = 1348057, upload-time = "2024-09-16T12:53:47.723Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/81/9c/42314ee079a3e9c24b27515f9fbc7a3c1d29992c33451779011c74488375/setuptools-78.1.1.tar.gz", hash = "sha256:fcc17fd9cd898242f6b4adfaca46137a9edef687f43e6f78469692a5e70d851d", size = 1368163, upload-time = "2025-04-19T18:23:36.68Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/ae/f19306b5a221f6a436d8f2238d5b80925004093fa3edea59835b514d9057/setuptools-75.1.0-py3-none-any.whl", hash = "sha256:35ab7fd3bcd95e6b7fd704e4a1539513edad446c097797f2985e0e4b960772f2", size = 1248506, upload-time = "2024-09-16T12:53:46.053Z" },
+    { url = "https://files.pythonhosted.org/packages/90/99/158ad0609729111163fc1f674a5a42f2605371a4cf036d0441070e2f7455/setuptools-78.1.1-py3-none-any.whl", hash = "sha256:c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561", size = 1256462, upload-time = "2025-04-19T18:23:34.525Z" },
 ]
 
 [[package]]

@@ -71,7 +71,6 @@ def get_video_frame_numpy(dataset_storage_identifier: DatasetStorageIdentifier, 
             video_binary_repo.get_path_or_presigned_url(filename=video_frame.video.data_binary_filename)
         ),
         frame_index=video_frame.frame_index,
-        fps=video_frame.video.fps,
     )
 
 

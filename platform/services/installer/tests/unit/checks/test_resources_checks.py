@@ -3,7 +3,7 @@
 
 import math
 from collections import namedtuple
-from unittest.mock import MagicMock, Mock, mock_open
+from unittest.mock import MagicMock, mock_open
 
 import pytest
 
@@ -70,7 +70,7 @@ def test_check_local_gpu_driver_skipped():
 
 @pytest.fixture
 def get_gpus_mock(mocker):
-    return mocker.patch("checks.resources.getGPUs")
+    return mocker.patch("checks.resources._get_nvidia_gpus")
 
 
 @pytest.fixture
@@ -79,9 +79,10 @@ def get_intel_gpus_mock(mocker):
 
 
 def test_check_local_nvidia_gpu_ok(get_gpus_mock):
-    gpu_mock = Mock()
-    gpu_mock.name = "NVIDIA GeForce RTX 3090"
-    gpu_mock.memoryTotal = 24576
+    gpu_mock = {
+        "name": "NVIDIA GeForce RTX 3090",
+        "memory_total": 24576,
+    }
     get_gpus_mock.return_value = [gpu_mock, gpu_mock]
     install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
     install_config_mock.gpu_support.value = True
@@ -123,12 +124,14 @@ def test_check_local_gpu_not_found(get_gpus_mock, get_intel_gpus_mock):
 
 
 def test_check_local_gpu_not_supported(get_gpus_mock):
-    gpu_mock_1 = Mock()
-    gpu_mock_1.name = "Fake Unsupported GPU"
-    gpu_mock_1.memoryTotal = 15000
-    gpu_mock_2 = Mock()
-    gpu_mock_2.name = "NVIDIA GeForce RTX 3090"
-    gpu_mock_2.memoryTotal = 24576
+    gpu_mock_1 = {
+        "name": "Fake Unsupported GPU",
+        "memory_total": 15000,
+    }
+    gpu_mock_2 = {
+        "name": "NVIDIA GeForce RTX 3090",
+        "memory_total": 24576,
+    }
     get_gpus_mock.return_value = [gpu_mock_1, gpu_mock_2]
     with pytest.raises(UnsupportedGpuWarning):
         install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)

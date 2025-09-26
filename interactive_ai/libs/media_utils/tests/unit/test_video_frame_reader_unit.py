@@ -26,11 +26,11 @@ class TestVideoFrameReader:
         assert patch_decode.call_count == 5
         patch_decode.assert_has_calls(
             [
-                call(file_location="file_location", frame_index=0, fps=None),
-                call(file_location="file_location", frame_index=0, fps=None),
-                call(file_location="file_location", frame_index=0, fps=None),
-                call(file_location="file_location", frame_index=0, fps=None),
-                call(file_location="file_location", frame_index=0, fps=None),
+                call(file_location="file_location", frame_index=0),
+                call(file_location="file_location", frame_index=0),
+                call(file_location="file_location", frame_index=0),
+                call(file_location="file_location", frame_index=0),
+                call(file_location="file_location", frame_index=0),
             ]
         )
 
@@ -46,10 +46,7 @@ class TestVideoFrameReader:
             )
         assert patch_decode.call_count == 2
         patch_decode.assert_has_calls(
-            [
-                call(file_location="file_location", frame_index=0, fps=None),
-                call(file_location="file_location", frame_index=0, fps=None),
-            ]
+            [call(file_location="file_location", frame_index=0), call(file_location="file_location", frame_index=0)]
         )
         assert result == frame
 
@@ -65,4 +62,4 @@ class TestVideoFrameReader:
                 file_location_getter=lambda: "file_location",
                 frame_index=0,
             )
-        patch_decode.assert_called_once_with(file_location="file_location", frame_index=0, fps=None)
+        patch_decode.assert_called_once_with(file_location="file_location", frame_index=0)

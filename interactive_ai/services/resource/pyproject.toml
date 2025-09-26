@@ -20,7 +20,7 @@ dependencies = [
     "geti-types",
     "iai_core",
     "media_utils",
-    "grpc_interfaces",
+    "grpc_interfaces[model_registration]",
     "geti-supported-models",
 ]
 
