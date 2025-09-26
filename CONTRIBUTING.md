@@ -140,8 +140,6 @@ Before you begin, ensure you have:
     ```
 5. Install Geti™ on your local machine
     ```bash
-    export PLATFORM_REGISTRY_ADDRESS=localhost:5000
-   
     # copy installer to directory eq. /tmp/geti
     cp platform/services/installer/platform_<TAG>/platform_installer /tmp/geti
    
