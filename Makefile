@@ -39,7 +39,9 @@ list-image:
 	done
 
 list-umbrella-chart:
-	$(MAKE) -C $(DISTRIB_CHARTS) list-umbrella-chart
+	@for dir in $(DISTRIB_CHARTS); do \
+		$(MAKE) -C $$dir list-umbrella-chart; \
+	done
 
 publish-image:
 	echo "Pushing all projects..."

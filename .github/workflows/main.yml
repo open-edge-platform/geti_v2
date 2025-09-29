@@ -76,6 +76,11 @@ jobs:
       components-list: ${{ steps.components-list.outputs.paths_list }}
       filtered-components-list: ${{ steps.filtered-components-list.outputs.filtered-list }}
       libs-list: ${{ steps.libs-list.outputs.paths_list }}
+      registry: ${{ steps.set-vars.outputs.registry }}
+      sha: ${{ steps.repo-vars.outputs.sha }}
+      images_list: ${{ steps.repo-vars.outputs.images_list }}
+      umbrella_chart_list: ${{ steps.repo-vars.outputs.umbrella_chart_list }}
+      date: ${{ steps.repo-vars.outputs.date }}
 
     steps:
       - name: Harden the runner (audit all outbound calls)
@@ -117,13 +122,22 @@ jobs:
             checkout_ref="$GITHUB_REF"
           fi
 
+          # REGISTRY: use production registry for scheduled runs, else use dev registry
+          if [[ "$EVENT_NAME" == "schedule" ]]; then
+            registry="ghcr.io/open-edge-platform"
+          else
+            registry="ghcr.io/open-edge-platform/dev"
+          fi
+
           echo "build_all=$build_all"               >> $GITHUB_OUTPUT
           echo "publish_binaries=$publish_binaries" >> $GITHUB_OUTPUT
           echo "checkout_ref=$checkout_ref"         >> $GITHUB_OUTPUT
+          echo "registry=$registry"                 >> $GITHUB_OUTPUT
 
           echo "build_all=$build_all"
           echo "publish_binaries=$publish_binaries"
           echo "checkout_ref=$checkout_ref"
+          echo "registry=$registry"
 
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -131,6 +145,26 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           ref: ${{ steps.set-vars.outputs.checkout_ref }}
+
+      - name: Get SHA, list images and umbrella charts
+        id: repo-vars
+        run: |
+          sha=$(git rev-parse HEAD)
+          image_list=$(REGISTRY=${{ steps.set-vars.outputs.registry }} make list-image | grep ${{ steps.set-vars.outputs.registry }} | jq -R -s -c 'split("\n")[:-1]')
+          umbrella_chart_list=$(REGISTRY=${{ steps.set-vars.outputs.registry }} make list-umbrella-chart | grep ${{ steps.set-vars.outputs.registry }} | jq -R -s -c 'split("\n")[:-1]')
+          date=$(date +'%d/%m/%Y')
+
+          echo "::group:: Daily promote variables"
+          echo "Image List: $image_list"
+          echo "Umbrella Chart List: $umbrella_chart_list"
+          echo "SHA: $sha"
+          echo "Date: $date"
+          echo "::endgroup::"
+
+          echo "images_list=$image_list" >> $GITHUB_OUTPUT
+          echo "umbrella_chart_list=$umbrella_chart_list" >> $GITHUB_OUTPUT
+          echo "sha=$sha" >> $GITHUB_OUTPUT
+          echo "date=$date" >> $GITHUB_OUTPUT
 
       - name: Prepare build version
         id: prepare-build-version
@@ -184,11 +218,7 @@ jobs:
     needs: get-vars
     permissions:
       contents: read
-      id-token: write # is required by nested component-check
-    secrets:
-      AWS_ROLE: ${{ secrets.AWS_ROLE }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      REGISTRY: ${{ secrets.REGISTRY }}
+      packages: write
     uses: ./.github/workflows/component.yml
     if: ${{ !contains(needs.get-vars.outputs.filtered-components-list, '[]') }}
     strategy:
@@ -202,23 +232,21 @@ jobs:
       component_dir: ${{ matrix.component }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
       ref: ${{ needs.get-vars.outputs.checkout_ref }}
+      registry: ${{ needs.get-vars.outputs.registry }}
 
   web-ui-workflow:
     name: Web UI workflow
     needs: get-vars
     permissions:
       contents: read
-      id-token: write # is required by nested component-check
-    secrets:
-      AWS_ROLE: ${{ secrets.AWS_ROLE }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      REGISTRY: ${{ secrets.REGISTRY }}
+      packages: write
     uses: ./.github/workflows/web-ui.yml
     if: ${{ contains(needs.get-vars.outputs.components-list, 'web_ui') }}
     with:
       build_version: ${{ needs.get-vars.outputs.build_version }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
       ref: ${{ needs.get-vars.outputs.checkout_ref }}
+      registry: ${{ needs.get-vars.outputs.registry }}
 
   package-distribution-workflow:
     name: Build platform distribution binaries
@@ -228,7 +256,7 @@ jobs:
       - web-ui-workflow
     permissions:
       contents: read
-      id-token: write # is required by nested component-check
+      packages: write
     uses: ./.github/workflows/package-distribution.yaml
     with:
       build_all: ${{ fromJSON(needs.get-vars.outputs.build_all) }} # fromJSON is required to cast string to boolean
@@ -236,11 +264,7 @@ jobs:
       platform_version: ${{ needs.get-vars.outputs.platform_version }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
       ref: ${{ needs.get-vars.outputs.checkout_ref }}
-    secrets:
-      AWS_ROLE: ${{ secrets.AWS_ROLE }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      REGISTRY: ${{ secrets.REGISTRY }}
-      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      registry: ${{ needs.get-vars.outputs.registry }}
 
   success:
     name: Required status checks
@@ -249,6 +273,8 @@ jobs:
       - component-workflow
       - web-ui-workflow
       - package-distribution-workflow
+    permissions:
+      discussions: write
     runs-on: ubuntu-latest
     if: ${{ always() && !cancelled() }}
     env:
@@ -274,3 +300,65 @@ jobs:
           echo "## Required status checks passed" >> $GITHUB_STEP_SUMMARY
           echo "All required status checks have passed successfully." >> $GITHUB_STEP_SUMMARY
           echo "Packages published with tag: $BUILD_VERSION" >> $GITHUB_STEP_SUMMARY
+
+      - name: Generate summary report
+        if: github.event_name == 'schedule'
+        id: msg
+        run: |
+          echo "## Daily Build Summary" > body.txt
+          echo "> NOTE: This version is pre-release software and has not undergone full release qualification. APIs/behavior are subject to change. It is NOT meant to be incorporated into any production software/solution." >> body.txt
+          echo "" >> body.txt
+          echo "**Published version**: ${{ needs.get-vars.outputs.build_version }}" >> body.txt
+          echo "**Installation Guide**: [Installation Using Helm Charts](https://docs.geti.intel.com/docs/user-guide/getting-started/installation/using-helm-charts)" >> body.txt
+          echo "" >> body.txt
+          echo "Use the following value for the environment variable `version` :" >> body.txt
+          echo '```' >> body.txt
+          echo "export version=${{ needs.get-vars.outputs.build_version }}" >> body.txt
+          echo '```' >> body.txt
+          echo "" >> body.txt
+          echo "**Umbrella Charts**:" >> body.txt
+          UMBRELLA_CHARTS_LIST=$(echo '${{ needs.get-vars.outputs.umbrella_chart_list }}' | jq -r '.[]')
+          for CHART in $UMBRELLA_CHARTS_LIST; do
+            echo "  - $CHART" >> body.txt
+          done
+          echo "" >> body.txt
+          echo "**Container Images**:" >> body.txt
+          CONTAINER_IMAGES_LIST=$(echo '${{ needs.get-vars.outputs.images_list }}' | jq -r '.[]')
+          for IMAGE in $CONTAINER_IMAGES_LIST; do
+            echo "  - $IMAGE:${{ needs.get-vars.outputs.build_version }}" >> body.txt
+          done
+          echo "" >> body.txt
+          echo "**Source Code**: https://github.com/open-edge-platform/geti/tree/${{ needs.get-vars.outputs.sha }}" >> body.txt
+          {
+            echo "body<<EOF"
+            cat body.txt
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          cat body.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: Create discussion
+        if: github.event_name == 'schedule'
+        id: create-discussion
+        uses: octokit/graphql-action@8ad880e4d437783ea2ab17010324de1075228110 #v2.3.2
+        with:
+          query: |
+            mutation($repoId: ID!, $categoryId: ID!, $title: String!, $body: String!) {
+              createDiscussion(input: {
+                repositoryId: $repoId,
+                categoryId: $categoryId,
+                title: $title,
+                body: $body
+              }) {
+                discussion {
+                  url
+                }
+              }
+            }
+          variables: |
+            repoId: "R_kgDOOXK_2A" # This is the repository ID for open-edge-platform/geti
+            categoryId: "DIC_kwDOOXK_2M4Ct5TM" # This is the category ID for "Daily Builds"
+            title: "Daily build - ${{ needs.get-vars.outputs.date }}"
+            body: ${{ toJSON(steps.msg.outputs.body) }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

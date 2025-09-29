@@ -15,12 +15,9 @@ on:
         description: "The branch, tag or SHA to checkout"
         type: string
         default: ""
-    secrets:
-      AWS_ROLE:
-        required: true
-      AWS_REGION:
-        required: true
-      REGISTRY:
+      registry:
+        description: "The container registry to push images to"
+        type: string
         required: true
 
 permissions: {} # No permissions by default on workflow level
@@ -248,13 +245,10 @@ jobs:
     needs: [lint, unit-tests, merge-playwright-reports]
     permissions:
       contents: read # to checkout code
-      id-token: write # is required by nested component-check
-    secrets:
-      AWS_ROLE: ${{ secrets.AWS_ROLE }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      REGISTRY: ${{ secrets.REGISTRY }}
+      packages: write
     uses: ./.github/workflows/component.yml
     with:
       build_version: ${{ inputs.build_version }}
       component_dir: web_ui
       publish_binaries: ${{ inputs.publish_binaries }}
+      registry: ${{ inputs.registry }}
