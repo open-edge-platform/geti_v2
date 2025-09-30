@@ -47,7 +47,7 @@ def kafka_sasl_mechanism() -> str:
     """
     Returns the Kafka sasl mechanism based on configured environment variable
     """
-    default_kafka_sasl_mechanism = "SCRAM-SHA-512"
+    default_kafka_sasl_mechanism = "PLAIN"
     return os.environ.get("KAFKA_SASL_MECHANISM", default_kafka_sasl_mechanism)
 
 
