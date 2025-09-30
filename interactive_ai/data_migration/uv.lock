@@ -301,7 +301,7 @@ dev = [
     { name = "mypy", specifier = "~=1.15" },
     { name = "pre-commit", specifier = "~=4.1" },
     { name = "pytest", specifier = "~=8.3" },
-    { name = "pytest-minio-mock", specifier = "~=0.4" },
+    { name = "pytest-minio-mock", specifier = "==0.4.18" },
     { name = "ruff", specifier = "~=0.11.2" },
     { name = "testcontainers", extras = ["mongodb"], specifier = "~=4.9" },
 ]
@@ -567,7 +567,7 @@ wheels = [
 
 [[package]]
 name = "pytest-minio-mock"
-version = "0.4.19"
+version = "0.4.18"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "minio" },
@@ -575,9 +575,9 @@ dependencies = [
     { name = "pytest-mock" },
     { name = "validators" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/85/1c/d504ee8c7af4b08df1dcebf450e7a55d74efc1bf89f1e9d5488491a34a16/pytest_minio_mock-0.4.19.tar.gz", hash = "sha256:b8dabd09dd4a4dc5970bd57155a32b1161f88a48d0aac38ab9b95c39029e1d09", size = 18994, upload-time = "2025-08-06T17:09:04.214Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2f/b4/16bca10d63fcd92839cd997cf74616b217116ad5ec24f50996589d04ccaa/pytest_minio_mock-0.4.18.tar.gz", hash = "sha256:698622e9993bb739ba55081de02d58226208cd3d8e1fcc2540082e4218ba53e4", size = 19002, upload-time = "2025-06-12T01:00:31.302Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/71/22/da64288b3891d7b0394fcb322a8c0f04504eebbe58019c18f1ea0edc7075/pytest_minio_mock-0.4.19-py3-none-any.whl", hash = "sha256:d93567670a01acfe2e2f8f4d056e64686eb14b622682702058dd53e71eba62c7", size = 14051, upload-time = "2025-08-06T17:09:03.018Z" },
+    { url = "https://files.pythonhosted.org/packages/7f/48/00129d357e5ee7bca46862058ab1a8c21e5229703dc083b60a457dd1e5ae/pytest_minio_mock-0.4.18-py3-none-any.whl", hash = "sha256:2352ef10a8d256a114b9351f912b6b7050be0fb0c081fb9dba28bf02885f869e", size = 14038, upload-time = "2025-06-12T01:00:28.931Z" },
 ]
 
 [[package]]
