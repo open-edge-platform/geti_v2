@@ -18,7 +18,7 @@ dependencies = [
 geti-telemetry-tools = { path = "../../../libs/telemetry_tools", editable = true }
 
 [dependency-groups]
-dev = ["pytest~=8.3", "ruff~=0.11", "mypy~=1.15", "types-requests", "httpx", "pytest-mock>=3.14.0", "pytest-asyncio~=0.19.0"]
+dev = ["pytest~=8.3", "ruff~=0.11.2", "mypy~=1.15", "types-requests", "httpx", "pytest-mock>=3.14.0", "pytest-asyncio~=0.19.0"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
