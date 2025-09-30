@@ -30,7 +30,7 @@ dev = [
     "click==8.1.7",
     "pre-commit==2.15.0",
     "pytest-html~=4.0.0",
-    "ruff~=0.11",
+    "ruff~=0.11.2",
     "pytest-mock==3.8.*",
     "protobuf~=4.25.8",
     "types-requests",
