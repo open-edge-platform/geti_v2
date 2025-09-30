@@ -715,7 +715,7 @@ dev = [
     { name = "mypy", specifier = "~=1.15" },
     { name = "pre-commit", specifier = "~=4.1" },
     { name = "pytest", specifier = "~=8.3" },
-    { name = "ruff", specifier = "~=0.11" },
+    { name = "ruff", specifier = "~=0.11.2" },
 ]
 
 [[package]]
@@ -734,7 +734,7 @@ dev = [
     { name = "mypy", specifier = "~=1.15" },
     { name = "pre-commit", specifier = "~=4.1" },
     { name = "pytest", specifier = "~=8.3" },
-    { name = "ruff", specifier = "~=0.11" },
+    { name = "ruff", specifier = "~=0.11.2" },
 ]
 
 [[package]]
@@ -826,7 +826,7 @@ dev = [
     { name = "mypy", specifier = "~=1.15" },
     { name = "pre-commit", specifier = "~=4.1" },
     { name = "pytest", specifier = "~=8.3" },
-    { name = "ruff", specifier = "~=0.11" },
+    { name = "ruff", specifier = "~=0.11.2" },
 ]
 
 [[package]]
@@ -970,7 +970,7 @@ dev = [
     { name = "mypy-protobuf" },
     { name = "pre-commit", specifier = "~=4.1" },
     { name = "pytest", specifier = "~=8.3" },
-    { name = "ruff", specifier = "~=0.11" },
+    { name = "ruff", specifier = "~=0.11.2" },
 ]
 
 [[package]]
