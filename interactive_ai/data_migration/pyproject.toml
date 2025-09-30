@@ -18,7 +18,7 @@ dev = [
     "pre-commit~=4.1",
     "pytest-minio-mock~=0.4",
     "mongomock~=4.3",
-    "testcontainers[mongodb]~=4.9",
+    "testcontainers[mongodb]~=4.10.0",
     "mypy~=1.15",
 ]
 
