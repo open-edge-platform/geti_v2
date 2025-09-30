@@ -52,6 +52,9 @@ jobs:
     env:
       TAG: ${{ inputs.build_version || github.sha }}
       REGISTRY: ${{ secrets.REGISTRY }}
+      # Update these when the tags in dev_tools/builder_images/*/Makefile are updated.
+      # Remember that new tags will be available only after the code with the change is merged
+      # and the builder image workflow is run and completed successfully.
       PYTHON_BUILDER_IMAGE: builder-images/python-builder:v0.1
       GO_BUILDER_IMAGE: builder-images/go-builder:v0.1
     steps:

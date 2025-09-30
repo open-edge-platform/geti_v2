@@ -10,5 +10,13 @@ build-image:
 	@docker build \
 		${DOCKER_EXTRA_ARGS} \
 		--label "org.opencontainers.image.description=${DOCKER_IMAGE_DESCRIPTION}" \
-		-t ${BUILDER_IMAGE_NAME}:${BUILDER_TAG} \
+		-t ${IMAGES_REGISTRY}/builders/${BUILDER_IMAGE_NAME}:${BUILDER_TAG} \
 		-f ./Dockerfile .
+
+list-image:
+	@echo ${IMAGES_REGISTRY}/builders/${BUILDER_IMAGE_NAME}:${BUILDER_TAG}
+
+push-image:
+	@echo "Pushing docker image: ${IMAGES_REGISTRY}/builders/${BUILDER_IMAGE_NAME}:${BUILDER_TAG}"
+	@docker push ${IMAGES_REGISTRY}/builders/${BUILDER_IMAGE_NAME}:${BUILDER_TAG}
+
