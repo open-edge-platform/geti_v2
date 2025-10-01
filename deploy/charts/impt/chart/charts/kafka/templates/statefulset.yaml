@@ -66,6 +66,8 @@ spec:
               value: {{ .Values.kraft.clusterId | quote }}
             - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
               value: "CONTROLLER:SASL_PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT"
+            - name: KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND
+              value: "true"
             - name: KAFKA_ADVERTISED_LISTENERS
               value: "SASL_PLAINTEXT://$(MY_POD_NAME).impt-kafka-headless.impt.svc.cluster.local:9092"
             - name: KAFKA_CONTROLLER_QUORUM_VOTERS
@@ -93,7 +95,7 @@ spec:
             - name: KAFKA_LOG_DIRS
               value: '/tmp/kraft-combined-logs'
             - name: KAFKA_SASL_ENABLED_MECHANISMS
-              value: "PLAIN,SCRAM-SHA-256,SCRAM-SHA-512"
+              value: "PLAIN"
             - name: KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL
               value: 'PLAIN'
             - name: KAFKA_SASL_MECHANISM_CONTROLLER_PROTOCOL
@@ -106,6 +108,8 @@ spec:
               value: "-Djava.security.auth.login.config=/opt/kafka/config/kafka_server_jaas.conf"
             - name: KAFKA_AUTHORIZER_CLASS_NAME
               value: "org.apache.kafka.metadata.authorizer.StandardAuthorizer"
+            - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+              value: "false"
           ports:
           - name: broker
             containerPort: {{ .Values.service.broker }}

@@ -93,7 +93,7 @@ class TestKafkaEventConsumer:
     @patch.dict(os.environ, {"KAFKA_USERNAME": "username"})
     @patch.dict(os.environ, {"KAFKA_PASSWORD": "password"})
     @patch.dict(os.environ, {"KAFKA_SECURITY_PROTOCOL": "SASL_PLAINTEXT"})
-    @patch.dict(os.environ, {"KAFKA_SASL_MECHANISM": "SCRAM-SHA-512"})
+    @patch.dict(os.environ, {"KAFKA_SASL_MECHANISM": "PLAIN"})
     def test_kafka_event_consumer_create_consumer_security_enabled(self, fxt_consumer) -> None:
         # Arrange
 
@@ -109,7 +109,7 @@ class TestKafkaEventConsumer:
                 "max.poll.interval.ms": 900000,
                 "connections.max.idle.ms": 910000,
                 "security.protocol": "SASL_PLAINTEXT",
-                "sasl.mechanism": "SCRAM-SHA-512",
+                "sasl.mechanism": "PLAIN",
                 "sasl.username": "username",
                 "sasl.password": "password",
             }
