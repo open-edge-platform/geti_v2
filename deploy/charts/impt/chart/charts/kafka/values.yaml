@@ -12,7 +12,7 @@ replicaCount: 1
 image:
   registry: docker.io
   repository: apache
-  name: kafka:3.7.2
+  name: kafka:4.1.0
   pullPolicy: IfNotPresent
 
 # This is to override the chart name.
