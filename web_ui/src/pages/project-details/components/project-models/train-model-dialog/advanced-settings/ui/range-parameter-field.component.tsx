@@ -68,7 +68,7 @@ export const RangeParameterField: FC<RangeParameterFieldProps> = ({
     };
 
     return (
-        <Flex gap={'size-100'}>
+        <Flex gap={'size-100'} aria-label={name}>
             <NumberField
                 isQuiet
                 step={fieldStep}
@@ -90,7 +90,7 @@ export const RangeParameterField: FC<RangeParameterFieldProps> = ({
                 step={fieldStep}
                 flex={1}
                 isDisabled={isDisabled}
-                aria-label={`Change ${name} range value`}
+                aria-label={`Change ${name} value`}
                 UNSAFE_className={isDisabled ? '' : classes.rangeSlider}
             />
             <NumberField

@@ -35,7 +35,7 @@ describe('RangeParameterField', () => {
 
         expect(screen.getByLabelText(`Change ${name} start range value`)).toBeInTheDocument();
         expect(screen.getByLabelText(`Change ${name} end range value`)).toBeInTheDocument();
-        expect(screen.getByLabelText(`Change ${name} range value`)).toBeInTheDocument();
+        expect(screen.getByLabelText(`Change ${name} value`)).toBeInTheDocument();
     });
 
     it('calls onChange when start value changes', async () => {
@@ -83,7 +83,7 @@ describe('RangeParameterField', () => {
         expect(screen.getByLabelText(`Change ${name} start range value`)).toBeDisabled();
         expect(screen.getByLabelText(`Change ${name} end range value`)).toBeDisabled();
 
-        const slider = screen.getByLabelText(`Change ${name} range value`);
+        const slider = screen.getByLabelText(`Change ${name} value`);
 
         expect(slider).toHaveClass('A-RCEa_is-disabled');
     });
