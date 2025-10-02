@@ -33,7 +33,7 @@ export const RequiredAnnotations: FC<RequiredAnnotationsProps> = ({
         <NumberField
             step={1}
             value={numberOfRequiredAnnotations}
-            minValue={requiredImagesAutoTrainingConfig.minValue}
+            minValue={requiredImagesAutoTrainingConfig.minValue ?? undefined}
             maxValue={requiredImagesAutoTrainingConfig.maxValue ?? undefined}
             onChange={handleRequiredAnnotationsChange}
             label={'Number of required annotations'}
