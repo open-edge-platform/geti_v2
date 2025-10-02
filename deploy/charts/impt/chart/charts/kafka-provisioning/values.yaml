@@ -266,7 +266,7 @@ provisioning:
       topic: model_activated
       operations: ["Read", "Write"]
     - user: resource
-      topic: model_activatedw
+      topic: model_activated
       operations: ["Read", "Write"]
     - user: flyte
       topic: model_activated
