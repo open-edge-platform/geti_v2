@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 import { ModelConfigurationOption } from '../../../src/pages/project-details/components/project-models/legacy-train-model-dialog/model-templates-selection/utils';
 
@@ -16,8 +16,8 @@ export class TrainModelDialogPage {
         await this.page.getByRole('button', { name: /advanced settings/i }).click();
     }
 
-    async changeSubsetRange(range: 'start' | 'end', iterations: number) {
-        await this.page.getByLabel(range === 'start' ? 'Start range' : 'End range').click();
+    async changeSubsetRange(slider: Locator, range: 'start' | 'end', iterations: number) {
+        await slider.getByLabel(range === 'start' ? 'Start range' : 'End range').click();
 
         for (let i = 0; i < iterations; i++) {
             await this.page.keyboard.press('ArrowLeft');

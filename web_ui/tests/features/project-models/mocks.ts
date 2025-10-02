@@ -2887,26 +2887,15 @@ export const trainingConfiguration: TrainingConfigurationDTO = {
                     default_value: false,
                 },
                 {
-                    key: 'max_rotate_degree',
+                    key: 'degrees',
                     name: 'Rotation degrees',
                     type: 'float',
                     description:
                         'Maximum rotation angle in degrees for affine transformation. A random angle in the range [-max_rotate_degree, max_rotate_degree] will be applied. For example, max_rotate_degree=10 allows up to ±10 degrees rotation.',
-                    value: 10.0,
+                    value: 15.0,
                     default_value: 10.0,
                     min_value: 0.0,
                     max_value: null,
-                },
-                {
-                    key: 'max_translate_ratio',
-                    name: 'Horizontal translation',
-                    type: 'float',
-                    description:
-                        'Maximum translation as a fraction of image width or height. A random translation in the range [-max_translate_ratio, max_translate_ratio] will be applied along both axes. For example, 0.1 allows up to ±10% translation.',
-                    value: 0.1,
-                    default_value: 0.1,
-                    min_value: 0.0,
-                    max_value: 1.0,
                 },
                 {
                     key: 'scaling_ratio_range',
@@ -2940,15 +2929,35 @@ export const trainingConfiguration: TrainingConfigurationDTO = {
                     default_value: true,
                 },
                 {
-                    key: 'probability',
-                    name: 'Probability',
+                    key: 'max_translate_ratio',
+                    name: 'Horizontal translation',
                     type: 'float',
                     description:
-                        'Probability of applying horizontal flip. A value of 0.5 means each image has a 50% chance to be flipped horizontally.',
-                    value: 0.5,
-                    default_value: 0.5,
+                        'Maximum translation as a fraction of image width or height. A random translation in the range [-max_translate_ratio, max_translate_ratio] will be applied along both axes. For example, 0.1 allows up to ±10% translation.',
+                    value: 0.1,
+                    default_value: 0.1,
                     min_value: 0.0,
                     max_value: 1.0,
+                },
+                {
+                    key: 'scaling_ratio_range',
+                    name: 'Scaling ratio range',
+                    type: 'array',
+                    description:
+                        'Range (min, max) of scaling factors to apply during affine transformation. Both values should be > 0.0. For example, (0.8, 1.2) will randomly scale the image between 80% and 120% of its original size.',
+                    value: [0.5, 1.5],
+                    default_value: [0.5, 1.5],
+                },
+                {
+                    key: 'max_shear_degree',
+                    name: 'Maximum shear degree',
+                    type: 'float',
+                    description:
+                        'Maximum absolute shear angle in degrees to apply during affine transformation. A random shear in the range [-max_shear_degree, max_shear_degree] will be applied.',
+                    value: 2.0,
+                    default_value: 2.0,
+                    min_value: null,
+                    max_value: null,
                 },
             ],
             random_vertical_flip: [
@@ -3274,14 +3283,72 @@ export const expectedTrainingConfiguration: TrainingConfigurationUpdatePayloadDT
             ],
         },
         augmentation: {
-            center_crop: [
+            color_jitter: [
+                {
+                    key: 'enable',
+                    value: true,
+                },
+                {
+                    key: 'brightness',
+                    value: [0.876, 1.091],
+                },
+                {
+                    key: 'contrast',
+                    value: [0.5, 1.5],
+                },
+                {
+                    key: 'saturation',
+                    value: [0.5, 1.5],
+                },
+                {
+                    key: 'hue',
+                    value: [-0.05, 0.05],
+                },
+                {
+                    key: 'probability',
+                    value: 0.5,
+                },
+            ],
+            gaussian_blur: [
                 {
                     key: 'enable',
                     value: false,
                 },
                 {
-                    key: 'ratio',
-                    value: 0.6,
+                    key: 'kernel_size',
+                    value: 5,
+                },
+                {
+                    key: 'sigma',
+                    value: [0.1, 2],
+                },
+                {
+                    key: 'probability',
+                    value: 0.5,
+                },
+            ],
+            gaussian_noise: [
+                {
+                    key: 'enable',
+                    value: false,
+                },
+                {
+                    key: 'mean',
+                    value: 0,
+                },
+                {
+                    key: 'sigma',
+                    value: 0.1,
+                },
+                {
+                    key: 'probability',
+                    value: 0.5,
+                },
+            ],
+            iou_random_crop: [
+                {
+                    key: 'enable',
+                    value: true,
                 },
             ],
             random_affine: [
@@ -3294,16 +3361,12 @@ export const expectedTrainingConfiguration: TrainingConfigurationUpdatePayloadDT
                     value: 15,
                 },
                 {
-                    key: 'translate_x',
-                    value: 0,
+                    key: 'scaling_ratio_range',
+                    value: [0.5, 1.5],
                 },
                 {
-                    key: 'translate_y',
-                    value: 0,
-                },
-                {
-                    key: 'scale',
-                    value: 1,
+                    key: 'max_shear_degree',
+                    value: 2,
                 },
             ],
             tiling: [
@@ -3321,8 +3384,18 @@ export const expectedTrainingConfiguration: TrainingConfigurationUpdatePayloadDT
                 },
                 {
                     key: 'tile_overlap',
-                    value: 64,
+                    value: 0.2,
                 },
+            ],
+            random_horizontal_flip: [
+                { key: 'enable', value: true },
+                { key: 'max_translate_ratio', value: 0.1 },
+                { key: 'scaling_ratio_range', value: [0.5, 1.5] },
+                { key: 'max_shear_degree', value: 2 },
+            ],
+            random_vertical_flip: [
+                { key: 'enable', value: false },
+                { key: 'probability', value: 0.5 },
             ],
         },
     },
