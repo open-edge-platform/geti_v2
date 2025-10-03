@@ -67,6 +67,7 @@ class TestAutoTrainUseCase:
         fxt_missing_annotations,
         fxt_missing_annotations_zero_missing,
         project_fixture,
+        fxt_project,
         auto_train_enabled,
     ) -> None:
         """Checks that an auto-training request is submitted if and only if the conditions are met"""
