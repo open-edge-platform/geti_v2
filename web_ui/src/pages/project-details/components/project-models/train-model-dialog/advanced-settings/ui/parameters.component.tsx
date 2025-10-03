@@ -87,7 +87,7 @@ export const ParameterReadOnlyValue = ({ value, name }: ParameterReadOnlyValuePr
         return <span aria-label={name}>{value ? 'On' : 'Off'}</span>;
     }
 
-    if (isArray(value)) {
+    if (isArray(value) && value.length === 2) {
         return (
             <span aria-label={name}>
                 {value[0]} - {value[1]}
