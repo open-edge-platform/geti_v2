@@ -127,9 +127,3 @@ spec:
             defaultMode: 365
         - name: tmp
           emptyDir: {}
-KAFKA_AUTHORIZER_CLASS_NAME=org:
-  apache:
-    kafka:
-      metadata:
-        authorizer:
-          StandardAuthorizer:
