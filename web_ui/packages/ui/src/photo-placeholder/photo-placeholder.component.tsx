@@ -11,7 +11,7 @@ import { getDistinctColorBasedOnHash, getForegroundColor, hexaToRGBA } from './u
 
 export interface PhotoPlaceholderProps extends StyleProps {
     name: string;
-    email: string;
+    indicator: string;
     width?: ViewProps<5>['width'];
     height?: ViewProps<5>['height'];
     borderRadius?: string;
@@ -19,14 +19,14 @@ export interface PhotoPlaceholderProps extends StyleProps {
 
 export const PhotoPlaceholder: FC<PhotoPlaceholderProps> = ({
     name,
-    email,
+    indicator,
     width = 'size-1600',
     height = 'size-1600',
     borderRadius = '50%',
     ...viewProps
 }) => {
-    const backgroundColor = getDistinctColorBasedOnHash(email);
-    const letter = (isEmpty(name.trim()) ? email : name).charAt(0);
+    const backgroundColor = getDistinctColorBasedOnHash(indicator);
+    const letter = (isEmpty(name.trim()) ? indicator : name).charAt(0);
 
     const color = getForegroundColor(
         hexaToRGBA(backgroundColor),
