@@ -32,12 +32,8 @@ const getStep = ({
         return step;
     }
 
-    if (maxValue === null) {
+    if (maxValue === null || minValue === null) {
         return type === 'int' ? DEFAULT_INT_STEP : DEFAULT_FLOAT_STEP;
-    }
-
-    if (minValue === null) {
-        return type === 'int' ? 0 : 0.0;
     }
 
     return getFloatingPointStep(minValue, maxValue);
