@@ -2,7 +2,7 @@
 # --device /dev/dri          # Intel GPU access
 # -v /dev/dri/by-path:/dev/dri/by-path  # Device path mapping
 
-FROM python:3.10-slim-bookworm@sha256:e7eed6c2e7fd1ecc43f0a37da7a115f4c9c9f50f247e9cba086c2f4583412fd9 AS base
+FROM python:3.10-slim-bookworm@sha256:445b9efb2c047a7ccdb30d293fd6b1aa0f62a55062dc2b69051df91e10848749 AS base
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
