@@ -9,7 +9,6 @@ dependencies = [
     "pymongo[aws]~=4.10",
     "minio~=7.1",
     "opencv-python-headless~=4.10",
-    "boto3==1.40.37",
 ]
 
 [dependency-groups]
