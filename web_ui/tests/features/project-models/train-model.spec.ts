@@ -205,6 +205,13 @@ test.describe('Train model', () => {
                 throw new Error('Could not get bounding box for endRange handle');
             }
 
+            await expect(trainModelPage.getBooleanParameter('Enable center crop')).toBeChecked();
+            await expect(trainModelPage.getNumberParameter('Crop ratio')).toBeEnabled();
+
+            await trainModelPage.toggleEnableParameter('Enable center crop');
+            await expect(trainModelPage.getBooleanParameter('Enable center crop')).not.toBeChecked();
+            await expect(trainModelPage.getNumberParameter('Crop ratio')).toBeDisabled();
+
             await expect(trainModelPage.getToggleFilter('Minimum annotation pixels')).toBeChecked();
             await expect(trainModelPage.getNumberParameter('Minimum annotation pixels')).toBeDisabled();
 
@@ -428,6 +435,33 @@ test.describe('Train model', () => {
 
             await trainModelPage.changeNumberParameter('Tile size', 128);
             await expect(trainModelPage.getNumberParameter('Tile size')).toHaveValue('128');
+
+            await trainModelPage.toggleEnableParameter('Enable color jitter');
+
+            await expect(page.getByRole('slider', { name: 'Minimum Change Brightness' })).toHaveValue('0.875');
+            await expect(page.getByRole('slider', { name: 'Maximum Change Brightness' })).toHaveValue('1.125');
+
+            const brightnessStart = page.getByRole('button', {
+                name: 'Increase Change Brightness range start range value',
+            });
+            await brightnessStart.click();
+
+            const brightnessSlider = page.getByLabel('Change Brightness range value');
+            brightnessSlider.click();
+
+            const endRange = brightnessSlider.getByRole('presentation').nth(2);
+
+            await endRange.click();
+            const box = await endRange.boundingBox();
+
+            if (box) {
+                await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+                await page.mouse.down();
+                await page.mouse.move(box.x + box.width / 2 - 30, box.y + box.height / 2);
+                await page.mouse.up();
+            } else {
+                throw new Error('Could not get bounding box for endRange handle');
+            }
 
             await expect(trainModelPage.getBooleanParameter('Enable center crop')).toBeChecked();
             await expect(trainModelPage.getNumberParameter('Crop ratio')).toBeEnabled();
