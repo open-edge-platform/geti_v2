@@ -637,7 +637,7 @@ allow if {
 
 # Restrict access to POST /api/<api_ver>/organizations/<org_id>/users/invitations endpoint to organization_admin
 allow if {
-	["api", api_ver, "organizations", org_id, "users", ""invitations"] = parsed_path
+	["api", api_ver, "organizations", org_id, "users", "invitations"] = parsed_path
 	http_request.method == "POST"
 	is_valid_api_version(api_ver)
 
