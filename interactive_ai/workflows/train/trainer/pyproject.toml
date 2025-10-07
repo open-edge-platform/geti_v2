@@ -13,6 +13,7 @@ dependencies = [
     "geti-kafka-tools",
     "geti-telemetry-tools[telemetry,kafka]",
     "setuptools==69.5.1",
+    "av<16",
 ]
 
 [tool.uv.sources]

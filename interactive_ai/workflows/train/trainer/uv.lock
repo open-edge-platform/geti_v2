@@ -157,12 +157,17 @@ wheels = [
 
 [[package]]
 name = "av"
-version = "16.0.0"
+version = "15.1.0"
 source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e9/c3/83e6e73d1592bc54436eae0bc61704ae0cff0c3cfbde7b58af9ed67ebb49/av-15.1.0.tar.gz", hash = "sha256:39cda2dc810e11c1938f8cb5759c41d6b630550236b3365790e67a313660ec85", size = 3774192, upload-time = "2025-08-30T04:41:56.076Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/f9/653efeec6d9430992469894c8ec60ce2bf0f1e6f9b8d748ca424bbefbe65/av-16.0.0-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:c69a228c95422391e527b0fe98d4ce632b4ac1045a1c16bf5a308ea23d9e5fe8", size = 27206451, upload-time = "2025-10-05T01:41:11.381Z" },
-    { url = "https://files.pythonhosted.org/packages/f0/0a/e037de0b61a13a690ae2aea5ba21a15c7a29f41b4b04dc5bdb7748813891/av-16.0.0-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:26491d71419d967914855be05da78bf20dfb58e7f3157723056c692e33527e7d", size = 21774368, upload-time = "2025-10-05T01:41:14.171Z" },
-    { url = "https://files.pythonhosted.org/packages/34/05/9be3c2d92681b306cd13f1cea59ae6d85fcf5fe75c88d4b45cb8fcf9ec51/av-16.0.0-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:18c457355b8d116d613440380c38097923e1a53ce51e7d2c37a49e58a3fd7614", size = 38176247, upload-time = "2025-10-05T01:41:16.71Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/6a/91e3e68ae0d1b53b480ec69a96f2ae820fb007bc60e6b821741f31c7ba4e/av-15.1.0-cp310-cp310-macosx_13_0_arm64.whl", hash = "sha256:cf067b66cee2248220b29df33b60eb4840d9e7b9b75545d6b922f9c41d88c4ee", size = 21781685, upload-time = "2025-08-30T04:39:13.118Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/6d/afa951b9cb615c3bc6d95c4eed280c6cefb52c006f4e15e79043626fab39/av-15.1.0-cp310-cp310-macosx_13_0_x86_64.whl", hash = "sha256:26426163d96fc3bde9a015ba4d60da09ef848d9284fe79b4ca5e60965a008fc5", size = 26962481, upload-time = "2025-08-30T04:39:16.875Z" },
+    { url = "https://files.pythonhosted.org/packages/3c/42/0c384884235c42c439cef28cbd129e4624ad60229119bf3c6c6020805119/av-15.1.0-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:92f524541ce74b8a12491d8934164a5c57e983da24826547c212f60123de400b", size = 37571839, upload-time = "2025-08-30T04:39:20.325Z" },
+    { url = "https://files.pythonhosted.org/packages/25/c0/5c967b0872fce1add80a8f50fa7ce11e3e3e5257c2b079263570bc854699/av-15.1.0-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:659f9d6145fb2c58e8b31907283b6ba876570f5dd6e7e890d74c09614c436c8e", size = 39070227, upload-time = "2025-08-30T04:39:24.079Z" },
+    { url = "https://files.pythonhosted.org/packages/e2/81/e333056d49363c35a74b828ed5f87c96dfbcc1a506b49d79a31ac773b94d/av-15.1.0-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:07a8ae30c0cfc3132eff320a6b27d18a5e0dda36effd0ae28892888f4ee14729", size = 39619362, upload-time = "2025-08-30T04:39:27.7Z" },
+    { url = "https://files.pythonhosted.org/packages/d5/ae/50cc2af1bf68452cbfec8d1b2554c18f6d167c8ba6d7ad7707797dfd1541/av-15.1.0-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:e33a76e38f03bb5de026b9f66ccf23dc01ddd2223221096992cb52ac22e62538", size = 40371627, upload-time = "2025-08-30T04:39:31.207Z" },
+    { url = "https://files.pythonhosted.org/packages/50/e6/381edf1779106dd31c9ef1ac9842f643af4465b8a87cbc278d3eaa76229a/av-15.1.0-cp310-cp310-win_amd64.whl", hash = "sha256:aa4bf12bdce20edc2a3b13a2776c474c5ab63e1817d53793714504476eeba82e", size = 31340369, upload-time = "2025-08-30T04:39:34.774Z" },
 ]
 
 [[package]]
@@ -1901,6 +1906,7 @@ name = "otx-v2-trainer"
 version = "1.0.0"
 source = { editable = "." }
 dependencies = [
+    { name = "av" },
     { name = "geti-kafka-tools" },
     { name = "geti-telemetry-tools", extra = ["kafka", "telemetry"] },
     { name = "minio" },
@@ -1928,6 +1934,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "av", specifier = "<16" },
     { name = "geti-kafka-tools", directory = "../../../../libs/kafka_tools" },
     { name = "geti-telemetry-tools", extras = ["telemetry", "kafka"], directory = "../../../../libs/telemetry_tools" },
     { name = "minio", specifier = "~=7.1.0" },
