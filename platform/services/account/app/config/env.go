@@ -169,5 +169,5 @@ var (
 	FeatureFlagAccSvcMod        = utils.GetBoolEnvOrDefault(featureFlagAccSvcMod, featureFlagDefaultValue)
 	FeatureFlagReqAccess        = utils.GetBoolEnvOrDefault(featureFlagReqAccess, featureFlagDefaultValue)
 
-    FeatureFlagWorkspaceActions = utils.GetBoolEnvOrDefault(featureFlagWorkspaceActions, featureFlagDefaultValue)
+	FeatureFlagWorkspaceActions = utils.GetBoolEnvOrDefault(featureFlagWorkspaceActions, featureFlagDefaultValue)
 )

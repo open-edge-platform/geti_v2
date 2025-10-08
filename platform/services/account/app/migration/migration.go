@@ -8,7 +8,7 @@ import (
 	"account_service/app/config"
 	"account_service/app/roles"
 
-    v1 "github.com/authzed/authzed-go/proto/authzed/api/v1"
+	v1 "github.com/authzed/authzed-go/proto/authzed/api/v1"
 )
 
 var logger = utils.InitializeLogger()
