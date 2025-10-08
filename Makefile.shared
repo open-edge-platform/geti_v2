@@ -14,10 +14,9 @@ TAG                                ?= $(PRODUCT_VERSION)-$(shell git rev-parse -
 ###
 # registries
 ###
-REGISTRY                          ?= local
+REGISTRY                          ?= localhost:5000/open-edge-platform
 IMAGES_REGISTRY                   ?= ${REGISTRY}/geti
 CHARTS_REGISTRY                   ?= ${REGISTRY}/geti/helm
-BASE_IMAGES_REGISTRY              ?= ${REGISTRY}/base-images
 
 ###
 # base images versions

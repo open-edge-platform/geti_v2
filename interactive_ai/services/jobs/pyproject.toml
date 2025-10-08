@@ -5,8 +5,9 @@ description = "Jobs scheduler for Geti"
 requires-python = ">=3.10, <3.11"
 
 dependencies = [
-    "flytekit==1.10.2",
-    "fastapi==0.115.2",
+    "flytekit==1.13.15", # Version that supports urllib3>=2.5.0
+    "fastapi==0.117.1",
+    "starlette>=0.47.2", # Lower bound due to CVEs
     "uvicorn~=0.27",
     "marshmallow-enum==1.5.1",
     "geti-telemetry-tools[telemetry,fastapi,logger,kafka,grpc]",
@@ -32,7 +33,7 @@ grpc_interfaces = { path = "../../../libs/grpc_interfaces", editable = true }
 [dependency-groups]
 dev = [
     "pytest~=8.3",
-    "ruff~=0.11",
+    "ruff~=0.11.2",
     "pre-commit~=4.1",
     "mypy~=1.15",
     "httpx~=0.23",
@@ -40,7 +41,8 @@ dev = [
     "pytest-freezegun==0.4.2",
     "types-cachetools",
     "types-PyYAML",
-    "grpc-stubs~=1.53.0.5"
+    "grpc-stubs~=1.53.0.5",
+    "pandas~=2.3"
 ]
 
 [tool.ruff]

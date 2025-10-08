@@ -14,7 +14,7 @@ interface OrganizationNameCellProps {
 export const OrganizationNameCell = ({ id, name }: OrganizationNameCellProps) => {
     return (
         <Flex width={'100%'} alignItems={'center'} gap={'size-100'}>
-            <PhotoPlaceholder name={name} email={name} width={'size-300'} height={'size-300'} />
+            <PhotoPlaceholder name={name} indicator={name} width={'size-300'} height={'size-300'} />
             <TooltipTrigger placement={'bottom left'}>
                 <PressableElement>
                     <TruncatedText>{name}</TruncatedText>

@@ -12,7 +12,8 @@ dependencies = [
     "otx",
     "geti-kafka-tools",
     "geti-telemetry-tools[telemetry,kafka]",
-    "setuptools==69.5.1",
+    "setuptools==78.1.1",
+    "av<16",
 ]
 
 [tool.uv.sources]
@@ -23,7 +24,7 @@ otx = { git = "https://github.com/open-edge-platform/training_extensions.git", b
 [dependency-groups]
 dev = [
     "pytest~=8.3",
-    "ruff~=0.11",
+    "ruff~=0.11.2",
     "pre-commit~=4.1",
     "testfixtures~=7.2",
     "requests~=2.32",

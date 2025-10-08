@@ -1,4 +1,4 @@
-FROM python:3.10.18-bullseye@sha256:65c6bdcca22db1a3468a0262ae05f38a0a718f51e9818cd09c12094aaae28a33
+FROM python:3.10.18-bullseye@sha256:65c6bdcca22db1a3468a0262ae05f38a0a718f51e9818cd09c12094aaae28a33 AS builder
 
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
@@ -25,3 +25,7 @@ RUN . .venv/bin/activate && \
     --add-data "app/version.yaml:." \
     --add-data "app/system-packages.yaml:." \
      -F app/platform_installer.py
+
+# this step is needed in order to see binary after build
+FROM scratch AS exporter
+COPY --from=builder /deploy/services/installer/dist/platform_installer /

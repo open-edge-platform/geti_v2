@@ -16,5 +16,6 @@ RUN useradd -l -m -u 1001 builder \
     && mkdir -p /go/bin /go/src /go/pkg \
     && chown -R builder:builder /go \
     && chmod -R 755 /go
+
 WORKDIR /app
 USER builder

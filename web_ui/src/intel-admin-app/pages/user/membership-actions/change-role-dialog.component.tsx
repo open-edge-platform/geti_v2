@@ -60,7 +60,7 @@ const ChangeRoleDialogInner: FC<ChangeRoleDialogInnerProps> = ({ membership, onC
                 <Flex alignItems={'center'} gap={'size-100'} marginBottom={'size-250'} marginTop={'size-150'}>
                     <PhotoPlaceholder
                         name={membership.organizationName}
-                        email={membership.organizationName}
+                        indicator={membership.organizationName}
                         width={'size-300'}
                         height={'size-300'}
                     />

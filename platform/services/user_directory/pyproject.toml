@@ -9,7 +9,8 @@ requires-python = ">=3.10, <3.11"
 dependencies = [
     "confluent-kafka==2.3.0",
     "cryptography==44.0.1",
-    "fastapi==0.115.2",
+    "fastapi==0.117.1",
+    "starlette>=0.47.2", # Lower bound due to CVEs
     "Jinja2==3.1.*",
     "kubernetes==24.2.0",
     "Pillow>=10.2.0",
@@ -32,7 +33,7 @@ users_handler = { path = "../../libs/users_handler", editable = true }
 [dependency-groups]
 dev = [
     "pytest~=8.3",
-    "ruff~=0.11",
+    "ruff~=0.11.2",
     "pre-commit~=4.1",
     "mypy~=1.15",
     "httpx~=0.23",

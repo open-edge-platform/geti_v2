@@ -4,7 +4,7 @@
 import { FC, ReactNode } from 'react';
 
 import { Grid, Item, minmax, Picker, Text, ToggleButtons, View } from '@geti/ui';
-import { isBoolean, isFunction } from 'lodash-es';
+import { isArray, isBoolean, isFunction } from 'lodash-es';
 
 import {
     ConfigurationParameter,
@@ -85,6 +85,14 @@ type ParameterReadOnlyValueProps = Pick<ConfigurationParameter, 'value' | 'name'
 export const ParameterReadOnlyValue = ({ value, name }: ParameterReadOnlyValueProps) => {
     if (isBoolean(value)) {
         return <span aria-label={name}>{value ? 'On' : 'Off'}</span>;
+    }
+
+    if (isArray(value) && value.length === 2) {
+        return (
+            <span aria-label={name}>
+                {value[0]} - {value[1]}
+            </span>
+        );
     }
 
     return <span aria-label={name}>{value}</span>;

@@ -1,0 +1,2 @@
+product_version: ${PRODUCT_VERSION}
+product_build: ${TAG}

@@ -20,7 +20,12 @@ export const SidebarHeader: FC<SidebarHeaderProps> = ({ name, email }) => {
             <Flex flex={1} gap={'size-200'} alignItems={'center'} height={'100%'}>
                 {name ? (
                     <>
-                        <PhotoPlaceholder name={name} email={email ?? name} width={'size-500'} height={'size-500'} />
+                        <PhotoPlaceholder
+                            name={name}
+                            indicator={email ?? name}
+                            width={'size-500'}
+                            height={'size-500'}
+                        />
                         <TruncatedTextWithTooltip UNSAFE_className={classes.sidebarHeaderText}>
                             {name}
                         </TruncatedTextWithTooltip>

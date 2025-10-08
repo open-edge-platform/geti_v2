@@ -23,7 +23,7 @@ get:
           examples:
             Project configuration response:
               value:
-                - $ref: "../../examples/configuration/responses/revamp/project_configuration.json"
+                $ref: "../../examples/configuration/responses/revamp/project_configuration.json"
     '404':
       description: Object not found. See the examples for details.
       content:
@@ -67,7 +67,7 @@ patch:
         examples:
           Project configuration payload:
             value:
-              - $ref: "../../examples/configuration/requests/revamp/project_configuration.json"
+              $ref: "../../examples/configuration/requests/revamp/project_configuration.json"
     required: true
   responses:
     '204':

@@ -89,6 +89,8 @@ const (
 	featureFlagManageUsersRoles = "FEATURE_FLAG_MANAGE_USERS_ROLES"
 	featureFlagAccSvcMod        = "FEATURE_FLAG_ACC_SVC_MOD"
 	featureFlagReqAccess        = "FEATURE_FLAG_REQ_ACCESS"
+
+    featureFlagWorkspaceActions = "FEATURE_FLAG_WORKSPACE_ACTIONS"
 )
 
 //goland:noinspection GoCommentStart
@@ -166,4 +168,6 @@ var (
 	FeatureFlagManageUsersRoles = utils.GetBoolEnvOrDefault(featureFlagManageUsersRoles, featureFlagDefaultValue)
 	FeatureFlagAccSvcMod        = utils.GetBoolEnvOrDefault(featureFlagAccSvcMod, featureFlagDefaultValue)
 	FeatureFlagReqAccess        = utils.GetBoolEnvOrDefault(featureFlagReqAccess, featureFlagDefaultValue)
+
+	FeatureFlagWorkspaceActions = utils.GetBoolEnvOrDefault(featureFlagWorkspaceActions, featureFlagDefaultValue)
 )

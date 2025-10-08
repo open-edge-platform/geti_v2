@@ -75,7 +75,7 @@ export const OrganizationsPicker = ({ isLargeSize }: OrganizationsPickerProps) =
             >
                 <PhotoPlaceholder
                     name={orgName}
-                    email={orgName}
+                    indicator={orgName}
                     width={'size-400'}
                     height={'size-400'}
                     borderRadius={'20%'}
@@ -113,7 +113,7 @@ export const OrganizationsPicker = ({ isLargeSize }: OrganizationsPickerProps) =
             >
                 <PhotoPlaceholder
                     name={orgName}
-                    email={orgName}
+                    indicator={orgName}
                     width={'size-400'}
                     height={'size-400'}
                     borderRadius={'20%'}

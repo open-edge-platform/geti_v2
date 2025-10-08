@@ -1,0 +1,105 @@
+# This workflow builds and publishes builder container images for Python and Go.
+# These images contain all the tools required to build applications and are used
+# both in GitHub Actions workflows and for local development. The workflow checks
+# for changes in the builder image directories, builds the relevant images if needed,
+# and pushes them to the GitHub Container Registry. This ensures that up-to-date
+# builder images are available for creating product images in CI/CD pipelines and
+# for developers working locally.
+#
+# NOTICE:
+# Whenever you make changes to the builder image directories,
+# you MUST bump the BUILDER_TAG in the corresponding Makefile.
+# This ensures that the new image is tagged and published correctly.
+
+name: Build and Publish Builder Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dev_tools/builder_images/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'dev_tools/builder_images/**'
+
+permissions: {}
+
+jobs:
+  check_paths:
+    name: Check if workflow should run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      build_list: ${{ steps.changed-files-yaml.outputs.modified_keys }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Get all paths that should trigger the workflow
+        id: changed-files-yaml
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46.0.5
+        with:
+          files_yaml: |
+            go:
+              - dev_tools/builder_images/go-builder/**
+            python:
+              - dev_tools/builder_images/python-builder/**
+  
+  create_builder:
+    name: Create and push builder images
+    needs: check_paths
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # To push to GitHub Container Registry
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - path: dev_tools/builder_images/go-builder
+            run_condition: ${{ contains(needs.check_paths.outputs.build_list, 'go')}}
+          - path: dev_tools/builder_images/python-builder
+            run_condition: ${{ contains(needs.check_paths.outputs.build_list, 'python')}}
+    env:
+      REGISTRY: ghcr.io/open-edge-platform
+    steps:
+      - name: Checkout repository
+        if: ${{ matrix.run_condition }}
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Check if Docker image exists
+        if: ${{ matrix.run_condition }}
+        run: |
+          IMAGE=$(make -C ${{ matrix.path }} list-image | grep $REGISTRY)
+          if docker manifest inspect "${IMAGE}" > /dev/null 2>&1; then
+            echo Image ${IMAGE} exists please bump the BUILDER_TAG in the Makefile
+            exit 1
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build image
+        if: ${{ matrix.run_condition}}
+        run: |
+          make -C ${{ matrix.path }} build-image
+
+      - name: Log in to GitHub Container Registry
+        if: ${{ matrix.run_condition && github.event_name == 'push'}}
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        if: ${{ matrix.run_condition && github.event_name == 'push'}}
+        run: |
+          make -C ${{ matrix.path }} push-image

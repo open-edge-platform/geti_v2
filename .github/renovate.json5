@@ -63,6 +63,18 @@
       schedule: ["* * * * 0"], // weekly
     },
 
+    // Base images from dev_tools/builder_images
+    // are upgraded separately as it requires two steps
+    {
+      enabled: true,
+      matchDatasources: ["docker"],
+      pinDigests: true,
+      groupName: "Pin builder images",
+      groupSlug: "pin-builders",
+      schedule: ["* * 1 * *"], // every month
+      matchPaths: ["dev_tools/builder_images/**"],
+    },
+
     // Disable non-security upgrades for go and npm.
     // We will enable it in the next phase
     {

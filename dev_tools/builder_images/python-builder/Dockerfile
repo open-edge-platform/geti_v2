@@ -34,5 +34,6 @@ RUN groupadd docker \
     && usermod -aG docker builder \
     && mkdir -p /home/builder/.docker \
     && chown builder:builder /home/builder/.docker
+
 WORKDIR /app
 USER builder
