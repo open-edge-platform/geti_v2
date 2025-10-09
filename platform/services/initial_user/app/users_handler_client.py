@@ -12,6 +12,7 @@ from users_handler.exceptions import UserDoesNotExist
 from users_handler.users_handler import AuthorizationRelationships, UsersHandler, UserType
 
 INITIAL_USER_PASSWORD = os.getenv("INITIAL_USER_PASSWORD", "")
+FF_WORKSPACE_ACTIONS = os.getenv("FEATURE_FLAG_WORKSPACE_ACTIONS", "false")
 FIND_USER: Mapping[Any, Any] = {
     "first_name": "admin",
     "second_name": "admin",
@@ -59,9 +60,12 @@ class UsersHandlerConnection:
 
     def create_initial_user(self, uid: str, workspace_id: str, organization_id: str) -> bool:
         roles = [
-            {"role": "ADMIN", "resource_id": workspace_id, "resource_type": "workspace"},
             {"role": "ADMIN", "resource_id": organization_id, "resource_type": "organization"},
         ]
+
+        if FF_WORKSPACE_ACTIONS == "false":
+            roles.append({"role": "ADMIN", "resource_id": workspace_id, "resource_type": "workspace"})
+
         password = base64.b64encode(INITIAL_USER_PASSWORD.encode("ascii")).decode("ascii")
         user_auth_relationships = [
             AuthorizationRelationships(

@@ -105,6 +105,9 @@ spec:
                 key: "spicedb-postgresql-password"
         - name: LOGGING_CONFIG_DIR
           value: {{ .Values.global.logging_config_dir }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Release.Namespace }}-feature-flags
         volumeMounts:
           - mountPath: {{ .Values.global.logging_config_dir }}
             name: config

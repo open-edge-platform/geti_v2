@@ -90,7 +90,7 @@ const (
 	featureFlagAccSvcMod        = "FEATURE_FLAG_ACC_SVC_MOD"
 	featureFlagReqAccess        = "FEATURE_FLAG_REQ_ACCESS"
 
-    featureFlagWorkspaceActions = "FEATURE_FLAG_WORKSPACE_ACTIONS"
+	featureFlagWorkspaceActions = "FEATURE_FLAG_WORKSPACE_ACTIONS"
 )
 
 //goland:noinspection GoCommentStart
