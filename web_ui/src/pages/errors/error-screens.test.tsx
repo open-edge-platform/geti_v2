@@ -6,17 +6,17 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { AuthProvider, useAuth } from 'react-oidc-context';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-import * as SharedUtils from '../../shared/utils';
 import { useHandleSignOut } from '../../hooks/use-handle-sign-out/use-handle-sign-out.hook';
+import * as SharedUtils from '../../shared/utils';
 import { BadRequest } from './bad-request/bad-request.component';
 import { ErrorFallback } from './error-boundary.component';
 import { ErrorScreen } from './general-error-screen/general-error-screen.component';
 import { InternalServerError } from './internal-server-error/internal-server-error.component';
 import { LoginErrorScreen } from './login-error/login-error-screen.component';
+import { NoWorkspacesError } from './no-workspaces.error';
 import { ResourceNotFound } from './resource-not-found/resource-not-found.component';
 import { ServiceUnavailable } from './service-unavailable/service-unavailable.component';
 import { UnauthenticatedUser } from './unauthenticated-user/unauthenticated-user.component';
-import { NoWorkspacesError } from './no-workspaces.error';
 
 jest.mock('react-oidc-context', () => ({
     ...jest.requireActual('react-oidc-context'),
@@ -244,7 +244,7 @@ describe('Error screens', () => {
             expect(screen.getByText('No workspace access')).toBeInTheDocument();
             expect(
                 screen.getByText(
-                    'You don\'t have access to any workspaces in this organization yet. An organization administrator must assign you to a workspace before you can continue.'
+                    "You don't have access to any workspaces in this organization yet. An organization administrator must assign you to a workspace before you can continue."
                 )
             ).toBeInTheDocument();
 

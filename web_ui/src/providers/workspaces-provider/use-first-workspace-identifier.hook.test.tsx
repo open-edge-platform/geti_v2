@@ -4,14 +4,14 @@
 import { ReactNode } from 'react';
 
 import { paths } from '@geti/core';
+import { createInMemoryApiWorkspacesService } from '@geti/core/src/workspaces/services/in-memory-api-workspaces-service';
 import { waitFor } from '@testing-library/react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Route, Routes } from 'react-router-dom';
 
 import { NoWorkspacesError } from '../../pages/errors/no-workspaces.error';
 import { renderHookWithProviders } from '../../test-utils/render-hook-with-providers';
 import { useFirstWorkspaceIdentifier } from './use-first-workspace-identifier.hook';
-import { createInMemoryApiWorkspacesService } from '@geti/core/src/workspaces/services/in-memory-api-workspaces-service';
-import { ErrorBoundary } from 'react-error-boundary';
 
 describe('useFirstWorkspaceIdentifier', () => {
     const Wrapper = ({ children }: { children: ReactNode }) => {
@@ -69,7 +69,12 @@ describe('useFirstWorkspaceIdentifier', () => {
                 workspacesService,
             },
             wrapper: ({ children }) => (
-                <ErrorBoundary fallbackRender={() => null} onError={(error) => { caughtError = error} }>
+                <ErrorBoundary
+                    fallbackRender={() => null}
+                    onError={(error) => {
+                        caughtError = error;
+                    }}
+                >
                     <Wrapper>{children}</Wrapper>
                 </ErrorBoundary>
             ),
