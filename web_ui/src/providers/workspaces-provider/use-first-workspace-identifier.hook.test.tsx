@@ -7,8 +7,11 @@ import { paths } from '@geti/core';
 import { waitFor } from '@testing-library/react';
 import { Route, Routes } from 'react-router-dom';
 
+import { NoWorkspacesError } from '../../pages/errors/no-workspaces.error';
 import { renderHookWithProviders } from '../../test-utils/render-hook-with-providers';
 import { useFirstWorkspaceIdentifier } from './use-first-workspace-identifier.hook';
+import { createInMemoryApiWorkspacesService } from '@geti/core/src/workspaces/services/in-memory-api-workspaces-service';
+import { ErrorBoundary } from 'react-error-boundary';
 
 describe('useFirstWorkspaceIdentifier', () => {
     const Wrapper = ({ children }: { children: ReactNode }) => {
@@ -52,5 +55,28 @@ describe('useFirstWorkspaceIdentifier', () => {
         });
 
         expect(result.current).toEqual({ organizationId: 'xxx', workspaceId: 'workspace-id' });
+    });
+
+    it('Throws error when no workspace', async () => {
+        const workspacesService = createInMemoryApiWorkspacesService();
+        workspacesService.getWorkspaces = jest.fn().mockResolvedValue([]);
+
+        let caughtError: unknown;
+
+        renderHookWithProviders(useFirstWorkspaceIdentifier, {
+            providerProps: {
+                initialEntries: ['/organizations/no-workspaces/'],
+                workspacesService,
+            },
+            wrapper: ({ children }) => (
+                <ErrorBoundary fallbackRender={() => null} onError={(error) => { caughtError = error} }>
+                    <Wrapper>{children}</Wrapper>
+                </ErrorBoundary>
+            ),
+        });
+
+        await waitFor(() => {
+            expect(caughtError).toBeInstanceOf(NoWorkspacesError);
+        });
     });
 });
