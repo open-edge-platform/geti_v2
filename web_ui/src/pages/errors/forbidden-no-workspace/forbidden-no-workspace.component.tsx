@@ -4,6 +4,7 @@
 import { useEffect } from 'react';
 
 import { Button, Heading, Text } from '@geti/ui';
+import isFunction from 'lodash-es/isFunction';
 
 import { Forbidden } from '../../../assets/images';
 import { useHandleSignOut } from '../../../hooks/use-handle-sign-out/use-handle-sign-out.hook';
@@ -39,7 +40,7 @@ export const ForbiddenNoWorkspace = ({ onReset }: ForbiddenNoWorkspaceProps) => 
             <Button
                 variant={'accent'}
                 onPress={() => {
-                    isFunction(onReset) && onReset()
+                    isFunction(onReset) && onReset();
                     handleSignOut();
                 }}
                 marginTop={'size-200'}
