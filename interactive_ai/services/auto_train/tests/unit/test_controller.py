@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from geti_configuration_tools.training_configuration import TrainingConfiguration
+from geti_supported_models import SupportedModels
 from grpc import RpcError
 
 from controller import AUTO_TRAIN_AUTHOR, AutoTrainController, last_job_submission_time
@@ -18,8 +19,6 @@ from repos.partial_training_configuration_repo import PartialTrainingConfigurati
 from geti_types import ID, ProjectIdentifier, Session
 from grpc_interfaces.job_submission.client import GRPCJobsClient
 from grpc_interfaces.job_submission.pb.job_service_pb2 import SubmitJobRequest
-from iai_core.configuration.elements.component_parameters import ComponentType
-from iai_core.configuration.elements.dataset_manager_parameters import DatasetManagementConfig
 from iai_core.entities.model_storage import NullModelStorage
 from iai_core.entities.model_template import ModelTemplateDeprecationStatus, TaskFamily, TaskType
 from iai_core.entities.project import NullProject, Project
@@ -124,9 +123,10 @@ class TestAutoTrainController:
         fxt_empty_project,
         fxt_model_storage,
         fxt_task_node,
+        fxt_training_configuration_task_level,
+        fxt_dummy_model_manifest,
     ) -> None:
         # Arrange
-        dummy_dataset_config = MagicMock()
         dummy_train_job_key = "dummy_job_key"
         dummy_train_job_payload = "dummy_job_payload"
         dummy_train_job_metadata = "dummy_job_metadata"
@@ -134,10 +134,15 @@ class TestAutoTrainController:
         # Act
         with (
             patch.object(
-                ConfigurableParametersRepo,
-                "get_or_create_component_parameters",
-                return_value=dummy_dataset_config,
-            ) as mock_get_dataset_config,
+                PartialTrainingConfigurationRepo,
+                "get_task_only_configuration",
+                return_value=fxt_training_configuration_task_level,
+            ),
+            patch.object(
+                SupportedModels,
+                "get_model_manifest_by_id",
+                return_value=fxt_dummy_model_manifest,
+            ),
             patch.object(ProjectRepo, "get_by_id", return_value=fxt_empty_project) as mock_get_project,
             patch.object(
                 Project, "get_trainable_task_node_by_id", return_value=fxt_task_node
@@ -155,10 +160,6 @@ class TestAutoTrainController:
             fxt_auto_train_controller.submit_train_job(fxt_auto_train_activation_request)
 
         # Assert
-        mock_get_dataset_config.assert_called_once_with(
-            data_instance_of=DatasetManagementConfig,
-            component=ComponentType.PIPELINE_DATASET_MANAGER,
-        )
         mock_get_project.assert_called_once_with(fxt_auto_train_activation_request.project_id)
         mock_get_trainable_task_node.assert_called_once_with(task_id=fxt_auto_train_activation_request.task_node_id)
         MOCK_JOBS_CLIENT.submit.assert_called_with(
@@ -333,16 +334,28 @@ class TestAutoTrainController:
         fxt_auto_train_activation_request,
         fxt_empty_project,
         fxt_model_storage,
+        fxt_dummy_model_manifest,
+        fxt_training_configuration_task_level,
+        fxt_training_configuration_model_manifest_level,
     ) -> None:
-        dummy_dataset_config = MagicMock()
         dummy_train_job_key = "dummy_job_key"
         dummy_train_job_payload = "dummy_job_payload"
         dummy_train_job_metadata = "dummy_job_metadata"
         with (
             patch.object(
-                ConfigurableParametersRepo,
-                "get_or_create_component_parameters",
-                return_value=dummy_dataset_config,
+                PartialTrainingConfigurationRepo,
+                "get_task_only_configuration",
+                return_value=fxt_training_configuration_task_level,
+            ),
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_by_model_manifest_id",
+                return_value=fxt_training_configuration_model_manifest_level,
+            ),
+            patch.object(
+                SupportedModels,
+                "get_model_manifest_by_id",
+                return_value=fxt_dummy_model_manifest,
             ),
             patch.object(ProjectRepo, "get_by_id", return_value=fxt_empty_project),
             patch.object(Project, "get_trainable_task_node_by_id", return_value=fxt_task_node),
