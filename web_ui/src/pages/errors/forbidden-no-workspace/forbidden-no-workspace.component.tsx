@@ -39,7 +39,7 @@ export const ForbiddenNoWorkspace = ({ onReset }: ForbiddenNoWorkspaceProps) => 
             <Button
                 variant={'accent'}
                 onPress={() => {
-                    onReset?.();
+                    isFunction(onReset) && onReset()
                     handleSignOut();
                 }}
                 marginTop={'size-200'}
