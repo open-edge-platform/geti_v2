@@ -1,8 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { DISTINCT_COLORS, getHEXFormat } from '@geti/ui/utils';
+
 import { LabelTreeItem, LabelTreeLabelProps } from '../../../../../core/labels/label-tree-view.interface';
-import { DISTINCT_COLORS, getHEXFormat } from '../../../../create-project/components/distinct-colors';
 
 export const getAvailableColors = (flatItems: LabelTreeItem[] | undefined): string[] => {
     if (!flatItems) {

@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { FullscreenAction } from '@geti/ui';
+import { getDistinctColorBasedOnHash } from '@geti/ui/utils';
 
 import {
     TrainingModelChartConfig,
@@ -11,7 +12,6 @@ import { CardContent } from '../../../../../../shared/components/card-content/ca
 import { LineChart } from '../../../../../../shared/components/charts/line-chart/line-chart.component';
 import { LineChartData } from '../../../../../../shared/components/charts/line-chart/line-chart.interface';
 import { DownloadGraphMenu } from '../../../../../../shared/components/download-graph-menu/download-graph-menu.component';
-import { getDistinctColorBasedOnHash } from '../../../../../create-project/components/distinct-colors';
 
 export const TrainingModelLineChart = ({
     header,

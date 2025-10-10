@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { DISTINCT_COLORS } from '@geti/ui/utils';
 import { fireEvent, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
@@ -16,7 +17,6 @@ import { getDefaultGroupName } from '../../../../../shared/components/label-tree
 import { getMockedTreeGroup, getMockedTreeLabel } from '../../../../../test-utils/mocked-items-factory/mocked-labels';
 import { providersRender as render } from '../../../../../test-utils/required-providers-render';
 import { getById, MORE_THAN_100_CHARS_NAME } from '../../../../../test-utils/utils';
-import { DISTINCT_COLORS } from '../../distinct-colors';
 import { LABEL_TREE_TYPE } from '../label-tree-type.enum';
 import { TaskLabelsManagement } from './task-labels-management.component';
 
