@@ -40,6 +40,6 @@
         ".": "./index.ts",
         "./icons": "./icons/index.ts",
         "./theme": "./theme/index.tsx",
-        "./utils": "./utils/index.tsx"
+        "./utils": "./utils/index.ts"
     }
 }
