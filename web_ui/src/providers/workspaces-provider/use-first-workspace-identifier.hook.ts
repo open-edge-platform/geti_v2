@@ -8,6 +8,7 @@ import { WorkspaceIdentifier } from '@geti/core/src/workspaces/services/workspac
 import { useParams } from 'react-router-dom';
 
 import { useOrganizationIdentifier } from '../../hooks/use-organization-identifier/use-organization-identifier.hook';
+import { NoWorkspacesError } from '../../pages/errors/no-workspaces.error';
 
 export const useFirstWorkspaceIdentifier = () => {
     const { organizationId } = useOrganizationIdentifier();
@@ -18,7 +19,8 @@ export const useFirstWorkspaceIdentifier = () => {
     const { workspaceId = workspaces.at(0)?.id } = useParams<Pick<WorkspaceIdentifier, 'workspaceId'>>();
 
     if (workspaceId === undefined) {
-        throw new Error('Undefined workspace id');
+        // No workspace found for user -> trigger global error boundary with dedicated screen
+        throw new NoWorkspacesError();
     }
 
     return useMemo(() => ({ workspaceId, organizationId }), [workspaceId, organizationId]);

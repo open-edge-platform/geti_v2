@@ -22,6 +22,7 @@ import (
 	"account_service/app/grpc/user_settings"
 	"account_service/app/grpc/workspace"
 	"account_service/app/grpc_gateway"
+	"account_service/app/migration"
 	"account_service/app/models"
 	"account_service/app/repository"
 	"account_service/app/rest"
@@ -253,6 +254,8 @@ func main() {
 	}(conn)
 
 	initSpiceDB()
+
+    migration.MigrateUsers()
 
 	go runGRPCServer(db)
 	if config.OtelEnableMetrics {
