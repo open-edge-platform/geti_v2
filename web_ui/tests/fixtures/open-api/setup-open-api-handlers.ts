@@ -11,7 +11,7 @@ import { OpenAPIBackend, type Context, type Document, type Options } from 'opena
 import { supportedAlgorithms } from '../../features/project-models/mocks';
 import { getDirname } from '../../utils/get-dirname';
 import definition from './../../../src/core/server/generated/api-spec.json' with { type: 'json' };
-import {  settings } from './mocks';
+import { settings } from './mocks';
 
 const SHOW_UNIMPLEMENTED_OPERATIONS = false;
 
