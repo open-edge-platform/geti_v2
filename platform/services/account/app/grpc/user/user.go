@@ -1242,7 +1242,7 @@ func (s *GRPCServer) SendInvitation(ctx context.Context, req *pb.UserInvitationR
 
 		//update roles with workspace level roles if required
 		userRoles = req.Roles
-		if config.FeatureFlagManageUsers {
+		if config.FeatureFlagManageUsers && !config.FeatureFlagWorkspaceActions {
 			userRoles, err = UpdateRolesList(userRoles, orgRequestedID.String(), ctx, tx)
 			if err != nil {
 				logger.Errorf("error during updating roles: %v", err)

@@ -4,6 +4,7 @@
 import { useEffect } from 'react';
 
 import { Flex } from '@geti/ui';
+import { getHEXFormat } from '@geti/ui/utils';
 
 import {
     LabelItemEditionState,
@@ -26,7 +27,6 @@ import {
 } from '../../../../../shared/components/label-tree-view/utils';
 import { isYupValidationError } from '../../../../user-management/profile-page/utils';
 import { validateLabelsSchema } from '../../../utils';
-import { getHEXFormat } from '../../distinct-colors';
 import { LABEL_TREE_TYPE } from '../label-tree-type.enum';
 import { LabelTreeGroup } from './new-label-tree-item/label-tree-group.component';
 import { LabelTreeLabel } from './new-label-tree-item/label-tree-label.component';

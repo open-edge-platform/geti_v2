@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { DISTINCT_COLORS } from '@geti/ui/utils';
+
 import {
     LabelItemEditionState,
     LabelItemType,
@@ -9,7 +11,6 @@ import {
 } from '../../../core/labels/label-tree-view.interface';
 import { LabelsRelationType } from '../../../core/labels/label.interface';
 import { getFlattenedGroups } from '../../../core/labels/utils';
-import { DISTINCT_COLORS } from '../../../pages/create-project/components/distinct-colors';
 import { getMockedTreeGroup, getMockedTreeLabel } from '../../../test-utils/mocked-items-factory/mocked-labels';
 import {
     checkIfItemWasChanged,

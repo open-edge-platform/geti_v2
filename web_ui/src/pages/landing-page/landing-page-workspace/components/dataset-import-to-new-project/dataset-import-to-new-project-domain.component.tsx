@@ -4,6 +4,7 @@
 import { Key, useEffect, useMemo, useState } from 'react';
 
 import { ComboBox, Flex, Item, TextField } from '@geti/ui';
+import { getRandomDistinctColor } from '@geti/ui/utils';
 import { isEmpty } from 'lodash-es';
 import { ValidationError } from 'yup';
 
@@ -15,7 +16,6 @@ import {
     DatasetImportToNewProjectItem,
 } from '../../../../../core/datasets/dataset.interface';
 import { ValidationErrorMsg } from '../../../../../shared/components/validation-error-msg/validation-error-msg.component';
-import { getRandomDistinctColor } from '../../../../create-project/components/distinct-colors';
 import {
     MAX_NUMBER_OF_CHARACTERS_OF_PROJECT_NAME,
     ProjectNameErrorPath,

@@ -22,8 +22,10 @@ import { isRouteErrorResponse } from 'react-router-dom';
 import { AccessDenied } from './access-denied/access-denied.component';
 import { BadRequest } from './bad-request/bad-request.component';
 import { ErrorLayout } from './error-layout/error-layout.component';
+import { ForbiddenNoWorkspace } from './forbidden-no-workspace/forbidden-no-workspace.component';
 import { ErrorScreen } from './general-error-screen/general-error-screen.component';
 import { InternalServerError } from './internal-server-error/internal-server-error.component';
+import { NoWorkspacesError } from './no-workspaces.error';
 import { ResourceNotFound } from './resource-not-found/resource-not-found.component';
 import { ServiceUnavailable } from './service-unavailable/service-unavailable.component';
 import { UnauthenticatedUser } from './unauthenticated-user/unauthenticated-user.component';
@@ -49,7 +51,9 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
 
     let component = <ErrorScreen errorMessage={errorMessage} resetErrorBoundary={resetErrorBoundary} />;
 
-    if (isAxiosError(error)) {
+    if (error instanceof NoWorkspacesError) {
+        component = <ForbiddenNoWorkspace onReset={resetErrorBoundary} />;
+    } else if (isAxiosError(error)) {
         const errorStatus = Number(error.response?.status);
 
         switch (errorStatus) {
