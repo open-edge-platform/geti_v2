@@ -7,7 +7,7 @@ description = "Platform cleaner service for Geti"
 requires-python = ">=3.10, <3.11"
 
 dependencies = [
-    "python-ldap==3.4.4",
+    "python-ldap==3.4.5",
     "kubernetes-asyncio==29.0.0",
     "geti-telemetry-tools",
     "grpc_interfaces[account-service]",
