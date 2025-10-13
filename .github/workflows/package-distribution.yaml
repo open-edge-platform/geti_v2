@@ -22,14 +22,9 @@ on:
         description: "The branch, tag or SHA to checkout"
         type: string
         default: ""
-    secrets:
-      AWS_ROLE:
-        required: true
-      AWS_REGION:
-        required: true
-      REGISTRY:
-        required: true
-      S3_BUCKET_NAME:
+      registry:
+        description: "The container registry to push images to"
+        type: string
         required: true
 permissions: {} # No permissions by default on workflow level
 
@@ -40,11 +35,11 @@ jobs:
     if: ${{ inputs.build_all }}
     permissions:
       contents: read
-      id-token: write
+      packages: write
     env:
       TAG: ${{ inputs.build_version }}
       PLATFORM_VERSION: ${{ inputs.platform_version }}
-      REGISTRY: ${{ secrets.REGISTRY }}
+      REGISTRY: ${{ inputs.registry }}
     steps:
       - name: Harden the runner (audit all outbound calls)
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -56,17 +51,6 @@ jobs:
         with:
           persist-credentials: false
           ref: ${{ inputs.ref || '' }}
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: Github
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
 
       - name: Build umbrella charts
         run: make build-umbrella-chart
@@ -81,13 +65,12 @@ jobs:
         run: |
           printf "product_version: %s\nproduct_build: %s\n" "$PLATFORM_VERSION" "$TAG" > app/version.yaml
           make build
-
-      - name: Publish the installer binary to S3
-        if: ${{ inputs.publish_binaries }}
-        working-directory: platform/services/installer
-        shell: bash
-        env:
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-        run: |
           tar -czf platform_installer.tar.gz platform_$TAG
-          aws s3 cp platform_installer.tar.gz s3://$S3_BUCKET_NAME/v$TAG/
+
+      - name: Upload build artifacts
+        if: ${{ inputs.publish_binaries }}
+        uses: actions/upload-artifact@vea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: platform_installer
+          path: platform/services/installer/platform_installer.tar.gz
+          retention-days: 14
