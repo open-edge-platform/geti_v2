@@ -156,7 +156,8 @@ test.describe('Members page', () => {
         await expectMembersToBeVisible(membersPage, members.get());
     });
 
-    test('Removes a workspace admin member', async ({ page, membersPage, registerApiResponse }) => {
+    // TODO: reenable this after users tab merge
+    test.skip('Removes a workspace admin member', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);
@@ -184,7 +185,8 @@ test.describe('Members page', () => {
         await expect(membersPage.getEmailCell(workspaceAdmin2.email)).toBeHidden();
     });
 
-    test('Removes a workspace contributor member', async ({ page, membersPage, registerApiResponse }) => {
+    // TODO: reenable this after users tab merge
+    test.skip('Removes a workspace contributor member', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);

@@ -28,7 +28,6 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
 
     const { useGetUsersQuery, useUpdateUserRoles, useUpdateMemberRole } = useUsers();
 
-    // All org users
     const {
         users: orgUsers,
         isLoading: isOrgLoading,
@@ -38,7 +37,6 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
         totalMatchedCount: _orgMatched,
     } = useGetUsersQuery(organizationId);
 
-    // Users that belong to the selected workspace
     const {
         users: wsUsers,
         isLoading: isWsLoading,
@@ -48,12 +46,13 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
         totalMatchedCount: _wsMatched,
     } = useGetUsersQuery(organizationId, { resourceType: RESOURCE_TYPE.WORKSPACE, resourceId: workspaceId });
 
-    // Compute users not in the workspace
     const availableUsers = useMemo(() => {
-        if (orgUsers === undefined || wsUsers === undefined) return [] as User[];
+        if (isWsLoading || orgUsers === undefined || wsUsers === undefined) return [] as User[];
         const wsSet = new Set(wsUsers.map((u) => u.id));
-        return orgUsers.filter((u) => !wsSet.has(u.id));
-    }, [orgUsers, wsUsers]);
+        return orgUsers.filter(
+            (u) => !wsSet.has(u.id) && u.roles.every((r) => r.role !== USER_ROLE.ORGANIZATION_ADMIN)
+        ); // filter out org admins and workspace members
+    }, [orgUsers, wsUsers, isWsLoading]);
 
     const updateUserRoleMutation = useUpdateUserRoles();
     const updateMemberRoleMutation = useUpdateMemberRole();

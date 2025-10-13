@@ -161,6 +161,7 @@ describe('WorkspaceUserActions', () => {
                     activeUser={mockedOrgAdminUser}
                     user={mockedWorkspaceAdminUser}
                     users={[mockedOrgAdminUser, mockedWorkspaceAdminUser]}
+                    workspaceId={workspaceId}
                 />
             );
 
@@ -169,7 +170,7 @@ describe('WorkspaceUserActions', () => {
             fireEvent.click(actionsMenu);
 
             expect(screen.getByText('Edit')).toBeInTheDocument();
-            expect(screen.getByText('Delete')).toBeInTheDocument();
+            expect(screen.getByText('Remove from workspace')).toBeInTheDocument();
         });
 
         it('Check if contributor cannot edit or delete other user - SaaS environment', async () => {
@@ -202,6 +203,7 @@ describe('WorkspaceUserActions', () => {
                 activeUser={mockedOrgAdminUser}
                 user={mockedInvitedUser}
                 users={[mockedOrgAdminUser, mockedInvitedUser]}
+                workspaceId={workspaceId}
             />
         );
 
@@ -210,7 +212,7 @@ describe('WorkspaceUserActions', () => {
         fireEvent.click(actionsMenu);
 
         expect(screen.getByText('Edit')).toBeInTheDocument();
-        expect(screen.queryByText('Delete')).toBeInTheDocument();
+        expect(screen.queryByText('Remove from workspace')).toBeInTheDocument();
     });
 
     it('Check if edition and deletion is enabled when environment is of type on-prem', async () => {
@@ -220,6 +222,7 @@ describe('WorkspaceUserActions', () => {
                 activeUser={mockedOrgAdminUser}
                 user={mockedWorkspaceAdminUser}
                 users={[mockedOrgAdminUser, mockedWorkspaceAdminUser]}
+                workspaceId={workspaceId}
             />
         );
 
@@ -228,7 +231,7 @@ describe('WorkspaceUserActions', () => {
         fireEvent.click(actionsMenu);
 
         expect(screen.getByText('Edit')).toBeInTheDocument();
-        expect(screen.queryByText('Delete')).toBeInTheDocument();
+        expect(screen.queryByText('Remove from workspace')).toBeInTheDocument();
     });
 
     it('Check if contributor cannot edit or delete other user - SaaS environment', async () => {
