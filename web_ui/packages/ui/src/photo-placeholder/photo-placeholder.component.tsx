@@ -7,7 +7,8 @@ import { Flex, Text, View, ViewProps } from '@adobe/react-spectrum';
 import { StyleProps } from '@react-types/shared';
 import { isEmpty } from 'lodash-es';
 
-import { getDistinctColorBasedOnHash, getForegroundColor, hexaToRGBA } from './utils';
+import { getDistinctColorBasedOnHash } from '../../utils';
+import { getForegroundColor, hexaToRGBA } from './utils';
 
 export interface PhotoPlaceholderProps extends StyleProps {
     name: string;

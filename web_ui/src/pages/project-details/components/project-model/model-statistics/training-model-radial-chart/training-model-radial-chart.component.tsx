@@ -1,13 +1,14 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { getDistinctColorBasedOnHash } from '@geti/ui/utils';
+
 import {
     TrainingModelBarRadialChart,
     TrainingModelChartConfig,
 } from '../../../../../../core/statistics/model-statistics.interface';
 import { CardContent } from '../../../../../../shared/components/card-content/card-content.component';
 import { RadialChart } from '../../../../../../shared/components/charts/radial-chart/radial-chart.component';
-import { getDistinctColorBasedOnHash } from '../../../../../create-project/components/distinct-colors';
 
 export const TrainingModelRadialChart = ({
     header,

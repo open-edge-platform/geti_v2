@@ -19,12 +19,9 @@ on:
         description: "The branch, tag or SHA to checkout"
         type: string
         default: ""
-    secrets:
-      AWS_ROLE:
-        required: true
-      AWS_REGION:
-        required: true
-      REGISTRY:
+      registry:
+        description: "The container registry to push images to"
+        type: string
         required: true
   workflow_dispatch:
     inputs:
@@ -47,16 +44,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
+      packages: write
     timeout-minutes: 30
     env:
       TAG: ${{ inputs.build_version || github.sha }}
-      REGISTRY: ${{ secrets.REGISTRY }}
       # Update these when the tags in dev_tools/builder_images/*/Makefile are updated.
       # Remember that new tags will be available only after the code with the change is merged
       # and the builder image workflow is run and completed successfully.
-      PYTHON_BUILDER_IMAGE: builder-images/python-builder:v0.1
-      GO_BUILDER_IMAGE: builder-images/go-builder:v0.1
+      REGISTRY: ${{ inputs.registry }}
+      BUILDER_REGISTRY: ghcr.io/open-edge-platform/geti/builders
+      PYTHON_BUILDER_IMAGE: python-builder:v1.0.0
+      GO_BUILDER_IMAGE: go-builder:v1.0.0
     steps:
       - name: Harden the runner (audit all outbound calls)
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -81,25 +79,14 @@ jobs:
         with:
           type: "initial"
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: Github
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
-
       - name: Check if Python/Go project
         id: check-python-go
         run: |
           BUILDER_IMAGE=""
           if [ -f "${COMPONENT_DIR}/setup.py" ] || [ -f "${COMPONENT_DIR}/pyproject.toml" ] || [ -f "${COMPONENT_DIR}/.python" ]; then
-            BUILDER_IMAGE=${REGISTRY}/${PYTHON_BUILDER_IMAGE}
+            BUILDER_IMAGE=${BUILDER_REGISTRY}/${PYTHON_BUILDER_IMAGE}
           elif [ -f "${COMPONENT_DIR}/go.mod" ] || [ -f "${COMPONENT_DIR}/.go" ]; then
-            BUILDER_IMAGE=${REGISTRY}/${GO_BUILDER_IMAGE}
+            BUILDER_IMAGE=${BUILDER_REGISTRY}/${GO_BUILDER_IMAGE}
           fi
           echo "BUILDER_IMAGE=${BUILDER_IMAGE}" >> $GITHUB_ENV
           echo "BUILDER_IMAGE=${BUILDER_IMAGE}"
@@ -133,6 +120,14 @@ jobs:
           if echo "$OUTPUT" | grep -q "Skipping"; then
             echo "SKIP_IMAGE=true" >> $GITHUB_OUTPUT
           fi
+
+      - name: Log in to GitHub Container Registry
+        if: steps.build-image.outputs.SKIP_IMAGE != 'true' && inputs.publish_binaries
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push image
         if: steps.build-image.outputs.SKIP_IMAGE != 'true' && inputs.publish_binaries

@@ -1,5 +1,7 @@
 id: Object_Detection_Deim_DFine_L
 name: Deim-DFine-L
+capabilities:
+  tiling: false
 
 description: "DEIM is an advanced training framework designed to enhance the matching mechanism in DETRs, enabling faster convergence and improved accuracy."
 stats:
@@ -19,6 +21,7 @@ hyperparameters:
     input_size_height: 640
   dataset_preparation:
     augmentation:
+      tiling: null
       iou_random_crop: null
       random_affine: null
       random_horizontal_flip: null
