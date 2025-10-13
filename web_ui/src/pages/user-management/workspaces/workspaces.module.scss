@@ -1,0 +1,40 @@
+/*
+    Overriding vertical tabs is necessary because if the user's monitor display settings
+    are higher than 100%, then spectrum's tabs collapses to a Picker. This doesn't happen on
+    vertical tabs. So we decided to use the vertical tabs logic with horizontal tabs layout.
+
+    https://react-spectrum.adobe.com/react-spectrum/Tabs.html#collapse-overflow-behavior
+ */
+.componentWrapper {
+    box-sizing: border-box;
+
+    div[class*='spectrum-Tabs--vertical'] {
+        border-left: 0 !important;
+        flex-direction: row !important;
+        padding-right: var(--spectrum-global-dimension-size-100) !important;
+
+        > div[class*='Tabs-item'] {
+            margin-bottom: 0 !important;
+            margin-left: 0 !important;
+            box-sizing: border-box !important;
+            display: flex;
+            align-items: center;
+
+            &:first-child {
+                padding-left: 0 !important;
+            }
+        }
+    }
+
+    div[class*='TabsPanel--vertical'] {
+        flex-direction: column !important;
+        padding: 0 !important;
+    }
+}
+
+.tabWrapper {
+    border-bottom: var(--spectrum-global-dimension-size-10) solid
+        var(--spectrum-tabs-rule-color, var(--spectrum-global-color-gray-200)) !important;
+    box-sizing: border-box !important;
+    overflow: auto hidden;
+}
