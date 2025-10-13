@@ -33,453 +33,218 @@ const explanation = {
 };
 
 test.describe('Quick inference', () => {
-    test.describe('FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false', () => {
-        test.use({
-            featureFlags: {
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            },
+    test.beforeEach(async ({ page, registerApiResponse }) => {
+        registerApiResponse('GetProjectInfo', (_, res, ctx) => {
+            return res(ctx.json(cloneDeep(project)));
         });
 
-        test.beforeEach(async ({ page, registerApiResponse }) => {
-            registerApiResponse('GetProjectInfo', (_, res, ctx) => {
-                return res(ctx.json(cloneDeep(project)));
-            });
+        registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
+            return res(ctx.status(200), ctx.json(predictionAnnotationsResponse));
+        });
 
+        registerApiResponse('GetSinglePrediction', async (_, res, ctx) => {
+            return res(ctx.status(200), ctx.json({ predictions: predictionAnnotationsResponse.annotations }));
+        });
+
+        registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
+
+        await page.goto(
+            // eslint-disable-next-line max-len
+            '/organizations/5b1f89f3-aba5-4a5f-84ab-de9abb8e0633/workspaces/61011e42d891c82e13ec92da/projects/63283aedc80c9c686fd3b1e6/tests/live-prediction'
+        );
+    });
+
+    test('Quick inference', async ({ page, quickInferencePage }) => {
+        await quickInferencePage.uploadImage(imagePath);
+
+        await expectAGlobalAnnotationToExist(page);
+
+        // check uploading another image using full screen mode works
+        await quickInferencePage.openFullscreen();
+
+        await quickInferencePage.uploadImage(imagePath);
+
+        await expectAGlobalAnnotationToExist(page.getByRole('dialog'));
+
+        await quickInferencePage.closeFullscreen();
+    });
+
+    test.describe('Explanation', () => {
+        test('Quick inference retrieves with explanation', async ({
+            page,
+            quickInferencePage,
+            registerApiResponse,
+        }) => {
+            await quickInferencePage.uploadImage(imagePath);
+
+            // Mock with an explanation response...
             registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                return res(ctx.status(200), ctx.json(predictionAnnotationsResponse));
+                return res(ctx.status(200), ctx.json({ ...predictionAnnotationsResponse, maps: [explanation] }));
+            });
+            registerApiResponse('GetSingleExplanation', async (_, res, ctx) => {
+                return res(
+                    ctx.status(200),
+                    ctx.json({
+                        maps: [{ data: explanation.binary, label_id: explanation.label_id, id: explanation.id }],
+                    })
+                );
             });
 
-            registerApiResponse('GetSinglePrediction', async (_, res, ctx) => {
-                return res(ctx.status(200), ctx.json({ predictions: predictionAnnotationsResponse.annotations }));
-            });
+            await quickInferencePage.toggleExplanation();
+            await expect(
+                page.getByRole('button', { name: `${explanationLabel.name} show explanations dropdown` })
+            ).toBeVisible();
 
-            await page.goto(
-                // eslint-disable-next-line max-len
-                '/organizations/5b1f89f3-aba5-4a5f-84ab-de9abb8e0633/workspaces/61011e42d891c82e13ec92da/projects/63283aedc80c9c686fd3b1e6/tests/live-prediction'
-            );
+            const explanationImage = quickInferencePage.getExplanationImage();
+            await expect(explanationImage).toBeVisible();
         });
 
-        test('Quick inference', async ({ page, quickInferencePage }) => {
+        test('Quick inference retrieves with empty explanation', async ({
+            page,
+            quickInferencePage,
+            registerApiResponse,
+        }) => {
             await quickInferencePage.uploadImage(imagePath);
 
-            await expectAGlobalAnnotationToExist(page);
+            // Mock with a map response...
+            registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
+                return res(ctx.status(200), ctx.json({ ...predictionAnnotationsResponse, maps: [] }));
+            });
 
-            // check uploading another image using full screen mode works
-            await quickInferencePage.openFullscreen();
+            registerApiResponse('GetSingleExplanation', async (_, res, ctx) => {
+                return res(ctx.status(200), ctx.json({ maps: [] }));
+            });
 
-            await quickInferencePage.uploadImage(imagePath);
+            await quickInferencePage.toggleExplanation();
+            const dropdown = page.getByRole('button', { name: /show explanations dropdown/i });
+            const parent = dropdown.locator('..');
 
-            await expectAGlobalAnnotationToExist(page.getByRole('dialog'));
+            await parent.hover();
+            await expect(page.getByText('No explanations were generated')).toBeVisible();
 
-            await quickInferencePage.closeFullscreen();
+            await expect(dropdown).toBeDisabled();
+            await expect(page.getByRole('button', { name: /opacity slider button/i })).toBeDisabled();
         });
 
-        test.describe('Explanation', () => {
-            test('Quick inference retrieves with explanation', async ({
-                page,
-                quickInferencePage,
-                registerApiResponse,
-            }) => {
-                await quickInferencePage.uploadImage(imagePath);
-
-                // Mock with an explanation response...
-                registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                    return res(ctx.status(200), ctx.json({ ...predictionAnnotationsResponse, maps: [explanation] }));
-                });
-                registerApiResponse('GetSingleExplanation', async (_, res, ctx) => {
-                    return res(
-                        ctx.status(200),
-                        ctx.json({
-                            maps: [{ data: explanation.binary, label_id: explanation.label_id, id: explanation.id }],
-                        })
-                    );
-                });
-
-                await quickInferencePage.toggleExplanation();
-                await expect(
-                    page.getByRole('button', { name: `${explanationLabel.name} show explanations dropdown` })
-                ).toBeVisible();
-
-                const explanationImage = quickInferencePage.getExplanationImage();
-                await expect(explanationImage).toBeVisible();
+        test('Inference using camera', async ({ page, registerApiResponse, quickInferencePage }) => {
+            registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
+                return res(ctx.status(200), ctx.json({ ...predictionAnnotationsResponse, maps: [explanation] }));
             });
-
-            test('Quick inference retrieves with empty explanation', async ({
-                page,
-                quickInferencePage,
-                registerApiResponse,
-            }) => {
-                await quickInferencePage.uploadImage(imagePath);
-
-                // Mock with a map response...
-                registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                    return res(ctx.status(200), ctx.json({ ...predictionAnnotationsResponse, maps: [] }));
-                });
-
-                registerApiResponse('GetSingleExplanation', async (_, res, ctx) => {
-                    return res(ctx.status(200), ctx.json({ maps: [] }));
-                });
-
-                await quickInferencePage.toggleExplanation();
-                const dropdown = page.getByRole('button', { name: /show explanations dropdown/i });
-                const parent = dropdown.locator('..');
-
-                await parent.hover();
-                await expect(page.getByText('No explanations were generated')).toBeVisible();
-
-                await expect(dropdown).toBeDisabled();
-                await expect(page.getByRole('button', { name: /opacity slider button/i })).toBeDisabled();
-            });
-
-            test('Inference using camera', async ({ page, registerApiResponse, quickInferencePage }) => {
-                registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                    return res(ctx.status(200), ctx.json({ ...predictionAnnotationsResponse, maps: [explanation] }));
-                });
-                registerApiResponse('GetSingleExplanation', async (_, res, ctx) => {
-                    return res(
-                        ctx.status(200),
-                        ctx.json({
-                            maps: [{ data: explanation.binary, label_id: explanation.label_id, id: explanation.id }],
-                        })
-                    );
-                });
-
-                await quickInferencePage.useCameraInference();
-                await quickInferencePage.takePhoto();
-
-                await quickInferencePage.toggleExplanation();
-                await expect(
-                    page.getByRole('button', { name: `${explanationLabel.name} show explanations dropdown` })
-                ).toBeVisible();
-
-                await expect(quickInferencePage.getExplanationImage()).toBeVisible();
-
-                await quickInferencePage.takeNext();
-                await quickInferencePage.takePhoto();
-
-                await quickInferencePage.toggleExplanation();
-                await expect(quickInferencePage.getExplanationImage()).toBeVisible();
-            });
-        });
-
-        test.describe('With a slow inference server', () => {
-            test.beforeEach(async ({ registerApiResponse, openApi }) => {
-                let failedOnce = false;
-
-                registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                    if (failedOnce) {
-                        return res(ctx.status(200), ctx.json(predictionAnnotationsResponse));
-                    }
-
-                    failedOnce = true;
-                    const { mock, status } = openApi.mockResponseForOperation('GetImagePrediction', {
-                        code: 503,
-                    });
-                    return res(ctx.status(status), ctx.json(mock));
-                });
-
-                registerApiResponse('GetSinglePrediction', async (_, res, ctx) => {
-                    if (failedOnce) {
-                        return res(
-                            ctx.status(200),
-                            ctx.json({ predictions: predictionAnnotationsResponse.annotations })
-                        );
-                    }
-                    failedOnce = true;
-                    return res(ctx.status(400));
-                });
-            });
-
-            test('Quick inference without an inference server', async ({ page, quickInferencePage }) => {
-                await quickInferencePage.uploadImage(imagePath);
-
-                await expect(quickInferencePage.getAlertMessage()).toHaveText(
-                    /Retrieving inference results may take some time/
+            registerApiResponse('GetSingleExplanation', async (_, res, ctx) => {
+                return res(
+                    ctx.status(200),
+                    ctx.json({
+                        maps: [{ data: explanation.binary, label_id: explanation.label_id, id: explanation.id }],
+                    })
                 );
-
-                await expectAGlobalAnnotationToExist(page);
             });
 
-            test('Full screen inference server', async ({ page, quickInferencePage }) => {
-                await quickInferencePage.uploadImage(imagePath);
-                await quickInferencePage.openFullscreen();
+            await quickInferencePage.useCameraInference();
+            await quickInferencePage.takePhoto();
 
-                await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
-                    /Retrieving inference results may take some time/
-                );
+            await quickInferencePage.toggleExplanation();
+            await expect(
+                page.getByRole('button', { name: `${explanationLabel.name} show explanations dropdown` })
+            ).toBeVisible();
 
-                const dialog = page.getByRole('dialog');
-                await expectAGlobalAnnotationToExist(dialog);
-            });
+            await expect(quickInferencePage.getExplanationImage()).toBeVisible();
 
-            test('Adjusting canvas settings should not persist configuration changes', async ({
-                page,
-                quickInferencePage,
-            }) => {
-                await quickInferencePage.uploadImage(imagePath);
-                await quickInferencePage.openFullscreen();
+            await quickInferencePage.takeNext();
+            await quickInferencePage.takePhoto();
 
-                await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
-                    /Retrieving inference results may take some time/
-                );
-
-                const dialog = page.getByRole('dialog');
-
-                await expectAGlobalAnnotationToExist(dialog);
-
-                // Open canvas adjustments dialog
-                await page
-                    .getByTestId('modal')
-                    .getByRole('button', { name: /canvas adjustments/i })
-                    .click();
-
-                // Change a few settings
-                const hideLabelsSwitch = page.getByRole('switch', { name: /hide labels/i });
-                const pixelViewSwitch = page.getByRole('switch', { name: /pixel view/i });
-
-                await hideLabelsSwitch.click();
-                await pixelViewSwitch.click();
-
-                await expect(hideLabelsSwitch).toBeChecked();
-                await expect(hideLabelsSwitch).toBeChecked();
-
-                // Close the dialog
-                await page.getByRole('button', { name: /close canvas adjustments/i }).click();
-
-                // Go to annotator page and check the canvas settings
-                await page.goto(annotatorUrl);
-
-                await page.getByRole('button', { name: /canvas adjustments/i }).click();
-
-                await expect(page.getByRole('switch', { name: /hide labels/i })).not.toBeChecked();
-                await expect(page.getByRole('switch', { name: /pixel view/i })).toBeChecked();
-            });
+            await quickInferencePage.toggleExplanation();
+            await expect(quickInferencePage.getExplanationImage()).toBeVisible();
         });
     });
 
-    test.describe('FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true', () => {
-        test.use({
-            featureFlags: {
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true,
-            },
-        });
-
-        test.beforeEach(async ({ page, registerApiResponse }) => {
-            registerApiResponse('GetProjectInfo', (_, res, ctx) => {
-                return res(ctx.json(cloneDeep(project)));
-            });
+    test.describe('With a slow inference server', () => {
+        test.beforeEach(async ({ registerApiResponse, openApi }) => {
+            let failedOnce = false;
 
             registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                return res(ctx.status(200), ctx.json(predictionAnnotationsResponse));
+                if (failedOnce) {
+                    return res(ctx.status(200), ctx.json(predictionAnnotationsResponse));
+                }
+
+                failedOnce = true;
+                const { mock, status } = openApi.mockResponseForOperation('GetImagePrediction', {
+                    code: 503,
+                });
+                return res(ctx.status(status), ctx.json(mock));
             });
 
             registerApiResponse('GetSinglePrediction', async (_, res, ctx) => {
-                return res(ctx.status(200), ctx.json({ predictions: predictionAnnotationsResponse.annotations }));
+                if (failedOnce) {
+                    return res(ctx.status(200), ctx.json({ predictions: predictionAnnotationsResponse.annotations }));
+                }
+                failedOnce = true;
+                return res(ctx.status(400));
             });
-
-            registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
-
-            await page.goto(
-                // eslint-disable-next-line max-len
-                '/organizations/5b1f89f3-aba5-4a5f-84ab-de9abb8e0633/workspaces/61011e42d891c82e13ec92da/projects/63283aedc80c9c686fd3b1e6/tests/live-prediction'
-            );
         });
 
-        test('Quick inference', async ({ page, quickInferencePage }) => {
+        test('Quick inference without an inference server', async ({ page, quickInferencePage }) => {
             await quickInferencePage.uploadImage(imagePath);
+
+            await expect(quickInferencePage.getAlertMessage()).toHaveText(
+                /Retrieving inference results may take some time/
+            );
 
             await expectAGlobalAnnotationToExist(page);
+        });
 
-            // check uploading another image using full screen mode works
+        test('Full screen inference server', async ({ page, quickInferencePage }) => {
+            await quickInferencePage.uploadImage(imagePath);
             await quickInferencePage.openFullscreen();
 
+            await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
+                /Retrieving inference results may take some time/
+            );
+
+            const dialog = page.getByRole('dialog');
+            await expectAGlobalAnnotationToExist(dialog);
+        });
+
+        test('Adjusting canvas settings should not persist configuration changes', async ({
+            page,
+            quickInferencePage,
+        }) => {
             await quickInferencePage.uploadImage(imagePath);
+            await quickInferencePage.openFullscreen();
 
-            await expectAGlobalAnnotationToExist(page.getByRole('dialog'));
+            await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
+                /Retrieving inference results may take some time/
+            );
 
-            await quickInferencePage.closeFullscreen();
-        });
+            const dialog = page.getByRole('dialog');
 
-        test.describe('Explanation', () => {
-            test('Quick inference retrieves with explanation', async ({
-                page,
-                quickInferencePage,
-                registerApiResponse,
-            }) => {
-                await quickInferencePage.uploadImage(imagePath);
+            await expectAGlobalAnnotationToExist(dialog);
 
-                // Mock with an explanation response...
-                registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                    return res(ctx.status(200), ctx.json({ ...predictionAnnotationsResponse, maps: [explanation] }));
-                });
-                registerApiResponse('GetSingleExplanation', async (_, res, ctx) => {
-                    return res(
-                        ctx.status(200),
-                        ctx.json({
-                            maps: [{ data: explanation.binary, label_id: explanation.label_id, id: explanation.id }],
-                        })
-                    );
-                });
+            // Open canvas adjustments dialog
+            await page
+                .getByTestId('modal')
+                .getByRole('button', { name: /canvas adjustments/i })
+                .click();
 
-                await quickInferencePage.toggleExplanation();
-                await expect(
-                    page.getByRole('button', { name: `${explanationLabel.name} show explanations dropdown` })
-                ).toBeVisible();
+            // Change a few settings
+            const hideLabelsSwitch = page.getByRole('switch', { name: /hide labels/i });
+            const pixelViewSwitch = page.getByRole('switch', { name: /pixel view/i });
 
-                const explanationImage = quickInferencePage.getExplanationImage();
-                await expect(explanationImage).toBeVisible();
-            });
+            await hideLabelsSwitch.click();
+            await pixelViewSwitch.click();
 
-            test('Quick inference retrieves with empty explanation', async ({
-                page,
-                quickInferencePage,
-                registerApiResponse,
-            }) => {
-                await quickInferencePage.uploadImage(imagePath);
+            await expect(hideLabelsSwitch).toBeChecked();
+            await expect(hideLabelsSwitch).toBeChecked();
 
-                // Mock with a map response...
-                registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                    return res(ctx.status(200), ctx.json({ ...predictionAnnotationsResponse, maps: [] }));
-                });
+            // Close the dialog
+            await page.getByRole('button', { name: /close canvas adjustments/i }).click();
 
-                registerApiResponse('GetSingleExplanation', async (_, res, ctx) => {
-                    return res(ctx.status(200), ctx.json({ maps: [] }));
-                });
+            // Go to annotator page and check the canvas settings
+            await page.goto(annotatorUrl);
 
-                await quickInferencePage.toggleExplanation();
-                const dropdown = page.getByRole('button', { name: /show explanations dropdown/i });
-                const parent = dropdown.locator('..');
+            await page.getByRole('button', { name: /canvas adjustments/i }).click();
 
-                await parent.hover();
-                await expect(page.getByText('No explanations were generated')).toBeVisible();
-
-                await expect(dropdown).toBeDisabled();
-                await expect(page.getByRole('button', { name: /opacity slider button/i })).toBeDisabled();
-            });
-
-            test('Inference using camera', async ({ page, registerApiResponse, quickInferencePage }) => {
-                registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                    return res(ctx.status(200), ctx.json({ ...predictionAnnotationsResponse, maps: [explanation] }));
-                });
-                registerApiResponse('GetSingleExplanation', async (_, res, ctx) => {
-                    return res(
-                        ctx.status(200),
-                        ctx.json({
-                            maps: [{ data: explanation.binary, label_id: explanation.label_id, id: explanation.id }],
-                        })
-                    );
-                });
-
-                await quickInferencePage.useCameraInference();
-                await quickInferencePage.takePhoto();
-
-                await quickInferencePage.toggleExplanation();
-                await expect(
-                    page.getByRole('button', { name: `${explanationLabel.name} show explanations dropdown` })
-                ).toBeVisible();
-
-                await expect(quickInferencePage.getExplanationImage()).toBeVisible();
-
-                await quickInferencePage.takeNext();
-                await quickInferencePage.takePhoto();
-
-                await quickInferencePage.toggleExplanation();
-                await expect(quickInferencePage.getExplanationImage()).toBeVisible();
-            });
-        });
-
-        test.describe('With a slow inference server', () => {
-            test.beforeEach(async ({ registerApiResponse, openApi }) => {
-                let failedOnce = false;
-
-                registerApiResponse('GetImagePrediction', async (_, res, ctx) => {
-                    if (failedOnce) {
-                        return res(ctx.status(200), ctx.json(predictionAnnotationsResponse));
-                    }
-
-                    failedOnce = true;
-                    const { mock, status } = openApi.mockResponseForOperation('GetImagePrediction', {
-                        code: 503,
-                    });
-                    return res(ctx.status(status), ctx.json(mock));
-                });
-
-                registerApiResponse('GetSinglePrediction', async (_, res, ctx) => {
-                    if (failedOnce) {
-                        return res(
-                            ctx.status(200),
-                            ctx.json({ predictions: predictionAnnotationsResponse.annotations })
-                        );
-                    }
-                    failedOnce = true;
-                    return res(ctx.status(400));
-                });
-            });
-
-            test('Quick inference without an inference server', async ({ page, quickInferencePage }) => {
-                await quickInferencePage.uploadImage(imagePath);
-
-                await expect(quickInferencePage.getAlertMessage()).toHaveText(
-                    /Retrieving inference results may take some time/
-                );
-
-                await expectAGlobalAnnotationToExist(page);
-            });
-
-            test('Full screen inference server', async ({ page, quickInferencePage }) => {
-                await quickInferencePage.uploadImage(imagePath);
-                await quickInferencePage.openFullscreen();
-
-                await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
-                    /Retrieving inference results may take some time/
-                );
-
-                const dialog = page.getByRole('dialog');
-                await expectAGlobalAnnotationToExist(dialog);
-            });
-
-            test('Adjusting canvas settings should not persist configuration changes', async ({
-                page,
-                quickInferencePage,
-            }) => {
-                await quickInferencePage.uploadImage(imagePath);
-                await quickInferencePage.openFullscreen();
-
-                await expect(quickInferencePage.getAlertMessageInFullScreen()).toHaveText(
-                    /Retrieving inference results may take some time/
-                );
-
-                const dialog = page.getByRole('dialog');
-
-                await expectAGlobalAnnotationToExist(dialog);
-
-                // Open canvas adjustments dialog
-                await page
-                    .getByTestId('modal')
-                    .getByRole('button', { name: /canvas adjustments/i })
-                    .click();
-
-                // Change a few settings
-                const hideLabelsSwitch = page.getByRole('switch', { name: /hide labels/i });
-                const pixelViewSwitch = page.getByRole('switch', { name: /pixel view/i });
-
-                await hideLabelsSwitch.click();
-                await pixelViewSwitch.click();
-
-                await expect(hideLabelsSwitch).toBeChecked();
-                await expect(hideLabelsSwitch).toBeChecked();
-
-                // Close the dialog
-                await page.getByRole('button', { name: /close canvas adjustments/i }).click();
-
-                // Go to annotator page and check the canvas settings
-                await page.goto(annotatorUrl);
-
-                await page.getByRole('button', { name: /canvas adjustments/i }).click();
-
-                await expect(page.getByRole('switch', { name: /hide labels/i })).not.toBeChecked();
-                await expect(page.getByRole('switch', { name: /pixel view/i })).toBeChecked();
-            });
+            await expect(page.getByRole('switch', { name: /hide labels/i })).not.toBeChecked();
+            await expect(page.getByRole('switch', { name: /pixel view/i })).toBeChecked();
         });
     });
 });

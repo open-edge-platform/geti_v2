@@ -10,9 +10,6 @@ from dataclasses import dataclass
 from enum import Enum, auto
 
 from geti_configuration_tools.training_configuration import TrainingConfiguration
-from geti_feature_tools import FeatureFlagProvider
-
-from entities import FeatureFlag
 
 from geti_types import ID
 from iai_core.entities.dataset_storage import DatasetStorage
@@ -97,7 +94,7 @@ class TrainTaskJobData:
 
         :returns: a dict representing the job payload
         """
-        payload = {
+        return {
             "project_id": str(self.project.id_),
             "task_id": str(self.task_node.id_),
             "from_scratch": self.from_scratch,
@@ -114,17 +111,15 @@ class TrainTaskJobData:
             "max_number_of_annotations": self.max_number_of_annotations,
             "reshuffle_subsets": self.reshuffle_subsets,
             "retain_training_artifacts": self.retain_training_artifacts,
-        }
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            payload["training_configuration_json"] = (
+            "training_configuration_json": (
                 # Use model_dump_json to avoid int casting into floats
                 self.training_configuration.model_dump_json(
                     exclude={"hyperparameters": {"training": {"allowed_values_input_size"}}}, exclude_none=True
                 )
                 if self.training_configuration
                 else None
-            )
-        return payload
+            ),
+        }
 
     def create_metadata(self) -> dict:
         """

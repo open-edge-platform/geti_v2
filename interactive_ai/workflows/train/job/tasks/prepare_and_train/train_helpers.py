@@ -292,10 +292,9 @@ def prepare_train(train_data: TrainWorkflowData, dataset: Dataset) -> TrainOutpu
         ),
     )
 
-    ff_enabled = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS)
     model_configuration = output_base_model.configuration
     revamped_hyperparameters = model_configuration.display_only_configuration
-    if ff_enabled and revamped_hyperparameters:
+    if revamped_hyperparameters:
         # Remove advanced_model_configuration if it exists
         revamped_hyperparameters.pop("advanced_model_configuration", None)
         hyper_parameter_dict = revamped_hyperparameters

@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { LifecycleStage } from '../../../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
+import { LifecycleStage } from '../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { isDeprecatedAlgorithm, isObsoleteAlgorithm } from './utils';
 
 describe('filterDeprecatedAlgorithm', () => {

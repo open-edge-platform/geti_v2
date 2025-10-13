@@ -18,7 +18,7 @@ describe('RangeParameterField', () => {
 
     const renderApp = ({ value = defaultValue, isDisabled = false }: { value?: number[]; isDisabled?: boolean }) => {
         return render(
-            <RequiredProviders featureFlags={{ FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true }}>
+            <RequiredProviders>
                 <RangeParameterField
                     defaultValue={defaultValue}
                     value={value}

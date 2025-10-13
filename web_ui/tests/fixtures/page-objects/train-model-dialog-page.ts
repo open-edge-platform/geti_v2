@@ -3,8 +3,6 @@
 
 import { Page } from '@playwright/test';
 
-import { ModelConfigurationOption } from '../../../src/pages/project-details/components/project-models/legacy-train-model-dialog/model-templates-selection/utils';
-
 export class TrainModelDialogPage {
     constructor(private page: Page) {}
 
@@ -74,10 +72,6 @@ export class TrainModelDialogPage {
 
     async selectTab(name: 'Architecture' | 'Data management' | 'Training') {
         await this.page.getByRole('tab', { name }).click();
-    }
-
-    async selectModelConfigurationOption(option: ModelConfigurationOption) {
-        await this.page.getByRole('radio', { name: option }).check();
     }
 
     async selectModelAlgorithm(name: string) {

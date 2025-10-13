@@ -60,7 +60,6 @@ const expectTaskSelectorToBeHidden = async (page: Page) => {
 test.describe('Train model', () => {
     test.use({
         featureFlags: {
-            FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true,
             FEATURE_FLAG_CREDIT_SYSTEM: false,
         },
     });

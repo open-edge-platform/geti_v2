@@ -5,15 +5,22 @@ import os
 import time
 from unittest.mock import call, patch
 
-from coordination.configuration_manager.task_node_config import TaskNodeConfig
+from geti_configuration_tools.project_configuration import (
+    AutoTrainingParameters,
+    ProjectConfiguration,
+    TaskConfig,
+    TrainConstraints,
+    TrainingParameters,
+)
+
 from entities.dataset_item_count import DatasetItemCount, LabelData
 from storage.repos import DatasetItemCountRepo
 from storage.repos.auto_train_activation_repo import ProjectBasedAutoTrainActivationRepo
+from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 from usecases.auto_train import AutoTrainUseCase
 
 from geti_types import CTX_SESSION_VAR, DatasetStorageIdentifier
-from iai_core.configuration.elements.component_parameters import ComponentType
-from iai_core.repos import ConfigurableParametersRepo, DatasetRepo
+from iai_core.repos import DatasetRepo
 
 
 class TestAutoTrainUseCase:
@@ -97,10 +104,10 @@ class TestAutoTrainUseCase:
                 dataset_storage_id=dataset_storage.id_,
             ),
         )
-        config_param_repo = ConfigurableParametersRepo(project.identifier)
         request.addfinalizer(lambda: dataset_item_count_repo.delete_all())
 
         # Step 2: for each task, set dataset item count to 100 and auto-training to True
+        task_configs = []
         for task_node in trainable_task_nodes:
             dataset_item_count = DatasetItemCount(
                 task_node_id=task_node.id_,
@@ -111,13 +118,24 @@ class TestAutoTrainUseCase:
             )
             dataset_item_count_repo.save(dataset_item_count)
 
-            task_configuration = config_param_repo.get_or_create_component_parameters(
-                data_instance_of=TaskNodeConfig,
+            task_config = TaskConfig(
                 task_id=task_node.id_,
-                component=ComponentType.TASK_NODE,
+                training=TrainingParameters(constraints=TrainConstraints(min_images_per_label=3)),
+                auto_training=AutoTrainingParameters(
+                    enable=True,
+                    enable_dynamic_required_annotations=False,
+                    min_images_per_label=3,
+                ),
             )
-            task_configuration.data.auto_training = True
-            config_param_repo.save(task_configuration)
+            task_configs.append(task_config)
+
+        project_config = ProjectConfiguration(
+            project_id=project.id_,
+            task_configs=task_configs,
+        )
+        repo = ProjectConfigurationRepo(project.identifier)
+        request.addfinalizer(lambda: repo.delete_all())
+        repo.save(project_config)
 
         # Step 3: let the AutoTrainUseCase scan for ready tasks and set their readiness
         with patch.object(
@@ -176,13 +194,16 @@ class TestAutoTrainUseCase:
             )
 
         # Step 5: disable auto-training for the first task and assert that no tasks is set for auto-training
-        task_configuration = config_param_repo.get_or_create_component_parameters(
-            data_instance_of=TaskNodeConfig,
+        task_config = TaskConfig(
             task_id=trainable_task_nodes[0].id_,
-            component=ComponentType.TASK_NODE,
+            training=TrainingParameters(constraints=TrainConstraints(min_images_per_label=3)),
+            auto_training=AutoTrainingParameters(
+                enable=False,
+                enable_dynamic_required_annotations=False,
+                min_images_per_label=3,
+            ),
         )
-        task_configuration.data.auto_training = False
-        config_param_repo.save(task_configuration)
+        repo.update_task_config(task_config)
         with patch.object(
             ProjectBasedAutoTrainActivationRepo,
             "set_auto_train_readiness_by_task_id",

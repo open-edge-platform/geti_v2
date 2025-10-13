@@ -294,256 +294,6 @@ class TestConfigurationRESTController:
 
         assert str(error.value) == "Cannot use both model_id and algorithm name as query parameters"
 
-    def test_set_taskchain_configuration_successful(
-        self,
-        configuration_controller,
-        fxt_task_chain_project,
-        fxt_configuration_dict,
-        fxt_configuration_2,
-    ):
-        project_id = fxt_task_chain_project.id_
-        workspace_id = fxt_task_chain_project.workspace_id
-        dummy_return = [[["a", "b"], ["c", "d"]], [["e", "f"], ["g", "h"]]]
-        dummy_append = fxt_configuration_2
-
-        with (
-            patch.object(
-                ProjectRepo,
-                "get_by_id",
-                return_value=fxt_task_chain_project,
-            ) as get_project_by_id_mocked,
-            patch.object(
-                ConfigurationRESTViews,
-                "_task_chain_config_from_rest_list",
-                return_value=dummy_return,
-            ) as task_chain_config_from_rest_list_mocked,
-            patch.object(
-                ConfigurationValidator, "_validate_entity_identifier", return_value=True
-            ) as validate_entity_identifier_mocked,
-            patch.object(
-                ConfigurationValidator,
-                "_validate_and_update_config_values",
-                return_value=dummy_append,
-            ) as validate_and_update_config_mocked,
-            patch.object(
-                ConfigurationManager, "save_configuration_list", return_value=True
-            ) as save_configuration_mocked,
-        ):
-            result = configuration_controller.set_task_chain_configuration(
-                project_id=project_id,
-                workspace_id=workspace_id,
-                set_request=fxt_configuration_dict,
-            )
-
-        get_project_by_id_mocked.assert_called_with(project_id)
-        task_chain_config_from_rest_list_mocked.assert_called_with(
-            fxt_configuration_dict["task_chain"],
-            workspace_id=workspace_id,
-            project_id=project_id,
-        )
-        validate_entity_identifier_mocked.assert_has_calls(
-            [
-                call(
-                    entity_identifier="b",
-                    project=fxt_task_chain_project,
-                    task_id=fxt_task_chain_project.get_trainable_task_nodes()[0].id_,
-                ),
-                call(
-                    entity_identifier="d",
-                    project=fxt_task_chain_project,
-                    task_id=fxt_task_chain_project.get_trainable_task_nodes()[0].id_,
-                ),
-                call(
-                    entity_identifier="f",
-                    project=fxt_task_chain_project,
-                    task_id=fxt_task_chain_project.get_trainable_task_nodes()[1].id_,
-                ),
-                call(
-                    entity_identifier="h",
-                    project=fxt_task_chain_project,
-                    task_id=fxt_task_chain_project.get_trainable_task_nodes()[1].id_,
-                ),
-            ]
-        )
-        validate_and_update_config_mocked.assert_has_calls(
-            [
-                call(input_config="a", entity_identifier="b"),
-                call(input_config="c", entity_identifier="d"),
-            ]
-        )
-        save_configuration_mocked.assert_has_calls(
-            [
-                call(
-                    workspace_id=workspace_id,
-                    project_id=project_id,
-                    configurable_parameter_list=[
-                        dummy_append,
-                        dummy_append,
-                        dummy_append,
-                        dummy_append,
-                    ],
-                )
-            ]
-        )
-
-        compare(result, success_response_rest(), ignore_eq=True)
-
-    def test_set_global_configuration_successful(
-        self,
-        configuration_controller,
-        fxt_task_chain_project,
-        fxt_configuration_dict,
-        fxt_configuration_2,
-    ):
-        project_id = ID("dummy_project_id")
-        workspace_id = ID("dummy_workspace_id")
-        dummy_return = [["a", "b"], ["c", "d"]]
-        dummy_append = fxt_configuration_2
-
-        with (
-            patch.object(
-                ProjectRepo,
-                "get_by_id",
-                return_value=fxt_task_chain_project,
-            ) as get_project_by_id_mocked,
-            patch.object(
-                ConfigurationRESTViews,
-                "config_list_from_rest_dict",
-                return_value=dummy_return,
-            ) as config_list_from_rest_dict_mocked,
-            patch.object(
-                ConfigurationValidator,
-                "_validate_and_update_config_values",
-                return_value=dummy_append,
-            ) as validate_and_update_config_mocked,
-            patch.object(
-                ConfigurationManager, "save_configuration_list", return_value=True
-            ) as save_configuration_list_mocked,
-        ):
-            result = configuration_controller.set_global_configuration(
-                project_id=project_id,
-                workspace_id=workspace_id,
-                set_request=fxt_configuration_dict,
-            )
-
-        get_project_by_id_mocked.assert_called_with(project_id)
-        config_list_from_rest_dict_mocked.assert_called_with(
-            {"components": fxt_configuration_dict["global"]},
-            workspace_id=workspace_id,
-            project_id=project_id,
-        )
-        validate_and_update_config_mocked.assert_has_calls(
-            [
-                call(input_config="a", entity_identifier="b"),
-                call(input_config="c", entity_identifier="d"),
-            ]
-        )
-        save_configuration_list_mocked.assert_has_calls(
-            [
-                call(
-                    workspace_id=workspace_id,
-                    project_id=project_id,
-                    configurable_parameter_list=[dummy_append, dummy_append],
-                )
-            ]
-        )
-
-        compare(result, success_response_rest(), ignore_eq=True)
-
-    def test_set_task_configuration_successful(
-        self,
-        configuration_controller,
-        fxt_task_chain_project,
-        fxt_configuration_dict,
-        fxt_configuration_2,
-    ):
-        project_id = fxt_task_chain_project.id_
-        workspace_id = fxt_task_chain_project.workspace_id
-        task_id = fxt_task_chain_project.task_ids[0]
-        dummy_return = [["a", "b"], ["c", "d"]]
-        dummy_append = fxt_configuration_2
-
-        with (
-            patch.object(
-                ProjectRepo,
-                "get_by_id",
-                return_value=fxt_task_chain_project,
-            ) as get_project_by_id_mocked,
-            patch.object(
-                Project,
-                "get_trainable_task_node_by_id",
-                return_value=fxt_task_chain_project.task_graph.tasks[0],
-            ) as get_task_by_id_mocked,
-            patch.object(
-                ConfigurationRestValidator,
-                "validate_task_configuration",
-                return_value=True,
-            ) as validate_task_configuration_mocked,
-            patch.object(
-                ConfigurationRESTViews,
-                "config_list_from_rest_dict",
-                return_value=dummy_return,
-            ) as config_list_from_rest_dict_mocked,
-            patch.object(
-                ConfigurationValidator, "_validate_entity_identifier", return_value=True
-            ) as validate_entity_identifier_mocked,
-            patch.object(
-                ConfigurationValidator,
-                "_validate_and_update_config_values",
-                return_value=dummy_append,
-            ) as validate_and_update_config_mocked,
-            patch.object(
-                ConfigurationManager, "save_configuration_list", return_value=True
-            ) as save_configuration_list_mocked,
-        ):
-            result = configuration_controller.set_task_configuration(
-                task_id=task_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                set_request=fxt_configuration_dict,
-            )
-
-        get_project_by_id_mocked.assert_called_with(project_id)
-        get_task_by_id_mocked.assert_called_with(task_id=task_id)
-        validate_task_configuration_mocked.assert_called_with(fxt_configuration_dict)
-        config_list_from_rest_dict_mocked.assert_called_with(
-            fxt_configuration_dict,
-            workspace_id=workspace_id,
-            project_id=project_id,
-            task_id=task_id,
-        )
-        validate_entity_identifier_mocked.assert_has_calls(
-            [
-                call(
-                    entity_identifier="b",
-                    project=fxt_task_chain_project,
-                    task_id=task_id,
-                ),
-                call(
-                    entity_identifier="d",
-                    project=fxt_task_chain_project,
-                    task_id=task_id,
-                ),
-            ]
-        )
-        validate_and_update_config_mocked.assert_has_calls(
-            [
-                call(input_config="a", entity_identifier="b"),
-                call(input_config="c", entity_identifier="d"),
-            ]
-        )
-        save_configuration_list_mocked.assert_has_calls(
-            [
-                call(
-                    workspace_id=workspace_id,
-                    project_id=project_id,
-                    configurable_parameter_list=[dummy_append, dummy_append],
-                )
-            ]
-        )
-
-        compare(result, success_response_rest(), ignore_eq=True)
-
     def test_set_full_configuration_successful(
         self,
         configuration_controller,
@@ -630,10 +380,7 @@ class TestConfigurationRESTController:
         fxt_task_chain_project,
         fxt_configuration_dict,
         fxt_configuration_2,
-        fxt_enable_feature_flag_name,
     ):
-        # Arrange
-        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
         project_id = fxt_task_chain_project.id_
         workspace_id = fxt_task_chain_project.workspace_id
         dummy_return = [[["a", "b"], ["c", "d"]], [["e", "f"], ["g", "h"]]]
@@ -711,10 +458,8 @@ class TestConfigurationRESTController:
         fxt_task_chain_project,
         fxt_configuration_dict,
         fxt_configuration_2,
-        fxt_enable_feature_flag_name,
     ):
         # Arrange
-        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
         project_id = ID("dummy_project_id")
         workspace_id = ID("dummy_workspace_id")
         dummy_return = [["a", "b"], ["c", "d"]]
@@ -792,10 +537,8 @@ class TestConfigurationRESTController:
         fxt_task_chain_project,
         fxt_configuration_dict,
         fxt_configuration_2,
-        fxt_enable_feature_flag_name,
     ):
         # Arrange
-        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
         project_id = fxt_task_chain_project.id_
         workspace_id = fxt_task_chain_project.workspace_id
         task_id = fxt_task_chain_project.task_ids[0]
@@ -883,10 +626,8 @@ class TestConfigurationRESTController:
         configuration_controller,
         fxt_task_chain_project,
         fxt_configuration_dict,
-        fxt_enable_feature_flag_name,
     ):
         # Arrange
-        fxt_enable_feature_flag_name("FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS")
         project_id = ID("dummy_project_id")
         workspace_id = ID("dummy_workspace_id")
 

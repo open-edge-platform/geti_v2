@@ -80,14 +80,10 @@ class ModelTrainingJobSubmitter(ModelJobSubmitter):
 
         retain_training_artifacts = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS)
 
-        full_training_configuration = (
-            ConfigurationService.get_full_training_configuration(
-                project_identifier=project.identifier,
-                task_id=task_node.id_,
-                model_manifest_id=model_storage.model_template.model_template_id,
-            )
-            if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS)
-            else None
+        full_training_configuration = ConfigurationService.get_full_training_configuration(
+            project_identifier=project.identifier,
+            task_id=task_node.id_,
+            model_manifest_id=model_storage.model_template.model_template_id,
         )
 
         train_job_data = TrainTaskJobData(

@@ -10,8 +10,6 @@ director and resource microservice
 import logging
 from typing import Any
 
-from geti_feature_tools import FeatureFlagProvider
-
 from communication.exceptions import (
     ConfigurationMismatchException,
     ConfigurationNotFoundException,
@@ -19,7 +17,6 @@ from communication.exceptions import (
     TaskNotFoundException,
 )
 from configuration import ConfigurableComponentRegister
-from features.feature_flag import FeatureFlag
 
 import iai_core.configuration.helper as otx_config_helper
 from geti_fastapi_tools.exceptions import InvalidEntityIdentifierException
@@ -129,37 +126,21 @@ class ConfigurationValidator:
                 if task_id not in task_ids:
                     raise TaskNotFoundException(task_id=task_id)
 
-        if isinstance(entity_identifier, ModelEntityIdentifier):
+        if isinstance(entity_identifier, ModelEntityIdentifier) and task_id is None:
             model_storage_id = entity_identifier.model_storage_id
-            if task_id is not None:
-                # Check that model storage in entity identifier belongs to the task
-                task_model_storages = ConfigurationValidator.__get_model_storages_by_task_id(
-                    project_identifier=project_identifier,
-                    task_id=task_id,
+            # Check that the model storage exists within the project
+            project_model_storages: list[ModelStorage] = []
+            for task_node in project.get_trainable_task_nodes():
+                project_model_storages.extend(
+                    ConfigurationValidator.__get_model_storages_by_task_id(
+                        project_identifier=project_identifier, task_id=task_node.id_
+                    )
                 )
-                task_model_storages_ids = [ms.id_ for ms in task_model_storages]
-
-                # Only validate model storage when the feature flag for new configurable parameters is not enabled
-                ff_new_configs = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS)
-                if not ff_new_configs and model_storage_id not in task_model_storages_ids:
-                    raise InvalidEntityIdentifierException(
-                        f"Model storage with id {model_storage_id} does not belong to task with id {task_id}"
-                    )
-            else:  # no task id specified
-                # Check that the model storage exists within the project
-                project_model_storages: list[ModelStorage] = []
-                for task_node in project.get_trainable_task_nodes():
-                    project_model_storages.extend(
-                        ConfigurationValidator.__get_model_storages_by_task_id(
-                            project_identifier=project_identifier, task_id=task_node.id_
-                        )
-                    )
-                project_model_storages_ids = [ms.id_ for ms in project_model_storages]
-                if model_storage_id not in project_model_storages_ids:
-                    raise InvalidEntityIdentifierException(
-                        f"Model storage with ID {model_storage_id} is not associated "
-                        f"with any task of project {project}."
-                    )
+            project_model_storages_ids = [ms.id_ for ms in project_model_storages]
+            if model_storage_id not in project_model_storages_ids:
+                raise InvalidEntityIdentifierException(
+                    f"Model storage with ID {model_storage_id} is not associated with any task of project {project}."
+                )
 
     @staticmethod
     def _validate_and_update_config_values(
@@ -181,36 +162,32 @@ class ConfigurationValidator:
             set for the configurable parameters
         :return: Validated configuration object, holding the new values
         """
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            project_identifier = ProjectIdentifier(
-                workspace_id=entity_identifier.workspace_id, project_id=entity_identifier.project_id
+        project_identifier = ProjectIdentifier(
+            workspace_id=entity_identifier.workspace_id, project_id=entity_identifier.project_id
+        )
+        if entity_identifier.type is ConfigurableParameterType.HYPER_PARAMETERS:
+            latest_config: IConfigurableParameterContainer[ConfigurableParameters] = HyperParameters(
+                id_=ID("000000000000000000000001"),
+                workspace_id=project_identifier.workspace_id,
+                project_id=project_identifier.project_id,
+                model_storage_id=ID("000000000000000000000001"),  # model_storage_id is only used in legacy configs
+                data=DefaultModelParameters(),
             )
-            if entity_identifier.type is ConfigurableParameterType.HYPER_PARAMETERS:
-                latest_config: IConfigurableParameterContainer[ConfigurableParameters] = HyperParameters(
-                    id_=ID("000000000000000000000001"),
-                    workspace_id=project_identifier.workspace_id,
-                    project_id=project_identifier.project_id,
-                    model_storage_id=ID("000000000000000000000001"),  # model_storage_id is only used in legacy configs
-                    data=DefaultModelParameters(),
-                )
-            else:
-                component = entity_identifier.component  # type: ignore[attr-defined]
-                task_node = TaskNodeRepo(project_identifier).get_by_id(entity_identifier.task_id)  # type: ignore[attr-defined]
-                task_type = task_node.task_properties.task_type
-                register_data = ConfigurableComponentRegister[component.name].value
-                config_type = register_data.get_configuration_type(task_type=task_type)
-                latest_config = ComponentParameters(
-                    id_=ID("000000000000000000000001"),
-                    workspace_id=project_identifier.workspace_id,
-                    project_id=project_identifier.project_id,
-                    task_id=task_node.id_,
-                    component=component,
-                    data=config_type(),  # type: ignore[call-arg]
-                )
         else:
-            latest_config = ConfigurationValidator._get_latest_config_by_entity_identifier(
-                entity_identifier=entity_identifier
+            component = entity_identifier.component  # type: ignore[attr-defined]
+            task_node = TaskNodeRepo(project_identifier).get_by_id(entity_identifier.task_id)  # type: ignore[attr-defined]
+            task_type = task_node.task_properties.task_type
+            register_data = ConfigurableComponentRegister[component.name].value
+            config_type = register_data.get_configuration_type(task_type=task_type)
+            latest_config = ComponentParameters(
+                id_=ID("000000000000000000000001"),
+                workspace_id=project_identifier.workspace_id,
+                project_id=project_identifier.project_id,
+                task_id=task_node.id_,
+                component=component,
+                data=config_type(),  # type: ignore[call-arg]
             )
+
         if latest_config.data is None:
             raise ConfigurationNotFoundException(
                 f"There was an error retrieving the latest configurable parameter "

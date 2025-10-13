@@ -22,7 +22,7 @@ import { ModelCardMenu } from '../project-models/models-container/model-card/mod
 import { useOptimizedModels } from './hooks/use-optimized-models/use-optimized-models.hook';
 import { useSelectedModel } from './hooks/use-selected-model/use-selected-model.hook';
 import { ModelBreadcrumb } from './model-breadcrumb/model-breadcrumb.component';
-import { ModelConfigurableParameters } from './model-configurable-parameters/model-configurable-parameters.component';
+import { TrainedModelConfigurationParameters } from './model-configurable-parameters/trained-model-configuration-parameters/trained-model-configuration-parameters.component';
 import { ModelLabels } from './model-labels/model-labels.component';
 import { ModelStatistics } from './model-statistics/model-statistics.component';
 import { ModelVariants } from './model-variants/model-variants.component';
@@ -171,7 +171,7 @@ const ProjectModel = () => {
             id: 'configurable-parameters-id',
             key: ModelTabsKeys.PARAMETERS,
             name: 'Parameters',
-            children: <ModelConfigurableParameters taskId={taskId} />,
+            children: <TrainedModelConfigurationParameters taskId={taskId} />,
         },
         {
             id: 'labels-id',

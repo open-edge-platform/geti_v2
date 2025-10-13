@@ -51,19 +51,16 @@ describe('Train model', () => {
         projectService = createInMemoryProjectService(),
         creditsService = createInMemoryCreditsService(),
         FEATURE_FLAG_CREDIT_SYSTEM,
-        FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS,
     }: {
         models: ModelGroupsAlgorithmDetails[];
         projectService?: ProjectService;
         creditsService?: CreditsService;
         FEATURE_FLAG_CREDIT_SYSTEM?: boolean;
-        FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: boolean;
     }) => {
         return render(<TrainModel models={models} />, {
             services: { projectService, creditsService },
             featureFlags: {
                 FEATURE_FLAG_CREDIT_SYSTEM,
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS,
             },
         });
     };
@@ -72,175 +69,167 @@ describe('Train model', () => {
         jest.clearAllMocks();
     });
 
-    describe('when FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS is enabled', () => {
-        it('render "Train new model"', async () => {
-            await renderTrainModel({ models: [], FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false });
+    it('render "Train new model"', async () => {
+        await renderTrainModel({ models: [] });
 
-            expect(screen.getByRole('button', { name: 'Train new model' })).toBeVisible();
+        expect(screen.getByRole('button', { name: 'Train new model' })).toBeVisible();
+    });
+
+    it('render "Train model"', async () => {
+        await renderTrainModel({
+            models: [getMockedModelGroupsAlgorithmDetails()],
         });
 
-        it('render "Train model"', async () => {
-            await renderTrainModel({
-                models: [getMockedModelGroupsAlgorithmDetails()],
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            });
+        expect(screen.getByRole('button', { name: 'Train model' })).toBeVisible();
+    });
 
-            expect(screen.getByRole('button', { name: 'Train model' })).toBeVisible();
+    it('open/close modal when training is allowed and FEATURE_FLAG_CREDIT_SYSTEM not enabled', async () => {
+        const projectService = createInMemoryProjectService();
+        projectService.getProjectStatus = () =>
+            Promise.resolve(
+                getMockedProjectStatus({
+                    tasks: [getMockedProjectStatusTask({ ready_to_train: true })],
+                })
+            );
+
+        await renderTrainModel({
+            models: [],
+            projectService,
+            FEATURE_FLAG_CREDIT_SYSTEM: false,
         });
 
-        it('open/close modal when training is allowed and FEATURE_FLAG_CREDIT_SYSTEM not enabled', async () => {
-            const projectService = createInMemoryProjectService();
-            projectService.getProjectStatus = () =>
-                Promise.resolve(
-                    getMockedProjectStatus({
-                        tasks: [getMockedProjectStatusTask({ ready_to_train: true })],
-                    })
-                );
+        fireEvent.click(screen.getByRole('button', { name: 'Train new model' }));
 
-            await renderTrainModel({
-                models: [],
-                projectService,
-                FEATURE_FLAG_CREDIT_SYSTEM: false,
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            });
+        expect(screen.getByRole('dialog')).toBeVisible();
 
-            fireEvent.click(screen.getByRole('button', { name: 'Train new model' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
-            expect(screen.getByRole('dialog')).toBeVisible();
+        await waitFor(() => {
+            expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        });
+    });
 
-            fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    it('shows not enough annotations when training is not allowed and FEATURE_FLAG_CREDIT_SYSTEM is not enabled', async () => {
+        const projectService = createInMemoryProjectService();
+        projectService.getProjectStatus = () =>
+            Promise.resolve(
+                getMockedProjectStatus({
+                    tasks: [getMockedProjectStatusTask({ ready_to_train: false })],
+                })
+            );
 
-            await waitFor(() => {
-                expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-            });
+        await renderTrainModel({
+            models: [],
+            projectService,
+            FEATURE_FLAG_CREDIT_SYSTEM: false,
         });
 
-        it('shows not enough annotations when training is not allowed and FEATURE_FLAG_CREDIT_SYSTEM is not enabled', async () => {
-            const projectService = createInMemoryProjectService();
-            projectService.getProjectStatus = () =>
-                Promise.resolve(
-                    getMockedProjectStatus({
-                        tasks: [getMockedProjectStatusTask({ ready_to_train: false })],
-                    })
-                );
+        fireEvent.click(screen.getByRole('button', { name: 'Train new model' }));
 
-            await renderTrainModel({
-                models: [],
-                projectService,
-                FEATURE_FLAG_CREDIT_SYSTEM: false,
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            });
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Not enough annotations' })).toBeInTheDocument();
+    });
 
-            fireEvent.click(screen.getByRole('button', { name: 'Train new model' }));
+    it('shows not enough annotations when training is not allowed and FEATURE_FLAG_CREDIT_SYSTEM is enabled', async () => {
+        const projectService = createInMemoryProjectService();
+        projectService.getProjectStatus = () =>
+            Promise.resolve(
+                getMockedProjectStatus({
+                    tasks: [getMockedProjectStatusTask({ ready_to_train: false })],
+                })
+            );
 
-            expect(screen.getByRole('dialog')).toBeInTheDocument();
-            expect(screen.getByRole('heading', { name: 'Not enough annotations' })).toBeInTheDocument();
+        jest.mocked(useTotalCreditPrice).mockReturnValue({
+            getCreditPrice: () => ({ totalCreditsToConsume: 1, totalMedias: 1 }),
+            isLoading: false,
         });
 
-        it('shows not enough annotations when training is not allowed and FEATURE_FLAG_CREDIT_SYSTEM is enabled', async () => {
-            const projectService = createInMemoryProjectService();
-            projectService.getProjectStatus = () =>
-                Promise.resolve(
-                    getMockedProjectStatus({
-                        tasks: [getMockedProjectStatusTask({ ready_to_train: false })],
-                    })
-                );
-
-            jest.mocked(useTotalCreditPrice).mockReturnValue({
-                getCreditPrice: () => ({ totalCreditsToConsume: 1, totalMedias: 1 }),
-                isLoading: false,
-            });
-
-            await renderTrainModel({
-                models: [],
-                projectService,
-                FEATURE_FLAG_CREDIT_SYSTEM: true,
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            });
-
-            fireEvent.click(await screen.findByRole('button', { name: 'Train new model' }));
-
-            expect(screen.getByRole('dialog')).toBeInTheDocument();
-            expect(screen.getByRole('heading', { name: 'Not enough annotations' })).toBeInTheDocument();
-            fireEvent.click(screen.getByRole('button', { name: 'Annotate interactively' }));
-            expect(mockedUseNavigate).toHaveBeenCalledWith(expect.stringContaining('/annotator'));
+        await renderTrainModel({
+            models: [],
+            projectService,
+            FEATURE_FLAG_CREDIT_SYSTEM: true,
         });
 
-        it('open/close modal when training is allowed and FEATURE_FLAG_CREDIT_SYSTEM is enabled and there are enough credits', async () => {
-            const projectService = createInMemoryProjectService();
-            projectService.getProjectStatus = () =>
-                Promise.resolve(
-                    getMockedProjectStatus({
-                        tasks: [getMockedProjectStatusTask({ ready_to_train: true })],
-                    })
-                );
+        fireEvent.click(await screen.findByRole('button', { name: 'Train new model' }));
 
-            const creditsService = createInMemoryCreditsService();
-            creditsService.getOrganizationBalance = () =>
-                Promise.resolve({
-                    available: 10,
-                    blocked: 0,
-                    incoming: 0,
-                });
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Not enough annotations' })).toBeInTheDocument();
+        fireEvent.click(screen.getByRole('button', { name: 'Annotate interactively' }));
+        expect(mockedUseNavigate).toHaveBeenCalledWith(expect.stringContaining('/annotator'));
+    });
 
-            jest.mocked(useTotalCreditPrice).mockReturnValue({
-                getCreditPrice: () => ({ totalCreditsToConsume: 1, totalMedias: 1 }),
-                isLoading: false,
+    it('open/close modal when training is allowed and FEATURE_FLAG_CREDIT_SYSTEM is enabled and there are enough credits', async () => {
+        const projectService = createInMemoryProjectService();
+        projectService.getProjectStatus = () =>
+            Promise.resolve(
+                getMockedProjectStatus({
+                    tasks: [getMockedProjectStatusTask({ ready_to_train: true })],
+                })
+            );
+
+        const creditsService = createInMemoryCreditsService();
+        creditsService.getOrganizationBalance = () =>
+            Promise.resolve({
+                available: 10,
+                blocked: 0,
+                incoming: 0,
             });
 
-            await renderTrainModel({
-                models: [],
-                projectService,
-                creditsService,
-                FEATURE_FLAG_CREDIT_SYSTEM: true,
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            });
-
-            fireEvent.click(await screen.findByRole('button', { name: 'Train new model' }));
-
-            expect(screen.getByRole('dialog')).toBeVisible();
-
-            fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-
-            await waitFor(() => {
-                expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-            });
+        jest.mocked(useTotalCreditPrice).mockReturnValue({
+            getCreditPrice: () => ({ totalCreditsToConsume: 1, totalMedias: 1 }),
+            isLoading: false,
         });
 
-        it('shows not enough credits dialog when training is allowed and FEATURE_FLAG_CREDIT_SYSTEM is enabled and there are not enough credits', async () => {
-            const projectService = createInMemoryProjectService();
-            projectService.getProjectStatus = () =>
-                Promise.resolve(
-                    getMockedProjectStatus({
-                        tasks: [getMockedProjectStatusTask({ ready_to_train: true })],
-                    })
-                );
-
-            const creditsService = createInMemoryCreditsService();
-            creditsService.getOrganizationBalance = () =>
-                Promise.resolve({
-                    available: 10,
-                    blocked: 0,
-                    incoming: 0,
-                });
-
-            jest.mocked(useTotalCreditPrice).mockReturnValue({
-                getCreditPrice: () => ({ totalCreditsToConsume: 11, totalMedias: 1 }),
-                isLoading: false,
-            });
-
-            await renderTrainModel({
-                models: [],
-                projectService,
-                creditsService,
-                FEATURE_FLAG_CREDIT_SYSTEM: true,
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            });
-
-            fireEvent.click(screen.getByRole('button', { name: 'Train new model' }));
-
-            expect(screen.getByRole('dialog')).toBeInTheDocument();
-            expect(screen.getByRole('heading', { name: 'Not enough credits' })).toBeInTheDocument();
+        await renderTrainModel({
+            models: [],
+            projectService,
+            creditsService,
+            FEATURE_FLAG_CREDIT_SYSTEM: true,
         });
+
+        fireEvent.click(await screen.findByRole('button', { name: 'Train new model' }));
+
+        expect(screen.getByRole('dialog')).toBeVisible();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+        await waitFor(() => {
+            expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        });
+    });
+
+    it('shows not enough credits dialog when training is allowed and FEATURE_FLAG_CREDIT_SYSTEM is enabled and there are not enough credits', async () => {
+        const projectService = createInMemoryProjectService();
+        projectService.getProjectStatus = () =>
+            Promise.resolve(
+                getMockedProjectStatus({
+                    tasks: [getMockedProjectStatusTask({ ready_to_train: true })],
+                })
+            );
+
+        const creditsService = createInMemoryCreditsService();
+        creditsService.getOrganizationBalance = () =>
+            Promise.resolve({
+                available: 10,
+                blocked: 0,
+                incoming: 0,
+            });
+
+        jest.mocked(useTotalCreditPrice).mockReturnValue({
+            getCreditPrice: () => ({ totalCreditsToConsume: 11, totalMedias: 1 }),
+            isLoading: false,
+        });
+
+        await renderTrainModel({
+            models: [],
+            projectService,
+            creditsService,
+            FEATURE_FLAG_CREDIT_SYSTEM: true,
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: 'Train new model' }));
+
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Not enough credits' })).toBeInTheDocument();
     });
 });

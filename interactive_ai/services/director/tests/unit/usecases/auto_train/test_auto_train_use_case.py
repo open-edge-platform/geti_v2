@@ -9,7 +9,6 @@ import pytest
 
 from coordination.dataset_manager.missing_annotations_helper import MissingAnnotationsHelper
 from entities.auto_train_activation import AutoTrainActivation
-from features.feature_flag import FeatureFlag
 from storage.repos.auto_train_activation_repo import ProjectBasedAutoTrainActivationRepo
 from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 from usecases.auto_train import AutoTrainUseCase
@@ -21,16 +20,11 @@ WORKSPACE_ID = ID("workspace_id")
 
 
 class TestAutoTrainUseCase:
-    @pytest.mark.parametrize("feature_flag_config_revamp_on", [True, False], ids=["FF on", "FF off"])
-    def test_check_conditions_and_set_auto_train_readiness_debounce(
-        self, fxt_project_identifier, fxt_enable_feature_flag_name, feature_flag_config_revamp_on
-    ) -> None:
+    def test_check_conditions_and_set_auto_train_readiness_debounce(self, fxt_project_identifier) -> None:
         """
         Checks that when "_check_conditions_and_set_auto_train_readiness_debounce" is called, the
         "_check_conditions_and_set_auto_train_readiness_debounce" method starts after the debounce time.
         """
-        if feature_flag_config_revamp_on:
-            fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
         CTX_SESSION_VAR.set(make_session())
         with (
             patch.object(
@@ -52,7 +46,6 @@ class TestAutoTrainUseCase:
                 bypass_debouncer=False,
             )
 
-    @pytest.mark.parametrize("feature_flag_config_revamp_on", [True, False], ids=["FF on", "FF off"])
     @pytest.mark.parametrize(
         "enough_annotations",
         [True, False],
@@ -69,13 +62,12 @@ class TestAutoTrainUseCase:
     def test_check_conditions_and_set_auto_train_readiness(
         self,
         request,
-        feature_flag_config_revamp_on,
         enough_annotations,
         fxt_organization_id,
         fxt_missing_annotations,
         fxt_missing_annotations_zero_missing,
-        fxt_enable_feature_flag_name,
         project_fixture,
+        fxt_project,
         auto_train_enabled,
     ) -> None:
         """Checks that an auto-training request is submitted if and only if the conditions are met"""
@@ -83,10 +75,8 @@ class TestAutoTrainUseCase:
         dataset_storage = project.get_training_dataset_storage()
         task_node = project.get_trainable_task_nodes()[0]
 
-        if feature_flag_config_revamp_on:
-            fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
-            request.addfinalizer(lambda: ProjectBasedAutoTrainActivationRepo(project.identifier).delete_all())
-            ProjectConfigurationRepo(project.identifier).create_default_configuration([task_node.id_])
+        request.addfinalizer(lambda: ProjectBasedAutoTrainActivationRepo(project.identifier).delete_all())
+        ProjectConfigurationRepo(project.identifier).create_default_configuration([task_node.id_])
 
         session = make_session(
             organization_id=fxt_organization_id,
@@ -137,17 +127,12 @@ class TestAutoTrainUseCase:
                     raise_exc_on_missing=False,
                 )
 
-    @pytest.mark.parametrize("feature_flag_config_revamp_on", [True, False], ids=["FF on", "FF off"])
     def test_upsert_auto_train_request_timestamps_for_tasks(
         self,
         fxt_project_identifier,
         fxt_session_ctx,
         fxt_ote_id,
-        fxt_enable_feature_flag_name,
-        feature_flag_config_revamp_on,
     ) -> None:
-        if feature_flag_config_revamp_on:
-            fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
         task_id_1, task_id_2 = fxt_ote_id(201), fxt_ote_id(202)
         with (
             patch.object(
@@ -166,18 +151,12 @@ class TestAutoTrainUseCase:
             ]
         )
 
-    @pytest.mark.parametrize("feature_flag_config_revamp_on", [True, False], ids=["FF on", "FF off"])
-    def test_on_configuration_changed(
-        self, fxt_project_identifier, fxt_enable_feature_flag_name, feature_flag_config_revamp_on
-    ) -> None:
-        if feature_flag_config_revamp_on:
-            fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
+    def test_on_configuration_changed(self, fxt_project_identifier) -> None:
         with patch.object(AutoTrainUseCase, "_check_conditions_and_set_auto_train_readiness") as mock_check_conditions:
             AutoTrainUseCase.on_configuration_changed(fxt_project_identifier)
 
         mock_check_conditions.assert_called_once_with(project_identifier=fxt_project_identifier)
 
-    @pytest.mark.parametrize("feature_flag_config_revamp_on", [True, False], ids=["FF on", "FF off"])
     @pytest.mark.parametrize(
         "session_request_source,session_extra",
         [
@@ -201,13 +180,9 @@ class TestAutoTrainUseCase:
         self,
         fxt_organization_id,
         fxt_project_identifier,
-        fxt_enable_feature_flag_name,
-        feature_flag_config_revamp_on,
         session_request_source,
         session_extra,
     ) -> None:
-        if feature_flag_config_revamp_on:
-            fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
         auto_train_use_case = AutoTrainUseCase()
         session = make_session(
             organization_id=fxt_organization_id,

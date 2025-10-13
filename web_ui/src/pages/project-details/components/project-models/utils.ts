@@ -8,7 +8,10 @@ import {
 } from '../../../../core/configurable-parameters/services/configurable-parameters.interface';
 import { getComponentsDTO } from '../../../../core/configurable-parameters/utils';
 import { ModelGroupsAlgorithmDetails, ModelsGroups } from '../../../../core/models/models.interface';
-import { PerformanceCategory } from '../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
+import {
+    LifecycleStage,
+    PerformanceCategory,
+} from '../../../../core/supported-algorithms/dtos/supported-algorithms.interface';
 import { TaskWithSupportedAlgorithms } from '../../../../core/supported-algorithms/supported-algorithms.interface';
 import { hasEqualId } from '../../../../shared/utils';
 
@@ -41,3 +44,7 @@ export const addAlgorithmDetails =
             complexity: match?.gigaflops ?? null,
         };
     };
+
+export const isDeprecatedAlgorithm = (lifecycleStage: LifecycleStage) => lifecycleStage === LifecycleStage.DEPRECATED;
+
+export const isObsoleteAlgorithm = (lifecycleStage: LifecycleStage) => lifecycleStage === LifecycleStage.OBSOLETE;

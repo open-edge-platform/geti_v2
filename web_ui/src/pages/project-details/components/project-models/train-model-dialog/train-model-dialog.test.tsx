@@ -189,7 +189,7 @@ const renderTrainModelDialog = async ({
 
     await render(<TrainModel isOpen onClose={onClose} onSuccess={onSuccess} />, {
         ...services,
-        featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: false, FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true },
+        featureFlags: { FEATURE_FLAG_CREDIT_SYSTEM: false },
         services: {
             ...services,
             supportedAlgorithmsService: services?.supportedAlgorithmsService ?? supportedAlgorithmsService,

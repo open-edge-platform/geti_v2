@@ -9,7 +9,7 @@ dependencies = [
     "psycopg2-binary~=2.9.9",
     "Pillow>=10.2.0",
     "pyjwt==2.4.0",
-    "python-ldap==3.4.4",
+    "python-ldap==3.4.5",
     "grpc_interfaces[account-service]",
     "geti-spicedb-tools",
     "geti-telemetry-tools[logger]",

@@ -1,30 +1,31 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-import { Divider, Flex } from '@geti/ui';
+import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
+import { Flex, Text } from '@geti/ui';
 
+import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { useWorkspaces } from '../../../providers/workspaces-provider/workspaces-provider.component';
-import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
-import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
-import { CreateWorkspace } from './create-workspace.component';
-import { WorkspacesList } from './workspaces-list.component';
+import { WorkspaceUsersManagement } from './workspace-users-management.component';
 
 export const Workspaces = () => {
+    const { organizationId } = useOrganizationIdentifier();
+    const { useActiveUser } = useUsers();
+    const { data: activeUser } = useActiveUser(organizationId);
     const { workspaces } = useWorkspaces();
-    const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
+
+    if (!activeUser) return null;
+
+    const hasAnyWorkspace = workspaces.length > 0;
 
     return (
         <Flex direction={'column'} height={'100%'} gap={'size-300'}>
-            <HasPermission
-                operations={
-                    FEATURE_FLAG_WORKSPACE_ACTIONS ? [OPERATION.WORKSPACE_CREATION] : [OPERATION.WORKSPACE_MANAGEMENT]
-                }
-            >
-                <CreateWorkspace />
-                <Divider size={'S'} />
-            </HasPermission>
-            <WorkspacesList workspaces={workspaces} />
+            <Text>
+                Manage the workspaces that you have access to as part of your organization. Workspace admins can view
+                and manage all projects inside a workspace, and can add users from the organization to their workspace.
+                Workspace contributors can create projects and manage the projects that they have access to.
+            </Text>
+            {hasAnyWorkspace && <WorkspaceUsersManagement activeUser={activeUser} />}
         </Flex>
     );
 };

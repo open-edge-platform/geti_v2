@@ -23,8 +23,8 @@ describe('Supported algorithms service', () => {
             )
         );
 
-        const { getLegacyProjectSupportedAlgorithms } = createApiSupportedAlgorithmsService();
-        const supportedAlgorithms = await getLegacyProjectSupportedAlgorithms(mockedProjectIdentifier);
+        const { getProjectSupportedAlgorithms } = createApiSupportedAlgorithmsService();
+        const supportedAlgorithms = await getProjectSupportedAlgorithms(mockedProjectIdentifier);
 
         expect(supportedAlgorithms).toEqual(mockedSupportedAlgorithms);
     });

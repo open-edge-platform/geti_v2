@@ -3,25 +3,10 @@
 
 import { DOMAIN } from '../projects/core.interface';
 import {
-    LegacySupportedAlgorithmDTO,
     LifecycleStage,
     PerformanceCategory,
     SupportedAlgorithmStatsValues,
 } from './dtos/supported-algorithms.interface';
-
-export interface LegacySupportedAlgorithm {
-    name: LegacySupportedAlgorithmDTO['name'];
-    modelSize: LegacySupportedAlgorithmDTO['model_size'];
-    modelTemplateId: LegacySupportedAlgorithmDTO['model_template_id'];
-    templateName: string | undefined;
-    domain: DOMAIN;
-    description: string;
-    gigaflops: number;
-    isDefaultAlgorithm: boolean;
-    lifecycleStage: LegacySupportedAlgorithmDTO['lifecycle_stage'];
-    performanceCategory: LegacySupportedAlgorithmDTO['performance_category'];
-    license: string;
-}
 
 export interface SupportedAlgorithm {
     name: string;
@@ -50,4 +35,4 @@ export interface SupportedAlgorithm {
     templateName: string | undefined;
 }
 
-export type TaskWithSupportedAlgorithms = Record<string, LegacySupportedAlgorithm[] | SupportedAlgorithm[]>;
+export type TaskWithSupportedAlgorithms = Record<string, SupportedAlgorithm[]>;

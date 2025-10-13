@@ -22,12 +22,10 @@ from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier, ProjectIdentifier, session_context
 from grpc_interfaces.job_submission.client import GRPCJobsClient
 from grpc_interfaces.job_submission.pb.job_service_pb2 import SubmitJobRequest
-from iai_core.configuration.elements.component_parameters import ComponentType
-from iai_core.configuration.elements.dataset_manager_parameters import DatasetManagementConfig
 from iai_core.entities.model_storage import NullModelStorage
 from iai_core.entities.model_template import ModelTemplateDeprecationStatus
 from iai_core.entities.project import NullProject
-from iai_core.repos import ConfigurableParametersRepo, DatasetRepo, ModelStorageRepo, ProjectRepo
+from iai_core.repos import DatasetRepo, ModelStorageRepo, ProjectRepo
 from iai_core.repos.dataset_entity_repo import PipelineDatasetRepo
 from iai_core.utils.time_utils import now
 
@@ -162,43 +160,26 @@ class AutoTrainController:
             )
 
             full_training_configuration: TrainingConfiguration | None = None
-            if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-                config_repo = PartialTrainingConfigurationRepo(project_identifier=auto_train_request.project_identifier)
-                global_parameters = config_repo.get_global_parameters(
-                    task_id=auto_train_request.task_node_id, model_manifest_id=model_storage.model_manifest_id
-                )
-                filtering_parameters = global_parameters.dataset_preparation.filtering
-                min_annotation_size = (
-                    filtering_parameters.min_annotation_pixels.min_annotation_pixels
-                    if filtering_parameters and filtering_parameters.min_annotation_pixels
-                    else None
-                )
-                max_number_of_annotations = (
-                    filtering_parameters.max_annotation_objects.max_annotation_objects
-                    if filtering_parameters and filtering_parameters.max_annotation_objects.enable
-                    else None
-                )
-                full_training_configuration = self.get_full_training_configuration(
-                    project_identifier=auto_train_request.project_identifier,
-                    task_id=auto_train_request.task_node_id,
-                    model_manifest_id=model_storage.model_manifest_id,
-                )
-            else:
-                config_repo = ConfigurableParametersRepo(project_identifier=auto_train_request.project_identifier)
-                dataset_manager_config = config_repo.get_or_create_component_parameters(
-                    data_instance_of=DatasetManagementConfig,
-                    component=ComponentType.PIPELINE_DATASET_MANAGER,
-                )
-                min_annotation_size = (
-                    None
-                    if dataset_manager_config.minimum_annotation_size == -1
-                    else dataset_manager_config.minimum_annotation_size
-                )
-                max_number_of_annotations = (
-                    None
-                    if dataset_manager_config.maximum_number_of_annotations == -1
-                    else dataset_manager_config.maximum_number_of_annotations
-                )
+            config_repo = PartialTrainingConfigurationRepo(project_identifier=auto_train_request.project_identifier)
+            global_parameters = config_repo.get_global_parameters(
+                task_id=auto_train_request.task_node_id, model_manifest_id=model_storage.model_manifest_id
+            )
+            filtering_parameters = global_parameters.dataset_preparation.filtering
+            min_annotation_size = (
+                filtering_parameters.min_annotation_pixels.min_annotation_pixels
+                if filtering_parameters and filtering_parameters.min_annotation_pixels
+                else None
+            )
+            max_number_of_annotations = (
+                filtering_parameters.max_annotation_objects.max_annotation_objects
+                if filtering_parameters and filtering_parameters.max_annotation_objects.enable
+                else None
+            )
+            full_training_configuration = self.get_full_training_configuration(
+                project_identifier=auto_train_request.project_identifier,
+                task_id=auto_train_request.task_node_id,
+                model_manifest_id=model_storage.model_manifest_id,
+            )
 
             retain_training_artifacts = FeatureFlagProvider.is_enabled(
                 FeatureFlag.FEATURE_FLAG_RETAIN_TRAINING_ARTIFACTS
