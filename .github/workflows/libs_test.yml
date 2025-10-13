@@ -1,3 +1,25 @@
+# Libraries tests & style checks workflow (Geti project)
+#
+# This reusable workflow runs static analysis (style / lint / static code analysis) and
+# executes tests for a specified library/component directory. It is designed to be
+# invoked by higher-level pipelines via `workflow_call` or run manually with
+# `workflow_dispatch` for ad‑hoc validation.
+#
+# Key Features:
+# - Parameterized target component directory (root‑relative)
+# - Multi‑language environment support (Python via uv, Go via setup-go)
+# - Static code analysis (Make target) and test execution (Make target)
+#
+# Process Stages:
+# 1. Checkout source (read-only credentials)
+# 2. Provision system/package dependencies (apt, uv, Go toolchain)
+# 3. Run static code analysis (make <component>/static-code-analysis)
+# 4. Run tests (make <component>/tests)
+#
+# Inputs (workflow_call):
+# - component-dir: Root-relative path of the component/library to validate (required)
+#
+
 name: Libraries - tests and stylechecks
 
 on:

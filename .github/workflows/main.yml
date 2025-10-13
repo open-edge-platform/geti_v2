@@ -21,7 +21,6 @@
 #
 # Inputs:
 # - publish_binaries: Enable publishing binaries (default: true)
-# - ref: The branch, tag, or SHA to checkout (default: current ref)
 #
 
 name: Main CI
