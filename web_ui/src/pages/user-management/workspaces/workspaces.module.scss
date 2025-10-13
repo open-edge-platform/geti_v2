@@ -38,3 +38,42 @@
     box-sizing: border-box !important;
     overflow: auto hidden;
 }
+
+.tabList {
+    span[class*='spectrum-Tabs-itemLabel'] {
+        font-size: var(--spectrum-global-dimension-font-size-200);
+    }
+
+    div[class*='is-selected']::after {
+        transition: background-color 0.15s ease-in-out;
+        content: '';
+        height: var(--spectrum-global-dimension-size-25);
+        background-color: transparent;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    div[class*='is-selected'] {
+        position: relative;
+
+        &:after {
+            background-color: var(--energy-blue);
+        }
+    }
+
+    div[class*='spectrum-Tabs-selectionIndicator'] {
+        display: none;
+    }
+
+    &.emptySelection {
+        div[class*='is-selected'] {
+            color: var(--spectrum-tabs-text-color, var(--spectrum-alias-label-text-color));
+        }
+    }
+
+    > div {
+        border-bottom-width: 0;
+    }
+}
