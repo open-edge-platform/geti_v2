@@ -9,7 +9,7 @@ import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import { RESOURCE_TYPE } from '@geti/core/src/users/users.interface';
 import { useWorkspacesApi } from '@geti/core/src/workspaces/hooks/use-workspaces.hook';
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
-import { ActionButton, Flex, Item, Loading, TabList, Tabs, Tooltip, TooltipTrigger, View } from '@geti/ui';
+import { ActionButton, Flex, Item, Loading, TabList, Tabs, Tooltip, TooltipTrigger } from '@geti/ui';
 import { Add } from '@geti/ui/icons';
 
 import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
