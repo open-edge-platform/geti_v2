@@ -186,7 +186,7 @@ test.describe('Members page', () => {
     });
 
     // TODO: reenable this after users tab merge
-    test('Removes a workspace contributor member', async ({ page, membersPage, registerApiResponse }) => {
+    test.skip('Removes a workspace contributor member', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);

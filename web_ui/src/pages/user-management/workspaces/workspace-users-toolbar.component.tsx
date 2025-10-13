@@ -12,6 +12,7 @@ import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.i
 import { ActionButton, Flex, Item, Loading, TabList, Tabs, Tooltip, TooltipTrigger, View } from '@geti/ui';
 import { Add } from '@geti/ui/icons';
 
+import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { CustomTabItem } from '../../../shared/components/custom-tab-item/custom-tab-item.component';
 import { EditNameDialog } from '../../../shared/components/edit-name-dialog/edit-name-dialog.component';
@@ -21,7 +22,6 @@ import { getUniqueNameFromArray } from '../../../shared/utils';
 import { WorkspaceDeleteDialog } from '../../landing-page/workspaces-tabs/components/workspace-delete-dialog.component';
 import { CustomTabItemWithMenu } from '../../landing-page/workspaces-tabs/custom-tab-item-with-menu.component';
 import { useWorkspaceActions } from '../../landing-page/workspaces-tabs/hooks/use-workspace-actions.hook';
-import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
 
 interface WorkspaceUsersToolbarProps {
     workspaces: WorkspaceEntity[];
@@ -46,7 +46,7 @@ export const WorkspaceUsersToolbar = ({
     const projectsNamesQuery = useGetProjectNames({ organizationId, workspaceId: selectedWorkspace!.id });
     const isWorkspaceEmpty = projectsNamesQuery.data?.projects.length === 0;
 
-    const { deleteDialog, editDialog } = useWorkspaceActions(workspaces.length, isWorkspaceEmpty ,selectedWorkspaceId);
+    const { deleteDialog, editDialog } = useWorkspaceActions(workspaces.length, isWorkspaceEmpty, selectedWorkspaceId);
 
     const tabItems = workspaces.map((w) => ({ key: w.id, name: w.name }));
 
