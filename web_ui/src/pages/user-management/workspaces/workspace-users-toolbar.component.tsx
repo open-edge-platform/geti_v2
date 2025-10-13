@@ -21,6 +21,7 @@ import { getUniqueNameFromArray } from '../../../shared/utils';
 import { WorkspaceDeleteDialog } from '../../landing-page/workspaces-tabs/components/workspace-delete-dialog.component';
 import { CustomTabItemWithMenu } from '../../landing-page/workspaces-tabs/custom-tab-item-with-menu.component';
 import { useWorkspaceActions } from '../../landing-page/workspaces-tabs/hooks/use-workspace-actions.hook';
+import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
 
 interface WorkspaceUsersToolbarProps {
     workspaces: WorkspaceEntity[];
@@ -36,13 +37,16 @@ export const WorkspaceUsersToolbar = ({
     const { organizationId } = useOrganizationIdentifier();
     const { data: activeUser } = useActiveUser(organizationId);
     const { useCreateWorkspaceMutation } = useWorkspacesApi(organizationId);
+    const { useGetProjectNames } = useProjectActions();
     const createWorkspace = useCreateWorkspaceMutation();
 
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
 
     const selectedWorkspace = workspaces.find((w) => w.id === selectedWorkspaceId);
+    const projectsNamesQuery = useGetProjectNames({ organizationId, workspaceId: selectedWorkspace!.id });
+    const isWorkspaceEmpty = projectsNamesQuery.data?.projects.length === 0;
 
-    const { deleteDialog, editDialog } = useWorkspaceActions(workspaces.length, selectedWorkspaceId);
+    const { deleteDialog, editDialog } = useWorkspaceActions(workspaces.length, isWorkspaceEmpty ,selectedWorkspaceId);
 
     const tabItems = workspaces.map((w) => ({ key: w.id, name: w.name }));
 
@@ -128,7 +132,7 @@ export const WorkspaceUsersToolbar = ({
                         );
                     }}
                     triggerState={deleteDialog.deleteWorkspaceDialogState}
-                    workspaceId={selectedWorkspace.id}
+                    isWorkspaceEmpty={isWorkspaceEmpty}
                 />
             )}
             {selectedWorkspace && editDialog.editWorkspaceDialogState.isOpen && (
