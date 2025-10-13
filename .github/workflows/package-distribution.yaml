@@ -1,3 +1,32 @@
+# Platform package distribution workflow (Geti project)
+#
+# This reusable workflow builds the platform umbrella Helm charts and (optionally)
+# the installer distribution artifacts, then publishes them when enabled.
+# It is triggered via `workflow_call` by upstream CI orchestrations that decide
+# whether to run a full multi‑component build (build_all) and whether publishing
+# is permitted (publish_binaries).
+#
+# Key Features:
+# - Conditional execution (skips entirely unless `build_all` is true)
+# - Builds umbrella Helm charts (Make targets) and optionally publishes them
+# - Generates a versioned installer binary bundle (tar.gz) embedding product & build versions
+# - Produces an uploadable artifact for downstream consumption (platform_installer)
+#
+# Process Stages:
+# 1. Checkout source
+# 2. Build umbrella charts
+# 3. (Optional) Publish umbrella charts
+# 4. (Optional) Build installer binary (version info injected)
+# 5. (Optional) Package & upload installer artifact
+#
+# Inputs (workflow_call):
+# - build_all (boolean, required): Gate to execute the distribution stage
+# - build_version (string, required): Build identifier applied to binaries / tags
+# - platform_version (string, required): Current platform semantic version
+# - publish_binaries (boolean, default: false): Enable publishing & installer packaging
+# - registry (string, required): Container registry namespace for chart/image publication
+#
+
 name: Package distribution workflow
 on:
   workflow_call:
@@ -18,10 +47,6 @@ on:
         description: "Enable pushing Docker images and Helm charts"
         type: boolean
         default: false
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        type: string
-        default: ""
       registry:
         description: "The container registry to push images to"
         type: string
@@ -50,7 +75,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - name: Build umbrella charts
         run: make build-umbrella-chart

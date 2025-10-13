@@ -1,3 +1,38 @@
+# Component build & test workflow (Geti project)
+#
+# This reusable workflow performs static analysis, unit & integration testing,
+# optional container image build/publish, and Helm chart lint/publish for a single
+# component directory. It supports both Python and Go projects via builder images
+# and can be invoked directly (workflow_dispatch) or from higher‑level orchestration
+# (workflow_call) with versioning and publish controls.
+#
+# Key Features:
+# - Auto-detects project language (Python / Go) and selects appropriate builder image
+# - Runs static code analysis, unit tests, integration tests (builder vs host fallback)
+# - Conditional cleanup phases (initial / pre-build / all) via component config action
+# - Skips image build gracefully if Make target indicates so (captures SKIP_IMAGE flag)
+# - Optionally logs into GHCR and publishes image & Helm chart when publish_binaries=true
+# - Injects build/version tag (TAG) with fallback to commit SHA
+#
+# Process Stages:
+# 1. Checkout & component configuration read
+# 2. Optional initial cleanup
+# 3. Language detection & builder image selection
+# 4. Static code analysis
+# 5. Unit tests
+# 6. Integration tests (builder or host + ffmpeg install when needed)
+# 7. Optional pre-build cleanup
+# 8. Container image build (skip-aware)
+# 9. (Optional) Image push & chart lint
+# 10. (Optional) Chart publish
+#
+# Inputs (workflow_call / dispatch):
+# - component_dir (string, required): Root-relative path of the component
+# - build_version (string, required): Version tag applied to built artifacts (fallback to commit)
+# - publish_binaries (bool, default false): Enable push of image & Helm chart
+# - registry (string, required): Target container registry base
+#
+
 name: Components workflow
 
 on:
@@ -15,20 +50,12 @@ on:
         description: "Enable publishing binaries to repos"
         type: boolean
         default: false
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        type: string
-        default: ""
       registry:
         description: "The container registry to push images to"
         type: string
         required: true
   workflow_dispatch:
     inputs:
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        required: true
-        default: "main"
       component_dir:
         description: "Path to the component (relative to the root of the repository)"
         required: true
@@ -65,7 +92,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - name: Read component config
         id: component-config
