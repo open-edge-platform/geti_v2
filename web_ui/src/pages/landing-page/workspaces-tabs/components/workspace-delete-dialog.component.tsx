@@ -53,7 +53,7 @@ export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, workspaceI
         <AlertDialog
             title={'Checking workspace'}
             primaryActionLabel='Cancel'
-            onPrimaryAction={() => triggerState.close()}
+            onPrimaryAction={triggerState.close}
         >
             <Loading size={'S'} /> Checking projects in workspace...
         </AlertDialog>
