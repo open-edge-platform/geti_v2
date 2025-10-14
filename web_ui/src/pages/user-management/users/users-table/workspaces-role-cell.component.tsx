@@ -17,12 +17,14 @@ interface WorkspacesRoleCellProps extends Omit<TableCellProps, 'cellData'> {
 export const WorkspacesRoleCell = ({ cellData, workspaceId, workspaces, ...rest }: WorkspacesRoleCellProps) => {
     const workspaceRoles = cellData.filter((role) => role.resourceType === RESOURCE_TYPE.WORKSPACE);
 
-    const selectedWorkspaceRoles = `Workspace ${workspaceRoles.find((role) => role.resourceId === workspaceId)?.role}`;
+    const selectedWorkspaceRole = workspaceRoles.find((role) => role.resourceId === workspaceId)?.role
+        ? `Workspace ${workspaceRoles.find((role) => role.resourceId === workspaceId)?.role}`
+        : '';
     const availableWorkspaces = workspaceRoles
         .map((role) => workspaces.find((workspace) => workspace.id === role.resourceId)?.name ?? role.resourceId)
         .join(', ');
 
-    const rolesWorkspacesCellData = !isEmpty(workspaceId) ? selectedWorkspaceRoles : availableWorkspaces;
+    const rolesWorkspacesCellData = !isEmpty(workspaceId) ? selectedWorkspaceRole : availableWorkspaces;
 
     return <CasualCell {...rest} cellData={rolesWorkspacesCellData} />;
 };
