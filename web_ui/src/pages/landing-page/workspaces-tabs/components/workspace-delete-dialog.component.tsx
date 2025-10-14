@@ -36,7 +36,7 @@ export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, workspaceI
             <p>
                 This workspace will be deleted from your Geti™ organization, including access of the user accounts.
                 Before deleting the workspace, please make sure that the associated users are added to another workspace
-                so that they can still access your Geti organization.
+                so that they can still access your Geti™ organization.
             </p>
             <p>Are you sure you want to delete workspace {name}?</p>
         </AlertDialog>
@@ -50,11 +50,7 @@ export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, workspaceI
     );
 
     const loadingDialog: ReactNode = (
-        <AlertDialog
-            title={'Checking projects'}
-            primaryActionLabel='Cancel'
-            onPrimaryAction={triggerState.close}
-        >
+        <AlertDialog title={'Checking projects'} primaryActionLabel='Cancel' onPrimaryAction={triggerState.close}>
             <Loading size={'S'} /> Checking projects in workspace...
         </AlertDialog>
     );
