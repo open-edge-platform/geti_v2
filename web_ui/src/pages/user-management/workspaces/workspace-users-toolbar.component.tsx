@@ -23,7 +23,7 @@ import { WorkspaceDeleteDialog } from '../../landing-page/workspaces-tabs/compon
 import { CustomTabItemWithMenu } from '../../landing-page/workspaces-tabs/custom-tab-item-with-menu.component';
 import { useWorkspaceActions } from '../../landing-page/workspaces-tabs/hooks/use-workspace-actions.hook';
 
-import classes from './workspaces.module.scss';
+import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
 
 interface WorkspaceUsersToolbarProps {
     workspaces: WorkspaceEntity[];
