@@ -34,7 +34,7 @@ export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, workspaceI
             cancelLabel={'Cancel'}
         >
             <p>
-                This workspace will be deleted from your Geti organization, including access of the user accounts.
+                This workspace will be deleted from your Geti™ organization, including access of the user accounts.
                 Before deleting the workspace, please make sure that the associated users are added to another workspace
                 so that they can still access your Geti organization.
             </p>
