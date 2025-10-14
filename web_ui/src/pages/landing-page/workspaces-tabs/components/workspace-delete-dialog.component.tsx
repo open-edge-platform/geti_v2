@@ -51,7 +51,7 @@ export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, workspaceI
 
     const loadingDialog: ReactNode = (
         <AlertDialog
-            title={'Checking workspace'}
+            title={'Checking projects'}
             primaryActionLabel='Cancel'
             onPrimaryAction={triggerState.close}
         >
