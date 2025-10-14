@@ -21,7 +21,7 @@ export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, workspaceI
     const { useGetProjectNames } = useProjectActions();
     const projectsQuery = useGetProjectNames({ organizationId, workspaceId });
     const hasProjects = projectsQuery.data ? projectsQuery.data.projects.length > 0 : undefined;
-    const loading = hasProjects === undefined;
+    const loading = projectsQuery.isLoading;
     const deleteDialog: ReactNode = (
         <AlertDialog
             title={'Delete workspace'}
