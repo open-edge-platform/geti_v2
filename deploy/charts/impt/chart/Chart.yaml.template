@@ -34,8 +34,6 @@ dependencies:
     version: 0.0.1
   - name: geti-common-labels
     version: 0.0.1
-  - name: bitnami-common
-    version: 1.11.2
   - name: kafka
     version: 0.1.0
     condition: enabled.kafka
