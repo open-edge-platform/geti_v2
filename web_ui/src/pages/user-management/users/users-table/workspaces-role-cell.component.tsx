@@ -3,7 +3,7 @@
 
 import { RESOURCE_TYPE, Role } from '@geti/core/src/users/users.interface';
 import { Workspace } from '@geti/core/src/workspaces/services/workspaces.interface';
-import { capitalize, isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 
 import { CasualCell } from '../../../../shared/components/table/components/casual-cell/casual-cell.component';
 import { TableCellProps } from '../../../../shared/components/table/table.interface';
