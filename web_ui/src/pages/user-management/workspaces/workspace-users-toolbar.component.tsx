@@ -121,7 +121,6 @@ export const WorkspaceUsersToolbar = ({
                     )}
                 </Flex>
             </Tabs>
-            {/* Dialogs for selected workspace */}
             {selectedWorkspace && deleteDialog.deleteWorkspaceDialogState.isOpen && (
                 <WorkspaceDeleteDialog
                     name={selectedWorkspace.name}
@@ -132,7 +131,7 @@ export const WorkspaceUsersToolbar = ({
                         );
                     }}
                     triggerState={deleteDialog.deleteWorkspaceDialogState}
-                    isWorkspaceEmpty={isWorkspaceEmpty}
+                    workspaceId={selectedWorkspace.id}
                 />
             )}
             {selectedWorkspace && editDialog.editWorkspaceDialogState.isOpen && (

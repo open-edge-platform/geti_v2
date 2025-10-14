@@ -41,7 +41,10 @@ export const useWorkspaceActions = (numberOfWorkspaces: number, workspaceId?: st
         return items;
     })();
 
-    const disabledKeys = [...(!canEditWorkspace ? [WorkspaceMenuActions.EDIT] : [])];
+    const disabledKeys = [...(!canEditWorkspace ? [
+        WorkspaceMenuActions.EDIT,
+        WorkspaceMenuActions.DELETE,
+    ] : [])];
 
     const handleMenuAction = (key: Key) => {
         switch (key.toString().toLocaleLowerCase()) {
