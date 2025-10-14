@@ -5,8 +5,6 @@ import { ComponentProps } from 'react';
 
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
 
-import { useProjectActions } from '../../../core/projects/hooks/use-project-actions.hook';
-import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import {
     CustomTabItem,
     CustomTabItemProps,
@@ -34,14 +32,8 @@ export const CustomTabItemWithMenu = ({
     workspaces,
     selectWorkspace,
 }: CustomTabItemWithMenuProps) => {
-    const { organizationId } = useOrganizationIdentifier();
-    const { useGetProjectNames } = useProjectActions();
-    const projectsNamesQuery = useGetProjectNames({ organizationId, workspaceId: workspace.id });
-    const isWorkspaceEmpty = projectsNamesQuery.data?.projects.length === 0;
-
-    const { items, handleMenuAction, editDialog, deleteDialog, grayedOutKeys, disabledKeys } = useWorkspaceActions(
+    const { items, handleMenuAction, editDialog, deleteDialog, disabledKeys } = useWorkspaceActions(
         workspaces.length,
-        isWorkspaceEmpty,
         workspace.id
     );
 
@@ -81,7 +73,6 @@ export const CustomTabItemWithMenu = ({
                 items={items}
                 onAction={handleMenuAction}
                 ariaLabel={ariaLabel}
-                grayedOutKeys={grayedOutKeys}
                 disabledKeys={disabledKeys}
                 customTriggerContent={<CustomTabItem name={workspace.name} isMoreIconVisible={isMoreIconVisible} />}
                 menuTriggerClasses={classes.customTabItemMenuTrigger}
@@ -92,7 +83,7 @@ export const CustomTabItemWithMenu = ({
                     name={workspace.name}
                     onAction={handleDeleteWorkspace}
                     triggerState={deleteDialog.deleteWorkspaceDialogState}
-                    isWorkspaceEmpty={isWorkspaceEmpty}
+                    workspaceId={workspace.id}
                 />
             )}
 

@@ -14,7 +14,7 @@ import { WorkspaceMenuActions } from '../utils';
 
 const MIN_NUMBER_OF_REQUIRED_WORKSPACES = 1;
 
-export const useWorkspaceActions = (numberOfWorkspaces: number, isWorkspaceEmpty: boolean, workspaceId?: string) => {
+export const useWorkspaceActions = (numberOfWorkspaces: number, workspaceId?: string) => {
     const editWorkspaceDialogState = useOverlayTriggerState({});
     const deleteWorkspaceDialogState = useOverlayTriggerState({});
 
@@ -40,8 +40,6 @@ export const useWorkspaceActions = (numberOfWorkspaces: number, isWorkspaceEmpty
 
         return items;
     })();
-
-    const grayedOutKeys = [...(!isWorkspaceEmpty ? [WorkspaceMenuActions.DELETE] : [])];
 
     const disabledKeys = [...(!canEditWorkspace ? [WorkspaceMenuActions.EDIT] : [])];
 
@@ -74,7 +72,6 @@ export const useWorkspaceActions = (numberOfWorkspaces: number, isWorkspaceEmpty
             editWorkspaceDialogState,
             editWorkspaceMutation,
         },
-        grayedOutKeys,
         disabledKeys,
     };
 };
