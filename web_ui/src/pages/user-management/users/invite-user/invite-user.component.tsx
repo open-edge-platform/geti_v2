@@ -153,9 +153,9 @@ export const InviteUserDialog = ({ isAdmin, id, organizationId, workspaceId }: I
                                     label='Organization Role'
                                     aria-label='Organization Role'
                                     testId='invite-user-organization-role-picker'
-                                    setSelectedRole={(r) => {
-                                        setSelectedOrgRole(r as USER_ROLE);
-                                        if (r === USER_ROLE.ORGANIZATION_ADMIN) {
+                                    setSelectedRole={(role) => {
+                                        setSelectedOrgRole(role as USER_ROLE);
+                                        if (role === USER_ROLE.ORGANIZATION_ADMIN) {
                                             setSelectedWorkspaceId(undefined);
                                             setSelectedWorkspaceRole(undefined);
                                         } else {
@@ -191,13 +191,13 @@ export const InviteUserDialog = ({ isAdmin, id, organizationId, workspaceId }: I
                                             aria-label={'Workspace'}
                                             width={'100%'}
                                         >
-                                            {(w) => <Item key={w.id}>{w.name}</Item>}
+                                            {(workspace) => <Item key={workspace.id}>{workspace.name}</Item>}
                                         </Picker>
                                         <RolePicker
                                             roles={workspaceRoles}
-                                            selectedRole={selectedWorkspaceRole as USER_ROLE}
+                                            selectedRole={selectedWorkspaceRole}
                                             label='Workspace Role'
-                                            setSelectedRole={(r) => setSelectedWorkspaceRole(r as USER_ROLE)}
+                                            setSelectedRole={(role) => setSelectedWorkspaceRole(role)}
                                             width={'100%'}
                                             contextualHelp={
                                                 <ContextualHelp>

@@ -61,7 +61,12 @@ export const EditOrganizationUserDialog = ({
 
     const currentOrgRole: USER_ROLE | undefined = useMemo(
         () =>
-            user.roles.find((r) => r.resourceType === RESOURCE_TYPE.ORGANIZATION && r.resourceId === organizationId)
+            user.roles
+                .find(
+                    (role) =>
+                        role.resourceType === RESOURCE_TYPE.ORGANIZATION &&
+                        role.resourceId === organizationId
+                )
                 ?.role,
         [user.roles, organizationId]
     );
@@ -70,12 +75,12 @@ export const EditOrganizationUserDialog = ({
 
     const orgAdmins = useMemo(
         () =>
-            users.filter((u) =>
-                u.roles.some(
-                    (r) =>
-                        r.resourceType === RESOURCE_TYPE.ORGANIZATION &&
-                        r.resourceId === organizationId &&
-                        r.role === USER_ROLE.ORGANIZATION_ADMIN
+            users.filter((user) =>
+                user.roles.some(
+                    (role) =>
+                        role.resourceType === RESOURCE_TYPE.ORGANIZATION &&
+                        role.resourceId === organizationId &&
+                        role.role === USER_ROLE.ORGANIZATION_ADMIN
                 )
             ),
         [users, organizationId]

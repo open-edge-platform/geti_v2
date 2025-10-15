@@ -230,9 +230,9 @@ export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupPr
                                     roles={orgRoles}
                                     selectedRole={selectedOrgRole as USER_ROLE}
                                     label='Organization Role'
-                                    setSelectedRole={(r) => {
-                                        setSelectedOrgRole(r as USER_ROLE);
-                                        if (r === USER_ROLE.ORGANIZATION_ADMIN) {
+                                    setSelectedRole={(role) => {
+                                        setSelectedOrgRole(role as USER_ROLE);
+                                        if (role === USER_ROLE.ORGANIZATION_ADMIN) {
                                             setSelectedWorkspaceRole(undefined);
                                         } else if (selectedWorkspaceRole === undefined) {
                                             setSelectedWorkspaceRole(roles[0]);
@@ -262,7 +262,7 @@ export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupPr
                                             width={'100%'}
                                             onSelectionChange={(key) => setSelectedWorkspaceId(key as string)}
                                         >
-                                            {(w) => <Item key={w.id}>{w.name}</Item>}
+                                            {(workspace) => <Item key={workspace.id}>{workspace.name}</Item>}
                                         </Picker>
                                         <RolePicker
                                             label={'Workspace Role'}
