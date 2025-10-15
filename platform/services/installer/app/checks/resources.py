@@ -189,7 +189,7 @@ def _get_intel_gpus() -> str:
         logger.debug(f"Getting the list of Intel ARC with {command}")
 
         env = os.environ.copy()
-        env.pop('LD_LIBRARY_PATH', None)
+        env.pop("LD_LIBRARY_PATH", None)
 
         clinfo_output = subprocess.check_output(  # noqa: S602  # nosec: B602
             command,
