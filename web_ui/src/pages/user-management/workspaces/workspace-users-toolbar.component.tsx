@@ -21,7 +21,7 @@ import { OPERATION } from '../../../shared/components/has-permission/has-permiss
 import { WorkspaceDeleteDialog } from '../../landing-page/workspaces-tabs/components/workspace-delete-dialog.component';
 import { CustomTabItemWithMenu } from '../../landing-page/workspaces-tabs/custom-tab-item-with-menu.component';
 import { useWorkspaceActions } from '../../landing-page/workspaces-tabs/hooks/use-workspace-actions.hook';
-import { CreateWorkspaceDialog } from './create-workspace-dialog.component';
+import { CreateWorkspaceDialog } from './create-workspace-dialog/create-workspace-dialog.component';
 
 import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
 
