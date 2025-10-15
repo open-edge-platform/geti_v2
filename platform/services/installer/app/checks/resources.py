@@ -169,10 +169,16 @@ def _get_intel_gpus() -> str:
     ARC cards:
     We rely on the output of clinfo
     """
+    # pyinstaller sets the LD_LIBRARY_PATH env variable value to a folder with unpacked dependencies
+    # which contains the libstdc++.so.6 library - this library causes errors while executing clinfo/xpu-smi.
+    # I remove then this variable from env passed to clinfo - to get rid of this error.
+    env = os.environ.copy()
+    env.pop("LD_LIBRARY_PATH", None)
+
     # Only valid for MAX cards
     try:
         logger.debug("Getting the list of Intel GPU with `xpu-smi discovery`")
-        xpu_output = subprocess.check_output(["xpu-smi", "discovery"], timeout=5).decode("utf-8")  # noqa: S607
+        xpu_output = subprocess.check_output(["xpu-smi", "discovery"], timeout=5, env=env).decode("utf-8")  # noqa: S607
         logger.debug(xpu_output)
         if ResourcesChecksTexts.intel_gpu_no_devices in xpu_output:
             logger.debug("No devices")
@@ -187,9 +193,6 @@ def _get_intel_gpus() -> str:
     try:
         command = 'clinfo|grep "' + ResourcesChecksTexts.intel_gpu_arc_device_name + '"|grep Intel'
         logger.debug(f"Getting the list of Intel ARC with {command}")
-
-        env = os.environ.copy()
-        env.pop("LD_LIBRARY_PATH", None)
 
         clinfo_output = subprocess.check_output(  # noqa: S602  # nosec: B602
             command,
