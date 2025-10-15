@@ -1,3 +1,25 @@
+# Libraries tests & style checks workflow (Geti project)
+#
+# This reusable workflow runs static analysis (style / lint / static code analysis) and
+# executes tests for a specified library/component directory. It is designed to be
+# invoked by higher-level pipelines via `workflow_call` or run manually with
+# `workflow_dispatch` for ad‑hoc validation.
+#
+# Key Features:
+# - Parameterized target component directory (root‑relative)
+# - Multi‑language environment support (Python via uv, Go via setup-go)
+# - Static code analysis (Make target) and test execution (Make target)
+#
+# Process Stages:
+# 1. Checkout source (read-only credentials)
+# 2. Provision system/package dependencies (apt, uv, Go toolchain)
+# 3. Run static code analysis (make <component>/static-code-analysis)
+# 4. Run tests (make <component>/tests)
+#
+# Inputs (workflow_call):
+# - component-dir: Root-relative path of the component/library to validate (required)
+#
+
 name: Libraries - tests and stylechecks
 
 on:
@@ -7,16 +29,8 @@ on:
         description: "Dir in root directory"
         type: string
         required: true
-      ref:
-        description: "Ref to checkout"
-        type: string
-        default: ""
   workflow_dispatch:
     inputs:
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        required: true
-        default: "main"
       component-dir:
         description: "Path to the component (relative to the root of the repository)"
         required: true
@@ -43,7 +57,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - name: Install missing dependencies
         run: |
@@ -51,7 +65,7 @@ jobs:
           sudo -E apt install -y ffmpeg
 
       - name: Install uv
-        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+        uses: astral-sh/setup-uv@3259c6206f993105e3a61b142c2d97bf4b9ef83d # v7.1.0
         with:
           version: "0.7.13"
 

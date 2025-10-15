@@ -3,17 +3,25 @@
 
 import { ReactNode } from 'react';
 
-import { AlertDialog, DialogContainer } from '@geti/ui';
+import { AlertDialog, DialogContainer, Loading } from '@geti/ui';
 import { OverlayTriggerState } from '@react-stately/overlays';
+
+import { useProjectActions } from '../../../../core/projects/hooks/use-project-actions.hook';
+import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 
 interface DeleteDialogProps {
     name: string;
     onAction: () => void;
     triggerState: OverlayTriggerState;
-    isWorkspaceEmpty: boolean;
+    workspaceId: string;
 }
 
-export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, isWorkspaceEmpty }: DeleteDialogProps) => {
+export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, workspaceId }: DeleteDialogProps) => {
+    const { organizationId } = useOrganizationIdentifier();
+    const { useGetProjectNames } = useProjectActions();
+    const projectsQuery = useGetProjectNames({ organizationId, workspaceId });
+    const hasProjects = projectsQuery.data ? projectsQuery.data.projects.length > 0 : undefined;
+    const loading = projectsQuery.isLoading;
     const deleteDialog: ReactNode = (
         <AlertDialog
             title={'Delete workspace'}
@@ -25,7 +33,12 @@ export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, isWorkspac
             }}
             cancelLabel={'Cancel'}
         >
-            {`Are you sure you want to delete workspace "${name}"?`}
+            <p>
+                This workspace will be deleted from your Geti™ organization, including access of the user accounts.
+                Before deleting the workspace, please make sure that the associated users are added to another workspace
+                so that they can still access your Geti™ organization.
+            </p>
+            <p>Are you sure you want to delete workspace {name}?</p>
         </AlertDialog>
     );
 
@@ -36,9 +49,15 @@ export const WorkspaceDeleteDialog = ({ triggerState, onAction, name, isWorkspac
         </AlertDialog>
     );
 
+    const loadingDialog: ReactNode = (
+        <AlertDialog title={'Checking projects'} primaryActionLabel='Cancel' onPrimaryAction={triggerState.close}>
+            <Loading size={'S'} /> Checking projects in workspace...
+        </AlertDialog>
+    );
+
     return (
         <DialogContainer onDismiss={() => triggerState.close()}>
-            {isWorkspaceEmpty ? deleteDialog : warningDialog}
+            {loading ? loadingDialog : hasProjects ? warningDialog : deleteDialog}
         </DialogContainer>
     );
 };

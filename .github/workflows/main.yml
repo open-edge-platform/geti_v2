@@ -21,7 +21,6 @@
 #
 # Inputs:
 # - publish_binaries: Enable publishing binaries (default: true)
-# - ref: The branch, tag, or SHA to checkout (default: current ref)
 #
 
 name: Main CI
@@ -49,10 +48,6 @@ on:
         description: "Enable publishing binaries"
         type: boolean
         default: true
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        required: true
-        default: ""
 
 concurrency:
   group: ${{ github.head_ref || github.ref_name }}
@@ -71,7 +66,6 @@ jobs:
       build_all: ${{ steps.set-vars.outputs.build_all }}
       build_version: "${{ steps.prepare-build-version.outputs.build_version }}"
       platform_version: "${{ steps.prepare-build-version.outputs.platform_version }}"
-      checkout_ref: ${{ steps.set-vars.outputs.checkout_ref }}
       publish_binaries: ${{ steps.set-vars.outputs.publish_binaries }}
       components-list: ${{ steps.components-list.outputs.paths_list }}
       filtered-components-list: ${{ steps.filtered-components-list.outputs.filtered-list }}
@@ -93,8 +87,8 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
+          GITHUB_SHA: ${{ github.sha }}
           DISPATCH_PUB: ${{ github.event.inputs.publish_binaries }}
-          DISPATCH_REF: ${{ github.event.inputs.ref }}
         run: |
 
           is_build_all_event() {
@@ -115,13 +109,6 @@ jobs:
           (is_build_all_event || is_tag) && build_all=true
           (is_publish_event || is_tag) && publish_binaries=true
 
-          # CHECKOUT_REF: manual input if provided, else use default ref
-          if [[ "$EVENT_NAME" == "workflow_dispatch" && -n "$DISPATCH_REF" ]]; then
-            checkout_ref="$DISPATCH_REF"
-          else
-            checkout_ref="$GITHUB_REF"
-          fi
-
           # REGISTRY: use production registry for scheduled runs, else use dev registry
           if [[ "$EVENT_NAME" == "schedule" ]]; then
             registry="ghcr.io/open-edge-platform"
@@ -131,12 +118,12 @@ jobs:
 
           echo "build_all=$build_all"               >> $GITHUB_OUTPUT
           echo "publish_binaries=$publish_binaries" >> $GITHUB_OUTPUT
-          echo "checkout_ref=$checkout_ref"         >> $GITHUB_OUTPUT
           echo "registry=$registry"                 >> $GITHUB_OUTPUT
 
           echo "build_all=$build_all"
           echo "publish_binaries=$publish_binaries"
-          echo "checkout_ref=$checkout_ref"
+          echo "checkout_ref=$GITHUB_REF"
+          echo "checkout_sha=$GITHUB_SHA"
           echo "registry=$registry"
 
       - name: Checkout code
@@ -144,7 +131,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-          ref: ${{ steps.set-vars.outputs.checkout_ref }}
+          ref: ${{ github.sha }}
 
       - name: Get SHA, list images and umbrella charts
         id: repo-vars
@@ -170,7 +157,7 @@ jobs:
         id: prepare-build-version
         uses: ./.github/actions/build-version
         with:
-          ref: ${{ steps.set-vars.outputs.checkout_ref }}
+          ref: ${{ github.sha }}
 
       - name: Get changed components dirs
         id: components-list
@@ -211,7 +198,6 @@ jobs:
         component: ${{ fromJSON(needs.get-vars.outputs.libs-list) }}
     with:
       component-dir: ${{ matrix.component }}
-      ref: ${{ needs.get-vars.outputs.checkout_ref }}
 
   component-workflow:
     name: Component workflow
@@ -231,7 +217,6 @@ jobs:
       build_version: ${{ needs.get-vars.outputs.build_version }}
       component_dir: ${{ matrix.component }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
-      ref: ${{ needs.get-vars.outputs.checkout_ref }}
       registry: ${{ needs.get-vars.outputs.registry }}
 
   web-ui-workflow:
@@ -245,7 +230,6 @@ jobs:
     with:
       build_version: ${{ needs.get-vars.outputs.build_version }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
-      ref: ${{ needs.get-vars.outputs.checkout_ref }}
       registry: ${{ needs.get-vars.outputs.registry }}
 
   package-distribution-workflow:
@@ -263,7 +247,6 @@ jobs:
       build_version: ${{ needs.get-vars.outputs.build_version }}
       platform_version: ${{ needs.get-vars.outputs.platform_version }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
-      ref: ${{ needs.get-vars.outputs.checkout_ref }}
       registry: ${{ needs.get-vars.outputs.registry }}
 
   success:

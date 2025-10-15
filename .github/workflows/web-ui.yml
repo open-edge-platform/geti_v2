@@ -1,3 +1,32 @@
+# Web UI workflow for the Geti project
+#
+# This reusable workflow builds, lints, type‑checks, and tests the Web UI layer
+# (unit + component tests) and then optionally invokes the component workflow
+# to publish artifacts when requested.
+#
+# Key Features:
+# - Produces a production build tarball (compressed build artifact)
+# - Runs formatting (Prettier), lint (ESLint), cyclic import detection, and TypeScript checks
+# - Executes sharded Jest unit tests (5 shards) for parallel speed‑up
+# - Executes sharded Playwright component tests (5 shards) in a pinned container image
+# - Merges Playwright shard blob reports into a single HTML report
+# - Invokes nested component workflow (component.yml) for downstream publish / distribution steps
+#
+# Process Stages:
+# 1. Build UI (compile & compress)
+# 2. Lint & formatting & type checking
+# 3. Sharded unit tests (Jest)
+# 4. Sharded component tests (Playwright)
+# 5. Merge Playwright reports (HTML)
+# 6. Invoke component workflow (optional publish)
+#
+# Inputs (workflow_call):
+# - build_version: Version string applied to produced artifacts (required)
+# - publish_binaries: Whether to trigger publishing flow in the component workflow (default: false)
+# - registry: The container registry to push images to
+#
+
+
 name: Web UI checks
 
 on:
@@ -11,10 +40,6 @@ on:
         description: "Enable publishing binaries to repos"
         type: boolean
         default: false
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        type: string
-        default: ""
       registry:
         description: "The container registry to push images to"
         type: string
@@ -38,9 +63,9 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         id: setup-node
         with:
           node-version-file: web_ui/.nvmrc
@@ -77,9 +102,9 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         id: setup-node
         with:
           node-version-file: web_ui/.nvmrc
@@ -123,9 +148,9 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         id: setup-node
         with:
           node-version-file: web_ui/.nvmrc
@@ -162,9 +187,9 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         id: setup-node
         with:
           node-version-file: web_ui/.nvmrc
@@ -211,9 +236,9 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         id: setup-node
         with:
           node-version-file: web_ui/.nvmrc
