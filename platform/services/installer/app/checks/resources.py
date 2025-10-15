@@ -187,11 +187,16 @@ def _get_intel_gpus() -> str:
     try:
         command = 'clinfo|grep "' + ResourcesChecksTexts.intel_gpu_arc_device_name + '"|grep Intel'
         logger.debug(f"Getting the list of Intel ARC with {command}")
+
+        env = os.environ.copy()
+        env.pop('LD_LIBRARY_PATH', None)
+
         clinfo_output = subprocess.check_output(  # noqa: S602  # nosec: B602
             command,
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=5,
+            env=env,
         ).decode("utf-8")
         logger.debug(clinfo_output)
         if ResourcesChecksTexts.intel_gpu_arc_device_name in clinfo_output:
