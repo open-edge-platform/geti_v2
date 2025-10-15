@@ -103,8 +103,8 @@ export interface Role {
 }
 
 export enum USER_ROLE {
-    WORKSPACE_ADMIN = 'Admin',
-    WORKSPACE_CONTRIBUTOR = 'Contributor',
+    WORKSPACE_ADMIN = 'Workspace admin',
+    WORKSPACE_CONTRIBUTOR = 'Workspace contributor',
     PROJECT_MANAGER = 'Project manager',
     PROJECT_CONTRIBUTOR = 'Project contributor',
     ORGANIZATION_ADMIN = 'Organization admin',
@@ -123,8 +123,9 @@ export interface UsersQueryParamsDTO
                 | 'userPhoto'
             >
         >,
-        Partial<RoleResourceDTO>,
+        Omit<Partial<RoleResourceDTO>, 'resourceType'>,
         QueryParametersDTO<keyof UserDTO> {
+    resourceType?: ResourceTypeDTO | ResourceTypeDTO[];
     lastSuccessfulLoginFrom?: string;
     lastSuccessfulLoginTo?: string;
 }
@@ -193,8 +194,9 @@ export interface UsersQueryParams
                 | 'userPhoto'
             > & { name: string }
         >,
-        Partial<RoleResource>,
+        Omit<Partial<RoleResource>, 'resourceType'>,
         QueryParameters<keyof User> {
+    resourceType?: RESOURCE_TYPE | RESOURCE_TYPE[];
     lastSuccessfulLoginFrom?: string;
     lastSuccessfulLoginTo?: string;
 }

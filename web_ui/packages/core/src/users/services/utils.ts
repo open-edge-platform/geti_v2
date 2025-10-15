@@ -220,7 +220,11 @@ export const getUsersQueryParamsDTO = (queryParams: UsersQueryParams): UsersQuer
         secondName: lastName,
         externalId: externalIdentitySystemId,
         role: role ? USER_ROLE_MAPPING_DTO[role] : undefined,
-        resourceType: resourceType ? USER_RESOURCE_TYPE_MAPPING_DTO[resourceType] : undefined,
+        resourceType: resourceType
+            ? Array.isArray(resourceType)
+                ? resourceType.map((type) => USER_RESOURCE_TYPE_MAPPING_DTO[type])
+                : USER_RESOURCE_TYPE_MAPPING_DTO[resourceType]
+            : undefined,
         sortDirection: sortDirection ? (sortDirection === 'ASC' ? 'asc' : 'desc') : undefined,
 
         sortBy:

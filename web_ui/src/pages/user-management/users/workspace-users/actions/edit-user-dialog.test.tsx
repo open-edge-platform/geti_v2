@@ -79,7 +79,7 @@ describe('EditUserDialog', () => {
             expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
 
             expect(screen.getByTestId('edit-workspace-role-Workspace 1')).toBeInTheDocument();
-            expect(screen.getByTestId('roles-add-user')).toHaveTextContent('Admin');
+            expect(screen.getByTestId('roles-add-user')).toHaveTextContent('Workspace admin');
             expect(screen.getByRole('button', { name: 'Add workspace role' })).toBeDisabled();
         });
 
@@ -113,7 +113,7 @@ describe('EditUserDialog', () => {
             expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
 
             expect(screen.getByTestId('edit-workspace-role-Workspace 1')).toBeInTheDocument();
-            expect(screen.getByTestId('roles-add-user')).toHaveTextContent('Admin');
+            expect(screen.getByTestId('roles-add-user')).toHaveTextContent('Workspace admin');
             expect(screen.getByRole('button', { name: 'Add workspace role' })).toBeDisabled();
         });
 
@@ -147,7 +147,7 @@ describe('EditUserDialog', () => {
                 await userEvent.click(screen.getByTestId('roles-add-user'));
                 await userEvent.selectOptions(
                     screen.getByRole('listbox', { name: 'Role' }),
-                    screen.getByRole('option', { name: /Contributor/ })
+                    screen.getByRole('option', { name: /Workspace contributor/ })
                 );
 
                 await userEvent.click(screen.getByRole('button', { name: 'Save' }));
@@ -233,7 +233,7 @@ describe('EditUserDialog', () => {
 
             await userEvent.selectOptions(
                 screen.getByRole('listbox', { name: 'Role' }),
-                screen.getByRole('option', { name: /Contributor/ })
+                screen.getByRole('option', { name: /Workspace contributor/ })
             );
         });
 
@@ -269,7 +269,7 @@ describe('EditUserDialog', () => {
                 await userEvent.click(screen.getByRole('button', { name: /role/i }));
                 await userEvent.selectOptions(
                     screen.getByRole('listbox', { name: 'Role' }),
-                    screen.getByRole('option', { name: /Contributor/ })
+                    screen.getByRole('option', { name: /Workspace contributor/ })
                 );
 
                 await userEvent.click(screen.getByRole('button', { name: 'Save' }));
@@ -372,8 +372,8 @@ describe('EditUserDialog', () => {
 
             await userEvent.click(screen.getByRole('button', { name: /role/i }));
 
-            expect(screen.getByRole('option', { name: /Contributor/ })).toBeInTheDocument();
-            expect(screen.getByRole('option', { name: /Admin/ })).toBeInTheDocument();
+            expect(screen.getByRole('option', { name: /Workspace contributor/ })).toBeInTheDocument();
+            expect(screen.getByRole('option', { name: /Workspace admin/ })).toBeInTheDocument();
         });
 
         it('active member can edit member their role when there are more admins than one', async () => {
@@ -397,8 +397,8 @@ describe('EditUserDialog', () => {
 
             await userEvent.click(screen.getByRole('button', { name: /role/i }));
 
-            expect(screen.getByRole('option', { name: /Contributor/ })).toBeInTheDocument();
-            expect(screen.getByRole('option', { name: /Admin/ })).toBeInTheDocument();
+            expect(screen.getByRole('option', { name: /Workspace contributor/ })).toBeInTheDocument();
+            expect(screen.getByRole('option', { name: /Workspace admin/ })).toBeInTheDocument();
         });
     });
 });

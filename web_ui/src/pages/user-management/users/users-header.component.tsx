@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 
 import { USER_ROLE, UsersQueryParams } from '@geti/core/src/users/users.interface';
 import { Flex, SearchField } from '@geti/ui';
@@ -17,6 +17,7 @@ interface WorkspaceUsersHeaderProps {
     hasFilterOptions: boolean;
     setUsersQueryParams: Dispatch<SetStateAction<UsersQueryParams>>;
     isProjectUsersTable?: boolean;
+    actionsSlot?: ReactNode;
 }
 
 export const UsersHeader = ({
@@ -25,6 +26,7 @@ export const UsersHeader = ({
     hasFilterOptions,
     setUsersQueryParams,
     isProjectUsersTable = false,
+    actionsSlot,
 }: WorkspaceUsersHeaderProps) => {
     const [searchInput, setSearchInput] = useState<string>('');
     const [roleFilter, setRoleFilter] = useState<USER_ROLE | undefined>();
@@ -83,16 +85,19 @@ export const UsersHeader = ({
                     emptyItem={'All roles'}
                     selectedRole={roleFilter}
                     setSelectedRole={changeRole}
-                    options={{ showLabel: false }}
+                    label={false}
                     testId={'users-header-role-picker'}
                 />
             </Flex>
-            <UsersCount
-                totalMatchedCount={totalMatchedCount}
-                totalCount={totalCount}
-                hasFilters={hasFilterOptions}
-                id={'users-header-users-count'}
-            />
+            <Flex alignItems={'center'} gap={'size-150'}>
+                {actionsSlot}
+                <UsersCount
+                    totalMatchedCount={totalMatchedCount}
+                    totalCount={totalCount}
+                    hasFilters={hasFilterOptions}
+                    id={'users-header-users-count'}
+                />
+            </Flex>
         </Flex>
     );
 };

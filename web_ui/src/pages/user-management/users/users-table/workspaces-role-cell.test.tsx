@@ -43,7 +43,7 @@ describe('WorkspacesRoleCell', () => {
             />
         );
 
-        expect(screen.getByTestId('roles')).toHaveTextContent('Admin');
+        expect(screen.getByTestId('roles')).toHaveTextContent('Workspace admin');
     });
 
     it('Show contributor role for selected workspace', () => {
@@ -60,7 +60,7 @@ describe('WorkspacesRoleCell', () => {
             />
         );
 
-        expect(screen.getByTestId('roles')).toHaveTextContent('Contributor');
+        expect(screen.getByTestId('roles')).toHaveTextContent('Workspace contributor');
     });
 
     it('Show workspaces available for user', () => {
