@@ -27,7 +27,7 @@ export const RolePicker = <T extends USER_ROLE>({
 }: RolePickerProps<T>) => {
     const rolesItems = roles.map((role) => ({ key: role, text: role }));
     const items = isEmpty(emptyItem) ? rolesItems : [...rolesItems, { key: '', text: emptyItem }];
-    const labelContent = label ? label : 'Role';
+    const labelContent = label || 'Role';
 
     const onSelectionChange = (key: Key) => {
         setSelectedRole(key as T);
