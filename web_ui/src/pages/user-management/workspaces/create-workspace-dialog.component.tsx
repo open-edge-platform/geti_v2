@@ -29,26 +29,29 @@ interface CreateWorkspaceDialogProps {
 }
 
 export const CreateWorkspaceDialog = ({ names, triggerState, nameLimitations = {} }: CreateWorkspaceDialogProps) => {
-    const [updatedName, setUpdatedName] = useState<string>('');
+    const [workspaceName, setWorkspaceName] = useState<string>('');
 
-    const isEmptyName = isEmpty(updatedName);
-    const isDuplicatedName = names.some((name) => name.toLocaleLowerCase() === updatedName.trim().toLocaleLowerCase());
+    const isEmptyName = isEmpty(workspaceName);
+    const isDuplicatedName = names.some(
+        (name) => name.toLocaleLowerCase() === workspaceName.trim().toLocaleLowerCase()
+    );
     const isConfirmButtonDisabled = isEmptyName || isDuplicatedName;
     const { organizationId } = useOrganizationIdentifier();
     const { useCreateWorkspaceMutation } = useWorkspacesApi(organizationId);
     const createWorkspace = useCreateWorkspaceMutation();
 
     const handleOnChange = (name: string) => {
-        setUpdatedName(name);
+        setWorkspaceName(name);
     };
 
     const handleConfirm = (event: FormEvent) => {
         event.preventDefault();
-        const newName = updatedName.trim();
+        const newName = workspaceName.trim();
 
         createWorkspace.mutate({ name: newName });
 
         triggerState.close();
+        setWorkspaceName('');
     };
 
     return (
@@ -67,7 +70,7 @@ export const CreateWorkspaceDialog = ({ names, triggerState, nameLimitations = {
                                 id={`create-workspace-name`}
                                 data-testid={`create-workspace-name`}
                                 width={'100%'}
-                                value={updatedName}
+                                value={workspaceName}
                                 onChange={handleOnChange}
                                 label={'Workspace name'}
                                 validationState={isDuplicatedName ? 'invalid' : undefined}
