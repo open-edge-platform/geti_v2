@@ -3,9 +3,7 @@
 
 import { FormEvent, useMemo, useState } from 'react';
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
-import { getRoleCreationPayload, getRoleDeletionPayload } from '@geti/core/src/users/services/utils';
 import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import { RESOURCE_TYPE, User, USER_ROLE } from '@geti/core/src/users/users.interface';
 import {
@@ -47,11 +45,9 @@ export const EditOrganizationUserDialog = ({
     isSaasEnvironment,
     closeDialog,
 }: EditOrganizationUserDialogProps) => {
-    const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();
-    const { useUpdateUser, useUpdateUserRoles, useUpdateMemberRole } = useUsers();
+    const { useUpdateUser, useUpdateRole } = useUsers();
     const updateUser = useUpdateUser();
-    const updateUserRoles = useUpdateUserRoles();
-    const updateMemberRole = useUpdateMemberRole();
+    const updateRole = useUpdateRole();
 
     const isActiveOrgAdmin = isOrganizationAdmin(activeUser, organizationId);
     const isEditingSelf = activeUser.id === user.id;
@@ -99,45 +95,26 @@ export const EditOrganizationUserDialog = ({
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const promises: Promise<User | void>[] = [];
 
         if (canUpdateUser) {
-            promises.push(
-                updateUser.mutateAsync({
-                    user: { ...user, firstName, lastName },
-                    userId: user.id,
-                    organizationId,
-                })
-            );
+            updateUser.mutate({
+                user: { ...user, firstName, lastName },
+                userId: user.id,
+                organizationId,
+            });
         }
 
         if (canUpdateUserRoles) {
-            if (FEATURE_FLAG_MANAGE_USERS_ROLES) {
-                promises.push(
-                    updateMemberRole.mutateAsync({
-                        organizationId,
-                        memberId: user.id,
-                        role: { role: selectedOrgRole, resourceId: organizationId },
-                    })
-                );
-            } else if (currentOrgRole) {
-                const del = getRoleDeletionPayload({
-                    role: currentOrgRole,
-                    resourceId: organizationId,
-                    resourceType: RESOURCE_TYPE.ORGANIZATION,
-                });
-                const create = getRoleCreationPayload({
-                    role: selectedOrgRole,
-                    resourceId: organizationId,
-                    resourceType: RESOURCE_TYPE.ORGANIZATION,
-                });
-                promises.push(
-                    updateUserRoles.mutateAsync({ newRoles: [del, create], userId: user.id, organizationId })
-                );
-            }
+            updateRole.mutate({
+                organizationId,
+                userId: user.id,
+                resourceId: organizationId,
+                resourceType: RESOURCE_TYPE.ORGANIZATION,
+                newRole: selectedOrgRole,
+                previousRole: currentOrgRole,
+            })
         }
 
-        await Promise.all(promises);
         closeDialog();
     };
 
@@ -221,7 +198,7 @@ export const EditOrganizationUserDialog = ({
                             variant='accent'
                             type={'submit'}
                             isDisabled={isSaveDisabled}
-                            isPending={updateUser.isPending || updateUserRoles.isPending || updateMemberRole.isPending}
+                            isPending={updateUser.isPending || updateRole.isPending}
                         >
                             Save
                         </Button>

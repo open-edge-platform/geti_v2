@@ -78,6 +78,13 @@ interface UseUpdateMemberRolePayload {
     role: MemberRole;
 }
 
+export interface UseUpdateRolePayload extends UseUsersBasePayload {
+    resourceId: string;
+    resourceType: RESOURCE_TYPE;
+    newRole: MemberRole['role'];
+    previousRole?: MemberRole['role'];
+}
+
 export interface UseUsers {
     useActiveUser: (organizationId: string, resource?: Resource) => UseQueryResult<User, AxiosError>;
     useGetUsersQuery: (organizationId: string, queryParams?: UsersQueryParams) => UseGetUsersQuery;
@@ -92,6 +99,7 @@ export interface UseUsers {
     useUpdateUserRoles: () => UseMutationResult<void, AxiosError, UseUpdateUserRolesPayload>;
     useInviteUserMutation: (organizationId: string) => UseMutationResult<void, AxiosError, UseInviteUserPayload>;
 
+    useUpdateRole: () => UseMutationResult<void, AxiosError, UseUpdateRolePayload>;
     useUpdateMemberRole: () => UseMutationResult<void, AxiosError, UseUpdateMemberRolePayload>;
     useDeleteMemberRole: () => UseMutationResult<void, AxiosError, UseUpdateMemberRolePayload>;
 }
