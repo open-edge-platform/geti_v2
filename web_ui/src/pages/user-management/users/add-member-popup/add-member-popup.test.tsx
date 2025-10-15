@@ -95,7 +95,7 @@ describe('Add member popup', () => {
     it('save button should be disabled initially', async () => {
         await renderAddMember();
 
-    const saveButton = screen.getByRole('button', { name: 'save add user' });
+        const saveButton = screen.getByRole('button', { name: 'save add user' });
 
         expect(saveButton).toBeDisabled();
     });

@@ -41,7 +41,9 @@ interface InviteUserDialogProps extends WorkspaceIdentifier {
 }
 export const InviteUserDialog = ({ isAdmin, id, organizationId, workspaceId }: InviteUserDialogProps) => {
     // Org role selection
-    const orgRoles = isAdmin ? [USER_ROLE.ORGANIZATION_CONTRIBUTOR, USER_ROLE.ORGANIZATION_ADMIN] : [USER_ROLE.ORGANIZATION_CONTRIBUTOR];
+    const orgRoles = isAdmin
+        ? [USER_ROLE.ORGANIZATION_CONTRIBUTOR, USER_ROLE.ORGANIZATION_ADMIN]
+        : [USER_ROLE.ORGANIZATION_CONTRIBUTOR];
     const [selectedOrgRole, setSelectedOrgRole] = useState<USER_ROLE>(USER_ROLE.ORGANIZATION_CONTRIBUTOR);
 
     // Workspace selection (only when org contributor)
@@ -207,9 +209,7 @@ export const InviteUserDialog = ({ isAdmin, id, organizationId, workspaceId }: I
                                             }
                                         />
                                     </Flex>
-                                ) : (
-                                    null
-                                )}
+                                ) : <></>}
                                 <ErrorMessage marginTop={'size-150'} message={errorMsg} id={'invite'} />
                                 <Flex alignItems={'center'} gap={'size-100'} marginTop={'size-150'}>
                                     <Info />

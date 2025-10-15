@@ -91,9 +91,9 @@ describe('Invite user to the workspace', () => {
         fireEvent.click(screen.getByRole('button', { name: /Organization Role/, expanded: false }));
         expect(screen.getByRole('option', { name: USER_ROLE.ORGANIZATION_ADMIN })).toBeInTheDocument();
         expect(screen.getByRole('option', { name: USER_ROLE.ORGANIZATION_CONTRIBUTOR })).toBeInTheDocument();
-        fireEvent.click(screen.getByRole('option', { name: USER_ROLE.ORGANIZATION_CONTRIBUTOR}));
+        fireEvent.click(screen.getByRole('option', { name: USER_ROLE.ORGANIZATION_CONTRIBUTOR }));
 
-        fireEvent.click(screen.getByRole('button', { name: /Workspace Role/, expanded: false}))
+        fireEvent.click(screen.getByRole('button', { name: /Workspace Role/, expanded: false }));
         expect(screen.getByRole('option', { name: USER_ROLE.WORKSPACE_ADMIN })).toBeInTheDocument();
         expect(screen.getByRole('option', { name: USER_ROLE.WORKSPACE_CONTRIBUTOR })).toBeInTheDocument();
     });

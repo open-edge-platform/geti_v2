@@ -23,8 +23,6 @@ import {
     PasswordField,
     Picker,
     TextField,
-    Tooltip,
-    TooltipTrigger,
 } from '@geti/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { ValidationError } from 'yup';
@@ -282,9 +280,7 @@ export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupPr
                                             width={'100%'}
                                         />
                                     </Flex>
-                                ) : (
-                                    null
-                                )}
+                                ) : <></>}
                                 <PasswordField
                                     error={password.error}
                                     label='Password'
