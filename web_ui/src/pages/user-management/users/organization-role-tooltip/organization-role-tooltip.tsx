@@ -4,7 +4,7 @@
 import { Flex, Text, View } from '@geti/ui';
 
 export const OrganizationRoleTooltipContent = () => (
-    <View width={350}>
+    <View width={'size-4600'}>
         <Flex direction={'column'} gap={'size-100'}>
             <Text>
                 New users that are added to an organization can have two different roles: organization admin and

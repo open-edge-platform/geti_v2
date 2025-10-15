@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-// Simplified Users tab: single organization-wide users view (no inner tabs or workspace selector)
-
 import { RESOURCE_TYPE, User } from '@geti/core/src/users/users.interface';
 import { Flex, Text } from '@geti/ui';
 

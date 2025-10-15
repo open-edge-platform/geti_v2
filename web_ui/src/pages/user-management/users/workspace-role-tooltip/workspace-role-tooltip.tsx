@@ -4,7 +4,7 @@
 import { Flex, Text, View } from '@geti/ui';
 
 export const WorkspaceRoleTooltipContent = () => (
-    <View width={350}>
+    <View width={'size-4600'}>
         <Flex direction={'column'} gap={'size-100'}>
             <Text>
                 <strong>Workspace admin:</strong> has full create, view, access, and edit rights for projects inside the

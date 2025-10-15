@@ -89,11 +89,18 @@ export const EditOrganizationUserDialog = ({
 
     const isSaveDisabled = !nameChanged && !roleChanged;
 
+    const canUpdateUser = nameChanged && !isSaasEnvironment && canEditNames;
+    const canUpdateUserRoles =
+        roleChanged &&
+        isActiveOrgAdmin &&
+        selectedOrgRole &&
+        !(isLastRemainingOrgAdmin && selectedOrgRole !== USER_ROLE.ORGANIZATION_ADMIN);
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         const promises: Promise<User | void>[] = [];
 
-        if (nameChanged && !isSaasEnvironment && canEditNames) {
+        if (canUpdateUser) {
             promises.push(
                 updateUser.mutateAsync({
                     user: { ...user, firstName, lastName },
@@ -103,12 +110,7 @@ export const EditOrganizationUserDialog = ({
             );
         }
 
-        if (
-            roleChanged &&
-            isActiveOrgAdmin &&
-            selectedOrgRole &&
-            !(isLastRemainingOrgAdmin && selectedOrgRole !== USER_ROLE.ORGANIZATION_ADMIN)
-        ) {
+        if (canUpdateUserRoles) {
             if (FEATURE_FLAG_MANAGE_USERS_ROLES) {
                 promises.push(
                     updateMemberRole.mutateAsync({
