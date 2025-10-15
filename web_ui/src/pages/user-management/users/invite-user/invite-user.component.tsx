@@ -209,7 +209,9 @@ export const InviteUserDialog = ({ isAdmin, id, organizationId, workspaceId }: I
                                             }
                                         />
                                     </Flex>
-                                ) : <></>}
+                                ) : (
+                                    <></>
+                                )}
                                 <ErrorMessage marginTop={'size-150'} message={errorMsg} id={'invite'} />
                                 <Flex alignItems={'center'} gap={'size-100'} marginTop={'size-150'}>
                                     <Info />

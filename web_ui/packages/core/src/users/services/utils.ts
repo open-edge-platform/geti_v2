@@ -87,7 +87,7 @@ const resourceMapDTO: Record<ResourceTypeDTO, RESOURCE_TYPE> = {
 };
 
 export const mapResourceTypeToDTO = (
-    resourceType?: RESOURCE_TYPE | RESOURCE_TYPE[],
+    resourceType?: RESOURCE_TYPE | RESOURCE_TYPE[]
 ): ResourceTypeDTO | ResourceTypeDTO[] | undefined => {
     if (resourceType == null) {
         return undefined;
