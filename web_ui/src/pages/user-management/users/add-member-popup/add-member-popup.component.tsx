@@ -283,7 +283,7 @@ export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupPr
                                         />
                                     </Flex>
                                 ) : (
-                                    <></>
+                                    null
                                 )}
                                 <PasswordField
                                     error={password.error}
