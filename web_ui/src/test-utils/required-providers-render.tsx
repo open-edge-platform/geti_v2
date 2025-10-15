@@ -27,6 +27,7 @@ interface RequiredProvidersProps extends Partial<ApplicationServicesContextProps
     featureFlags?: CustomFeatureFlags;
     profile?: OnboardingProfile | null;
     queryClient?: QueryClient;
+    skipPrefillDeploymentConfig?: boolean;
 }
 
 const prefilledOrgId = '000000000000000000000001';
@@ -54,7 +55,15 @@ const adminDeploymentConfig: DeploymentConfiguration = {
     },
 };
 
-const usePrefilledQueryClient = (featureFlags?: CustomFeatureFlags, profile?: OnboardingProfile | null) => {
+const usePrefilledQueryClient = ({
+    featureFlags,
+    profile,
+    skipPrefillDeploymentConfig,
+}: {
+    featureFlags?: CustomFeatureFlags;
+    profile?: OnboardingProfile | null;
+    skipPrefillDeploymentConfig?: boolean;
+}) => {
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
@@ -85,8 +94,10 @@ const usePrefilledQueryClient = (featureFlags?: CustomFeatureFlags, profile?: On
         ]);
     });
 
-    queryClient.setQueryData(['deployment-config', false], defaultDeploymentConfig);
-    queryClient.setQueryData(['deployment-config', true], adminDeploymentConfig);
+    if (!skipPrefillDeploymentConfig) {
+        queryClient.setQueryData(['deployment-config', false], defaultDeploymentConfig);
+        queryClient.setQueryData(['deployment-config', true], adminDeploymentConfig);
+    }
 
     return queryClient;
 };
@@ -97,9 +108,14 @@ export const RequiredProviders = ({
     initialEntries,
     profile,
     queryClient,
+    skipPrefillDeploymentConfig,
     ...services
 }: RequiredProvidersProps) => {
-    const prefilledQueryClient = usePrefilledQueryClient(featureFlags, profile);
+    const prefilledQueryClient = usePrefilledQueryClient({
+        featureFlags,
+        profile,
+        skipPrefillDeploymentConfig,
+    });
 
     return (
         <Suspense fallback={<IntelBrandedLoading />}>

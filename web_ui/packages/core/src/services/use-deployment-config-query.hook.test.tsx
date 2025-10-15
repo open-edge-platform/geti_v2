@@ -37,7 +37,9 @@ describe('useDeploymentConfigQuery', () => {
     const renderDeploymentConfigHook = ({ isAdmin = false }: { isAdmin?: boolean } = {}) => {
         jest.mocked(isAdminLocation).mockImplementation(() => isAdmin);
 
-        return renderHookWithProviders(useDeploymentConfigQuery);
+        return renderHookWithProviders(useDeploymentConfigQuery, {
+            providerProps: { skipPrefillDeploymentConfig: true },
+        });
     };
 
     describe('not having a deployment config', () => {
