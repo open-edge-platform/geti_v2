@@ -112,7 +112,7 @@ export const EditOrganizationUserDialog = ({
                 resourceType: RESOURCE_TYPE.ORGANIZATION,
                 newRole: selectedOrgRole,
                 previousRole: currentOrgRole,
-            })
+            });
         }
 
         closeDialog();

@@ -123,7 +123,7 @@ describe('useUsers', () => {
         expect(mockedUsersService.updateRoles).toHaveBeenCalledTimes(1);
         expect(mockedUsersService.updateRoles).toHaveBeenCalledWith('organization-id', 'user-id', [
             getRoleDeletionPayload({
-                role: payload.previousRole!,
+                role: payload.previousRole,
                 resourceId: payload.resourceId,
                 resourceType: payload.resourceType,
             }),

@@ -10,8 +10,8 @@ import { validate } from 'uuid';
 
 import { AccountStatusDTO } from '../../../../../src/core/organizations/dtos/organizations.interface';
 import { redirectTo } from '../../../../../src/shared/utils';
-import QUERY_KEYS from '../../requests/query-keys';
 import { useFeatureFlags } from '../../feature-flags/hooks/use-feature-flags.hook';
+import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
 import { paths } from '../../services/routes';
 import { getErrorMessage } from '../../services/utils';
@@ -23,9 +23,9 @@ import {
     UseDeleteUserPayload,
     UseDeleteUserPhotoPayload,
     UseInviteUserPayload,
+    UseUpdateRolePayload,
     UseUpdateUserPayload,
     UseUpdateUserStatusesPayload,
-    UseUpdateRolePayload,
     UseUploadUserPhotoPayload,
     UseUsers,
 } from './use-users.interface';
@@ -331,14 +331,7 @@ export const useUsers = (): UseUsers => {
         const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();
 
         return useMutation<void, AxiosError, UseUpdateRolePayload>({
-            mutationFn: async ({
-                organizationId,
-                userId,
-                newRole,
-                previousRole,
-                resourceId,
-                resourceType,
-            }) => {
+            mutationFn: async ({ organizationId, userId, newRole, previousRole, resourceId, resourceType }) => {
                 if (FEATURE_FLAG_MANAGE_USERS_ROLES) {
                     await usersService.updateMemberRole(organizationId, userId, {
                         role: newRole,
