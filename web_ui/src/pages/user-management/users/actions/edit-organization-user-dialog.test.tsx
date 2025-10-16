@@ -9,7 +9,7 @@ import {
     UserRoleDTO,
     type User,
 } from '@geti/core/src/users/users.interface';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { applicationRender as render } from '../../../../test-utils/application-provider-render';
@@ -164,10 +164,8 @@ describe('EditOrganizationUserDialog', () => {
             );
 
             await userEvent.click(screen.getByTestId('roles-add-user'));
-            await userEvent.selectOptions(
-                screen.getByRole('listbox', { name: 'Role' }),
-                screen.getByRole('option', { name: /contributor/i })
-            );
+            const roleListbox = await screen.findByRole('listbox', { name: /organization role/i });
+            await userEvent.click(within(roleListbox).getByRole('option', { name: /contributor/i }));
 
             const saveButton = screen.getByRole('button', { name: 'Save' });
             await userEvent.click(saveButton);
@@ -214,10 +212,8 @@ describe('EditOrganizationUserDialog', () => {
             );
 
             await userEvent.click(screen.getByTestId('roles-add-user'));
-            await userEvent.selectOptions(
-                screen.getByRole('listbox', { name: 'Role' }),
-                screen.getByRole('option', { name: /contributor/i })
-            );
+            const roleListbox = await screen.findByRole('listbox', { name: /organization role/i });
+            await userEvent.click(within(roleListbox).getByRole('option', { name: /contributor/i }));
 
             await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 

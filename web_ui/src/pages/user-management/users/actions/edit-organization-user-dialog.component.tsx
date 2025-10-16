@@ -185,8 +185,8 @@ export const EditOrganizationUserDialog = ({
                         isDisabled={isLastRemainingOrgAdmin}
                         contextualHelp={
                             <ContextualHelp>
-                                <Heading>What roles can there be in a workspace?</Heading>
-                                <Content UNSAFE_className={tooltipClasses.workspaceRoleContextualHelp}>
+                                <Heading>What roles can there be in an organization?</Heading>
+                                <Content UNSAFE_className={tooltipClasses.organizationRoleContextualHelp}>
                                     <OrganizationRoleTooltipContent />
                                 </Content>
                             </ContextualHelp>
