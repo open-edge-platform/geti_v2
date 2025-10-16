@@ -68,7 +68,7 @@ export const RangeParameterField: FC<RangeParameterFieldProps> = ({
     };
 
     return (
-        <Flex gap={'size-100'} aria-label={name}>
+        <Flex gap={'size-100'}>
             <NumberField
                 isQuiet
                 step={fieldStep}
