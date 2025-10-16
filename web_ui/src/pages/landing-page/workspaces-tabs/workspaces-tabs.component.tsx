@@ -38,7 +38,7 @@ export const WorkspacesTabs = () => {
         key: id,
         children: <Workspace />,
     }));
-    const workspacesNames = workspaces.map((w) => w.name);
+    const workspacesNames = workspaces.map((workspace) => workspace.name);
 
     return (
         <Flex id={`page-layout-id`} direction='column' height='100%' UNSAFE_className={classes.componentWrapper}>
@@ -91,7 +91,7 @@ export const WorkspacesTabs = () => {
                                     isQuiet
                                     id={'create-new-workspace-id'}
                                     aria-label={'Create new workspace'}
-                                    onPress={() => createWorkspaceDialogState.setOpen(true)}
+                                    onPress={createWorkspaceDialogState.open}
                                     isDisabled={createWorkspace.isPending}
                                 >
                                     {createWorkspace.isPending ? <Loading mode='inline' size={'S'} /> : <Add />}

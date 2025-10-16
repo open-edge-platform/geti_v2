@@ -48,8 +48,8 @@ export const WorkspaceUsersToolbar = ({
 
     const { deleteDialog, editDialog } = useWorkspaceActions(workspaces.length, selectedWorkspaceId);
 
-    const tabItems = workspaces.map((w) => ({ key: w.id, name: w.name }));
-    const workspacesNames = workspaces.map((w) => w.name);
+    const tabItems = workspaces.map((workspace) => ({ key: workspace.id, name: workspace.name }));
+    const workspacesNames = workspaces.map((workspace) => workspace.name);
 
     const handleSelection = (key: Key) => {
         onSelectWorkspace(key.toString());
@@ -100,7 +100,7 @@ export const WorkspaceUsersToolbar = ({
                                     isQuiet
                                     aria-label={'Create workspace'}
                                     id={'create-workspace-toolbar-btn'}
-                                    onPress={() => createWorkspaceDialogState.setOpen(true)}
+                                    onPress={createWorkspaceDialogState.open}
                                     isDisabled={createWorkspace.isPending}
                                 >
                                     {createWorkspace.isPending ? <Loading mode='inline' size={'S'} /> : <Add />}
