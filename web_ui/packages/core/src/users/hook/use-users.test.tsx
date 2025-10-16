@@ -47,6 +47,10 @@ describe('useUsers', () => {
         const { result } = renderHook(() => useActiveUser('organization-id'), { wrapper });
 
         await waitFor(() => {
+            expect(result.current).not.toBeNull();
+        });
+
+        await waitFor(() => {
             expect(result.current.data).toStrictEqual(mockedUser);
         });
     });
@@ -63,6 +67,10 @@ describe('useUsers', () => {
 
     it('query is not executed if the user id is invalid', async () => {
         const { result } = renderHook(() => useUsers(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current).not.toBeNull();
+        });
 
         renderHook(() => result.current.useGetUserQuery('organization-id', 'user@intel.com'), {
             wrapper,

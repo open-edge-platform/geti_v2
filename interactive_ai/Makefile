@@ -16,9 +16,10 @@ PY_SUBPROJECTS := $(call find_subprojects,.,pyproject.toml)
 SUBPROJECTS := $(GO_SUBPROJECTS) $(PY_SUBPROJECTS)
 
 WORKFLOWS := $(call find_subprojects,workflows,job,3)
+TRAINERS := $(call find_subprojects,workflows/train/trainer,Makefile,2)  # needed for otx2 images
 
 GO_BUILDABLE_SUBPROJECTS := $(GO_SERVICES)  # assumption: no workflows in Go
-PY_BUILDABLE_SUBPROJECTS := $(PY_SERVICES) $(WORKFLOWS) migration_job
+PY_BUILDABLE_SUBPROJECTS := $(PY_SERVICES) $(WORKFLOWS) migration_job $(TRAINERS)
 BUILDABLE_SUBPROJECTS := $(GO_BUILDABLE_SUBPROJECTS) $(PY_BUILDABLE_SUBPROJECTS)
 
 # Targets
@@ -28,4 +29,3 @@ list-workflows:
 	@for svc in $(notdir $(WORKFLOWS)); do \
 		echo "  - $$svc"; \
 	done
-

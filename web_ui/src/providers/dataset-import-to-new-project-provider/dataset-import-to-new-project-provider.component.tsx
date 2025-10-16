@@ -16,6 +16,7 @@ import {
 import QUERY_KEYS from '@geti/core/src/requests/query-keys';
 import { useApplicationServices } from '@geti/core/src/services/application-services-provider.component';
 import { toast } from '@geti/ui';
+import { getRandomDistinctColor } from '@geti/ui/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError, HttpStatusCode } from 'axios';
 import { isEmpty, noop } from 'lodash-es';
@@ -28,7 +29,6 @@ import {
 } from '../../core/datasets/dataset.interface';
 import { useDatasetImportQueries } from '../../core/datasets/hooks/use-dataset-import-queries.hook';
 import { useLocalStorageDatasetImport } from '../../features/dataset-import/hooks/use-local-storage-dataset-import.hook';
-import { getRandomDistinctColor } from '../../pages/create-project/components/distinct-colors';
 import { getImportDatasetToNewProjectKey } from '../../shared/local-storage-keys';
 import { MissingProviderError } from '../../shared/missing-provider-error';
 import { getFileSize, isNonEmptyString, runWhenTruthy } from '../../shared/utils';

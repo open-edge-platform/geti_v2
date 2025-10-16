@@ -1,3 +1,38 @@
+# Component build & test workflow (Geti project)
+#
+# This reusable workflow performs static analysis, unit & integration testing,
+# optional container image build/publish, and Helm chart lint/publish for a single
+# component directory. It supports both Python and Go projects via builder images
+# and can be invoked directly (workflow_dispatch) or from higher‑level orchestration
+# (workflow_call) with versioning and publish controls.
+#
+# Key Features:
+# - Auto-detects project language (Python / Go) and selects appropriate builder image
+# - Runs static code analysis, unit tests, integration tests (builder vs host fallback)
+# - Conditional cleanup phases (initial / pre-build / all) via component config action
+# - Skips image build gracefully if Make target indicates so (captures SKIP_IMAGE flag)
+# - Optionally logs into GHCR and publishes image & Helm chart when publish_binaries=true
+# - Injects build/version tag (TAG) with fallback to commit SHA
+#
+# Process Stages:
+# 1. Checkout & component configuration read
+# 2. Optional initial cleanup
+# 3. Language detection & builder image selection
+# 4. Static code analysis
+# 5. Unit tests
+# 6. Integration tests (builder or host + ffmpeg install when needed)
+# 7. Optional pre-build cleanup
+# 8. Container image build (skip-aware)
+# 9. (Optional) Image push & chart lint
+# 10. (Optional) Chart publish
+#
+# Inputs (workflow_call / dispatch):
+# - component_dir (string, required): Root-relative path of the component
+# - build_version (string, required): Version tag applied to built artifacts (fallback to commit)
+# - publish_binaries (bool, default false): Enable push of image & Helm chart
+# - registry (string, required): Target container registry base
+#
+
 name: Components workflow
 
 on:
@@ -15,23 +50,12 @@ on:
         description: "Enable publishing binaries to repos"
         type: boolean
         default: false
-      ref:
-        description: "The branch, tag or SHA to checkout"
+      registry:
+        description: "The container registry to push images to"
         type: string
-        default: ""
-    secrets:
-      AWS_ROLE:
-        required: true
-      AWS_REGION:
-        required: true
-      REGISTRY:
         required: true
   workflow_dispatch:
     inputs:
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        required: true
-        default: "main"
       component_dir:
         description: "Path to the component (relative to the root of the repository)"
         required: true
@@ -47,16 +71,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
+      packages: write
     timeout-minutes: 30
     env:
       TAG: ${{ inputs.build_version || github.sha }}
-      REGISTRY: ${{ secrets.REGISTRY }}
-      PYTHON_BUILDER_IMAGE: builder-images/python-builder:v0.1
-      GO_BUILDER_IMAGE: builder-images/go-builder:v0.1
+      # Update these when the tags in dev_tools/builder_images/*/Makefile are updated.
+      # Remember that new tags will be available only after the code with the change is merged
+      # and the builder image workflow is run and completed successfully.
+      REGISTRY: ${{ inputs.registry }}
+      BUILDER_REGISTRY: ghcr.io/open-edge-platform/geti/builders
+      PYTHON_BUILDER_IMAGE: python-builder:v1.0.0
+      GO_BUILDER_IMAGE: go-builder:v1.0.0
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
 
@@ -64,7 +92,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - name: Read component config
         id: component-config
@@ -78,25 +106,14 @@ jobs:
         with:
           type: "initial"
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: Github
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
-
       - name: Check if Python/Go project
         id: check-python-go
         run: |
           BUILDER_IMAGE=""
           if [ -f "${COMPONENT_DIR}/setup.py" ] || [ -f "${COMPONENT_DIR}/pyproject.toml" ] || [ -f "${COMPONENT_DIR}/.python" ]; then
-            BUILDER_IMAGE=${REGISTRY}/${PYTHON_BUILDER_IMAGE}
+            BUILDER_IMAGE=${BUILDER_REGISTRY}/${PYTHON_BUILDER_IMAGE}
           elif [ -f "${COMPONENT_DIR}/go.mod" ] || [ -f "${COMPONENT_DIR}/.go" ]; then
-            BUILDER_IMAGE=${REGISTRY}/${GO_BUILDER_IMAGE}
+            BUILDER_IMAGE=${BUILDER_REGISTRY}/${GO_BUILDER_IMAGE}
           fi
           echo "BUILDER_IMAGE=${BUILDER_IMAGE}" >> $GITHUB_ENV
           echo "BUILDER_IMAGE=${BUILDER_IMAGE}"
@@ -130,6 +147,14 @@ jobs:
           if echo "$OUTPUT" | grep -q "Skipping"; then
             echo "SKIP_IMAGE=true" >> $GITHUB_OUTPUT
           fi
+
+      - name: Log in to GitHub Container Registry
+        if: steps.build-image.outputs.SKIP_IMAGE != 'true' && inputs.publish_binaries
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push image
         if: steps.build-image.outputs.SKIP_IMAGE != 'true' && inputs.publish_binaries

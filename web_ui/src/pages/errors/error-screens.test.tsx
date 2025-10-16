@@ -2,15 +2,18 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { paths } from '@geti/core';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { AuthProvider, useAuth } from 'react-oidc-context';
 import { MemoryRouter as Router } from 'react-router-dom';
 
+import { useHandleSignOut } from '../../hooks/use-handle-sign-out/use-handle-sign-out.hook';
 import * as SharedUtils from '../../shared/utils';
 import { BadRequest } from './bad-request/bad-request.component';
+import { ErrorFallback } from './error-boundary.component';
 import { ErrorScreen } from './general-error-screen/general-error-screen.component';
 import { InternalServerError } from './internal-server-error/internal-server-error.component';
 import { LoginErrorScreen } from './login-error/login-error-screen.component';
+import { NoWorkspacesError } from './no-workspaces.error';
 import { ResourceNotFound } from './resource-not-found/resource-not-found.component';
 import { ServiceUnavailable } from './service-unavailable/service-unavailable.component';
 import { UnauthenticatedUser } from './unauthenticated-user/unauthenticated-user.component';
@@ -18,6 +21,10 @@ import { UnauthenticatedUser } from './unauthenticated-user/unauthenticated-user
 jest.mock('react-oidc-context', () => ({
     ...jest.requireActual('react-oidc-context'),
     useAuth: jest.fn(),
+}));
+
+jest.mock('../../hooks/use-handle-sign-out/use-handle-sign-out.hook', () => ({
+    useHandleSignOut: jest.fn(),
 }));
 
 describe('Error screens', () => {
@@ -199,6 +206,57 @@ describe('Error screens', () => {
             render(<LoginErrorScreen />);
 
             expect(screen.getByText('User is not currently logged in.')).toBeInTheDocument();
+        });
+    });
+
+    describe('No workspace error', () => {
+        const mockedUseHandleSignOut = jest.mocked(useHandleSignOut);
+
+        afterEach(() => {
+            mockedUseHandleSignOut.mockReset();
+            jest.clearAllMocks();
+        });
+
+        it('render no error if workspace exists', () => {
+            const resetErrorBoundary = jest.fn();
+
+            render(<ErrorFallback error={new Error('Oops')} resetErrorBoundary={resetErrorBoundary} />);
+
+            expect(screen.getByText('An error occurred...')).toBeInTheDocument();
+            expect(screen.queryByText('No workspace access')).not.toBeInTheDocument();
+        });
+
+        it('render correct error if no workspace', async () => {
+            const resetErrorBoundary = jest.fn();
+            const signOut = jest.fn();
+
+            mockedUseHandleSignOut.mockReturnValue(signOut);
+
+            document.title = 'Original title';
+            const originalTitle = document.title;
+
+            const { unmount } = render(
+                <ErrorFallback error={new NoWorkspacesError()} resetErrorBoundary={resetErrorBoundary} />
+            );
+
+            await waitFor(() => expect(document.title).toBe('No workspaces'));
+
+            expect(screen.getByText('No workspace access')).toBeInTheDocument();
+            expect(
+                screen.getByText(
+                    "You don't have access to any workspaces in this organization yet. An organization administrator must assign you to a workspace before you can continue."
+                )
+            ).toBeInTheDocument();
+
+            const signOutButton = screen.getByRole('button', { name: 'Sign out' });
+            fireEvent.click(signOutButton);
+
+            expect(resetErrorBoundary).toHaveBeenCalled();
+            expect(signOut).toHaveBeenCalled();
+
+            unmount();
+
+            await waitFor(() => expect(document.title).toBe(originalTitle));
         });
     });
 });

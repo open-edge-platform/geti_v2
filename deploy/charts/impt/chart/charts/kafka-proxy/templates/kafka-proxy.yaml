@@ -42,7 +42,7 @@ spec:
               --sasl-enable \
               --sasl-username=$SASL_USERNAME \
               --sasl-password=$SASL_PASSWORD \
-              --sasl-method=SCRAM-SHA-512 \
+              --sasl-method=PLAIN \
               --proxy-request-buffer-size=32768 \
               --proxy-response-buffer-size=32768 \
               --proxy-listener-read-buffer-size=32768 \

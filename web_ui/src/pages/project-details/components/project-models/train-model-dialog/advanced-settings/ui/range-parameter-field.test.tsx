@@ -4,7 +4,10 @@
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { providersRender as render } from '../../../../../../../test-utils/required-providers-render';
+import {
+    providersRender as render,
+    RequiredProviders,
+} from '../../../../../../../test-utils/required-providers-render';
 import { RangeParameterField } from './range-parameter-field.component';
 
 describe('RangeParameterField', () => {
@@ -18,15 +21,17 @@ describe('RangeParameterField', () => {
 
     const renderApp = ({ value = defaultValue, isDisabled = false }: { value?: number[]; isDisabled?: boolean }) => {
         return render(
-            <RangeParameterField
-                defaultValue={defaultValue}
-                value={value}
-                onChange={onChange}
-                name={name}
-                type={'array'}
-                isDisabled={isDisabled}
-                step={0.001}
-            />
+            <RequiredProviders>
+                <RangeParameterField
+                    defaultValue={defaultValue}
+                    value={value}
+                    onChange={onChange}
+                    name={name}
+                    type={'array'}
+                    isDisabled={isDisabled}
+                    step={0.001}
+                />
+            </RequiredProviders>
         );
     };
 

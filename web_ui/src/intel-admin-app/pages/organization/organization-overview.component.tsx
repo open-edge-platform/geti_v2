@@ -92,7 +92,7 @@ export const OrganizationOverview = () => {
                     <View paddingX={'size-300'} UNSAFE_className={classes.organizationOverviewPicture}>
                         <PhotoPlaceholder
                             name={organization.name}
-                            email={organization.name}
+                            indicator={organization.name}
                             width={'size-1600'}
                             height={'size-1600'}
                         />

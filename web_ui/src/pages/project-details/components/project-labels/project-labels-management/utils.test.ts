@@ -1,8 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { DISTINCT_COLORS } from '@geti/ui/utils';
+
 import { getMockedTreeLabel } from '../../../../../test-utils/mocked-items-factory/mocked-labels';
-import { DISTINCT_COLORS } from '../../../../create-project/components/distinct-colors';
 import { getAvailableColors } from './utils';
 
 describe('getAvailableColors', () => {

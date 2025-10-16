@@ -24,14 +24,14 @@ class FeatureFlagProvider:
 
         """
 
-        TRUE_SET = {"y", "yes", "t", "true", "on", "1"}
-        FALSE_SET = {"n", "no", "f", "false", "off", "0"}
+        true_set = {"y", "yes", "t", "true", "on", "1"}
+        false_set = {"n", "no", "f", "false", "off", "0"}
         buf_input = text.lower()
-        if buf_input in TRUE_SET:
+        if buf_input in true_set:
             return True
-        if buf_input in FALSE_SET:
+        if buf_input in false_set:
             return False
-        raise ValueError(f"Cannot convert {text} to boolean. Expected one of {TRUE_SET} or {FALSE_SET}")
+        raise ValueError(f"Cannot convert {text} to boolean. Expected one of {true_set} or {false_set}")
 
     @classmethod
     def is_enabled(cls, feature_flag: str | Enum) -> bool:

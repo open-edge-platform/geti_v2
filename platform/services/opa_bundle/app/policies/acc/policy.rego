@@ -298,6 +298,20 @@ allow if {
 	check_if_objects_are_related_user_invitation(spicedb_key, unmarshaled_body.roles, org_id)
 }
 
+# Restrict access to POST /api/<api_ver>/organizations/<org_id>/users/invitations endpoint to organization_admin - different order in request
+allow if {
+	["api", api_ver, "organizations", org_id, "users", "invitations"] = parsed_path
+	http_request.method == "POST"
+	is_valid_api_version(api_ver)
+
+	user_id := resolve_user_id(http_request.headers)
+	body := replace(http_request.body, "\\\"", "")
+	unmarshaled_body = json.unmarshal(body)
+	count(unmarshaled_body.roles) == 2
+	check_authorization(spicedb_key, "organization", org_id, "can_manage", user_id)
+	check_if_objects_are_related_user_invitation_opposite(spicedb_key, unmarshaled_body.roles, org_id)
+}
+
 # Restrict access to POST /api/<api_ver>/organizations/<org_id>/invitations endpoint to organization_admin
 allow if {
 	["api", api_ver, "organizations", org_id, "invitations"] = parsed_path
@@ -621,6 +635,20 @@ allow if {
 	check_if_objects_are_related_user_invitation_one_role(spicedb_key, unmarshaled_body.roles, org_id)
 }
 
+# Restrict access to POST /api/<api_ver>/organizations/<org_id>/users/invitations endpoint to organization_admin
+allow if {
+	["api", api_ver, "organizations", org_id, "users", "invitations"] = parsed_path
+	http_request.method == "POST"
+	is_valid_api_version(api_ver)
+
+	user_id := resolve_user_id(http_request.headers)
+	body := replace(http_request.body, "\\\"", "")
+	unmarshaled_body = json.unmarshal(body)
+	count(unmarshaled_body.roles) == 1
+	check_authorization(spicedb_key, "organization", org_id, "can_manage", user_id)
+	check_if_objects_are_related_user_invitation_one_role(spicedb_key, unmarshaled_body.roles, org_id)
+}
+
 check_if_objects_are_related_user_invitation(spicedb_key, roles, org_id) {
     roles[0].operation == "CREATE"
 	roles[0].role.resourceType == "workspace"
@@ -628,6 +656,15 @@ check_if_objects_are_related_user_invitation(spicedb_key, roles, org_id) {
 	roles[1].operation == "CREATE"
 	roles[1].role.resourceType == "organization"
 	roles[1].role.resourceId == org_id
+}
+
+check_if_objects_are_related_user_invitation_opposite(spicedb_key, roles, org_id) {
+    roles[1].operation == "CREATE"
+	roles[1].role.resourceType == "workspace"
+	check_relation(spicedb_address, spicedb_key, "workspace", roles[1].role.resourceId, "parent_organization", "organization", org_id)
+	roles[0].operation == "CREATE"
+	roles[0].role.resourceType == "organization"
+	roles[0].role.resourceId == org_id
 }
 
 check_if_objects_are_related(spicedb_key, roles, org_id) {
@@ -675,10 +712,4 @@ check_if_objects_are_related_user_invitation_one_role(spicedb_key, roles, org_id
     roles[0].operation == "CREATE"
 	roles[0].role.resourceType == "organization"
 	roles[0].role.resourceId == org_id
-}
-
-check_if_objects_are_related_user_invitation_one_role(spicedb_key, roles, org_id) {
-    roles[0].operation == "CREATE"
-	roles[0].role.resourceType == "workspace"
-	check_relation(spicedb_address, spicedb_key, "workspace", roles[0].role.resourceId, "parent_organization", "organization", org_id)
 }

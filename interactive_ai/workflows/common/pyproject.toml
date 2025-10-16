@@ -6,15 +6,15 @@ requires-python = ">=3.10, <3.11"
 
 dependencies = [
     "dataclasses-json==0.5.7",
-    "flytekit==1.10.2",
+    "flytekit==1.13.15", # Version that supports urllib3>=2.5.0
     "flytekitplugins-pod==1.2.4",
-    "s3fs==2023.9.2",  # to match flytekit fsspec dep"
+    "s3fs==2025.9.0",
     "kubernetes-asyncio==29.0.0",
     "geti-kafka-tools",
     "geti-telemetry-tools[telemetry,grpc,kafka,logger]",
     "geti-k8s-tools",
     "geti-types",
-    "grpc_interfaces",
+    "grpc_interfaces[job_update]",
     "iai-core",
     "geti-configuration-tools",
 ]
@@ -57,12 +57,7 @@ dev = [
     "types-cachetools",
     "types-PyYAML",
     "testcontainers[mongodb]~=4.10",
-    # FIXME: The version of "requests" is pinned
-    # to avoid the bug described in https://github.com/docker/docker-py/issues/3256
-    # We should upgrade to "docker~=7.1.0" to fix the issue but it is not compatible
-    # with the version of Flytekit that we use. In the meantime, we downgrade
-    # the "requests" package.
-    "requests==2.31",
+    "requests~=2.32.4",
     "types-requests~=2.31",
 
     "asynctest==0.13.0",
@@ -71,7 +66,7 @@ dev = [
     "scikit-learn~=1.6",
 
     # For Datumaro Arrow data format export
-    "pyarrow==15.0.0",
+    "pyarrow==17.0.0",
 
     "workflows-common[evaluation,shard-dataset,datumaro-conversion]"
 ]

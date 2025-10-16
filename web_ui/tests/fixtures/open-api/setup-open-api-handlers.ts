@@ -8,9 +8,10 @@ import { isString } from 'lodash-es';
 import { DefaultBodyType, ResponseComposition, RestContext } from 'msw';
 import { OpenAPIBackend, type Context, type Document, type Options } from 'openapi-backend';
 
+import { supportedAlgorithms } from '../../features/project-models/mocks';
 import { getDirname } from '../../utils/get-dirname';
 import definition from './../../../src/core/server/generated/api-spec.json' with { type: 'json' };
-import { legacySupportedAlgorithms, settings } from './mocks';
+import { settings } from './mocks';
 
 const SHOW_UNIMPLEMENTED_OPERATIONS = false;
 
@@ -216,9 +217,7 @@ const registerDefaultHandlers = (api: OpenAPIBackend) => {
     };
 
     const GetSupportedAlgorithms: OperationHandler = async (_: Context<Document>, res, ctx) => {
-        // TODO: Replace this with supportedAlgorithms from `project-models/mocks.ts`
-        // when FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS is removed
-        return res(ctx.json(legacySupportedAlgorithms));
+        return res(ctx.json(supportedAlgorithms));
     };
 
     api.register({

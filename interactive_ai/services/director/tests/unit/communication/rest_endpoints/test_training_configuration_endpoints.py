@@ -10,7 +10,6 @@ from geti_configuration_tools.training_configuration import PartialTrainingConfi
 from testfixtures import compare
 
 from communication.controllers.training_configuration_controller import TrainingConfigurationRESTController
-from features.feature_flag import FeatureFlag
 
 from geti_types import ID, ProjectIdentifier
 
@@ -25,10 +24,11 @@ API_PROJECT_PATTERN = f"{API_WORKSPACE_PATTERN}/projects/{DUMMY_PROJECT_ID}"
 
 class TestTrainingConfigurationEndpoints:
     def test_get_training_configuration(
-        self, fxt_director_app, fxt_training_configuration_task_level, fxt_enable_feature_flag_name
+        self,
+        fxt_director_app,
+        fxt_training_configuration_task_level,
     ) -> None:
         # Arrange
-        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
         fxt_training_configuration_task_level.model_manifest_id = "dummy_model_manifest_id"
         dummy_rest_view = {"dummy_key": "dummy_value"}
         project_identifier = ProjectIdentifier(
@@ -61,26 +61,7 @@ class TestTrainingConfigurationEndpoints:
         assert result.status_code == HTTPStatus.OK
         compare(json.loads(result.content), dummy_rest_view, ignore_eq=True)
 
-    def test_get_project_configuration_feature_flag_off(self, fxt_director_app) -> None:
-        # check that endpoint is not available when feature flag is off
-        result = fxt_director_app.get(f"{API_PROJECT_PATTERN}/training_configuration")
-
-        assert result.status_code == HTTPStatus.FORBIDDEN
-
-        result = fxt_director_app.patch(
-            f"{API_PROJECT_PATTERN}/training_configuration",
-            json={
-                "task_id": "dummy_task_id",
-                "model_manifest_id": "dummy_model_manifest_id",
-            },
-        )
-
-        assert result.status_code == HTTPStatus.FORBIDDEN
-
-    def test_update_training_configuration(self, fxt_director_app, fxt_enable_feature_flag_name) -> None:
-        # Arrange
-        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
-
+    def test_update_training_configuration(self, fxt_director_app) -> None:
         # Create a sample REST input payload
         rest_input = {
             "model_manifest_id": "model_manifest_123",
@@ -201,11 +182,8 @@ class TestTrainingConfigurationEndpoints:
         ],
     )
     def test_update_training_configuration_validation_errors(
-        self, fxt_director_app, fxt_enable_feature_flag_name, payload, expected_error_type
+        self, fxt_director_app, payload, expected_error_type
     ) -> None:
-        # Arrange
-        fxt_enable_feature_flag_name(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS.name)
-
         # Act
         result = fxt_director_app.patch(
             f"{API_PROJECT_PATTERN}/training_configuration",

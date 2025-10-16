@@ -26,7 +26,7 @@ const compat = new FlatCompat({
 
 // https://github.com/sindresorhus/globals/issues/239
 const GLOBALS_BROWSER_FIX = Object.assign({}, globals.browser, {
-    AudioWorkletGlobalScope: globals.browser['AudioWorkletGlobalScope '],
+    AudioWorkletGlobalScope: 'readonly',
 });
 
 delete GLOBALS_BROWSER_FIX['AudioWorkletGlobalScope '];

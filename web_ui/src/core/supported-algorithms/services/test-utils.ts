@@ -3,140 +3,223 @@
 
 import { DOMAIN } from '../../projects/core.interface';
 import { TASK_TYPE } from '../../projects/dtos/task.interface';
-import {
-    LegacySupportedAlgorithmDTO,
-    LifecycleStage,
-    PerformanceCategory,
-} from '../dtos/supported-algorithms.interface';
-import { LegacySupportedAlgorithm } from '../supported-algorithms.interface';
-import { getLegacySupportedAlgorithmsEntities } from './utils';
+import { LifecycleStage, PerformanceCategory, SupportedAlgorithmDTO } from '../dtos/supported-algorithms.interface';
+import { SupportedAlgorithm } from '../supported-algorithms.interface';
+import { getSupportedAlgorithmsEntities } from './utils';
 
-export const getLegacyMockedSupportedAlgorithm = (
-    supportedAlgorithm?: Partial<LegacySupportedAlgorithm>
-): LegacySupportedAlgorithm => {
-    const {
-        name,
-        description,
-        domain,
-        templateName,
-        modelTemplateId,
-        modelSize,
-        gigaflops,
-        isDefaultAlgorithm,
-        lifecycleStage,
-        performanceCategory,
-        license,
-    } = supportedAlgorithm ?? {};
-
-    return {
-        name: name ?? 'Yolo algorithm',
-        description: description ?? 'Description of the algorithm',
-        domain: domain ?? DOMAIN.DETECTION,
-        modelTemplateId: modelTemplateId ?? 'yolo-template-id',
-        modelSize: modelSize ?? 1.2,
-        gigaflops: gigaflops ?? 1.2,
-        isDefaultAlgorithm: isDefaultAlgorithm ?? false,
-        templateName,
-        lifecycleStage: lifecycleStage || LifecycleStage.ACTIVE,
-        performanceCategory: performanceCategory || PerformanceCategory.OTHER,
-        license: license ?? 'Apache 2.0',
-    };
-};
-
-export const mockedSupportedAlgorithmsDTO: LegacySupportedAlgorithmDTO[] = [
+export const mockedSupportedAlgorithmsDTO: SupportedAlgorithmDTO[] = [
     {
         name: 'Yolo',
-        task_type: TASK_TYPE.DETECTION,
-        model_size: 200,
-        model_template_id: 'detection_yolo',
-        gigaflops: 5,
-        summary: 'YOLO architecture for detection',
-        default_algorithm: false,
-        lifecycle_stage: LifecycleStage.ACTIVE,
+        task: TASK_TYPE.DETECTION,
+        model_manifest_id: 'detection_yolo',
+        stats: {
+            gigaflops: 5,
+            trainable_parameters: 0,
+            performance_ratings: {
+                accuracy: 3,
+                inference_speed: 3,
+                training_time: 3,
+            },
+        },
+        description: 'YOLO architecture for detection',
+        is_default_model: false,
+        support_status: LifecycleStage.ACTIVE,
         performance_category: PerformanceCategory.ACCURACY,
+        capabilities: {
+            tiling: false,
+            xai: false,
+        },
+        supported_gpus: {
+            intel: false,
+            nvidia: false,
+        },
     },
     {
         name: 'SSD',
-        task_type: TASK_TYPE.DETECTION,
-        model_size: 200,
-        model_template_id: 'detection_ssd',
-        gigaflops: 3,
-        summary: 'SSD architecture for detection',
-        default_algorithm: false,
-        lifecycle_stage: LifecycleStage.ACTIVE,
+        task: TASK_TYPE.DETECTION,
+        model_manifest_id: 'detection_ssd',
+        stats: {
+            gigaflops: 3,
+            trainable_parameters: 0,
+            performance_ratings: {
+                accuracy: 3,
+                inference_speed: 3,
+                training_time: 3,
+            },
+        },
+        description: 'SSD architecture for detection',
+        is_default_model: false,
+        support_status: LifecycleStage.ACTIVE,
         performance_category: PerformanceCategory.OTHER,
+        capabilities: {
+            tiling: false,
+            xai: false,
+        },
+        supported_gpus: {
+            intel: false,
+            nvidia: false,
+        },
     },
     {
         name: 'HDD',
-        task_type: TASK_TYPE.DETECTION,
-        model_size: 300,
-        model_template_id: 'detection_hdd',
-        gigaflops: 1,
-        summary: 'HDD architecture for detection',
-        default_algorithm: false,
-        lifecycle_stage: LifecycleStage.ACTIVE,
+        task: TASK_TYPE.DETECTION,
+        model_manifest_id: 'detection_hdd',
+        stats: {
+            gigaflops: 1,
+            trainable_parameters: 0,
+            performance_ratings: {
+                accuracy: 3,
+                inference_speed: 3,
+                training_time: 3,
+            },
+        },
+        description: 'HDD architecture for detection',
+        is_default_model: false,
+        support_status: LifecycleStage.ACTIVE,
         performance_category: PerformanceCategory.OTHER,
+        capabilities: {
+            tiling: false,
+            xai: false,
+        },
+        supported_gpus: {
+            intel: false,
+            nvidia: false,
+        },
     },
     {
         name: 'Efficient-B0',
-        task_type: TASK_TYPE.CLASSIFICATION,
-        model_size: 100,
-        model_template_id: 'classification_efficient_b0',
-        gigaflops: 0.8,
-        summary: 'Efficient-B0 architecture for classification',
-        default_algorithm: false,
-        lifecycle_stage: LifecycleStage.ACTIVE,
+        task: TASK_TYPE.CLASSIFICATION,
+        model_manifest_id: 'classification_efficient_b0',
+        stats: {
+            gigaflops: 0.8,
+            trainable_parameters: 0,
+            performance_ratings: {
+                accuracy: 3,
+                inference_speed: 3,
+                training_time: 3,
+            },
+        },
+        description: 'Efficient-B0 architecture for classification',
+        is_default_model: false,
+        support_status: LifecycleStage.ACTIVE,
         performance_category: PerformanceCategory.OTHER,
+        capabilities: {
+            tiling: false,
+            xai: false,
+        },
+        supported_gpus: {
+            intel: false,
+            nvidia: false,
+        },
     },
     {
         name: 'Mobile-Net',
-        task_type: TASK_TYPE.CLASSIFICATION,
-        model_size: 300,
-        model_template_id: 'classification_mobile_net',
-        gigaflops: 1.1,
-        summary: 'Mobile-Net architecture for classification',
-        default_algorithm: false,
-        lifecycle_stage: LifecycleStage.ACTIVE,
+        task: TASK_TYPE.CLASSIFICATION,
+        model_manifest_id: 'classification_mobile_net',
+        stats: {
+            gigaflops: 1.1,
+            trainable_parameters: 0,
+            performance_ratings: {
+                accuracy: 3,
+                inference_speed: 3,
+                training_time: 3,
+            },
+        },
+        description: 'Mobile-Net architecture for classification',
+        is_default_model: false,
+        support_status: LifecycleStage.ACTIVE,
         performance_category: PerformanceCategory.OTHER,
+        capabilities: {
+            tiling: false,
+            xai: false,
+        },
+        supported_gpus: {
+            intel: false,
+            nvidia: false,
+        },
     },
     {
         name: 'Segmentation-HDD',
-        task_type: TASK_TYPE.SEGMENTATION,
-        model_size: 250,
-        model_template_id: 'segmentation_hdd',
-        gigaflops: 1,
-        summary: 'Segmentation-HDD architecture for segmentation',
-        default_algorithm: false,
-        lifecycle_stage: LifecycleStage.ACTIVE,
+        task: TASK_TYPE.SEGMENTATION,
+        model_manifest_id: 'segmentation_hdd',
+        stats: {
+            gigaflops: 1,
+            trainable_parameters: 0,
+            performance_ratings: {
+                accuracy: 3,
+                inference_speed: 3,
+                training_time: 3,
+            },
+        },
+        description: 'Segmentation-HDD architecture for segmentation',
+        is_default_model: false,
+        support_status: LifecycleStage.ACTIVE,
         performance_category: PerformanceCategory.OTHER,
+        capabilities: {
+            tiling: false,
+            xai: false,
+        },
+        supported_gpus: {
+            intel: false,
+            nvidia: false,
+        },
     },
     {
         name: 'Anomaly-SSD',
-        task_type: TASK_TYPE.ANOMALY_CLASSIFICATION,
-        model_size: 300,
-        model_template_id: 'anomaly_ssd',
-        gigaflops: 1,
-        summary: 'Anomaly-SSD architecture for anomaly',
-        default_algorithm: false,
-        lifecycle_stage: LifecycleStage.ACTIVE,
+        task: TASK_TYPE.ANOMALY_CLASSIFICATION,
+        model_manifest_id: 'anomaly_ssd',
+        stats: {
+            gigaflops: 1,
+            trainable_parameters: 0,
+            performance_ratings: {
+                accuracy: 3,
+                inference_speed: 3,
+                training_time: 3,
+            },
+        },
+        description: 'Anomaly-SSD architecture for anomaly',
+        support_status: LifecycleStage.ACTIVE,
         performance_category: PerformanceCategory.OTHER,
+        capabilities: {
+            tiling: false,
+            xai: false,
+        },
+        supported_gpus: {
+            intel: false,
+            nvidia: false,
+        },
+        is_default_model: false,
     },
     {
         name: 'Segmentation-SSD',
-        task_type: TASK_TYPE.SEGMENTATION,
-        model_size: 150,
-        model_template_id: 'segmentation_ssd',
-        gigaflops: 23,
-        summary: 'Segmentation-SSD for segmentation',
-        default_algorithm: false,
-        lifecycle_stage: LifecycleStage.ACTIVE,
+        task: TASK_TYPE.SEGMENTATION,
+        model_manifest_id: 'segmentation_ssd',
+        stats: {
+            gigaflops: 23,
+            trainable_parameters: 0,
+            performance_ratings: {
+                accuracy: 3,
+                inference_speed: 3,
+                training_time: 3,
+            },
+        },
+        description: 'Segmentation-SSD for segmentation',
+        is_default_model: false,
+        support_status: LifecycleStage.ACTIVE,
         performance_category: PerformanceCategory.OTHER,
+        capabilities: {
+            tiling: false,
+            xai: false,
+        },
+        supported_gpus: {
+            intel: false,
+            nvidia: false,
+        },
     },
 ];
 
-export const mockedSupportedAlgorithms: LegacySupportedAlgorithm[] = getLegacySupportedAlgorithmsEntities({
-    supported_algorithms: mockedSupportedAlgorithmsDTO,
-});
+export const mockedSupportedAlgorithms: SupportedAlgorithm[] =
+    getSupportedAlgorithmsEntities(mockedSupportedAlgorithmsDTO);
 
 export const mockedDetectionSupportedAlgorithms = mockedSupportedAlgorithms.filter(
     ({ domain }) => domain === DOMAIN.DETECTION

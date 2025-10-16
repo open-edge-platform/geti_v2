@@ -21,7 +21,8 @@ image:
   pullPolicy: IfNotPresent
 
 ## @param logLevel Sets the log level for the etcd process. Allowed values: 'debug', 'info', 'warn', 'error', 'panic', 'fatal'
-logLevel: info
+logLevel: "info"
+
 ## @param maxProcs Limits the number of operating system threads that can execute user-level
 ## Go code simultaneously by setting GOMAXPROCS environment variable
 ## ref: https://golang.org/pkg/runtime
@@ -32,7 +33,7 @@ dataDir: /data
 
 auth:
   token:
-    enabled: false
+    enabled: true
     type: "jwt"
     privateKey: jwt-token.pem
     signMethod: RS256

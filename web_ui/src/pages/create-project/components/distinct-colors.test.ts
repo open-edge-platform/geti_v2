@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { getDistinctColorBasedOnHash, getHEXFormat } from './distinct-colors';
+import { getDistinctColorBasedOnHash, getHEXFormat } from '@geti/ui/utils';
 
 describe('Distinct colors', () => {
     it('getHEXFormat - get color format from hex with alpha - should return hex', () => {

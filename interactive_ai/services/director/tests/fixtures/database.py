@@ -18,15 +18,21 @@ import cv2
 import jsonschema
 import numpy as np
 import pytest
+from geti_configuration_tools.project_configuration import (
+    AutoTrainingParameters,
+    ProjectConfiguration,
+    TaskConfig,
+    TrainConstraints,
+    TrainingParameters,
+)
 from geti_supported_models.default_models import DefaultModels
 
-from coordination.configuration_manager.task_node_config import TaskNodeConfig
+from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
 from geti_fastapi_tools.validation import RestApiValidator
 from geti_types import CTX_SESSION_VAR, ID, DatasetStorageIdentifier, ImageIdentifier, MediaType, ProjectIdentifier
 from iai_core.adapters.binary_interpreters import NumpyBinaryInterpreter
 from iai_core.algorithms import ModelTemplateList
-from iai_core.configuration.elements.component_parameters import ComponentParameters, ComponentType
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
 from iai_core.entities.annotation import Annotation, AnnotationScene, AnnotationSceneKind
 from iai_core.entities.dataset_item import DatasetItem
@@ -939,18 +945,25 @@ class DBProjectService:
         return annotation_scene
 
     def _set_auto_train(self, auto_train: bool = False):
+        task_configs = []
         for task_node in self.project.get_trainable_task_nodes():
-            task_config = TaskNodeConfig()
-            task_config.auto_training = auto_train
-            conf_params: ComponentParameters[TaskNodeConfig] = ComponentParameters(
-                workspace_id=self.workspace_id,
-                project_id=self.project.id_,
-                component=ComponentType.TASK_NODE,
-                id_=ConfigurableParametersRepo.generate_id(),
-                data=task_config,
+            task_config = TaskConfig(
                 task_id=task_node.id_,
+                training=TrainingParameters(constraints=TrainConstraints(min_images_per_label=3)),
+                auto_training=AutoTrainingParameters(
+                    enable=auto_train,
+                    enable_dynamic_required_annotations=False,
+                    min_images_per_label=3,
+                ),
             )
-            ConfigurableParametersRepo(self.project_identifier).save(conf_params)
+            task_configs.append(task_config)
+
+        project_config = ProjectConfiguration(
+            project_id=self.project.id_,
+            task_configs=task_configs,
+        )
+        repo = ProjectConfigurationRepo(self.project.identifier)
+        repo.save(project_config)
 
     def cleanup(self) -> None:
         DeletionHelpers.delete_project_by_id(project_id=self.project.id_)

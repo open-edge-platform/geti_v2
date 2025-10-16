@@ -10,10 +10,7 @@ import { isEmpty } from 'lodash-es';
 
 import { useTasksWithSupportedAlgorithms } from '../../../../../core/supported-algorithms/hooks/use-tasks-with-supported-algorithms';
 import { ANIMATION_PARAMETERS } from '../../../../../shared/animation-parameters/animation-parameters';
-import {
-    isDeprecatedAlgorithm,
-    isObsoleteAlgorithm,
-} from '../legacy-train-model-dialog/model-templates-selection/utils';
+import { isDeprecatedAlgorithm, isObsoleteAlgorithm } from '../utils';
 import { ModelCard } from './model-card/model-card.component';
 import { ModelVersion } from './model-card/model-card.interface';
 import { ModelsContainerHeader } from './models-container-header.component';

@@ -143,7 +143,10 @@ def invite_user_endpoint(  # noqa: ANN201
             role_ops.append(role_operation)
 
         # extend a list of roles with workspace related roles only if manage_users feature flag is enabled
-        if os.environ.get("FEATURE_FLAG_MANAGE_USERS", "false") == "true":
+        if (
+            os.environ.get("FEATURE_FLAG_MANAGE_USERS", "false") == "true"
+            and os.environ.get("FEATURE_FLAG_WORKSPACE_ACTIONS", "false") == "false"
+        ):
             default_workspace = account_service.get_default_workspace_id(organization_id)
             role_ops = update_missing_workspace_roles(role_ops=role_ops, default_workspace=default_workspace)
 

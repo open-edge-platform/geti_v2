@@ -6,8 +6,8 @@ import { useState } from 'react';
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { Button, ButtonGroup, Content, Dialog, DialogContainer, Divider, Heading, Text } from '@geti/ui';
 
+import { useTask } from '../../../../../annotator/providers/task-provider/task-provider.component';
 import { useTotalCreditPrice } from '../../../../hooks/use-credits-to-consume.hook';
-import { useTrainStateValue } from '../../legacy-train-model-dialog/use-training-state-value/use-training-state-value.hook';
 
 import classes from './model-card.module.scss';
 
@@ -23,8 +23,8 @@ interface ActivateModelDialogProps {
 
 const TotalCreditsDeduction = () => {
     const { isLoading, getCreditPrice } = useTotalCreditPrice();
-    const { selectedTask } = useTrainStateValue();
-    const { totalCreditsToConsume } = getCreditPrice(selectedTask.id);
+    const { selectedTask } = useTask();
+    const { totalCreditsToConsume } = getCreditPrice(selectedTask?.id);
     const displayCreditDeductionInfo = !isLoading;
 
     return displayCreditDeductionInfo ? (

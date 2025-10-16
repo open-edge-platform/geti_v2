@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { FullscreenAction } from '@geti/ui';
+import { getDistinctColorBasedOnHash } from '@geti/ui/utils';
 
 import {
     TrainingModelBarRadialChart,
@@ -12,7 +13,6 @@ import { BarHorizontalChart } from '../../../../../../shared/components/charts/b
 import { Colors } from '../../../../../../shared/components/charts/chart.interface';
 import { convertColorToFadedColor } from '../../../../../../shared/components/charts/utils';
 import { DownloadGraphMenu } from '../../../../../../shared/components/download-graph-menu/download-graph-menu.component';
-import { getDistinctColorBasedOnHash } from '../../../../../create-project/components/distinct-colors';
 
 const TrainingModelBarChart = ({
     header,

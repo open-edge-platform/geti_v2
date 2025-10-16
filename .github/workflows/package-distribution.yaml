@@ -1,3 +1,32 @@
+# Platform package distribution workflow (Geti project)
+#
+# This reusable workflow builds the platform umbrella Helm charts and (optionally)
+# the installer distribution artifacts, then publishes them when enabled.
+# It is triggered via `workflow_call` by upstream CI orchestrations that decide
+# whether to run a full multi‑component build (build_all) and whether publishing
+# is permitted (publish_binaries).
+#
+# Key Features:
+# - Conditional execution (skips entirely unless `build_all` is true)
+# - Builds umbrella Helm charts (Make targets) and optionally publishes them
+# - Generates a versioned installer binary bundle (tar.gz) embedding product & build versions
+# - Produces an uploadable artifact for downstream consumption (platform_installer)
+#
+# Process Stages:
+# 1. Checkout source
+# 2. Build umbrella charts
+# 3. (Optional) Publish umbrella charts
+# 4. (Optional) Build installer binary (version info injected)
+# 5. (Optional) Package & upload installer artifact
+#
+# Inputs (workflow_call):
+# - build_all (boolean, required): Gate to execute the distribution stage
+# - build_version (string, required): Build identifier applied to binaries / tags
+# - platform_version (string, required): Current platform semantic version
+# - publish_binaries (boolean, default: false): Enable publishing & installer packaging
+# - registry (string, required): Container registry namespace for chart/image publication
+#
+
 name: Package distribution workflow
 on:
   workflow_call:
@@ -18,18 +47,9 @@ on:
         description: "Enable pushing Docker images and Helm charts"
         type: boolean
         default: false
-      ref:
-        description: "The branch, tag or SHA to checkout"
+      registry:
+        description: "The container registry to push images to"
         type: string
-        default: ""
-    secrets:
-      AWS_ROLE:
-        required: true
-      AWS_REGION:
-        required: true
-      REGISTRY:
-        required: true
-      S3_BUCKET_NAME:
         required: true
 permissions: {} # No permissions by default on workflow level
 
@@ -40,14 +60,14 @@ jobs:
     if: ${{ inputs.build_all }}
     permissions:
       contents: read
-      id-token: write
+      packages: write
     env:
       TAG: ${{ inputs.build_version }}
       PLATFORM_VERSION: ${{ inputs.platform_version }}
-      REGISTRY: ${{ secrets.REGISTRY }}
+      REGISTRY: ${{ inputs.registry }}
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
 
@@ -55,18 +75,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: Github
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+          ref: ${{ github.sha }}
 
       - name: Build umbrella charts
         run: make build-umbrella-chart
@@ -81,13 +90,12 @@ jobs:
         run: |
           printf "product_version: %s\nproduct_build: %s\n" "$PLATFORM_VERSION" "$TAG" > app/version.yaml
           make build
-
-      - name: Publish the installer binary to S3
-        if: ${{ inputs.publish_binaries }}
-        working-directory: platform/services/installer
-        shell: bash
-        env:
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-        run: |
           tar -czf platform_installer.tar.gz platform_$TAG
-          aws s3 cp platform_installer.tar.gz s3://$S3_BUCKET_NAME/v$TAG/
+
+      - name: Upload build artifacts
+        if: ${{ inputs.publish_binaries }}
+        uses: actions/upload-artifact@vea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: platform_installer
+          path: platform/services/installer/platform_installer.tar.gz
+          retention-days: 14

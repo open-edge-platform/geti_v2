@@ -5,49 +5,8 @@ import { capitalize } from 'lodash-es';
 
 import { DOMAIN } from '../../projects/core.interface';
 import { getDomain } from '../../projects/project.interface';
-import {
-    LegacySupportedAlgorithmDTO,
-    PerformanceCategory,
-    SupportedAlgorithmDTO,
-    SupportedAlgorithmsResponseDTO,
-} from '../dtos/supported-algorithms.interface';
-import { LegacySupportedAlgorithm, SupportedAlgorithm } from '../supported-algorithms.interface';
-
-const getLegacySupportedAlgorithmEntity = (
-    supportedAlgorithm: LegacySupportedAlgorithmDTO
-): LegacySupportedAlgorithm => {
-    const {
-        task_type,
-        model_template_id,
-        model_size,
-        name,
-        gigaflops,
-        summary,
-        default_algorithm,
-        performance_category,
-        lifecycle_stage,
-    } = supportedAlgorithm;
-    const domain = getDomain(task_type) as DOMAIN;
-
-    return {
-        domain,
-        description: summary,
-        gigaflops,
-        name,
-        modelSize: model_size,
-        templateName: performance_category !== PerformanceCategory.OTHER ? capitalize(performance_category) : undefined,
-        isDefaultAlgorithm: default_algorithm,
-        modelTemplateId: model_template_id,
-        lifecycleStage: lifecycle_stage,
-        performanceCategory: performance_category,
-        license: 'Apache 2.0',
-    };
-};
-
-export const getLegacySupportedAlgorithmsEntities = ({
-    supported_algorithms,
-}: SupportedAlgorithmsResponseDTO): LegacySupportedAlgorithm[] =>
-    supported_algorithms.map(getLegacySupportedAlgorithmEntity);
+import { PerformanceCategory, SupportedAlgorithmDTO } from '../dtos/supported-algorithms.interface';
+import { SupportedAlgorithm } from '../supported-algorithms.interface';
 
 export const getSupportedAlgorithmsEntities = (supportedAlgorithms: SupportedAlgorithmDTO[]): SupportedAlgorithm[] => {
     return supportedAlgorithms.map((supportedAlgorithm) => {

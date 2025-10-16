@@ -10,12 +10,8 @@ from typing import Any, cast
 
 from geti_configuration_tools import ConfigurationOverlayTools
 from geti_configuration_tools.training_configuration import PartialTrainingConfiguration
-from geti_feature_tools import FeatureFlagProvider
 
 from communication.backward_compatibility.configurations import ConfigurationsBackwardCompatibility
-from communication.exceptions import AlgorithmNotFoundException, TaskNotFoundException
-from configuration import ComponentRegisterEntry, ConfigurableComponentRegister
-from features.feature_flag import FeatureFlag
 from service.configuration_service import ConfigurationService
 from storage.repos.project_configuration_repo import ProjectConfigurationRepo
 
@@ -23,13 +19,13 @@ from geti_fastapi_tools.exceptions import ModelNotFoundException, ProjectNotFoun
 from geti_kafka_tools import publish_event
 from geti_telemetry_tools import unified_tracing
 from geti_types import CTX_SESSION_VAR, ID, ProjectIdentifier
-from iai_core.configuration.elements.component_parameters import ComponentParameters, ComponentType
+from iai_core.configuration.elements.component_parameters import ComponentParameters
 from iai_core.configuration.elements.configurable_parameters import ConfigurableParameters
 from iai_core.configuration.elements.hyper_parameters import HyperParameters
 from iai_core.configuration.interfaces.configurable_parameters_interface import IConfigurableParameterContainer
 from iai_core.entities.model import Model, NullModel
 from iai_core.entities.model_storage import ModelStorage, ModelStorageIdentifier, NullModelStorage
-from iai_core.entities.project import NullProject, Project
+from iai_core.entities.project import NullProject
 from iai_core.entities.task_node import TaskNode
 from iai_core.repos import ConfigurableParametersRepo, ModelRepo, ModelStorageRepo, ProjectRepo, TaskNodeRepo
 from iai_core.services.model_service import ModelService
@@ -127,38 +123,12 @@ class ConfigurationManager:
             project_id=project_id, task_id=task_id
         )
 
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            project_identifier = ProjectIdentifier(workspace_id=workspace_id, project_id=project_id)
-            return ConfigurationManager._get_task_config_from_new_configurations(
-                project_identifier=project_identifier,
-                task_id=task_id,
-                model_template_id=model_storage.model_template_id,
-            )
-
-        config_repo = ConfigurationManager.__get_config_repo(workspace_id=workspace_id, project_id=project_id)
-
-        # First add the model config
-        model_config: HyperParameters = config_repo.get_or_create_hyper_parameters(model_storage=model_storage)
-        configs: list[IConfigurableParameterContainer] = [model_config]
-
-        project = ProjectRepo().get_by_id(project_id)
-        if isinstance(project, NullProject):
-            raise ProjectNotFoundException(project_id)
-        task_node = project.get_trainable_task_node_by_id(task_id=task_id)
-        if task_node is None:
-            raise TaskNotFoundException(task_id)
-        # Then add configs for all per-task components
-        for component in ConfigurationManager.__get_per_task_components():
-            register_data: ComponentRegisterEntry = ConfigurableComponentRegister[component.name].value
-            configuration_type = register_data.get_configuration_type(task_type=task_node.task_properties.task_type)
-            config = config_repo.get_or_create_component_parameters(
-                data_instance_of=configuration_type,
-                component=component,
-                task_id=task_id,
-            )
-
-            configs.append(config)
-        return configs
+        project_identifier = ProjectIdentifier(workspace_id=workspace_id, project_id=project_id)
+        return ConfigurationManager._get_task_config_from_new_configurations(
+            project_identifier=project_identifier,
+            task_id=task_id,
+            model_template_id=model_storage.model_template_id,
+        )
 
     @staticmethod
     def get_configuration_for_model(
@@ -200,8 +170,7 @@ class ConfigurationManager:
         if model is None or model_storage_id is None:
             raise ModelNotFoundException(model_id)
 
-        ff_enabled = FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS)
-        if ff_enabled and (config_dict := model.configuration.display_only_configuration):
+        if config_dict := model.configuration.display_only_configuration:
             # If the new configuration is saved in the model, then use that instead
             full_config = ConfigurationService.get_full_training_configuration(
                 project_identifier=project_identifier,
@@ -250,38 +219,13 @@ class ConfigurationManager:
         :raises ConfigurationNotFoundException if the configuration is not found in the repo
         model_storage_id= algorithm_name in the task
         """
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            project_identifier = ProjectIdentifier(workspace_id=workspace_id, project_id=project_id)
-            config_list = cls._get_task_config_from_new_configurations(
-                project_identifier=project_identifier,
-                task_id=task_id,
-                model_template_id=algorithm_name,
-            )
-            return cast("HyperParameters", config_list[0])
-
-        project = ProjectRepo().get_by_id(project_id)
-        if isinstance(project, NullProject):
-            raise ProjectNotFoundException(project_id)
-        config_repo = ConfigurationManager.__get_config_repo(workspace_id=workspace_id, project_id=project_id)
-        trainable_task: TaskNode | None = None
-        for task in project.tasks:
-            if task.id_ == task_id and task.task_properties.is_trainable:
-                trainable_task = task
-                break
-        if trainable_task is None:
-            raise TaskNotFoundException(task_id)
-
-        try:
-            model_storage = ModelService.get_or_create_model_storage(
-                project_identifier=project.identifier,
-                task_node=trainable_task,
-                model_manifest_id=algorithm_name,
-            )
-        except ValueError as error:
-            raise AlgorithmNotFoundException(message=str(error))
-
-        config: HyperParameters = config_repo.get_or_create_hyper_parameters(model_storage=model_storage)
-        return config
+        project_identifier = ProjectIdentifier(workspace_id=workspace_id, project_id=project_id)
+        config_list = cls._get_task_config_from_new_configurations(
+            project_identifier=project_identifier,
+            task_id=task_id,
+            model_template_id=algorithm_name,
+        )
+        return cast("HyperParameters", config_list[0])
 
     @staticmethod
     @unified_tracing
@@ -295,23 +239,10 @@ class ConfigurationManager:
         :return: dictionary containing the serialized configurations, grouped per domain
             and per component
         """
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            global_config, _ = ConfigurationManager._get_from_new_configurations(
-                workspace_id=workspace_id, project_id=project_id
-            )
-            return global_config
-
-        config_repo = ConfigurationManager.__get_config_repo(workspace_id=workspace_id, project_id=project_id)
-        configs = []
-        for component in ConfigurationManager.__get_global_components():
-            register_data: ComponentRegisterEntry = ConfigurableComponentRegister[component.name].value
-            config = config_repo.get_or_create_component_parameters(
-                data_instance_of=register_data.get_configuration_type(),
-                component=component,
-                task_id=None,
-            )
-            configs.append(config)
-        return configs
+        global_config, _ = ConfigurationManager._get_from_new_configurations(
+            workspace_id=workspace_id, project_id=project_id
+        )
+        return global_config
 
     @staticmethod
     @unified_tracing
@@ -326,22 +257,10 @@ class ConfigurationManager:
         :param workspace_id: ID of the workspace in which the project lives
         :param project_id: ID of the project for which to retrieve the configuration
         """
-        if FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            _, task_chain_config = ConfigurationManager._get_from_new_configurations(
-                workspace_id=workspace_id, project_id=project_id
-            )
-            return task_chain_config
-
-        project = ProjectRepo().get_by_id(project_id)
-        if isinstance(project, NullProject):
-            raise ProjectNotFoundException(project_id)
-        task_chain_configs = []
-        for task_node in ConfigurationManager.__get_trainable_task_nodes(project):
-            task_config_list = ConfigurationManager.get_active_configuration_for_task(
-                workspace_id=workspace_id, project_id=project_id, task_id=task_node.id_
-            )
-            task_chain_configs.append({"task": task_node, "configurations": task_config_list})
-        return task_chain_configs
+        _, task_chain_config = ConfigurationManager._get_from_new_configurations(
+            workspace_id=workspace_id, project_id=project_id
+        )
+        return task_chain_config
 
     @staticmethod
     @unified_tracing
@@ -365,38 +284,6 @@ class ConfigurationManager:
         )
 
         return global_configs, task_chain_configs
-
-    @staticmethod
-    def __get_trainable_task_nodes(project: Project) -> list[TaskNode]:
-        """
-        Returns a list of trainable task nodes in the project
-
-        :param project: Project to retrieve the trainable tasks for
-        :return: list of task nodes that are trainable
-        """
-        return [node for node in project.tasks if node.task_properties.is_trainable]
-
-    @staticmethod
-    def __get_per_task_components() -> list[ComponentType]:
-        """
-        Get all components that operate per-task, as opposed to project-wide.
-        """
-        return [
-            component
-            for component in ComponentType
-            if component.metadata.per_task and component is not ComponentType.NULL_COMPONENT
-        ]
-
-    @staticmethod
-    def __get_global_components() -> list[ComponentType]:
-        """
-        Get all components that operate project-wide, as opposed to per-task.
-        """
-        return [
-            component
-            for component in ComponentType
-            if not component.metadata.per_task and component is not ComponentType.NULL_COMPONENT
-        ]
 
     @staticmethod
     @unified_tracing
@@ -449,8 +336,6 @@ class ConfigurationManager:
             - List of ComponentParameters for global components
             - List of dictionaries containing task chain configurations
         """
-        if not FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            raise ValueError("Cannot get new configurations without the feature flag enabled")
         project_identifier = ProjectIdentifier(workspace_id=workspace_id, project_id=project_id)
         task_ids = TaskNodeRepo(project_identifier).get_trainable_task_ids()
         project_configuration = ProjectConfigurationRepo(project_identifier).get_project_configuration()
@@ -486,8 +371,6 @@ class ConfigurationManager:
         :param model_template_id: ID of the model template to get the configuration for
         :return: List of configurable parameter containers for the task
         """
-        if not FeatureFlagProvider.is_enabled(FeatureFlag.FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS):
-            raise ValueError("Cannot get new configurations without the feature flag enabled")
         full_training_config = ConfigurationService.get_full_training_configuration(
             project_identifier=project_identifier,
             task_id=task_id,

@@ -162,7 +162,7 @@ class StatusRestViews:
         job_progress: float | None = None
         if highest_prio_running_job:
             for job_step_details in highest_prio_running_job.step_details:
-                if job_step_details.state == "running":
+                if job_step_details.state.lower() == "running":
                     job_progress = job_step_details.progress
                     break
 
@@ -215,7 +215,7 @@ class StatusRestViews:
         progress: float = -1.0
         if task_job:
             for job_step_details in task_job.step_details:
-                if job_step_details.state == "running":
+                if job_step_details.state.lower() == "running":
                     progress = job_step_details.progress
                     break
         rest_task_status = {

@@ -3,7 +3,7 @@
 
 import { RESOURCE_TYPE, Role } from '@geti/core/src/users/users.interface';
 import { Workspace } from '@geti/core/src/workspaces/services/workspaces.interface';
-import { capitalize, isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 
 import { CasualCell } from '../../../../shared/components/table/components/casual-cell/casual-cell.component';
 import { TableCellProps } from '../../../../shared/components/table/table.interface';
@@ -16,13 +16,13 @@ interface WorkspacesRoleCellProps extends Omit<TableCellProps, 'cellData'> {
 
 export const WorkspacesRoleCell = ({ cellData, workspaceId, workspaces, ...rest }: WorkspacesRoleCellProps) => {
     const workspaceRoles = cellData.filter((role) => role.resourceType === RESOURCE_TYPE.WORKSPACE);
-
-    const selectedWorkspaceRoles = capitalize(workspaceRoles.find((role) => role.resourceId === workspaceId)?.role);
+    const workspaceRole = workspaceRoles.find((role) => role.resourceId === workspaceId)?.role;
+    const selectedWorkspaceRole = workspaceRole ? `Workspace ${workspaceRole}` : '';
     const availableWorkspaces = workspaceRoles
         .map((role) => workspaces.find((workspace) => workspace.id === role.resourceId)?.name ?? role.resourceId)
         .join(', ');
 
-    const rolesWorkspacesCellData = !isEmpty(workspaceId) ? selectedWorkspaceRoles : availableWorkspaces;
+    const rolesWorkspacesCellData = !isEmpty(workspaceId) ? selectedWorkspaceRole : availableWorkspaces;
 
     return <CasualCell {...rest} cellData={rolesWorkspacesCellData} />;
 };

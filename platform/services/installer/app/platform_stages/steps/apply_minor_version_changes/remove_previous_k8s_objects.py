@@ -42,6 +42,19 @@ def _remove_modelmesh_webhook_conf():
     logger.debug("Deleted webhook conf.")
 
 
+def _remove_istio_webhook_conf():
+    with kubernetes.client.ApiClient() as api_client:
+        logger.debug("Deleting istio webhooks conf.")
+        admission_registration_api = kubernetes.client.AdmissionregistrationV1Api(api_client)
+        try:
+            admission_registration_api.delete_validating_webhook_configuration(name="istiod-default-validator")
+        except kubernetes.client.exceptions.ApiException as ex:
+            if ex.status != 404:
+                logger.error("Error when accessing the Kubernetes API.", exc_info=True)
+                raise RemovePreviousK8SObjectsError from ex
+    logger.debug("Deleted istio webhook conf.")
+
+
 def _remove_secret():
     with kubernetes.client.ApiClient() as api_client:
         core_api = kubernetes.client.CoreV1Api(api_client)
@@ -94,6 +107,7 @@ def remove_previous_k8s_objects() -> None:
         _remove_secret,
         _remove_deployment,
         _remove_stateful_set,
+        _remove_istio_webhook_conf,
     ]
 
     for task in tasks:

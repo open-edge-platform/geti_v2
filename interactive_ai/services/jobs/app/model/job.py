@@ -305,7 +305,7 @@ class Job(PersistentEntity):
         )
 
 
-class NullJob(Job):  # noqa: PLW1641
+class NullJob(Job):
     def __init__(self) -> None:
         super().__init__(
             id=ID(),

@@ -49,7 +49,7 @@ export const UserPhotoPlaceholder = ({
                           : ''
                 }
             >
-                <PhotoPlaceholder name={userName} email={email} width={width} height={height} />
+                <PhotoPlaceholder name={userName} indicator={email} width={width} height={height} />
             </div>
             {handleUploadClick && !disableUpload && (
                 <ActionButton isQuiet marginTop={'size-200'} onPress={handleUploadClick} colorVariant={'blue'}>

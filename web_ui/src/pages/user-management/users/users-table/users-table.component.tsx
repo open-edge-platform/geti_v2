@@ -8,6 +8,7 @@ import { User, UsersQueryParams } from '@geti/core/src/users/users.interface';
 import { Workspace } from '@geti/core/src/workspaces/services/workspaces.interface';
 import { Cell, Column, Flex, Row, TableBody, TableHeader, TableView, View } from '@geti/ui';
 import { get, isEmpty } from 'lodash-es';
+import { useLocation } from 'react-router-dom';
 
 import { SortDirection } from '../../../../core/shared/query-parameters';
 import { useSortTable } from '../../../../hooks/use-sort-table/use-sort-table.hook';
@@ -70,6 +71,8 @@ export const UsersTable = ({
     overrideRoleColumn,
 }: UsersTableProps) => {
     const shouldShowNotFound = hasFilters && isEmpty(users);
+    const location = useLocation();
+    const isAccountWorkspacesLocation = location.pathname.includes('account/workspaces');
 
     const columns = useMemo(() => {
         const tableColumns = [
@@ -109,7 +112,7 @@ export const UsersTable = ({
                 },
             },
             {
-                label: isEmpty(resourceId) ? 'Workspace' : 'Role',
+                label: isEmpty(resourceId) ? 'Workspace' : isAccountWorkspacesLocation ? 'Workspace role' : 'Role',
                 dataKey: USERS_TABLE_COLUMNS.ROLES,
                 width: 150,
                 isSortable: false,
@@ -173,6 +176,7 @@ export const UsersTable = ({
         workspaces,
         users,
         overrideRoleColumn,
+        isAccountWorkspacesLocation,
     ]);
 
     const [sortingOptions, sort] = useSortTable<UsersQueryParams>({

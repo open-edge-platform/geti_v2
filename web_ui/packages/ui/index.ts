@@ -2,6 +2,7 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 export {
+    ActionMenu,
     View,
     Flex,
     Radio,
@@ -131,8 +132,9 @@ export { type ColumnSize } from '@react-types/table';
 export { type ToggleProps } from '@react-types/checkbox';
 
 export { Button, ActionButton, type ButtonProps, type ActionButtonProps } from './src/button/button.component';
-export { Checkbox } from './src/checkbox/checkbox.component';
+export { Checkbox, CheckboxGroup } from './src/checkbox/checkbox.component';
 export { ColorThumb, type ColorThumbProps } from './src/color-thumb/color-thumb.component';
+export { ColorPickerDialog } from './src/color-picker-dialog/color-picker-dialog.component';
 export { DatePicker } from './src/date-picker/date-picker.component';
 export { DateRangePicker } from './src/date-range-picker/date-range-picker.component';
 export { Slider } from './src/slider/slider.component';
@@ -158,7 +160,7 @@ export { FullscreenAction } from './src/fullscreen-action/fullscreen-action.comp
 export { MediaViewModes } from './src/view-modes/media-view-modes.component';
 export { ViewModes, INITIAL_VIEW_MODE, VIEW_MODE_LABEL } from './src/view-modes/utils';
 export { useViewMode } from './src/view-modes/use-view-mode.hook';
-export { Toast, toast, removeToasts, removeToast } from './src/toast/toast.component';
+export { Toast, toast, removeToasts, removeToast, CustomToast } from './src/toast/toast.component';
 
 export {
     ListBox as AriaComponentsListBox,

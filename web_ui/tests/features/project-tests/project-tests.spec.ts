@@ -32,191 +32,91 @@ const test = extendWithOpenApi(baseTest).extend<{ testsResponse: OpenApiResponse
 });
 
 test.describe('Project Tests', () => {
-    test.describe('FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false', () => {
-        test.use({
-            featureFlags: {
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: false,
-            },
-        });
-
-        test('Two tabs are visible: Tests and Live prediction', async ({ page }) => {
-            await page.goto(PROJECT_TESTS);
-
-            await expect(page.getByRole('tab', { name: 'Tests' })).toBeVisible();
-            await expect(page.getByRole('tab', { name: 'Live prediction' })).toBeVisible();
-        });
-
-        test('Tabs are url aware and the other way around', async ({ page }) => {
-            await page.goto(PROJECT_TESTS);
-
-            const testsTab = page.getByRole('tab', { name: 'Tests' });
-            const livePredictionTab = page.getByRole('tab', { name: 'Live prediction' });
-
-            await expect(testsTab).toHaveAttribute('aria-selected', 'true');
-            await expect(livePredictionTab).toHaveAttribute('aria-selected', 'false');
-
-            await livePredictionTab.click();
-
-            await expect(page).toHaveURL(new RegExp(`${PROJECT_TESTS}/live-prediction`));
-            await expect(livePredictionTab).toHaveAttribute('aria-selected', 'true');
-            await expect(testsTab).toHaveAttribute('aria-selected', 'false');
-        });
-
-        test('Open a test after it finishes', async ({ page, testsPage, registerApiResponse, testsResponse }) => {
-            registerApiResponse(
-                'GetAllTestsInAProject',
-                switchAfterOneCall([
-                    async (_, res, ctx) => res(ctx.json(testsResponse)),
-                    async (_, res, ctx) => {
-                        const completedTestResults = testsResponse.test_results.map((testResult, index) => {
-                            if (index === 0) {
-                                return {
-                                    ...testResult,
-                                    job_info: { ...testResult.job_info, status: 'DONE' },
-                                    scores: [
-                                        {
-                                            name: 'F-measure',
-                                            value: 0.7804878048780486,
-                                            label_id: null,
-                                        },
-                                    ],
-                                };
-                            }
-
-                            return testResult;
-                        });
-
-                        return res(ctx.json({ test_results: completedTestResults }));
-                    },
-                ])
-            );
-            await page.goto(PROJECT_TESTS);
-
-            await testsPage.waitForTestToFinish('T1');
-            await testsPage.gotoTest('T1');
-
-            await expectToBeOnTheTestPage(page);
-        });
-
-        test('Removing a test', async ({ page, testsPage, registerApiResponse, testsResponse }) => {
-            registerApiResponse(
-                'GetAllTestsInAProject',
-                switchAfterOneCall([
-                    async (_, res, ctx) => {
-                        return res(ctx.json(testsResponse));
-                    },
-                    async (_, res, ctx) => {
-                        const completedTestResults = testsResponse.test_results.filter((result) => result.id !== '2');
-
-                        return res(ctx.json({ test_results: completedTestResults }));
-                    },
-                ])
-            );
-
-            await page.goto(PROJECT_TESTS);
-
-            // 4 + header
-            await expect(page.getByRole('row')).toHaveCount(5);
-
-            await testsPage.deleteTest('T2');
-
-            await expect(page.getByRole('row')).toHaveCount(4);
-        });
+    test.beforeEach(({ registerApiResponse }) => {
+        registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
     });
 
-    test.describe('FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true', () => {
-        test.use({
-            featureFlags: {
-                FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS: true,
-            },
-        });
+    test('Two tabs are visible: Tests and Live prediction', async ({ page }) => {
+        await page.goto(PROJECT_TESTS);
 
-        test.beforeEach(({ registerApiResponse }) => {
-            registerApiResponse('GetSupportedAlgorithms', (_, res, ctx) => res(ctx.json(supportedAlgorithms)));
-        });
+        await expect(page.getByRole('tab', { name: 'Tests' })).toBeVisible();
+        await expect(page.getByRole('tab', { name: 'Live prediction' })).toBeVisible();
+    });
 
-        test('Two tabs are visible: Tests and Live prediction', async ({ page }) => {
-            await page.goto(PROJECT_TESTS);
+    test('Tabs are url aware and the other way around', async ({ page }) => {
+        await page.goto(PROJECT_TESTS);
 
-            await expect(page.getByRole('tab', { name: 'Tests' })).toBeVisible();
-            await expect(page.getByRole('tab', { name: 'Live prediction' })).toBeVisible();
-        });
+        const testsTab = page.getByRole('tab', { name: 'Tests' });
+        const livePredictionTab = page.getByRole('tab', { name: 'Live prediction' });
 
-        test('Tabs are url aware and the other way around', async ({ page }) => {
-            await page.goto(PROJECT_TESTS);
+        await expect(testsTab).toHaveAttribute('aria-selected', 'true');
+        await expect(livePredictionTab).toHaveAttribute('aria-selected', 'false');
 
-            const testsTab = page.getByRole('tab', { name: 'Tests' });
-            const livePredictionTab = page.getByRole('tab', { name: 'Live prediction' });
+        await livePredictionTab.click();
 
-            await expect(testsTab).toHaveAttribute('aria-selected', 'true');
-            await expect(livePredictionTab).toHaveAttribute('aria-selected', 'false');
+        await expect(page).toHaveURL(new RegExp(`${PROJECT_TESTS}/live-prediction`));
+        await expect(livePredictionTab).toHaveAttribute('aria-selected', 'true');
+        await expect(testsTab).toHaveAttribute('aria-selected', 'false');
+    });
 
-            await livePredictionTab.click();
+    test('Open a test after it finishes', async ({ page, testsPage, registerApiResponse, testsResponse }) => {
+        registerApiResponse(
+            'GetAllTestsInAProject',
+            switchAfterOneCall([
+                async (_, res, ctx) => res(ctx.json(testsResponse)),
+                async (_, res, ctx) => {
+                    const completedTestResults = testsResponse.test_results.map((testResult, index) => {
+                        if (index === 0) {
+                            return {
+                                ...testResult,
+                                job_info: { ...testResult.job_info, status: 'DONE' },
+                                scores: [
+                                    {
+                                        name: 'F-measure',
+                                        value: 0.7804878048780486,
+                                        label_id: null,
+                                    },
+                                ],
+                            };
+                        }
 
-            await expect(page).toHaveURL(new RegExp(`${PROJECT_TESTS}/live-prediction`));
-            await expect(livePredictionTab).toHaveAttribute('aria-selected', 'true');
-            await expect(testsTab).toHaveAttribute('aria-selected', 'false');
-        });
+                        return testResult;
+                    });
 
-        test('Open a test after it finishes', async ({ page, testsPage, registerApiResponse, testsResponse }) => {
-            registerApiResponse(
-                'GetAllTestsInAProject',
-                switchAfterOneCall([
-                    async (_, res, ctx) => res(ctx.json(testsResponse)),
-                    async (_, res, ctx) => {
-                        const completedTestResults = testsResponse.test_results.map((testResult, index) => {
-                            if (index === 0) {
-                                return {
-                                    ...testResult,
-                                    job_info: { ...testResult.job_info, status: 'DONE' },
-                                    scores: [
-                                        {
-                                            name: 'F-measure',
-                                            value: 0.7804878048780486,
-                                            label_id: null,
-                                        },
-                                    ],
-                                };
-                            }
+                    return res(ctx.json({ test_results: completedTestResults }));
+                },
+            ])
+        );
+        await page.goto(PROJECT_TESTS);
 
-                            return testResult;
-                        });
+        await testsPage.waitForTestToFinish('T1');
+        await testsPage.gotoTest('T1');
 
-                        return res(ctx.json({ test_results: completedTestResults }));
-                    },
-                ])
-            );
-            await page.goto(PROJECT_TESTS);
+        await expectToBeOnTheTestPage(page);
+    });
 
-            await testsPage.waitForTestToFinish('T1');
-            await testsPage.gotoTest('T1');
+    test('Removing a test', async ({ page, testsPage, registerApiResponse, testsResponse }) => {
+        registerApiResponse(
+            'GetAllTestsInAProject',
+            switchAfterOneCall([
+                async (_, res, ctx) => {
+                    return res(ctx.json(testsResponse));
+                },
+                async (_, res, ctx) => {
+                    const completedTestResults = testsResponse.test_results.filter((result) => result.id !== '2');
 
-            await expectToBeOnTheTestPage(page);
-        });
+                    return res(ctx.json({ test_results: completedTestResults }));
+                },
+            ])
+        );
 
-        test('Removing a test', async ({ page, testsPage, registerApiResponse, testsResponse }) => {
-            registerApiResponse(
-                'GetAllTestsInAProject',
-                switchAfterOneCall([
-                    async (_, res, ctx) => {
-                        return res(ctx.json(testsResponse));
-                    },
-                    async (_, res, ctx) => {
-                        const completedTestResults = testsResponse.test_results.filter((result) => result.id !== '2');
+        await page.goto(PROJECT_TESTS);
 
-                        return res(ctx.json({ test_results: completedTestResults }));
-                    },
-                ])
-            );
+        // 4 + header
+        await expect(page.getByRole('row')).toHaveCount(5);
 
-            await page.goto(PROJECT_TESTS);
+        await testsPage.deleteTest('T2');
 
-            // 4 + header
-            await expect(page.getByRole('row')).toHaveCount(5);
-
-            await testsPage.deleteTest('T2');
-
-            await expect(page.getByRole('row')).toHaveCount(4);
-        });
+        await expect(page.getByRole('row')).toHaveCount(4);
     });
 });

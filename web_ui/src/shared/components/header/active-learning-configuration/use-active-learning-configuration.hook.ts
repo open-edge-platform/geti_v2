@@ -1,8 +1,6 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
-
 import {
     useProjectConfigurationMutation,
     useProjectConfigurationQuery,
@@ -11,7 +9,6 @@ import { ProjectConfigurationUploadPayload } from '../../../../core/configurable
 import { ProjectIdentifier } from '../../../../core/projects/core.interface';
 import { Task } from '../../../../core/projects/task.interface';
 import { isNotCropTask } from '../../../utils';
-import { useAutoTrainingTasksConfig } from './use-tasks-auto-training-config.hook';
 import {
     getAutoTrainingEnabledParameter,
     getDynamicRequiredAnnotationsParameter,
@@ -23,10 +20,7 @@ export const useActiveLearningConfiguration = (
     projectIdentifier: ProjectIdentifier,
     tasks: Task[]
 ): UseActiveLearningConfigurationReturnType => {
-    const { FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS } = useFeatureFlags();
-    const { data: projectConfiguration, isPending } = useProjectConfigurationQuery(projectIdentifier, {
-        enabled: FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS,
-    });
+    const { data: projectConfiguration, isPending } = useProjectConfigurationQuery(projectIdentifier);
 
     const projectConfigurationMutation = useProjectConfigurationMutation();
     const notCropTasks = tasks.filter(isNotCropTask);
@@ -86,43 +80,37 @@ export const useActiveLearningConfiguration = (
         });
     };
 
-    const autoTrainingTaskConfigLegacy = useAutoTrainingTasksConfig(projectIdentifier, tasks);
+    const autoTrainingTasks = notCropTasks.map((task) => {
+        const taskProjectConfiguration = projectConfiguration?.taskConfigs.find(
+            (taskConfig) => taskConfig.taskId === task.id
+        );
 
-    if (FEATURE_FLAG_NEW_CONFIGURABLE_PARAMETERS) {
-        const autoTrainingTasks = notCropTasks.map((task) => {
-            const taskProjectConfiguration = projectConfiguration?.taskConfigs.find(
-                (taskConfig) => taskConfig.taskId === task.id
-            );
-
-            if (taskProjectConfiguration === undefined) {
-                return {
-                    task,
-                    trainingConfig: undefined,
-                    dynamicRequiredAnnotationsConfig: undefined,
-                    requiredImagesAutoTrainingConfig: undefined,
-                };
-            }
-
+        if (taskProjectConfiguration === undefined) {
             return {
                 task,
-                trainingConfig: getAutoTrainingEnabledParameter(taskProjectConfiguration.autoTraining),
-                dynamicRequiredAnnotationsConfig: getDynamicRequiredAnnotationsParameter(
-                    taskProjectConfiguration.autoTraining
-                ),
-                requiredImagesAutoTrainingConfig: getRequiredImagesAutoTrainingParameter(
-                    taskProjectConfiguration.autoTraining
-                ),
+                trainingConfig: undefined,
+                dynamicRequiredAnnotationsConfig: undefined,
+                requiredImagesAutoTrainingConfig: undefined,
             };
-        });
+        }
 
         return {
-            isPending,
-            autoTrainingTasks,
-            updateAutoTraining,
-            updateDynamicRequiredAnnotations,
-            updateRequiredImagesAutoTraining,
+            task,
+            trainingConfig: getAutoTrainingEnabledParameter(taskProjectConfiguration.autoTraining),
+            dynamicRequiredAnnotationsConfig: getDynamicRequiredAnnotationsParameter(
+                taskProjectConfiguration.autoTraining
+            ),
+            requiredImagesAutoTrainingConfig: getRequiredImagesAutoTrainingParameter(
+                taskProjectConfiguration.autoTraining
+            ),
         };
-    }
+    });
 
-    return autoTrainingTaskConfigLegacy;
+    return {
+        isPending,
+        autoTrainingTasks,
+        updateAutoTraining,
+        updateDynamicRequiredAnnotations,
+        updateRequiredImagesAutoTraining,
+    };
 };

@@ -2,14 +2,16 @@
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import json
 from datetime import datetime, timedelta
-from unittest.mock import call, patch
+from unittest.mock import ANY, call, patch
 
 import pytest
 from bson import ObjectId
+from geti_supported_models import SupportedModels
 
 from entities import AutoTrainActivationRequest, NullAutoTrainActivationRequest
 from main import run_controller_loop
 from repos.auto_train_activation_repo import SessionBasedAutoTrainActivationRepo
+from repos.partial_training_configuration_repo import PartialTrainingConfigurationRepo
 
 from geti_types import ID, ProjectIdentifier
 from grpc_interfaces.job_submission.client import GRPCJobsClient
@@ -122,17 +124,21 @@ def fxt_auto_train_activation_request_factory(request, fxt_session):
     ):
         repo = SessionBasedAutoTrainActivationRepo()
         request.addfinalizer(lambda: repo.delete_all())
-        repo._collection.insert_one(
+        repo._collection.update_one(
+            {"_id": ObjectId(task_id)},
             {
-                "_id": ObjectId(task_id),
-                "organization_id": session_doc["organization_id"],
-                "workspace_id": session_doc["workspace_id"],
-                "project_id": ObjectId(project_id),
-                "model_storage_id": ObjectId(model_storage_id),
-                "ready": ready,
-                "request_time": DatetimeToMongo.forward(timestamp),
-                "session": session_doc,
-            }
+                "$set": {
+                    "_id": ObjectId(task_id),
+                    "organization_id": session_doc["organization_id"],
+                    "workspace_id": session_doc["workspace_id"],
+                    "project_id": ObjectId(project_id),
+                    "model_storage_id": ObjectId(model_storage_id),
+                    "ready": ready,
+                    "request_time": DatetimeToMongo.forward(timestamp),
+                    "session": session_doc,
+                }
+            },
+            upsert=True,
         )
 
     yield _factory
@@ -165,7 +171,7 @@ class TestAutoTrainControllerLoopIntegration:
     @patch("main.AUTO_TRAIN_DEBOUNCING_PERIOD", 10)
     def test_run_controller_loop_process_requests(
         self,
-        mock_dataset_repo_count_items,
+        mock_dataset_count,
         mock_grpc_client_close,
         mock_grpc_client_submit,
         request,
@@ -175,6 +181,9 @@ class TestAutoTrainControllerLoopIntegration:
         fxt_project_with_classification_task,
         fxt_model_storage_detection,
         fxt_model_storage_classification,
+        fxt_training_configuration_task_level,
+        fxt_training_configuration_model_manifest_level,
+        fxt_dummy_model_manifest,
     ) -> None:
         # Arrange
         # - 2 ready request to be submitted
@@ -185,12 +194,6 @@ class TestAutoTrainControllerLoopIntegration:
         model_storage_repo_clas = ModelStorageRepo(project_identifier=fxt_project_with_classification_task.identifier)
         request.addfinalizer(lambda: model_storage_repo_det.delete_all())
         request.addfinalizer(lambda: model_storage_repo_clas.delete_all())
-        request.addfinalizer(
-            lambda: ConfigurableParametersRepo(fxt_project_with_classification_task.identifier).delete_all()
-        )
-        request.addfinalizer(
-            lambda: ConfigurableParametersRepo(fxt_project_with_detection_task.identifier).delete_all()
-        )
 
         fxt_model_storage_detection.id_ = fxt_ote_id(1)
         fxt_model_storage_detection.workspace_id = fxt_project_with_detection_task.workspace_id
@@ -246,7 +249,24 @@ class TestAutoTrainControllerLoopIntegration:
         assert isinstance(ready_request, AutoTrainActivationRequest)
 
         # Act
-        run_controller_loop()
+        with (
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_task_only_configuration",
+                return_value=fxt_training_configuration_task_level,
+            ),
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_by_model_manifest_id",
+                return_value=fxt_training_configuration_model_manifest_level,
+            ),
+            patch.object(
+                SupportedModels,
+                "get_model_manifest_by_id",
+                return_value=fxt_dummy_model_manifest,
+            ),
+        ):
+            run_controller_loop()
 
         # Assert
         mock_grpc_client_submit.assert_has_calls(
@@ -275,8 +295,9 @@ class TestAutoTrainControllerLoopIntegration:
                         "hyper_parameters_id": "",
                         "enable_training_from_dataset_shard": True,
                         "max_training_dataset_size": 12,
-                        "max_number_of_annotations": None,
-                        "min_annotation_size": None,
+                        "max_number_of_annotations": 100,
+                        "min_annotation_size": 512,
+                        "training_configuration_json": ANY,
                         "retain_training_artifacts": False,
                     },
                     metadata={
@@ -326,13 +347,17 @@ class TestAutoTrainControllerLoopIntegration:
     @patch("main.AUTO_TRAIN_JOB_SUBMISSION_COOLDOWN", 60)
     def test_controller_loop_cooldown(
         self,
-        mock_dataset_repo_count_items,
+        mock_dataset_count,
+        mock_grpc_client_close,
         mock_grpc_client_submit,
         request,
         fxt_auto_train_activation_request_factory,
         fxt_ote_id,
         fxt_project_with_detection_task,
         fxt_model_storage_detection,
+        fxt_training_configuration_model_manifest_level,
+        fxt_training_configuration_task_level,
+        fxt_dummy_model_manifest,
     ) -> None:
         # Arrange
         import controller
@@ -362,7 +387,24 @@ class TestAutoTrainControllerLoopIntegration:
         )
 
         # Act & assert
-        run_controller_loop()
+        with (
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_task_only_configuration",
+                return_value=fxt_training_configuration_task_level,
+            ),
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_by_model_manifest_id",
+                return_value=fxt_training_configuration_model_manifest_level,
+            ),
+            patch.object(
+                SupportedModels,
+                "get_model_manifest_by_id",
+                return_value=fxt_dummy_model_manifest,
+            ),
+        ):
+            run_controller_loop()
 
         # request #2, copy of #1, should be ignored during cooldown period
         fxt_auto_train_activation_request_factory(
@@ -373,7 +415,24 @@ class TestAutoTrainControllerLoopIntegration:
             ready=True,
         )
 
-        run_controller_loop()
+        with (
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_task_only_configuration",
+                return_value=fxt_training_configuration_task_level,
+            ),
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_by_model_manifest_id",
+                return_value=fxt_training_configuration_model_manifest_level,
+            ),
+            patch.object(
+                SupportedModels,
+                "get_model_manifest_by_id",
+                return_value=fxt_dummy_model_manifest,
+            ),
+        ):
+            run_controller_loop()
 
         # request #2 should have been discarded
         mock_grpc_client_submit.assert_called_once()
@@ -383,7 +442,24 @@ class TestAutoTrainControllerLoopIntegration:
         assert controller.last_job_submission_time[detection_task.id_] == now()
 
         # after cooldown period, new auto-train requests are allowed to be submitted
-        with patch.object(datetime, "now", return_value=now() + timedelta(seconds=80)):
+        with (
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_task_only_configuration",
+                return_value=fxt_training_configuration_task_level,
+            ),
+            patch.object(
+                PartialTrainingConfigurationRepo,
+                "get_by_model_manifest_id",
+                return_value=fxt_training_configuration_model_manifest_level,
+            ),
+            patch.object(
+                SupportedModels,
+                "get_model_manifest_by_id",
+                return_value=fxt_dummy_model_manifest,
+            ),
+            patch.object(datetime, "now", return_value=now() + timedelta(seconds=80)),
+        ):
             # request #3
             fxt_auto_train_activation_request_factory(
                 task_id=detection_task.id_,
