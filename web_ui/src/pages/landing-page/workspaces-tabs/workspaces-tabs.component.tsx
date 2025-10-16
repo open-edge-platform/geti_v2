@@ -13,7 +13,7 @@ import { CustomTabItem } from '../../../shared/components/custom-tab-item/custom
 import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
 import { TabItem } from '../../../shared/components/tabs/tabs.interface';
-import { getUniqueNameFromArray, hasEqualId } from '../../../shared/utils';
+import { hasEqualId } from '../../../shared/utils';
 import { CreateWorkspaceDialog } from '../../user-management/workspaces/create-workspace-dialog/create-workspace-dialog.component';
 import { LandingPageWorkspace as Workspace } from '../landing-page-workspace/landing-page-workspace.component';
 import { NoPermissionPlaceholder } from './components/no-permission-placeholder.component';
