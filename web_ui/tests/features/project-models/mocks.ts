@@ -2866,6 +2866,26 @@ export const trainingConfiguration: TrainingConfigurationDTO = {
             ],
         },
         augmentation: {
+            center_crop: [
+                {
+                    default_value: false,
+                    description: 'Whether to apply center cropping to the image',
+                    key: 'enable',
+                    name: 'Enable center crop',
+                    type: 'bool',
+                    value: true,
+                },
+                {
+                    default_value: 1,
+                    description: 'Ratio of original dimensions to keep when cropping',
+                    key: 'ratio',
+                    max_value: null,
+                    min_value: 0,
+                    name: 'Crop ratio',
+                    type: 'float',
+                    value: 0.6,
+                },
+            ],
             iou_random_crop: [
                 {
                     key: 'enable',
@@ -3129,7 +3149,7 @@ export const trainingConfiguration: TrainingConfigurationDTO = {
                     name: 'Enable tiling',
                     type: 'bool',
                     description: 'Whether to apply tiling to the image',
-                    value: false,
+                    value: true,
                     default_value: false,
                 },
                 {
@@ -3137,7 +3157,7 @@ export const trainingConfiguration: TrainingConfigurationDTO = {
                     name: 'Adaptive tiling',
                     type: 'bool',
                     description: 'Whether to use adaptive tiling based on image content',
-                    value: true,
+                    value: false,
                     default_value: true,
                 },
                 {
@@ -3283,6 +3303,16 @@ export const expectedTrainingConfiguration: TrainingConfigurationUpdatePayloadDT
             ],
         },
         augmentation: {
+            center_crop: [
+                {
+                    key: 'enable',
+                    value: false,
+                },
+                {
+                    key: 'ratio',
+                    value: 0.6,
+                },
+            ],
             color_jitter: [
                 {
                     key: 'enable',
