@@ -15,8 +15,8 @@ import { ActionMenu } from '../../../../shared/components/action-menu/action-men
 import { MenuAction } from '../../../../shared/components/action-menu/menu-action.interface';
 import { HasPermission } from '../../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../../shared/components/has-permission/has-permission.interface';
-import { RemoveUserDialog } from '../workspace-users/actions/remove-user-dialog.component';
 import { EditOrganizationUserDialog } from './edit-organization-user-dialog.component';
+import { RemoveUserDialog } from './remove-user-dialog.component';
 
 enum ORG_USER_ACTIONS_OPTIONS {
     DELETE = 'Delete from organization',
