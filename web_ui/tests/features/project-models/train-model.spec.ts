@@ -185,14 +185,17 @@ test.describe('Train model', () => {
             const brightnessStart = page.getByRole('button', {
                 name: 'Increase Change Brightness range start range value',
             });
+
             await brightnessStart.click();
 
             const brightnessSlider = page.getByLabel('Change Brightness range value');
-            brightnessSlider.click();
+
+            await brightnessSlider.click();
 
             const endRange = brightnessSlider.getByRole('presentation').nth(2);
 
             await endRange.click();
+
             const box = await endRange.boundingBox();
 
             if (box) {
@@ -443,10 +446,12 @@ test.describe('Train model', () => {
             const brightnessStart = page.getByRole('button', {
                 name: 'Increase Change Brightness range start range value',
             });
+
             await brightnessStart.click();
 
             const brightnessSlider = page.getByLabel('Change Brightness range value');
-            brightnessSlider.click();
+
+            await brightnessSlider.click();
 
             const endRange = brightnessSlider.getByRole('presentation').nth(2);
 
