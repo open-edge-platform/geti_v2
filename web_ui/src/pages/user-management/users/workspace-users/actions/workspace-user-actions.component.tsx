@@ -9,13 +9,12 @@ import { DialogContainer } from '@geti/ui';
 import { Delete, Edit } from '@geti/ui/icons';
 import { isEmpty } from 'lodash-es';
 
-import { useIsSaasEnv } from '../../../../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { useOrganizationIdentifier } from '../../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { ActionMenu } from '../../../../../shared/components/action-menu/action-menu.component';
 import { MenuAction } from '../../../../../shared/components/action-menu/menu-action.interface';
 import { HasPermission } from '../../../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../../../shared/components/has-permission/has-permission.interface';
-import { EditUserDialog } from './edit-user-dialog.component';
+import { EditWorkspaceUserDialog } from './edit-workspace-user-dialog.component';
 import { RemoveFromWorkspaceDialog } from './remove-from-workspace-dialog.component';
 
 enum USER_ACTIONS_OPTIONS {
@@ -32,7 +31,6 @@ interface UserActionsProps {
 
 export const WorkspaceUserActions = ({ activeUser, user, users, workspaceId }: UserActionsProps) => {
     const { organizationId } = useOrganizationIdentifier();
-    const isSaasEnvironment = useIsSaasEnv();
 
     const [action, setAction] = useState<USER_ACTIONS_OPTIONS | undefined>(undefined);
 
@@ -107,14 +105,13 @@ export const WorkspaceUserActions = ({ activeUser, user, users, workspaceId }: U
                         onAfterRemove={clearAction}
                     />
                 )}
-                {action === USER_ACTIONS_OPTIONS.EDIT && (
-                    <EditUserDialog
+                {action === USER_ACTIONS_OPTIONS.EDIT && workspaceId && (
+                    <EditWorkspaceUserDialog
                         organizationId={organizationId}
                         workspaceId={workspaceId}
                         user={user}
                         activeUser={activeUser}
                         closeDialog={clearAction}
-                        isSaasEnvironment={isSaasEnvironment}
                         users={users}
                     />
                 )}

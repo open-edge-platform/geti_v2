@@ -13,7 +13,7 @@ export const WorkspaceRoleTooltipContent = () => (
                 as well, with the same permissions. Workspace admin accounts can only be removed from the workspace or
                 permanently deleted if there is another workspace admin user in that same workspace.
             </Text>
-            <Text marginTop={'size-150'}>
+            <Text>
                 <strong>Workspace contributor:</strong> can create projects, and view, access, and edit projects that
                 they are added to. They can be project manager if they create projects themselves, and/or can be added
                 to projects as project manager or project contributor. Project contributor can&apos;t add users to a

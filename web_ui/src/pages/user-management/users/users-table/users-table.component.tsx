@@ -8,7 +8,6 @@ import { User, UsersQueryParams } from '@geti/core/src/users/users.interface';
 import { Workspace } from '@geti/core/src/workspaces/services/workspaces.interface';
 import { Cell, Column, Flex, Row, TableBody, TableHeader, TableView, View } from '@geti/ui';
 import { get, isEmpty } from 'lodash-es';
-import { useLocation } from 'react-router-dom';
 
 import { SortDirection } from '../../../../core/shared/query-parameters';
 import { useSortTable } from '../../../../hooks/use-sort-table/use-sort-table.hook';
@@ -16,6 +15,7 @@ import { NotFound } from '../../../../shared/components/not-found/not-found.comp
 import { CasualCell } from '../../../../shared/components/table/components/casual-cell/casual-cell.component';
 import { StatusCell } from '../../../../shared/components/table/status-cell/status-cell.component';
 import { TableCellProps } from '../../../../shared/components/table/table.interface';
+import { WorkspaceRoleTooltipContent } from '../../../../shared/components/tooltips/workspace-role-tooltip';
 import { SpectrumTableLoadingState } from '../../../../shared/utils';
 import { LastLoginCell } from './last-login-cell.component';
 import { ProjectRoleCell } from './project-role-cell.component';
@@ -71,8 +71,6 @@ export const UsersTable = ({
     overrideRoleColumn,
 }: UsersTableProps) => {
     const shouldShowNotFound = hasFilters && isEmpty(users);
-    const location = useLocation();
-    const isAccountWorkspacesLocation = location.pathname.includes('account/workspaces');
 
     const columns = useMemo(() => {
         const tableColumns = [
@@ -112,13 +110,21 @@ export const UsersTable = ({
                 },
             },
             {
-                label: isEmpty(resourceId) ? 'Workspace' : isAccountWorkspacesLocation ? 'Workspace role' : 'Role',
+                label: isEmpty(resourceId) ? 'Workspace' : 'Role',
                 dataKey: USERS_TABLE_COLUMNS.ROLES,
                 width: 150,
                 isSortable: false,
+                tooltip: <WorkspaceRoleTooltipContent />,
                 component: (data: TableCellProps) => {
                     if (overrideRoleColumn) {
                         return overrideRoleColumn(data);
+                    }
+                    // Organization-level view (no specific workspace selected)
+                    if (isEmpty(resourceId)) {
+                        const isOrgAdminUser = isOrganizationAdmin(data.rowData, organizationId);
+                        if (isOrgAdminUser) {
+                            return <CasualCell {...data} cellData='N/A' />;
+                        }
                     }
                     return isProjectUsersTable ? (
                         <ProjectRoleCell {...data} roles={data.rowData.roles} projectId={resourceId as string} />
@@ -176,7 +182,6 @@ export const UsersTable = ({
         workspaces,
         users,
         overrideRoleColumn,
-        isAccountWorkspacesLocation,
     ]);
 
     const [sortingOptions, sort] = useSortTable<UsersQueryParams>({

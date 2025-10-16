@@ -4,13 +4,7 @@
 import { RESOURCE_TYPE, RoleResource, WorkspaceRole } from '@geti/core/src/users/users.interface';
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
 
-import { hasEqualId } from '../../../../../../shared/utils';
-
-export const getUpdatedWorkspaceRoles = <T>(editedWorkspaceRole: T, index: number, workspaceRoles: T[]): T[] => {
-    const prefixPart = index > 0 ? [...workspaceRoles.slice(0, index)] : [];
-    const suffixPart = index + 1 < workspaceRoles.length ? [...workspaceRoles.slice(index + 1)] : [];
-    return [...prefixPart, editedWorkspaceRole, ...suffixPart];
-};
+import { hasEqualId } from '../../../../../shared/utils';
 
 export const mapRolesToWorkspaceRoles = (roles: RoleResource[], workspaces: WorkspaceEntity[]): WorkspaceRole[] =>
     roles

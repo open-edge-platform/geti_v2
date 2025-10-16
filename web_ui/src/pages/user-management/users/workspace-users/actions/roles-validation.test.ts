@@ -4,13 +4,14 @@
 import { RESOURCE_TYPE, USER_ROLE } from '@geti/core/src/users/users.interface';
 
 import { getMockedUser } from '../../../../../test-utils/mocked-items-factory/mocked-users';
-import { getAvailableRoles } from './roles-validation';
+import { getAvailableWorkspaceRoles } from './roles-validation';
 
 describe('roles-validation', () => {
-    describe('getAvailableRoles', () => {
+    describe('getAvailableWorkspaceRoles', () => {
         const workspaceId = 'workspace-id';
+        const organizationId = 'organization-id';
 
-        test('Returns no roles when active member is a workspace contributor', () => {
+        test('Returns no roles when active member is a workspace contributor without org admin privileges', () => {
             const activeMemberContributor = getMockedUser({
                 roles: [
                     {
@@ -21,14 +22,25 @@ describe('roles-validation', () => {
                 ],
             });
 
-            const members = [activeMemberContributor];
+            const targetMember = getMockedUser({
+                roles: [
+                    {
+                        resourceType: RESOURCE_TYPE.WORKSPACE,
+                        role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+                        resourceId: workspaceId,
+                    },
+                ],
+            });
+
+            const members = [activeMemberContributor, targetMember];
 
             expect(
-                getAvailableRoles({
+                getAvailableWorkspaceRoles({
                     activeMember: activeMemberContributor,
+                    targetMember,
                     members,
                     workspaceId,
-                    isAccountOwner: true,
+                    organizationId,
                 })
             ).toEqual([]);
         });
@@ -44,19 +56,20 @@ describe('roles-validation', () => {
                 ],
             });
 
-            const users = [activeMemberAdmin];
+            const members = [activeMemberAdmin];
 
             expect(
-                getAvailableRoles({
+                getAvailableWorkspaceRoles({
                     activeMember: activeMemberAdmin,
-                    members: users,
+                    targetMember: activeMemberAdmin,
+                    members,
                     workspaceId,
-                    isAccountOwner: true,
+                    organizationId,
                 })
             ).toEqual([]);
         });
 
-        test('Returns no roles for active member as a workspace admin while editing themselves when there is only one workspace admin', () => {
+        test('Returns no roles for active workspace admin editing themselves when they are the only workspace admin', () => {
             const activeMemberAdmin = getMockedUser({
                 roles: [
                     {
@@ -67,25 +80,30 @@ describe('roles-validation', () => {
                 ],
             });
 
-            const members = [
-                activeMemberAdmin,
-                getMockedUser({
-                    roles: [
-                        {
-                            resourceType: RESOURCE_TYPE.WORKSPACE,
-                            role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
-                            resourceId: workspaceId,
-                        },
-                    ],
-                }),
-            ];
+            const workspaceContributor = getMockedUser({
+                roles: [
+                    {
+                        resourceType: RESOURCE_TYPE.WORKSPACE,
+                        role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+                        resourceId: workspaceId,
+                    },
+                ],
+            });
+
+            const members = [activeMemberAdmin, workspaceContributor];
 
             expect(
-                getAvailableRoles({ activeMember: activeMemberAdmin, members, workspaceId, isAccountOwner: true })
+                getAvailableWorkspaceRoles({
+                    activeMember: activeMemberAdmin,
+                    targetMember: activeMemberAdmin,
+                    members,
+                    workspaceId,
+                    organizationId,
+                })
             ).toEqual([]);
         });
 
-        test('Returns WORKSPACE_ADMIN and WORKSPACE_CONTRIBUTOR roles for active member as a workspace admin while editing workspace contributor', () => {
+        test('Returns roles for workspace admin editing a contributor', () => {
             const activeMemberAdmin = getMockedUser({
                 roles: [
                     {
@@ -96,25 +114,30 @@ describe('roles-validation', () => {
                 ],
             });
 
-            const members = [
-                activeMemberAdmin,
-                getMockedUser({
-                    roles: [
-                        {
-                            resourceType: RESOURCE_TYPE.WORKSPACE,
-                            role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
-                            resourceId: workspaceId,
-                        },
-                    ],
-                }),
-            ];
+            const targetMember = getMockedUser({
+                roles: [
+                    {
+                        resourceType: RESOURCE_TYPE.WORKSPACE,
+                        role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+                        resourceId: workspaceId,
+                    },
+                ],
+            });
+
+            const members = [activeMemberAdmin, targetMember];
 
             expect(
-                getAvailableRoles({ activeMember: activeMemberAdmin, members, workspaceId, isAccountOwner: false })
+                getAvailableWorkspaceRoles({
+                    activeMember: activeMemberAdmin,
+                    targetMember,
+                    members,
+                    workspaceId,
+                    organizationId,
+                })
             ).toEqual([USER_ROLE.WORKSPACE_ADMIN, USER_ROLE.WORKSPACE_CONTRIBUTOR]);
         });
 
-        test('Returns WORKSPACE_ADMIN and WORKSPACE_CONTRIBUTOR roles when active member is a workspace admin and there are at least two admins', () => {
+        test('Returns roles for workspace admin editing themselves when at least two admins exist', () => {
             const activeMemberAdmin = getMockedUser({
                 roles: [
                     {
@@ -125,30 +148,36 @@ describe('roles-validation', () => {
                 ],
             });
 
-            const members = [
-                activeMemberAdmin,
-                getMockedUser({
-                    roles: [
-                        {
-                            resourceType: RESOURCE_TYPE.WORKSPACE,
-                            role: USER_ROLE.WORKSPACE_ADMIN,
-                            resourceId: workspaceId,
-                        },
-                    ],
-                }),
-                getMockedUser({
-                    roles: [
-                        {
-                            resourceType: RESOURCE_TYPE.WORKSPACE,
-                            role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
-                            resourceId: workspaceId,
-                        },
-                    ],
-                }),
-            ];
+            const secondWorkspaceAdmin = getMockedUser({
+                roles: [
+                    {
+                        resourceType: RESOURCE_TYPE.WORKSPACE,
+                        role: USER_ROLE.WORKSPACE_ADMIN,
+                        resourceId: workspaceId,
+                    },
+                ],
+            });
+
+            const workspaceContributor = getMockedUser({
+                roles: [
+                    {
+                        resourceType: RESOURCE_TYPE.WORKSPACE,
+                        role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+                        resourceId: workspaceId,
+                    },
+                ],
+            });
+
+            const members = [activeMemberAdmin, secondWorkspaceAdmin, workspaceContributor];
 
             expect(
-                getAvailableRoles({ activeMember: activeMemberAdmin, members, workspaceId, isAccountOwner: false })
+                getAvailableWorkspaceRoles({
+                    activeMember: activeMemberAdmin,
+                    targetMember: activeMemberAdmin,
+                    members,
+                    workspaceId,
+                    organizationId,
+                })
             ).toEqual([USER_ROLE.WORKSPACE_ADMIN, USER_ROLE.WORKSPACE_CONTRIBUTOR]);
         });
     });

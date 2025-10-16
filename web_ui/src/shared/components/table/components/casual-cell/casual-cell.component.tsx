@@ -3,7 +3,7 @@
 
 import { ReactNode } from 'react';
 
-import { PressableElement, Tooltip, TooltipTrigger } from '@geti/ui';
+import { PressableElement, SpectrumTooltipProps, Tooltip, TooltipTrigger } from '@geti/ui';
 
 import { idMatchingFormat } from '../../../../../test-utils/id-utils';
 import { formatUtcToLocal } from '../../../../utils';
@@ -12,9 +12,10 @@ import { TableCellProps } from '../../table.interface';
 
 interface CasualCellProps extends TableCellProps {
     tooltip?: ReactNode;
+    tooltipProps?: Omit<SpectrumTooltipProps, 'children'>;
 }
 
-export const CasualCell = ({ rowData, cellData, dataKey, tooltip, styles }: CasualCellProps) => {
+export const CasualCell = ({ rowData, cellData, dataKey, tooltip, styles, tooltipProps }: CasualCellProps) => {
     let id = dataKey;
 
     if (rowData.id) {
@@ -38,7 +39,7 @@ export const CasualCell = ({ rowData, cellData, dataKey, tooltip, styles }: Casu
                     {cellData}
                 </TruncatedText>
             </PressableElement>
-            <Tooltip>{tooltip ?? cellData}</Tooltip>
+            <Tooltip {...tooltipProps}>{tooltip ?? cellData}</Tooltip>
         </TooltipTrigger>
     );
 };

@@ -9,14 +9,14 @@ import {
     USER_ROLE,
     UserRoleDTO,
 } from '@geti/core/src/users/users.interface';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { applicationRender as render } from '../../../../../test-utils/application-provider-render';
 import { getMockedWorkspaceIdentifier } from '../../../../../test-utils/mocked-items-factory/mocked-identifiers';
 import { getMockedAdminUser, getMockedUser } from '../../../../../test-utils/mocked-items-factory/mocked-users';
 import { getMockedWorkspace } from '../../../../../test-utils/mocked-items-factory/mocked-workspace';
-import { EditUserDialog } from './edit-user-dialog.component';
+import { EditWorkspaceUserDialog } from './edit-workspace-user-dialog.component';
 
 const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier({ workspaceId: 'testing-workspace' });
 const mockedAdminUser = getMockedAdminUser(
@@ -33,15 +33,58 @@ jest.mock('../../../../../providers/workspaces-provider/workspaces-provider.comp
     })),
 }));
 
-describe('EditUserDialog', () => {
+describe('EditWorkspaceUserDialog', () => {
+    it("allows organization admin to edit another user's workspace role", async () => {
+        const orgAdminWorkspaceContributor = getMockedUser({
+            roles: [
+                {
+                    role: USER_ROLE.ORGANIZATION_ADMIN,
+                    resourceType: RESOURCE_TYPE.ORGANIZATION,
+                    resourceId: mockedWorkspaceIdentifier.organizationId,
+                },
+            ],
+            id: 'org-admin-contributor',
+            firstName: 'Org',
+            lastName: 'Admin',
+        });
+        const targetUser = getMockedUser({
+            roles: [
+                {
+                    role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+                    resourceType: RESOURCE_TYPE.WORKSPACE,
+                    resourceId: mockedWorkspaceIdentifier.workspaceId,
+                },
+            ],
+            id: 'target-user',
+            firstName: 'Target',
+            lastName: 'User',
+        });
+
+        await render(
+            <EditWorkspaceUserDialog
+                organizationId={mockedWorkspaceIdentifier.organizationId}
+                workspaceId={mockedWorkspaceIdentifier.workspaceId}
+                user={targetUser}
+                closeDialog={jest.fn()}
+                activeUser={orgAdminWorkspaceContributor}
+                users={[orgAdminWorkspaceContributor, targetUser]}
+            />,
+            { featureFlags: { FEATURE_FLAG_WORKSPACE_ACTIONS: false, FEATURE_FLAG_MANAGE_USERS_ROLES: true } }
+        );
+
+        const roleButton = screen.getByTestId('roles-add-user');
+        expect(roleButton).toBeInTheDocument();
+        await userEvent.click(roleButton);
+        expect(screen.getByRole('option', { name: /workspace contributor/i })).toBeInTheDocument();
+        expect(screen.getByRole('option', { name: /workspace admin/i })).toBeInTheDocument();
+    });
     describe('WORKSPACE_ACTION FF enabled', () => {
         it('save button is disabled when member data has not been changed', async () => {
             await render(
-                <EditUserDialog
+                <EditWorkspaceUserDialog
                     organizationId={mockedWorkspaceIdentifier.organizationId}
                     workspaceId={mockedWorkspaceIdentifier.workspaceId}
                     user={mockedAdminUser}
-                    isSaasEnvironment
                     closeDialog={jest.fn()}
                     activeUser={mockedAdminUser}
                     users={[mockedAdminUser]}
@@ -54,11 +97,10 @@ describe('EditUserDialog', () => {
 
         it('Check edit dialog on SaaS environment', async () => {
             await render(
-                <EditUserDialog
+                <EditWorkspaceUserDialog
                     organizationId={mockedWorkspaceIdentifier.organizationId}
                     workspaceId={mockedWorkspaceIdentifier.workspaceId}
                     user={mockedAdminUser}
-                    isSaasEnvironment
                     closeDialog={jest.fn()}
                     activeUser={mockedAdminUser}
                     users={[mockedAdminUser, getMockedAdminUser({ id: 'user-id-2' })]}
@@ -72,24 +114,20 @@ describe('EditUserDialog', () => {
                 'Last login:14 Aug 202311:13 AM'
             );
 
-            expect(screen.getByLabelText('First name')).toBeDisabled();
-            expect(screen.getByLabelText('Last name')).toBeDisabled();
-
             expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
 
-            expect(screen.getByTestId('edit-workspace-role-Workspace 1')).toBeInTheDocument();
-            expect(screen.getByTestId('roles-add-user')).toHaveTextContent('Workspace admin');
-            expect(screen.getByRole('button', { name: 'Add workspace role' })).toBeDisabled();
+            const workspaceRoleTrigger = screen.getByTestId('roles-add-user');
+            expect(workspaceRoleTrigger).toHaveTextContent(/select a role/i);
+            expect(workspaceRoleTrigger).toBeDisabled();
         });
 
         it('Check edit dialog on on-prem environment', async () => {
             await render(
-                <EditUserDialog
+                <EditWorkspaceUserDialog
                     organizationId={mockedWorkspaceIdentifier.organizationId}
                     workspaceId={mockedWorkspaceIdentifier.workspaceId}
                     user={mockedAdminUser}
-                    isSaasEnvironment={false}
                     closeDialog={jest.fn()}
                     activeUser={mockedAdminUser}
                     users={[
@@ -106,15 +144,12 @@ describe('EditUserDialog', () => {
                 'Last login:14 Aug 202311:13 AM'
             );
 
-            expect(screen.getByLabelText('First name')).toBeEnabled();
-            expect(screen.getByLabelText('Last name')).toBeEnabled();
-
             expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
 
-            expect(screen.getByTestId('edit-workspace-role-Workspace 1')).toBeInTheDocument();
-            expect(screen.getByTestId('roles-add-user')).toHaveTextContent('Workspace admin');
-            expect(screen.getByRole('button', { name: 'Add workspace role' })).toBeDisabled();
+            const workspaceRoleTrigger = screen.getByTestId('roles-add-user');
+            expect(workspaceRoleTrigger).toHaveTextContent(/workspace admin/i);
+            expect(workspaceRoleTrigger).toBeEnabled();
         });
 
         describe('roles edition', () => {
@@ -123,11 +158,10 @@ describe('EditUserDialog', () => {
                 usersService.updateRoles = jest.fn();
 
                 await render(
-                    <EditUserDialog
+                    <EditWorkspaceUserDialog
                         organizationId={mockedWorkspaceIdentifier.organizationId}
                         workspaceId={mockedWorkspaceIdentifier.workspaceId}
                         user={mockedAdminUser}
-                        isSaasEnvironment
                         closeDialog={jest.fn()}
                         activeUser={mockedAdminUser}
                         users={[
@@ -145,10 +179,7 @@ describe('EditUserDialog', () => {
                 );
 
                 await userEvent.click(screen.getByTestId('roles-add-user'));
-                await userEvent.selectOptions(
-                    screen.getByRole('listbox', { name: 'Role' }),
-                    screen.getByRole('option', { name: /Workspace contributor/ })
-                );
+                await userEvent.click(screen.getByRole('option', { name: /workspace contributor/i }));
 
                 await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
@@ -185,11 +216,10 @@ describe('EditUserDialog', () => {
     describe('WORKSPACE_ACTION FF disabled', () => {
         it('save button is disabled when member data has not been changed', async () => {
             await render(
-                <EditUserDialog
+                <EditWorkspaceUserDialog
                     organizationId={mockedWorkspaceIdentifier.organizationId}
                     workspaceId={mockedWorkspaceIdentifier.workspaceId}
                     user={mockedAdminUser}
-                    isSaasEnvironment
                     closeDialog={jest.fn()}
                     activeUser={mockedAdminUser}
                     users={[mockedAdminUser]}
@@ -202,11 +232,10 @@ describe('EditUserDialog', () => {
 
         it('Check edit dialog on SaaS environment', async () => {
             await render(
-                <EditUserDialog
+                <EditWorkspaceUserDialog
                     organizationId={mockedWorkspaceIdentifier.organizationId}
                     workspaceId={mockedWorkspaceIdentifier.workspaceId}
                     user={mockedAdminUser}
-                    isSaasEnvironment
                     closeDialog={jest.fn()}
                     activeUser={mockedAdminUser}
                     users={[
@@ -223,31 +252,26 @@ describe('EditUserDialog', () => {
                 'Last login:14 Aug 202311:13 AM'
             );
 
-            expect(screen.getByLabelText('First name')).toBeDisabled();
-            expect(screen.getByLabelText('Last name')).toBeDisabled();
-
             expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
 
-            fireEvent.click(screen.getByRole('button', { name: /role/i }));
+            expect(screen.getByTestId('roles-add-user')).toBeEnabled();
 
-            await userEvent.selectOptions(
-                screen.getByRole('listbox', { name: 'Role' }),
-                screen.getByRole('option', { name: /Workspace contributor/ })
-            );
+            await userEvent.click(screen.getByTestId('roles-add-user'));
+
+            await userEvent.click(screen.getByRole('option', { name: /workspace contributor/i }));
         });
 
         describe('roles edition', () => {
             it("edits member's role", async () => {
                 const usersService = createInMemoryUsersService();
-                usersService.updateMemberRole = jest.fn();
+                usersService.updateRoles = jest.fn();
 
                 await render(
-                    <EditUserDialog
+                    <EditWorkspaceUserDialog
                         organizationId={mockedWorkspaceIdentifier.organizationId}
                         workspaceId={mockedWorkspaceIdentifier.workspaceId}
                         user={mockedAdminUser}
-                        isSaasEnvironment
                         closeDialog={jest.fn()}
                         activeUser={mockedAdminUser}
                         users={[
@@ -266,22 +290,33 @@ describe('EditUserDialog', () => {
                     }
                 );
 
-                await userEvent.click(screen.getByRole('button', { name: /role/i }));
-                await userEvent.selectOptions(
-                    screen.getByRole('listbox', { name: 'Role' }),
-                    screen.getByRole('option', { name: /Workspace contributor/ })
-                );
+                await userEvent.click(screen.getByTestId('roles-add-user'));
+                await userEvent.click(screen.getByRole('option', { name: /workspace contributor/i }));
 
                 await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
                 await waitFor(() => {
-                    expect(usersService.updateMemberRole).toHaveBeenCalledWith(
+                    expect(usersService.updateRoles).toHaveBeenCalledWith(
                         mockedWorkspaceIdentifier.organizationId,
                         mockedAdminUser.id,
-                        {
-                            resourceId: mockedWorkspaceIdentifier.organizationId,
-                            role: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
-                        }
+                        expect.arrayContaining([
+                            expect.objectContaining({
+                                operation: RoleOperationDTO.DELETE,
+                                role: expect.objectContaining({
+                                    resourceId: mockedWorkspaceIdentifier.workspaceId,
+                                    resourceType: ResourceTypeDTO.WORKSPACE,
+                                    role: UserRoleDTO.WORKSPACE_ADMIN,
+                                }),
+                            }),
+                            expect.objectContaining({
+                                operation: RoleOperationDTO.CREATE,
+                                role: expect.objectContaining({
+                                    resourceId: mockedWorkspaceIdentifier.workspaceId,
+                                    resourceType: ResourceTypeDTO.WORKSPACE,
+                                    role: UserRoleDTO.WORKSPACE_CONTRIBUTOR,
+                                }),
+                            }),
+                        ])
                     );
                 });
             });
@@ -298,11 +333,10 @@ describe('EditUserDialog', () => {
                 ],
             });
             await render(
-                <EditUserDialog
+                <EditWorkspaceUserDialog
                     organizationId={mockedWorkspaceIdentifier.organizationId}
                     workspaceId={mockedWorkspaceIdentifier.workspaceId}
                     user={mockedAdminUser}
-                    isSaasEnvironment
                     closeDialog={jest.fn()}
                     activeUser={memberContributor}
                     users={[memberContributor, mockedAdminUser]}
@@ -312,7 +346,7 @@ describe('EditUserDialog', () => {
                 }
             );
 
-            expect(screen.queryByRole('button', { name: /role/i })).not.toBeInTheDocument();
+            expect(screen.getByTestId('roles-add-user')).toBeDisabled();
         });
 
         it('active member cannot edit member their role when active member is the only workspace admin', async () => {
@@ -327,11 +361,10 @@ describe('EditUserDialog', () => {
             });
 
             await render(
-                <EditUserDialog
+                <EditWorkspaceUserDialog
                     organizationId={mockedWorkspaceIdentifier.organizationId}
                     workspaceId={mockedWorkspaceIdentifier.workspaceId}
                     user={mockedAdminUser}
-                    isSaasEnvironment
                     closeDialog={jest.fn()}
                     activeUser={mockedAdminUser}
                     users={[memberContributor, mockedAdminUser]}
@@ -341,7 +374,7 @@ describe('EditUserDialog', () => {
                 }
             );
 
-            expect(screen.queryByRole('button', { name: /role/i })).not.toBeInTheDocument();
+            expect(screen.getByTestId('roles-add-user')).toBeDisabled();
         });
 
         it('active member can edit member other member role when active member is a workspace admin', async () => {
@@ -356,11 +389,10 @@ describe('EditUserDialog', () => {
             });
 
             await render(
-                <EditUserDialog
+                <EditWorkspaceUserDialog
                     organizationId={mockedWorkspaceIdentifier.organizationId}
                     workspaceId={mockedWorkspaceIdentifier.workspaceId}
                     user={memberContributor}
-                    isSaasEnvironment
                     closeDialog={jest.fn()}
                     activeUser={mockedAdminUser}
                     users={[memberContributor, mockedAdminUser]}
@@ -370,19 +402,18 @@ describe('EditUserDialog', () => {
                 }
             );
 
-            await userEvent.click(screen.getByRole('button', { name: /role/i }));
+            await userEvent.click(screen.getByTestId('roles-add-user'));
 
-            expect(screen.getByRole('option', { name: /Workspace contributor/ })).toBeInTheDocument();
-            expect(screen.getByRole('option', { name: /Workspace admin/ })).toBeInTheDocument();
+            expect(await screen.findByRole('option', { name: /workspace contributor/i })).toBeInTheDocument();
+            expect(screen.getByRole('option', { name: /workspace admin/i })).toBeInTheDocument();
         });
 
         it('active member can edit member their role when there are more admins than one', async () => {
             await render(
-                <EditUserDialog
+                <EditWorkspaceUserDialog
                     organizationId={mockedWorkspaceIdentifier.organizationId}
                     workspaceId={mockedWorkspaceIdentifier.workspaceId}
                     user={mockedAdminUser}
-                    isSaasEnvironment
                     closeDialog={jest.fn()}
                     activeUser={mockedAdminUser}
                     users={[
@@ -395,10 +426,10 @@ describe('EditUserDialog', () => {
                 }
             );
 
-            await userEvent.click(screen.getByRole('button', { name: /role/i }));
+            await userEvent.click(screen.getByTestId('roles-add-user'));
 
-            expect(screen.getByRole('option', { name: /Workspace contributor/ })).toBeInTheDocument();
-            expect(screen.getByRole('option', { name: /Workspace admin/ })).toBeInTheDocument();
+            expect(await screen.findByRole('option', { name: /workspace contributor/i })).toBeInTheDocument();
+            expect(screen.getByRole('option', { name: /workspace admin/i })).toBeInTheDocument();
         });
     });
 });
