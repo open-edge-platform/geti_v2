@@ -21,12 +21,12 @@ import {
 import { Email } from '@geti/ui/icons';
 
 import { StatusCell } from '../../../../shared/components/table/status-cell/status-cell.component';
-import { RolePicker } from '../old-project-users/role-picker.component';
 import { OrganizationRoleTooltipContent } from '../../../../shared/components/tooltips/organization-role-tooltip';
+import { RolePicker } from '../old-project-users/role-picker.component';
 import { LastLoginCell } from '../users-table/last-login-cell.component';
 
-import classes from '../workspace-users/actions/user-summary.module.scss';
 import tooltipClasses from '../../../../shared/components/tooltips/tooltips.module.scss';
+import classes from '../workspace-users/actions/user-summary.module.scss';
 
 interface EditOrganizationUserDialogProps {
     organizationId: string;

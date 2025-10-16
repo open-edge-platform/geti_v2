@@ -10,8 +10,6 @@ import { isFunction } from 'lodash-es';
 
 import { useHandleSignOut } from '../../../../hooks/use-handle-sign-out/use-handle-sign-out.hook';
 
-import classes from './users-actions.module.scss';
-
 interface UserActionsProps {
     organizationId: string;
     user: User;
@@ -49,7 +47,6 @@ export const RemoveUserDialog = ({ organizationId, user, activeUser, onDeleting 
             primaryActionLabel='Delete'
             onPrimaryAction={deleteUserAction}
             cancelLabel={'Cancel'}
-            UNSAFE_className={classes.removeUserDialog}
         >
             <Flex direction={'column'} gap={'size-150'}>
                 <Text>

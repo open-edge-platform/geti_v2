@@ -122,11 +122,14 @@ describe('EditOrganizationUserDialog', () => {
             expect(usersService.updateUser).toHaveBeenCalledTimes(1);
         });
 
-        expect(usersService.updateUser).toHaveBeenCalledWith(organizationId, expect.objectContaining({
-            id: contributor.id,
-            firstName: 'Updated',
-            lastName: contributor.lastName,
-        }));
+        expect(usersService.updateUser).toHaveBeenCalledWith(
+            organizationId,
+            expect.objectContaining({
+                id: contributor.id,
+                firstName: 'Updated',
+                lastName: contributor.lastName,
+            })
+        );
         expect(closeDialog).toHaveBeenCalled();
     });
 
@@ -268,6 +271,6 @@ describe('EditOrganizationUserDialog', () => {
             />
         );
 
-    expect(screen.getByTestId('roles-add-user')).toBeDisabled();
+        expect(screen.getByTestId('roles-add-user')).toBeDisabled();
     });
 });
