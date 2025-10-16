@@ -48,10 +48,18 @@ export const CreateWorkspaceDialog = ({ names, triggerState, nameLimitations = {
         event.preventDefault();
         const newName = workspaceName.trim();
 
-        createWorkspace.mutate({ name: newName });
-
-        triggerState.close();
-        setWorkspaceName('');
+        createWorkspace.mutate(
+            { name: newName },
+            {
+                onSuccess: () => {
+                    triggerState.close();
+                    setWorkspaceName('');
+                },
+                onError: () => {
+                    throw new Error('Failed to create workspace. Please try again.');
+                },
+            }
+        );
     };
 
     return (
@@ -90,6 +98,7 @@ export const CreateWorkspaceDialog = ({ names, triggerState, nameLimitations = {
                                     type='submit'
                                     id={`confirm-create-workspace`}
                                     data-testid={`confirm-create-workspace`}
+                                    isPending={createWorkspace.isPending}
                                 >
                                     Confirm
                                 </Button>
