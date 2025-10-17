@@ -29,6 +29,7 @@ interface UsersProps {
     UserActions?: ComponentProps<typeof UsersTable>['UserActions'];
     ignoredColumns?: ComponentProps<typeof UsersTable>['ignoredColumns'];
     isProjectUsersTable?: ComponentProps<typeof UsersTable>['isProjectUsersTable'];
+    isWorkspaceUsersTable?: ComponentProps<typeof UsersTable>['isWorkspaceUsersTable'];
 }
 
 const USERS_LIMIT = 20;
@@ -40,6 +41,7 @@ export const Users = ({
     UserActions = () => <></>,
     ignoredColumns = [],
     isProjectUsersTable = false,
+    isWorkspaceUsersTable = false,
 }: UsersProps) => {
     const { organizationId } = useOrganizationIdentifier();
     const { workspaceId: firstWorkspaceId } = useFirstWorkspaceIdentifier();
@@ -99,6 +101,7 @@ export const Users = ({
                     hasFilterOptions={hasFilters}
                     setUsersQueryParams={setUsersQueryParams}
                     isProjectUsersTable={isProjectUsersTable}
+                    isWorkspaceUsersTable={isWorkspaceUsersTable}
                     actionsSlot={actionsSlot}
                 />
                 <UsersTable
@@ -115,6 +118,7 @@ export const Users = ({
                     ignoredColumns={ignoredColumns}
                     resourceId={resourceId}
                     isProjectUsersTable={isProjectUsersTable}
+                    isWorkspaceUsersTable={isWorkspaceUsersTable}
                 />
                 {resourceType === RESOURCE_TYPE.WORKSPACE && resourceId !== undefined && (
                     <AvailableWorkspaceUsers workspaceId={resourceId} activeUser={activeUser} />

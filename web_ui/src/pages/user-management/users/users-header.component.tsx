@@ -17,6 +17,7 @@ interface WorkspaceUsersHeaderProps {
     hasFilterOptions: boolean;
     setUsersQueryParams: Dispatch<SetStateAction<UsersQueryParams>>;
     isProjectUsersTable?: boolean;
+    isWorkspaceUsersTable?: boolean;
     actionsSlot?: ReactNode;
 }
 
@@ -26,14 +27,17 @@ export const UsersHeader = ({
     hasFilterOptions,
     setUsersQueryParams,
     isProjectUsersTable = false,
+    isWorkspaceUsersTable = false,
     actionsSlot,
 }: WorkspaceUsersHeaderProps) => {
     const [searchInput, setSearchInput] = useState<string>('');
     const [roleFilter, setRoleFilter] = useState<USER_ROLE | undefined>();
 
-    const roles = isProjectUsersTable
+   const roles = isProjectUsersTable
         ? [USER_ROLE.PROJECT_MANAGER, USER_ROLE.PROJECT_CONTRIBUTOR]
-        : [USER_ROLE.WORKSPACE_ADMIN, USER_ROLE.WORKSPACE_CONTRIBUTOR];
+        : isWorkspaceUsersTable
+        ? [USER_ROLE.WORKSPACE_ADMIN, USER_ROLE.WORKSPACE_CONTRIBUTOR]
+        : [USER_ROLE.ORGANIZATION_ADMIN, USER_ROLE.ORGANIZATION_CONTRIBUTOR];
 
     const debouncedCallback = useDebouncedCallback((value: string) => {
         setUsersQueryParams((prevQueryParams) => {
