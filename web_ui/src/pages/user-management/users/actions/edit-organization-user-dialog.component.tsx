@@ -80,6 +80,7 @@ export const EditOrganizationUserDialog = ({
     const isLastRemainingOrgAdmin = currentOrgRole === USER_ROLE.ORGANIZATION_ADMIN && orgAdmins.length === 1;
 
     const canEditNames = isActiveOrgAdmin || isEditingSelf;
+    const canEditRole = isActiveOrgAdmin && !(isLastRemainingOrgAdmin && isEditingSelf);
 
     const nameChanged = firstName !== user.firstName || lastName !== user.lastName;
     const roleChanged = selectedOrgRole !== currentOrgRole;
@@ -182,7 +183,7 @@ export const EditOrganizationUserDialog = ({
                         roles={[USER_ROLE.ORGANIZATION_ADMIN, USER_ROLE.ORGANIZATION_CONTRIBUTOR]}
                         selectedRole={selectedOrgRole as USER_ROLE}
                         setSelectedRole={setSelectedOrgRole}
-                        isDisabled={isLastRemainingOrgAdmin}
+                        isDisabled={!canEditRole}
                         contextualHelp={
                             <ContextualHelp>
                                 <Heading>What roles can there be in an organization?</Heading>

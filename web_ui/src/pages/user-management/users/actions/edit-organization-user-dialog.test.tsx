@@ -269,4 +269,26 @@ describe('EditOrganizationUserDialog', () => {
 
         expect(screen.getByTestId('roles-add-user')).toBeDisabled();
     });
+
+    it('disables role picker when active user is org contributor', async () => {
+        const contributor = createOrgContributor({
+            id: 'contributor',
+            firstName: 'Dan',
+            lastName: 'Contributor',
+            email: 'dan.contributor@geti.com',
+        });
+
+        await render(
+            <EditOrganizationUserDialog
+                organizationId={organizationId}
+                user={contributor}
+                users={[contributor]}
+                activeUser={contributor}
+                isSaasEnvironment={false}
+                closeDialog={jest.fn()}
+            />
+        );
+
+        expect(screen.getByTestId('roles-add-user')).toBeDisabled();
+    });
 });
