@@ -43,6 +43,7 @@ interface UsersTableProps {
     resourceId: string | undefined;
     usersTableType?: RESOURCE_TYPE;
     tableId?: string;
+    usersTableType?: RESOURCE_TYPE;
 }
 
 export const UsersTable = ({
