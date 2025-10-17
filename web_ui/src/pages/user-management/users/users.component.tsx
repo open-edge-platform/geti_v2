@@ -114,14 +114,7 @@ export const Users = ({
                     UserActions={UserActions}
                     ignoredColumns={ignoredColumns}
                     resourceId={resourceId}
-<<<<<<< HEAD
-                    isProjectUsersTable={isProjectUsersTable}
-                    isWorkspaceUsersTable={isWorkspaceUsersTable}
-=======
-                    workspaces={workspaces}
                     usersTableType={usersTableType}
-                    organizationId={organizationId}
->>>>>>> 8747a567 (using one attribute to keep the type of the table)
                 />
                 {resourceType === RESOURCE_TYPE.WORKSPACE && resourceId !== undefined && (
                     <AvailableWorkspaceUsers workspaceId={resourceId} activeUser={activeUser} />

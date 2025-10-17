@@ -43,7 +43,6 @@ interface UsersTableProps {
     resourceId: string | undefined;
     usersTableType?: RESOURCE_TYPE;
     tableId?: string;
-    usersTableType?: RESOURCE_TYPE;
 }
 
 export const UsersTable = ({
@@ -101,7 +100,7 @@ export const UsersTable = ({
             {
                 label: isEmpty(resourceId)
                     ? 'Organization role'
-                    : isProjectUsersTable
+                    : usersTableType === RESOURCE_TYPE.PROJECT
                       ? 'Project role'
                       : 'Workspace role',
                 dataKey: USERS_TABLE_COLUMNS.ROLES,
@@ -145,7 +144,7 @@ export const UsersTable = ({
         ];
 
         return tableColumns.filter(({ dataKey }) => !ignoredColumns.includes(dataKey as USERS_TABLE_COLUMNS));
-    }, [ignoredColumns, resourceId, UserActions, activeUser, isProjectUsersTable, users]);
+    }, [ignoredColumns, resourceId, UserActions, activeUser, usersTableType, users]);
 
     const [sortingOptions, sort] = useSortTable<UsersQueryParams>({
         queryOptions: usersQueryParams,
