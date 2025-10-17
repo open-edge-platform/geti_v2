@@ -110,7 +110,7 @@ describe('WorkspaceUserActions', () => {
             expect(screen.getByText('Edit')).toBeInTheDocument();
         });
 
-        it('Workspace contributor can edit themselves (without role edition)', async () => {
+        it('Workspace contributor cannot edit themselves', async () => {
             mockedUseActiveUser.mockImplementation(() => ({
                 data: mockedContributorUser,
                 isLoading: false,
@@ -124,8 +124,9 @@ describe('WorkspaceUserActions', () => {
                 />
             );
 
-            fireEvent.click(screen.getByRole('button', { name: `${mockedContributorUser.email} action menu` }));
-            expect(screen.getByText('Edit')).toBeInTheDocument();
+            expect(
+                screen.queryByRole('button', { name: `${mockedContributorUser.email} action menu` })
+            ).not.toBeInTheDocument();
         });
 
         it('Check if organization admin cannot delete him/herself', async () => {
