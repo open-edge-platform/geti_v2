@@ -107,7 +107,11 @@ export const UsersTable = ({
                 width: 180,
                 isSortable: false,
                 component: (data: TableCellProps) => (
-                    <UserRoleCell {...data} resourceId={resourceId} isProjectUsersTable={usersTableType === RESOURCE_TYPE.PROJECT} />
+                    <UserRoleCell
+                        {...data}
+                        resourceId={resourceId}
+                        isProjectUsersTable={usersTableType === RESOURCE_TYPE.PROJECT}
+                    />
                 ),
             },
             {
