@@ -3,7 +3,7 @@
 
 import { Dispatch, ReactNode, SetStateAction, useMemo } from 'react';
 
-import { User, UsersQueryParams } from '@geti/core/src/users/users.interface';
+import { RESOURCE_TYPE, User, UsersQueryParams } from '@geti/core/src/users/users.interface';
 import { Cell, Column, Flex, Row, TableBody, TableHeader, TableView, View } from '@geti/ui';
 import { get, isEmpty } from 'lodash-es';
 
@@ -41,7 +41,7 @@ interface UsersTableProps {
     UserActions: (props: { activeUser: User; user: User; users: User[] }) => ReactNode;
     ignoredColumns?: USERS_TABLE_COLUMNS[];
     resourceId: string | undefined;
-    isProjectUsersTable?: boolean;
+    usersTableType?: RESOURCE_TYPE;
     tableId?: string;
 }
 
@@ -56,7 +56,7 @@ export const UsersTable = ({
     resourceId,
     isLoading,
     isFetchingNextPage,
-    isProjectUsersTable,
+    usersTableType,
     getNextPage,
     tableId,
 }: UsersTableProps) => {
@@ -107,7 +107,7 @@ export const UsersTable = ({
                 width: 180,
                 isSortable: false,
                 component: (data: TableCellProps) => (
-                    <UserRoleCell {...data} resourceId={resourceId} isProjectUsersTable={isProjectUsersTable} />
+                    <UserRoleCell {...data} resourceId={resourceId} isProjectUsersTable={usersTableType === RESOURCE_TYPE.PROJECT} />
                 ),
             },
             {

@@ -47,7 +47,7 @@ export const ProjectUsers = () => {
                 resourceType={RESOURCE_TYPE.PROJECT}
                 resourceId={projectId}
                 ignoredColumns={ignoredColumns}
-                isProjectUsersTable
+                usersTableType={RESOURCE_TYPE.PROJECT}
                 UserActions={ProjectUserActions}
             />
         </PageLayout>

@@ -3,7 +3,7 @@
 
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 
-import { USER_ROLE, UsersQueryParams } from '@geti/core/src/users/users.interface';
+import { RESOURCE_TYPE, USER_ROLE, UsersQueryParams } from '@geti/core/src/users/users.interface';
 import { Flex, SearchField } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
@@ -16,8 +16,7 @@ interface WorkspaceUsersHeaderProps {
     totalMatchedCount: number;
     hasFilterOptions: boolean;
     setUsersQueryParams: Dispatch<SetStateAction<UsersQueryParams>>;
-    isProjectUsersTable?: boolean;
-    isWorkspaceUsersTable?: boolean;
+    usersTableType?: RESOURCE_TYPE;
     actionsSlot?: ReactNode;
 }
 
@@ -26,18 +25,18 @@ export const UsersHeader = ({
     totalCount,
     hasFilterOptions,
     setUsersQueryParams,
-    isProjectUsersTable = false,
-    isWorkspaceUsersTable = false,
+    usersTableType = RESOURCE_TYPE.ORGANIZATION,
     actionsSlot,
 }: WorkspaceUsersHeaderProps) => {
     const [searchInput, setSearchInput] = useState<string>('');
     const [roleFilter, setRoleFilter] = useState<USER_ROLE | undefined>();
 
-   const roles = isProjectUsersTable
-        ? [USER_ROLE.PROJECT_MANAGER, USER_ROLE.PROJECT_CONTRIBUTOR]
-        : isWorkspaceUsersTable
-        ? [USER_ROLE.WORKSPACE_ADMIN, USER_ROLE.WORKSPACE_CONTRIBUTOR]
-        : [USER_ROLE.ORGANIZATION_ADMIN, USER_ROLE.ORGANIZATION_CONTRIBUTOR];
+    const roles =
+        usersTableType === RESOURCE_TYPE.PROJECT
+            ? [USER_ROLE.PROJECT_MANAGER, USER_ROLE.PROJECT_CONTRIBUTOR]
+            : usersTableType === RESOURCE_TYPE.WORKSPACE
+              ? [USER_ROLE.WORKSPACE_ADMIN, USER_ROLE.WORKSPACE_CONTRIBUTOR]
+              : [USER_ROLE.ORGANIZATION_ADMIN, USER_ROLE.ORGANIZATION_CONTRIBUTOR];
 
     const debouncedCallback = useDebouncedCallback((value: string) => {
         setUsersQueryParams((prevQueryParams) => {

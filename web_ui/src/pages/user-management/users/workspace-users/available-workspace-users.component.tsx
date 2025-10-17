@@ -128,7 +128,7 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
                             USERS_TABLE_COLUMNS.ROLES,
                         ]}
                         resourceId={workspaceId}
-                        isProjectUsersTable={false}
+                        usersTableType={'RESOURCE_TYPE.WORKSPACE'}
                     />
                 </View>
             </Flex>
