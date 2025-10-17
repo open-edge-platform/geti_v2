@@ -84,22 +84,17 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
     };
 
     const AddContributorAction = ({ user }: { user: User }) => (
-        <HasPermission
-            operations={[OPERATION.ADD_USER_TO_WORKSPACE]}
-            resources={[{ type: RESOURCE_TYPE.WORKSPACE, id: workspaceId }]}
+        <ActionButton
+            aria-label={`Add ${user.email} to workspace`}
+            onPress={() => handleAddUserWithRole(user, USER_ROLE.WORKSPACE_CONTRIBUTOR)}
+            id={`${user.id}-add-to-workspace`}
         >
-            <ActionButton
-                aria-label={`Add ${user.email} to workspace`}
-                onPress={() => handleAddUserWithRole(user, USER_ROLE.WORKSPACE_CONTRIBUTOR)}
-                id={`${user.id}-add-to-workspace`}
-            >
-                {updateUserRoleMutation.isPending || updateMemberRoleMutation.isPending ? (
-                    <Loading mode={'inline'} size={'S'} />
-                ) : (
-                    <Add />
-                )}
-            </ActionButton>
-        </HasPermission>
+            {updateUserRoleMutation.isPending || updateMemberRoleMutation.isPending ? (
+                <Loading mode={'inline'} size={'S'} />
+            ) : (
+                <Add />
+            )}
+        </ActionButton>
     );
 
     if (availableUsers.length === 0) {
@@ -107,35 +102,40 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
     }
 
     return (
-        <Flex direction={'column'} gap={'size-200'}>
-            <Heading level={3}>Available users to add to this workspace</Heading>
-            <View>
-                <UsersTable
-                    tableId={'available-workspace-users-table-id'}
-                    isFetchingNextPage={isFetchingNextPage}
-                    isLoading={isLoading}
-                    totalCount={orgTotal}
-                    users={availableUsers}
-                    hasFilters={false}
-                    activeUser={activeUser}
-                    getNextPage={async () => {
-                        // Load more from both lists to keep difference accurate
-                        await Promise.all([getNextOrgPage(), getNextWsPage()]);
-                    }}
-                    usersQueryParams={{}}
-                    setUsersQueryParams={() => {}}
-                    UserActions={({ user }) => <AddContributorAction user={user} />}
-                    ignoredColumns={[
-                        USERS_TABLE_COLUMNS.LAST_LOGIN,
-                        USERS_TABLE_COLUMNS.REGISTRATION_STATUS,
-                        USERS_TABLE_COLUMNS.ROLES,
-                    ]}
-                    resourceId={workspaceId}
-                    workspaces={workspaces}
-                    isProjectUsersTable={false}
-                    organizationId={organizationId}
-                />
-            </View>
-        </Flex>
+        <HasPermission
+            operations={[OPERATION.ADD_USER_TO_WORKSPACE]}
+            resources={[{ type: RESOURCE_TYPE.WORKSPACE, id: workspaceId }]}
+        >
+            <Flex direction={'column'} gap={'size-200'}>
+                <Heading level={3}>Available users to add to this workspace</Heading>
+                <View>
+                    <UsersTable
+                        tableId={'available-workspace-users-table-id'}
+                        isFetchingNextPage={isFetchingNextPage}
+                        isLoading={isLoading}
+                        totalCount={orgTotal}
+                        users={availableUsers}
+                        hasFilters={false}
+                        activeUser={activeUser}
+                        getNextPage={async () => {
+                            // Load more from both lists to keep difference accurate
+                            await Promise.all([getNextOrgPage(), getNextWsPage()]);
+                        }}
+                        usersQueryParams={{}}
+                        setUsersQueryParams={() => {}}
+                        UserActions={({ user }) => <AddContributorAction user={user} />}
+                        ignoredColumns={[
+                            USERS_TABLE_COLUMNS.LAST_LOGIN,
+                            USERS_TABLE_COLUMNS.REGISTRATION_STATUS,
+                            USERS_TABLE_COLUMNS.ROLES,
+                        ]}
+                        resourceId={workspaceId}
+                        workspaces={workspaces}
+                        isProjectUsersTable={false}
+                        organizationId={organizationId}
+                    />
+                </View>
+            </Flex>
+        </HasPermission>
     );
 };
