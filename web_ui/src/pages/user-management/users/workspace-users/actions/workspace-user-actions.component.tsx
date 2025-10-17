@@ -3,7 +3,7 @@
 
 import { Key, useState } from 'react';
 
-import { isOrganizationAdmin, isWorkspaceAdmin, isWorkspaceContributor } from '@geti/core/src/users/user-role-utils';
+import { isOrganizationAdmin, isWorkspaceAdmin } from '@geti/core/src/users/user-role-utils';
 import { User } from '@geti/core/src/users/users.interface';
 import { DialogContainer } from '@geti/ui';
 import { Delete, Edit } from '@geti/ui/icons';
@@ -40,7 +40,6 @@ export const WorkspaceUserActions = ({ activeUser, user, users, workspaceId }: U
 
     const isOwnAccount = user.id === activeUser?.id;
     const isActiveUserOrgAdmin = isOrganizationAdmin(activeUser, organizationId);
-    const isActiveMemberWorkspaceContributor = workspaceId ? isWorkspaceContributor(activeUser, workspaceId) : false;
     const isActiveUserWorkspaceAdmin = workspaceId ? isWorkspaceAdmin(activeUser, workspaceId) : false;
 
     const editAction = {
@@ -55,9 +54,7 @@ export const WorkspaceUserActions = ({ activeUser, user, users, workspaceId }: U
         icon: <Delete />,
     };
 
-    const canContributorEdit = (isOwnAccount && !workspaceId) || (isActiveMemberWorkspaceContributor && isOwnAccount);
-    const canEditUserRole =
-        isActiveUserOrgAdmin || canContributorEdit || activeUser.isAdmin || isActiveUserWorkspaceAdmin;
+    const canEditUserRole = isActiveUserOrgAdmin || activeUser.isAdmin || isActiveUserWorkspaceAdmin;
 
     const workspaceAdmins = workspaceId ? users.filter((u) => isWorkspaceAdmin(u, workspaceId)) : [];
     const isTargetWorkspaceAdmin = workspaceId ? isWorkspaceAdmin(user, workspaceId) : false;
