@@ -12,7 +12,7 @@ describe('UsernameCell', () => {
     const mockedUser = getMockedUser({ id: 'user-id' });
     const fullName = getFullNameFromUser(mockedUser);
 
-    it('Check if organization admin is marked in the table', async () => {
+    it('shows the user full name within the cell', async () => {
         render(
             <UserNameCell
                 dataKey={mockedUser.id}
@@ -20,27 +20,10 @@ describe('UsernameCell', () => {
                 userPhoto={null}
                 fullName={fullName}
                 email={mockedUser.email}
-                isOrgAdmin
                 cellData={fullName}
             />
         );
 
-        expect(screen.getByTestId('organization-admin-indicator')).toBeInTheDocument();
-    });
-
-    it('Check if not organization admin is not marked in the table', async () => {
-        render(
-            <UserNameCell
-                dataKey={mockedUser.id}
-                id={mockedUser.id}
-                userPhoto={null}
-                fullName={fullName}
-                email={mockedUser.email}
-                isOrgAdmin={false}
-                cellData={fullName}
-            />
-        );
-
-        expect(screen.queryByTestId('organization-admin-indicator')).not.toBeInTheDocument();
+        expect(screen.getByText(fullName)).toBeInTheDocument();
     });
 });

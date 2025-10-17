@@ -11,7 +11,6 @@ import { ActionButton, Flex, Heading, Loading, View } from '@geti/ui';
 import { Add } from '@geti/ui/icons';
 
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { useWorkspaces } from '../../../../providers/workspaces-provider/workspaces-provider.component';
 import { HasPermission } from '../../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../../shared/components/has-permission/has-permission.interface';
 import { USERS_TABLE_COLUMNS, UsersTable } from '../users-table/users-table.component';
@@ -23,7 +22,6 @@ interface AvailableWorkspaceUsersProps {
 
 export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWorkspaceUsersProps) => {
     const { organizationId } = useOrganizationIdentifier();
-    const { workspaces } = useWorkspaces();
     const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();
 
     const { useGetUsersQuery, useUpdateUserRoles, useUpdateMemberRole } = useUsers();
@@ -131,9 +129,7 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
                         USERS_TABLE_COLUMNS.ROLES,
                     ]}
                     resourceId={workspaceId}
-                    workspaces={workspaces}
                     isProjectUsersTable={false}
-                    organizationId={organizationId}
                 />
             </View>
         </Flex>

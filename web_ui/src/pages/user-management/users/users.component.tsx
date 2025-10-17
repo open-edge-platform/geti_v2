@@ -13,7 +13,6 @@ import { isEmpty } from 'lodash-es';
 import { useIsSaasEnv } from '../../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { useFirstWorkspaceIdentifier } from '../../../providers/workspaces-provider/use-first-workspace-identifier.hook';
-import { useWorkspaces } from '../../../providers/workspaces-provider/workspaces-provider.component';
 import { ANIMATION_PARAMETERS } from '../../../shared/animation-parameters/animation-parameters';
 import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
@@ -46,7 +45,6 @@ export const Users = ({
     const { workspaceId: firstWorkspaceId } = useFirstWorkspaceIdentifier();
     const isSaasEnvironment = useIsSaasEnv();
     const { data: productInfo } = useProductInfo();
-    const { workspaces } = useWorkspaces();
     const [usersQueryParams, setUsersQueryParams] = useState<UsersQueryParams>({
         sortBy: undefined,
         sortDirection: undefined,
@@ -116,9 +114,7 @@ export const Users = ({
                     UserActions={UserActions}
                     ignoredColumns={ignoredColumns}
                     resourceId={resourceId}
-                    workspaces={workspaces}
                     isProjectUsersTable={isProjectUsersTable}
-                    organizationId={organizationId}
                 />
                 {resourceType === RESOURCE_TYPE.WORKSPACE && resourceId !== undefined && (
                     <AvailableWorkspaceUsers workspaceId={resourceId} activeUser={activeUser} />
