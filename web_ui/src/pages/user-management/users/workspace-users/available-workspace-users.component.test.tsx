@@ -152,12 +152,12 @@ describe('AvailableWorkspaceUsers', () => {
         );
     });
 
-    it('does not render the Add action when user lacks permission', async () => {
+    it('does not render the Available users section when user lacks permission', async () => {
         renderAvailableWorkspaceUsers({ activeUserRoles: onlyOrgContributorRoles, manageUsersRoles: true });
 
         expect(
-            await screen.findByRole('heading', { name: /available users to add to this workspace/i })
-        ).toBeInTheDocument();
+            screen.queryByRole('heading', { name: /available users to add to this workspace/i })
+        ).not.toBeInTheDocument();
         expect(screen.queryByRole('button', { name: /add u2@intel.com to workspace/i })).not.toBeInTheDocument();
     });
 

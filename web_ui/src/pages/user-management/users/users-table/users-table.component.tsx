@@ -13,6 +13,7 @@ import { NotFound } from '../../../../shared/components/not-found/not-found.comp
 import { CasualCell } from '../../../../shared/components/table/components/casual-cell/casual-cell.component';
 import { StatusCell } from '../../../../shared/components/table/status-cell/status-cell.component';
 import { TableCellProps } from '../../../../shared/components/table/table.interface';
+import { WorkspaceRoleTooltipContent } from '../../../../shared/components/tooltips/workspace-role-tooltip';
 import { SpectrumTableLoadingState } from '../../../../shared/utils';
 import { LastLoginCell } from './last-login-cell.component';
 import { UserNameCell } from './user-name-cell/user-name-cell.component';
