@@ -185,6 +185,7 @@ export const UsersTable = ({
         workspaces,
         users,
         overrideRoleColumn,
+        isAccountWorkspacesLocation,
     ]);
 
     const [sortingOptions, sort] = useSortTable<UsersQueryParams>({
