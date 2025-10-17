@@ -45,12 +45,14 @@ export const LandingPageWorkspace = () => {
 
     return (
         <Flex direction={'column'} height={'100%'}>
-            <ProjectsActions
-                shouldShowProjectActions={hasProjects || hasNameFilter}
-                queryOptions={queryOptions}
-                setQueryOptions={setQueryOptions}
-                datasetImportDialogTrigger={datasetImportDialogTrigger}
-            />
+            {hasProjects && (
+                <ProjectsActions
+                    shouldShowProjectActions={hasProjects || hasNameFilter}
+                    queryOptions={queryOptions}
+                    setQueryOptions={setQueryOptions}
+                    datasetImportDialogTrigger={datasetImportDialogTrigger}
+                />
+            )}
 
             <Flex
                 flex={1}
