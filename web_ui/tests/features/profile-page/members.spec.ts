@@ -25,12 +25,12 @@ const expectMembersToBeVisible = async (
         await expect(membersPage.getEmailCell(member.email, row)).toBeVisible();
         await expect(membersPage.getNameCell(member.firstName, member.secondName, row)).toBeVisible();
 
-        const workspaceRole = member.roles.find((role) => role.resourceType === ResourceTypeDTO.WORKSPACE);
-        if (workspaceRole === undefined) {
-            throw new Error(`${member} does not have workspace role`);
+        const organizationRole = member.roles.find((role) => role.resourceType === ResourceTypeDTO.ORGANIZATION);
+        if (organizationRole === undefined) {
+            throw new Error(`${member} does not have organization role`);
         }
 
-        await expect(membersPage.getRoleCell(USER_ROLE_MAPPING[workspaceRole.role], row)).toBeVisible();
+        await expect(membersPage.getRoleCell(USER_ROLE_MAPPING[organizationRole.role], row)).toBeVisible();
     }
 };
 
@@ -57,14 +57,19 @@ test.describe('Members page', () => {
         });
     });
 
-    // TODO: need to fix it in a separate PR
-    test.skip('Creates a workspace admin member', async ({ page, membersPage, registerApiResponse, openApi }) => {
+    test('Creates an organization admin - workspace admin member', async ({
+        page,
+        membersPage,
+        registerApiResponse,
+        openApi,
+    }) => {
         const member = {
             firstName: 'Yet another',
             lastName: 'User',
             email: 'test50@intel.com',
             password: 'Test1234',
-            role: USER_ROLE.WORKSPACE_ADMIN,
+            workspaceRole: USER_ROLE.WORKSPACE_ADMIN,
+            organizationRole: USER_ROLE.ORGANIZATION_ADMIN,
         } as const;
 
         const members = registerApiMembers({ registerApiResponse, openApi });
@@ -96,6 +101,57 @@ test.describe('Members page', () => {
                     resourceType: 'organization',
                     resourceId: '5b1f89f3-aba5-4a5f-84ab-de9abb8e0633',
                 },
+            ],
+        });
+
+        await expect(membersPage.membersTableCount).toHaveCount(members.get().length);
+        await expectMembersToBeVisible(membersPage, members.get());
+    });
+
+    test('Creates an organization contributor - workspace admin member', async ({
+        page,
+        membersPage,
+        registerApiResponse,
+        openApi,
+    }) => {
+        const member = {
+            firstName: 'Yet another',
+            lastName: 'User',
+            email: 'test50@intel.com',
+            password: 'Test1234',
+            workspaceRole: USER_ROLE.WORKSPACE_ADMIN,
+            organizationRole: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
+        } as const;
+
+        const members = registerApiMembers({ registerApiResponse, openApi });
+
+        await membersPage.openByURL(organizationId);
+
+        await expect(membersPage.addMemberButton).toBeVisible();
+
+        await expect(membersPage.membersTableCount).toHaveCount(members.get().length);
+        await expectMembersToBeVisible(membersPage, members.get());
+
+        const addUserRequestPromise = page.waitForRequest((req) => {
+            return req.method() === 'POST' && req.url().includes('/users/create');
+        });
+
+        await membersPage.addMember(member);
+
+        const addUserRequest = await addUserRequestPromise;
+        const addUserRequestPayload = JSON.parse(addUserRequest.postData() ?? '');
+
+        expect(addUserRequestPayload).toEqual({
+            email: member.email,
+            firstName: member.firstName,
+            secondName: member.lastName,
+            password: expect.any(String),
+            roles: [
+                {
+                    role: 'organization_contributor',
+                    resourceType: 'organization',
+                    resourceId: '5b1f89f3-aba5-4a5f-84ab-de9abb8e0633',
+                },
                 {
                     role: 'workspace_admin',
                     resourceType: 'workspace',
@@ -108,14 +164,19 @@ test.describe('Members page', () => {
         await expectMembersToBeVisible(membersPage, members.get());
     });
 
-    // TODO: need to fix it in a separate PR
-    test.skip('Creates a workspace contributor member', async ({ page, membersPage, openApi, registerApiResponse }) => {
+    test('Creates an organization contributor - workspace contributor member', async ({
+        page,
+        membersPage,
+        openApi,
+        registerApiResponse,
+    }) => {
         const member = {
             firstName: 'Test',
             lastName: 'User',
             email: 'tes@intel.com',
             password: 'Test1234',
-            role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+            workspaceRole: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+            organizationRole: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
         } as const;
 
         const members = registerApiMembers({ registerApiResponse, openApi });
@@ -159,7 +220,7 @@ test.describe('Members page', () => {
     });
 
     // TODO: reenable this after users tab merge
-    test.skip('Removes a workspace admin member', async ({ page, membersPage, registerApiResponse }) => {
+    test('Removes a workspace admin member', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);
