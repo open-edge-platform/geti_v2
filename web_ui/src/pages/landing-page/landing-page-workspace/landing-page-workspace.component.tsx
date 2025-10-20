@@ -40,12 +40,13 @@ export const LandingPageWorkspace = () => {
     }, [data]);
 
     const hasProjects = !isEmpty(projects);
+    const hasNameFilter = queryOptions.name !== undefined;
     const isLoading = isLoadingProjectsQuery;
 
     return (
         <Flex direction={'column'} height={'100%'}>
             <ProjectsActions
-                shouldShowProjectActions={hasProjects}
+                shouldShowProjectActions={hasProjects || hasNameFilter}
                 queryOptions={queryOptions}
                 setQueryOptions={setQueryOptions}
                 datasetImportDialogTrigger={datasetImportDialogTrigger}
