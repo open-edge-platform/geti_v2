@@ -59,10 +59,7 @@ export const LandingPageWorkspace = () => {
                 minHeight={0}
                 direction={'column'}
                 position={'relative'}
-                UNSAFE_style={{
-                    overflowY: 'auto',
-                    marginTop: hasProjects ? '0px' : '32px',
-                }}
+                UNSAFE_style={{ overflowY: 'auto' }}
                 gap={'size-250'}
             >
                 {!isEmpty(importItems) ? (
