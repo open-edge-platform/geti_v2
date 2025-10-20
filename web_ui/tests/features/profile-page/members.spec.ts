@@ -219,7 +219,6 @@ test.describe('Members page', () => {
         await expectMembersToBeVisible(membersPage, members.get());
     });
 
-    // TODO: reenable this after users tab merge
     test('Removes a workspace admin member', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
@@ -248,8 +247,7 @@ test.describe('Members page', () => {
         await expect(membersPage.getEmailCell(workspaceAdmin2.email)).toBeHidden();
     });
 
-    // TODO: reenable this after users tab merge
-    test.skip('Removes a workspace contributor member', async ({ page, membersPage, registerApiResponse }) => {
+    test('Removes a workspace contributor member', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);
@@ -278,7 +276,7 @@ test.describe('Members page', () => {
     });
 
     // TODO: need to fix it in a separate PR
-    test.skip('Filters by workspace admin or contributor role', async ({ page, membersPage, registerApiResponse }) => {
+    test('Filters by workspace admin or contributor role', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);

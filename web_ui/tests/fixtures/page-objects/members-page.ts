@@ -69,7 +69,7 @@ export class MembersPage {
     }
 
     private getActionMenuButton(email: string) {
-        return this.page.getByRole('button', { name: new RegExp(`${email} action menu`) });
+        return this.page.getByRole('button', { name: new RegExp(`${email} organization user action menu`) });
     }
 
     async removeMember(email: string) {
