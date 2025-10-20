@@ -1,7 +1,7 @@
 # Component Build Configuration
 #
 # This file optimizes CI/CD builds by configuring settings per component.
-# Components not listed here use the 'defaults' section below.
+# Components not listed here use the 'defaults' section below. 
 components:
   interactive_ai/workflows/train/trainer/xpu:
     # Heavy builds requiring cleanup to fit into default GitHub runner disk space

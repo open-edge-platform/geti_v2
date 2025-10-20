@@ -1,4 +1,4 @@
-# Platform services
+# Platform services 
 platform/services/auth_proxy:
   - platform/services/auth_proxy/**
   - libs/grpc_interfaces/account_service/**

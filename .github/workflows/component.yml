@@ -31,7 +31,7 @@
 # - build_version (string, required): Version tag applied to built artifacts (fallback to commit)
 # - publish_binaries (bool, default false): Enable push of image & Helm chart
 # - registry (string, required): Target container registry base
-#
+# 
 
 name: Components workflow
 
