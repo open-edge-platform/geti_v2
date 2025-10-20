@@ -13,7 +13,7 @@ interface RolePickerProps<T> extends Omit<ComponentProps<typeof Picker>, 'childr
     setSelectedRole: (user: T) => void;
     emptyItem?: string;
     testId?: string;
-    options?: { showLabel?: boolean };
+    label?: ComponentProps<typeof Picker>['label'] | boolean;
 }
 
 export const RolePicker = <T extends USER_ROLE>({
@@ -21,12 +21,13 @@ export const RolePicker = <T extends USER_ROLE>({
     selectedRole,
     setSelectedRole,
     emptyItem,
-    options = { showLabel: true },
     testId = 'roles-add-user',
+    label,
     ...pickerProps
 }: RolePickerProps<T>) => {
     const rolesItems = roles.map((role) => ({ key: role, text: role }));
     const items = isEmpty(emptyItem) ? rolesItems : [...rolesItems, { key: '', text: emptyItem }];
+    const labelContent = label || 'Role';
 
     const onSelectionChange = (key: Key) => {
         setSelectedRole(key as T);
@@ -35,7 +36,7 @@ export const RolePicker = <T extends USER_ROLE>({
     return (
         <Picker
             {...pickerProps}
-            label={options.showLabel ? 'Role' : undefined}
+            label={label !== false ? labelContent : undefined}
             placeholder={'Select a role'}
             items={items}
             id='roles-add-user'

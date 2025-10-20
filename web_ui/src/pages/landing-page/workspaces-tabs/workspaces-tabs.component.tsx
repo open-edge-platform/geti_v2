@@ -6,13 +6,15 @@ import { useWorkspacesApi } from '@geti/core/src/workspaces/hooks/use-workspaces
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
 import { ActionButton, Flex, Item, Loading, TabList, TabPanels, Tabs, Tooltip, TooltipTrigger } from '@geti/ui';
 import { Add } from '@geti/ui/icons';
+import { useOverlayTriggerState } from 'react-stately';
 
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { CustomTabItem } from '../../../shared/components/custom-tab-item/custom-tab-item.component';
 import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
 import { TabItem } from '../../../shared/components/tabs/tabs.interface';
-import { getUniqueNameFromArray, hasEqualId } from '../../../shared/utils';
+import { hasEqualId } from '../../../shared/utils';
+import { CreateWorkspaceDialog } from '../../user-management/workspaces/create-workspace-dialog/create-workspace-dialog.component';
 import { LandingPageWorkspace as Workspace } from '../landing-page-workspace/landing-page-workspace.component';
 import { NoPermissionPlaceholder } from './components/no-permission-placeholder.component';
 import { CustomTabItemWithMenu } from './custom-tab-item-with-menu.component';
@@ -24,6 +26,7 @@ export const WorkspacesTabs = () => {
     const { organizationId } = useOrganizationIdentifier();
     const { workspaces, selectWorkspace, selectedWorkspaceId, handleSelectWorkspace } = useWorkspacesTabs();
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
+    const createWorkspaceDialogState = useOverlayTriggerState({});
 
     const { useCreateWorkspaceMutation } = useWorkspacesApi(organizationId);
     const createWorkspace = useCreateWorkspaceMutation();
@@ -35,22 +38,7 @@ export const WorkspacesTabs = () => {
         key: id,
         children: <Workspace />,
     }));
-
-    const handleCreateWorkspace = (): void => {
-        const uniqueName = getUniqueNameFromArray(
-            workspaces.map(({ name }) => name),
-            'Workspace '
-        );
-
-        createWorkspace.mutate(
-            { name: uniqueName },
-            {
-                onSuccess: (workspace) => {
-                    selectWorkspace(workspace.id);
-                },
-            }
-        );
-    };
+    const workspacesNames = workspaces.map((workspace) => workspace.name);
 
     return (
         <Flex id={`page-layout-id`} direction='column' height='100%' UNSAFE_className={classes.componentWrapper}>
@@ -103,7 +91,7 @@ export const WorkspacesTabs = () => {
                                     isQuiet
                                     id={'create-new-workspace-id'}
                                     aria-label={'Create new workspace'}
-                                    onPress={handleCreateWorkspace}
+                                    onPress={createWorkspaceDialogState.open}
                                     isDisabled={createWorkspace.isPending}
                                 >
                                     {createWorkspace.isPending ? <Loading mode='inline' size={'S'} /> : <Add />}
@@ -127,6 +115,11 @@ export const WorkspacesTabs = () => {
                     )}
                 </TabPanels>
             </Tabs>
+            <CreateWorkspaceDialog
+                triggerState={createWorkspaceDialogState}
+                names={workspacesNames}
+                nameLimitations={{ maxLength: 64, minLength: 1 }}
+            />
         </Flex>
     );
 };

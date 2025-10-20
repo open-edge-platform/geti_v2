@@ -1,87 +1,33 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key, useState } from 'react';
+import { RESOURCE_TYPE, User } from '@geti/core/src/users/users.interface';
+import { Flex, Text } from '@geti/ui';
 
-import { paths } from '@geti/core';
-import { User } from '@geti/core/src/users/users.interface';
-import { Flex } from '@geti/ui';
-import { capitalize } from 'lodash-es';
-import { useNavigate } from 'react-router-dom';
-
-import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
-import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
-import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
-import { PageLayoutWithTabs } from '../../../shared/components/page-layout/page-layout-with-tabs.component';
-import { TabItem } from '../../../shared/components/tabs/tabs.interface';
-import { Header } from './header.component';
-import { WorkspaceUsersPanel } from './workspace-users-panel.component';
-import { WorkspaceUsers } from './workspace-users/workspace-users.component';
-
-enum UsersTabs {
-    DETAILS = 'details',
-}
-
-const USERS_TABS_TO_PATH_MAPPING = {
-    [UsersTabs.DETAILS]: paths.account.users.details,
-};
+import { OrganizationUserActions } from './actions/organization-user-actions.component';
+import { Users } from './users.component';
 
 interface UsersTabProps {
     activeUser: User | undefined;
 }
 
 export const UsersTab = ({ activeUser }: UsersTabProps) => {
-    const { organizationId } = useOrganizationIdentifier();
-    const [selectedWorkspace, setSelectedWorkspace] = useState<string>();
-
-    const activeTab = UsersTabs.DETAILS;
-    const navigate = useNavigate();
-
-    const handleTabChange = (key: Key): void => {
-        if (key === activeTab) {
-            return;
-        }
-
-        navigate(USERS_TABS_TO_PATH_MAPPING[key as UsersTabs]({ organizationId }));
-    };
-
-    if (activeUser === undefined) {
-        return <></>;
-    }
-
-    const tabs: TabItem[] = [
-        {
-            id: `${UsersTabs}-tab-id`,
-            key: UsersTabs.DETAILS,
-            name: capitalize(UsersTabs.DETAILS),
-            children: (
-                <WorkspaceUsers
-                    activeUser={activeUser}
-                    workspaceId={selectedWorkspace === '' ? undefined : selectedWorkspace}
-                />
-            ),
-        },
-    ];
+    if (!activeUser) return <></>;
 
     return (
-        <Flex direction={'column'} height={'100%'}>
-            <Flex justifyContent={'space-between'} marginBottom={'size-200'}>
-                <WorkspaceUsersPanel
-                    selectedWorkspace={selectedWorkspace}
-                    setSelectedWorkspace={setSelectedWorkspace}
-                />
-                <HasPermission operations={[OPERATION.MANAGE_USER, OPERATION.INVITE_USER]}>
-                    <Header />
-                </HasPermission>
-            </Flex>
-            <Flex direction={'column'} flex={1}>
-                <PageLayoutWithTabs
-                    activeTab={activeTab}
-                    tabs={tabs}
-                    tabsLabel={'Users tabs'}
-                    onSelectionChange={handleTabChange}
-                />
-            </Flex>
+        <Flex direction={'column'} height={'100%'} gap={'size-200'}>
+            <Text>
+                View and manage the users that are part of your organization. Organization admins can view and manage
+                all workspaces and projects. They can invite new users to this Geti™ environment and create additional
+                workspaces to separate their teams. Organization contributors can create projects inside the workspaces
+                that they have been added to.
+            </Text>
+            <Users
+                activeUser={activeUser}
+                resourceType={[RESOURCE_TYPE.ORGANIZATION, RESOURCE_TYPE.WORKSPACE]}
+                resourceId={undefined}
+                UserActions={OrganizationUserActions}
+            />
         </Flex>
     );
 };

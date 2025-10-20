@@ -10,18 +10,20 @@ import { validate } from 'uuid';
 
 import { AccountStatusDTO } from '../../../../../src/core/organizations/dtos/organizations.interface';
 import { redirectTo } from '../../../../../src/shared/utils';
+import { useFeatureFlags } from '../../feature-flags/hooks/use-feature-flags.hook';
 import QUERY_KEYS from '../../requests/query-keys';
 import { useApplicationServices } from '../../services/application-services-provider.component';
 import { paths } from '../../services/routes';
 import { getErrorMessage } from '../../services/utils';
 import { ForgotPasswordDTO, ResetPasswordDTO, UpdatePasswordDTO, UserRegistrationDTO } from '../dtos/members.interface';
-import { getUsersQueryParamsDTO } from '../services/utils';
-import { RoleResource, User, UsersResponse } from '../users.interface';
+import { getRoleCreationPayload, getRoleDeletionPayload, getUsersQueryParamsDTO } from '../services/utils';
+import { RoleResource, UpdateRolePayload, User, UsersResponse } from '../users.interface';
 import {
     UseCreateUserPayload,
     UseDeleteUserPayload,
     UseDeleteUserPhotoPayload,
     UseInviteUserPayload,
+    UseUpdateRolePayload,
     UseUpdateUserPayload,
     UseUpdateUserStatusesPayload,
     UseUploadUserPhotoPayload,
@@ -325,6 +327,55 @@ export const useUsers = (): UseUsers => {
         });
     };
 
+    const useUpdateRole: UseUsers['useUpdateRole'] = () => {
+        const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();
+
+        return useMutation<void, AxiosError, UseUpdateRolePayload>({
+            mutationFn: async ({ organizationId, userId, newRole, previousRole, resourceId, resourceType }) => {
+                if (FEATURE_FLAG_MANAGE_USERS_ROLES) {
+                    await usersService.updateMemberRole(organizationId, userId, {
+                        role: newRole,
+                        resourceId,
+                    });
+
+                    return;
+                }
+
+                const roleUpdates: UpdateRolePayload[] = [];
+
+                if (previousRole) {
+                    roleUpdates.push(
+                        getRoleDeletionPayload({
+                            role: previousRole,
+                            resourceId,
+                            resourceType,
+                        })
+                    );
+                }
+
+                roleUpdates.push(
+                    getRoleCreationPayload({
+                        role: newRole,
+                        resourceId,
+                        resourceType,
+                    })
+                );
+
+                await usersService.updateRoles(organizationId, userId, roleUpdates);
+            },
+            onSuccess: async (_, { organizationId, userId, resourceType }) => {
+                if (FEATURE_FLAG_MANAGE_USERS_ROLES) {
+                    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USERS(organizationId) });
+                    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ACTIVE_USER(organizationId) });
+                } else {
+                    await queryClient.invalidateQueries({
+                        queryKey: QUERY_KEYS.USER_ROLES(organizationId, userId, resourceType),
+                    });
+                }
+            },
+        });
+    };
+
     return {
         useActiveUser,
         useGetUsersQuery,
@@ -338,7 +389,7 @@ export const useUsers = (): UseUsers => {
         useUploadUserPhoto,
         useDeleteUserPhoto,
         useUserRoles,
-
+        useUpdateRole,
         useUpdateMemberRole,
         useDeleteMemberRole,
     };

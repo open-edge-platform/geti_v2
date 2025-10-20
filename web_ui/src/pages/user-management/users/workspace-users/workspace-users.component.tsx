@@ -27,6 +27,7 @@ export const WorkspaceUsers = ({ activeUser, workspaceId }: WorkspaceUsersProps)
             resourceId={workspaceId}
             UserActions={Actions}
             ignoredColumns={isSaasEnv ? undefined : [USERS_TABLE_COLUMNS.LAST_LOGIN]}
+            usersTableType={RESOURCE_TYPE.WORKSPACE}
         />
     );
 };

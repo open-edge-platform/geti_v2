@@ -1,10 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { USER_ROLE } from '@geti/core/src/users/users.interface';
-import { Flex, PressableElement, Tooltip, TooltipTrigger } from '@geti/ui';
-import { UserCircleFilled as AdminIcon } from '@geti/ui/icons';
-import { COLOR_MODE } from '@geti/ui/theme';
+import { Flex } from '@geti/ui';
 
 import { UserPhotoPresentation } from '../../../profile-page/user-photo-container/user-photo-presentation.component';
 
@@ -17,36 +14,20 @@ interface EmailCellProps {
     id: string;
     userPhoto: string | null;
     fullName: string;
-    isOrgAdmin: boolean;
 }
 
-export const UserNameCell = ({ cellData, dataKey, id, userPhoto, fullName, email, isOrgAdmin }: EmailCellProps) => {
+export const UserNameCell = ({ cellData, dataKey, id, userPhoto, fullName, email }: EmailCellProps) => {
     return (
         <Flex alignItems='center' gap='size-200' id={`${id}-${dataKey}`} width={'100%'}>
-            <TooltipTrigger placement={'bottom'}>
-                <PressableElement aria-label='label-relation'>
-                    <>
-                        <UserPhotoPresentation
-                            key={id}
-                            userName={fullName}
-                            email={email}
-                            userPhoto={userPhoto}
-                            handleUploadClick={null}
-                            width={'size-300'}
-                            height={'size-300'}
-                        />
-                        {isOrgAdmin && (
-                            <AdminIcon
-                                color={COLOR_MODE.NEGATIVE}
-                                fill='white'
-                                data-testid={'organization-admin-indicator'}
-                                className={classes.orgAdminIndicator}
-                            />
-                        )}
-                    </>
-                </PressableElement>
-                <Tooltip>{isOrgAdmin ? USER_ROLE.ORGANIZATION_ADMIN : ''}</Tooltip>
-            </TooltipTrigger>
+            <UserPhotoPresentation
+                key={id}
+                userName={fullName}
+                email={email}
+                userPhoto={userPhoto}
+                handleUploadClick={null}
+                width={'size-300'}
+                height={'size-300'}
+            />
 
             <span title={cellData} id={'user-name-cell'} className={classes.emailCellTitle}>
                 {cellData}

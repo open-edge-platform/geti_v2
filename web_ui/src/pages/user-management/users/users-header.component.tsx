@@ -1,9 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 
-import { USER_ROLE, UsersQueryParams } from '@geti/core/src/users/users.interface';
+import { RESOURCE_TYPE, USER_ROLE, UsersQueryParams } from '@geti/core/src/users/users.interface';
 import { Flex, SearchField } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
@@ -16,7 +16,8 @@ interface WorkspaceUsersHeaderProps {
     totalMatchedCount: number;
     hasFilterOptions: boolean;
     setUsersQueryParams: Dispatch<SetStateAction<UsersQueryParams>>;
-    isProjectUsersTable?: boolean;
+    usersTableType?: RESOURCE_TYPE;
+    actionsSlot?: ReactNode;
 }
 
 export const UsersHeader = ({
@@ -24,14 +25,18 @@ export const UsersHeader = ({
     totalCount,
     hasFilterOptions,
     setUsersQueryParams,
-    isProjectUsersTable = false,
+    usersTableType = RESOURCE_TYPE.ORGANIZATION,
+    actionsSlot,
 }: WorkspaceUsersHeaderProps) => {
     const [searchInput, setSearchInput] = useState<string>('');
     const [roleFilter, setRoleFilter] = useState<USER_ROLE | undefined>();
 
-    const roles = isProjectUsersTable
-        ? [USER_ROLE.PROJECT_MANAGER, USER_ROLE.PROJECT_CONTRIBUTOR]
-        : [USER_ROLE.WORKSPACE_ADMIN, USER_ROLE.WORKSPACE_CONTRIBUTOR];
+    const roles =
+        usersTableType === RESOURCE_TYPE.PROJECT
+            ? [USER_ROLE.PROJECT_MANAGER, USER_ROLE.PROJECT_CONTRIBUTOR]
+            : usersTableType === RESOURCE_TYPE.WORKSPACE
+              ? [USER_ROLE.WORKSPACE_ADMIN, USER_ROLE.WORKSPACE_CONTRIBUTOR]
+              : [USER_ROLE.ORGANIZATION_ADMIN, USER_ROLE.ORGANIZATION_CONTRIBUTOR];
 
     const debouncedCallback = useDebouncedCallback((value: string) => {
         setUsersQueryParams((prevQueryParams) => {
@@ -83,16 +88,19 @@ export const UsersHeader = ({
                     emptyItem={'All roles'}
                     selectedRole={roleFilter}
                     setSelectedRole={changeRole}
-                    options={{ showLabel: false }}
+                    label={false}
                     testId={'users-header-role-picker'}
                 />
             </Flex>
-            <UsersCount
-                totalMatchedCount={totalMatchedCount}
-                totalCount={totalCount}
-                hasFilters={hasFilterOptions}
-                id={'users-header-users-count'}
-            />
+            <Flex alignItems={'center'} gap={'size-150'}>
+                {actionsSlot}
+                <UsersCount
+                    totalMatchedCount={totalMatchedCount}
+                    totalCount={totalCount}
+                    hasFilters={hasFilterOptions}
+                    id={'users-header-users-count'}
+                />
+            </Flex>
         </Flex>
     );
 };

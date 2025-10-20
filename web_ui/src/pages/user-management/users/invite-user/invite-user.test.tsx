@@ -8,7 +8,7 @@ import { getMockedWorkspaceIdentifier } from '../../../../test-utils/mocked-item
 import { getMockedAdminUser } from '../../../../test-utils/mocked-items-factory/mocked-users';
 import { getMockedWorkspace } from '../../../../test-utils/mocked-items-factory/mocked-workspace';
 import { providersRender as render } from '../../../../test-utils/required-providers-render';
-import { InviteUser } from './invite-user.component';
+import { InviteUserDialog } from './invite-user.component';
 
 const mockedAdmin = getMockedAdminUser();
 const mockedInviteUserMutation = jest.fn();
@@ -41,7 +41,7 @@ jest.mock('@geti/core/src/users/hook/use-users.hook', () => ({
 describe('Invite user to the workspace', () => {
     it('Check if user invitation is sending proper roles', async () => {
         render(
-            <InviteUser
+            <InviteUserDialog
                 isAdmin={mockedAdmin.isAdmin}
                 id={mockedAdmin.id}
                 organizationId={mockedWorkspaceIdentifier.organizationId}
@@ -59,14 +59,14 @@ describe('Invite user to the workspace', () => {
             expect.objectContaining({
                 roles: [
                     {
-                        resourceId: mockedWorkspaceIdentifier.workspaceId,
-                        resourceType: RESOURCE_TYPE.WORKSPACE,
-                        role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
-                    },
-                    {
                         resourceId: mockedWorkspaceIdentifier.organizationId,
                         resourceType: RESOURCE_TYPE.ORGANIZATION,
                         role: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
+                    },
+                    {
+                        resourceId: mockedWorkspaceIdentifier.workspaceId,
+                        resourceType: RESOURCE_TYPE.WORKSPACE,
+                        role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
                     },
                 ],
             }),
@@ -74,9 +74,9 @@ describe('Invite user to the workspace', () => {
         );
     });
 
-    it('Check if admin can invite user to the workspace - admin and contributor role', async () => {
+    it('Check if admin can invite user ', async () => {
         render(
-            <InviteUser
+            <InviteUserDialog
                 isAdmin={mockedAdmin.isAdmin}
                 id={mockedAdmin.id}
                 organizationId={mockedWorkspaceIdentifier.organizationId}
@@ -85,15 +85,22 @@ describe('Invite user to the workspace', () => {
         );
 
         fireEvent.click(screen.getByRole('button', { name: 'Send invite' }));
-        fireEvent.click(screen.getByRole('button', { name: 'Contributor Role' }));
 
-        expect(screen.getByRole('option', { name: USER_ROLE.WORKSPACE_CONTRIBUTOR })).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Workspace', expanded: false })).not.toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: /Organization Role/, expanded: false }));
+        expect(screen.getByRole('option', { name: USER_ROLE.ORGANIZATION_ADMIN })).toBeInTheDocument();
+        expect(screen.getByRole('option', { name: USER_ROLE.ORGANIZATION_CONTRIBUTOR })).toBeInTheDocument();
+        fireEvent.click(screen.getByRole('option', { name: USER_ROLE.ORGANIZATION_CONTRIBUTOR }));
+
+        fireEvent.click(screen.getByRole('button', { name: /Workspace Role/, expanded: false }));
         expect(screen.getByRole('option', { name: USER_ROLE.WORKSPACE_ADMIN })).toBeInTheDocument();
+        expect(screen.getByRole('option', { name: USER_ROLE.WORKSPACE_CONTRIBUTOR })).toBeInTheDocument();
     });
 
-    it('Check if contributor can invite user to the workspace - contributor role', async () => {
+    it('Check if contributor cannot invite user to the workspace', async () => {
         render(
-            <InviteUser
+            <InviteUserDialog
                 isAdmin={false}
                 id={mockedAdmin.id}
                 organizationId={mockedWorkspaceIdentifier.organizationId}
@@ -102,8 +109,11 @@ describe('Invite user to the workspace', () => {
         );
 
         fireEvent.click(screen.getByRole('button', { name: 'Send invite' }));
-        fireEvent.click(screen.getByRole('button', { name: 'Contributor Role' }));
 
-        expect(screen.getByRole('option', { name: 'Contributor' })).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Workspace', expanded: false })).not.toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: /Organization Role/, expanded: false }));
+        expect(screen.queryByRole('option', { name: USER_ROLE.ORGANIZATION_ADMIN })).not.toBeInTheDocument();
+        expect(screen.getByRole('option', { name: USER_ROLE.ORGANIZATION_CONTRIBUTOR })).toBeInTheDocument();
     });
 });

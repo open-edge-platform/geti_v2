@@ -8,7 +8,7 @@ import { Flex } from '@geti/ui';
 import { useIsSaasEnv } from '../../../hooks/use-is-saas-env/use-is-saas-env.hook';
 import { useFirstWorkspaceIdentifier } from '../../../providers/workspaces-provider/use-first-workspace-identifier.hook';
 import { AddMemberPopup } from './add-member-popup/add-member-popup.component';
-import { InviteUser } from './invite-user/invite-user.component';
+import { InviteUserDialog } from './invite-user/invite-user.component';
 
 export const Header = () => {
     const { useActiveUser } = useUsers();
@@ -35,7 +35,7 @@ export const Header = () => {
                 )}
 
                 {shouldShowInviteUserButton && (
-                    <InviteUser
+                    <InviteUserDialog
                         isAdmin={activeUser.isAdmin}
                         id={sendInviteId}
                         organizationId={organizationId}

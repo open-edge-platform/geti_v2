@@ -11,16 +11,17 @@ import { useWorkspacesApi } from '@geti/core/src/workspaces/hooks/use-workspaces
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
 import { ActionButton, Flex, Item, Loading, TabList, Tabs, Tooltip, TooltipTrigger } from '@geti/ui';
 import { Add } from '@geti/ui/icons';
+import { useOverlayTriggerState } from 'react-stately';
 
 import { useOrganizationIdentifier } from '../../../hooks/use-organization-identifier/use-organization-identifier.hook';
 import { CustomTabItem } from '../../../shared/components/custom-tab-item/custom-tab-item.component';
 import { EditNameDialog } from '../../../shared/components/edit-name-dialog/edit-name-dialog.component';
 import { HasPermission } from '../../../shared/components/has-permission/has-permission.component';
 import { OPERATION } from '../../../shared/components/has-permission/has-permission.interface';
-import { getUniqueNameFromArray } from '../../../shared/utils';
 import { WorkspaceDeleteDialog } from '../../landing-page/workspaces-tabs/components/workspace-delete-dialog.component';
 import { CustomTabItemWithMenu } from '../../landing-page/workspaces-tabs/custom-tab-item-with-menu.component';
 import { useWorkspaceActions } from '../../landing-page/workspaces-tabs/hooks/use-workspace-actions.hook';
+import { CreateWorkspaceDialog } from './create-workspace-dialog/create-workspace-dialog.component';
 
 import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
 
@@ -35,6 +36,7 @@ export const WorkspaceUsersToolbar = ({
     selectedWorkspaceId,
     onSelectWorkspace,
 }: WorkspaceUsersToolbarProps) => {
+    const createWorkspaceDialogState = useOverlayTriggerState({});
     const { organizationId } = useOrganizationIdentifier();
     const { data: activeUser } = useActiveUser(organizationId);
     const { useCreateWorkspaceMutation } = useWorkspacesApi(organizationId);
@@ -46,18 +48,11 @@ export const WorkspaceUsersToolbar = ({
 
     const { deleteDialog, editDialog } = useWorkspaceActions(workspaces.length, selectedWorkspaceId);
 
-    const tabItems = workspaces.map((w) => ({ key: w.id, name: w.name }));
+    const tabItems = workspaces.map((workspace) => ({ key: workspace.id, name: workspace.name }));
+    const workspacesNames = workspaces.map((workspace) => workspace.name);
 
     const handleSelection = (key: Key) => {
         onSelectWorkspace(key.toString());
-    };
-
-    const handleCreateWorkspace = () => {
-        const unique = getUniqueNameFromArray(
-            workspaces.map((w) => w.name),
-            'Workspace '
-        );
-        createWorkspace.mutate({ name: unique });
     };
 
     return (
@@ -105,7 +100,7 @@ export const WorkspaceUsersToolbar = ({
                                     isQuiet
                                     aria-label={'Create workspace'}
                                     id={'create-workspace-toolbar-btn'}
-                                    onPress={handleCreateWorkspace}
+                                    onPress={createWorkspaceDialogState.open}
                                     isDisabled={createWorkspace.isPending}
                                 >
                                     {createWorkspace.isPending ? <Loading mode='inline' size={'S'} /> : <Add />}
@@ -145,6 +140,11 @@ export const WorkspaceUsersToolbar = ({
                     nameLimitations={{ maxLength: 64, minLength: 1 }}
                 />
             )}
+            <CreateWorkspaceDialog
+                triggerState={createWorkspaceDialogState}
+                names={workspacesNames}
+                nameLimitations={{ maxLength: 64, minLength: 1 }}
+            />
         </Flex>
     );
 };

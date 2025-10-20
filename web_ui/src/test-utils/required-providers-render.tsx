@@ -9,6 +9,7 @@ import {
     ApplicationServicesContextProps,
     ApplicationServicesProvider,
 } from '@geti/core/src/services/application-services-provider.component';
+import { DeploymentConfiguration } from '@geti/core/src/services/use-deployment-config-query.hook';
 import { OnboardingProfile } from '@geti/core/src/users/services/onboarding-service.interface';
 import { defaultTheme, IntelBrandedLoading, Provider as ThemeProvider, Toast } from '@geti/ui';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -26,11 +27,43 @@ interface RequiredProvidersProps extends Partial<ApplicationServicesContextProps
     featureFlags?: CustomFeatureFlags;
     profile?: OnboardingProfile | null;
     queryClient?: QueryClient;
+    skipPrefillDeploymentConfig?: boolean;
 }
 
 const prefilledOrgId = '000000000000000000000001';
 
-const usePrefilledQueryClient = (featureFlags?: CustomFeatureFlags, profile?: OnboardingProfile | null) => {
+const defaultDeploymentConfig: DeploymentConfiguration = {
+    servingMode: 'on-prem',
+    auth: {
+        type: 'dex',
+        clientId: 'web_ui',
+        authority: '/dex',
+    },
+    docsUrl: 'https://docs.geti.intel.com/',
+    controlPlaneUrl: null,
+    dataPlaneUrl: null,
+    configUrl: null,
+};
+
+const adminDeploymentConfig: DeploymentConfiguration = {
+    ...defaultDeploymentConfig,
+    servingMode: 'saas',
+    auth: {
+        type: 'admin',
+        clientId: 'intel-admin',
+        authority: 'https://accounts.example.com',
+    },
+};
+
+const usePrefilledQueryClient = ({
+    featureFlags,
+    profile,
+    skipPrefillDeploymentConfig,
+}: {
+    featureFlags?: CustomFeatureFlags;
+    profile?: OnboardingProfile | null;
+    skipPrefillDeploymentConfig?: boolean;
+}) => {
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
@@ -61,6 +94,11 @@ const usePrefilledQueryClient = (featureFlags?: CustomFeatureFlags, profile?: On
         ]);
     });
 
+    if (!skipPrefillDeploymentConfig) {
+        queryClient.setQueryData(['deployment-config', false], defaultDeploymentConfig);
+        queryClient.setQueryData(['deployment-config', true], adminDeploymentConfig);
+    }
+
     return queryClient;
 };
 
@@ -70,9 +108,14 @@ export const RequiredProviders = ({
     initialEntries,
     profile,
     queryClient,
+    skipPrefillDeploymentConfig,
     ...services
 }: RequiredProvidersProps) => {
-    const prefilledQueryClient = usePrefilledQueryClient(featureFlags, profile);
+    const prefilledQueryClient = usePrefilledQueryClient({
+        featureFlags,
+        profile,
+        skipPrefillDeploymentConfig,
+    });
 
     return (
         <Suspense fallback={<IntelBrandedLoading />}>

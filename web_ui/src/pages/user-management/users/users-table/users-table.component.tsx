@@ -3,12 +3,9 @@
 
 import { Dispatch, ReactNode, SetStateAction, useMemo } from 'react';
 
-import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
-import { User, UsersQueryParams } from '@geti/core/src/users/users.interface';
-import { Workspace } from '@geti/core/src/workspaces/services/workspaces.interface';
+import { RESOURCE_TYPE, User, UsersQueryParams } from '@geti/core/src/users/users.interface';
 import { Cell, Column, Flex, Row, TableBody, TableHeader, TableView, View } from '@geti/ui';
 import { get, isEmpty } from 'lodash-es';
-import { useLocation } from 'react-router-dom';
 
 import { SortDirection } from '../../../../core/shared/query-parameters';
 import { useSortTable } from '../../../../hooks/use-sort-table/use-sort-table.hook';
@@ -18,10 +15,9 @@ import { StatusCell } from '../../../../shared/components/table/status-cell/stat
 import { TableCellProps } from '../../../../shared/components/table/table.interface';
 import { SpectrumTableLoadingState } from '../../../../shared/utils';
 import { LastLoginCell } from './last-login-cell.component';
-import { ProjectRoleCell } from './project-role-cell.component';
 import { UserNameCell } from './user-name-cell/user-name-cell.component';
+import { UserRoleCell } from './user-role-cell.component';
 import { getUserFullName } from './utils';
-import { WorkspacesRoleCell } from './workspaces-role-cell.component';
 
 export const enum USERS_TABLE_COLUMNS {
     EMAIL_ADDRESS = 'email',
@@ -45,11 +41,8 @@ interface UsersTableProps {
     UserActions: (props: { activeUser: User; user: User; users: User[] }) => ReactNode;
     ignoredColumns?: USERS_TABLE_COLUMNS[];
     resourceId: string | undefined;
-    workspaces: Workspace[];
-    isProjectUsersTable?: boolean;
-    organizationId: string;
+    usersTableType?: RESOURCE_TYPE;
     tableId?: string;
-    overrideRoleColumn?: (props: TableCellProps) => ReactNode;
 }
 
 export const UsersTable = ({
@@ -63,16 +56,11 @@ export const UsersTable = ({
     resourceId,
     isLoading,
     isFetchingNextPage,
-    organizationId,
-    isProjectUsersTable,
-    workspaces,
+    usersTableType,
     getNextPage,
     tableId,
-    overrideRoleColumn,
 }: UsersTableProps) => {
     const shouldShowNotFound = hasFilters && isEmpty(users);
-    const location = useLocation();
-    const isAccountWorkspacesLocation = location.pathname.includes('account/workspaces');
 
     const columns = useMemo(() => {
         const tableColumns = [
@@ -86,7 +74,6 @@ export const UsersTable = ({
 
                     const fullName = getUserFullName(firstName, lastName);
                     const cellData = isEmpty(fullName) ? '-' : activeUser?.id === id ? `${fullName} (You)` : fullName;
-                    const isOrgAdmin = isOrganizationAdmin(rowData, organizationId);
 
                     return (
                         <UserNameCell
@@ -97,7 +84,6 @@ export const UsersTable = ({
                             dataKey={dataKey}
                             userPhoto={userPhoto}
                             fullName={`${firstName} ${lastName}`}
-                            isOrgAdmin={isOrgAdmin}
                         />
                     );
                 },
@@ -112,25 +98,21 @@ export const UsersTable = ({
                 },
             },
             {
-                label: isEmpty(resourceId) ? 'Workspace' : isAccountWorkspacesLocation ? 'Workspace role' : 'Role',
+                label: isEmpty(resourceId)
+                    ? 'Organization role'
+                    : usersTableType === RESOURCE_TYPE.PROJECT
+                      ? 'Project role'
+                      : 'Workspace role',
                 dataKey: USERS_TABLE_COLUMNS.ROLES,
-                width: 150,
+                width: 180,
                 isSortable: false,
-                component: (data: TableCellProps) => {
-                    if (overrideRoleColumn) {
-                        return overrideRoleColumn(data);
-                    }
-                    return isProjectUsersTable ? (
-                        <ProjectRoleCell {...data} roles={data.rowData.roles} projectId={resourceId as string} />
-                    ) : (
-                        <WorkspacesRoleCell
-                            {...data}
-                            workspaceId={resourceId}
-                            workspaces={workspaces}
-                            cellData={data.rowData.roles}
-                        />
-                    );
-                },
+                component: (data: TableCellProps) => (
+                    <UserRoleCell
+                        {...data}
+                        resourceId={resourceId}
+                        isProjectUsersTable={usersTableType === RESOURCE_TYPE.PROJECT}
+                    />
+                ),
             },
             {
                 label: 'Last login',
@@ -166,18 +148,7 @@ export const UsersTable = ({
         ];
 
         return tableColumns.filter(({ dataKey }) => !ignoredColumns.includes(dataKey as USERS_TABLE_COLUMNS));
-    }, [
-        ignoredColumns,
-        resourceId,
-        UserActions,
-        activeUser,
-        isProjectUsersTable,
-        organizationId,
-        workspaces,
-        users,
-        overrideRoleColumn,
-        isAccountWorkspacesLocation,
-    ]);
+    }, [ignoredColumns, resourceId, UserActions, activeUser, usersTableType, users]);
 
     const [sortingOptions, sort] = useSortTable<UsersQueryParams>({
         queryOptions: usersQueryParams,

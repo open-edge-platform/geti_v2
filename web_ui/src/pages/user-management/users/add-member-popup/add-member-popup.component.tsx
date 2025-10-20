@@ -12,18 +12,24 @@ import {
     Button,
     ButtonGroup,
     Content,
+    ContextualHelp,
     Dialog,
     DialogContainer,
     Divider,
+    Flex,
     Form,
     Heading,
+    Item,
     PasswordField,
+    Picker,
     TextField,
 } from '@geti/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { ValidationError } from 'yup';
 
-import { useIsSaasEnv } from '../../../../hooks/use-is-saas-env/use-is-saas-env.hook';
+import { useWorkspaces } from '../../../../providers/workspaces-provider/workspaces-provider.component';
+import { OrganizationRoleTooltipContent } from '../../../../shared/components/tooltips/organization-role-tooltip';
+import { WorkspaceRoleTooltipContent } from '../../../../shared/components/tooltips/workspace-role-tooltip';
 import { CONFIRM_PASSWORD_ERROR_MESSAGE, encodeToBase64 } from '../../../../shared/utils';
 import { EditFullName } from '../../profile-page/edit-full-name.component';
 import { isYupValidationError } from '../../profile-page/utils';
@@ -33,16 +39,20 @@ import { PasswordState } from './add-member-popup.interface';
 import { ErrorMessage } from './error-message/error-message.component';
 import { defaultPasswordState, handlePassword, validatePasswordsSchema } from './utils';
 
+import tooltipClasses from '../../../../shared/components/tooltips/tooltips.module.scss';
 import classes from './add-member-popup.module.scss';
 
 type AddMemberPopupProps = WorkspaceIdentifier;
 
 export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupProps) => {
-    const roles = [USER_ROLE.WORKSPACE_CONTRIBUTOR, USER_ROLE.WORKSPACE_ADMIN];
+    const roles = [USER_ROLE.WORKSPACE_CONTRIBUTOR, USER_ROLE.WORKSPACE_ADMIN]; // workspace roles
+    const orgRoles: USER_ROLE[] = [USER_ROLE.ORGANIZATION_CONTRIBUTOR, USER_ROLE.ORGANIZATION_ADMIN];
 
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
-    const [selectedRole, setSelectedRole] = useState<USER_ROLE | undefined>(undefined);
+    const [selectedOrgRole, setSelectedOrgRole] = useState<USER_ROLE>(USER_ROLE.ORGANIZATION_CONTRIBUTOR);
+    const [selectedWorkspaceRole, setSelectedWorkspaceRole] = useState<USER_ROLE | undefined>(roles[0]);
+    const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>(workspaceId);
     const [email, setEmail] = useState<string>('');
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
@@ -51,6 +61,7 @@ export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupPr
     const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
 
     const queryClient = useQueryClient();
+    const { workspaces } = useWorkspaces();
     const { useGetUsersQuery, useCreateUser } = useUsers();
     const { users } = useGetUsersQuery(organizationId);
     const createUser = useCreateUser();
@@ -61,7 +72,8 @@ export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupPr
             !isValidEmail ||
             !firstName ||
             !lastName ||
-            !selectedRole ||
+            (selectedOrgRole === USER_ROLE.ORGANIZATION_CONTRIBUTOR &&
+                (!selectedWorkspaceRole || !selectedWorkspaceId)) ||
             !password.value ||
             !confirmPassword.value ||
             password.error ||
@@ -88,20 +100,16 @@ export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupPr
         setEmail('');
         setFirstName('');
         setLastName('');
-        setSelectedRole(undefined);
+        setSelectedOrgRole(USER_ROLE.ORGANIZATION_CONTRIBUTOR);
+        setSelectedWorkspaceRole(undefined);
+        setSelectedWorkspaceId(workspaceId);
         setPassword(defaultPasswordState);
         setConfirmPassword(defaultPasswordState);
         setEmailErrorMessage('');
     };
 
-    const isSaasEnvironment = useIsSaasEnv();
-
     const handleOnSubmit = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
-
-        if (selectedRole === undefined) {
-            return;
-        }
 
         try {
             const result = validatePasswordsSchema.validateSync(
@@ -117,22 +125,25 @@ export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupPr
                 firstName: firstName.trim(),
                 secondName: lastName.trim(),
                 password: encodeToBase64(result.password),
-
-                roles: [
-                    getRoleDTO({
-                        resourceId: organizationId,
-                        resourceType: RESOURCE_TYPE.ORGANIZATION,
-                        role:
-                            !isSaasEnvironment && selectedRole === USER_ROLE.WORKSPACE_ADMIN
-                                ? USER_ROLE.ORGANIZATION_ADMIN
-                                : USER_ROLE.ORGANIZATION_CONTRIBUTOR,
-                    }),
-                    getRoleDTO({
-                        role: selectedRole,
-                        resourceId: workspaceId,
-                        resourceType: RESOURCE_TYPE.WORKSPACE,
-                    }),
-                ],
+                roles: (() => {
+                    const base = [
+                        getRoleDTO({
+                            resourceId: organizationId,
+                            resourceType: RESOURCE_TYPE.ORGANIZATION,
+                            role: selectedOrgRole,
+                        }),
+                    ];
+                    if (selectedOrgRole === USER_ROLE.ORGANIZATION_CONTRIBUTOR && selectedWorkspaceRole !== undefined) {
+                        base.push(
+                            getRoleDTO({
+                                role: selectedWorkspaceRole,
+                                resourceId: selectedWorkspaceId,
+                                resourceType: RESOURCE_TYPE.WORKSPACE,
+                            })
+                        );
+                    }
+                    return base;
+                })(),
             };
 
             createUser.mutate(
@@ -217,10 +228,64 @@ export const AddMemberPopup = ({ organizationId, workspaceId }: AddMemberPopupPr
                                     flex={1}
                                 />
                                 <RolePicker
-                                    roles={roles}
-                                    selectedRole={selectedRole}
-                                    setSelectedRole={setSelectedRole}
+                                    roles={orgRoles}
+                                    selectedRole={selectedOrgRole as USER_ROLE}
+                                    label='Organization Role'
+                                    setSelectedRole={(role) => {
+                                        setSelectedOrgRole(role as USER_ROLE);
+                                        if (role === USER_ROLE.ORGANIZATION_ADMIN) {
+                                            setSelectedWorkspaceRole(undefined);
+                                        } else if (selectedWorkspaceRole === undefined) {
+                                            setSelectedWorkspaceRole(roles[0]);
+                                        }
+                                    }}
+                                    contextualHelp={
+                                        <ContextualHelp>
+                                            <Heading>What roles can there be in an organization?</Heading>
+                                            <Content UNSAFE_className={tooltipClasses.organizationRoleContextualHelp}>
+                                                <OrganizationRoleTooltipContent />
+                                            </Content>
+                                        </ContextualHelp>
+                                    }
                                 />
+                                {selectedOrgRole === USER_ROLE.ORGANIZATION_CONTRIBUTOR ? (
+                                    <Flex
+                                        direction={'row'}
+                                        gap={'size-400'}
+                                        marginTop={'size-150'}
+                                        justifyContent={'space-between'}
+                                    >
+                                        <Picker
+                                            label={'Workspace'}
+                                            selectedKey={selectedWorkspaceId}
+                                            items={workspaces}
+                                            aria-label={'Workspace'}
+                                            width={'100%'}
+                                            onSelectionChange={(key) => setSelectedWorkspaceId(key as string)}
+                                        >
+                                            {(workspace) => <Item key={workspace.id}>{workspace.name}</Item>}
+                                        </Picker>
+                                        <RolePicker
+                                            label={'Workspace Role'}
+                                            contextualHelp={
+                                                <ContextualHelp>
+                                                    <Heading>What roles can there be in a workspace?</Heading>
+                                                    <Content
+                                                        UNSAFE_className={tooltipClasses.workspaceRoleContextualHelp}
+                                                    >
+                                                        <WorkspaceRoleTooltipContent />
+                                                    </Content>
+                                                </ContextualHelp>
+                                            }
+                                            roles={roles}
+                                            selectedRole={(selectedWorkspaceRole || roles[0]) as USER_ROLE}
+                                            setSelectedRole={setSelectedWorkspaceRole}
+                                            width={'100%'}
+                                        />
+                                    </Flex>
+                                ) : (
+                                    <></>
+                                )}
                                 <PasswordField
                                     error={password.error}
                                     label='Password'

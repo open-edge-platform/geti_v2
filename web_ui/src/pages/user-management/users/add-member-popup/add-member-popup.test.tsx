@@ -18,7 +18,15 @@ import { CORRECT_PASS, INCORRECT_PASS, PASSWORD_WITH_MORE_THAN_200_CHARS } from 
 const mockedWorkspaceIdentifier = getMockedWorkspaceIdentifier({ workspaceId: 'testing-workspace' });
 
 jest.mock('../../../../providers/workspaces-provider/workspaces-provider.component', () => ({
-    useWorkspaces: jest.fn(() => ({ workspaceId: mockedWorkspaceIdentifier.workspaceId })),
+    useWorkspaces: jest.fn(() => ({
+        workspaceId: mockedWorkspaceIdentifier.workspaceId,
+        workspaces: [
+            {
+                id: mockedWorkspaceIdentifier.workspaceId,
+                name: 'Mock workspace',
+            },
+        ],
+    })),
 }));
 
 describe('Add member popup', () => {
@@ -51,7 +59,8 @@ describe('Add member popup', () => {
             />
         );
 
-        screen.getByRole('button', { name: 'Add user' }).click();
+        await userEvent.click(screen.getByRole('button', { name: 'Add user' }));
+        await screen.findByTestId('add-user-title-id');
     };
 
     it('should render without error', async () => {
@@ -60,22 +69,22 @@ describe('Add member popup', () => {
         expect(screen.getByTestId('add-user-title-id')).toHaveTextContent('Add user');
     });
 
-    it('should display "Select a role"', async () => {
+    it('should display Workspace contributor by default', async () => {
         await renderAddMember();
 
-        const rolesPicker = screen.getByRole('button', { expanded: false });
+        const rolesPicker = screen.getByRole('button', { name: /Workspace Role$/i, expanded: false });
 
-        const defaultValue = within(rolesPicker).getByText('Select a role');
+        const defaultValue = within(rolesPicker).getByText('Workspace contributor');
         expect(defaultValue).toBeInTheDocument();
     });
 
     it('allows an admin to add an admin', async () => {
         await renderAddMember();
 
-        const rolesPicker = screen.getByRole('button', { expanded: false });
+        const rolesPicker = screen.getByRole('button', { name: /Workspace Role$/i, expanded: false });
 
         await userEvent.selectOptions(
-            screen.getByRole('combobox', { name: 'Role', hidden: true }),
+            screen.getByRole('combobox', { name: /Workspace Role$/i, hidden: true }),
             screen.getByRole('option', { name: USER_ROLE.WORKSPACE_ADMIN, hidden: true })
         );
 
@@ -86,7 +95,7 @@ describe('Add member popup', () => {
     it('save button should be disabled initially', async () => {
         await renderAddMember();
 
-        const saveButton = screen.getByText('Add').closest('button');
+        const saveButton = screen.getByRole('button', { name: 'save add user' });
 
         expect(saveButton).toBeDisabled();
     });
@@ -112,7 +121,7 @@ describe('Add member popup', () => {
         expect(saveButton).toBeDisabled();
 
         await userEvent.selectOptions(
-            screen.getByRole('combobox', { name: 'Role', hidden: true }),
+            screen.getByRole('combobox', { name: /Workspace Role$/i, hidden: true }),
             screen.getByRole('option', { name: USER_ROLE.WORKSPACE_CONTRIBUTOR, hidden: true })
         );
 
@@ -168,13 +177,58 @@ describe('Add member popup', () => {
         fireEvent.change(confirmField, { target: { value: '4321Test' } });
 
         await userEvent.selectOptions(
-            screen.getByRole('combobox', { name: 'Role', hidden: true }),
+            screen.getByRole('combobox', { name: /Workspace Role$/i, hidden: true }),
             screen.getByRole('option', { name: USER_ROLE.WORKSPACE_CONTRIBUTOR, hidden: true })
         );
 
         fireEvent.click(saveButton);
 
         expect(screen.getByText(CONFIRM_PASSWORD_ERROR_MESSAGE)).toBeInTheDocument();
+    });
+
+    it('toggles workspace role selector visibility based on organization role', async () => {
+        await renderAddMember();
+
+        const organizationRoleCombobox = screen.getByRole('combobox', {
+            name: /Organization Role$/i,
+            hidden: true,
+        });
+
+        expect(
+            screen.getByRole('button', {
+                name: /Workspace Role$/i,
+                expanded: false,
+            })
+        ).toBeInTheDocument();
+
+        await userEvent.selectOptions(
+            organizationRoleCombobox,
+            screen.getByRole('option', {
+                name: USER_ROLE.ORGANIZATION_ADMIN,
+                hidden: true,
+            })
+        );
+
+        expect(
+            screen.queryByRole('button', {
+                name: /Workspace Role$/i,
+            })
+        ).not.toBeInTheDocument();
+
+        await userEvent.selectOptions(
+            organizationRoleCombobox,
+            screen.getByRole('option', {
+                name: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
+                hidden: true,
+            })
+        );
+
+        expect(
+            screen.getByRole('button', {
+                name: /Workspace Role$/i,
+                expanded: false,
+            })
+        ).toBeInTheDocument();
     });
 
     it('save button should be disabled when password does not have capital letter or symbol', async () => {
@@ -198,7 +252,7 @@ describe('Add member popup', () => {
         expect(saveButton).toBeDisabled();
 
         await userEvent.selectOptions(
-            screen.getByRole('combobox', { name: 'Role', hidden: true }),
+            screen.getByRole('combobox', { name: /Workspace Role$/i, hidden: true }),
             screen.getByRole('option', { name: USER_ROLE.WORKSPACE_CONTRIBUTOR, hidden: true })
         );
 

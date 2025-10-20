@@ -86,6 +86,18 @@ const resourceMapDTO: Record<ResourceTypeDTO, RESOURCE_TYPE> = {
     [ResourceTypeDTO.ORGANIZATION]: RESOURCE_TYPE.ORGANIZATION,
 };
 
+export const mapResourceTypeToDTO = (
+    resourceType?: RESOURCE_TYPE | RESOURCE_TYPE[]
+): ResourceTypeDTO | ResourceTypeDTO[] | undefined => {
+    if (resourceType == null) {
+        return undefined;
+    }
+
+    return Array.isArray(resourceType)
+        ? resourceType.map((type) => USER_RESOURCE_TYPE_MAPPING_DTO[type])
+        : USER_RESOURCE_TYPE_MAPPING_DTO[resourceType];
+};
+
 const getRoles = (roles: RoleResourceDTO[]): RoleResource[] => {
     return roles.reduce<Role[]>((prev, curr) => {
         const { resourceId, resourceType, role } = curr;
@@ -220,7 +232,7 @@ export const getUsersQueryParamsDTO = (queryParams: UsersQueryParams): UsersQuer
         secondName: lastName,
         externalId: externalIdentitySystemId,
         role: role ? USER_ROLE_MAPPING_DTO[role] : undefined,
-        resourceType: resourceType ? USER_RESOURCE_TYPE_MAPPING_DTO[resourceType] : undefined,
+        resourceType: mapResourceTypeToDTO(resourceType),
         sortDirection: sortDirection ? (sortDirection === 'ASC' ? 'asc' : 'desc') : undefined,
 
         sortBy:

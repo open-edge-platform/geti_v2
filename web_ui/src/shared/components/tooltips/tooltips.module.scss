@@ -1,0 +1,13 @@
+.workspaceRoleContextualHelp,
+.organizationRoleContextualHelp {
+    display: block;
+}
+
+:global {
+    section[class*='react-spectrum-ContextualHelp-dialog']:has(
+            [class*='workspaceRoleContextualHelp'],
+            [class*='organizationRoleContextualHelp']
+        ) {
+        width: fit-content !important;
+    }
+}
