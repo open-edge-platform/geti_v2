@@ -21,11 +21,15 @@ import { CustomTabItemWithMenu } from './custom-tab-item-with-menu.component';
 import { useWorkspacesTabs } from './hooks/use-pinned-collapsed-workspace.hook';
 
 import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
+import { RESOURCE_TYPE } from '@geti/core/src/users/users.interface';
+import { useActiveUser } from '@geti/core/src/users/hook/use-users.hook';
+import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 
 export const WorkspacesTabs = () => {
     const { organizationId } = useOrganizationIdentifier();
     const { workspaces, selectWorkspace, selectedWorkspaceId, handleSelectWorkspace } = useWorkspacesTabs();
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
+    const {data: activeUser } = useActiveUser(organizationId);
     const createWorkspaceDialogState = useOverlayTriggerState({});
 
     const { useCreateWorkspaceMutation } = useWorkspacesApi(organizationId);
@@ -51,38 +55,44 @@ export const WorkspacesTabs = () => {
                 orientation={'vertical'}
                 onSelectionChange={handleSelectWorkspace}
             >
-                <Flex width={'100%'} alignItems={'center'} UNSAFE_className={classes.tabWrapper}>
-                    <TabList UNSAFE_className={classes.tabList}>
-                        {(item: TabItem) => (
-                            <Item textValue={item.name as string} key={item.key}>
-                                <>
-                                    <Flex alignItems={'center'}>
-                                        {selectedWorkspaceId === item.key && FEATURE_FLAG_WORKSPACE_ACTIONS ? (
-                                            <HasPermission
-                                                operations={[OPERATION.WORKSPACE_MANAGEMENT]}
-                                                specialCondition={true}
-                                                Fallback={
-                                                    <CustomTabItem
-                                                        name={item.name as string}
-                                                        isMoreIconVisible={false}
+                <Flex width={'100%'} alignItems={'center'} UNSAFE_className={classes.tabWrapper} gap={'size-200'}>
+                    <div className={classes.tabListScrollContainer}>
+                        <TabList UNSAFE_className={classes.tabList}>
+                            {(item: TabItem) => (
+                                <Item textValue={item.name as string} key={item.key}>
+                                    <>
+                                        <Flex alignItems={'center'}>
+                                            {selectedWorkspaceId === item.key && FEATURE_FLAG_WORKSPACE_ACTIONS ? (
+                                                <HasPermission
+                                                    operations={[OPERATION.WORKSPACE_MANAGEMENT]}
+                                                    resources={[{ type: RESOURCE_TYPE.WORKSPACE, id: item.id }]}
+                                                    specialCondition={
+                                                        activeUser !== undefined &&
+                                                        isOrganizationAdmin(activeUser, organizationId)
+                                                    }
+                                                    Fallback={
+                                                        <CustomTabItem
+                                                            name={item.name as string}
+                                                            isMoreIconVisible={false}
+                                                        />
+                                                    }
+                                                >
+                                                    <CustomTabItemWithMenu
+                                                        workspace={selectedWorkspace as WorkspaceEntity}
+                                                        isMoreIconVisible={item.key === selectedWorkspaceId}
+                                                        workspaces={workspaces}
+                                                        selectWorkspace={selectWorkspace}
                                                     />
-                                                }
-                                            >
-                                                <CustomTabItemWithMenu
-                                                    workspace={selectedWorkspace as WorkspaceEntity}
-                                                    isMoreIconVisible={item.key === selectedWorkspaceId}
-                                                    workspaces={workspaces}
-                                                    selectWorkspace={selectWorkspace}
-                                                />
-                                            </HasPermission>
-                                        ) : (
-                                            <CustomTabItem name={item.name as string} isMoreIconVisible={false} />
-                                        )}
-                                    </Flex>
-                                </>
-                            </Item>
-                        )}
-                    </TabList>
+                                                </HasPermission>
+                                            ) : (
+                                                <CustomTabItem name={item.name as string} isMoreIconVisible={false} />
+                                            )}
+                                        </Flex>
+                                    </>
+                                </Item>
+                            )}
+                        </TabList>
+                    </div>
 
                     {FEATURE_FLAG_WORKSPACE_ACTIONS && (
                         <HasPermission operations={[OPERATION.WORKSPACE_CREATION]}>

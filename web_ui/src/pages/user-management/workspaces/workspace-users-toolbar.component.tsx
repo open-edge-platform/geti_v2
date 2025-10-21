@@ -65,34 +65,36 @@ export const WorkspaceUsersToolbar = ({
                 orientation='vertical'
             >
                 <Flex alignItems={'center'} gap={'size-200'} UNSAFE_className={classes.tabWrapper}>
-                    <TabList UNSAFE_className={classes.tabList}>
-                        {(item: { key: string; name: string }) => {
-                            return (
-                                <Item key={item.key} textValue={item.name}>
-                                    {item.key === selectedWorkspaceId && FEATURE_FLAG_WORKSPACE_ACTIONS ? (
-                                        <HasPermission
-                                            operations={[OPERATION.WORKSPACE_MANAGEMENT]}
-                                            resources={[{ type: RESOURCE_TYPE.WORKSPACE, id: item.key }]}
-                                            specialCondition={
-                                                activeUser !== undefined &&
-                                                isOrganizationAdmin(activeUser, organizationId)
-                                            }
-                                            Fallback={<CustomTabItem name={item.name} isMoreIconVisible={false} />}
-                                        >
-                                            <CustomTabItemWithMenu
-                                                workspace={selectedWorkspace as WorkspaceEntity}
-                                                isMoreIconVisible={item.key === selectedWorkspaceId}
-                                                workspaces={workspaces}
-                                                selectWorkspace={(id: string) => handleSelection(id)}
-                                            />
-                                        </HasPermission>
-                                    ) : (
-                                        <CustomTabItem isMoreIconVisible={false} name={item.name} />
-                                    )}
-                                </Item>
-                            );
-                        }}
-                    </TabList>
+                    <div className={classes.tabListScrollContainer}>
+                        <TabList UNSAFE_className={classes.tabList}>
+                            {(item: { key: string; name: string }) => {
+                                return (
+                                    <Item key={item.key} textValue={item.name}>
+                                        {item.key === selectedWorkspaceId && FEATURE_FLAG_WORKSPACE_ACTIONS ? (
+                                            <HasPermission
+                                                operations={[OPERATION.WORKSPACE_MANAGEMENT]}
+                                                resources={[{ type: RESOURCE_TYPE.WORKSPACE, id: item.key }]}
+                                                specialCondition={
+                                                    activeUser !== undefined &&
+                                                    isOrganizationAdmin(activeUser, organizationId)
+                                                }
+                                                Fallback={<CustomTabItem name={item.name} isMoreIconVisible={false} />}
+                                            >
+                                                <CustomTabItemWithMenu
+                                                    workspace={selectedWorkspace as WorkspaceEntity}
+                                                    isMoreIconVisible={item.key === selectedWorkspaceId}
+                                                    workspaces={workspaces}
+                                                    selectWorkspace={(id: string) => handleSelection(id)}
+                                                />
+                                            </HasPermission>
+                                        ) : (
+                                            <CustomTabItem isMoreIconVisible={false} name={item.name} />
+                                        )}
+                                    </Item>
+                                );
+                            }}
+                        </TabList>
+                    </div>
                     {FEATURE_FLAG_WORKSPACE_ACTIONS && (
                         <HasPermission operations={[OPERATION.WORKSPACE_CREATION]}>
                             <TooltipTrigger placement={'bottom'}>

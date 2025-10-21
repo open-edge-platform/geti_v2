@@ -367,6 +367,7 @@ export const useUsers = (): UseUsers => {
                 if (FEATURE_FLAG_MANAGE_USERS_ROLES) {
                     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USERS(organizationId) });
                     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ACTIVE_USER(organizationId) });
+                    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.WORKSPACES(organizationId) });
                 } else {
                     await queryClient.invalidateQueries({
                         queryKey: QUERY_KEYS.USER_ROLES(organizationId, userId, resourceType),

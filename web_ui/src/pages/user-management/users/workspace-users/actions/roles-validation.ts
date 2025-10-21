@@ -20,15 +20,15 @@ export const getAvailableWorkspaceRoles = ({
     const isActiveUserWorkspaceContributor = isWorkspaceContributor(activeMember, workspaceId);
     const isActiveUserOrgAdmin = isOrganizationAdmin(activeMember, organizationId);
 
-    if (isActiveUserWorkspaceContributor && !isActiveUserOrgAdmin) {
+    if (isActiveUserOrgAdmin) {
+        return [USER_ROLE.WORKSPACE_ADMIN, USER_ROLE.WORKSPACE_CONTRIBUTOR];
+    }
+
+    if (isActiveUserWorkspaceContributor) {
         return [];
     }
 
-    if (members.length === 1) {
-        return [];
-    }
-
-    const isActiveUserAdmin = isActiveUserOrgAdmin || isWorkspaceAdmin(activeMember, workspaceId);
+    const isActiveUserAdmin = isWorkspaceAdmin(activeMember, workspaceId);
     const isAccountOwner = activeMember.id === targetMember.id;
     const isTargetMemberWorkspaceContributor = isWorkspaceContributor(targetMember, workspaceId);
     const atLeastTwoAdminsExist = members.filter((user) => isWorkspaceAdmin(user, workspaceId)).length >= 2;

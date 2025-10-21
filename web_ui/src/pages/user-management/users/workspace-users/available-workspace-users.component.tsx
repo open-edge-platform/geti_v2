@@ -104,34 +104,32 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
             operations={[OPERATION.ADD_USER_TO_WORKSPACE]}
             resources={[{ type: RESOURCE_TYPE.WORKSPACE, id: workspaceId }]}
         >
-            <Flex direction={'column'} gap={'size-200'}>
+            <View marginTop={'size-200'}>
                 <Heading level={3}>Available users to add to this workspace</Heading>
-                <View>
-                    <UsersTable
-                        tableId={'available-workspace-users-table-id'}
-                        isFetchingNextPage={isFetchingNextPage}
-                        isLoading={isLoading}
-                        totalCount={orgTotal}
-                        users={availableUsers}
-                        hasFilters={false}
-                        activeUser={activeUser}
-                        getNextPage={async () => {
-                            // Load more from both lists to keep difference accurate
-                            await Promise.all([getNextOrgPage(), getNextWsPage()]);
-                        }}
-                        usersQueryParams={{}}
-                        setUsersQueryParams={() => {}}
-                        UserActions={({ user }) => <AddContributorAction user={user} />}
-                        ignoredColumns={[
-                            USERS_TABLE_COLUMNS.LAST_LOGIN,
-                            USERS_TABLE_COLUMNS.REGISTRATION_STATUS,
-                            USERS_TABLE_COLUMNS.ROLES,
-                        ]}
-                        resourceId={workspaceId}
-                        usersTableType={RESOURCE_TYPE.WORKSPACE}
-                    />
-                </View>
-            </Flex>
+                <UsersTable
+                    tableId={'available-workspace-users-table-id'}
+                    isFetchingNextPage={isFetchingNextPage}
+                    isLoading={isLoading}
+                    totalCount={orgTotal}
+                    users={availableUsers}
+                    hasFilters={false}
+                    activeUser={activeUser}
+                    getNextPage={async () => {
+                        // Load more from both lists to keep difference accurate
+                        await Promise.all([getNextOrgPage(), getNextWsPage()]);
+                    }}
+                    usersQueryParams={{}}
+                    setUsersQueryParams={() => {}}
+                    UserActions={({ user }) => <AddContributorAction user={user} />}
+                    ignoredColumns={[
+                        USERS_TABLE_COLUMNS.LAST_LOGIN,
+                        USERS_TABLE_COLUMNS.REGISTRATION_STATUS,
+                        USERS_TABLE_COLUMNS.ROLES,
+                    ]}
+                    resourceId={workspaceId}
+                    usersTableType={RESOURCE_TYPE.WORKSPACE}
+                />
+            </View>
         </HasPermission>
     );
 };
