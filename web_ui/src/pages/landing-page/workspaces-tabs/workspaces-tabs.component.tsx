@@ -2,6 +2,9 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
+import { useActiveUser } from '@geti/core/src/users/hook/use-users.hook';
+import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
+import { RESOURCE_TYPE } from '@geti/core/src/users/users.interface';
 import { useWorkspacesApi } from '@geti/core/src/workspaces/hooks/use-workspaces.hook';
 import { WorkspaceEntity } from '@geti/core/src/workspaces/services/workspaces.interface';
 import { ActionButton, Flex, Item, Loading, TabList, TabPanels, Tabs, Tooltip, TooltipTrigger } from '@geti/ui';
@@ -21,15 +24,12 @@ import { CustomTabItemWithMenu } from './custom-tab-item-with-menu.component';
 import { useWorkspacesTabs } from './hooks/use-pinned-collapsed-workspace.hook';
 
 import classes from '../../../shared/components/custom-tab-item/custom-tab-item.module.scss';
-import { RESOURCE_TYPE } from '@geti/core/src/users/users.interface';
-import { useActiveUser } from '@geti/core/src/users/hook/use-users.hook';
-import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 
 export const WorkspacesTabs = () => {
     const { organizationId } = useOrganizationIdentifier();
     const { workspaces, selectWorkspace, selectedWorkspaceId, handleSelectWorkspace } = useWorkspacesTabs();
     const { FEATURE_FLAG_WORKSPACE_ACTIONS } = useFeatureFlags();
-    const {data: activeUser } = useActiveUser(organizationId);
+    const { data: activeUser } = useActiveUser(organizationId);
     const createWorkspaceDialogState = useOverlayTriggerState({});
 
     const { useCreateWorkspaceMutation } = useWorkspacesApi(organizationId);

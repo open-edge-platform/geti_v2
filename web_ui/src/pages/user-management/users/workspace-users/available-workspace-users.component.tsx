@@ -7,7 +7,7 @@ import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { getRoleCreationPayload } from '@geti/core/src/users/services/utils';
 import { RESOURCE_TYPE, User, USER_ROLE } from '@geti/core/src/users/users.interface';
-import { ActionButton, Flex, Heading, Loading, View } from '@geti/ui';
+import { ActionButton, Heading, Loading, View } from '@geti/ui';
 import { Add } from '@geti/ui/icons';
 
 import { useOrganizationIdentifier } from '../../../../hooks/use-organization-identifier/use-organization-identifier.hook';
