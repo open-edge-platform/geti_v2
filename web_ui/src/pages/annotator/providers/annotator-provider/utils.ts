@@ -77,7 +77,7 @@ export const DefaultHotkeys = (
     close: 'escape',
     hideAllAnnotations: 'a',
     accept: 'enter',
-    ['empty-label']: `n`,
+    ['empty-label']: 'n',
     [ToolType.SelectTool]: 'v',
     [ToolType.SSIMTool]: 'd',
     [ToolType.RITMTool]: 'i',
