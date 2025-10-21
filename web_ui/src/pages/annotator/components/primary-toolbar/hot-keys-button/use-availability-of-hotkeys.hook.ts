@@ -48,6 +48,7 @@ export const useAvailabilityOfHotkeys = (domains: DOMAIN[]): Record<HotKeyAction
             close: true,
             hideAllAnnotations: true,
             accept: true,
+            ['empty-label']: true,
             [ToolType.EditTool]: false, // we do not have hotkey for edit tool
             [ToolType.SelectTool]: true,
             [SelectingToolType.SelectionTool]: false, // we do not have hotkey for selection tool
