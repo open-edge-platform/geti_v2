@@ -127,7 +127,7 @@ export const LabelsShortcuts = ({ labels, annotationToolContext, isDisabled = fa
             }
         },
         HOTKEY_OPTIONS,
-        [emptyLabel, selectedAnnotations, handleSelectLabelShortcut, hotkeys]
+        [emptyLabel, handleSelectLabelShortcut, hotkeys]
     );
 
     return (
