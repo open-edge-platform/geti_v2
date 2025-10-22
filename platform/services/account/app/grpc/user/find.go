@@ -404,20 +404,29 @@ func (s *GRPCServer) Find(ctx context.Context, findRequest *pb.FindUserRequest) 
 	}
 
 	response.TotalCount = totalCount
-	const DefaultLimit = 10
-	nextPageFields := common.CalculateNextPage(response.TotalCount, findRequest.Skip, func() int32 {
+
+	if response.TotalMatchedCount == response.TotalCount {
+		// no pagination needed
+		nextPage := pb.ListUsersResponse_NextPage{
+			Skip:  0,
+			Limit: 0,
+		}
+		response.NextPage = &nextPage
+	} else {
+		const DefaultLimit = 10
+		nextPageFields := common.CalculateNextPage(response.TotalCount, findRequest.Skip, func() int32 {
 		if findRequest.Limit < DefaultLimit {
 			return DefaultLimit
 		}
-		return findRequest.Limit
-	}())
+			return findRequest.Limit
+		}())
 
-	nextPage := pb.ListUsersResponse_NextPage{
-		Skip:  nextPageFields.Skip,
-		Limit: nextPageFields.Limit,
+		nextPage := pb.ListUsersResponse_NextPage{
+			Skip:  nextPageFields.Skip,
+			Limit: nextPageFields.Limit,
+		}
+		response.NextPage = &nextPage
 	}
-
-	response.NextPage = &nextPage
 
 	return &response, nil
 }

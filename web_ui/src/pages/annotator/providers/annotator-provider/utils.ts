@@ -48,7 +48,8 @@ export type HotKeyActions =
     | 'pasteAnnotation'
     | 'close'
     | 'accept'
-    | 'hideAllAnnotations';
+    | 'hideAllAnnotations'
+    | 'empty-label';
 
 export type Hotkeys = Record<HotKeyActions, string>;
 
@@ -76,6 +77,7 @@ export const DefaultHotkeys = (
     close: 'escape',
     hideAllAnnotations: 'a',
     accept: 'enter',
+    ['empty-label']: 'n',
     [ToolType.SelectTool]: 'v',
     [ToolType.SSIMTool]: 'd',
     [ToolType.RITMTool]: 'i',

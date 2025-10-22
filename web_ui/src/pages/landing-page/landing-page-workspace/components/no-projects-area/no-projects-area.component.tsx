@@ -22,7 +22,7 @@ export const NoProjectArea = ({ openImportDatasetDialog }: NoProjectsAreaProps) 
     const DESCRIPTION = 'Create new project to leverage AI to automate your Computer Vision task';
 
     return (
-        <Flex width={'100%'} gap={'size-300'}>
+        <Flex width={'100%'} gap={'size-300'} marginTop={'size-700'}>
             <CustomWell
                 height={'size-3400'}
                 minWidth={'size-3000'}

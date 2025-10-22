@@ -5,6 +5,7 @@ import { useCallback, useMemo } from 'react';
 
 import { Flex, Tooltip, TooltipTrigger } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { Annotation } from '../../../../../core/annotations/annotation.interface';
@@ -15,6 +16,8 @@ import { useProjectIdentifier } from '../../../../../hooks/use-project-identifie
 import { LOCAL_STORAGE_KEYS } from '../../../../../shared/local-storage-keys';
 import { getId, getIds, hasEqualId } from '../../../../../shared/utils';
 import { AnnotationToolContext, ToolSettings, ToolType } from '../../../core/annotation-tool-context.interface';
+import { useAnnotatorHotkeys } from '../../../hooks/use-hotkeys-configuration.hook';
+import { HOTKEY_OPTIONS } from '../../../hot-keys/utils';
 import { getOutputFromTask } from '../../../providers/task-chain-provider/utils';
 import { useTask } from '../../../providers/task-provider/task-provider.component';
 import { LabelsHotkeys } from '../../labels/labels-hotkeys/labels-hotkeys.component';
@@ -39,6 +42,7 @@ const hasNotAnomalousNorLocalLabels = (annotation: Annotation) =>
 export const LabelsShortcuts = ({ labels, annotationToolContext, isDisabled = false }: LabelsShortcutsProps) => {
     const { selectedTask, tasks, setDefaultLabel } = useTask();
     const { projectId } = useProjectIdentifier();
+    const { hotkeys } = useAnnotatorHotkeys();
     const {
         isDrawing,
         annotations: annotationsScene,
@@ -110,6 +114,21 @@ export const LabelsShortcuts = ({ labels, annotationToolContext, isDisabled = fa
 
         return isDrawingSmartTool ? smartToolHandler(label) : clickHandler(label);
     };
+
+    const emptyLabel = labels.find((label) => isEmptyLabel(label));
+
+    useHotkeys(
+        hotkeys['empty-label'],
+        (event) => {
+            event.preventDefault();
+
+            if (emptyLabel) {
+                handleSelectLabelShortcut(emptyLabel);
+            }
+        },
+        HOTKEY_OPTIONS,
+        [emptyLabel, handleSelectLabelShortcut, hotkeys]
+    );
 
     return (
         <div aria-label='Label shortcuts' role='list'>

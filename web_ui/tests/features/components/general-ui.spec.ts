@@ -9,7 +9,7 @@ test.describe('General GUI Test', () => {
     test('Check if entry page is shown correctly.', async ({ page }) => {
         await page.goto('/');
 
-        await expect(page.getByRole('tab', { name: 'Workspace 1' })).toBeVisible();
+        await expect(page.getByRole('tab', { name: 'open menu' })).toBeVisible();
         await expect(page.getByText('Create new project')).toBeVisible();
     });
 

@@ -100,5 +100,12 @@
     border-bottom: var(--spectrum-global-dimension-size-10) solid
         var(--spectrum-tabs-rule-color, var(--spectrum-global-color-gray-200)) !important;
     box-sizing: border-box !important;
+    display: flex;
+    align-items: center;
+}
+
+.tabListScrollContainer {
+    flex: 1 1 auto;
+    min-width: 0;
     overflow: auto hidden;
 }

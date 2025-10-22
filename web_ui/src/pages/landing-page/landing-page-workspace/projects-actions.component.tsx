@@ -53,31 +53,30 @@ export const ProjectsActions = ({
         handleQueryOptions(value);
     };
 
-    return (
+    return shouldShowProjectActions ? (
         <Flex marginY='size-200' width={'100%'} gap='size-150' alignItems={'center'} justifyContent={'end'}>
             <Flex gap={'size-100'}>
-                {shouldShowProjectActions && (
-                    <>
-                        <SearchField
-                            isQuiet
-                            value={filterText}
-                            onChange={handleFilterTextChange}
-                            aria-label={'Search...'}
-                            id={'list-search-field'}
-                            UNSAFE_className={`${sharedClasses.searchField} ${
-                                filterText.length ? sharedClasses.searchFieldOpen : ''
-                            }`}
-                            placeholder='Search by name'
-                        />
+                <>
+                    <SearchField
+                        isQuiet
+                        value={filterText}
+                        onChange={handleFilterTextChange}
+                        aria-label={'Search...'}
+                        id={'list-search-field'}
+                        UNSAFE_className={`${sharedClasses.searchField} ${
+                            filterText.length ? sharedClasses.searchFieldOpen : ''
+                        }`}
+                        placeholder='Search by name'
+                    />
 
-                        <ProjectSorting
-                            nameKey={ProjectSortingOptions.name}
-                            dateKey={ProjectSortingOptions.creationDate}
-                            sortingOptions={queryOptions}
-                            setSortingOptions={setQueryOptions}
-                        />
-                    </>
-                )}
+                    <ProjectSorting
+                        nameKey={ProjectSortingOptions.name}
+                        dateKey={ProjectSortingOptions.creationDate}
+                        sortingOptions={queryOptions}
+                        setSortingOptions={setQueryOptions}
+                    />
+                </>
+
                 <HasPermission operations={[OPERATION.PROJECT_CREATION]}>
                     <NewProjectDialog
                         buttonText={'Create new project'}
@@ -86,5 +85,7 @@ export const ProjectsActions = ({
                 </HasPermission>
             </Flex>
         </Flex>
+    ) : (
+        <></>
     );
 };
