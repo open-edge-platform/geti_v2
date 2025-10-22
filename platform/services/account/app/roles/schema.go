@@ -22,10 +22,13 @@ const spicedbSchema = `
     /** Permission to manage organization */
     permission can_manage = organization_admin
 
+    /** Permission for a service account for organization admin */
+    permission service_account_for_org_admin = organization_admin->service_accounts
+
     /** Permission to contribute to organization */
     permission can_contribute = organization_contributor +
                                 organization_contributor->service_accounts +
-                                organization_admin->service_accounts +
+                                service_account_for_org_admin +
                                 can_manage
     }
     
@@ -36,14 +39,16 @@ const spicedbSchema = `
       relation workspace_contributor: user
       /** Parent organization of the workspace */
       relation parent_organization: organization
-    
+
       /** Permission to manage workspace */
       permission can_manage = workspace_admin +
                               workspace_admin->service_accounts +
+                              parent_organization->service_account_for_org_admin +
                               parent_organization->can_manage
       /** Permission to contribute to the workspace, granted to workspace contributors, administrators and their service accounts */
       permission can_contribute = workspace_contributor +
                                   workspace_contributor->service_accounts +
+                                  parent_organization->service_account_for_org_admin +
                                   can_manage
       /** Permission to view all workspace jobs, granted to administrators and their service accounts */
       permission view_all_workspace_jobs = can_manage + workspace_admin->service_accounts
@@ -60,10 +65,11 @@ const spicedbSchema = `
       relation project_contributor: user
       /** Parent workspace of the project */
       relation parent_workspace: workspace
-    
+
       /** Permission to manage project, granted to project managers and parent workspace admins */
       permission can_manage = project_manager +
                               project_manager->service_accounts +
+                              service_account_for_workspace_admin->service_accounts +
                               parent_workspace->can_manage
       /** Permission to contribute to the project, granted to project contributors, project managers and their service accounts */
       permission can_contribute = project_contributor +
