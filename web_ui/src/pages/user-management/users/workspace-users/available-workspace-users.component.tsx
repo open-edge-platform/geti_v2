@@ -35,7 +35,7 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser, searchQuery }
             ...prev,
             name: searchQuery,
         }));
-    }, [searchQuery, setUsersQueryParams]);
+    }, [searchQuery]);
     const { useGetUsersQuery, useUpdateUserRoles, useUpdateMemberRole } = useUsers();
 
     const {
