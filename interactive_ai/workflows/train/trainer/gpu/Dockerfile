@@ -16,23 +16,33 @@ ENV TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.2;7.5;8.0;8.6"
 ENV TORCH_DONT_CHECK_COMPILER_ABI=1
 
 RUN apt update \
-	&& apt install -y wget --no-install-recommends
+        && apt install -y wget --no-install-recommends
 
 RUN wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb \
     && dpkg -i cuda-keyring_1.1-1_all.deb \
     && rm -rf cuda-keyring_1.1-1_all.deb
 
 RUN apt update \
-	&& apt install -y --no-install-recommends \
+        && apt install -y --no-install-recommends \
     cuda-libraries-12-9 \
     cuda-compiler-12-9 \
     && apt clean all \
     && rm -rf /var/cache/apt/* \
-	&& echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \
-	&& echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+        && echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \
+        && echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+
+RUN rm -rf /usr/local/cuda-12.9/targets/x86_64-linux/lib/libnvrtc.alt.so.12 \
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/libnvrtc.alt.so.12.9.86 \
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/libnvrtc-builtins.alt.so.12.9 \
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/libcusolverMg.so.11 \
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/libnvrtc-builtins.alt.so.12.9.86 \
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/libcusolverMg.so.11.7.5.82 \
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/libcufilt.a
 
 # step 2: get python dependencies
-FROM base AS runtime
+FROM base AS python_dependencies
+
+RUN ulimit -n 65536
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
@@ -63,24 +73,59 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --no-editable
 
 # Install runtime dependencies
+RUN pip3 uninstall -y setuptools pip wheel && \
+    rm -rf /root/.cache/pip
+
+# Place executables in the environment at the front of the path
+RUN rm -rf /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cublas/include \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_cupti/include \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_cupti/lib/libcheckpoint.so \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_cupti/lib/libnvperf_host.so \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_cupti/lib/libnvperf_target.so \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_cupti/lib/libpcsamplingutil.so \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_nvrtc/libnvrtc.alt.so.12 \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_nvrtc/libnvrtc-builtins.alt.so.12.9 \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_runtime/include \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cufft/include \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/curand/include \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cusolver/include \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cusolver/lib/libcusolverMg.so.11 \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cusparse/include \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/nvjitlink/include \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cudnn/include \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cudnn/lib/__init__.py \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cudnn/lib/__pycache__ \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cudnn/__pycache__ \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/triton/backends/nvidia \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_nvrtc/lib/libnvrtc.alt.so.12 \
+    /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_nvrtc/lib/libnvrtc-builtins.alt.so.12.8
+
+FROM base AS runtime
+
+RUN ulimit -n 65536
+
+# Install runtime dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     libgl1=1.6.* \
     libglib2.0-0=2.74.* \
     curl && \
-    rm -rf /var/lib/apt/lists/* && \
-    useradd -l -u 10001 non-root && \
-	pip3 uninstall -y setuptools pip wheel && \
-    rm -rf /root/.cache/pip
+    rm -rf /var/lib/apt/lists/*
 
-# Copy the application from the builder
-COPY --link --from=cuda --chown=10001 /usr/local /usr/local
-
-# Place executables in the environment at the front of the path
-ENV PATH="/interactive_ai/workflows/train/trainer/.venv/bin:/interactive_ai/workflows/train/trainer:$PATH"
-ENV PYTHONPATH="/interactive_ai/workflows/train/trainer"
-ENV HF_HUB_OFFLINE=1
+RUN useradd -l -u 10001 non-root
 
 USER non-root
 WORKDIR /home/non-root
+
+COPY --link --from=cuda --chown=10001 /usr/local /usr/local
+COPY --link --from=python_dependencies --chown=10001 /interactive_ai /interactive_ai
+
 WORKDIR /interactive_ai/workflows/train/trainer
+
+COPY --link scripts/ scripts
+COPY --link run run
+COPY --link download_pretrained_weights.py download_pretrained_weights.py
+
+ENV PATH="/interactive_ai/workflows/train/trainer/.venv/bin:/interactive_ai/workflows/train/trainer:$PATH"
+ENV PYTHONPATH="/interactive_ai/workflows/train/trainer"
+ENV HF_HUB_OFFLINE=1

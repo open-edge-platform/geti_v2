@@ -2,6 +2,25 @@
 # --device /dev/dri          # Intel GPU access
 # -v /dev/dri/by-path:/dev/dri/by-path  # Device path mapping
 
+FROM python:3.10-slim-bookworm@sha256:cda0e2fa3894f9ada2c652534e6de6b2fe65687c63208a77e9e8d88231547902 AS python_dependencies
+
+COPY --link --from=libs . libs
+
+WORKDIR /interactive_ai/workflows/train/trainer
+RUN chown -R 10001:10001 /interactive_ai/workflows/train/trainer
+
+COPY --link --from=ghcr.io/astral-sh/uv:0.6.12@sha256:515b886e8eb99bcf9278776d8ea41eb4553a794195ef5803aa7ca6258653100d /uv /bin/uv
+COPY --link uv.lock uv.lock
+COPY --link pyproject.toml pyproject.toml
+
+# For OTX to install torch with ipex support, else defaults to cpu version
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
+RUN uv pip uninstall torch torchvision
+RUN uv pip install torch==2.8.0 torchvision==0.23.0 --default-index https://download.pytorch.org/whl/xpu
+
+RUN rm -rf /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia \
+           /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/triton/backends/nvidia/
+
 FROM python:3.10-slim-bookworm@sha256:cda0e2fa3894f9ada2c652534e6de6b2fe65687c63208a77e9e8d88231547902 AS base
 
 ENV UV_COMPILE_BYTECODE=1
@@ -45,14 +64,9 @@ COPY --link --from=ghcr.io/astral-sh/uv:0.6.12@sha256:515b886e8eb99bcf9278776d8e
 
 COPY --link scripts/ scripts
 COPY --link run run
-COPY --link uv.lock uv.lock
-COPY --link pyproject.toml pyproject.toml
 COPY --link download_pretrained_weights.py download_pretrained_weights.py
 
-# For OTX to install torch with ipex support, else defaults to cpu version
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
-RUN uv pip uninstall torch torchvision
-RUN uv pip install torch==2.8.0 torchvision==0.23.0 --default-index https://download.pytorch.org/whl/xpu
+COPY --link --from=python_dependencies /interactive_ai/workflows/train/trainer/.venv /interactive_ai/workflows/train/trainer/.venv
 
 # Place executables in the environment at the front of the path
 ENV PATH="/interactive_ai/workflows/train/trainer/.venv/bin:/interactive_ai/workflows/train/trainer:$PATH"
