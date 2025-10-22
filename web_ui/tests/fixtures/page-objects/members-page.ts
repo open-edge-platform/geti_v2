@@ -2,8 +2,9 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import { paths } from '@geti/core';
-import { USER_ROLE } from '@geti/core/src/users/users.interface';
 import { expect, Locator, Page } from '@playwright/test';
+
+import { USER_ROLE } from '../../../packages/core/src/users/users.interface';
 
 export class MembersPage {
     constructor(private page: Page) {}
@@ -55,7 +56,7 @@ export class MembersPage {
         await this.page.getByRole('button', { name: /Organization contributor/i }).click();
         await this.page.getByRole('option', { name: member.organizationRole }).click();
 
-        if ((member.organizationRole as string) === 'Organization contributor') {
+        if (member.organizationRole === USER_ROLE.ORGANIZATION_CONTRIBUTOR) {
             await this.page.getByRole('button', { name: 'Default workspace Workspace' }).click();
             await this.page.getByRole('option', { name: 'Default workspace' }).locator('div').click();
             await this.page.getByRole('button', { name: 'Workspace contributor' }).click();
