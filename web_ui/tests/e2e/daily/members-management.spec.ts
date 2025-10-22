@@ -10,49 +10,60 @@ import { test } from '../fixtures';
 
 const expectMemberToBeVisible = async (
     membersPage: MembersPage,
-    member: { email: string; firstName: string; lastName: string; role: WorkspaceRole['role'] }
+    member: {
+        email: string;
+        firstName: string;
+        lastName: string;
+        organizationRole: USER_ROLE.ORGANIZATION_ADMIN | USER_ROLE.ORGANIZATION_CONTRIBUTOR;
+    }
 ) => {
     const memberRow = membersPage.getMemberRow(member.email);
 
     await expect(membersPage.getEmailCell(member.email, memberRow)).toBeVisible();
     await expect(membersPage.getNameCell(member.firstName, member.lastName, memberRow)).toBeVisible();
-    await expect(membersPage.getRoleCell(member.role, memberRow)).toBeVisible();
+    await expect(membersPage.getRoleCell(member.organizationRole, memberRow)).toBeVisible();
 };
 
 const expectMemberNotToBeVisible = async (
     membersPage: MembersPage,
-    member: { email: string; firstName: string; lastName: string; role: WorkspaceRole['role'] }
+    member: {
+        email: string;
+        firstName: string;
+        lastName: string;
+        organizationRole: USER_ROLE.ORGANIZATION_ADMIN | USER_ROLE.ORGANIZATION_CONTRIBUTOR;
+    }
 ) => {
     await expect(membersPage.getMemberRow(member.email)).toBeHidden();
 };
 
 test.describe('Members management suite', () => {
-    const workspaceAdminMember = {
+    const organizationAdminMember = {
         email: `test-admin-${uuid()}@intel.com`,
         firstName: 'Test',
         lastName: 'Admin',
         password: 'Test1234',
-        role: USER_ROLE.WORKSPACE_ADMIN,
+        workspaceRole: USER_ROLE.WORKSPACE_ADMIN,
+        organizationRole: USER_ROLE.ORGANIZATION_ADMIN,
     } as const;
 
-    const workspaceContributorMember = {
+    const organizationContributorMember = {
         email: `test-contributor-${uuid()}@intel.com`,
         firstName: 'Test',
         lastName: 'Contributor',
         password: 'Test1234',
-        role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+        workspaceRole: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+        organizationRole: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
     } as const;
 
     test.afterEach(async ({ membersPage }, testInfo) => {
         if (testInfo.status !== 'passed') {
             console.info('Cleanup');
-            await membersPage.removeMember(workspaceAdminMember.email);
-            await membersPage.removeMember(workspaceContributorMember.email);
+            await membersPage.removeMember(organizationAdminMember.email);
+            await membersPage.removeMember(organizationContributorMember.email);
         }
     });
 
-    // TODO: need to fix it in a separate PR
-    test.skip('Members management', { tag: ['@daily'] }, async ({ membersPage, page }) => {
+    test('Members management', { tag: ['@daily'] }, async ({ membersPage, page }) => {
         await page.route('**/api/v1/product_info', async (route) => {
             const response = await route.fetch();
             const body = await response.json();
@@ -66,52 +77,52 @@ test.describe('Members management suite', () => {
 
         await membersPage.open();
 
-        await test.step('Creates new workspace admin and workspace contributor member', async () => {
-            await membersPage.addMember(workspaceContributorMember);
+        await test.step('Creates new organization admin and organization contributor members', async () => {
+            await membersPage.addMember(organizationContributorMember);
 
-            await expectMemberToBeVisible(membersPage, workspaceContributorMember);
+            await expectMemberToBeVisible(membersPage, organizationContributorMember);
 
-            await membersPage.addMember(workspaceAdminMember);
+            await membersPage.addMember(organizationAdminMember);
 
-            await expectMemberToBeVisible(membersPage, workspaceAdminMember);
+            await expectMemberToBeVisible(membersPage, organizationAdminMember);
         });
 
-        await test.step('Filters by workspace admin and workspace contributor role', async () => {
-            await membersPage.filterByRole(USER_ROLE.WORKSPACE_ADMIN);
+        await test.step('Filters by organization admin and organization contributor role', async () => {
+            await membersPage.filterByRole(USER_ROLE.ORGANIZATION_ADMIN);
 
-            await expectMemberToBeVisible(membersPage, workspaceAdminMember);
-            await expectMemberNotToBeVisible(membersPage, workspaceContributorMember);
+            await expectMemberToBeVisible(membersPage, organizationAdminMember);
+            await expectMemberNotToBeVisible(membersPage, organizationContributorMember);
 
-            await membersPage.filterByRole(USER_ROLE.WORKSPACE_CONTRIBUTOR);
+            await membersPage.filterByRole(USER_ROLE.ORGANIZATION_CONTRIBUTOR);
 
-            await expectMemberToBeVisible(membersPage, workspaceContributorMember);
-            await expectMemberNotToBeVisible(membersPage, workspaceAdminMember);
+            await expectMemberToBeVisible(membersPage, organizationContributorMember);
+            await expectMemberNotToBeVisible(membersPage, organizationAdminMember);
 
             await membersPage.filterByRole('All role');
-            await expectMemberToBeVisible(membersPage, workspaceAdminMember);
-            await expectMemberToBeVisible(membersPage, workspaceContributorMember);
+            await expectMemberToBeVisible(membersPage, organizationAdminMember);
+            await expectMemberToBeVisible(membersPage, organizationContributorMember);
         });
 
         await test.step("Filters by member's name and email", async () => {
-            await membersPage.filterByNameOrEmail(workspaceAdminMember.email);
+            await membersPage.filterByNameOrEmail(organizationAdminMember.email);
 
-            await expectMemberToBeVisible(membersPage, workspaceAdminMember);
-            await expectMemberNotToBeVisible(membersPage, workspaceContributorMember);
+            await expectMemberToBeVisible(membersPage, organizationAdminMember);
+            await expectMemberNotToBeVisible(membersPage, organizationContributorMember);
 
-            await membersPage.filterByNameOrEmail(workspaceContributorMember.lastName);
+            await membersPage.filterByNameOrEmail(organizationContributorMember.lastName);
 
-            await expectMemberToBeVisible(membersPage, workspaceContributorMember);
-            await expectMemberNotToBeVisible(membersPage, workspaceAdminMember);
+            await expectMemberToBeVisible(membersPage, organizationContributorMember);
+            await expectMemberNotToBeVisible(membersPage, organizationAdminMember);
 
             await membersPage.resetSearchFilter();
         });
 
         await test.step('Edits workspace admin and workspace contributor member', async () => {
             const updatedWorkspaceAdminMember = {
-                ...workspaceAdminMember,
+                ...organizationAdminMember,
                 firstName: 'Updated',
                 lastName: 'Old Admin',
-                role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+                role: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
             } as const;
 
             await membersPage.editMember(updatedWorkspaceAdminMember);
@@ -119,10 +130,10 @@ test.describe('Members management suite', () => {
             await expectMemberToBeVisible(membersPage, updatedWorkspaceAdminMember);
 
             const updatedWorkspaceContributorMember = {
-                ...workspaceContributorMember,
+                ...organizationContributorMember,
                 firstName: 'Updated',
                 lastName: 'Old Contributor',
-                role: USER_ROLE.WORKSPACE_ADMIN,
+                role: USER_ROLE.ORGANIZATION_ADMIN,
             } as const;
 
             await membersPage.editMember(updatedWorkspaceContributorMember);
@@ -131,13 +142,13 @@ test.describe('Members management suite', () => {
         });
 
         await test.step('Removes workspace admin and workspace contributor member', async () => {
-            await membersPage.removeMember(workspaceContributorMember.email);
+            await membersPage.removeMember(organizationContributorMember.email);
 
-            await expectMemberNotToBeVisible(membersPage, workspaceContributorMember);
+            await expectMemberNotToBeVisible(membersPage, organizationContributorMember);
 
-            await membersPage.removeMember(workspaceAdminMember.email);
+            await membersPage.removeMember(organizationAdminMember.email);
 
-            await expectMemberNotToBeVisible(membersPage, workspaceAdminMember);
+            await expectMemberNotToBeVisible(membersPage, organizationAdminMember);
         });
     });
 });
