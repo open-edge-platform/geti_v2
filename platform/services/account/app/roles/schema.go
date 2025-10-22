@@ -69,7 +69,6 @@ const spicedbSchema = `
       /** Permission to manage project, granted to project managers and parent workspace admins */
       permission can_manage = project_manager +
                               project_manager->service_accounts +
-                              service_account_for_workspace_admin->service_accounts +
                               parent_workspace->can_manage
       /** Permission to contribute to the project, granted to project contributors, project managers and their service accounts */
       permission can_contribute = project_contributor +
