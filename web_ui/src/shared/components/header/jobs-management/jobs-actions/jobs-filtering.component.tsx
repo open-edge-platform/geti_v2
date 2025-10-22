@@ -12,6 +12,7 @@ import { JobType } from '../../../../../core/jobs/jobs.const';
 import { useProjectActions } from '../../../../../core/projects/hooks/use-project-actions.hook';
 import { ProjectProps } from '../../../../../core/projects/project.interface';
 import { ProjectSortingOptions } from '../../../../../core/projects/services/project-service.interface';
+import { SortDirection } from '../../../../../core/shared/query-parameters';
 import { useWorkspaceIdentifier } from '../../../../../providers/workspaces-provider/use-workspace-identifier.hook';
 import { isNonEmptyArray } from '../../../../utils';
 import { JobsFilterField } from '../jobs-filter-field.component';
@@ -54,8 +55,13 @@ export const JobsFiltering = ({ values, onChange }: JobsFilteringProps) => {
             ? {
                   resourceId: projectId,
                   resourceType: RESOURCE_TYPE.PROJECT,
+                  sortBy: 'email',
+                  sortDirection: SortDirection.ASC,
               }
-            : undefined
+            : {
+                  sortBy: 'email',
+                  sortDirection: SortDirection.ASC,
+              }
     );
 
     const projects: ProjectProps[] = useMemo((): ProjectProps[] => {
