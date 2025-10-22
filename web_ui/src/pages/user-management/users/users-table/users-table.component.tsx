@@ -158,7 +158,9 @@ export const UsersTable = ({
     return (
         <Flex flex={1} width={'100%'} justifyContent={'center'} alignItems={'start'}>
             {shouldShowNotFound ? (
-                <NotFound />
+                <View paddingY={'size-200'}>
+                    <NotFound />
+                </View>
             ) : (
                 <View minHeight={0} width={'100%'} data-testid={tableId ?? 'users-table-id'}>
                     <TableView
