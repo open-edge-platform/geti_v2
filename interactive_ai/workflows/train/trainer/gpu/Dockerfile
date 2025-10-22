@@ -16,20 +16,20 @@ ENV TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.2;7.5;8.0;8.6"
 ENV TORCH_DONT_CHECK_COMPILER_ABI=1
 
 RUN apt update \
-        && apt install -y wget --no-install-recommends
+    && apt install -y wget --no-install-recommends
 
 RUN wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb \
     && dpkg -i cuda-keyring_1.1-1_all.deb \
     && rm -rf cuda-keyring_1.1-1_all.deb
 
 RUN apt update \
-        && apt install -y --no-install-recommends \
+    && apt install -y --no-install-recommends \
     cuda-libraries-12-9 \
     cuda-compiler-12-9 \
     && apt clean all \
     && rm -rf /var/cache/apt/* \
-        && echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \
-        && echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+    && echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \
+    && echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
 
 RUN rm -rf /usr/local/cuda-12.9/targets/x86_64-linux/lib/libnvrtc.alt.so.12 \
     /usr/local/cuda-12.9/targets/x86_64-linux/lib/libnvrtc.alt.so.12.9.86 \
