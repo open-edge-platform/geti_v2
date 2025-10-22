@@ -275,8 +275,7 @@ test.describe('Members page', () => {
         await expect(membersPage.getEmailCell(workspaceContributor.email)).toBeHidden();
     });
 
-    // TODO: need to fix it in a separate PR
-    test('Filters by workspace admin or contributor role', async ({ page, membersPage, registerApiResponse }) => {
+    test('Filters by organization admin or contributor role', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);
@@ -289,12 +288,11 @@ test.describe('Members page', () => {
             return req.method() === 'GET' && req.url().includes(`/users`);
         });
 
-        await membersPage.filterByRole(USER_ROLE.WORKSPACE_ADMIN);
+        await membersPage.filterByRole(USER_ROLE.ORGANIZATION_ADMIN);
 
         const filterMembersRequest = await filterMembersRequestPromise;
 
-        expect(filterMembersRequest.url()).toContain(`role=${UserRoleDTO.WORKSPACE_ADMIN}`);
-
+        expect(filterMembersRequest.url()).toContain(`role=${UserRoleDTO.ORGANIZATION_ADMIN}`);
         await expect(membersPage.membersTableCount).toHaveCount(members.get().length);
         await expectMembersToBeVisible(membersPage, members.get());
         await expect(membersPage.getEmailCell(workspaceContributor.email)).toBeHidden();
@@ -303,11 +301,11 @@ test.describe('Members page', () => {
             return req.method() === 'GET' && req.url().includes(`/users`);
         });
 
-        await membersPage.filterByRole(USER_ROLE.WORKSPACE_CONTRIBUTOR);
+        await membersPage.filterByRole(USER_ROLE.ORGANIZATION_CONTRIBUTOR);
 
         const filterContributorMembersRequest = await filterContributorMembersRequestPromise;
 
-        expect(filterContributorMembersRequest.url()).toContain(`role=${UserRoleDTO.WORKSPACE_CONTRIBUTOR}`);
+        expect(filterContributorMembersRequest.url()).toContain(`role=${UserRoleDTO.ORGANIZATION_CONTRIBUTOR}`);
 
         await expect(membersPage.membersTableCount).toHaveCount(members.get().length);
         await expectMembersToBeVisible(membersPage, members.get());
@@ -315,8 +313,7 @@ test.describe('Members page', () => {
         await expect(membersPage.getEmailCell(workspaceAdmin2.email)).toBeHidden();
     });
 
-    // TODO: need to fix it in a separate PR
-    test.skip("Filters by member's name", async ({ page, membersPage, registerApiResponse }) => {
+    test("Filters by member's name", async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);
@@ -343,17 +340,21 @@ test.describe('Members page', () => {
     test.describe('FEATURE_FLAG_MANAGE_USERS_ROLES: on', () => {
         test.use({ featureFlags: { FEATURE_FLAG_MANAGE_USERS_ROLES: true } });
 
-        // TODO: need to fix it in a separate PR
-        test.skip('Edits workspace admin user', async ({ page, membersPage, registerApiResponse, openApi }) => {
-            const editedWorkspaceAdmin2 = getMockedMember({
+        test('Edits organization admin user', async ({ page, membersPage, registerApiResponse, openApi }) => {
+            const editedOrganizationAdmin = getMockedMember({
                 ...workspaceAdmin2,
                 firstName: 'Edit Test',
                 secondName: 'User',
                 roles: [
                     {
-                        role: UserRoleDTO.ORGANIZATION_CONTRIBUTOR,
+                        role: UserRoleDTO.ORGANIZATION_ADMIN,
                         resourceType: ResourceTypeDTO.ORGANIZATION,
                         resourceId: organizationId,
+                    },
+                    {
+                        resourceId: workspace.id,
+                        resourceType: ResourceTypeDTO.WORKSPACE,
+                        role: UserRoleDTO.WORKSPACE_ADMIN,
                     },
                 ],
             });
@@ -373,12 +374,11 @@ test.describe('Members page', () => {
             });
 
             const editedMember = {
-                email: editedWorkspaceAdmin2.email,
-                firstName: editedWorkspaceAdmin2.firstName,
-                lastName: editedWorkspaceAdmin2.secondName,
-                role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+                email: editedOrganizationAdmin.email,
+                firstName: editedOrganizationAdmin.firstName,
+                lastName: editedOrganizationAdmin.secondName,
+                role: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
             } as const;
-
             await membersPage.editMember(editedMember);
 
             const editMemberRequest = await editMemberRequestPromise;
@@ -391,23 +391,27 @@ test.describe('Members page', () => {
                 role: UserRoleDTO.ORGANIZATION_CONTRIBUTOR,
                 resourceId: organizationId,
             });
-            expect(editMemberRequestPayload).toEqual(editedWorkspaceAdmin2);
+            expect(editMemberRequestPayload).toEqual(editedOrganizationAdmin);
 
             await expectMembersToBeVisible(membersPage, members.get());
             await expect(membersPage.getNameCell(workspaceAdmin2.firstName, workspaceAdmin2.secondName)).toBeHidden();
         });
 
-        // TODO: need to fix it in a separate PR
-        test.skip('Edits workspace contributor user', async ({ page, membersPage, registerApiResponse, openApi }) => {
-            const editedWorkspaceContributor = getMockedMember({
+        test('Edits workspace contributor user', async ({ page, membersPage, registerApiResponse, openApi }) => {
+            const editedOrganizationContributor = getMockedMember({
                 ...workspaceContributor,
-                firstName: 'Test',
-                secondName: 'User',
+                firstName: 'Edited First Name',
+                secondName: 'Edited Second Name',
                 roles: [
                     {
-                        role: UserRoleDTO.ORGANIZATION_ADMIN,
+                        role: UserRoleDTO.ORGANIZATION_CONTRIBUTOR,
                         resourceType: ResourceTypeDTO.ORGANIZATION,
                         resourceId: organizationId,
+                    },
+                    {
+                        resourceId: workspace.id,
+                        resourceType: ResourceTypeDTO.WORKSPACE,
+                        role: UserRoleDTO.WORKSPACE_CONTRIBUTOR,
                     },
                 ],
             });
@@ -427,11 +431,15 @@ test.describe('Members page', () => {
             });
 
             const editedMember = {
-                email: editedWorkspaceContributor.email,
-                firstName: editedWorkspaceContributor.firstName,
-                lastName: editedWorkspaceContributor.secondName,
-                role: USER_ROLE.WORKSPACE_ADMIN,
+                email: editedOrganizationContributor.email,
+                firstName: editedOrganizationContributor.firstName,
+                lastName: editedOrganizationContributor.secondName,
+                role: USER_ROLE.ORGANIZATION_ADMIN,
             } as const;
+
+            await expect(
+                membersPage.getNameCell(workspaceContributor.firstName, workspaceContributor.secondName)
+            ).toBeVisible();
 
             await membersPage.editMember(editedMember);
 
@@ -445,9 +453,15 @@ test.describe('Members page', () => {
                 role: UserRoleDTO.ORGANIZATION_ADMIN,
                 resourceId: organizationId,
             });
-            expect(editMemberRequestPayload).toEqual(editedWorkspaceContributor);
+            expect(editMemberRequestPayload).toEqual(editedOrganizationContributor);
 
             await expectMembersToBeVisible(membersPage, members.get());
+            await expect(
+                membersPage.getNameCell(
+                    editedOrganizationContributor.firstName,
+                    editedOrganizationContributor.secondName
+                )
+            ).toBeVisible();
             await expect(
                 membersPage.getNameCell(workspaceContributor.firstName, workspaceContributor.secondName)
             ).toBeHidden();
@@ -457,13 +471,91 @@ test.describe('Members page', () => {
     test.describe('FEATURE_FLAG_MANAGE_USERS_ROLES: off', () => {
         test.use({ featureFlags: { FEATURE_FLAG_MANAGE_USERS_ROLES: false } });
 
-        // TODO: need to fix it in a separate PR
-        test.skip('Edits workspace admin user', async ({ page, membersPage, registerApiResponse }) => {
+        test('Edits organization admin user', async ({ page, membersPage, registerApiResponse }) => {
             const editedWorkspaceAdmin2 = getMockedMember({
                 ...workspaceAdmin2,
-                firstName: 'EditedTest',
+                firstName: 'EditedFirstName',
+                secondName: 'EditedSecondName',
+                roles: [
+                    {
+                        role: UserRoleDTO.ORGANIZATION_ADMIN,
+                        resourceType: ResourceTypeDTO.ORGANIZATION,
+                        resourceId: organizationId,
+                    },
+                    {
+                        resourceId: workspace.id,
+                        resourceType: ResourceTypeDTO.WORKSPACE,
+                        role: UserRoleDTO.WORKSPACE_ADMIN,
+                    },
+                ],
+            });
+
+            const members = registerApiMembers({ registerApiResponse });
+
+            await membersPage.openByURL(organizationId);
+
+            await expect(membersPage.membersTable).toBeVisible();
+
+            const editMemberRequestPromise = page.waitForRequest((req) => {
+                return req.method() === 'PUT' && req.url().includes('/users') && !req.url().includes('/roles');
+            });
+
+            const editMemberRolesRequestPromise = page.waitForRequest((req) => {
+                return req.method() === 'PUT' && req.url().includes('/users') && req.url().includes('/roles');
+            });
+
+            const editedMember = {
+                email: editedWorkspaceAdmin2.email,
+                firstName: editedWorkspaceAdmin2.firstName,
+                lastName: editedWorkspaceAdmin2.secondName,
+                role: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
+            } as const;
+
+            await membersPage.editMember(editedMember);
+
+            const editMemberRequest = await editMemberRequestPromise;
+            const editMemberRolesRequest = await editMemberRolesRequestPromise;
+
+            const editMemberRequestPayload = JSON.parse(editMemberRequest.postData() ?? '');
+            const editMemberRolesRequestPayload = JSON.parse(editMemberRolesRequest.postData() ?? '');
+
+            expect(editMemberRolesRequestPayload).toEqual({
+                roles: [
+                    {
+                        operation: 'DELETE',
+                        role: {
+                            role: UserRoleDTO.ORGANIZATION_ADMIN,
+                            resourceType: ResourceTypeDTO.ORGANIZATION,
+                            resourceId: organizationId,
+                        },
+                    },
+                    {
+                        operation: 'CREATE',
+                        role: {
+                            role: UserRoleDTO.ORGANIZATION_CONTRIBUTOR,
+                            resourceType: ResourceTypeDTO.ORGANIZATION,
+                            resourceId: organizationId,
+                        },
+                    },
+                ],
+            });
+            expect(editMemberRequestPayload).toEqual(editedWorkspaceAdmin2);
+
+            await expectMembersToBeVisible(membersPage, members.get());
+            await expect(membersPage.getNameCell(workspaceAdmin2.firstName, workspaceAdmin2.secondName)).toBeHidden();
+        });
+
+        test('Edits workspace contributor user', async ({ page, membersPage, registerApiResponse }) => {
+            const editedOrganizationContributor = getMockedMember({
+                ...workspaceContributor,
+                firstName: 'Test',
                 secondName: 'User',
                 roles: [
+                    {
+                        role: UserRoleDTO.ORGANIZATION_CONTRIBUTOR,
+                        resourceType: ResourceTypeDTO.ORGANIZATION,
+                        resourceId: organizationId,
+                    },
                     {
                         role: UserRoleDTO.WORKSPACE_CONTRIBUTOR,
                         resourceType: ResourceTypeDTO.WORKSPACE,
@@ -487,10 +579,10 @@ test.describe('Members page', () => {
             });
 
             const editedMember = {
-                email: editedWorkspaceAdmin2.email,
-                firstName: editedWorkspaceAdmin2.firstName,
-                lastName: editedWorkspaceAdmin2.secondName,
-                role: USER_ROLE.WORKSPACE_CONTRIBUTOR,
+                email: editedOrganizationContributor.email,
+                firstName: editedOrganizationContributor.firstName,
+                lastName: editedOrganizationContributor.secondName,
+                role: USER_ROLE.ORGANIZATION_ADMIN,
             } as const;
 
             await membersPage.editMember(editedMember);
@@ -506,92 +598,22 @@ test.describe('Members page', () => {
                     {
                         operation: 'DELETE',
                         role: {
-                            role: UserRoleDTO.WORKSPACE_ADMIN,
-                            resourceType: ResourceTypeDTO.WORKSPACE,
-                            resourceId: workspace.id,
+                            role: UserRoleDTO.ORGANIZATION_CONTRIBUTOR,
+                            resourceType: ResourceTypeDTO.ORGANIZATION,
+                            resourceId: organizationId,
                         },
                     },
                     {
                         operation: 'CREATE',
                         role: {
-                            role: UserRoleDTO.WORKSPACE_CONTRIBUTOR,
-                            resourceType: ResourceTypeDTO.WORKSPACE,
-                            resourceId: workspace.id,
+                            role: UserRoleDTO.ORGANIZATION_ADMIN,
+                            resourceType: ResourceTypeDTO.ORGANIZATION,
+                            resourceId: organizationId,
                         },
                     },
                 ],
             });
-            expect(editMemberRequestPayload).toEqual(editedWorkspaceAdmin2);
-
-            await expectMembersToBeVisible(membersPage, members.get());
-            await expect(membersPage.getNameCell(workspaceAdmin2.firstName, workspaceAdmin2.secondName)).toBeHidden();
-        });
-
-        // TODO: need to fix it in a separate PR
-        test.skip('Edits workspace contributor user', async ({ page, membersPage, registerApiResponse }) => {
-            const editedWorkspaceContributor = getMockedMember({
-                ...workspaceContributor,
-                firstName: 'Test',
-                secondName: 'User',
-                roles: [
-                    {
-                        role: UserRoleDTO.WORKSPACE_ADMIN,
-                        resourceType: ResourceTypeDTO.WORKSPACE,
-                        resourceId: workspace.id,
-                    },
-                ],
-            });
-
-            const members = registerApiMembers({ registerApiResponse });
-
-            await membersPage.openByURL(organizationId);
-
-            await expect(membersPage.membersTable).toBeVisible();
-
-            const editMemberRequestPromise = page.waitForRequest((req) => {
-                return req.method() === 'PUT' && req.url().includes('/users') && !req.url().includes('/roles');
-            });
-
-            const editMemberRolesRequestPromise = page.waitForRequest((req) => {
-                return req.method() === 'PUT' && req.url().includes('/users') && req.url().includes('/roles');
-            });
-
-            const editedMember = {
-                email: editedWorkspaceContributor.email,
-                firstName: editedWorkspaceContributor.firstName,
-                lastName: editedWorkspaceContributor.secondName,
-                role: USER_ROLE.WORKSPACE_ADMIN,
-            } as const;
-
-            await membersPage.editMember(editedMember);
-
-            const editMemberRequest = await editMemberRequestPromise;
-            const editMemberRolesRequest = await editMemberRolesRequestPromise;
-
-            const editMemberRequestPayload = JSON.parse(editMemberRequest.postData() ?? '');
-            const editMemberRolesRequestPayload = JSON.parse(editMemberRolesRequest.postData() ?? '');
-
-            expect(editMemberRolesRequestPayload).toEqual({
-                roles: [
-                    {
-                        operation: 'DELETE',
-                        role: {
-                            role: UserRoleDTO.WORKSPACE_CONTRIBUTOR,
-                            resourceType: ResourceTypeDTO.WORKSPACE,
-                            resourceId: workspace.id,
-                        },
-                    },
-                    {
-                        operation: 'CREATE',
-                        role: {
-                            role: UserRoleDTO.WORKSPACE_ADMIN,
-                            resourceType: ResourceTypeDTO.WORKSPACE,
-                            resourceId: workspace.id,
-                        },
-                    },
-                ],
-            });
-            expect(editMemberRequestPayload).toEqual(editedWorkspaceContributor);
+            expect(editMemberRequestPayload).toEqual(editedOrganizationContributor);
 
             await expectMembersToBeVisible(membersPage, members.get());
             await expect(
