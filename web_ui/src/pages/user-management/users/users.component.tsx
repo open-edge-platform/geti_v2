@@ -117,7 +117,11 @@ export const Users = ({
                     usersTableType={usersTableType}
                 />
                 {resourceType === RESOURCE_TYPE.WORKSPACE && resourceId !== undefined && (
-                    <AvailableWorkspaceUsers workspaceId={resourceId} activeUser={activeUser} />
+                    <AvailableWorkspaceUsers
+                        workspaceId={resourceId}
+                        activeUser={activeUser}
+                        searchQuery={usersQueryParams.name}
+                    />
                 )}
             </Flex>
         </motion.div>

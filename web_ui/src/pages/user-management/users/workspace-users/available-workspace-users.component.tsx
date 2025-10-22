@@ -1,12 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { getRoleCreationPayload } from '@geti/core/src/users/services/utils';
-import { RESOURCE_TYPE, User, USER_ROLE } from '@geti/core/src/users/users.interface';
+import { RESOURCE_TYPE, User, USER_ROLE, UsersQueryParams } from '@geti/core/src/users/users.interface';
 import { ActionButton, Heading, Loading, View } from '@geti/ui';
 import { Add } from '@geti/ui/icons';
 
@@ -18,12 +18,24 @@ import { USERS_TABLE_COLUMNS, UsersTable } from '../users-table/users-table.comp
 interface AvailableWorkspaceUsersProps {
     workspaceId: string;
     activeUser: User;
+    searchQuery?: string;
 }
 
-export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWorkspaceUsersProps) => {
+export const AvailableWorkspaceUsers = ({ workspaceId, activeUser, searchQuery }: AvailableWorkspaceUsersProps) => {
     const { organizationId } = useOrganizationIdentifier();
     const { FEATURE_FLAG_MANAGE_USERS_ROLES } = useFeatureFlags();
 
+    const [usersQueryParams, setUsersQueryParams] = useState<UsersQueryParams>({
+        sortBy: undefined,
+        sortDirection: undefined,
+    });
+
+    useEffect(() => {
+        setUsersQueryParams((prev) => ({
+            ...prev,
+            name: searchQuery,
+        }));
+    }, [searchQuery, setUsersQueryParams]);
     const { useGetUsersQuery, useUpdateUserRoles, useUpdateMemberRole } = useUsers();
 
     const {
@@ -33,7 +45,7 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
         getNextPage: getNextOrgPage,
         totalCount: orgTotal,
         totalMatchedCount: _orgMatched,
-    } = useGetUsersQuery(organizationId);
+    } = useGetUsersQuery(organizationId, usersQueryParams);
 
     const {
         users: wsUsers,
@@ -42,20 +54,27 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
         getNextPage: getNextWsPage,
         totalCount: _wsTotal,
         totalMatchedCount: _wsMatched,
-    } = useGetUsersQuery(organizationId, { resourceType: RESOURCE_TYPE.WORKSPACE, resourceId: workspaceId });
+    } = useGetUsersQuery(organizationId, {
+        ...usersQueryParams,
+        resourceType: RESOURCE_TYPE.WORKSPACE,
+        resourceId: workspaceId,
+    });
 
     const availableUsers = useMemo(() => {
-        if (isWsLoading || orgUsers === undefined || wsUsers === undefined) return [] as User[];
+        if (orgUsers === undefined || wsUsers === undefined) {
+            return [] as User[];
+        }
         const wsSet = new Set(wsUsers.map((u) => u.id));
         return orgUsers.filter(
             (u) => !wsSet.has(u.id) && u.roles.every((r) => r.role !== USER_ROLE.ORGANIZATION_ADMIN)
         ); // filter out org admins and workspace members
-    }, [orgUsers, wsUsers, isWsLoading]);
+    }, [orgUsers, wsUsers]);
 
     const updateUserRoleMutation = useUpdateUserRoles();
     const updateMemberRoleMutation = useUpdateMemberRole();
 
     const isLoading = isOrgLoading || isWsLoading;
+    const isDataReady = !isLoading && orgUsers !== undefined && wsUsers !== undefined;
     const isFetchingNextPage = isOrgFetchingMore || isWsFetchingMore;
 
     const handleAddUserWithRole = (user: User, role: USER_ROLE) => {
@@ -95,7 +114,7 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
         </ActionButton>
     );
 
-    if (availableUsers.length === 0) {
+    if (!isDataReady || availableUsers.length === 0) {
         return <></>;
     }
 
@@ -118,8 +137,8 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser }: AvailableWo
                         // Load more from both lists to keep difference accurate
                         await Promise.all([getNextOrgPage(), getNextWsPage()]);
                     }}
-                    usersQueryParams={{}}
-                    setUsersQueryParams={() => {}}
+                    usersQueryParams={usersQueryParams}
+                    setUsersQueryParams={setUsersQueryParams}
                     UserActions={({ user }) => <AddContributorAction user={user} />}
                     ignoredColumns={[
                         USERS_TABLE_COLUMNS.LAST_LOGIN,
