@@ -13,8 +13,9 @@ interface UsersTabProps {
 }
 
 export const UsersTab = ({ activeUser }: UsersTabProps) => {
-    if (!activeUser) return <></>;
     const { organizationId } = useOrganization();
+
+    if (!activeUser) return <></>;
 
     return (
         <Flex direction={'column'} height={'100%'} gap={'size-200'}>
