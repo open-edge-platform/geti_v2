@@ -98,11 +98,12 @@ export const UsersTable = ({
                 },
             },
             {
-                label: isEmpty(resourceId)
-                    ? 'Organization role'
-                    : usersTableType === RESOURCE_TYPE.PROJECT
-                      ? 'Project role'
-                      : 'Workspace role',
+                label:
+                    usersTableType === RESOURCE_TYPE.ORGANIZATION
+                        ? 'Organization role'
+                        : usersTableType === RESOURCE_TYPE.PROJECT
+                          ? 'Project role'
+                          : 'Workspace role',
                 dataKey: USERS_TABLE_COLUMNS.ROLES,
                 width: 180,
                 isSortable: false,

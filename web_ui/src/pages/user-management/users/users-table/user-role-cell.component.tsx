@@ -43,9 +43,7 @@ export const UserRoleCell = ({
         );
     }
 
-    const workspaceRole =
-        roles.find((role) => role.resourceType === RESOURCE_TYPE.WORKSPACE && role.resourceId === resourceId)?.role ??
-        'N/A';
+    const workspaceRole = roles.find((role) => role.resourceId === resourceId)?.role ?? 'N/A';
 
     return (
         <CasualCell
