@@ -122,7 +122,7 @@ export const LabelsShortcuts = ({ labels, annotationToolContext, isDisabled = fa
         (event) => {
             event.preventDefault();
 
-            if (emptyLabel && selectedAnnotations.length > 0) {
+            if (emptyLabel) {
                 handleSelectLabelShortcut(emptyLabel);
             }
         },
