@@ -62,7 +62,7 @@ export const AvailableWorkspaceUsers = ({ workspaceId, activeUser, searchQuery }
 
     const availableUsers = useMemo(() => {
         if (orgUsers === undefined || wsUsers === undefined) {
-            return [] as User[];
+            return [];
         }
         const wsSet = new Set(wsUsers.map((u) => u.id));
         return orgUsers.filter(
