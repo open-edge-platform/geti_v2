@@ -63,7 +63,7 @@ export const Users = ({
     const { sortBy, sortDirection, ...filteringParams } = usersQueryParams;
     const hasFilters = !isEmpty(filteringParams);
 
-    const enableCreation = Array.isArray(resourceType) ? resourceType.length > 0 : resourceType === undefined;
+    const enableCreation = usersTableType === RESOURCE_TYPE.ORGANIZATION;
     const shouldShowAddUserButton = enableCreation && !isSaasEnvironment && productInfo?.isSmtpDefined === false;
     const shouldShowInviteUserButton = enableCreation && (isSaasEnvironment || productInfo?.isSmtpDefined === true);
 
