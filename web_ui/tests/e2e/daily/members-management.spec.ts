@@ -42,7 +42,6 @@ test.describe('Members management suite', () => {
         firstName: 'Test',
         lastName: 'Admin',
         password: 'Test1234',
-        workspaceRole: USER_ROLE.WORKSPACE_ADMIN,
         organizationRole: USER_ROLE.ORGANIZATION_ADMIN,
     } as const;
 

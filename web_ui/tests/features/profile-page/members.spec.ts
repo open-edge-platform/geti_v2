@@ -57,18 +57,12 @@ test.describe('Members page', () => {
         });
     });
 
-    test('Creates an organization admin - workspace admin member', async ({
-        page,
-        membersPage,
-        registerApiResponse,
-        openApi,
-    }) => {
+    test('Creates an organization admin member', async ({ page, membersPage, registerApiResponse, openApi }) => {
         const member = {
             firstName: 'Yet another',
             lastName: 'User',
             email: 'test50@intel.com',
             password: 'Test1234',
-            workspaceRole: USER_ROLE.WORKSPACE_ADMIN,
             organizationRole: USER_ROLE.ORGANIZATION_ADMIN,
         } as const;
 
@@ -219,7 +213,7 @@ test.describe('Members page', () => {
         await expectMembersToBeVisible(membersPage, members.get());
     });
 
-    test('Removes a workspace admin member', async ({ page, membersPage, registerApiResponse }) => {
+    test('Removes an organization admin member', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);
@@ -247,7 +241,7 @@ test.describe('Members page', () => {
         await expect(membersPage.getEmailCell(workspaceAdmin2.email)).toBeHidden();
     });
 
-    test('Removes a workspace contributor member', async ({ page, membersPage, registerApiResponse }) => {
+    test('Removes an organization contributor member', async ({ page, membersPage, registerApiResponse }) => {
         const members = registerApiMembers({ registerApiResponse });
 
         await membersPage.openByURL(organizationId);
@@ -397,7 +391,7 @@ test.describe('Members page', () => {
             await expect(membersPage.getNameCell(workspaceAdmin2.firstName, workspaceAdmin2.secondName)).toBeHidden();
         });
 
-        test('Edits workspace contributor user', async ({ page, membersPage, registerApiResponse, openApi }) => {
+        test('Edits organization contributor user', async ({ page, membersPage, registerApiResponse, openApi }) => {
             const editedOrganizationContributor = getMockedMember({
                 ...workspaceContributor,
                 firstName: 'Edited First Name',
@@ -545,7 +539,7 @@ test.describe('Members page', () => {
             await expect(membersPage.getNameCell(workspaceAdmin2.firstName, workspaceAdmin2.secondName)).toBeHidden();
         });
 
-        test('Edits workspace contributor user', async ({ page, membersPage, registerApiResponse }) => {
+        test('Edits organization contributor user', async ({ page, membersPage, registerApiResponse }) => {
             const editedOrganizationContributor = getMockedMember({
                 ...workspaceContributor,
                 firstName: 'Test',
