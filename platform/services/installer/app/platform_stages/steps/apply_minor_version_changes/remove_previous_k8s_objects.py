@@ -87,6 +87,8 @@ def _remove_stateful_set():
         try:
             logger.debug("Deleting etcd stateful set.")
             core_api.delete_namespaced_stateful_set(name="impt-etcd", namespace="impt")
+            logger.debug("Deleting kafka stateful set.")
+            core_api.delete_namespaced_stateful_set(name="impt-kafka", namespace="impt")
         except kubernetes.client.exceptions.ApiException as ex:
             if ex.status != 404:
                 logger.error("Error when accessing the Kubernetes API.", exc_info=True)
