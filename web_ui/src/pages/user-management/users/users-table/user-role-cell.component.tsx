@@ -43,13 +43,13 @@ export const UserRoleCell = ({
         );
     }
 
-    const workspaceRole = roles.find((role) => role.resourceId === resourceId)?.role ?? 'N/A';
+    const userRole = roles.find((role) => role.resourceId === resourceId)?.role ?? 'N/A';
 
     return (
         <CasualCell
             {...rest}
             rowData={rowData}
-            cellData={workspaceRole}
+            cellData={userRole}
             tooltip={<WorkspaceRoleTooltipContent />}
             tooltipProps={{
                 width: 'calc(size-4600 + size-100)',
