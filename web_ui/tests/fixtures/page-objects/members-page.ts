@@ -58,9 +58,9 @@ export class MembersPage {
 
         if (member.organizationRole === USER_ROLE.ORGANIZATION_CONTRIBUTOR) {
             await this.page.getByRole('button', { name: 'Default workspace Workspace' }).click();
-            await this.page.getByRole('option', { name: 'Default workspace' }).locator('div').click();
+            await this.page.getByRole('option', { name: 'Default workspace' }).click();
             await this.page.getByRole('button', { name: 'Workspace contributor' }).click();
-            await this.page.getByRole('option', { name: member.workspaceRole }).locator('div').click();
+            await this.page.getByRole('option', { name: member.workspaceRole }).click();
         }
 
         await this.page.getByLabel('Password', { exact: true }).fill(member.password);
