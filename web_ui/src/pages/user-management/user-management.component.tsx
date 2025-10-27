@@ -151,7 +151,7 @@ export const UserManagement = () => {
                 id: `${UserManagementTabs.USERS}-user-page`,
                 key: UserManagementTabs.USERS,
                 name: capitalize(UserManagementTabs.USERS),
-                children: <UsersTab activeUser={activeUser as User} />,
+                children: <UsersTab activeUser={activeUser as User} resourceId={organizationId} />,
             },
             {
                 id: `${UserManagementTabs.PERSONAL_ACCESS_TOKEN}-user-page`,

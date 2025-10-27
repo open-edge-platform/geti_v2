@@ -45,7 +45,7 @@ describe('UsersTab', () => {
                 platformUtilsService.getProductInfo = async () =>
                     Promise.resolve(getMockedProductInfo({ isSmtpDefined: false }));
 
-                await render(<UsersTab activeUser={adminUser} />, {
+                await render(<UsersTab activeUser={adminUser} resourceId='org-id' />, {
                     services: { platformUtilsService, usersService },
                 });
 
@@ -58,7 +58,7 @@ describe('UsersTab', () => {
                 platformUtilsService.getProductInfo = async () =>
                     Promise.resolve(getMockedProductInfo({ isSmtpDefined: true }));
 
-                await render(<UsersTab activeUser={adminUser} />, {
+                await render(<UsersTab activeUser={adminUser} resourceId='org-id' />, {
                     services: { platformUtilsService, usersService },
                 });
 
@@ -76,7 +76,7 @@ describe('UsersTab', () => {
                 platformUtilsService.getProductInfo = async () =>
                     Promise.resolve(getMockedProductInfo({ isSmtpDefined: false }));
 
-                await render(<UsersTab activeUser={contributorUser} />, {
+                await render(<UsersTab activeUser={contributorUser} resourceId='org-id' />, {
                     services: { platformUtilsService, usersService },
                 });
 
@@ -89,7 +89,7 @@ describe('UsersTab', () => {
                 platformUtilsService.getProductInfo = async () =>
                     Promise.resolve(getMockedProductInfo({ isSmtpDefined: true }));
 
-                await render(<UsersTab activeUser={contributorUser} />, {
+                await render(<UsersTab activeUser={contributorUser} resourceId='org-id' />, {
                     services: { platformUtilsService, usersService },
                 });
 
@@ -113,7 +113,7 @@ describe('UsersTab', () => {
                 platformUtilsService.getProductInfo = async () =>
                     Promise.resolve(getMockedProductInfo({ isSmtpDefined: false }));
 
-                await render(<UsersTab activeUser={adminUser} />, {
+                await render(<UsersTab activeUser={adminUser} resourceId='org-id' />, {
                     services: { platformUtilsService, usersService },
                 });
 
@@ -131,7 +131,7 @@ describe('UsersTab', () => {
                 platformUtilsService.getProductInfo = async () =>
                     Promise.resolve(getMockedProductInfo({ isSmtpDefined: true }));
 
-                await render(<UsersTab activeUser={contributorUser} />, {
+                await render(<UsersTab activeUser={contributorUser} resourceId='org-id' />, {
                     services: { platformUtilsService, usersService },
                 });
 
