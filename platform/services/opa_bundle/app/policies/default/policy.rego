@@ -564,7 +564,7 @@ allow if {
 
 # * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/uploads
 # * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects/uploads/*
-# Workspace project upload operations, user should be granted with "can_manage" workspace level permission
+# Workspace project upload operations, user should be granted with "can_contribute" workspace level permission
 allow if {
     ["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects", "uploads"] = array.slice(parsed_path, 0, 8)
 	is_valid_api_version(api_ver)
@@ -577,7 +577,7 @@ allow if {
 }
 
 # * /api/<api_ver>/organizations/{organization_id}/workspaces/{workspace_id}/projects:import
-# Import project, user should be granted with "can_manage" workspace level permission
+# Import project, user should be granted with "can_contribute" workspace level permission
 allow if {
     http_request.method == "POST"
 	["api", api_ver, "organizations", organization_id, "workspaces", workspace_id, "projects:import"] = array.slice(parsed_path, 0, 7)
