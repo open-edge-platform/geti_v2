@@ -572,7 +572,7 @@ allow if {
     print("Policy: Import project operations", parsed_path)
     user_id := resolve_user_id(http_request.headers)
 	check_relation(spicedb_address, spicedb_key, "workspace", workspace_id, "parent_organization", "organization", organization_id)
-    check_authorization_allowing_pat(spicedb_key, "workspace", workspace_id, "can_manage", user_id)
+    check_authorization_allowing_pat(spicedb_key, "workspace", workspace_id, "can_contribute", user_id)
     check_authorization_allowing_pat(spicedb_key, "organization", organization_id, "can_contribute", user_id)
 }
 
@@ -586,7 +586,7 @@ allow if {
 	print("Policy: Import project operations", parsed_path)
 	check_relation(spicedb_address, spicedb_key, "workspace", workspace_id, "parent_organization", "organization", organization_id)
 	user_id := resolve_user_id(http_request.headers)
-	check_authorization_allowing_pat(spicedb_key, "workspace", workspace_id, "can_manage", user_id)
+	check_authorization_allowing_pat(spicedb_key, "workspace", workspace_id, "can_contribute", user_id)
 	check_authorization_allowing_pat(spicedb_key, "organization", organization_id, "can_contribute", user_id)
 }
 
