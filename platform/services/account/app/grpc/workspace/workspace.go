@@ -96,7 +96,7 @@ func (s *GRPCServer) Create(ctx context.Context, data *pb.WorkspaceData) (*pb.Wo
     }
 
 	workspace := models.Workspace{
-		Name:           data.Name,
+		Name:           strings.TrimSpace(data.Name),
 		OrganizationID: parsedOrganizationUUID,
 		ModifiedAt: &sql.NullTime{
 			Valid: false,
@@ -205,7 +205,7 @@ func (s *GRPCServer) Modify(ctx context.Context, data *pb.WorkspaceData) (*pb.Wo
 			return status.Error(codes.Unknown, "unexpected error")
 		}
 
-		workspace.Name = data.Name
+		workspace.Name = strings.TrimSpace(data.Name)
 		workspaceOrganizationID, err := uuid.Parse(data.OrganizationId)
 		if err != nil {
 			logger.Errorf("error during parsing organization uuid: %v", err)
