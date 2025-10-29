@@ -976,7 +976,7 @@ class ProjectBuilder:
                 updated_labels.append(project_label)
             # Make the LabelGroup and child->parent mapping with the new list of labels
             for label in updated_labels:
-                if label.is_empty:
+                if label.is_empty or label.is_background:
                     continue
                 label_group = parser.get_label_group_by_name(
                     task_name=task_name,
