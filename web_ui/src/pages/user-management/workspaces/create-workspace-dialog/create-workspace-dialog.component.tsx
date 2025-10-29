@@ -31,7 +31,7 @@ interface CreateWorkspaceDialogProps {
 export const CreateWorkspaceDialog = ({ names, triggerState, nameLimitations = {} }: CreateWorkspaceDialogProps) => {
     const [workspaceName, setWorkspaceName] = useState<string>('');
 
-    const isEmptyName = isEmpty(workspaceName);
+    const isEmptyName = isEmpty(workspaceName.trim());
     const isDuplicatedName = names.some(
         (name) => name.toLocaleLowerCase() === workspaceName.trim().toLocaleLowerCase()
     );
