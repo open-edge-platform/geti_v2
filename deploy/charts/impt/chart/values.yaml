@@ -173,7 +173,7 @@ configuration:
     "FEATURE_FLAG_VISUAL_PROMPT_SERVICE": "true"
     "FEATURE_FLAG_WORKSPACE_ACTIONS": "true"
     "FEATURE_FLAG_MIGRATE_VFR_TO_CFR_VIDEOS": "false"
-    "FEATURE_FLAG_LOGIN_DATES_AVAILABLE": "false",
+    "FEATURE_FLAG_LOGIN_DATES_AVAILABLE": "false"
 secrets:
   smtp:
     smtp_enabled: false
