@@ -1,13 +1,13 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { User } from '@geti/core/src/users/users.interface';
 import { Flex } from '@geti/ui';
 import { Email } from '@geti/ui/icons';
 
 import { StatusCell } from '../../../../../shared/components/table/status-cell/status-cell.component';
 import { LastLoginCell } from '../../users-table/last-login-cell.component';
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 
 import classes from './user-summary.module.scss';
 
@@ -15,7 +15,6 @@ interface UserSummaryProps {
     user: User;
 }
 export const UserSummary = ({ user }: UserSummaryProps) => {
-
     const { FEATURE_FLAG_LOGIN_DATES_AVAILABLE } = useFeatureFlags();
 
     return (

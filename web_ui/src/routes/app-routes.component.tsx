@@ -69,7 +69,7 @@ import { UsersRoute } from './users/index.route';
 
 const AppProviders = () => {
     const isSaaS = useIsSaasEnv();
-    const { FEATURE_FLAG_CREDIT_SYSTEM } = useFeatureFlags();
+    const { FEATURE_FLAG_CREDIT_SYSTEM, FEATURE_FLAG_LOGIN_DATES_AVAILABLE } = useFeatureFlags();
 
     const location = useLocation();
 
@@ -94,7 +94,7 @@ const AppProviders = () => {
             <InstallationModeProvider>
                 <RoutesCollector>
                     <OrganizationsContext>
-                        <LastLoginNotification />
+                        {FEATURE_FLAG_LOGIN_DATES_AVAILABLE && <LastLoginNotification />}
                         <TusUploadProvider>
                             <MediaUploadProvider>
                                 <ProjectsImportProvider>

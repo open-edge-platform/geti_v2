@@ -3,6 +3,7 @@
 
 import { FormEvent, useMemo, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import { RESOURCE_TYPE, User, USER_ROLE } from '@geti/core/src/users/users.interface';
@@ -24,7 +25,6 @@ import { StatusCell } from '../../../../shared/components/table/status-cell/stat
 import { OrganizationRoleTooltipContent } from '../../../../shared/components/tooltips/organization-role-tooltip';
 import { RolePicker } from '../old-project-users/role-picker.component';
 import { LastLoginCell } from '../users-table/last-login-cell.component';
-import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 
 import tooltipClasses from '../../../../shared/components/tooltips/tooltips.module.scss';
 import classes from '../workspace-users/actions/user-summary.module.scss';
@@ -154,7 +154,7 @@ export const EditOrganizationUserDialog = ({
                                 UNSAFE_className={classes.lastLogin}
                                 data-testid={`last-successful-login-${user.firstName}-${user.lastName}`}
                             >
-                                Last login 2:
+                                Last login:
                                 <LastLoginCell
                                     id={`last-successful-login-${user.firstName}-${user.lastName}`}
                                     lastSuccessfulLogin={user.lastSuccessfulLogin}
