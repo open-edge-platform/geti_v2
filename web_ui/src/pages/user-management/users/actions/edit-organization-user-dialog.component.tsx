@@ -24,6 +24,7 @@ import { StatusCell } from '../../../../shared/components/table/status-cell/stat
 import { OrganizationRoleTooltipContent } from '../../../../shared/components/tooltips/organization-role-tooltip';
 import { RolePicker } from '../old-project-users/role-picker.component';
 import { LastLoginCell } from '../users-table/last-login-cell.component';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 
 import tooltipClasses from '../../../../shared/components/tooltips/tooltips.module.scss';
 import classes from '../workspace-users/actions/user-summary.module.scss';
@@ -64,6 +65,8 @@ export const EditOrganizationUserDialog = ({
     );
 
     const [selectedOrgRole, setSelectedOrgRole] = useState<USER_ROLE | undefined>(currentOrgRole);
+
+    const { FEATURE_FLAG_LOGIN_DATES_AVAILABLE } = useFeatureFlags();
 
     const orgAdmins = useMemo(
         () =>
@@ -145,18 +148,20 @@ export const EditOrganizationUserDialog = ({
 
                     <Flex direction={'column'} alignItems={'end'}>
                         <StatusCell id={`user-status-${user.firstName}-${user.lastName}`} status={user.status} />
-                        <Flex
-                            gap={'size-50'}
-                            UNSAFE_className={classes.lastLogin}
-                            data-testid={`last-successful-login-${user.firstName}-${user.lastName}`}
-                        >
-                            Last login:
-                            <LastLoginCell
-                                id={`last-successful-login-${user.firstName}-${user.lastName}`}
-                                lastSuccessfulLogin={user.lastSuccessfulLogin}
-                                direction='row'
-                            />
-                        </Flex>
+                        {FEATURE_FLAG_LOGIN_DATES_AVAILABLE && (
+                            <Flex
+                                gap={'size-50'}
+                                UNSAFE_className={classes.lastLogin}
+                                data-testid={`last-successful-login-${user.firstName}-${user.lastName}`}
+                            >
+                                Last login 2:
+                                <LastLoginCell
+                                    id={`last-successful-login-${user.firstName}-${user.lastName}`}
+                                    lastSuccessfulLogin={user.lastSuccessfulLogin}
+                                    direction='row'
+                                />
+                            </Flex>
+                        )}
                     </Flex>
                 </Flex>
                 <Form onSubmit={handleSubmit}>

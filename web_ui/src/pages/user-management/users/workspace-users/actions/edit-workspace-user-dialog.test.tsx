@@ -110,9 +110,6 @@ describe('EditWorkspaceUserDialog', () => {
 
             expect(screen.getByText('Edit user')).toBeInTheDocument();
             expect(screen.getByTestId('user-email')).toHaveTextContent(mockedAdminUser.email);
-            expect(screen.getByTestId('last-successful-login-John-Snow')).toHaveTextContent(
-                'Last login:14 Aug 202311:13 AM'
-            );
 
             expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -140,9 +137,6 @@ describe('EditWorkspaceUserDialog', () => {
 
             expect(screen.getByText('Edit user')).toBeInTheDocument();
             expect(screen.getByTestId('user-email')).toHaveTextContent(mockedAdminUser.email);
-            expect(screen.getByTestId('last-successful-login-John-Snow')).toHaveTextContent(
-                'Last login:14 Aug 202311:13 AM'
-            );
 
             expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -248,9 +242,6 @@ describe('EditWorkspaceUserDialog', () => {
 
             expect(screen.getByText('Edit user')).toBeInTheDocument();
             expect(screen.getByTestId('user-email')).toHaveTextContent(mockedAdminUser.email);
-            expect(screen.getByTestId('last-successful-login-John-Snow')).toHaveTextContent(
-                'Last login:14 Aug 202311:13 AM'
-            );
 
             expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();

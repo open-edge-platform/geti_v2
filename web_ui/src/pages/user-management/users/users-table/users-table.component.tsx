@@ -8,6 +8,7 @@ import { Cell, Column, Flex, Row, TableBody, TableHeader, TableView, View } from
 import { get, isEmpty } from 'lodash-es';
 
 import { SortDirection } from '../../../../core/shared/query-parameters';
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useSortTable } from '../../../../hooks/use-sort-table/use-sort-table.hook';
 import { NotFound } from '../../../../shared/components/not-found/not-found.component';
 import { CasualCell } from '../../../../shared/components/table/components/casual-cell/casual-cell.component';
@@ -62,8 +63,10 @@ export const UsersTable = ({
 }: UsersTableProps) => {
     const shouldShowNotFound = hasFilters && isEmpty(users);
 
+    const { FEATURE_FLAG_LOGIN_DATES_AVAILABLE } = useFeatureFlags();
+
     const columns = useMemo(() => {
-        const tableColumns = [
+        let tableColumns = [
             {
                 label: 'Name',
                 dataKey: USERS_TABLE_COLUMNS.LAST_NAME,
@@ -147,6 +150,12 @@ export const UsersTable = ({
                 },
             },
         ];
+
+        if (!FEATURE_FLAG_LOGIN_DATES_AVAILABLE) {
+            tableColumns = tableColumns.filter(
+                (col) => col.dataKey !== USERS_TABLE_COLUMNS.LAST_LOGIN
+            );
+        }
 
         return tableColumns.filter(({ dataKey }) => !ignoredColumns.includes(dataKey as USERS_TABLE_COLUMNS));
     }, [ignoredColumns, resourceId, UserActions, activeUser, usersTableType, users]);
