@@ -86,5 +86,16 @@ export default defineConfig({
     },
     server: {
         proxy: devProxy,
+        headers: {
+            'Cross-Origin-Embedder-Policy': 'credentialless',
+            'Cross-Origin-Opener-Policy': 'same-origin',
+            'Content-Security-Policy':
+                "default-src 'self'; " +
+                "script-src 'self' 'unsafe-eval' blob:; " +
+                "worker-src 'self' blob:; " +
+                "connect-src 'self' data:; " +
+                "img-src 'self' data: blob:; " +
+                "style-src 'self' 'unsafe-inline';",
+        },
     },
 });
