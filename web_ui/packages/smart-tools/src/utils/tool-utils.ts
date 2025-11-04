@@ -130,7 +130,7 @@ export const loadSource = async (source: string, cacheKey = 'general'): Promise<
 
     // Putting the model in cache might fail if the user does not have enough storage
     try {
-        await cache.put(source, response);
+        await cache.put(source, response.clone());
     } finally {
         return response;
     }
