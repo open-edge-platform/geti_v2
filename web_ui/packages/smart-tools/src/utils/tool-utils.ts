@@ -131,11 +131,9 @@ export const loadSource = async (source: string, cacheKey = 'general'): Promise<
     // Putting the model in cache might fail if the user does not have enough storage
     try {
         await cache.put(source, response);
-    } catch {
+    } finally {
         return response;
     }
-
-    return cache.match(source);
 };
 
 export const getPointsFromMat = (mat: OpenCVTypes.Mat, offset = { x: 0, y: 0 }): Point[] => {
