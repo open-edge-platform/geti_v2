@@ -121,9 +121,18 @@ export const loadSource = async (source: string, cacheKey = 'general'): Promise<
     }
 
     const cache = await caches.open(cacheKey);
+    const match = await cache.match(source);
+    if (match !== undefined) {
+        return match;
+    }
 
-    if (!(await cache.match(source))) {
-        await cache.put(source, await self.fetch(source));
+    const response = await self.fetch(source);
+
+    // Putting the model in cache might fail if the user does not have enough storage
+    try {
+        await cache.put(source, response);
+    } catch {
+        return response;
     }
 
     return cache.match(source);
