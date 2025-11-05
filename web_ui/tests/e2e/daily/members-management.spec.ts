@@ -126,7 +126,10 @@ test.describe('Members management suite', () => {
 
             await membersPage.editMember(updatedWorkspaceAdminMember);
 
-            await expectMemberToBeVisible(membersPage, updatedWorkspaceAdminMember);
+            await expectMemberToBeVisible(membersPage, {
+                ...updatedWorkspaceAdminMember,
+                organizationRole: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
+            });
 
             const updatedWorkspaceContributorMember = {
                 ...organizationContributorMember,
@@ -137,7 +140,10 @@ test.describe('Members management suite', () => {
 
             await membersPage.editMember(updatedWorkspaceContributorMember);
 
-            await expectMemberToBeVisible(membersPage, updatedWorkspaceContributorMember);
+            await expectMemberToBeVisible(membersPage, {
+                ...updatedWorkspaceContributorMember,
+                organizationRole: USER_ROLE.ORGANIZATION_ADMIN,
+            });
         });
 
         await test.step('Removes workspace admin and workspace contributor member', async () => {
