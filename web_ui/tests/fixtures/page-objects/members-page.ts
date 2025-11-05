@@ -121,7 +121,7 @@ export class MembersPage {
         await this.searchByNameOrEmailField.fill('');
     }
 
-    async editMember(member: { email: string; firstName?: string; lastName?: string; role?: USER_ROLE }) {
+    async editMember(member: { email: string; firstName?: string; lastName?: string; organizationRole?: USER_ROLE }) {
         await this.getActionMenuButton(member.email).click();
 
         await this.page.getByRole('menuitem', { name: /edit/i }).click();
@@ -134,9 +134,9 @@ export class MembersPage {
             await this.page.getByRole('textbox', { name: /last name/i }).fill(member.lastName);
         }
 
-        if (member.role !== undefined) {
+        if (member.organizationRole !== undefined) {
             await this.page.getByTestId('roles-add-user').click();
-            await this.page.getByRole('option', { name: member.role }).click();
+            await this.page.getByRole('option', { name: member.organizationRole }).click();
         }
 
         await this.page.getByRole('button', { name: /save/i }).click();
