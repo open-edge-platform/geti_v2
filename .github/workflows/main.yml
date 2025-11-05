@@ -323,7 +323,7 @@ jobs:
       - name: Create discussion
         if: github.event_name == 'schedule'
         id: create-discussion
-        uses: octokit/graphql-action@8ad880e4d437783ea2ab17010324de1075228110 #v2.3.2
+        uses: octokit/graphql-action@abaeca7ba4f0325d63b8de7ef943c2418d161b93 # v3.0.0
         with:
           query: |
             mutation($repoId: ID!, $categoryId: ID!, $title: String!, $body: String!) {
