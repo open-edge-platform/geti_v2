@@ -296,6 +296,7 @@ def check_local_gpu(config: InstallationConfig):  # noqa: ANN201
         config.gpu_provider.value = intel_gpu
         logger.info(f"GPU provider (Intel iGPU): {config.gpu_provider.value}")
 
+
 def check_local_mem():  # noqa: ANN201
     """
     Check size of available memory.

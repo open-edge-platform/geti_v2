@@ -43,7 +43,7 @@ arc_i915_description = """    03:00.0 Display controller [0380]: Intel Corporati
             Kernel driver in use: i915
             Kernel modules: i915"""
 
-igpu_description =  """00:02.0 VGA compatible controller [0300]: Intel Corporation Raptor Lake-S GT1 [UHD Graphics 770] [8086:a780] (rev 04)
+igpu_description = """00:02.0 VGA compatible controller [0300]: Intel Corporation Raptor Lake-S GT1 [UHD Graphics 770] [8086:a780] (rev 04)
             DeviceName: Onboard IGD
             Subsystem: ASUSTeK Computer Inc. Raptor Lake-S GT1 [UHD Graphics 770] [1043:8882]
             Kernel driver in use: i915"""
@@ -124,8 +124,9 @@ def test_check_local_nvidia_gpu_ok(get_gpus_mock):
 
 
 def test_get_intel_gpus_max_card(mocker):
-    sub_process_mock = mocker.patch("subprocess.check_output",
-                                     return_value=ResourcesChecksTexts.intel_gpu_max_card.encode("utf-8"))
+    sub_process_mock = mocker.patch(
+        "subprocess.check_output", return_value=ResourcesChecksTexts.intel_gpu_max_card.encode("utf-8")
+    )
     gpus, _ = _get_intel_gpus()
 
     assert GPU_PROVIDER_INTEL_MAX in gpus
@@ -133,8 +134,7 @@ def test_get_intel_gpus_max_card(mocker):
 
 
 def test_get_intel_gpus_arc_xe_card(mocker):
-    sub_process_mock = mocker.patch("subprocess.check_output",
-                                    return_value=arc_xe_description.encode("utf-8"))
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=arc_xe_description.encode("utf-8"))
 
     gpus, isdGPU = _get_intel_gpus()
 
@@ -144,8 +144,7 @@ def test_get_intel_gpus_arc_xe_card(mocker):
 
 
 def test_get_intel_gpus_arc_i915_card(mocker):
-    sub_process_mock = mocker.patch("subprocess.check_output",
-                                    return_value=arc_i915_description.encode("utf-8"))
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=arc_i915_description.encode("utf-8"))
 
     gpus, isdGPU = _get_intel_gpus()
 
@@ -155,8 +154,7 @@ def test_get_intel_gpus_arc_i915_card(mocker):
 
 
 def test_get_intel_gpus_arc_igpu_card(mocker):
-    sub_process_mock = mocker.patch("subprocess.check_output",
-                                    return_value=arc_i915_igpu_description.encode("utf-8"))
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=arc_i915_igpu_description.encode("utf-8"))
 
     gpus, isdPGU = _get_intel_gpus()
 
@@ -166,8 +164,7 @@ def test_get_intel_gpus_arc_igpu_card(mocker):
 
 
 def test_get_intel_gpus_igpu_card(mocker):
-    sub_process_mock = mocker.patch("subprocess.check_output",
-                                    return_value=igpu_description.encode("utf-8"))
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=igpu_description.encode("utf-8"))
 
     gpus, isdPGU = _get_intel_gpus()
 
@@ -178,11 +175,15 @@ def test_get_intel_gpus_igpu_card(mocker):
 
 def test_check_local_nvidia_arc(mocker):
     get_intel_mock = mocker.patch("checks.resources._get_intel_gpus", return_value=(GPU_PROVIDER_INTEL_ARC, True))
-    get_nvidia_mock = mocker.patch("checks.resources._get_nvidia_gpus",
-                                  return_value=[{
-                                                    "name": "NVIDIA GeForce RTX 3090",
-                                                    "memory_total": 24576,
-                                                }])
+    get_nvidia_mock = mocker.patch(
+        "checks.resources._get_nvidia_gpus",
+        return_value=[
+            {
+                "name": "NVIDIA GeForce RTX 3090",
+                "memory_total": 24576,
+            }
+        ],
+    )
 
     install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
     install_config_mock.gpu_support.value = True
@@ -194,11 +195,17 @@ def test_check_local_nvidia_arc(mocker):
 
 def test_check_local_nvidia_igpu(mocker):
     get_intel_mock = mocker.patch("checks.resources._get_intel_gpus", return_value=(GPU_PROVIDER_INTEL_ARC, False))
-    get_nvidia_mock = mocker.patch("checks.resources._get_nvidia_gpus",
-                                  return_value=([{
-                                                    "name": "NVIDIA GeForce RTX 3090",
-                                                    "memory_total": 24576,
-                                                }]))
+    get_nvidia_mock = mocker.patch(
+        "checks.resources._get_nvidia_gpus",
+        return_value=(
+            [
+                {
+                    "name": "NVIDIA GeForce RTX 3090",
+                    "memory_total": 24576,
+                }
+            ]
+        ),
+    )
 
     install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
     install_config_mock.gpu_support.value = True
@@ -209,8 +216,7 @@ def test_check_local_nvidia_igpu(mocker):
 
 
 def test_get_intel_gpus_no_card(mocker):
-    sub_process_mock = mocker.patch("subprocess.check_output",
-                                    return_value=b"lack of Intel gpu")
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=b"lack of Intel gpu")
 
     gpus = _get_intel_gpus()
 
