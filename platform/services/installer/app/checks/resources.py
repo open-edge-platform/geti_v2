@@ -161,7 +161,7 @@ def check_gpu_driver_version(config: InstallationConfig | UpgradeConfig) -> None
     logger.debug("GPU driver version matched.")
 
 
-def _get_intel_gpus() -> (str, bool):
+def _get_intel_gpus() -> tuple[str, bool]:
     """
     MAX cards:
     Attempt to get Intel GPUs with xpu-smi
@@ -192,7 +192,7 @@ def _get_intel_gpus() -> (str, bool):
 
     # Only valid for ARC cards
     try:
-        command = 'lspci -nnk | grep -iA3 \'VGA\|3D\|Display\''
+        command = "lspci -nnk | grep -iA3 'VGA\|3D\|Display'"
         logger.debug(f"Getting the list of Intel ARC with {command}")
 
         lspci_output = subprocess.check_output(  # noqa: S602  # nosec: B602
@@ -205,7 +205,7 @@ def _get_intel_gpus() -> (str, bool):
         driver = ""
         cards = lspci_output.split("--\n")
         for card in cards:
-            drivers = re.findall(r'Kernel driver in use:\s*([^\s]+)', card)
+            drivers = re.findall(r"Kernel driver in use:\s*([^\s]+)", card)
 
             if ResourcesChecksTexts.intel_gpu_i915_driver in drivers:
                 driver = GPU_PROVIDER_INTEL_ARC_A

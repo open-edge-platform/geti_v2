@@ -1,5 +1,4 @@
 # Copyright (C) 2022-2025 Intel Corporation
-# Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import math
@@ -17,7 +16,11 @@ from checks.errors import (
     UnsupportedGpuWarning,
 )
 from checks.resources import (
+    GPU_PROVIDER_INTEL_ARC,
+    GPU_PROVIDER_INTEL_ARC_A,
+    GPU_PROVIDER_INTEL_MAX,
     SUPPORTED_NVIDIA_DRIVER_VERSION,
+    _get_intel_gpus,
     check_gpu_driver_version,
     check_local_cpu,
     check_local_disk,
@@ -25,10 +28,6 @@ from checks.resources import (
     check_local_gpu_driver,
     check_local_mem,
     check_upgrade_storage_requirements,
-    _get_intel_gpus,
-    GPU_PROVIDER_INTEL_ARC,
-    GPU_PROVIDER_INTEL_ARC_A,
-    GPU_PROVIDER_INTEL_MAX,                                                                        
 )
 from configuration_models.install_config import InstallationConfig
 from configuration_models.upgrade_config import UpgradeConfig
@@ -180,10 +179,10 @@ def test_get_intel_gpus_igpu_card(mocker):
 def test_check_local_nvidia_arc(mocker):
     get_intel_mock = mocker.patch("checks.resources._get_intel_gpus", return_value=(GPU_PROVIDER_INTEL_ARC, True))
     get_nvidia_mock = mocker.patch("checks.resources._get_nvidia_gpus",
-                                  return_value=({
+                                  return_value=[{
                                                     "name": "NVIDIA GeForce RTX 3090",
                                                     "memory_total": 24576,
-                                                }))
+                                                }])
 
     install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
     install_config_mock.gpu_support.value = True
@@ -211,7 +210,7 @@ def test_check_local_nvidia_igpu(mocker):
 
 def test_get_intel_gpus_no_card(mocker):
     sub_process_mock = mocker.patch("subprocess.check_output",
-                                    return_value="lack of Intel gpu".encode("utf-8"))
+                                    return_value=b"lack of Intel gpu")
 
     gpus = _get_intel_gpus()
 
