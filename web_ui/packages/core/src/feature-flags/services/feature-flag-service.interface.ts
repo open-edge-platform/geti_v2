@@ -35,6 +35,7 @@ export const DEV_FEATURE_FLAGS = {
     FEATURE_FLAG_ANNOTATION_HOLE: true,
     FEATURE_FLAG_PLATFORM_UPGRADE: false,
     FEATURE_FLAG_UPLOAD_PREVIEW: false,
+    FEATURE_FLAG_LOGIN_DATES_AVAILABLE: false,
     // Only used for unit testing
     DEBUG: false,
 };

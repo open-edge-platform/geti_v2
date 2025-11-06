@@ -3,6 +3,7 @@
 
 import { FormEvent, useMemo, useState } from 'react';
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { useUsers } from '@geti/core/src/users/hook/use-users.hook';
 import { isOrganizationAdmin } from '@geti/core/src/users/user-role-utils';
 import { RESOURCE_TYPE, User, USER_ROLE } from '@geti/core/src/users/users.interface';
@@ -64,6 +65,8 @@ export const EditOrganizationUserDialog = ({
     );
 
     const [selectedOrgRole, setSelectedOrgRole] = useState<USER_ROLE | undefined>(currentOrgRole);
+
+    const { FEATURE_FLAG_LOGIN_DATES_AVAILABLE } = useFeatureFlags();
 
     const orgAdmins = useMemo(
         () =>
@@ -145,18 +148,20 @@ export const EditOrganizationUserDialog = ({
 
                     <Flex direction={'column'} alignItems={'end'}>
                         <StatusCell id={`user-status-${user.firstName}-${user.lastName}`} status={user.status} />
-                        <Flex
-                            gap={'size-50'}
-                            UNSAFE_className={classes.lastLogin}
-                            data-testid={`last-successful-login-${user.firstName}-${user.lastName}`}
-                        >
-                            Last login:
-                            <LastLoginCell
-                                id={`last-successful-login-${user.firstName}-${user.lastName}`}
-                                lastSuccessfulLogin={user.lastSuccessfulLogin}
-                                direction='row'
-                            />
-                        </Flex>
+                        {FEATURE_FLAG_LOGIN_DATES_AVAILABLE && (
+                            <Flex
+                                gap={'size-50'}
+                                UNSAFE_className={classes.lastLogin}
+                                data-testid={`last-successful-login-${user.firstName}-${user.lastName}`}
+                            >
+                                Last login:
+                                <LastLoginCell
+                                    id={`last-successful-login-${user.firstName}-${user.lastName}`}
+                                    lastSuccessfulLogin={user.lastSuccessfulLogin}
+                                    direction='row'
+                                />
+                            </Flex>
+                        )}
                     </Flex>
                 </Flex>
                 <Form onSubmit={handleSubmit}>

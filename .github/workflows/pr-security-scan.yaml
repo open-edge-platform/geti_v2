@@ -23,7 +23,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@60c5b06ac4b2c056f3567e84aa7fa06930cdc4e4
+        uses: open-edge-platform/geti-ci/actions/zizmor@4ec90fb54c7be053e40b9e3ecdf399cf501596ca
         with:
           scan-scope: "changed"
           severity-level: "LOW"
@@ -44,7 +44,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@60c5b06ac4b2c056f3567e84aa7fa06930cdc4e4
+        uses: open-edge-platform/geti-ci/actions/bandit@4ec90fb54c7be053e40b9e3ecdf399cf501596ca
         with:
           scan-scope: "changed"
           severity-level: "HIGH"

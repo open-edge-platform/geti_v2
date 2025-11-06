@@ -38,27 +38,34 @@ export const SidebarThumbnail = ({ screenshots, isCloseSidebar = false }: Sideba
         return deleteMany([id]);
     };
 
+    const containerHeight = isCloseSidebar ? `size-800` : `size-1250`;
+
     return (
         <>
-            <VirtualizedHorizontalGrid
-                items={screenshots}
-                key={screenshots.map(getId).join('-')}
-                containerHeight={isCloseSidebar ? `size-800` : `size-1250`}
-                size={isCloseSidebar ? 60 : 96}
-                idFormatter={getId}
-                textValueFormatter={getId}
-                renderItem={({ id, dataUrl, labelIds, file }) => (
-                    <AnimatedThumbnail
-                        id={id}
-                        key={id}
-                        url={String(dataUrl)}
-                        labelIds={labelIds}
-                        size={isCloseSidebar ? 'size-800' : 'size-1200'}
-                        isVideo={isVideoFile(file)}
-                        onDeleteItem={handleDeleteItem}
-                    />
-                )}
-            />
+            <View height={containerHeight}>
+                <VirtualizedHorizontalGrid
+                    items={screenshots}
+                    key={screenshots.map(getId).join('-')}
+                    layoutOptions={{
+                        gap: 4,
+                        size: isCloseSidebar ? 60 : 95,
+                    }}
+                    idFormatter={getId}
+                    textValueFormatter={getId}
+                    renderItem={({ id, dataUrl, labelIds, file }) => (
+                        <AnimatedThumbnail
+                            id={id}
+                            key={id}
+                            url={String(dataUrl)}
+                            labelIds={labelIds}
+                            size={isCloseSidebar ? 'size-800' : 'size-1200'}
+                            isVideo={isVideoFile(file)}
+                            onDeleteItem={handleDeleteItem}
+                        />
+                    )}
+                />
+            </View>
+
             <View paddingTop={'size-250'} paddingBottom={isCloseSidebar ? '' : 'size-250'}>
                 <SpectrumLink UNSAFE_style={{ color: 'var(--energy-blue)' }}>
                     <Link

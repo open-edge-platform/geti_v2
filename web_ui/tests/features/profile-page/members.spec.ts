@@ -371,7 +371,7 @@ test.describe('Members page', () => {
                 email: editedOrganizationAdmin.email,
                 firstName: editedOrganizationAdmin.firstName,
                 lastName: editedOrganizationAdmin.secondName,
-                role: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
+                organizationRole: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
             } as const;
             await membersPage.editMember(editedMember);
 
@@ -428,7 +428,7 @@ test.describe('Members page', () => {
                 email: editedOrganizationContributor.email,
                 firstName: editedOrganizationContributor.firstName,
                 lastName: editedOrganizationContributor.secondName,
-                role: USER_ROLE.ORGANIZATION_ADMIN,
+                organizationRole: USER_ROLE.ORGANIZATION_ADMIN,
             } as const;
 
             await expect(
@@ -502,7 +502,7 @@ test.describe('Members page', () => {
                 email: editedWorkspaceAdmin2.email,
                 firstName: editedWorkspaceAdmin2.firstName,
                 lastName: editedWorkspaceAdmin2.secondName,
-                role: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
+                organizationRole: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
             } as const;
 
             await membersPage.editMember(editedMember);
@@ -576,7 +576,7 @@ test.describe('Members page', () => {
                 email: editedOrganizationContributor.email,
                 firstName: editedOrganizationContributor.firstName,
                 lastName: editedOrganizationContributor.secondName,
-                role: USER_ROLE.ORGANIZATION_ADMIN,
+                organizationRole: USER_ROLE.ORGANIZATION_ADMIN,
             } as const;
 
             await membersPage.editMember(editedMember);

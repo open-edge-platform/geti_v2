@@ -117,6 +117,10 @@ Geti™ can be installed:
 - [Using the Geti™ Installer](https://docs.geti.intel.com/docs/user-guide/getting-started/installation/using-geti-installer)
 - [Using Helm Charts](https://docs.geti.intel.com/docs/user-guide/getting-started/installation/using-helm-charts)
 
+Quick Start videos:
+
+- [Geti™ - Anyone can build AI solutions](https://www.youtube.com/playlist?list=PLg-UKERBljNy-3VOK6tzYe69KbXZv1z5a)
+
 ## 🏗️ High-level architecture
 
 Geti™ is a cloud-native distributed system architecture comprising interactive microservice and AI workflows. Most components of Geti™ adhere to the microservice architecture style, while some components, such as active learning, follow the service-based architecture style. Additionally, event-driven architecture is utilized for asynchronous communication between components.
@@ -185,4 +189,5 @@ FFmpeg is an open source project licensed under LGPL and GPL. See https://www.ff
 ---
 
 \* Other names and brands may be claimed as the property of others.
+
 

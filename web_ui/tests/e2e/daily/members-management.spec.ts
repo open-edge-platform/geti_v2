@@ -121,7 +121,7 @@ test.describe('Members management suite', () => {
                 ...organizationAdminMember,
                 firstName: 'Updated',
                 lastName: 'Old Admin',
-                role: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
+                organizationRole: USER_ROLE.ORGANIZATION_CONTRIBUTOR,
             } as const;
 
             await membersPage.editMember(updatedWorkspaceAdminMember);
@@ -132,7 +132,7 @@ test.describe('Members management suite', () => {
                 ...organizationContributorMember,
                 firstName: 'Updated',
                 lastName: 'Old Contributor',
-                role: USER_ROLE.ORGANIZATION_ADMIN,
+                organizationRole: USER_ROLE.ORGANIZATION_ADMIN,
             } as const;
 
             await membersPage.editMember(updatedWorkspaceContributorMember);

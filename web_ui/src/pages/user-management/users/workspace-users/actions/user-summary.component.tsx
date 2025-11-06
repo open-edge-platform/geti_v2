@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { useFeatureFlags } from '@geti/core/src/feature-flags/hooks/use-feature-flags.hook';
 import { User } from '@geti/core/src/users/users.interface';
 import { Flex } from '@geti/ui';
 import { Email } from '@geti/ui/icons';
@@ -14,6 +15,8 @@ interface UserSummaryProps {
     user: User;
 }
 export const UserSummary = ({ user }: UserSummaryProps) => {
+    const { FEATURE_FLAG_LOGIN_DATES_AVAILABLE } = useFeatureFlags();
+
     return (
         <Flex
             alignItems='start'
@@ -31,18 +34,20 @@ export const UserSummary = ({ user }: UserSummaryProps) => {
 
             <Flex direction={'column'} alignItems={'end'}>
                 <StatusCell id={`user-status-${user.firstName}-${user.lastName}`} status={user.status} />
-                <Flex
-                    gap={'size-50'}
-                    UNSAFE_className={classes.lastLogin}
-                    data-testid={`last-successful-login-${user.firstName}-${user.lastName}`}
-                >
-                    Last login:
-                    <LastLoginCell
-                        id={`last-successful-login-${user.firstName}-${user.lastName}`}
-                        lastSuccessfulLogin={user.lastSuccessfulLogin}
-                        direction='row'
-                    />
-                </Flex>
+                {FEATURE_FLAG_LOGIN_DATES_AVAILABLE && (
+                    <Flex
+                        gap={'size-50'}
+                        UNSAFE_className={classes.lastLogin}
+                        data-testid={`last-successful-login-${user.firstName}-${user.lastName}`}
+                    >
+                        Last login:
+                        <LastLoginCell
+                            id={`last-successful-login-${user.firstName}-${user.lastName}`}
+                            lastSuccessfulLogin={user.lastSuccessfulLogin}
+                            direction='row'
+                        />
+                    </Flex>
+                )}
             </Flex>
         </Flex>
     );

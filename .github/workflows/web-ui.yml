@@ -82,7 +82,7 @@ jobs:
         working-directory: "web_ui"
         run: tar -czf build.tar.gz build
 
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: webui-build
           path: "web_ui/build.tar.gz"
@@ -198,7 +198,7 @@ jobs:
         working-directory: "web_ui"
         run: npm ci
 
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: webui-build
           path: "web_ui"
@@ -212,7 +212,7 @@ jobs:
         run: npm run test:component -- --project "chromium" --project "chromium mini viewport" --shard=${{ matrix.shard }}/${{ matrix.shardTotal }}
 
       - name: Upload blob report to GitHub Actions Artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         if: always()
         with:
           name: playwright-blob-reports-${{ matrix.shard }}
@@ -248,7 +248,7 @@ jobs:
         run: npm ci
 
       - name: Download playwright blob reports from GitHub Actions Artifacts
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           pattern: playwright-blob-reports-*
           path: web_ui/playwright-blob-reports
@@ -259,7 +259,7 @@ jobs:
         run: npx playwright merge-reports --reporter html ./playwright-blob-reports
 
       - name: Upload HTML report
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: playwright-html-report-attempt-${{ github.run_attempt }}
           path: web_ui/playwright-report
