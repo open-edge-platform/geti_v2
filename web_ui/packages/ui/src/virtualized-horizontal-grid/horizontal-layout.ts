@@ -6,20 +6,24 @@ import { Key, Layout, LayoutInfo, Rect, Size } from 'react-aria-components';
 
 const DEFAULT_GAP = 8;
 const DEFAULT_SIZE = 100;
+const DEFAULT_OVERSCAN = 0;
 
 export interface HorizontalLayoutOptions {
     gap?: number;
     size?: number;
+    overscan?: number;
 }
 
 export class HorizontalLayout extends Layout {
     protected gap: number;
     protected size: number;
+    protected overscan: number;
 
     constructor(options: HorizontalLayoutOptions = {}) {
         super();
         this.gap = options.gap ?? DEFAULT_GAP;
         this.size = options.size ?? DEFAULT_SIZE;
+        this.overscan = options.overscan ?? DEFAULT_OVERSCAN;
     }
 
     // Determine which items are visible within the given rectangle.
@@ -30,8 +34,8 @@ export class HorizontalLayout extends Layout {
 
         const sizeWithGap = this.size + this.gap;
         const keys = Array.from(this.virtualizer.collection.getKeys());
-        const startIndex = Math.max(0, Math.floor(rect.x / sizeWithGap));
-        const endIndex = Math.min(keys.length - 1, Math.ceil(rect.maxX / sizeWithGap));
+        const startIndex = Math.max(0, Math.floor(rect.x / sizeWithGap) - this.overscan);
+        const endIndex = Math.min(keys.length - 1, Math.ceil(rect.maxX / sizeWithGap) + this.overscan);
         const layoutInfos: LayoutInfo[] = [];
 
         for (let i = startIndex; i <= endIndex; i++) {
@@ -84,5 +88,6 @@ export class HorizontalLayout extends Layout {
     update(invalidationContext: InvalidationContext<HorizontalLayoutOptions>): void {
         this.gap = invalidationContext?.layoutOptions?.gap ?? this.gap;
         this.size = invalidationContext?.layoutOptions?.size ?? this.size;
+        this.overscan = invalidationContext?.layoutOptions?.overscan ?? this.overscan;
     }
 }
