@@ -24,7 +24,7 @@ jobs:
         run: |
           # Get all container images and
           # exclude 'geti/helm/' packages from the list of container packages for source collection
-          PACKAGES=$(gh api -H "Accept: application/vnd.github.v3+json" \
+          PACKAGES=$(gh api --paginate -H "Accept: application/vnd.github.v3+json" \
                             /orgs/open-edge-platform/packages?package_type=container  \
                             --jq '.[].name' 2>/dev/null | awk '/^geti\// && !/^geti\/helm\//')
 
@@ -32,9 +32,9 @@ jobs:
           for PACKAGE in $PACKAGES; do
             echo "Processing package: $PACKAGE"
             TMP_NAME=$(sed 's/\//%2F/g' <<< "$PACKAGE")
-            VERSION=$(gh api -H "Accept: application/vnd.github.v3+json"  \
+            VERSION=$(gh api --paginate -H "Accept: application/vnd.github.v3+json"  \
                              /orgs/open-edge-platform/packages/container/$TMP_NAME/versions  \
-                             --jq '.[].metadata.container.tags[]' 2>/dev/null | grep -w "$TAG" || true)
+                             --jq '.[].metadata.container.tags[]' 2>/dev/null | grep -x "$TAG" || true)
 
             if [ -n "$VERSION" ]; then
               IMAGE_URI="ghcr.io/open-edge-platform/$PACKAGE:$TAG"
