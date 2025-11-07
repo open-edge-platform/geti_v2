@@ -26,7 +26,7 @@ jobs:
           # exclude 'geti/helm/' packages from the list of container packages for source collection
           PACKAGES=$(gh api --paginate -H "Accept: application/vnd.github.v3+json" \
                             /orgs/open-edge-platform/packages?package_type=container  \
-                            --jq '.[].name' 2>/dev/null | awk '/^geti\// && !/^geti\/helm\//')
+                            --jq '.[].name' 2>/dev/null | awk '/^geti\// && !/^geti\/helm\// && !/^geti\/builders\// | sort')
 
           # Retrieve container images with specified input tag
           for PACKAGE in $PACKAGES; do
