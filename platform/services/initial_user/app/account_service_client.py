@@ -35,8 +35,9 @@ class AccountServiceConnection:
 
     def migrate_accounts(
         self, uh_connection: UsersHandlerConnection, postgresql_connection: PostgreSQLConnection, organization_id: str
-    ) -> None:
+    ) -> bool:
         users = uh_connection.get_accounts_for_migration()
+        number_of_migrated_users = 0
         for index, user in enumerate(users):
             is_org_admin = index == 0
             if user["mail"] is None:
@@ -47,6 +48,8 @@ class AccountServiceConnection:
             if find_response.total_matched_count >= 1:  # Check if user already exists in accsvc before migration
                 logger.info("User already exist in account service.")
                 continue
+
+            number_of_migrated_users += 1
 
             split_name = user["name"].split(" ") if user["name"] else ""  # split name if ldap name contains space
             if len(split_name) == 1:
@@ -90,6 +93,8 @@ class AccountServiceConnection:
                 )
             except RpcError as rpc_err:
                 self.handle_rpcerror(rpc_err, user["mail"])
+
+        return number_of_migrated_users == len(users)
 
     @staticmethod
     def update_user_id_spicedb(
