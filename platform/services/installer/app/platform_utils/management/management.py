@@ -509,7 +509,7 @@ def _restart_job(job_name: str, namespace: str) -> None:
                 body=kubernetes.client.V1DeleteOptions(propagation_policy="Foreground"),
             )
             # Wait for the Job to be fully deleted
-            for retry_count in range(10):
+            for _ in range(10):
                 try:
                     batch_api.read_namespaced_job(name=job_name, namespace=namespace)
                 except ApiException as e:
