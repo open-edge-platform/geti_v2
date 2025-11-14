@@ -49,8 +49,6 @@ class AccountServiceConnection:
                 logger.info("User already exist in account service.")
                 continue
 
-            number_of_migrated_users += 1
-
             split_name = user["name"].split(" ") if user["name"] else ""  # split name if ldap name contains space
             if len(split_name) == 1:
                 first_name = split_name[0]
@@ -91,6 +89,8 @@ class AccountServiceConnection:
                     organization_id=organization_id,
                     is_admin=is_org_admin,
                 )
+
+                number_of_migrated_users += 1
             except RpcError as rpc_err:
                 self.handle_rpcerror(rpc_err, user["mail"])
 
