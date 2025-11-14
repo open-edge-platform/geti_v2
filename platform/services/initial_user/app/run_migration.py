@@ -3,7 +3,6 @@
 
 import time
 
-from PIL.ImImagePlugin import number
 from geti_logger_tools.logger_config import initialize_logger
 from geti_spicedb_tools import SpiceDB
 from grpc import RpcError
