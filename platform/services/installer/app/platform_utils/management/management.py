@@ -4,6 +4,7 @@
 """Platform management functions"""
 
 import logging
+from time import sleep
 
 import kubernetes
 from kubernetes.client.exceptions import ApiException
@@ -251,6 +252,8 @@ def _patch_platform(config: UpgradeConfig, replicas: int) -> None:  # noqa: C901
             action = "add" if replicas == 0 else "remove"
             _replace_daemon_set_with_fetch_retry(apps_api=apps_api, daemon_set=daemon_set, action=action)
 
+        restart_jobs_after_revert()
+
         for daemon_set in daemon_sets:
             _ensure_desired_replicas(core_api=core_api, obj=daemon_set, replicas=replicas)
 
@@ -479,3 +482,65 @@ def remove_platform_workloads_tasks(config: UpgradeConfig):  # noqa: ANN201,C901
             except PodStillPresent as err:
                 logger.exception(err)
                 raise
+
+
+def restart_jobs_after_revert() -> None:
+    """Restarts specific jobs after revert operation."""
+    jobs_to_restart = [
+        "impt-etcd-auth",
+        "impt-kafka-provisioning",
+    ]
+
+    for job_name in jobs_to_restart:
+        try:
+            _restart_job(job_name=job_name, namespace=PLATFORM_NAMESPACE)
+        except Exception as e:
+            logger.error(f"Failed to restart job {job_name}: {e}")
+
+def _restart_job(job_name: str, namespace: str) -> None:
+    """Restart a Kubernetes Job by deleting its pods to force recreation."""
+    logger.info(f"Restarting job: {job_name} in namespace: {namespace}")
+    with kubernetes.client.ApiClient() as client:
+        batch_api = kubernetes.client.BatchV1Api(client)
+        logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 2")
+        try:
+            # Get the existing Job manifest
+            job = batch_api.read_namespaced_job(name=job_name, namespace=namespace)
+            logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 3")
+            # Delete the existing Job
+            batch_api.delete_namespaced_job(
+                name=job_name,
+                namespace=namespace,
+                body=kubernetes.client.V1DeleteOptions(propagation_policy="Foreground")
+            )
+            logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 4")
+            # Wait for the Job to be fully deleted
+            for retry_count in range(10):
+                try:
+                    batch_api.read_namespaced_job(name=job_name, namespace=namespace)
+                except ApiException as e:
+                    if e.status == 404:
+                        break
+                sleep(1)
+            logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 5")
+            # Remove fields that should not be set on creation
+            job.metadata.creation_timestamp = None
+            job.metadata.resource_version = None
+            job.metadata.uid = None
+            job.status = None
+            if job.metadata.labels.get("controller-uid"):
+                del job.metadata.labels["controller-uid"]
+            if job.metadata.labels.get("batch.kubernetes.io/controller-uid"):
+                del job.metadata.labels["batch.kubernetes.io/controller-uid"]
+            if job.spec.template.metadata.labels.get("controller-uid"):
+                del job.spec.template.metadata.labels["controller-uid"]
+            if job.spec.template.metadata.labels.get("batch.kubernetes.io/controller-uid"):
+                del job.spec.template.metadata.labels["batch.kubernetes.io/controller-uid"]
+            job.spec.selector = None
+            logger.info(f"New job content: {job}")
+            batch_api.create_namespaced_job(namespace=namespace, body=job)
+            logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 6")
+        except ApiException as e:
+            logger.error(f"Exception when restarting job {job_name}: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error when restarting job {job_name}: {e}")
