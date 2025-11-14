@@ -167,7 +167,7 @@ def _replace_statefulset_with_fetch_retry(
         raise
 
 
-def _patch_platform(config: UpgradeConfig, replicas: int) -> None:  # noqa: C901, PLR0912, PLR0915
+def _patch_platform(config: UpgradeConfig, replicas: int, revert: bool = False) -> None:  # noqa: C901, PLR0912, PLR0915
     """Patch Platform by stopping or starting all Platform's pods."""
     KubernetesConfigHandler(kube_config=config.kube_config.value)
 
@@ -252,13 +252,14 @@ def _patch_platform(config: UpgradeConfig, replicas: int) -> None:  # noqa: C901
             action = "add" if replicas == 0 else "remove"
             _replace_daemon_set_with_fetch_retry(apps_api=apps_api, daemon_set=daemon_set, action=action)
 
-        restart_jobs_after_revert()
-
         for daemon_set in daemon_sets:
             _ensure_desired_replicas(core_api=core_api, obj=daemon_set, replicas=replicas)
 
         for deployment in deployments:
             _ensure_desired_replicas(core_api=core_api, obj=deployment, replicas=replicas)
+
+        if revert:
+            restart_jobs_after_revert()
 
         for stateful_set in stateful_sets:
             _ensure_desired_replicas(core_api=core_api, obj=stateful_set, replicas=replicas)
@@ -288,9 +289,9 @@ def stop_platform(config: UpgradeConfig) -> None:
     _patch_platform(config=config, replicas=0)
 
 
-def restore_platform(config: UpgradeConfig) -> None:
+def restore_platform(config: UpgradeConfig, revert: bool = False) -> None:
     """Restore Platform by starting all Platform's pods."""
-    _patch_platform(config=config, replicas=1)
+    _patch_platform(config=config, replicas=1, revert=revert)
 
 
 def get_ordered_deployments(apps_api: kubernetes.client.AppsV1Api) -> list[kubernetes.client.V1Deployment]:
@@ -486,34 +487,27 @@ def remove_platform_workloads_tasks(config: UpgradeConfig):  # noqa: ANN201,C901
 
 def restart_jobs_after_revert() -> None:
     """Restarts specific jobs after revert operation."""
-    jobs_to_restart = [
+    for job_name in (
         "impt-etcd-auth",
         "impt-kafka-provisioning",
-    ]
+    ):
+        _restart_job(job_name=job_name, namespace=PLATFORM_NAMESPACE)
 
-    for job_name in jobs_to_restart:
-        try:
-            _restart_job(job_name=job_name, namespace=PLATFORM_NAMESPACE)
-        except Exception as e:
-            logger.error(f"Failed to restart job {job_name}: {e}")
 
 def _restart_job(job_name: str, namespace: str) -> None:
-    """Restart a Kubernetes Job by deleting its pods to force recreation."""
+    """Restart a Kubernetes Job by deleting it and making its copy."""
     logger.info(f"Restarting job: {job_name} in namespace: {namespace}")
     with kubernetes.client.ApiClient() as client:
         batch_api = kubernetes.client.BatchV1Api(client)
-        logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 2")
         try:
             # Get the existing Job manifest
             job = batch_api.read_namespaced_job(name=job_name, namespace=namespace)
-            logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 3")
             # Delete the existing Job
             batch_api.delete_namespaced_job(
                 name=job_name,
                 namespace=namespace,
-                body=kubernetes.client.V1DeleteOptions(propagation_policy="Foreground")
+                body=kubernetes.client.V1DeleteOptions(propagation_policy="Foreground"),
             )
-            logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 4")
             # Wait for the Job to be fully deleted
             for retry_count in range(10):
                 try:
@@ -522,7 +516,6 @@ def _restart_job(job_name: str, namespace: str) -> None:
                     if e.status == 404:
                         break
                 sleep(1)
-            logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 5")
             # Remove fields that should not be set on creation
             job.metadata.creation_timestamp = None
             job.metadata.resource_version = None
@@ -537,9 +530,7 @@ def _restart_job(job_name: str, namespace: str) -> None:
             if job.spec.template.metadata.labels.get("batch.kubernetes.io/controller-uid"):
                 del job.spec.template.metadata.labels["batch.kubernetes.io/controller-uid"]
             job.spec.selector = None
-            logger.info(f"New job content: {job}")
             batch_api.create_namespaced_job(namespace=namespace, body=job)
-            logger.info(f"Restarting job: {job_name} in namespace: {namespace} - 6")
         except ApiException as e:
             logger.error(f"Exception when restarting job {job_name}: {e}")
         except Exception as e:
