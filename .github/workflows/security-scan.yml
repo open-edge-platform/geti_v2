@@ -20,7 +20,7 @@ jobs:
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
         with:
           egress-policy: audit
       - name: Checkout code
@@ -28,7 +28,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@4ec90fb54c7be053e40b9e3ecdf399cf501596ca
+        uses: open-edge-platform/geti-ci/actions/zizmor@b7d997c1651b1e1b99a280033bd268b55ccb7923
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -42,7 +42,7 @@ jobs:
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
         with:
           egress-policy: audit
       - name: Checkout code
@@ -50,7 +50,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@4ec90fb54c7be053e40b9e3ecdf399cf501596ca
+        uses: open-edge-platform/geti-ci/actions/bandit@b7d997c1651b1e1b99a280033bd268b55ccb7923
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -66,7 +66,7 @@ jobs:
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
         with:
           egress-policy: audit
       - name: Checkout code
@@ -82,6 +82,6 @@ jobs:
           trivy-config: ".github/trivy_config.yml"
           output: "trivy-results.sarif"
       - name: Upload to code-scanning
-        uses: github/codeql-action/upload-sarif@0499de31b99561a6d14a36a5f662c2a54f91beee # v4.31.2
+        uses: github/codeql-action/upload-sarif@014f16e7ab1402f30e7c3329d33797e7948572db # v4.31.3
         with:
           sarif_file: "trivy-results.sarif"

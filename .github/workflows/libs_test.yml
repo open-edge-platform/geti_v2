@@ -49,7 +49,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
         with:
           egress-policy: audit
 
@@ -65,7 +65,7 @@ jobs:
           sudo -E apt install -y ffmpeg
 
       - name: Install uv
-        uses: astral-sh/setup-uv@85856786d1ce8acfbcc2f13a5f3fbd6b938f9f41 # v7.1.2
+        uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3 # v7.1.3
         with:
           version: "0.7.13"
 

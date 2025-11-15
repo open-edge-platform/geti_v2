@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
         with:
           egress-policy: audit
 
@@ -40,7 +40,7 @@ jobs:
           private-key: ${{ secrets.RENOVATE_APP_PEM }}
 
       - name: Self-hosted Renovate
-        uses: renovatebot/github-action@ea850436a5fe75c0925d583c7a02c60a5865461d # v43.0.20
+        uses: renovatebot/github-action@c5fdc9f98fdf9e9bb16b5760f7e560256eb79326 # v44.0.2
         with:
           configurationFile: .github/renovate.json5
           token: "${{ steps.get-github-app-token.outputs.token }}"
