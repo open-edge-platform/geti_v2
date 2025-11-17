@@ -42,10 +42,11 @@ def main() -> None:
     SpiceDB().link_organization_to_workspace_in_spicedb(workspace_id=workspace_id, organization_id=organization_id)
     psql_connection = PostgreSQLConnection()
     try:  # https://www.psycopg.org/docs/usage.html#with-statement
-        acc_svc.migrate_accounts(
+        first_migration: bool = acc_svc.migrate_accounts(
             uh_connection=uh_connection, postgresql_connection=psql_connection, organization_id=organization_id
         )
-        psql_connection.update_workspace_object_id(workspace_id=workspace_id)
+        if first_migration:
+            psql_connection.update_workspace_object_id(workspace_id=workspace_id)
     finally:
         psql_connection.close()
 

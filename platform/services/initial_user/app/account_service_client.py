@@ -35,8 +35,9 @@ class AccountServiceConnection:
 
     def migrate_accounts(
         self, uh_connection: UsersHandlerConnection, postgresql_connection: PostgreSQLConnection, organization_id: str
-    ) -> None:
+    ) -> bool:
         users = uh_connection.get_accounts_for_migration()
+        number_of_migrated_users = 0
         for index, user in enumerate(users):
             is_org_admin = index == 0
             if user["mail"] is None:
@@ -88,8 +89,12 @@ class AccountServiceConnection:
                     organization_id=organization_id,
                     is_admin=is_org_admin,
                 )
+
+                number_of_migrated_users += 1
             except RpcError as rpc_err:
                 self.handle_rpcerror(rpc_err, user["mail"])
+
+        return number_of_migrated_users == len(users)
 
     @staticmethod
     def update_user_id_spicedb(
