@@ -1084,8 +1084,8 @@ def test_handle_task_event_main_task_not_initiated(
         start_time=None,
         end_time=now(),
         message=(
-            "An issue was encountered while initializing this workload. Please retry or contact "
-            "customer support if problem persists."
+            "An issue was encountered while initializing this workload. Please retry or reach out to "
+            "us on GitHub if problem persists."
         ),
         progress=None,
     )

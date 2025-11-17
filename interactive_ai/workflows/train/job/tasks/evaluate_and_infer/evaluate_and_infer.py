@@ -144,7 +144,7 @@ class EvaluationFailedException(CommandDeliberateFailureException, TaskErrorMess
     def __init__(self, *args) -> None:  # noqa: ARG002
         msg = (
             "Training failed at evaluation stage. No model is saved from this training round. "
-            "Please try again and if problem persists, contact our customer support team."
+            "Please try again and if problem persists, reach out to us on GitHub."
         )
         super().__init__(msg)
 

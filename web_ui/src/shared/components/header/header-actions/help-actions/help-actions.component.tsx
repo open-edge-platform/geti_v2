@@ -22,7 +22,7 @@ export enum HelpActionsItems {
     USER_GUIDE = 'User guide',
     ABOUT = 'About',
     RESET_HELP_DIALOGS = 'Reset help dialogs',
-    CONTACT_SUPPORT = 'Contact support',
+    CONTACT_SUPPORT = 'Contact us',
     REST_API_SPECS = 'REST API specification',
 }
 

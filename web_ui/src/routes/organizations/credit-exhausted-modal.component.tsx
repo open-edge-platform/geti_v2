@@ -93,7 +93,7 @@ export const CreditExhaustedModal = ({ organizationId }: CreditExhaustedModalPro
                                 openNewTab(CONTACT_SUPPORT);
                             }}
                         >
-                            Contact support
+                            Contact us
                         </Button>
                     </ButtonGroup>
                 </Dialog>

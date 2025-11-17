@@ -56,7 +56,7 @@ describe('NotEnoughCreditsDialog', (): void => {
         expect(openNewTab).not.toHaveBeenCalled();
     });
 
-    it('open Contact support in a new tap', async (): Promise<void> => {
+    it('open Contact us in a new tap', async (): Promise<void> => {
         const onClose = jest.fn();
         await renderComponent({ isOpen: true, onClose });
 

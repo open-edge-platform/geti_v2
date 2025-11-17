@@ -200,7 +200,7 @@ class TestEvaluateAndInferTask:
                 call(
                     message=(
                         "Training failed at evaluation stage. No model is saved from this training round. "
-                        "Please try again and if problem persists, contact our customer support team. (ID: job_id)"
+                        "Please try again and if problem persists, reach out to us on GitHub. (ID: job_id)"
                     )
                 ),
             ]
@@ -292,7 +292,7 @@ class TestEvaluateAndInferTask:
                 call(
                     message=(
                         "Training failed at evaluation stage. No model is saved from this training round. "
-                        "Please try again and if problem persists, contact our customer support team. (ID: job_id)"
+                        "Please try again and if problem persists, reach out to us on GitHub. (ID: job_id)"
                     )
                 ),
             ]
