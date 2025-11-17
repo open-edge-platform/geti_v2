@@ -4,6 +4,7 @@
 """Platform management functions"""
 
 import logging
+from time import sleep
 
 import kubernetes
 from kubernetes.client.exceptions import ApiException
@@ -166,7 +167,7 @@ def _replace_statefulset_with_fetch_retry(
         raise
 
 
-def _patch_platform(config: UpgradeConfig, replicas: int) -> None:  # noqa: C901, PLR0912, PLR0915
+def _patch_platform(config: UpgradeConfig, replicas: int, revert: bool = False) -> None:  # noqa: C901, PLR0912, PLR0915
     """Patch Platform by stopping or starting all Platform's pods."""
     KubernetesConfigHandler(kube_config=config.kube_config.value)
 
@@ -254,6 +255,9 @@ def _patch_platform(config: UpgradeConfig, replicas: int) -> None:  # noqa: C901
         for daemon_set in daemon_sets:
             _ensure_desired_replicas(core_api=core_api, obj=daemon_set, replicas=replicas)
 
+        if revert:
+            restart_jobs_after_revert()
+
         for deployment in deployments:
             _ensure_desired_replicas(core_api=core_api, obj=deployment, replicas=replicas)
 
@@ -285,9 +289,9 @@ def stop_platform(config: UpgradeConfig) -> None:
     _patch_platform(config=config, replicas=0)
 
 
-def restore_platform(config: UpgradeConfig) -> None:
+def restore_platform(config: UpgradeConfig, revert: bool = False) -> None:
     """Restore Platform by starting all Platform's pods."""
-    _patch_platform(config=config, replicas=1)
+    _patch_platform(config=config, replicas=1, revert=revert)
 
 
 def get_ordered_deployments(apps_api: kubernetes.client.AppsV1Api) -> list[kubernetes.client.V1Deployment]:
@@ -479,3 +483,55 @@ def remove_platform_workloads_tasks(config: UpgradeConfig):  # noqa: ANN201,C901
             except PodStillPresent as err:
                 logger.exception(err)
                 raise
+
+
+def restart_jobs_after_revert() -> None:
+    """Restarts specific jobs after revert operation."""
+    for job_name in (
+        "impt-etcd-auth",
+        "impt-kafka-provisioning",
+    ):
+        _restart_job(job_name=job_name, namespace=PLATFORM_NAMESPACE)
+
+
+def _restart_job(job_name: str, namespace: str) -> None:
+    """Restart a Kubernetes Job by deleting it and making its copy."""
+    logger.info(f"Restarting job: {job_name} in namespace: {namespace}")
+    with kubernetes.client.ApiClient() as client:
+        batch_api = kubernetes.client.BatchV1Api(client)
+        try:
+            # Get the existing Job manifest
+            job = batch_api.read_namespaced_job(name=job_name, namespace=namespace)
+            # Delete the existing Job
+            batch_api.delete_namespaced_job(
+                name=job_name,
+                namespace=namespace,
+                body=kubernetes.client.V1DeleteOptions(propagation_policy="Foreground"),
+            )
+            # Wait for the Job to be fully deleted
+            for _ in range(10):
+                try:
+                    batch_api.read_namespaced_job(name=job_name, namespace=namespace)
+                except ApiException as e:
+                    if e.status == 404:
+                        break
+                sleep(1)
+            # Remove fields that should not be set on creation
+            job.metadata.creation_timestamp = None
+            job.metadata.resource_version = None
+            job.metadata.uid = None
+            job.status = None
+            if job.metadata.labels.get("controller-uid"):
+                del job.metadata.labels["controller-uid"]
+            if job.metadata.labels.get("batch.kubernetes.io/controller-uid"):
+                del job.metadata.labels["batch.kubernetes.io/controller-uid"]
+            if job.spec.template.metadata.labels.get("controller-uid"):
+                del job.spec.template.metadata.labels["controller-uid"]
+            if job.spec.template.metadata.labels.get("batch.kubernetes.io/controller-uid"):
+                del job.spec.template.metadata.labels["batch.kubernetes.io/controller-uid"]
+            job.spec.selector = None
+            batch_api.create_namespaced_job(namespace=namespace, body=job)
+        except ApiException as e:
+            logger.error(f"Exception when restarting job {job_name}: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error when restarting job {job_name}: {e}")
