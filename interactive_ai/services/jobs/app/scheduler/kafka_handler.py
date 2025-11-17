@@ -211,7 +211,7 @@ class ProgressHandler(BaseKafkaHandler, metaclass=Singleton):
         task = next((step for step in list(job.step_details) if step.task_id == task_id), None)
         if state == JobTaskState.FAILED and message is None and task is not None and task.message is None:
             message = (
-                "An issue was encountered while initializing this workload. Please retry or reach out to  "
+                "An issue was encountered while initializing this workload. Please retry or reach out to "
                 "us on GitHub if problem persists."
             )
 

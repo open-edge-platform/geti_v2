@@ -40,7 +40,7 @@ describe('Docs actions', () => {
             expect(screen.getByText('User guide')).toBeInTheDocument();
             expect(screen.getByText('Reset help dialogs')).toBeInTheDocument();
             expect(screen.getByText('About')).toBeInTheDocument();
-            expect(screen.getByText('Contact support')).toBeInTheDocument();
+            expect(screen.getByText('Contact us')).toBeInTheDocument();
             expect(screen.getByText('REST API specification')).toBeInTheDocument();
         });
     });

@@ -60,7 +60,7 @@ describe('NotEnoughCreditsDialog', (): void => {
         const onClose = jest.fn();
         await renderComponent({ isOpen: true, onClose });
 
-        fireEvent.click(screen.getByRole('button', { name: /contact support/i }));
+        fireEvent.click(screen.getByRole('button', { name: /contact us/i }));
 
         expect(openNewTab).toHaveBeenCalledWith(CONTACT_SUPPORT);
         expect(onClose).toHaveBeenCalled();
