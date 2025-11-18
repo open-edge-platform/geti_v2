@@ -3,7 +3,7 @@
 
 import Clipper from '@doodle3d/clipper-js';
 
-import { OpenCVTypes } from '../opencv/interfaces';
+import type { OpenCVTypes } from '../opencv/interfaces';
 import { Point, Polygon } from '../shared/interfaces';
 
 export const formatContourToPoints = (

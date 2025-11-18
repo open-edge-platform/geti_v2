@@ -3,7 +3,7 @@
 
 import * as ort from 'onnxruntime-web';
 
-import { OpenCVTypes } from '../opencv/interfaces';
+import type { OpenCVTypes } from '../opencv/interfaces';
 
 interface PreprocessorResult {
     tensor: ort.Tensor;
