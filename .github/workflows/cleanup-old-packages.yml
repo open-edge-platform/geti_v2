@@ -120,7 +120,7 @@ jobs:
           token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
 
       - name: Cleanup untagged packages
-        if: ${{ github.event.inputs.dry_run != 'true'}}
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55  # v5.0.0
         with:
           package-name: '${{ github.event.inputs.package_name }}'
