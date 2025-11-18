@@ -260,8 +260,8 @@ _internal_defaults_do_not_set:
           - operation:
               methods: [ "OPTIONS" ]
               paths:
-                - "/api/v1/organizations/*/workspaces/*/projects/uploads/resumable"
-                - "/api/v1/organizations/*/workspaces/*/datasets/uploads/resumable"
+                - "/api/v1/organizations/*/projects/uploads/resumable"
+                - "/api/v1/organizations/*/datasets/uploads/resumable"
         from:
           - source:
               requestPrincipals:
