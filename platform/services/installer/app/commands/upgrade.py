@@ -355,6 +355,8 @@ def execute_upgrade(config: UpgradeConfig) -> None:  # noqa: PLR0915
 
     reset_custom_signal_handler(handler_state)
 
+    revert = False
+
     try:
         prepare_upgrade(config, current_platform_version, data_folder, location)
         perform_upgrade(config)
@@ -364,6 +366,7 @@ def execute_upgrade(config: UpgradeConfig) -> None:  # noqa: PLR0915
         click.secho("\n" + UpgradeCmdTexts.upgrade_failed, fg="red")
         click.secho("\nReverting to the previous state...", fg="yellow")
         rollback_platform(config, location, data_folder)
+        revert = True
         click.secho("\n" + UpgradeCmdTexts.revert_succeeded, fg="green")
         sys.exit(1)
     except PrepareUpgradeException:
@@ -371,6 +374,7 @@ def execute_upgrade(config: UpgradeConfig) -> None:  # noqa: PLR0915
         click.secho("\n" + UpgradeCmdTexts.preparation_failed, fg="red")
         click.secho("\nReverting to the previous state...", fg="yellow")
         rollback_platform(config, location, data_folder)
+        revert = True
         click.secho("\n" + UpgradeCmdTexts.revert_succeeded, fg="green")
         sys.exit(1)
     finally:
@@ -383,7 +387,7 @@ def execute_upgrade(config: UpgradeConfig) -> None:  # noqa: PLR0915
             shutil.rmtree(OFFLINE_TOOLS_DIR)
         try:
             with click_spinner.spinner():
-                restore_platform(config=config)
+                restore_platform(config=config, revert=revert)
         except Exception:
             logger.error("Finalization tasks failed.")
             click.echo(UpgradeCmdTexts.finalization_failed)
