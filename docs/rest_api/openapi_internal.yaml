@@ -1,6 +1,6 @@
 openapi: "3.1.0"
 info:
-  version: 2.13.0
+  version: 2.14.0
   title: Geti™ REST API
   description: REST API documentation for Geti™.
 
