@@ -2,7 +2,7 @@
 # --device /dev/dri          # Intel GPU access
 # -v /dev/dri/by-path:/dev/dri/by-path  # Device path mapping
 
-FROM python:3.10-slim-bookworm@sha256:cda0e2fa3894f9ada2c652534e6de6b2fe65687c63208a77e9e8d88231547902 AS python_dependencies
+FROM python:3.10-slim-bookworm@sha256:a8d56efd3a77aecc8d4dcc58a6e6e1f54b282c519221bd111fff02b6374db772 AS python_dependencies
 
 COPY --link --from=libs . libs
 
@@ -21,7 +21,7 @@ RUN uv pip install torch==2.8.0 torchvision==0.23.0 --default-index https://down
 RUN rm -rf /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia \
            /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/triton/backends/nvidia/
 
-FROM python:3.10-slim-bookworm@sha256:cda0e2fa3894f9ada2c652534e6de6b2fe65687c63208a77e9e8d88231547902 AS base
+FROM python:3.10-slim-bookworm@sha256:a8d56efd3a77aecc8d4dcc58a6e6e1f54b282c519221bd111fff02b6374db772 AS base
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
