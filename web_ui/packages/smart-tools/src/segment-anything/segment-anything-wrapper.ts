@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { OpenCVTypes } from '../opencv/interfaces';
+import type { OpenCVTypes } from '../opencv/interfaces';
 import { OpenCVLoader } from '../utils/opencv-loader';
 import { SegmentAnythingResult } from './interfaces';
 import { SegmentAnythingModels } from './models/models';

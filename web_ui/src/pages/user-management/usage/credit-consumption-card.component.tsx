@@ -103,11 +103,11 @@ export const CreditConsumptionCard = (props: ViewProps<5>) => {
                     <Link>More credits</Link>
                     <AlertDialog
                         title='More credits'
-                        primaryActionLabel='Contact support'
+                        primaryActionLabel='Contact us'
                         onPrimaryAction={() => openNewTab(CONTACT_SUPPORT)}
                         cancelLabel='Close'
                     >
-                        Looking for more credits? Reach out to our Customer Support team to inquire about the
+                        Looking for more credits? Contact us to inquire about the
                         possibilities.
                     </AlertDialog>
                 </DialogTrigger>

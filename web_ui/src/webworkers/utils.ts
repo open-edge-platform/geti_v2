@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { OpenCVTypes } from '@geti/smart-tools/opencv';
+import type { OpenCVTypes } from '@geti/smart-tools/opencv';
 import axios from 'axios';
 
 // For debugging purposes, not being used atm

@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { OpenCVTypes } from '@geti/smart-tools/opencv';
+import type { OpenCVTypes } from '@geti/smart-tools/opencv';
 import type * as Comlink from 'comlink';
 import * as ort from 'onnxruntime-common';
 

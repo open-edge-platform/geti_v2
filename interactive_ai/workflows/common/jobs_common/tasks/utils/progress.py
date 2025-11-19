@@ -179,7 +179,7 @@ def task_progress(
                     if isinstance(ex, TaskErrorMessage)
                     else (
                         f"{failure_message} (Code: {ex.__class__.__name__}). "
-                        "Please retry or contact customer support if problem persists."
+                        "Please retry or reach out to us on GitHub if problem persists."
                     )
                 )
                 message += f" (ID: {JobMetadata.from_env_vars().id})"

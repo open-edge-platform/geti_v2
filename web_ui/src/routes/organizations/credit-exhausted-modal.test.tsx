@@ -160,7 +160,7 @@ describe('CreditExhaustedModal', () => {
 
         expect(await screen.findByText(/credits have been exhaust/i)).toBeVisible();
 
-        fireEvent.click(screen.getByRole('button', { name: /contact support/i }));
+        fireEvent.click(screen.getByRole('button', { name: /contact us/i }));
 
         await waitFor(() => {
             expect(openNewTab).toHaveBeenCalled();

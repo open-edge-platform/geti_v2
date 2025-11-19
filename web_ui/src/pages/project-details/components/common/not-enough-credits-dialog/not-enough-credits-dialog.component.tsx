@@ -89,7 +89,7 @@ export const NotEnoughCreditsDialog = ({
                                 openNewTab(CONTACT_SUPPORT);
                             }}
                         >
-                            Contact support
+                            Contact us
                         </Button>
                     </ButtonGroup>
                 </Dialog>

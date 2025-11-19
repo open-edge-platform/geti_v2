@@ -3,7 +3,7 @@
 
 import * as ort from 'onnxruntime-common';
 
-import { OpenCVTypes } from '../opencv/interfaces';
+import type { OpenCVTypes } from '../opencv/interfaces';
 import { Point, ShapeType } from '../shared/interfaces';
 import { isPointInShape } from '../utils/math';
 import type { SegmentAnythingResult } from './interfaces';
@@ -11,7 +11,7 @@ import { PostProcessor } from './post-processing';
 import { EncodingOutput } from './segment-anything-encoder';
 import { type Session } from './session';
 
-type cv = typeof OpenCVTypes;
+type cv = OpenCVTypes;
 
 type InteractiveAnnotationPoint = Point & { positive: boolean };
 
