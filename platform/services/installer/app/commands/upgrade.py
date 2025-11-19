@@ -52,6 +52,7 @@ from platform_stages.steps.errors import DownloadSystemPackagesError, StepsError
 from platform_stages.steps.install_system_packages import install_system_packages
 from platform_stages.upgrade import upgrade_platform
 from platform_utils.grafana import flush_ingesters as flush_lgtm_stack
+from platform_utils.k8s import check_if_telemetry_stack_is_installed
 from platform_utils.management.data_folder import backup_data_folder, restore_data_folder
 from platform_utils.management.management import restore_platform, stop_platform
 from platform_utils.management.state import (
@@ -500,9 +501,13 @@ def upgrade(config_file: str | None = None, install_telemetry_stack: bool = Fals
     click.echo(UpgradeCmdTexts.start_message)
     create_logs_dir()
     configure_logging()
+
     logger.info(f"{get_target_product_build()} {UpgradeCmdTexts.start_message}")
+    if not install_telemetry_stack:
+        install_telemetry_stack = check_if_telemetry_stack_is_installed()
     config = UpgradeConfig(interactive_mode=not bool(config_file), install_telemetry_stack=install_telemetry_stack)
     run_initial_checks(config)
+
     if config_file:
         load_upgrade_config_from_yaml(config, config_file)
         apply_config_overrides(config)

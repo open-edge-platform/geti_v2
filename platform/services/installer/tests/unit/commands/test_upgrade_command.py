@@ -37,6 +37,9 @@ def test_upgrade_interactive(mocker):
     prompt_for_upgrade_config_mock: Mock = mocker.patch("commands.upgrade.prompt_for_upgrade_config")
     display_final_confirmation_mock: Mock = mocker.patch("commands.upgrade.display_final_confirmation")
     create_logs_dir_mock: Mock = mocker.patch("commands.upgrade.create_logs_dir")
+    check_if_telemetry_stack_is_installed_mock: Mock = mocker.patch(
+        "commands.upgrade.check_if_telemetry_stack_is_installed")
+    check_if_telemetry_stack_is_installed_mock.return_value = False
     is_kubernetes_running_on_k3s: Mock = mocker.patch("commands.upgrade.is_kubernetes_running_on_k3s")
     is_kubernetes_running_on_k3s.return_value = True
 
@@ -48,6 +51,7 @@ def test_upgrade_interactive(mocker):
     assert execute_upgrade_mock.call_count == 1
     assert display_final_confirmation_mock.call_count == 1
     assert not result.exception
+    assert check_if_telemetry_stack_is_installed_mock.call_count == 1
     create_logs_dir_mock.assert_called_once_with()
 
 
@@ -65,6 +69,9 @@ def test_upgrade_config_file(mocker, tmpdir, is_grafana_installed):
     create_logs_dir_mock: Mock = mocker.patch("commands.upgrade.create_logs_dir")
     is_kubernetes_running_on_k3s: Mock = mocker.patch("commands.upgrade.is_kubernetes_running_on_k3s")
     is_kubernetes_running_on_k3s.return_value = True
+    check_if_telemetry_stack_is_installed_mock: Mock = mocker.patch(
+        "commands.upgrade.check_if_telemetry_stack_is_installed", side_effect=[is_grafana_installed]
+    )
 
     kubeconfig_path = tmpdir.join("kubeconfig")
     kubeconfig_path.write("foo")
@@ -81,6 +88,7 @@ def test_upgrade_config_file(mocker, tmpdir, is_grafana_installed):
 
     run_initial_checks_mock.assert_called_once()
     run_upgrade_checks_mock.assert_called_once()
+    check_if_telemetry_stack_is_installed_mock.assert_called_once()
     is_grafana_installed_mock.assert_called_once_with(str(kubeconfig_path))
     create_logs_dir_mock.assert_called_once_with()
     assert execute_upgrade_mock.call_count == 1
@@ -91,13 +99,16 @@ def test_initial_check_failure(mocker):
     run_initial_checks_mock: Mock = mocker.patch(
         "commands.upgrade.run_initial_checks", side_effect=CumulativeCheckError
     )
+    check_if_telemetry_stack_is_installed_mock: Mock = mocker.patch(
+        "commands.upgrade.check_if_telemetry_stack_is_installed", side_effect=[False]
+    )
 
     runner = CliRunner()
     result = runner.invoke(upgrade)
 
     assert result.exception
     run_initial_checks_mock.assert_called_once()
-
+    check_if_telemetry_stack_is_installed_mock.assert_called_once()
 
 def test_upgrade_check_failure(mocker):
     run_initial_checks_mock: Mock = mocker.patch("commands.upgrade.run_initial_checks")
@@ -109,6 +120,10 @@ def test_upgrade_check_failure(mocker):
     is_kubernetes_running_on_k3s: Mock = mocker.patch("commands.upgrade.is_kubernetes_running_on_k3s")
     is_kubernetes_running_on_k3s.return_value = True
 
+    check_if_telemetry_stack_is_installed_mock: Mock = mocker.patch(
+        "commands.upgrade.check_if_telemetry_stack_is_installed", side_effect=[True]
+    )
+
     runner = CliRunner()
     result = runner.invoke(upgrade)
 
@@ -116,6 +131,7 @@ def test_upgrade_check_failure(mocker):
     run_upgrade_checks_mock.assert_called_once()
     create_logs_dir_mock.assert_called_once_with()
     prompt_for_upgrade_config_mock.assert_called_once()
+    check_if_telemetry_stack_is_installed_mock.assert_called_once()
     assert execute_upgrade_mock.call_count == 0
     assert is_grafana_installed_mock.call_count == 0
     assert result.exception
@@ -128,6 +144,9 @@ def test_upgrade_execution_failure(mocker):
     prompt_for_upgrade_config_mock: Mock = mocker.patch("commands.upgrade.prompt_for_upgrade_config")
     display_final_confirmation_mock: Mock = mocker.patch("commands.upgrade.display_final_confirmation")
     create_logs_dir_mock: Mock = mocker.patch("commands.upgrade.create_logs_dir")
+    check_if_telemetry_stack_is_installed_mock: Mock = mocker.patch(
+        "commands.upgrade.check_if_telemetry_stack_is_installed", side_effect=[True]
+    )
     is_kubernetes_running_on_k3s: Mock = mocker.patch("commands.upgrade.is_kubernetes_running_on_k3s")
     is_kubernetes_running_on_k3s.return_value = True
 
@@ -137,6 +156,7 @@ def test_upgrade_execution_failure(mocker):
     run_initial_checks_mock.assert_called_once()
     run_upgrade_checks_mock.assert_called_once()
     create_logs_dir_mock.assert_called_once_with()
+    check_if_telemetry_stack_is_installed_mock.assert_called_once()
     assert prompt_for_upgrade_config_mock.call_count == 1
     assert execute_upgrade_mock.call_count == 1
     assert display_final_confirmation_mock.call_count == 1
@@ -151,6 +171,7 @@ def test_apply_config_overrides(mocker, is_grafana_installed: bool):
     is_grafana_installed_mock: Mock = mocker.patch(
         "commands.upgrade.is_grafana_installed", side_effect=[is_grafana_installed]
     )
+
     kube_config_mock = "/path/to/kube_config"
     config = UpgradeConfig(interactive_mode=False, install_telemetry_stack=False)
     config.kube_config.value = kube_config_mock
