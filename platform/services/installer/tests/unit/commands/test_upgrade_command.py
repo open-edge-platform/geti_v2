@@ -38,7 +38,8 @@ def test_upgrade_interactive(mocker):
     display_final_confirmation_mock: Mock = mocker.patch("commands.upgrade.display_final_confirmation")
     create_logs_dir_mock: Mock = mocker.patch("commands.upgrade.create_logs_dir")
     check_if_telemetry_stack_is_installed_mock: Mock = mocker.patch(
-        "commands.upgrade.check_if_telemetry_stack_is_installed")
+        "commands.upgrade.check_if_telemetry_stack_is_installed"
+    )
     check_if_telemetry_stack_is_installed_mock.return_value = False
     is_kubernetes_running_on_k3s: Mock = mocker.patch("commands.upgrade.is_kubernetes_running_on_k3s")
     is_kubernetes_running_on_k3s.return_value = True
@@ -109,6 +110,7 @@ def test_initial_check_failure(mocker):
     assert result.exception
     run_initial_checks_mock.assert_called_once()
     check_if_telemetry_stack_is_installed_mock.assert_called_once()
+
 
 def test_upgrade_check_failure(mocker):
     run_initial_checks_mock: Mock = mocker.patch("commands.upgrade.run_initial_checks")

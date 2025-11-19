@@ -262,7 +262,7 @@ def delete_job(batch_api: BatchV1Api, namespace: str, job_name: str) -> None:
 
 def check_if_telemetry_stack_is_installed() -> bool:
     """
-    Check if telemetry stack is installed by verifying the existence of the 'loki' deployment.
+    Check if telemetry stack is installed by verifying the existence of its deployment.
     """
     return _deployment_exists(name=TELEMETRY_STACK_COMPONENT, namespace=PLATFORM_NAMESPACE)
 
