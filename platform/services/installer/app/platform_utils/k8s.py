@@ -280,3 +280,22 @@ def _deployment_exists(name: str, namespace: str) -> bool:
         if ex.status == 404:
             return False
         raise
+
+
+def get_node_name() -> str | None:
+    """
+    Get the name of the first node in the cluster.
+    """
+    KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
+    v1 = client.CoreV1Api()
+    try:
+        nodes = v1.list_node()
+
+        if not nodes.items:
+            logger.error(f"Missing node name {nodes}")
+            return None
+    except ApiException as ex:
+        logger.error(f"Exception during getting the node name {ex}")
+        return None
+
+    return nodes.items[0].metadata.name

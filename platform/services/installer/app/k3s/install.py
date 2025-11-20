@@ -117,11 +117,13 @@ def _k3s_ready(time_wait: int = 300, delay: int = 10) -> bool:
     return False
 
 
-def _run_installer(k3s_script_path: str, logs_file_path: str):
+def _run_installer(k3s_script_path: str, logs_file_path: str, node_name: str | None = None):
     """
     Run K3S installer by running downloaded script in 'k3s_script_path' and writing
-    execution logs to 'logs_dir'.
+    execution logs to 'logs_dir'. node_name contains optional name of a node of k3s cluster
     """
+    if node_name:
+        k3s_configuration.node_name = node_name
     k3s_env_vars = k3s_configuration.to_env_var_dict()
     env = os.environ.copy()
     env.update(k3s_env_vars)
@@ -221,6 +223,7 @@ def _install_k3s_selinux_rpm() -> None:
 def install_k3s(  # noqa: ANN201
     logs_file_path: str = K3S_INSTALL_LOG_FILE_PATH,
     setup_remote_kubeconfig: bool = True,
+    node_name: str | None = None,
 ):
     """
     Install K3S to current system. Write installation logs to 'logs_dir'. Use optionally 'external_address' to adjust
@@ -230,7 +233,7 @@ def install_k3s(  # noqa: ANN201
         k3s_script_path = f"{K3S_OFFLINE_INSTALLATION_FILES_PATH}/install.sh"
         _prepare_k3s_files_structure()
         _install_k3s_selinux_rpm()
-        _run_installer(k3s_script_path=k3s_script_path, logs_file_path=logs_file_path)
+        _run_installer(k3s_script_path=k3s_script_path, logs_file_path=logs_file_path, node_name=node_name)
         _update_containerd_config(logs_file_path=logs_file_path)
         _mark_k3s_installation()
     except subprocess.CalledProcessError as ex:
