@@ -202,8 +202,8 @@ class TestProgress:
         [
             (
                 Exception("Failure"),
-                "Test function failed (Code: Exception). Please retry or contact customer support if "
-                "problem persists. (ID: job_id)",
+                "Test function failed (Code: Exception). Please retry or reach out to us on "
+                "GitHub if problem persists. (ID: job_id)",
             ),
             (
                 CommandInitializationFailedException("Failure"),

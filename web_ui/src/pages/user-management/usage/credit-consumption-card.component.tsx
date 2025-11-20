@@ -107,8 +107,7 @@ export const CreditConsumptionCard = (props: ViewProps<5>) => {
                         onPrimaryAction={() => openNewTab(CONTACT_SUPPORT)}
                         cancelLabel='Close'
                     >
-                        Looking for more credits? Contact us to inquire about the
-                        possibilities.
+                        Looking for more credits? Contact us to inquire about the possibilities.
                     </AlertDialog>
                 </DialogTrigger>
             </Flex>
