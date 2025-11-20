@@ -468,15 +468,7 @@ def run_installation_checks(config: InstallationConfig) -> None:
     is_flag=True,
     help="If flag is set - telemetry stack will be installed. By default the stack is not installed.",
 )
-@click.option(
-    "--node-name",
-    type=str,
-    required=False,
-    help="Name of a node for a k3s cluster installed together with Geti.",
-)
-def install(
-    config_file: str | None = None, install_telemetry_stack: bool = False, node_name: str | None = None
-) -> None:
+def install(config_file: str | None = None, install_telemetry_stack: bool = False) -> None:
     """
     Install platform.
     """
@@ -484,9 +476,7 @@ def install(
     create_logs_dir()
     configure_logging()
     logger.info(f"{get_target_product_build()} {InstallCmdTexts.start_message}")
-    config = InstallationConfig(
-        interactive_mode=not bool(config_file), install_telemetry_stack=install_telemetry_stack, node_name=node_name
-    )
+    config = InstallationConfig(interactive_mode=not bool(config_file), install_telemetry_stack=install_telemetry_stack)
     run_initial_checks(config=config)
     if config_file:
         load_installation_config_from_yaml(config=config, config_file_path=config_file)
