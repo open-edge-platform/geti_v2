@@ -20,6 +20,7 @@ from kubernetes.client import ApiException, BatchV1Api, CoreV1Api, V1Secret
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
 
 from constants.paths import K3S_KUBECONFIG_PATH
+from constants.platform import PLATFORM_NAMESPACE, TELEMETRY_STACK_COMPONENT
 from platform_stages.steps.errors import FailedJobError, RestartDeploymentError
 from platform_utils.kube_config_handler import KubernetesConfigHandler
 
@@ -257,3 +258,25 @@ def delete_job(batch_api: BatchV1Api, namespace: str, job_name: str) -> None:
     except client.exceptions.ApiException as ex:
         logger.error(f"Failed to delete job '{job_name}': {ex}")
         return
+
+
+def check_if_telemetry_stack_is_installed() -> bool:
+    """
+    Check if telemetry stack is installed by verifying the existence of its deployment.
+    """
+    return _deployment_exists(name=TELEMETRY_STACK_COMPONENT, namespace=PLATFORM_NAMESPACE)
+
+
+def _deployment_exists(name: str, namespace: str) -> bool:
+    """
+    Check if a deployment with the given name exists in the specified namespace.
+    """
+    KubernetesConfigHandler(kube_config=K3S_KUBECONFIG_PATH)
+    api = client.AppsV1Api()
+    try:
+        api.read_namespaced_deployment(name=name, namespace=namespace)
+        return True
+    except ApiException as ex:
+        if ex.status == 404:
+            return False
+        raise
