@@ -359,8 +359,7 @@ def execute_installation(config: InstallationConfig) -> None:  # noqa: C901, RUF
         logger.info(InstallCmdTexts.k3s_installing)
         try:
             with click_spinner.spinner():
-                node_name = config.node_name.value if config.node_name else None
-                install_k3s(node_name=node_name)
+                install_k3s()
         except K3SInstallationError:
             logger.exception("Error during k3s installation.")
             click.secho(InstallCmdTexts.k3s_installation_failed, fg="red")
