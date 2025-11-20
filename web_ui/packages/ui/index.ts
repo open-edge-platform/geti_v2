@@ -175,4 +175,7 @@ export {
     Pressable,
     DropIndicator,
     useDragAndDrop,
+    ListBoxLoadMoreItem,
+    type ListBoxLoadMoreItemProps,
+    Collection,
 } from 'react-aria-components';
