@@ -72,7 +72,7 @@ jobs:
         env: 
           MIN_VERSIONS_TO_KEEP: ${{ github.event.inputs.min_versions_to_keep }}
           PACKAGE_NAME: ${{ github.event.inputs.package_name }}
-          GH_TOKEN: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           echo "Preparing list of package:"$PACKAGE_NAME" ids to delete from ghcr.io..."
@@ -113,17 +113,19 @@ jobs:
       - name: Cleanup old packages
         if: ${{ github.event.inputs.dry_run != 'true' && steps.prepare-versions.outputs.package_version_ids != '' }}
         uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55  # v5.0.0
+        continue-on-error: true
         with:
           package-name: '${{ github.event.inputs.package_name }}'
           package-type: 'container'
           package-version-ids: '${{ steps.prepare-versions.outputs.package_version_ids }}'
-          token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cleanup untagged packages
         if: ${{ github.event.inputs.dry_run != 'true' }}
         uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55  # v5.0.0
+        continue-on-error: true
         with:
           package-name: '${{ github.event.inputs.package_name }}'
           package-type: 'container'
-          token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           delete-only-untagged-versions: true
