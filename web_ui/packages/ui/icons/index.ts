@@ -159,3 +159,5 @@ export { default as CloudErrorIcon } from '@spectrum-icons/workflow/CloudError';
 export { default as LinkOut } from '@spectrum-icons/workflow/LinkOut';
 export { default as Import } from '@spectrum-icons/workflow/Import';
 export { default as Cross } from '@spectrum-icons/ui/CrossMedium';
+export { default as Pending } from '@spectrum-icons/workflow/Pending';
+export { default as Cancel } from '@spectrum-icons/workflow/Cancel';
