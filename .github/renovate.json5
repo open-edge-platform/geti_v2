@@ -29,7 +29,7 @@
   // if necessary, add supported releases branches here
   // it is possible to enable/disable specific upgrades per branch with
   // `matchBaseBranches` in specific rule
-  baseBranches: ["main"],
+  baseBranches: ["main", "release-2.13"],
 
   enabledManagers: ["dockerfile", "github-actions", "gomod", "pep621", "npm"],
 
