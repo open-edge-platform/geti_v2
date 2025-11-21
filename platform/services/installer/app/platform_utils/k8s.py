@@ -292,10 +292,10 @@ def get_node_name() -> str | None:
         nodes = v1.list_node()
 
         if not nodes.items:
-            logger.error(f"Missing node name {nodes}")
+            logger.error(f"Missing node {nodes}")
             return None
     except ApiException as ex:
-        logger.error(f"Exception during getting the node name {ex}")
+        logger.error(f"Exception while getting the node name {ex}")
         return None
 
     return nodes.items[0].metadata.name
