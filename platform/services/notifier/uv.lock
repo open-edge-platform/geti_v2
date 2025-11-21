@@ -22,15 +22,15 @@ wheels = [
 
 [[package]]
 name = "confluent-kafka"
-version = "2.11.1"
+version = "2.12.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e1/e4/cd2dc58cd583788a362c2d59d179a6537b81c3bf70c6a1907c508117ca77/confluent_kafka-2.11.1.tar.gz", hash = "sha256:a9366d9dc07a527ed0dcef9c24ba38238cf9dc63c3f53b79da15d45ce4459166", size = 227194, upload-time = "2025-08-18T21:27:48.103Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c2/cd/18ffb1d2a7e189fee50b4a9597255e1078580d679daf913c25d0d13c3f88/confluent_kafka-2.12.2.tar.gz", hash = "sha256:5a50bfcd24f9dcf34b986f837f80126a71087364d44fcb8b45e8e74080fb6e98", size = 250423, upload-time = "2025-11-07T15:42:32.392Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6c/ed/a3eb9fdd161e87282a2d46b53b05fd4c72db3348bbf364f42a50ef4b2f6e/confluent_kafka-2.11.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d3d5a693c8dbfad16436699434cf0baf82b87c860ec12298d5e06d3a96f38c28", size = 3590829, upload-time = "2025-08-18T21:26:16.554Z" },
-    { url = "https://files.pythonhosted.org/packages/36/9d/3b5bc0f9335256459faf7471976e206a936084d5e0167c26b1d34fd96acd/confluent_kafka-2.11.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:9763c527b1b4c72415419ea1639b14d4b4fd5c395dc24e2503699c5ad540f62e", size = 3119114, upload-time = "2025-08-18T21:26:20.366Z" },
-    { url = "https://files.pythonhosted.org/packages/c0/f2/5f4c6a2e1cba27d8be053ce84a1079318f53917dd383301d7fdac9443c91/confluent_kafka-2.11.1-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:ed5a36c1e550eddb6343e8132d3fe01ce23ecd04e63bf0492fbf9a51c70cabd3", size = 15376626, upload-time = "2025-08-18T21:26:22.976Z" },
-    { url = "https://files.pythonhosted.org/packages/3a/3d/d55bd27eed5aae2b10ffccd764bc020f1724aa730b00259cc06e37f5467b/confluent_kafka-2.11.1-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:d2facbdb175f625005f5acdcf0179d758e1c9fe46460593b05345147ee948411", size = 3912524, upload-time = "2025-08-18T21:26:26.043Z" },
-    { url = "https://files.pythonhosted.org/packages/21/b0/b6918742a37447b708529c890eda9c156f007b403e8e83ebba6883efade8/confluent_kafka-2.11.1-cp310-cp310-win_amd64.whl", hash = "sha256:0b1b7b8cb980a08fa06d982bd452dc488e1635ab05b371039269da411c9d5095", size = 4037866, upload-time = "2025-08-18T21:26:27.695Z" },
+    { url = "https://files.pythonhosted.org/packages/8e/93/ebdb133b2c3a84edcaddeb39cb9396ed557467155cce1c8c3a034353f02e/confluent_kafka-2.12.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:8639850b97e199db5c968d01887e0f173c1d3763f851098a64a57e6db06d1d19", size = 3593784, upload-time = "2025-11-07T15:41:21.961Z" },
+    { url = "https://files.pythonhosted.org/packages/ab/68/28078e5c27373c94ba2cf6339e8cffdc87da8b55430029ca5025b84444f4/confluent_kafka-2.12.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:9a85f84483465c302da8c7432078f310e5aa748bb5767f71d5a50c3b4fce8004", size = 3153499, upload-time = "2025-11-07T15:41:24.852Z" },
+    { url = "https://files.pythonhosted.org/packages/fe/29/ccdfbe49518adb46e71525599778ee599a427da42f5a748ea4e81dc860d2/confluent_kafka-2.12.2-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:938e1ec9abdc6104faad07732521960c61644362b43a0af5cd7f149516dc9bd5", size = 3691675, upload-time = "2025-11-07T15:41:26.294Z" },
+    { url = "https://files.pythonhosted.org/packages/cf/b9/df8beebe26d25ba254f2dbff689c53f2551efcda5bf35c8974d788f77983/confluent_kafka-2.12.2-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:c0618ef7f3f70d80a5d2ee94241dde8e59419ea52f003f18ac310135b04b6e4a", size = 3943583, upload-time = "2025-11-07T15:41:28.542Z" },
+    { url = "https://files.pythonhosted.org/packages/73/cd/dab6a1e364cb3a405ec3f8d4da4e5a899bdaff838c87aac5a3fcff3bd690/confluent_kafka-2.12.2-cp310-cp310-win_amd64.whl", hash = "sha256:f62dc98e2059cde47b60eadc80904eaf59f88b283330d3fd93d69b1ac3d75496", size = 4067709, upload-time = "2025-11-07T15:41:31.567Z" },
 ]
 
 [[package]]
@@ -102,11 +102,11 @@ dev = [
 
 [[package]]
 name = "iniconfig"
-version = "2.1.0"
+version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f2/97/ebf4da567aa6827c909642694d71c9fcf53e5b504f2d96afea02718862f3/iniconfig-2.1.0.tar.gz", hash = "sha256:3abbd2e30b36733fee78f9c7f7308f2d0050e88f0087fd25c2645f63c773e1c7", size = 4793, upload-time = "2025-03-19T20:09:59.721Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/72/34/14ca021ce8e5dfedc35312d08ba8bf51fdd999c576889fc2c24cb97f4f10/iniconfig-2.3.0.tar.gz", hash = "sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730", size = 20503, upload-time = "2025-10-18T21:55:43.219Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2c/e1/e6716421ea10d38022b952c159d5161ca1193197fb744506875fbb87ea7b/iniconfig-2.1.0-py3-none-any.whl", hash = "sha256:9deba5723312380e77435581c6bf4935c94cbfab9b1ed33ef8d238ea168eb760", size = 6050, upload-time = "2025-03-19T20:10:01.071Z" },
+    { url = "https://files.pythonhosted.org/packages/cb/b1/3846dd7f199d53cb17f49cba7e651e9ce294d8497c8c150530ed11865bb8/iniconfig-2.3.0-py3-none-any.whl", hash = "sha256:f631c04d2c48c52b84d0d0549c99ff3859c98df65b3101406327ecc7d53fbf12", size = 7484, upload-time = "2025-10-18T21:55:41.639Z" },
 ]
 
 [[package]]
@@ -279,11 +279,11 @@ wheels = [
 
 [[package]]
 name = "tomli"
-version = "2.2.1"
+version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/18/87/302344fed471e44a87289cf4967697d07e532f2421fdaf868a303cbae4ff/tomli-2.2.1.tar.gz", hash = "sha256:cd45e1dc79c835ce60f7404ec8119f2eb06d38b1deba146f07ced3bbc44505ff", size = 17175, upload-time = "2024-11-27T22:38:36.873Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/52/ed/3f73f72945444548f33eba9a87fc7a6e969915e7b1acc8260b30e1f76a2f/tomli-2.3.0.tar.gz", hash = "sha256:64be704a875d2a59753d80ee8a533c3fe183e3f06807ff7dc2232938ccb01549", size = 17392, upload-time = "2025-10-08T22:01:47.119Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6e/c2/61d3e0f47e2b74ef40a68b9e6ad5984f6241a942f7cd3bbfbdbd03861ea9/tomli-2.2.1-py3-none-any.whl", hash = "sha256:cb55c73c5f4408779d0cf3eef9f762b9c9f147a77de7b258bef0a5628adc85cc", size = 14257, upload-time = "2024-11-27T22:38:35.385Z" },
+    { url = "https://files.pythonhosted.org/packages/77/b8/0135fadc89e73be292b473cb820b4f5a08197779206b33191e801feeae40/tomli-2.3.0-py3-none-any.whl", hash = "sha256:e95b1af3c5b07d9e643909b5abbec77cd9f1217e6d0bca72b0234736b9fb1f1b", size = 14408, upload-time = "2025-10-08T22:01:46.04Z" },
 ]
 
 [[package]]
