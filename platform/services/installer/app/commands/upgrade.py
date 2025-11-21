@@ -414,7 +414,7 @@ def perform_k3s_upgrade(config: UpgradeConfig) -> None:
         node_name = get_node_name()
 
         if not node_name:
-            logger.warning("Node name could not be determined, proceeding without it.")
+            logger.error("Node name could not be determined, proceeding without it.")
             raise K3SInstallationError("Node name could not be determined.")
 
         with click_spinner.spinner():
