@@ -135,41 +135,49 @@ def test_get_intel_gpus_max_card(mocker):
 
 def test_get_intel_gpus_arc_xe_card(mocker):
     sub_process_mock = mocker.patch("subprocess.check_output", return_value=arc_xe_description.encode("utf-8"))
+    check_intel_gpu_driver_mock = mocker.patch("checks.resources._check_intel_gpu_driver", return_value=True)
 
     gpus, isdGPU = _get_intel_gpus()
 
     assert GPU_PROVIDER_INTEL_ARC in gpus
     assert isdGPU is True
+    assert check_intel_gpu_driver_mock.call_count == 1
     assert sub_process_mock.call_count == 2
 
 
 def test_get_intel_gpus_arc_i915_card(mocker):
     sub_process_mock = mocker.patch("subprocess.check_output", return_value=arc_i915_description.encode("utf-8"))
+    check_intel_gpu_driver_mock = mocker.patch("checks.resources._check_intel_gpu_driver", return_value=True)
 
     gpus, isdGPU = _get_intel_gpus()
 
     assert GPU_PROVIDER_INTEL_ARC_A in gpus
     assert isdGPU is True
+    assert check_intel_gpu_driver_mock.call_count == 1
     assert sub_process_mock.call_count == 2
 
 
 def test_get_intel_gpus_arc_igpu_card(mocker):
     sub_process_mock = mocker.patch("subprocess.check_output", return_value=arc_i915_igpu_description.encode("utf-8"))
+    check_intel_gpu_driver_mock = mocker.patch("checks.resources._check_intel_gpu_driver", return_value=True)
 
     gpus, isdPGU = _get_intel_gpus()
 
     assert GPU_PROVIDER_INTEL_ARC_A in gpus
     assert isdPGU is True
+    assert check_intel_gpu_driver_mock.call_count == 1
     assert sub_process_mock.call_count == 2
 
 
 def test_get_intel_gpus_igpu_card(mocker):
     sub_process_mock = mocker.patch("subprocess.check_output", return_value=igpu_description.encode("utf-8"))
+    check_intel_gpu_driver_mock = mocker.patch("checks.resources._check_intel_gpu_driver", return_value=True)
 
     gpus, isdPGU = _get_intel_gpus()
 
     assert GPU_PROVIDER_INTEL_ARC_A in gpus
     assert isdPGU is False
+    assert check_intel_gpu_driver_mock.call_count == 1
     assert sub_process_mock.call_count == 2
 
 
