@@ -161,7 +161,33 @@ def check_gpu_driver_version(config: InstallationConfig | UpgradeConfig) -> None
     logger.debug("GPU driver version matched.")
 
 
-def _get_intel_gpus() -> tuple[str, bool]:
+def _check_intel_gpu_driver(env: dict[str, str]) -> bool:
+    """
+    Returns true if intel gpu driver is installed
+    """
+    try:
+        command = 'clinfo|grep "' + ResourcesChecksTexts.intel_gpu_arc_device_name + '"|grep Intel'
+        logger.debug(f"Getting the list of Intel GPU drivers with {command}")
+
+        clinfo_output = subprocess.check_output(  # noqa: S602  # nosec: B602
+            command,
+            stderr=subprocess.STDOUT,
+            shell=True,
+            timeout=5,
+            env=env,
+        ).decode("utf-8")
+        logger.debug(clinfo_output)
+        if ResourcesChecksTexts.intel_gpu_arc_device_name in clinfo_output:
+            return True
+
+    except (CalledProcessError, TimeoutExpired, FileNotFoundError) as err:
+        logger.debug(f"Checking the installed Intel GPU driver failed with {err}")
+        return False
+
+    return False
+
+
+def _get_intel_gpus() -> tuple[str, bool]:  # noqa: C901
     """
     MAX cards:
     Attempt to get Intel GPUs with xpu-smi
@@ -191,6 +217,9 @@ def _get_intel_gpus() -> tuple[str, bool]:
         logger.debug(f"Getting the list of Intel GPU failed with {err}")
 
     # Only valid for ARC cards
+    if not _check_intel_gpu_driver(env):
+        return "", False
+
     try:
         command = "lspci -nnk | grep -iA3 'VGA\|3D\|Display'"
         logger.debug(f"Getting the list of Intel ARC with {command}")
