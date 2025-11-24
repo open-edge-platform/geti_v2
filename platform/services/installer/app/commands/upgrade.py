@@ -52,6 +52,7 @@ from platform_stages.steps.errors import DownloadSystemPackagesError, StepsError
 from platform_stages.steps.install_system_packages import install_system_packages
 from platform_stages.upgrade import upgrade_platform
 from platform_utils.grafana import flush_ingesters as flush_lgtm_stack
+from platform_utils.k8s import check_if_telemetry_stack_is_installed, get_node_name
 from platform_utils.management.data_folder import backup_data_folder, restore_data_folder
 from platform_utils.management.management import restore_platform, stop_platform
 from platform_utils.management.state import (
@@ -407,9 +408,16 @@ def perform_k3s_upgrade(config: UpgradeConfig) -> None:
     logger.info("Upgrading k3s.")
     click.echo(UpgradeCmdTexts.k3s_upgrade)
     logger.info(UpgradeCmdTexts.k3s_upgrade)
+
     try:
+        node_name = get_node_name()
+
+        if not node_name:
+            logger.error("Node name could not be determined.")
+            raise K3SInstallationError("Node name could not be determined.")
+
         with click_spinner.spinner():
-            install_k3s(setup_remote_kubeconfig=True)
+            install_k3s(setup_remote_kubeconfig=True, node_name=node_name)
     except K3SInstallationError:
         logger.exception("Error during k3s upgrade.")
         click.echo(UpgradeCmdTexts.k3s_upgrade_failed)
@@ -499,6 +507,10 @@ def upgrade(config_file: str | None = None, install_telemetry_stack: bool = Fals
     create_logs_dir()
     configure_logging()
     logger.info(f"{get_target_product_build()} {UpgradeCmdTexts.start_message}")
+
+    if not install_telemetry_stack:
+        install_telemetry_stack = check_if_telemetry_stack_is_installed()
+
     config = UpgradeConfig(interactive_mode=not bool(config_file), install_telemetry_stack=install_telemetry_stack)
     run_initial_checks(config)
     if config_file:

@@ -25,10 +25,12 @@ class K3sConfiguration:
         kubelet_args: dict[str, str] | None = None,
         service_node_port_range: str | None = None,
         node_ip: str | None = None,
+        node_name: str | None = None,
     ):
         self.version = version
         self.service_node_port_range = service_node_port_range
         self.node_ip = node_ip
+        self.node_name = node_name
         if disable_components is None:
             self.disable_components = []
         else:
@@ -67,6 +69,11 @@ class K3sConfiguration:
 
         if self.node_ip:
             install_k3s_exec_big_str += f"--node-ip={self.node_ip} "
+
+        if self.node_name:
+            install_k3s_exec_big_str += f"--node-name={self.node_name} "
+        else:
+            install_k3s_exec_big_str += "--node-name=geti "
 
         flags_mapping = {
             "--kube-apiserver-arg": self.kube_apiserver_args,
