@@ -25,7 +25,7 @@ def _get_pod_name(kubeconfig: str) -> str:
     ]
     try:
         logger.debug(f"Running command: {' '.join(pod_name_cmd)}")
-        pod_name = subprocess.run(pod_name_cmd, capture_output=True, text=True, check=True)  # noqa: S603
+        pod_name = subprocess.run(pod_name_cmd, capture_output=True, text=True, check=True)  # noqa: S603 # nosec: B603
         return pod_name.stdout.strip()
     except subprocess.CalledProcessError as e:
         logger.exception(f"Error: {e.stderr}")
@@ -51,7 +51,7 @@ def _change_password(username: str, password: str, kubeconfig: str, pod_name: st
     ]
     try:
         logger.debug(f"Running command: {' '.join(kubectl_cmd)}")
-        subprocess.run(kubectl_cmd, text=True, check=True, stderr=subprocess.STDOUT)  # noqa: S603
+        subprocess.run(kubectl_cmd, text=True, check=True, stderr=subprocess.STDOUT)  # noqa: S603 # nosec: B603
 
     except subprocess.CalledProcessError as e:
         logger.exception(f"Error: {e.stderr}")

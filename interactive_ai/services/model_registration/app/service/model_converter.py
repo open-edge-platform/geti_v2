@@ -12,7 +12,7 @@ import urllib.request
 import zipfile
 from enum import Enum, auto
 from pathlib import Path
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element # nosec: B405 # defusedxml is used to parse data
 
 from defusedxml import ElementTree
 from grpc_interfaces.model_registration.pb.service_pb2 import Model, Project

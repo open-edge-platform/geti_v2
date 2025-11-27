@@ -92,7 +92,7 @@ class ConvertVFRVideosToCFR(IMigrationScript):
         :param video_path: Local path or presigned S3 URL pointing to the video
         :return: Video FPS as float
         """
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(  # noqa: S603 # nosec: B603
             [  # noqa: S607
                 "ffprobe",
                 "-v",
@@ -122,7 +122,7 @@ class ConvertVFRVideosToCFR(IMigrationScript):
         :return: True if the video has variable frame rate, False if constant frame rate
         """
         # Get r_frame_rate
-        r_frame_rate_result = subprocess.run(  # noqa: S603
+        r_frame_rate_result = subprocess.run(  # noqa: S603 # nosec: B603
             [  # noqa: S607
                 "ffprobe",
                 "-v",
@@ -141,7 +141,7 @@ class ConvertVFRVideosToCFR(IMigrationScript):
         )
 
         # Get avg_frame_rate
-        avg_frame_rate_result = subprocess.run(  # noqa: S603
+        avg_frame_rate_result = subprocess.run(  # noqa: S603 # nosec: B603
             [  # noqa: S607
                 "ffprobe",
                 "-v",
@@ -307,7 +307,7 @@ class ConvertVFRVideosToCFR(IMigrationScript):
             logger.info(f"Stitching {len(frame_files)} frames into CFR video at {fps} fps")
 
             # Use ffmpeg to create video from image sequence
-            process = subprocess.run(  # noqa: S603
+            process = subprocess.run(  # noqa: S603 # nosec: B603
                 [  # noqa: S607
                     "ffmpeg",
                     "-y",  # Overwrite output file

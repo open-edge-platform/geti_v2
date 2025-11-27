@@ -100,7 +100,7 @@ def _k3s_ready(time_wait: int = 300, delay: int = 10) -> bool:
 
     for _ in range(0, time_wait, delay):
         try:
-            result = subprocess.run(  # noqa: S603
+            result = subprocess.run(  # noqa: S603 # nosec: B603
                 node_cmd,
                 capture_output=True,
                 text=True,

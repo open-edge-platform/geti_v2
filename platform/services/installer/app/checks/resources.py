@@ -69,7 +69,7 @@ def _bytes_to_gigabytes(bytes_: int) -> float:
 
 def _subprocess_run(command: list[str]):
     with open(INSTALL_LOG_FILE_PATH, mode="a+") as log_file:
-        process = subprocess.run(  # noqa: S603
+        process = subprocess.run(  # noqa: S603 # nosec: B603
             command,
             check=True,
             stdout=subprocess.PIPE,
@@ -100,7 +100,7 @@ def _check_intel_driver() -> bool:
     """
     try:
         logger.debug("Checking the installed display devices with `hwinfo --display`")
-        hwinfo_output = subprocess.check_output(["hwinfo", "--display"], timeout=5).decode("utf-8")  # noqa: S607
+        hwinfo_output = subprocess.check_output(["hwinfo", "--display"], timeout=5).decode("utf-8")  # noqa: S607 # nosec: B603
         logger.debug(hwinfo_output)
         if ResourcesChecksTexts.intel_gpu_driver_displayed in hwinfo_output:
             logger.debug('hwinfo returned at least one device with Driver: "i915" displayed')
@@ -143,7 +143,7 @@ def check_gpu_driver_version(config: InstallationConfig | UpgradeConfig) -> None
     if config.gpu_provider.value == GPU_PROVIDER_NVIDIA:
         try:
             nvidia_smi_output = subprocess.check_output(
-                ["nvidia-smi", "--query-gpu=driver_version", "--format=csv,noheader,nounits"]  # noqa: S607
+                ["nvidia-smi", "--query-gpu=driver_version", "--format=csv,noheader,nounits"]  # noqa: S607 # nosec: B603
             )
             nvidia_driver_versions = nvidia_smi_output.decode("utf-8").strip().split("\n")
             for nvidia_driver_version in nvidia_driver_versions:
@@ -169,7 +169,7 @@ def _check_intel_gpu_driver(env: dict[str, str]) -> bool:
         command = 'clinfo|grep "' + ResourcesChecksTexts.intel_gpu_arc_device_name + '"|grep Intel'
         logger.debug(f"Getting the list of Intel GPU drivers with {command}")
 
-        clinfo_output = subprocess.check_output(  # noqa: S602  # nosec: B602
+        clinfo_output = subprocess.check_output(  # noqa: S602 # nosec: B602
             command,
             stderr=subprocess.STDOUT,
             shell=True,
@@ -205,7 +205,7 @@ def _get_intel_gpus() -> tuple[str, bool]:  # noqa: C901
     # Only valid for MAX cards
     try:
         logger.debug("Getting the list of Intel GPU with `xpu-smi discovery`")
-        xpu_output = subprocess.check_output(["xpu-smi", "discovery"], timeout=5, env=env).decode("utf-8")  # noqa: S607
+        xpu_output = subprocess.check_output(["xpu-smi", "discovery"], timeout=5, env=env).decode("utf-8")  # noqa: S607 # nosec: B603
         logger.debug(xpu_output)
         if ResourcesChecksTexts.intel_gpu_no_devices in xpu_output:
             logger.debug("No devices")
@@ -224,7 +224,7 @@ def _get_intel_gpus() -> tuple[str, bool]:  # noqa: C901
         command = "lspci -nnk | grep -iA3 'VGA\|3D\|Display'"
         logger.debug(f"Getting the list of Intel ARC with {command}")
 
-        lspci_output = subprocess.check_output(  # noqa: S602  # nosec: B602
+        lspci_output = subprocess.check_output(  # noqa: S602 # nosec: B602
             command,
             stderr=subprocess.STDOUT,
             shell=True,

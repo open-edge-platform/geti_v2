@@ -42,7 +42,7 @@ def resource_exists(resource: ResourceToHandle) -> bool:
     if resource.namespace:
         check_cmd.extend(["-n", resource.namespace])
 
-    result = subprocess.run(check_cmd, capture_output=True, text=True, check=False)  # noqa: S603
+    result = subprocess.run(check_cmd, capture_output=True, text=True, check=False)  # noqa: S603 # nosec: B603
     return result.returncode == 0
 
 

@@ -41,7 +41,7 @@ del os.environ["VIRTUAL_ENV"]
 exit_code = 0
 
 for project_dir, project_files in files_per_project.items():
-    if subprocess.run(
+    if subprocess.run( # nosec: B603
         ["make", "-n", make_target],
         cwd=project_dir,
         stdout=subprocess.DEVNULL,
@@ -55,7 +55,7 @@ for project_dir, project_files in files_per_project.items():
         project_files = [
             str(Path(file).relative_to(project_dir)) for file in project_files
         ]
-        exit_code |= subprocess.run(
+        exit_code |= subprocess.run( # nosec: B603
             ["make", make_target, "FILES=" + " ".join(project_files)], cwd=project_dir
         ).returncode
 
