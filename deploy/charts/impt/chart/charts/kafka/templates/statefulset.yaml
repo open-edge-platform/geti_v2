@@ -155,3 +155,6 @@ spec:
             defaultMode: 365
         - name: tmp
           emptyDir: {}
+        - name: kafka-data
+          persistentVolumeClaim:
+            claimName: data-storage-volume-claim
