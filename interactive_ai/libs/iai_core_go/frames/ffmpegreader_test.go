@@ -21,7 +21,7 @@ func TestReadFrameToBuffer(t *testing.T) {
 }
 
 func TestReadFrameToBufferFps(t *testing.T) {
-	video := entities.NewVideo(context.Background(), VideoPath)
+	video := entities.NewVideo(t.Context(), VideoPath)
 	frameReader := new(FramerReaderImpl)
 	_, err := frameReader.ReadFrameToBufferFps(video.FilePath, 0, video.FPS)
 	assert.NoError(t, err)

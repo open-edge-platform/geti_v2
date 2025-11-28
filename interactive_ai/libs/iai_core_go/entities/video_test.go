@@ -13,7 +13,7 @@ import (
 
 func TestNewVideo(t *testing.T) {
 	path := "../test_data/test_mp4.mp4"
-	video := NewVideo(context.Background(), path)
+	video := NewVideo(t.Context(), path)
 	assert.Equal(t, path, video.FilePath)
 	assert.InEpsilon(t, float64(30), video.FPS, 0.0001)
 }
