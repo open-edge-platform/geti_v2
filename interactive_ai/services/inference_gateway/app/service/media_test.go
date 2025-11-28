@@ -5,7 +5,6 @@ package service
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"io"
 	"strings"
@@ -23,7 +22,7 @@ func TestMediaService(t *testing.T) {
 	imageRepoMock := storage.NewMockImageRepository(t)
 	frameReaderMock := frames.NewMockFrameReader(t)
 
-	ctx := context.Background()
+	ctx := t.Context()
 	fullImageID := sdkentities.GetFullImageID(t)
 	fullVideoID := sdkentities.GetFullVideoID(t)
 	mediaSrv := NewMediaServiceImpl(videoRepoMock, imageRepoMock, frameReaderMock)

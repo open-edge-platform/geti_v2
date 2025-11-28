@@ -4,7 +4,6 @@
 package service
 
 import (
-	"context"
 	"errors"
 	"testing"
 
@@ -18,7 +17,7 @@ import (
 )
 
 func TestPredictionCacheService(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	client := resty.New()
 	httpmock.ActivateNonDefault(client.GetClient())
 	defer httpmock.DeactivateAndReset()

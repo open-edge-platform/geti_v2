@@ -4,7 +4,6 @@
 package controller
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -32,7 +31,7 @@ func readImage(t *testing.T) *os.File {
 func TestImageController(t *testing.T) {
 	fullImageID := testhelper.GetFullImageID(t)
 
-	ctx := context.Background()
+	ctx := t.Context()
 	mockImageRepo := storage.NewMockImageRepository(t)
 	mockGetThumbUC := usecase.NewMockIGetOrCreateThumbnail(t)
 

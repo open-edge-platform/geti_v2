@@ -35,7 +35,7 @@ func createInferParameters() *InferParameters {
 }
 
 func TestErrors(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	meshMock := modelmesh.NewMockModelMeshClient(t)
 	registrationMock := modelregistration.NewMockModelRegistrationClient(t)
@@ -202,7 +202,7 @@ func TestInferImageBytes(t *testing.T) {
 
 	// Make the call to InferImage
 	inferParams := NewInferParameters(buf, pipelineName, true, entities.Roi{Height: 10, Width: 10}, false, nil)
-	response, err := modelAccessSrv.InferImageBytes(context.Background(), *inferParams)
+	response, err := modelAccessSrv.InferImageBytes(t.Context(), *inferParams)
 
 	// Assert response is as expected
 	require.NoError(t, err)
@@ -333,7 +333,7 @@ func TestHandleModelNotFoundError(t *testing.T) {
 	inferenceMock.EXPECT().ModelInfer(mock.Anything, &pbRequest).Return(&pbResponse, nil)
 
 	// Act
-	inferResponse, inferErr := modelAccessSrv.TryRecoverModel(context.Background(), *inferParams)
+	inferResponse, inferErr := modelAccessSrv.TryRecoverModel(t.Context(), *inferParams)
 
 	// Assert no errors arise and predictions are returned
 	require.NoError(t, inferErr)
