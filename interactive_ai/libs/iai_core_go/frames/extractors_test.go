@@ -4,7 +4,6 @@
 package frames
 
 import (
-	"context"
 	"io"
 	"testing"
 
