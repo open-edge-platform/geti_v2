@@ -49,7 +49,7 @@
   ignorePaths: ["interactive_ai/tests/e2e/**"], // to exclude specific test folder
 
   // https://docs.renovatebot.com/golang/
-  postUpdateOptions: ["gomodTidy"],
+  postUpdateOptions: ["gomodTidy", "gomodUpdateImportPaths"],
 
   packageRules: [
     // Enable pinning for container images
