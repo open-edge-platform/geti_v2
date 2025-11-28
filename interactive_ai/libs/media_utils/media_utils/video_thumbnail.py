@@ -32,7 +32,7 @@ def generate_thumbnail_video(
         target_resolution = f"{default_thumbnail_size}:-2"
 
     _, tmp_thumbnail_path = tempfile.mkstemp()
-    process = subprocess.Popen(  # noqa: S603
+    process = subprocess.Popen(  # noqa: S603 # nosec: B603
         [  # noqa: S607
             "ffmpeg",
             "-threads",

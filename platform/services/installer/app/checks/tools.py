@@ -20,7 +20,7 @@ def _is_snap_installed():
     """
     logger.debug("Checking if snap is installed")
     try:
-        subprocess.check_output(["snap", "--version"])  # noqa: S607
+        subprocess.check_output(["snap", "--version"])  # noqa: S607 # nosec: B603
         logger.debug("snap is installed.")
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
@@ -46,7 +46,7 @@ def _is_curl_installed():
     """
     logger.debug("Checking curl is installed")
     try:
-        subprocess.check_output(["curl", "--version"])  # noqa: S607
+        subprocess.check_output(["curl", "--version"])  # noqa: S607 # nosec: B603
         logger.debug("curl is installed.")
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
@@ -62,7 +62,7 @@ def _check_if_curl_has_internet_access():
         logger.info("Checking if curl has internet access.")
         logger.debug("Sending request to http://example.com...")
         subprocess.check_output(
-            ["curl", "--head", "--silent", "http://example.com", "--connect-timeout", "5"]  # noqa: S607
+            ["curl", "--head", "--silent", "http://example.com", "--connect-timeout", "5"]  # noqa: S607 # nosec: B603
         )
         logger.debug("curl has access to Internet.")
     except (subprocess.CalledProcessError, FileNotFoundError) as error:

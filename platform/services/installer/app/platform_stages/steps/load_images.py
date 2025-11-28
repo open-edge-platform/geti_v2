@@ -53,7 +53,7 @@ def _extract_version(pattern: str, image: str) -> str:
 
 def _run_subprocess(command: list[str], error_message: str) -> subprocess.CompletedProcess:
     try:
-        return subprocess.run(command, capture_output=True, text=True, check=True)  # noqa: S603
+        return subprocess.run(command, capture_output=True, text=True, check=True)  # noqa: S603 # nosec: B603
     except subprocess.CalledProcessError as e:
         logger.error(f"{error_message}: {e.stderr}")
         raise PinImageVersionError from e

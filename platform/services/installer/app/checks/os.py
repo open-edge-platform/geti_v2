@@ -51,7 +51,7 @@ def _get_local_os() -> str:
     try:
         logger.debug("Checking OS version with `grep ^PRETTY /etc/os-release`")
         return (
-            subprocess.check_output(["grep", "^PRETTY", "/etc/os-release"], timeout=5)  # noqa: S607
+            subprocess.check_output(["grep", "^PRETTY", "/etc/os-release"], timeout=5)  # noqa: S607 # nosec: B603
             .decode("utf-8")
             .strip()
             .replace("PRETTY_NAME=", "")

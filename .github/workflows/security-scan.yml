@@ -24,11 +24,11 @@ jobs:
         with:
           egress-policy: audit
       - name: Checkout code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@b7d997c1651b1e1b99a280033bd268b55ccb7923
+        uses: open-edge-platform/geti-ci/actions/zizmor@6e7e8393869d05112f727d235acb644ed362c58f
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -46,11 +46,11 @@ jobs:
         with:
           egress-policy: audit
       - name: Checkout code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@b7d997c1651b1e1b99a280033bd268b55ccb7923
+        uses: open-edge-platform/geti-ci/actions/bandit@6e7e8393869d05112f727d235acb644ed362c58f
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -70,7 +70,7 @@ jobs:
         with:
           egress-policy: audit
       - name: Checkout code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
       - name: Run Trivy vulnerability scanner in config mode
@@ -82,6 +82,6 @@ jobs:
           trivy-config: ".github/trivy_config.yml"
           output: "trivy-results.sarif"
       - name: Upload to code-scanning
-        uses: github/codeql-action/upload-sarif@014f16e7ab1402f30e7c3329d33797e7948572db # v4.31.3
+        uses: github/codeql-action/upload-sarif@fdbfb4d2750291e159f0156def62b853c2798ca2 # v4.31.5
         with:
           sarif_file: "trivy-results.sarif"

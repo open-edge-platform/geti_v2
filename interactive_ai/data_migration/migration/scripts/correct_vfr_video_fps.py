@@ -53,7 +53,7 @@ class CorrectVFRVideoFPS(IMigrationScript):
     @staticmethod
     def get_video_fps(video_path: str) -> float:
         # Run ffprobe to get video stream information
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(  # noqa: S603 # nosec: B603
             [  # noqa: S607
                 "ffprobe",
                 "-v",
