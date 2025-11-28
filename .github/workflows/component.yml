@@ -81,7 +81,7 @@ jobs:
       REGISTRY: ${{ inputs.registry }}
       BUILDER_REGISTRY: ghcr.io/open-edge-platform/geti/builders
       PYTHON_BUILDER_IMAGE: python-builder:v1.0.1
-      GO_BUILDER_IMAGE: go-builder:v1.0.0
+      GO_BUILDER_IMAGE: go-builder:v1.1.0
     steps:
       - name: Harden the runner (audit all outbound calls)
         uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
