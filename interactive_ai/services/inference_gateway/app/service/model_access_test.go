@@ -5,7 +5,6 @@ package service
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"image/jpeg"
 	"testing"
