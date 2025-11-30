@@ -1,9 +1,10 @@
-// Copyright (C) 2022-2025 Intel Corporation
+v// Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 package controller
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -31,7 +32,7 @@ func readImage(t *testing.T) *os.File {
 func TestImageController(t *testing.T) {
 	fullImageID := testhelper.GetFullImageID(t)
 
-	ctx := t.Context()
+	ctx := context.Background()  //nolint:usetesting // FIXME
 	mockImageRepo := storage.NewMockImageRepository(t)
 	mockGetThumbUC := usecase.NewMockIGetOrCreateThumbnail(t)
 
