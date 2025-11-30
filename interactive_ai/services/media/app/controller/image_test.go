@@ -32,7 +32,7 @@ func readImage(t *testing.T) *os.File {
 func TestImageController(t *testing.T) {
 	fullImageID := testhelper.GetFullImageID(t)
 
-	ctx := context.Background()  //nolint:usetesting // FIXME
+	ctx := context.Background() //nolint:usetesting // this is temp
 	mockImageRepo := storage.NewMockImageRepository(t)
 	mockGetThumbUC := usecase.NewMockIGetOrCreateThumbnail(t)
 
