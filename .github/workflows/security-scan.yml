@@ -28,7 +28,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@6e7e8393869d05112f727d235acb644ed362c58f
+        uses: open-edge-platform/geti-ci/actions/zizmor@3cdaaaa0fc400b63f52f4dbb007fa0b69939e0ab
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -50,7 +50,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@6e7e8393869d05112f727d235acb644ed362c58f
+        uses: open-edge-platform/geti-ci/actions/bandit@3cdaaaa0fc400b63f52f4dbb007fa0b69939e0ab
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -82,6 +82,6 @@ jobs:
           trivy-config: ".github/trivy_config.yml"
           output: "trivy-results.sarif"
       - name: Upload to code-scanning
-        uses: github/codeql-action/upload-sarif@fdbfb4d2750291e159f0156def62b853c2798ca2 # v4.31.5
+        uses: github/codeql-action/upload-sarif@fe4161a26a8629af62121b670040955b330f9af2 # v4.31.6
         with:
           sarif_file: "trivy-results.sarif"
