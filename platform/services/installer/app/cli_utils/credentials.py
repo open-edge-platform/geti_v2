@@ -25,7 +25,7 @@ def generate_password() -> str:
     lower = "".join(secrets.choice(string.ascii_lowercase) for _ in range(4))
     upper = "".join(secrets.choice(string.ascii_uppercase) for _ in range(4))
     numeral = "".join(secrets.choice(string.digits) for _ in range(4))
-    symbols = "".join(secrets.choice(ALLOWED_SPECIAL_CHARACTERS) for _ in range(4))    
+    symbols = "".join(secrets.choice(ALLOWED_SPECIAL_CHARACTERS) for _ in range(4))
     password = [*lower, *upper, *numeral, *symbols]
     random.shuffle(password)
     return "".join(password)
