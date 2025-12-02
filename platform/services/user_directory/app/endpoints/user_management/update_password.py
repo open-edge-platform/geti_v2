@@ -63,7 +63,7 @@ async def update_user_password(  # noqa: ANN201, PLR0911
             update_password(uid=user_id, old_password=old_password, new_password=new_password)
 
     except ValueError as err:
-        return PlainTextResponse(content=str(err), status_code=HTTPStatus.BAD_REQUEST)
+        return PlainTextResponse(content="Invalid request arguments", status_code=HTTPStatus.BAD_REQUEST)
     except ResponseError:
         return PlainTextResponse(content="Unauthorized", status_code=HTTPStatus.UNAUTHORIZED)
     except UserDoesNotExist:

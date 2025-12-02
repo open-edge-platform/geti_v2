@@ -113,8 +113,9 @@ def invite_user_endpoint(  # noqa: ANN201
                 status_code=HTTPStatus.CONFLICT,
             )
         if error.grpc_status_code == StatusCode.INVALID_ARGUMENT:
+            logger.warning(f"Error on user account invitation: {error}"))
             return PlainTextResponse(
-                str(error),
+                "Invalid request arguments",
                 status_code=HTTPStatus.BAD_REQUEST,
             )
         raise

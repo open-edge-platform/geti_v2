@@ -52,13 +52,15 @@ def change_status_endpoint(body: StatusREST, organization_id: str, user_id: str)
         _ = account_service.change_user_status(user_status)
     except AccountServiceError as error:
         if error.grpc_status_code == StatusCode.INVALID_ARGUMENT:
+            logger.warning(f"Invalid argument: {error}")
             return PlainTextResponse(
-                str(error),
+                "Invalid request arguments",
                 status_code=HTTPStatus.BAD_REQUEST,
             )
         if error.grpc_status_code == StatusCode.FAILED_PRECONDITION:
+            logger.warning(f"Failed precondition: {error}")
             return PlainTextResponse(
-                str(error),
+                "A conflict detected while processing the request",
                 status_code=HTTPStatus.CONFLICT,
             )
         raise

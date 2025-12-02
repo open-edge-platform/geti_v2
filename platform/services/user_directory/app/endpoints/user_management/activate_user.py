@@ -58,7 +58,8 @@ async def activate(data: ActivateData) -> PlainTextResponse:  # noqa: D103
                     {"password": data.password, "first_name": data.first_name, "second_name": data.second_name}
                 )
             except ValueError as err:
-                return PlainTextResponse(str(err), status_code=HTTPStatus.BAD_REQUEST)
+                logger.warning(f"User input validation failed: {err}")
+                return PlainTextResponse("Invalid input", status_code=HTTPStatus.BAD_REQUEST)
             handler.check_password_strength(data.password)
         with tracer.start_as_current_span("verify-jwt-token"):
             user = verify_payload(handler, data.token)
