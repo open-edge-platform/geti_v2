@@ -28,7 +28,7 @@ spec:
           command:
             - /bin/bash
           image: "{{ .Values.image.registry }}/{{ if .Values.image.repository }}{{ .Values.image.repository }}/{{ end }}{{ .Values.image.name }}"
-          imagePullPolicy: { { .Values.image.pullPolicy } }
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: volume-permissions
           resources:
             limits:
