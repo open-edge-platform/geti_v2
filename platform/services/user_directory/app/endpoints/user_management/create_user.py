@@ -118,9 +118,8 @@ def create_organization_user(body: CreateUserBody, organization_id: str):  # noq
                 status_code=HTTPStatus.CONFLICT,
             )
         if error.grpc_status_code in (StatusCode.INVALID_ARGUMENT, StatusCode.FAILED_PRECONDITION):
-            logger.warning(f"Error on user account creation: {error}")
             return PlainTextResponse(
-                "Invalid request arguments",
+                str(error),
                 status_code=HTTPStatus.BAD_REQUEST,
             )
         raise
