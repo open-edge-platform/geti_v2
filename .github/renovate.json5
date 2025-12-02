@@ -194,7 +194,7 @@
     {
       enabled: true,
       matchPackageNames: ["golang", "go"],
-      allowedVersions: "<1.24",
+      allowedVersions: "<1.25",
       groupName: "Go version",
       groupSlug: "go-version",
       schedule: ["* * * * 0"], // weekly
