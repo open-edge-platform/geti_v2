@@ -11,7 +11,6 @@ describe('UsersHeader', () => {
         render(
             <UsersHeader
                 totalMatchedCount={2}
-                totalCount={3}
                 hasFilterOptions={false}
                 setUsersQueryParams={jest.fn()}
             />
