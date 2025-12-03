@@ -96,7 +96,7 @@ export const UsersHeader = ({
                 {actionsSlot}
                 <UsersCount
                     totalMatchedCount={totalMatchedCount}
-                    totalCount={totalCount}
+                    totalCount={totalMatchedCount}
                     hasFilters={hasFilterOptions}
                     id={'users-header-users-count'}
                 />
