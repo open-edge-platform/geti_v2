@@ -2,16 +2,11 @@ name: Syft test
 
 on:
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Image tag to filter images, e.g. '2.13.0-d90fa913'"
-        required: true
 
 permissions: {} # No permissions by default on workflow level
 
 jobs:
   collect-packages-names:
-    needs: collect-images-list
     timeout-minutes: 660
     runs-on: ubuntu-latest
     steps:
