@@ -32,7 +32,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     go-licenses save . --save_path /THIRD_PARTY_NOTICES || true
 
 # Production image
-FROM debian:bookworm-slim@sha256:b4aa902587c2e61ce789849cb54c332b0400fe27b1ee33af4669e1f7e7c3e22f AS runtime
+FROM debian:bookworm-slim@sha256:e899040a73d36e2b36fa33216943539d9957cba8172b858097c2cabcdb20a3e2 AS runtime
 
 # Install ffmpeg
 RUN apt-get update && \
