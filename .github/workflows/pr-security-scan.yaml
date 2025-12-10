@@ -47,7 +47,7 @@ jobs:
         uses: open-edge-platform/geti-ci/actions/bandit@3cdaaaa0fc400b63f52f4dbb007fa0b69939e0ab
         with:
           scan-scope: "changed"
-          severity-level: "HIGH"
-          confidence-level: "HIGH"
+          severity-level: "LOW"
+          confidence-level: "LOW"
           config_file: ".github/bandit_config.yml"
           fail-on-findings: true

@@ -58,7 +58,6 @@ jobs:
           config_file: ".github/bandit_config.yml"
           fail-on-findings: false # reports only
 
-  # TODO: unify approach and migrate to reusable workflows/composite actions
   trivy-scan:
     runs-on: ubuntu-latest
     permissions:
@@ -74,13 +73,15 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Trivy vulnerability scanner in config mode
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
+        uses: open-edge-platform/geti-ci/actions/trivy@3cdaaaa0fc400b63f52f4dbb007fa0b69939e0ab
         with:
-          scan-type: "config"
-          scan-ref: "."
-          format: sarif
-          trivy-config: ".github/trivy_config.yml"
-          output: "trivy-results.sarif"
+          scan_type: "fs"
+          scan-scope: all
+          severity: "LOW"
+          scanners: "vuln,secret,config"
+          format: "sarif"
+          timeout: "15m"
+          ignore_unfixed: "true"
       - name: Upload to code-scanning
         uses: github/codeql-action/upload-sarif@fe4161a26a8629af62121b670040955b330f9af2 # v4.31.6
         with:
