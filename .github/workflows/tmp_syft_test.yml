@@ -28,5 +28,5 @@ jobs:
             exit 1
           fi
           tar -zxvf syft_${VERSION}_${OS}_${ARCH}.tar.gz -C /usr/local/bin/ syft
-          echo "Syft $(syft version) installed successfully"
+          echo "Syft $(syft --version) installed successfully"
           syft ghcr.io/open-edge-platform/geti/account-service:2.14.0-2bff6fc2
