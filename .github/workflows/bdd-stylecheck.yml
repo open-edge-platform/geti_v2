@@ -48,8 +48,8 @@ jobs:
       - name: Install swagger-cli and openapi-generator-cli
         run: |
           npm config set registry "http://registry.npmjs.org/"
-          npm install -g @apidevtools/swagger-cli
-          npm install -g @openapitools/openapi-generator-cli
+          npm install -g @apidevtools/swagger-cli@4.0.4
+          npm install -g @openapitools/openapi-generator-cli@2.25.0
 
       - name: Static code analysis
         working-directory: interactive_ai/tests/e2e
