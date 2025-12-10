@@ -79,7 +79,7 @@ jobs:
             exit 1
           fi
           tar -zxvf syft_${VERSION}_${OS}_${ARCH}.tar.gz -C /usr/local/bin/ syft
-          echo "Syft $(syft version) installed successfully"
+          echo "Syft $(syft --version) installed successfully"
 
           NAME=$(echo "$TARGET" | cut -d'/' -f 4 | cut -d':' -f 1)
           echo "name=$NAME" >> $GITHUB_ENV
