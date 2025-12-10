@@ -204,7 +204,7 @@ jobs:
     needs: get-vars
     permissions:
       contents: read
-      packages: write
+      packages: write # to publish packages
     uses: ./.github/workflows/component.yml
     if: ${{ !contains(needs.get-vars.outputs.filtered-components-list, '[]') }}
     strategy:
@@ -224,7 +224,7 @@ jobs:
     needs: get-vars
     permissions:
       contents: read
-      packages: write
+      packages: write # to publish packages
     uses: ./.github/workflows/web-ui.yml
     if: ${{ contains(needs.get-vars.outputs.components-list, 'web_ui') }}
     with:
@@ -240,7 +240,7 @@ jobs:
       - web-ui-workflow
     permissions:
       contents: read
-      packages: write
+      packages: write # to publish packages
     uses: ./.github/workflows/package-distribution.yaml
     with:
       build_all: ${{ fromJSON(needs.get-vars.outputs.build_all) }} # fromJSON is required to cast string to boolean
@@ -257,7 +257,7 @@ jobs:
       - web-ui-workflow
       - package-distribution-workflow
     permissions:
-      discussions: write
+      discussions: write # to publish discussion/daily build
     runs-on: ubuntu-latest
     if: ${{ always() && !cancelled() }}
     env:

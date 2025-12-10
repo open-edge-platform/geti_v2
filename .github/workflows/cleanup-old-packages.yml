@@ -1,12 +1,12 @@
 # GHCR cleanup workflow
 #
 # This workflow deletes untagged and old package daily builds from GHCR registry.
-# 
+#
 # Key Features:
 # - Deletes untagged and old package daily builds from GHCR registry
 # - Can be triggered manually or by other workflows
 # - Supports dry run mode to preview changes
-# 
+#
 # Process Stages:
 # 1. Prepare list of package versions to delete
 # 2. Delete old package versions
@@ -59,17 +59,17 @@ on:
         type: boolean
         default: true
 
-permissions:
-  contents: read
-  packages: write
+permissions: {} # No permissions by default on workflow level
 
 jobs:
   prepare-vars:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Prepare list of package ids to delete
         id: prepare-versions
-        env: 
+        env:
           MIN_VERSIONS_TO_KEEP: ${{ github.event.inputs.min_versions_to_keep }}
           PACKAGE_NAME: ${{ github.event.inputs.package_name }}
           GH_TOKEN: ${{ secrets.GHCR_CLEANUP_TOKEN }}
@@ -112,18 +112,18 @@ jobs:
 
       - name: Cleanup old packages
         if: ${{ github.event.inputs.dry_run != 'true' && steps.prepare-versions.outputs.package_version_ids != '' }}
-        uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55  # v5.0.0
+        uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
         with:
-          package-name: '${{ github.event.inputs.package_name }}'
-          package-type: 'container'
-          package-version-ids: '${{ steps.prepare-versions.outputs.package_version_ids }}'
+          package-name: "${{ github.event.inputs.package_name }}"
+          package-type: "container"
+          package-version-ids: "${{ steps.prepare-versions.outputs.package_version_ids }}"
           token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
 
       - name: Cleanup untagged packages
         if: ${{ github.event.inputs.dry_run != 'true' }}
-        uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55  # v5.0.0
+        uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
         with:
-          package-name: '${{ github.event.inputs.package_name }}'
-          package-type: 'container'
+          package-name: "${{ github.event.inputs.package_name }}"
+          package-type: "container"
           token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
           delete-only-untagged-versions: true

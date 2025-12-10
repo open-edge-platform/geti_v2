@@ -270,7 +270,7 @@ jobs:
     needs: [lint, unit-tests, merge-playwright-reports]
     permissions:
       contents: read # to checkout code
-      packages: write
+      packages: write # to publish packages
     uses: ./.github/workflows/component.yml
     with:
       build_version: ${{ inputs.build_version }}
