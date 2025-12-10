@@ -2,7 +2,7 @@ module media
 
 go 1.23.3
 
-toolchain go1.23.12
+toolchain go1.24.11
 
 replace geti.com/iai_core => ./../../libs/iai_core_go
 
@@ -26,7 +26,6 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
-	github.com/containerd/containerd v1.7.27 // indirect
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/containerd/platforms v0.2.1 // indirect
 	github.com/cpuguy83/dockercfg v0.3.2 // indirect

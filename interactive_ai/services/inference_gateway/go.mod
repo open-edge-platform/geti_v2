@@ -2,7 +2,7 @@ module inference_gateway
 
 go 1.23.3
 
-toolchain go1.23.12
+toolchain go1.24.11
 
 replace (
 	geti.com/iai_core => ./../../libs/iai_core_go
@@ -86,6 +86,5 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241202173237-19429a94021a // indirect
 	google.golang.org/protobuf v1.35.2 // indirect
 	gopkg.in/validator.v2 v2.0.1 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
