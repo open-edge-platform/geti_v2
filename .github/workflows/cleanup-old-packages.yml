@@ -65,8 +65,7 @@ jobs:
   prepare-vars:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      packages: write # to delete package old versions
 
     steps:
       - name: Prepare list of package ids to delete
