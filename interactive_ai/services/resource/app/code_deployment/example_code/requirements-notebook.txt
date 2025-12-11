@@ -1,7 +1,7 @@
 # Requirements for running the `demo_notebook.ipynb` Jupyter notebook
 geti-sdk~=2.13
-jupyterlab>=3.6
+jupyterlab>=4.4.8
 opencv-python>=4.10
-Pillow>=9.4.0
+Pillow>=10.3.0
 ipython>=8.10.0
 ipywidgets~=8.1

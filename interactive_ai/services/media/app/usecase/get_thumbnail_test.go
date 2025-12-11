@@ -4,7 +4,6 @@
 package usecase
 
 import (
-	"context"
 	"errors"
 	"image"
 	"io"
@@ -32,7 +31,7 @@ func TestGetOrCreateThumbnail(t *testing.T) {
 	mockRepo := storage.NewMockImageRepository(t)
 	mockCropper := service.NewMockCropper(t)
 
-	ctx := context.Background()
+	ctx := t.Context()
 	fullImageID := testhelper.GetFullImageID(t)
 	img := image.NewRGBA(image.Rect(0, 0, 100, 100))
 	file, size := readImage(t)

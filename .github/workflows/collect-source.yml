@@ -65,7 +65,22 @@ jobs:
           TARGET: ${{ matrix.target }}
         run: |
           # install Syft
-          curl -sSfL https://get.anchore.io/syft | sudo sh -s -- -b /usr/local/bin
+
+          VERSION=1.38.2
+          OS=linux
+          ARCH=amd64
+          BASE_URL="https://github.com/anchore/syft/releases/download/v${VERSION}"
+          curl -sL "${BASE_URL}/syft_${VERSION}_${OS}_${ARCH}.tar.gz" > syft_${VERSION}_${OS}_${ARCH}.tar.gz
+          curl -sL "${BASE_URL}/syft_${VERSION}_checksums.txt" | grep -E "syft_${VERSION}_${OS}_${ARCH}\\.tar\\.gz$" > checkSum.txt
+          if [ -s checkSum.txt ]; then
+            sha256sum -c checkSum.txt
+          else
+            echo "Checksum file not found or empty"
+            exit 1
+          fi
+          tar -zxvf syft_${VERSION}_${OS}_${ARCH}.tar.gz -C /usr/local/bin/ syft
+          echo "Syft $(syft --version) installed successfully"
+
           NAME=$(echo "$TARGET" | cut -d'/' -f 4 | cut -d':' -f 1)
           echo "name=$NAME" >> $GITHUB_ENV
 
@@ -118,43 +133,43 @@ jobs:
     container:
       image: debian:bookworm-slim@sha256:b4aa902587c2e61ce789849cb54c332b0400fe27b1ee33af4669e1f7e7c3e22f
     steps:
-    - name: Add apt sources for deb-src
-      shell: bash
-      run: |
-        sed -Ei "s/^Types: deb$/Types: deb deb-src/" /etc/apt/sources.list.d/debian.sources
-        apt-get update
+      - name: Add apt sources for deb-src
+        shell: bash
+        run: |
+          sed -Ei "s/^Types: deb$/Types: deb deb-src/" /etc/apt/sources.list.d/debian.sources
+          apt-get update
 
-    - name: Find GPL/MPL licensed packages
-      shell: bash
-      env:
-        PACKAGES: ${{ needs.get-unique-names.outputs.unique_package_names_oneline }}
-      run: |
-        OUTPUT_DIR="output"
-        ARCHIVE_NAME="source_code.tar.gz"
-        mkdir -p "$OUTPUT_DIR"
-        cd "$OUTPUT_DIR"
-        # Split comma-separated list into an array
-        IFS=',' read -r -a PACKAGES_ARR <<< "$PACKAGES"
-        # Collect missing packages
-        # Install GNU Parallel for faster downloads
-        apt-get update && apt-get install -y parallel
+      - name: Find GPL/MPL licensed packages
+        shell: bash
+        env:
+          PACKAGES: ${{ needs.get-unique-names.outputs.unique_package_names_oneline }}
+        run: |
+          OUTPUT_DIR="output"
+          ARCHIVE_NAME="source_code.tar.gz"
+          mkdir -p "$OUTPUT_DIR"
+          cd "$OUTPUT_DIR"
+          # Split comma-separated list into an array
+          IFS=',' read -r -a PACKAGES_ARR <<< "$PACKAGES"
+          # Collect missing packages
+          # Install GNU Parallel for faster downloads
+          apt-get update && apt-get install -y parallel
 
-        # Download sources for GPL/MPL packages in parallel with error handling
-        if [ ${#PACKAGES_ARR[@]} -gt 0 ]; then
-          export OUTPUT_DIR
-          printf "%s\n" "${PACKAGES_ARR[@]}" | parallel --jobs 4 '
-            echo "Downloading source for {}"
-            if ! apt-get source -q --download-only "{}"; then
-              echo "Warning: Source not available for {}" >&2
-            fi
-          '
-        fi
-        cd ..
-        tar -czf "$ARCHIVE_NAME" -C "$OUTPUT_DIR" .
+          # Download sources for GPL/MPL packages in parallel with error handling
+          if [ ${#PACKAGES_ARR[@]} -gt 0 ]; then
+            export OUTPUT_DIR
+            printf "%s\n" "${PACKAGES_ARR[@]}" | parallel --jobs 4 '
+              echo "Downloading source for {}"
+              if ! apt-get source -q --download-only "{}"; then
+                echo "Warning: Source not available for {}" >&2
+              fi
+            '
+          fi
+          cd ..
+          tar -czf "$ARCHIVE_NAME" -C "$OUTPUT_DIR" .
 
-    - name: Upload source code archive
-      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
-      with:
-        name: source-code-archive
-        path: source_code.tar.gz
-        retention-days: 3
+      - name: Upload source code archive
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: source-code-archive
+          path: source_code.tar.gz
+          retention-days: 3
