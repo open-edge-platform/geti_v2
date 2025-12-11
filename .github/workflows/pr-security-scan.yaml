@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - main
-      - "releases/**"
+      - release**
   merge_group:
     branches:
       - main
