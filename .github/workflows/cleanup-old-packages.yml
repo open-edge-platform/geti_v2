@@ -66,6 +66,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: write
+
     steps:
       - name: Prepare list of package ids to delete
         id: prepare-versions
