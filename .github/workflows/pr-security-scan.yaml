@@ -5,6 +5,14 @@ on:
     branches:
       - main
       - "releases/**"
+  merge_group:
+    branches:
+      - main
+      - release**
+
+concurrency:
+  group: ${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions: {}
 
