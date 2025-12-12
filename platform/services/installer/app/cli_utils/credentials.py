@@ -22,10 +22,10 @@ def generate_password() -> str:
     Generate password. Security guide: 10 characters minimum, at least one capital letter,
     at least one numeral, and at least one special character
     """
-    lower = random.sample(string.ascii_lowercase, 4)
-    upper = random.sample(string.ascii_uppercase, 4)
-    numeral = random.sample(string.digits, 4)
-    symbols = random.sample(ALLOWED_SPECIAL_CHARACTERS, 4)
+    lower = "".join(secrets.choice(string.ascii_lowercase) for _ in range(4))
+    upper = "".join(secrets.choice(string.ascii_uppercase) for _ in range(4))
+    numeral = "".join(secrets.choice(string.digits) for _ in range(4))
+    symbols = "".join(secrets.choice(ALLOWED_SPECIAL_CHARACTERS) for _ in range(4))
     password = [*lower, *upper, *numeral, *symbols]
     random.shuffle(password)
     return "".join(password)

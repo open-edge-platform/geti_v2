@@ -52,7 +52,7 @@
   postUpdateOptions: ["gomodTidy", "gomodUpdateImportPaths"],
 
   packageRules: [
-    // Enable pinning for container images
+    // Enable pinning for container images (main and supported release branches)
     // https://docs.renovatebot.com/presets-docker/#dockerpindigests
     {
       enabled: true,
@@ -63,7 +63,7 @@
       schedule: ["* * * * 0"], // weekly
     },
 
-    // Base images from dev_tools/builder_images
+    // Base images from dev_tools/builder_images (main branch)
     // are upgraded separately as it requires two steps
     {
       enabled: true,
@@ -73,6 +73,16 @@
       groupSlug: "pin-builders",
       schedule: ["* * 1 * *"], // every month
       matchPaths: ["dev_tools/builder_images/**"],
+      matchBaseBranches: ["main"],
+    },
+
+    // Disable dev_tools/builder_images images upgrades
+    // for non-main branch
+    {
+      enabled: false,
+      matchDatasources: ["docker"],
+      matchPaths: ["dev_tools/builder_images/**"],
+      matchBaseBranches: ["!main"],
     },
 
     // Disable non-security upgrades for go and npm.
@@ -155,7 +165,7 @@
       matchUpdateTypes: ["major", "minor", "patch"],
     },
 
-    // Group GitHub Actions updates
+    // Group GitHub Actions updates for main branch
     {
       enabled: true,
       separateMajorMinor: false,
@@ -163,6 +173,14 @@
       matchManagers: ["github-actions"],
       matchPackagePatterns: ["*"],
       schedule: ["* * 1,15 * *"], // twice a month
+      matchBaseBranches: ["main"],
+    },
+
+    // Disable upgrades for non-main branches
+    {
+      enabled: false,
+      matchManagers: ["github-actions"],
+      matchBaseBranches: ["!main"],
     },
 
     // Go version used in GitHub Actions is updated manually
@@ -190,7 +208,7 @@
       matchUpdateTypes: ["major", "minor", "patch"],
     },
 
-    // Group Go version upgrades
+    // Group Go version upgrades for main branch
     {
       enabled: true,
       matchPackageNames: ["golang", "go"],
@@ -198,6 +216,19 @@
       groupName: "Go version",
       groupSlug: "go-version",
       schedule: ["* * * * 0"], // weekly
+      matchBaseBranches: ["main"],
+    },
+
+    // Group Go version upgrades for supported release branch
+    // with necessary restrictions
+    {
+      enabled: true,
+      matchPackageNames: ["golang", "go"],
+      allowedVersions: "<1.24",
+      groupName: "Go version",
+      groupSlug: "go-version",
+      schedule: ["* * * * 0"], // weekly
+      matchBaseBranches: ["release-2.13"],
     },
 
     // Restrict uv version used in workflows, it will be updated manually

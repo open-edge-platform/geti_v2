@@ -59,7 +59,7 @@ jobs:
           fail-on-findings: false # reports only
 
   # TODO: unify approach and migrate to reusable workflows/composite actions
-  trivy-scan:
+  trivy-scan-config:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -85,3 +85,27 @@ jobs:
         uses: github/codeql-action/upload-sarif@fe4161a26a8629af62121b670040955b330f9af2 # v4.31.6
         with:
           sarif_file: "trivy-results.sarif"
+
+  trivy-scan-lock:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
+        with:
+          egress-policy: audit
+      - name: Checkout code
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: false
+      - name: Run Trivy vulnerability scanner in vuln/secret modes
+        uses: open-edge-platform/geti-ci/actions/trivy@3cdaaaa0fc400b63f52f4dbb007fa0b69939e0ab
+        with:
+          scan_type: "fs"
+          scan-scope: all
+          severity: "LOW"
+          scanners: "vuln,secret"
+          format: "table" # Use plain text output format to omit uploading code scanning results to Security tab
+          timeout: "15m"
+          ignore_unfixed: "true"

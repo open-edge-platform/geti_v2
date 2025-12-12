@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      packages: write # to publish packages
     timeout-minutes: 30
     env:
       TAG: ${{ inputs.build_version || github.sha }}

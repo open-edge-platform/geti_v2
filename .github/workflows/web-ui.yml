@@ -26,7 +26,6 @@
 # - registry: The container registry to push images to
 #
 
-
 name: Web UI checks
 
 on:
@@ -171,7 +170,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.55.0-jammy@sha256:55db7b712a981e9cc1ec757a4511cd01c5ed4e20bd7c84b2dee4e1d320102b9d
+      image: mcr.microsoft.com/playwright:v1.57.0-jammy@sha256:6aca677c27a967caf7673d108ac67ffaf8fed134f27e17b27a05464ca0ace831
     strategy:
       fail-fast: false
       matrix:
@@ -270,7 +269,7 @@ jobs:
     needs: [lint, unit-tests, merge-playwright-reports]
     permissions:
       contents: read # to checkout code
-      packages: write
+      packages: write # to publish packages
     uses: ./.github/workflows/component.yml
     with:
       build_version: ${{ inputs.build_version }}

@@ -60,7 +60,7 @@ jobs:
     if: ${{ inputs.build_all }}
     permissions:
       contents: read
-      packages: write
+      packages: write # to publish packages
     env:
       TAG: ${{ inputs.build_version }}
       PLATFORM_VERSION: ${{ inputs.platform_version }}

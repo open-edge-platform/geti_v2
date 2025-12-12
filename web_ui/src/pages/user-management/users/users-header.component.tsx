@@ -12,7 +12,6 @@ import { RolePicker } from './old-project-users/role-picker.component';
 import { UsersCount } from './workspace-users/users-count.component';
 
 interface WorkspaceUsersHeaderProps {
-    totalCount: number;
     totalMatchedCount: number;
     hasFilterOptions: boolean;
     setUsersQueryParams: Dispatch<SetStateAction<UsersQueryParams>>;
@@ -22,7 +21,6 @@ interface WorkspaceUsersHeaderProps {
 
 export const UsersHeader = ({
     totalMatchedCount,
-    totalCount,
     hasFilterOptions,
     setUsersQueryParams,
     usersTableType = RESOURCE_TYPE.ORGANIZATION,
@@ -96,7 +94,7 @@ export const UsersHeader = ({
                 {actionsSlot}
                 <UsersCount
                     totalMatchedCount={totalMatchedCount}
-                    totalCount={totalCount}
+                    totalCount={totalMatchedCount}
                     hasFilters={hasFilterOptions}
                     id={'users-header-users-count'}
                 />
