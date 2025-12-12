@@ -20,6 +20,6 @@ web_ui/ @jpggvilaca @MarkRedeman @camiloHimura @pplaskie @ActiveChooN @romanowsk
 .github/actions/ @open-edge-platform/geti-ci-maintain
 .github/bandit_config.yml @open-edge-platform/geti-ci-maintain
 .github/renovate.json5 @open-edge-platform/geti-ci-maintain
-.github/trivy_config.yml@open-edge-platform/geti-ci-maintain
+.github/trivy_config.yml @open-edge-platform/geti-ci-maintain
 .github/trivyignore.yml @open-edge-platform/geti-ci-maintain
 security.md @open-edge-platform/geti-ci-maintain
