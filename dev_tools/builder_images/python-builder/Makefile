@@ -4,5 +4,5 @@
 include ../Makefile.shared-builders
 
 BUILDER_IMAGE_NAME = python-builder
-BUILDER_TAG = v1.0.1
+BUILDER_TAG = v1.0.2
 DOCKER_IMAGE_DESCRIPTION := Python builder image for Geti
