@@ -78,7 +78,7 @@ jobs:
 
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
         with:
           egress-policy: audit
 
@@ -127,7 +127,7 @@ jobs:
           echo "registry=$registry"
 
       - name: Checkout code
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -265,7 +265,7 @@ jobs:
       BUILD_VERSION: ${{ needs.get-vars.outputs.build_version }}
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
         with:
           egress-policy: audit
       - name: Check
@@ -323,7 +323,7 @@ jobs:
       - name: Create discussion
         if: github.event_name == 'schedule'
         id: create-discussion
-        uses: octokit/graphql-action@abaeca7ba4f0325d63b8de7ef943c2418d161b93 # v3.0.0
+        uses: octokit/graphql-action@ddde8ebb2493e79f390e6449c725c21663a67505 # v3.0.2
         with:
           query: |
             mutation($repoId: ID!, $categoryId: ID!, $title: String!, $body: String!) {

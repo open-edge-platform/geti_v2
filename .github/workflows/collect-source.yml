@@ -92,7 +92,7 @@ jobs:
           ] | unique[]' > pkg_list_$NAME.txt
 
       - name: Upload packages list
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: pkg_list_${{ env.name }}
           path: pkg_list_*
@@ -112,7 +112,7 @@ jobs:
 
       # Download all reports
       - name: Download all reports
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: "pkg_list_*"
           merge-multiple: true
@@ -131,7 +131,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: get-unique-names
     container:
-      image: debian:bookworm-slim@sha256:b4aa902587c2e61ce789849cb54c332b0400fe27b1ee33af4669e1f7e7c3e22f
+      image: debian:bookworm-slim@sha256:e899040a73d36e2b36fa33216943539d9957cba8172b858097c2cabcdb20a3e2
     steps:
       - name: Add apt sources for deb-src
         shell: bash
@@ -168,7 +168,7 @@ jobs:
           tar -czf "$ARCHIVE_NAME" -C "$OUTPUT_DIR" .
 
       - name: Upload source code archive
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: source-code-archive
           path: source_code.tar.gz
