@@ -3,7 +3,7 @@
 
 import fs from 'fs';
 
-import { Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 import { expectToBeDownloaded } from '../../utils/expects';
 
@@ -34,7 +34,9 @@ class ChartPage {
 
     private async downloadChart(format: string) {
         await this.openChartMenu();
-        await this.getDownloadMenuOption(format).click();
+        const menuItem = this.getDownloadMenuOption(format);
+        await menuItem.click();
+        await expect(menuItem).toBeHidden();
     }
 
     async downloadPDF() {
@@ -140,6 +142,10 @@ export class TextChartPage {
 
     async downloadPDF() {
         await this.chartPage.downloadPDF();
+    }
+
+    async downloadCSV() {
+        await this.chartPage.downloadCSV();
     }
 
     async downloadAndReadCSV() {

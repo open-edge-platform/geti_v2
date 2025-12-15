@@ -21,6 +21,7 @@ LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 [![python](https://img.shields.io/badge/python-3.10%2B-green)]()
 [![pytorch](https://img.shields.io/badge/pytorch-2.5%2B-orange)]()
 [![openvino](https://img.shields.io/badge/openvino-2025.1.0-purple)]()
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/open-edge-platform/geti/badge)](https://securityscorecards.dev/viewer/?uri=github.com/open-edge-platform/geti)
 
 </div>
 
