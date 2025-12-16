@@ -4,7 +4,6 @@
 package controller
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -19,6 +18,7 @@ import (
 	"geti.com/iai_core/testhelper"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
 	"media/app/usecase"
 )
@@ -32,7 +32,6 @@ func readImage(t *testing.T) *os.File {
 func TestImageController(t *testing.T) {
 	fullImageID := testhelper.GetFullImageID(t)
 
-	ctx := context.Background()
 	mockImageRepo := storage.NewMockImageRepository(t)
 	mockGetThumbUC := usecase.NewMockIGetOrCreateThumbnail(t)
 
@@ -51,7 +50,7 @@ func TestImageController(t *testing.T) {
 				fullImageID.ProjectID, fullImageID.DatasetID, fullImageID.ImageID),
 			setupMocks: func() {
 				mockImageRepo.EXPECT().
-					LoadImageByID(ctx, fullImageID).
+					LoadImageByID(mock.Anything, fullImageID).
 					Return(readImage(t), sdkendities.NewObjectMetadata(0, "image/jpeg"), nil).
 					Once()
 			},
@@ -64,7 +63,7 @@ func TestImageController(t *testing.T) {
 				"projects/65c497ad388f69938228908b/datasets/65c497ad388f699382289091/media/images/65c4987280b55559653d79257177/display/full",
 			setupMocks: func() {
 				mockImageRepo.EXPECT().
-					LoadImageByID(ctx, fullImageID).
+					LoadImageByID(mock.Anything, fullImageID).
 					Return(readImage(t), nil, nil).
 					Maybe()
 			},
@@ -80,7 +79,7 @@ func TestImageController(t *testing.T) {
 				fullImageID.ProjectID, fullImageID.DatasetID, fullImageID.ImageID),
 			setupMocks: func() {
 				mockImageRepo.EXPECT().
-					LoadImageByID(ctx, fullImageID).
+					LoadImageByID(mock.Anything, fullImageID).
 					Return(io.NopCloser(nil), nil, errors.New("cannot read image")).
 					Once()
 			},
@@ -93,7 +92,7 @@ func TestImageController(t *testing.T) {
 				fullImageID.ProjectID, fullImageID.DatasetID, fullImageID.ImageID),
 			setupMocks: func() {
 				mockGetThumbUC.EXPECT().
-					Execute(ctx, fullImageID).
+					Execute(mock.Anything, fullImageID).
 					Return(readImage(t), sdkendities.NewObjectMetadata(0, "image/jpeg"), nil).
 					Once()
 			},
@@ -106,7 +105,7 @@ func TestImageController(t *testing.T) {
 				"projects/65c497ad388f69938228908b/datasets/65c497ad388f699382289091/media/images/65c4987280b55559653d7925/display/thumb",
 			setupMocks: func() {
 				mockGetThumbUC.EXPECT().
-					Execute(ctx, fullImageID).
+					Execute(mock.Anything, fullImageID).
 					Return(readImage(t), sdkendities.NewObjectMetadata(0, "image/jpeg"), nil).
 					Maybe()
 			},
@@ -122,7 +121,7 @@ func TestImageController(t *testing.T) {
 				fullImageID.ProjectID, fullImageID.DatasetID, fullImageID.ImageID),
 			setupMocks: func() {
 				mockGetThumbUC.EXPECT().
-					Execute(ctx, fullImageID).
+					Execute(mock.Anything, fullImageID).
 					Return(io.NopCloser(nil), nil, &usecase.NotFoundError{Message: "not_found"}).
 					Once()
 			},
@@ -135,7 +134,7 @@ func TestImageController(t *testing.T) {
 				fullImageID.ProjectID, fullImageID.DatasetID, fullImageID.ImageID),
 			setupMocks: func() {
 				mockGetThumbUC.EXPECT().
-					Execute(ctx, fullImageID).
+					Execute(mock.Anything, fullImageID).
 					Return(io.NopCloser(nil), nil, errors.New("error")).
 					Once()
 			},

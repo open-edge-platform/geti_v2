@@ -95,7 +95,6 @@ export const Users = ({
             <Flex direction={'column'}>
                 <UsersHeader
                     totalMatchedCount={totalMatchedCount}
-                    totalCount={totalCount}
                     hasFilterOptions={hasFilters}
                     setUsersQueryParams={setUsersQueryParams}
                     usersTableType={usersTableType}

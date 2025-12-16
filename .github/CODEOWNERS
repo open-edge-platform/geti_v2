@@ -15,5 +15,11 @@ docs/rest_api/ @open-edge-platform/geti-core-backend-write
 # UI components
 web_ui/ @jpggvilaca @MarkRedeman @camiloHimura @pplaskie @ActiveChooN @romanowska @dwesolow
 
-# CI
-.github/workflows/ @kamillipka @mramotowski @ivanzati @AlexanderBarabanov
+# CI and security
+.github/workflows/ @open-edge-platform/geti-ci-maintain
+.github/actions/ @open-edge-platform/geti-ci-maintain
+.github/bandit_config.yml @open-edge-platform/geti-ci-maintain
+.github/renovate.json5 @open-edge-platform/geti-ci-maintain
+.github/trivy_config.yml @open-edge-platform/geti-ci-maintain
+.github/trivyignore.yml @open-edge-platform/geti-ci-maintain
+security.md @open-edge-platform/geti-ci-maintain

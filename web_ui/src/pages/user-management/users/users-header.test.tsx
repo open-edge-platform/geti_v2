@@ -8,14 +8,7 @@ import { UsersHeader } from './users-header.component';
 
 describe('UsersHeader', () => {
     it('Check all users header elements', async () => {
-        render(
-            <UsersHeader
-                totalMatchedCount={2}
-                totalCount={3}
-                hasFilterOptions={false}
-                setUsersQueryParams={jest.fn()}
-            />
-        );
+        render(<UsersHeader totalMatchedCount={2} hasFilterOptions={false} setUsersQueryParams={jest.fn()} />);
 
         expect(screen.getByTestId('users-header-search-field')).toBeInTheDocument();
         expect(screen.getByTestId('users-header-role-picker')).toBeInTheDocument();

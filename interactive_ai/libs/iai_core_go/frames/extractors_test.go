@@ -4,7 +4,6 @@
 package frames
 
 import (
-	"context"
 	"io"
 	"testing"
 
@@ -24,7 +23,7 @@ func BenchmarkExtractFramesCLI(b *testing.B) {
 		b.Skip()
 	}
 	frameReader := new(FramerReaderImpl)
-	video := entities.NewVideo(context.Background(), VPath)
+	video := entities.NewVideo(b.Context(), VPath)
 	for range b.N {
 		for j := range (end-start)/skip + 1 {
 			_, err := frameReader.ReadFrameToBufferFps(video.FilePath, start+skip*j, video.FPS)
@@ -37,7 +36,7 @@ func BenchmarkExtractFramesCLIPipe(b *testing.B) {
 	if testing.Short() {
 		b.Skip()
 	}
-	ctx := context.Background()
+	ctx := b.Context()
 	frameExtractor := NewFFmpegCLIFrameExtractor()
 	video := entities.NewVideo(ctx, VPath)
 	for range b.N {

@@ -1,6 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import * as OpenCVTypes from 'OpenCVTypes';
+
 /// <reference lib="webworker" />
 /// <reference path="scalars.d.ts" />
 /// <reference path="constants.d.ts" />

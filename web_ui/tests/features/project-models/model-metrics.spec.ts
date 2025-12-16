@@ -69,6 +69,8 @@ test.describe('Model metrics', () => {
         await expect(modelMetricsPage.getModelTrainingTime()).toContainText('00:04:26');
         await expect(modelMetricsPage.getJobDuration()).toContainText('00:08:22');
 
+        await expectToBeDownloaded(page, () => modelMetricsPage.downloadAll(), 60_000);
+
         for (const chart of metricsWithoutTrainingTime) {
             if (chart.type === 'bar') {
                 const barChart = modelMetricsPage.getBarChart(chart.header);
@@ -106,7 +108,7 @@ test.describe('Model metrics', () => {
                 await expect(textChart.getChart()).toBeVisible();
                 await expect(textChart.getChart()).toContainText(chart.value.toString());
 
-                await expectToBeDownloaded(page, () => textChart.downloadPDF());
+                await expectToBeDownloaded(page, () => textChart.downloadCSV());
             } else if (chart.type === 'line') {
                 const lineChart = modelMetricsPage.getLineChart(chart.header);
                 await expectLineChartToBeVisible({ lineChart, chart });
@@ -121,8 +123,6 @@ test.describe('Model metrics', () => {
                 await lineChartInFullScreen.closeFullScreen();
             }
         }
-
-        await expectToBeDownloaded(page, () => modelMetricsPage.downloadAll());
     });
 
     test('Downloads CSV with model metrics', async ({ modelMetricsPage, registerApiResponse }) => {

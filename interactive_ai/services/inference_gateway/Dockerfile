@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # Builder image
-FROM golang:1.23.12@sha256:60deed95d3888cc5e4d9ff8a10c54e5edc008c6ae3fba6187be6fb592e19e8c0 AS build
+FROM golang:1.24.10@sha256:7b13449f08287fdb53114d65bdf20eb3965e4e54997903b5cb9477df0ea37c12 AS build
 
 WORKDIR /build/interactive_ai/service
 
@@ -32,7 +32,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     go-licenses save . --save_path /THIRD_PARTY_NOTICES || true
 
 # Production image
-FROM debian:bookworm-slim@sha256:b4aa902587c2e61ce789849cb54c332b0400fe27b1ee33af4669e1f7e7c3e22f AS runtime
+FROM debian:bookworm-slim@sha256:e899040a73d36e2b36fa33216943539d9957cba8172b858097c2cabcdb20a3e2 AS runtime
 
 # Install ffmpeg
 RUN apt-get update && \

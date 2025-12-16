@@ -44,7 +44,7 @@ modelserver:
   image:
     registry: docker.io
     repository: openvino
-    name: model_server:2025.3
+    name: model_server:2025.4
 
 controllerResources:
   requests:

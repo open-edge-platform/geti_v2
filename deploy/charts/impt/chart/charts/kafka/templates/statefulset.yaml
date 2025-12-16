@@ -15,7 +15,32 @@ spec:
       labels:
         {{- include "kafka.labels" . | nindent 8 }}
     spec:
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ include "kafka.fullname" . }}
+      initContainers:
+        - args:
+            - -ec
+            - |
+              mkdir -p /data-folder/kafka/data
+              find /data-folder/kafka -type d -exec chown -v 10001 {} +
+          command:
+            - /bin/bash
+          image: "{{ .Values.image.registry }}/{{ if .Values.image.repository }}{{ .Values.image.repository }}/{{ end }}{{ .Values.image.name }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: volume-permissions
+          resources:
+            limits:
+              memory: 100Mi
+            requests:
+              cpu: 50m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - mountPath: /data-folder
+              name: kafka-data
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.registry }}/{{ if .Values.image.repository }}{{ .Values.image.repository }}/{{ end }}{{ .Values.image.name }}"
@@ -93,7 +118,7 @@ spec:
             - name: KAFKA_SHARE_COORDINATOR_STATE_TOPIC_MIN_ISR
               value: "1"
             - name: KAFKA_LOG_DIRS
-              value: '/tmp/kraft-combined-logs'
+              value: '/var/lib/kafka/data'
             - name: KAFKA_SASL_ENABLED_MECHANISMS
               value: "PLAIN"
             - name: KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL
@@ -120,6 +145,9 @@ spec:
               mountPath: /etc/kafka/scripts/
             - name: tmp
               mountPath: /tmp
+            - mountPath: /var/lib/kafka/data
+              name: kafka-data
+              subPath: kafka/data
       volumes:
         - name: config
           configMap:
@@ -127,3 +155,6 @@ spec:
             defaultMode: 365
         - name: tmp
           emptyDir: {}
+        - name: kafka-data
+          persistentVolumeClaim:
+            claimName: data-storage-volume-claim

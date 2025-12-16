@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # Builder image
-FROM golang:1.23.12@sha256:60deed95d3888cc5e4d9ff8a10c54e5edc008c6ae3fba6187be6fb592e19e8c0 AS build
+FROM golang:1.24.10@sha256:7b13449f08287fdb53114d65bdf20eb3965e4e54997903b5cb9477df0ea37c12 AS build
 
 WORKDIR /build/control_plane/account_service
 
@@ -31,7 +31,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     go-licenses save . --save_path /THIRD_PARTY_NOTICES || true
 
 # Production image
-FROM gcr.io/distroless/static-debian12:nonroot@sha256:e8a4044e0b4ae4257efa45fc026c0bc30ad320d43bd4c1a7d5271bd241e386d0 AS runtime
+FROM gcr.io/distroless/static-debian12:nonroot@sha256:2b7c93f6d6648c11f0e80a48558c8f77885eb0445213b8e69a6a0d7c89fc6ae4 AS runtime
 
 COPY --link --from=build /build/control_plane/account_service/account_service .
 COPY --from=build /THIRD_PARTY_NOTICES /THIRD_PARTY_NOTICES

@@ -116,7 +116,7 @@ export const stackPlanes = (CV: OpenCVTypes.cv, mat: OpenCVTypes.Mat) => {
 };
 
 export const loadSource = async (source: string, cacheKey = 'general'): Promise<Response | undefined> => {
-    if (!caches) {
+    if (typeof caches === 'undefined') {
         return await self.fetch(source);
     }
 
