@@ -58,7 +58,6 @@ jobs:
           config_file: ".github/bandit_config.yml"
           fail-on-findings: false # reports only
 
-  # TODO: unify approach and migrate to reusable workflows/composite actions
   trivy-scan-config:
     runs-on: ubuntu-latest
     permissions:
@@ -74,17 +73,14 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Trivy vulnerability scanner in config mode
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
+        uses: open-edge-platform/geti-ci/actions/trivy@a79fb2f70857ef7d2b1b89fdb5632e03f40df0a1
+        id: trivy-config-scan
         with:
-          scan-type: "config"
-          scan-ref: "."
+          scan_type: "config"
           format: sarif
-          trivy-config: ".github/trivy_config.yml"
-          output: "trivy-results.sarif"
-      - name: Upload to code-scanning
-        uses: github/codeql-action/upload-sarif@1b168cd39490f61582a9beae412bb7057a6b2c4e # v4.31.8
-        with:
-          sarif_file: "trivy-results.sarif"
+          config_path: ".github/trivy_config.yml"
+          artifact-name: "trivy-config-scan"
+          misconfig_scanners: "dockerfile"
 
   trivy-scan-lock:
     runs-on: ubuntu-latest
@@ -100,7 +96,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Trivy vulnerability scanner in vuln/secret modes
-        uses: open-edge-platform/geti-ci/actions/trivy@4768cec2f0f8e7f780868dcfb8be2530d8176c06
+        uses: open-edge-platform/geti-ci/actions/trivy@a79fb2f70857ef7d2b1b89fdb5632e03f40df0a1
         with:
           scan_type: "fs"
           scan-scope: all
@@ -109,3 +105,4 @@ jobs:
           format: "table" # Use plain text output format to omit uploading code scanning results to Security tab
           timeout: "15m"
           ignore_unfixed: "true"
+          artifact-name: "trivy-lock-scan"
