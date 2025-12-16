@@ -59,6 +59,11 @@ jobs:
       matrix: ${{ fromJSON(needs.collect-images-list.outputs.images) }}
       fail-fast: false
     steps:
+      - name: Initial cleanup
+        uses: ./.github/actions/cleanup-runner
+        with:
+          type: "initial"
+
       - name: Scan ${{ matrix.target }}
         shell: bash
         env:
