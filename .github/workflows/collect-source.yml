@@ -55,10 +55,17 @@ jobs:
     needs: collect-images-list
     timeout-minutes: 660
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix: ${{ fromJSON(needs.collect-images-list.outputs.images) }}
       fail-fast: false
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: false
+
       - name: Initial cleanup
         uses: ./.github/actions/cleanup-runner
         with:
