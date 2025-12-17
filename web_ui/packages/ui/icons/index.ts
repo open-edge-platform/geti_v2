@@ -161,3 +161,8 @@ export { default as Import } from '@spectrum-icons/workflow/Import';
 export { default as Cross } from '@spectrum-icons/ui/CrossMedium';
 export { default as Pending } from '@spectrum-icons/workflow/Pending';
 export { default as Cancel } from '@spectrum-icons/workflow/Cancel';
+export { default as Gauge1 } from '@spectrum-icons/workflow/Gauge1';
+export { default as Gauge2 } from '@spectrum-icons/workflow/Gauge2';
+export { default as Gauge3 } from '@spectrum-icons/workflow/Gauge3';
+export { default as Gauge4 } from '@spectrum-icons/workflow/Gauge4';
+export { default as Gauge5 } from '@spectrum-icons/workflow/Gauge5';
