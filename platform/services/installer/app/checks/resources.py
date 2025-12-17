@@ -7,6 +7,7 @@ A module containing local resources check functions.
 
 import logging
 import os
+import re
 import subprocess
 from subprocess import CalledProcessError, TimeoutExpired
 
@@ -68,7 +69,7 @@ def _bytes_to_gigabytes(bytes_: int) -> float:
 
 def _subprocess_run(command: list[str]):
     with open(INSTALL_LOG_FILE_PATH, mode="a+") as log_file:
-        process = subprocess.run(  # noqa: S603
+        process = subprocess.run(  # noqa: S603 # nosec: B603
             command,
             check=True,
             stdout=subprocess.PIPE,
@@ -99,7 +100,7 @@ def _check_intel_driver() -> bool:
     """
     try:
         logger.debug("Checking the installed display devices with `hwinfo --display`")
-        hwinfo_output = subprocess.check_output(["hwinfo", "--display"], timeout=5).decode("utf-8")  # noqa: S607
+        hwinfo_output = subprocess.check_output(["hwinfo", "--display"], timeout=5).decode("utf-8")  # noqa: S607 # nosec: B603
         logger.debug(hwinfo_output)
         if ResourcesChecksTexts.intel_gpu_driver_displayed in hwinfo_output:
             logger.debug('hwinfo returned at least one device with Driver: "i915" displayed')
@@ -142,7 +143,7 @@ def check_gpu_driver_version(config: InstallationConfig | UpgradeConfig) -> None
     if config.gpu_provider.value == GPU_PROVIDER_NVIDIA:
         try:
             nvidia_smi_output = subprocess.check_output(
-                ["nvidia-smi", "--query-gpu=driver_version", "--format=csv,noheader,nounits"]  # noqa: S607
+                ["nvidia-smi", "--query-gpu=driver_version", "--format=csv,noheader,nounits"]  # noqa: S607 # nosec: B603
             )
             nvidia_driver_versions = nvidia_smi_output.decode("utf-8").strip().split("\n")
             for nvidia_driver_version in nvidia_driver_versions:
@@ -160,7 +161,33 @@ def check_gpu_driver_version(config: InstallationConfig | UpgradeConfig) -> None
     logger.debug("GPU driver version matched.")
 
 
-def _get_intel_gpus() -> str:
+def _check_intel_gpu_driver(env: dict[str, str]) -> bool:
+    """
+    Returns true if intel gpu driver is installed
+    """
+    try:
+        command = 'clinfo|grep "' + ResourcesChecksTexts.intel_gpu_arc_device_name + '"|grep Intel'
+        logger.debug(f"Getting the list of Intel GPU drivers with {command}")
+
+        clinfo_output = subprocess.check_output(  # noqa: S602 # nosec: B602
+            command,
+            stderr=subprocess.STDOUT,
+            shell=True,
+            timeout=5,
+            env=env,
+        ).decode("utf-8")
+        logger.debug(clinfo_output)
+        if ResourcesChecksTexts.intel_gpu_arc_device_name in clinfo_output:
+            return True
+
+    except (CalledProcessError, TimeoutExpired, FileNotFoundError) as err:
+        logger.debug(f"Checking the installed Intel GPU driver failed with {err}")
+        return False
+
+    return False
+
+
+def _get_intel_gpus() -> tuple[str, bool]:  # noqa: C901
     """
     MAX cards:
     Attempt to get Intel GPUs with xpu-smi
@@ -178,37 +205,54 @@ def _get_intel_gpus() -> str:
     # Only valid for MAX cards
     try:
         logger.debug("Getting the list of Intel GPU with `xpu-smi discovery`")
-        xpu_output = subprocess.check_output(["xpu-smi", "discovery"], timeout=5, env=env).decode("utf-8")  # noqa: S607
+        xpu_output = subprocess.check_output(["xpu-smi", "discovery"], timeout=5, env=env).decode("utf-8")  # noqa: S607 # nosec: B603
         logger.debug(xpu_output)
         if ResourcesChecksTexts.intel_gpu_no_devices in xpu_output:
             logger.debug("No devices")
-            return ""
+            return "", True
         if ResourcesChecksTexts.intel_gpu_max_card in xpu_output:
             logger.debug("Max 1100 found")
-            return xpu_output
+            return GPU_PROVIDER_INTEL_MAX, True
     except (CalledProcessError, TimeoutExpired, FileNotFoundError) as err:
         logger.debug(f"Getting the list of Intel GPU failed with {err}")
 
     # Only valid for ARC cards
+    if not _check_intel_gpu_driver(env):
+        return "", False
+
     try:
-        command = 'clinfo|grep "' + ResourcesChecksTexts.intel_gpu_arc_device_name + '"|grep Intel'
+        command = "lspci -nnk | grep -iA3 'VGA\|3D\|Display'"
         logger.debug(f"Getting the list of Intel ARC with {command}")
 
-        clinfo_output = subprocess.check_output(  # noqa: S602  # nosec: B602
+        lspci_output = subprocess.check_output(  # noqa: S602 # nosec: B602
             command,
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=5,
             env=env,
         ).decode("utf-8")
-        logger.debug(clinfo_output)
-        if ResourcesChecksTexts.intel_gpu_arc_device_name in clinfo_output:
-            logger.debug("ARC found")
-            return clinfo_output
+        driver = ""
+        cards = lspci_output.split("--\n")
+        for card in cards:
+            drivers = re.findall(r"Kernel driver in use:\s*([^\s]+)", card)
+
+            if ResourcesChecksTexts.intel_gpu_i915_driver in drivers:
+                driver = GPU_PROVIDER_INTEL_ARC_A
+            elif ResourcesChecksTexts.intel_gpu_xe_driver in drivers:
+                driver = GPU_PROVIDER_INTEL_ARC
+
+            if driver:
+                first_line = card.split("\n")[0]
+                if "Intel Corporation Device" in first_line:
+                    logger.debug(f"Intel dGPU found: {driver}")
+                    return driver, True
+
+        logger.debug(f"Intel iGPU found: {driver}")
+        return driver, False
     except (CalledProcessError, TimeoutExpired, FileNotFoundError) as err:
         logger.debug(f"Getting the list of Intel ARC failed with {err}")
 
-    return ""
+    return "", False
 
 
 def _get_nvidia_gpus():
@@ -258,22 +302,17 @@ def check_local_gpu(config: InstallationConfig):  # noqa: ANN201
 
     # If Nvidia not found, let's look for Intel GPU
     # We prefer Intel GPU, so ignoring Nvidia if Intel GPU found
-    intel_gpus = _get_intel_gpus()
-    if not intel_gpus and not nvidia_gpus:
+    intel_gpu, isdGPU = _get_intel_gpus()
+    if not intel_gpu and not nvidia_gpus:
         raise ResourcesCheckWarning(ResourcesChecksTexts.gpu_requirements_check_error)
-    if intel_gpus:
-        if ResourcesChecksTexts.intel_gpu_max_card in intel_gpus:
-            config.gpu_provider.value = GPU_PROVIDER_INTEL_MAX
-        elif ResourcesChecksTexts.intel_gpu_arc_a_card in intel_gpus:
-            config.gpu_provider.value = GPU_PROVIDER_INTEL_ARC_A
-        else:
-            config.gpu_provider.value = GPU_PROVIDER_INTEL_ARC
-        logger.info(f"GPU provider: {config.gpu_provider.value}")
+    if intel_gpu and isdGPU:
+        config.gpu_provider.value = intel_gpu
+        logger.info(f"GPU provider (Intel dGPU): {config.gpu_provider.value}")
     elif nvidia_gpus:
         config.gpu_provider.value = GPU_PROVIDER_NVIDIA
         logger.info(f"GPU provider: {config.gpu_provider.value}")
         found_gpus = [f"{local_gpu['name']}, mem={str(local_gpu['memory_total'])}MiB" for local_gpu in nvidia_gpus]
-        logger.debug(f"Found GPUs: {', '.join(found_gpus)}")
+        logger.debug(f"Found nVidia GPUs: {', '.join(found_gpus)}")
 
         unsupported_gpus = [gpu for gpu in nvidia_gpus if gpu["memory_total"] < SUPPORTED_GPUS_MEMORY]
         if unsupported_gpus:
@@ -282,6 +321,9 @@ def check_local_gpu(config: InstallationConfig):  # noqa: ANN201
             raise UnsupportedGpuWarning(
                 ResourcesChecksTexts.gpu_requirements_check_memory.format(gpus=unsupported_gpus_str)
             )
+    elif intel_gpu:
+        config.gpu_provider.value = intel_gpu
+        logger.info(f"GPU provider (Intel iGPU): {config.gpu_provider.value}")
 
 
 def check_local_mem():  # noqa: ANN201

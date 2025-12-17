@@ -53,7 +53,7 @@ def retry_on_rate_limit(initial_delay: float = 1.0, max_retries: int = 5, max_ba
                         raise
 
                     # ruff: noqa: S311
-                    jitter = random.uniform(0, 1)  # nosec
+                    jitter = random.uniform(0, 1)  # nosec: B311
                     backoff_time = min(jitter * (2**retries) * delay, max_backoff)
                     time.sleep(backoff_time)
                     retries += 1

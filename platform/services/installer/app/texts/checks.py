@@ -214,4 +214,5 @@ class ResourcesChecksTexts:
     intel_gpu_no_devices = "No device discovered"
     intel_gpu_max_card = "Data Center GPU Max 1100"
     intel_gpu_arc_device_name = "Device Name"
-    intel_gpu_arc_a_card = "Arc(TM) A"
+    intel_gpu_i915_driver = "i915"
+    intel_gpu_xe_driver = "xe"

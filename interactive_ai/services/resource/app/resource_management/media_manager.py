@@ -731,7 +731,7 @@ class MediaManager:
                 filename=video.thumbnail_video_filename, make_unique=False
             )
             video_path_or_url = str(video_binary_repo.get_path_or_presigned_url(filename=video.data_binary_filename))
-            process = subprocess.Popen(  # noqa: S603
+            process = subprocess.Popen(  # noqa: S603 # nosec: B603
                 [  # noqa: S607
                     "ffmpeg",
                     "-threads",

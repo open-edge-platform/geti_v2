@@ -166,6 +166,7 @@ def test_k3s_configuration():
         "INSTALL_K3S_SKIP_DOWNLOAD": "true",
         "INSTALL_K3S_EXEC": "--disable traefik "
         "--disable kube-server "
+        "--node-name=geti "
         "--kube-apiserver-arg=enable-admission-plugins=NodeRestriction,"
         "PodSecurityPolicy,ServiceAccount "
         "--kube-controller-manager-arg=leader-elect-lease-duration=30s "

@@ -88,7 +88,7 @@ def subprocess_run(command, log_file, env=None, cwd=None):  # noqa: ANN001, ANN2
     """
     Runs the command and outputs to platform logs and/or stdout.
     """
-    with subprocess.Popen(  # noqa: S603
+    with subprocess.Popen(  # noqa: S603 # nosec: B603
         command,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,

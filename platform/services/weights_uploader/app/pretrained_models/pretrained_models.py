@@ -38,7 +38,7 @@ def download_file(url: str, target_path: str, auto_unzip=True):  # noqa: ANN001,
     download_temp_target_path = os.path.join(target_dir_path, url_original_filename)
 
     with (
-        urllib.request.urlopen(url) as response,  # noqa: S310
+        urllib.request.urlopen(url) as response,  # noqa: S310 # nosec: B310 # URLs hardcoded in JSON
         open(download_temp_target_path, "wb") as out_file,
     ):
         shutil.copyfileobj(response, out_file)

@@ -765,7 +765,7 @@ class ConvertUtils:
         for label_name in label_names:
             label_data: dict[str, Any] = {
                 "name": label_name,
-                "color": "#00" + "".join([random.choice("0123456789ABCDEF") for j in range(6)]),  # noqa: S311
+                "color": "#00" + "".join([random.choice("0123456789ABCDEF") for j in range(6)]),  # noqa: S311 # nosec: B311
             }
             label_datas.append(label_data)
 

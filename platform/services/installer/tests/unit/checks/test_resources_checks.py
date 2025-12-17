@@ -16,7 +16,11 @@ from checks.errors import (
     UnsupportedGpuWarning,
 )
 from checks.resources import (
+    GPU_PROVIDER_INTEL_ARC,
+    GPU_PROVIDER_INTEL_ARC_A,
+    GPU_PROVIDER_INTEL_MAX,
     SUPPORTED_NVIDIA_DRIVER_VERSION,
+    _get_intel_gpus,
     check_gpu_driver_version,
     check_local_cpu,
     check_local_disk,
@@ -28,6 +32,34 @@ from checks.resources import (
 from configuration_models.install_config import InstallationConfig
 from configuration_models.upgrade_config import UpgradeConfig
 from texts.checks import ResourcesChecksTexts
+
+arc_xe_description = """    03:00.0 Display controller [0380]: Intel Corporation Device [8086:e216]
+            Subsystem: Intel Corporation Device [8086:1500]
+            Kernel driver in use: xe
+            Kernel modules: xe"""
+
+arc_i915_description = """    03:00.0 Display controller [0380]: Intel Corporation Device [8086:e216]
+            Subsystem: Intel Corporation Device [8086:1500]
+            Kernel driver in use: i915
+            Kernel modules: i915"""
+
+igpu_description = """00:02.0 VGA compatible controller [0300]: Intel Corporation Raptor Lake-S GT1 [UHD Graphics 770] [8086:a780] (rev 04)
+            DeviceName: Onboard IGD
+            Subsystem: ASUSTeK Computer Inc. Raptor Lake-S GT1 [UHD Graphics 770] [1043:8882]
+            Kernel driver in use: i915"""
+
+nvidia_description = """08:00.0 VGA compatible controller [0300]: NVIDIA Corporation GA102 [GeForce RTX 3090] [10de:2204] (rev a1)
+            Subsystem: Gigabyte Technology Co., Ltd GA102 [GeForce RTX 3090] [1458:4043]
+            Kernel driver in use: nouveau
+            Kernel modules: nvidiafb, nouveau"""
+
+arc_xe_igpu_description = arc_xe_description + "\n--\n" + igpu_description
+
+arc_i915_igpu_description = arc_i915_description + "\n--\n" + igpu_description
+
+arc_xe_nvidia_description = arc_xe_description + "\n--\n" + nvidia_description
+
+nvidia_igpu_description = nvidia_description + "\n--\n" + igpu_description
 
 
 def test_check_local_cpu(mocker):
@@ -91,36 +123,113 @@ def test_check_local_nvidia_gpu_ok(get_gpus_mock):
     assert install_config_mock.gpu_provider.value == "nvidia"
 
 
-def test_check_local_intel_gpu_ok(get_gpus_mock, get_intel_gpus_mock):
-    get_gpus_mock.return_value = []
-    get_intel_gpus_mock.return_value = "Device Name: Intel(R) Data Center GPU Max 1100"
+def test_get_intel_gpus_max_card(mocker):
+    sub_process_mock = mocker.patch(
+        "subprocess.check_output", return_value=ResourcesChecksTexts.intel_gpu_max_card.encode("utf-8")
+    )
+    gpus, _ = _get_intel_gpus()
+
+    assert GPU_PROVIDER_INTEL_MAX in gpus
+    assert sub_process_mock.call_count == 1
+
+
+def test_get_intel_gpus_arc_xe_card(mocker):
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=arc_xe_description.encode("utf-8"))
+    check_intel_gpu_driver_mock = mocker.patch("checks.resources._check_intel_gpu_driver", return_value=True)
+
+    gpus, isdGPU = _get_intel_gpus()
+
+    assert GPU_PROVIDER_INTEL_ARC in gpus
+    assert isdGPU is True
+    assert check_intel_gpu_driver_mock.call_count == 1
+    assert sub_process_mock.call_count == 2
+
+
+def test_get_intel_gpus_arc_i915_card(mocker):
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=arc_i915_description.encode("utf-8"))
+    check_intel_gpu_driver_mock = mocker.patch("checks.resources._check_intel_gpu_driver", return_value=True)
+
+    gpus, isdGPU = _get_intel_gpus()
+
+    assert GPU_PROVIDER_INTEL_ARC_A in gpus
+    assert isdGPU is True
+    assert check_intel_gpu_driver_mock.call_count == 1
+    assert sub_process_mock.call_count == 2
+
+
+def test_get_intel_gpus_arc_igpu_card(mocker):
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=arc_i915_igpu_description.encode("utf-8"))
+    check_intel_gpu_driver_mock = mocker.patch("checks.resources._check_intel_gpu_driver", return_value=True)
+
+    gpus, isdPGU = _get_intel_gpus()
+
+    assert GPU_PROVIDER_INTEL_ARC_A in gpus
+    assert isdPGU is True
+    assert check_intel_gpu_driver_mock.call_count == 1
+    assert sub_process_mock.call_count == 2
+
+
+def test_get_intel_gpus_igpu_card(mocker):
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=igpu_description.encode("utf-8"))
+    check_intel_gpu_driver_mock = mocker.patch("checks.resources._check_intel_gpu_driver", return_value=True)
+
+    gpus, isdPGU = _get_intel_gpus()
+
+    assert GPU_PROVIDER_INTEL_ARC_A in gpus
+    assert isdPGU is False
+    assert check_intel_gpu_driver_mock.call_count == 1
+    assert sub_process_mock.call_count == 2
+
+
+def test_check_local_nvidia_arc(mocker):
+    get_intel_mock = mocker.patch("checks.resources._get_intel_gpus", return_value=(GPU_PROVIDER_INTEL_ARC, True))
+    get_nvidia_mock = mocker.patch(
+        "checks.resources._get_nvidia_gpus",
+        return_value=[
+            {
+                "name": "NVIDIA GeForce RTX 3090",
+                "memory_total": 24576,
+            }
+        ],
+    )
+
     install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
     install_config_mock.gpu_support.value = True
     check_local_gpu(config=install_config_mock)
-    assert get_gpus_mock.call_count == 1
-    assert get_intel_gpus_mock.call_count == 1
-    assert install_config_mock.gpu_provider.value == "intel-max"
+    assert get_intel_mock.call_count == 1
+    assert get_nvidia_mock.call_count == 1
+    assert install_config_mock.gpu_provider.value == GPU_PROVIDER_INTEL_ARC
 
 
-def test_check_local_intel_gpu_arc_ok(get_gpus_mock, get_intel_gpus_mock):
-    get_gpus_mock.return_value = []
-    get_intel_gpus_mock.return_value = "Device Name Intel(R) Graphics"
+def test_check_local_nvidia_igpu(mocker):
+    get_intel_mock = mocker.patch("checks.resources._get_intel_gpus", return_value=(GPU_PROVIDER_INTEL_ARC, False))
+    get_nvidia_mock = mocker.patch(
+        "checks.resources._get_nvidia_gpus",
+        return_value=(
+            [
+                {
+                    "name": "NVIDIA GeForce RTX 3090",
+                    "memory_total": 24576,
+                }
+            ]
+        ),
+    )
+
     install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
     install_config_mock.gpu_support.value = True
     check_local_gpu(config=install_config_mock)
-    assert get_gpus_mock.call_count == 1
-    assert get_intel_gpus_mock.call_count == 1
-    assert install_config_mock.gpu_provider.value == "intel-arc"
+    assert get_intel_mock.call_count == 1
+    assert get_nvidia_mock.call_count == 1
+    assert install_config_mock.gpu_provider.value == "nvidia"
 
 
-def test_check_local_gpu_not_found(get_gpus_mock, get_intel_gpus_mock):
-    get_gpus_mock.return_value = []
-    get_intel_gpus_mock.return_value = ""
-    with pytest.raises(ResourcesCheckWarning):
-        install_config_mock = InstallationConfig(interactive_mode=False, install_telemetry_stack=False)
-        check_local_gpu(config=install_config_mock)
-    assert get_gpus_mock.call_count == 1
-    assert get_intel_gpus_mock.call_count == 1
+def test_get_intel_gpus_no_card(mocker):
+    sub_process_mock = mocker.patch("subprocess.check_output", return_value=b"lack of Intel gpu")
+
+    gpus = _get_intel_gpus()
+
+    assert not gpus[0]
+    assert sub_process_mock.call_count == 2
 
 
 def test_check_local_gpu_not_supported(get_gpus_mock):

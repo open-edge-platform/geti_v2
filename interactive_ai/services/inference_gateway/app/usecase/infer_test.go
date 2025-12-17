@@ -4,7 +4,6 @@
 package usecase
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
@@ -44,7 +43,7 @@ func MockFrameCh(total int) <-chan *frames.FrameData {
 }
 
 func TestInferBatch(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	fullVideoID := sdkentities.GetFullVideoID(t)
 	start, end, skip := 0, 199, 10
 	total := (end-start)/skip + 1

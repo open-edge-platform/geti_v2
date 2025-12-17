@@ -172,7 +172,7 @@ class _VideoDecoderInterface:
 
     def get_fps(self, file_location: str) -> float:
         # Run ffprobe to get video stream information
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(  # noqa: S603 # nosec: B603
             [  # noqa: S607
                 "ffprobe",
                 "-v",
@@ -207,7 +207,7 @@ class _VideoDecoderInterface:
         """
         try:
             # Get r_frame_rate
-            r_frame_rate_result = subprocess.run(  # noqa: S603
+            r_frame_rate_result = subprocess.run(  # noqa: S603 # nosec: B603
                 [  # noqa: S607
                     "ffprobe",
                     "-v",
@@ -226,7 +226,7 @@ class _VideoDecoderInterface:
             )
 
             # Get avg_frame_rate
-            avg_frame_rate_result = subprocess.run(  # noqa: S603
+            avg_frame_rate_result = subprocess.run(  # noqa: S603 # nosec: B603
                 [  # noqa: S607
                     "ffprobe",
                     "-v",
@@ -278,7 +278,7 @@ class _VideoDecoderInterface:
         :return: True if conversion was successful, False otherwise
         """
         try:
-            process = subprocess.run(  # noqa: S603
+            process = subprocess.run(  # noqa: S603 # nosec: B603
                 [  # noqa: S607
                     "ffmpeg",
                     "-i",

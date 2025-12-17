@@ -44,10 +44,11 @@ class InstallationConfig(BaseConfig):
         """
         return bool(self.cert_file.value) or bool(self.key_file.value)
 
-    def __init__(self, interactive_mode: bool, install_telemetry_stack: bool) -> None:
+    def __init__(self, interactive_mode: bool, install_telemetry_stack: bool, node_name: str | None = None) -> None:
         self._interactive_mode = interactive_mode
 
         self.install_telemetry_stack = ConfigurationField(type=bool, required=False, value=install_telemetry_stack)
+        self.node_name = ConfigurationField(type=str, required=False, value=node_name)
         self.offer_k8s_option = ConfigurationField(
             type=bool, required=True, value=os.getenv("PLATFORM_K8S_OPTION") == "true"
         )

@@ -65,7 +65,7 @@ class VideoFileRepair:
 
             import subprocess
 
-            process = subprocess.Popen(  # noqa: S603
+            process = subprocess.Popen(  # noqa: S603 # nosec: B603
                 [  # noqa: S607
                     "ffmpeg",
                     "-hide_banner",

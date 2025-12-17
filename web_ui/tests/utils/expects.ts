@@ -19,8 +19,8 @@ export const expectCSVToBeEqual = (expected: string[][], actual: string[][]) => 
     }
 };
 
-export const expectToBeDownloaded = async (page: Page, download: () => Promise<void>) => {
-    const downloadPromise = page.waitForEvent('download');
+export const expectToBeDownloaded = async (page: Page, download: () => Promise<void>, timeout?: number) => {
+    const downloadPromise = page.waitForEvent('download', { timeout });
     await download();
 
     const downloadResolved = await downloadPromise;
