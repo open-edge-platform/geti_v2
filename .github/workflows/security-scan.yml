@@ -73,7 +73,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Trivy vulnerability scanner in config mode
-        uses: open-edge-platform/geti-ci/actions/trivy@a79fb2f70857ef7d2b1b89fdb5632e03f40df0a1
+        uses: open-edge-platform/geti-ci/actions/trivy@ec258520d5f17cef73afdf348948c7cfcbf965c7
         id: trivy-config-scan
         with:
           scan_type: "config"
@@ -96,7 +96,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Trivy vulnerability scanner in vuln/secret modes
-        uses: open-edge-platform/geti-ci/actions/trivy@a79fb2f70857ef7d2b1b89fdb5632e03f40df0a1
+        uses: open-edge-platform/geti-ci/actions/trivy@ec258520d5f17cef73afdf348948c7cfcbf965c7
         with:
           scan_type: "fs"
           scan-scope: all
