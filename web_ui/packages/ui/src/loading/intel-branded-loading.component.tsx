@@ -6,9 +6,13 @@ import { dimensionValue } from '@react-spectrum/utils';
 
 import IntelBrandedLoadingGif from './intel-loading.webp';
 
-export const IntelBrandedLoading = () => {
+interface IntelBrandedLoadingProps {
+    height?: string;
+}
+
+export const IntelBrandedLoading = ({ height = '100vh' }: IntelBrandedLoadingProps) => {
     return (
-        <Flex justifyContent='center' alignItems='center' height='100vh' direction='column'>
+        <Flex justifyContent='center' alignItems='center' height={height} direction='column'>
             <img
                 src={IntelBrandedLoadingGif}
                 // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
