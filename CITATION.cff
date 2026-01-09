@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+title: >-
+  Geti: Build computer vision models in a fraction of the
+  time
+message: >-
+  If you use this software, please cite it using the
+  metadata below.
+type: software
+authors:
+  - name: Intel Corporation
+identifiers:
+  - type: url
+    value: 'https://github.com/open-edge-platform/geti'
+repository-code: 'https://github.com/open-edge-platform/geti'
+url: 'https://docs.geti.intel.com/'
+abstract: >-
+  Geti™ enables anyone to build computer vision AI models in
+  a fraction of the time and with minimal data. The software
+  provides you with a seamless, end-to-end workflow to
+  prepare state-of-the-art computer vision models in
+  minutes.
+version: 2.13.1
+date-released: '2025-11-06'
+preferred-citation:
+  type: software
+  authors:
+    - name: "Intel Corporation"
+  title: "Geti: Build computer vision models in a fraction of the time"
+  year: 2025
+  notes: "Source code repository"
+  url: "https://github.com/open-edge-platform/geti"
