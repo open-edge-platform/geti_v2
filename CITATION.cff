@@ -14,7 +14,7 @@ identifiers:
 repository-code: 'https://github.com/open-edge-platform/geti'
 url: 'https://docs.geti.intel.com/'
 abstract: >-
-  Geti™ enables anyone to build computer vision AI models in
+  Geti (TM) enables anyone to build computer vision AI models in
   a fraction of the time and with minimal data. The software
   provides you with a seamless, end-to-end workflow to
   prepare state-of-the-art computer vision models in
@@ -27,5 +27,6 @@ preferred-citation:
     - name: "Intel Corporation"
   title: "Geti: Build computer vision models in a fraction of the time"
   year: 2025
+  version: 2.13.1
   notes: "Source code repository"
   url: "https://github.com/open-edge-platform/geti"
