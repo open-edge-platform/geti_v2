@@ -5,7 +5,7 @@ description = "Dataset import export service for Geti"
 requires-python = ">=3.10, <3.11"
 
 dependencies = [
-    "python-multipart==0.0.20",
+    "python-multipart==0.0.22",
     "httpx~=0.23",
     "geti-telemetry-tools[telemetry,logger,grpc,fastapi,kafka]",
     "geti-types",
