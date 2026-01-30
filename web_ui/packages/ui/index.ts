@@ -82,6 +82,8 @@ export {
     StatusLight,
     ToastQueue,
     Accordion,
+    Badge,
+    type SpectrumBadgeProps,
     type SpectrumAccordionProps,
     type SpectrumToastOptions,
     type SpectrumColorPickerProps,
