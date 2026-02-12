@@ -8,7 +8,7 @@ requires-python = ">=3.10, <3.11"
 
 dependencies = [
     "confluent-kafka==2.3.0",
-    "cryptography==44.0.1",
+    "cryptography==46.0.5",
     "fastapi==0.117.1",
     "starlette>=0.47.2", # Lower bound due to CVEs
     "Jinja2==3.1.*",
