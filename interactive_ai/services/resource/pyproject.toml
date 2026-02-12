@@ -10,7 +10,7 @@ dependencies = [
     "jsonschema>=4.18.0a10",
     "python-multipart~=0.0.18",
     "uvicorn~=0.27",
-    "pillow==11.1.0",
+    "pillow==12.1.1",
     "defusedxml~=0.7.1",
     "geti-feature-tools",
     "geti-fastapi-tools",

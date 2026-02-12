@@ -5,7 +5,7 @@ description = "Model evaluation workflow"
 requires-python = ">=3.10, <3.11"
 
 dependencies = [
-    "Pillow==10.3.0",
+    "Pillow==12.1.1",
     "geti-kafka-tools==1.0.0",
     "geti-telemetry-tools[telemetry,grpc,kafka,logger]==1.0.2",
     "geti-types~=1.0.2",
