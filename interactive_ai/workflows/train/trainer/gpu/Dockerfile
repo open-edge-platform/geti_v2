@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm@sha256:6e343dac46beda4a69e708bfc21d1a91504b7bdb6cef357ba963b4220dec2189 AS base
+FROM python:3.10-slim-bookworm@sha256:23f63358922e79a794f71be8f3723c84e5ccca9638af3f74456dc73d6184499e AS base
 
 # step 1: get cuda dependencies
 FROM base AS cuda
@@ -100,7 +100,7 @@ RUN rm -rf /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-pac
     /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_nvrtc/lib/libnvrtc.alt.so.12 \
     /interactive_ai/workflows/train/trainer/.venv/lib/python3.10/site-packages/nvidia/cuda_nvrtc/lib/libnvrtc-builtins.alt.so.12.8
 
-FROM python:3.10-slim-bookworm@sha256:6e343dac46beda4a69e708bfc21d1a91504b7bdb6cef357ba963b4220dec2189 AS runtime
+FROM python:3.10-slim-bookworm@sha256:23f63358922e79a794f71be8f3723c84e5ccca9638af3f74456dc73d6184499e AS runtime
 
 RUN ulimit -n 65536
 
