@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM python:3.10-slim-bookworm@sha256:6e343dac46beda4a69e708bfc21d1a91504b7bdb6cef357ba963b4220dec2189
+FROM python:3.10-slim-bookworm@sha256:b1f549b1c3da651d93802122ebcb0c3177702a6d549676236c859ad19e79e9da
 
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=0
 
