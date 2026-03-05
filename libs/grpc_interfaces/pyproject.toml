@@ -11,7 +11,7 @@ license = { text = "Copyright (c) Intel - All Rights Reserved. Unauthorized copy
 requires-python = ">=3.10, <3.11"
 
 dependencies = [
-    "grpcio==1.62.*"
+    "grpcio==1.78.0"
 ]
 
 [project.optional-dependencies]
@@ -26,7 +26,7 @@ job_submission = [
 ]
 job_update = []
 model_registration = [
-    "protobuf~=5.29"
+    "protobuf~=6.31.1"
 ]
 all = [
     "grpc_interfaces[account_service,credit_system,job_submission,job_update,model_registration]",
@@ -42,7 +42,7 @@ dev = [
     "pre-commit~=4.1",
     "mypy~=1.15",
     "grpc_interfaces[all]",
-    "grpcio-tools",
+    "grpcio_tools==1.78.0",
     "mypy-protobuf",
 ]
 
