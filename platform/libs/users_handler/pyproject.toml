@@ -5,7 +5,7 @@ description = "Configuration for common loggers and telemetry in the Geti platfo
 requires-python = ">=3.10, <3.13"
 dependencies = [
     "cryptography==44.0.1",
-    "Pillow==11.1.0",
+    "Pillow==12.1.1",
     "pyjwt==2.4.0",
     "python-ldap==3.4.5",
     "geti-spicedb-tools"

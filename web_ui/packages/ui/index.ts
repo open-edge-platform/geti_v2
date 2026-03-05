@@ -26,6 +26,7 @@ export {
     Tabs,
     TextArea,
     DialogContainer,
+    useDialogContainer,
     AlertDialog,
     Item,
     Content,
