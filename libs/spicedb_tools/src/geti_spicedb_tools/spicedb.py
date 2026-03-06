@@ -347,7 +347,7 @@ class SpiceDB(metaclass=Singleton):
         relation: Relations,
         subject: authzed.SubjectReference,
         resource: authzed.ObjectReference,
-        operation: authzed.RelationshipUpdate.Operation,
+        operation: authzed.RelationshipUpdate.Operation.ValueType,
     ) -> WriteRelationshipsResponse:
         """
         Write relationship into spice db

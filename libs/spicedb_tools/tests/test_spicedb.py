@@ -56,7 +56,7 @@ class TestSpiceDB:
         expected_arguments = WriteRelationshipsRequest(
             updates=[
                 RelationshipUpdate(
-                    operation=1,
+                    operation=RelationshipUpdate.Operation.OPERATION_CREATE,
                     relationship=Relationship(
                         resource=ObjectReference(object_type="workspace", object_id="test_workspace"),
                         relation=user_relation.value,
@@ -85,7 +85,7 @@ class TestSpiceDB:
         expected_arguments = WriteRelationshipsRequest(
             updates=[
                 RelationshipUpdate(
-                    operation=3,
+                    operation=RelationshipUpdate.Operation.OPERATION_DELETE,
                     relationship=Relationship(
                         resource=ObjectReference(object_type="workspace", object_id="test_workspace"),
                         relation=user_relation.value,
@@ -101,15 +101,15 @@ class TestSpiceDB:
     @pytest.mark.parametrize(
         "permissionship,expected_response",
         [
-            (1, False),
-            (2, True),
+            (CheckPermissionResponse.PERMISSIONSHIP_NO_PERMISSION, False),
+            (CheckPermissionResponse.PERMISSIONSHIP_HAS_PERMISSION, True),
         ],
     )
     def test_check_user_workspace_permission(
         self,
         mocked_client,
         permission: Permissions,
-        permissionship: int,
+        permissionship: CheckPermissionResponse.Permissionship.ValueType,
         expected_response: bool,
     ):
         # Arrange
@@ -201,7 +201,7 @@ class TestSpiceDB:
         expected_arguments_user = WriteRelationshipsRequest(
             updates=[
                 RelationshipUpdate(
-                    operation=1,
+                    operation=RelationshipUpdate.Operation.OPERATION_CREATE,
                     relationship=Relationship(
                         resource=ObjectReference(object_type="project", object_id="test_project"),
                         relation="project_manager",
@@ -213,7 +213,7 @@ class TestSpiceDB:
         expected_arguments_workspace = WriteRelationshipsRequest(
             updates=[
                 RelationshipUpdate(
-                    operation=1,
+                    operation=RelationshipUpdate.Operation.OPERATION_CREATE,
                     relationship=Relationship(
                         resource=ObjectReference(object_type="project", object_id="test_project"),
                         relation="parent_workspace",
@@ -245,7 +245,7 @@ class TestSpiceDB:
         expected_arguments = WriteRelationshipsRequest(
             updates=[
                 RelationshipUpdate(
-                    operation=1,
+                    operation=RelationshipUpdate.Operation.OPERATION_CREATE,
                     relationship=Relationship(
                         resource=ObjectReference(object_type="project", object_id="test_project"),
                         relation="parent_workspace",
@@ -276,7 +276,7 @@ class TestSpiceDB:
         expected_arguments = WriteRelationshipsRequest(
             updates=[
                 RelationshipUpdate(
-                    operation=1,
+                    operation=RelationshipUpdate.Operation.OPERATION_CREATE,
                     relationship=Relationship(
                         resource=ObjectReference(object_type="project", object_id="test_project"),
                         relation=user_relation.value,
@@ -305,7 +305,7 @@ class TestSpiceDB:
         expected_arguments = WriteRelationshipsRequest(
             updates=[
                 RelationshipUpdate(
-                    operation=3,
+                    operation=RelationshipUpdate.Operation.OPERATION_DELETE,
                     relationship=Relationship(
                         resource=ObjectReference(object_type="project", object_id="test_project"),
                         relation=user_relation.value,
@@ -321,15 +321,15 @@ class TestSpiceDB:
     @pytest.mark.parametrize(
         "permissionship,expected_response",
         [
-            (1, False),
-            (2, True),
+            (CheckPermissionResponse.PERMISSIONSHIP_NO_PERMISSION, False),
+            (CheckPermissionResponse.PERMISSIONSHIP_HAS_PERMISSION, True),
         ],
     )
     def test_check_user_project_permission(
         self,
         mocked_client,
         permission: Permissions,
-        permissionship,
+        permissionship: CheckPermissionResponse.Permissionship.ValueType,
         expected_response: bool,
     ):
         # Arrange
@@ -463,7 +463,7 @@ class TestSpiceDB:
         expected_arguments = WriteRelationshipsRequest(
             updates=[
                 RelationshipUpdate(
-                    operation=1,
+                    operation=RelationshipUpdate.Operation.OPERATION_CREATE,
                     relationship=Relationship(
                         resource=ObjectReference(object_type="job", object_id="test_job"),
                         relation="parent_entity",
@@ -493,7 +493,7 @@ class TestSpiceDB:
         expected_arguments = WriteRelationshipsRequest(
             updates=[
                 RelationshipUpdate(
-                    operation=1,
+                    operation=RelationshipUpdate.Operation.OPERATION_CREATE,
                     relationship=Relationship(
                         resource=ObjectReference(object_type="job", object_id="test_job"),
                         relation="parent_entity",
