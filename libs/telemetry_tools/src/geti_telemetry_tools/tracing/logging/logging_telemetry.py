@@ -3,6 +3,7 @@
 
 """Helpers for the integration of OpenTelemetry with logging"""
 
+
 class LoggerTelemetry:
     """OpenTelemetry instrumentation for logging"""
 

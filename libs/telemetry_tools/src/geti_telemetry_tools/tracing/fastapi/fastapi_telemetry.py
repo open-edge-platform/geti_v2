@@ -12,6 +12,7 @@ from geti_telemetry_tools.tracing.propagation import HttpEncodedHeaderSetter, pr
 
 logger = logging.getLogger(__name__)
 
+
 class FastAPITelemetry:
     """OpenTelemetry instrumentation for FastAPI"""
 
@@ -37,7 +38,6 @@ class FastAPITelemetry:
             )
             raise
 
-
         def response_hook(span: Span, scope: dict, message: dict) -> None:  # noqa: ARG001
             if span and message.get("type") == "http.response.start":
                 try:
@@ -48,8 +48,7 @@ class FastAPITelemetry:
                 except Exception:
                     logger.exception("Failed to inject trace headers in response_hook")
 
-        FastAPIInstrumentor().instrument_app(app, tracer_provider=tracer_provider,
-            client_response_hook=response_hook,)
+        FastAPIInstrumentor().instrument_app(app, tracer_provider=tracer_provider, client_response_hook=response_hook)
 
     @staticmethod
     def uninstrument(app) -> None:  # noqa: ANN001
