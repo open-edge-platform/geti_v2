@@ -3,9 +3,6 @@
 
 """Helpers for the integration of OpenTelemetry with logging"""
 
-from geti_telemetry_tools.tracing.common import tracer_provider
-
-
 class LoggerTelemetry:
     """OpenTelemetry instrumentation for logging"""
 
@@ -27,4 +24,4 @@ class LoggerTelemetry:
                 "is not installed. Add 'telemetry[logger]' to the required packages."
             ) from err
 
-        LoggingInstrumentor().instrument(tracer_provider=tracer_provider)
+        LoggingInstrumentor().instrument(set_logging_format=True)

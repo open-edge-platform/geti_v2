@@ -16,7 +16,7 @@ class TestIntegrationOtelLogging:
         """
         <b>Description:</b>
         Check that if tracing context is not present, then trace ID and span ID
-        will be 0's in logs
+        will be 0 in logs
 
         <b>Given:</b>
         No tracing context created
