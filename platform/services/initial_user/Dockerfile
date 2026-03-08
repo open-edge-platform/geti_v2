@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm@sha256:a8d56efd3a77aecc8d4dcc58a6e6e1f54b282c519221bd111fff02b6374db772 AS base
+FROM python:3.10-slim-bookworm@sha256:b1f549b1c3da651d93802122ebcb0c3177702a6d549676236c859ad19e79e9da AS base
 
 FROM base AS build
 
