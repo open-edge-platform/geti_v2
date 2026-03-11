@@ -113,7 +113,7 @@ spec:
               mountPath: /opt/bitnami/scripts/libopenldap.sh 
               subPath: libopenldap.sh
               readOnly: true
-            #{{- if not .Values.global.enable_local_image_pull_secret }}
+            {{- if not .Values.global.enable_local_image_pull_secret }}
             - name: config
               mountPath: /opt/bitnami/openldap/lib/openldap/pw-pbkdf2.so.0.0.0
               subPath: pw-pbkdf2.so.0.0.0
@@ -142,7 +142,7 @@ spec:
               mountPath: /configldifs/db_max_size.ldif
               subPath: db_max_size.ldif
               readOnly: true
-            #{{- end }}
+            {{- end }}
             - name: config
               mountPath: /ldifs/ppolicy_container.ldif
               subPath: ppolicy_container.ldif

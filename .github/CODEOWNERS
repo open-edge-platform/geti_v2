@@ -16,10 +16,10 @@ docs/rest_api/ @open-edge-platform/geti-core-backend-write @jcchr @piotrgrubicki
 web_ui/ @jpggvilaca @MarkRedeman @camiloHimura @pplaskie @ActiveChooN @romanowska @dwesolow @jcchr @piotrgrubicki @mgumowsk
 
 # CI and security
-.github/workflows/ @open-edge-platform/geti-ci-maintain @jcchr @piotrgrubicki @mgumowsk
-.github/actions/ @open-edge-platform/geti-ci-maintain @jcchr @piotrgrubicki @mgumowsk
-.github/bandit_config.yml @open-edge-platform/geti-ci-maintain @jcchr @piotrgrubicki @mgumowsk
-.github/renovate.json5 @open-edge-platform/geti-ci-maintain @jcchr @piotrgrubicki @mgumowsk
-.github/trivy_config.yml @open-edge-platform/geti-ci-maintain @jcchr @piotrgrubicki @mgumowsk
-.github/trivyignore.yml @open-edge-platform/geti-ci-maintain @jcchr @piotrgrubicki @mgumowsk
-security.md @open-edge-platform/geti-ci-maintain @jcchr @piotrgrubicki @mgumowsk
+.github/workflows/ @open-edge-platform/geti-ci-maintain
+.github/actions/ @open-edge-platform/geti-ci-maintain
+.github/bandit_config.yml @open-edge-platform/geti-ci-maintain
+.github/renovate.json5 @open-edge-platform/geti-ci-maintain
+.github/trivy_config.yml @open-edge-platform/geti-ci-maintain
+.github/trivyignore.yml @open-edge-platform/geti-ci-maintain
+security.md @open-edge-platform/geti-ci-maintain
