@@ -29,7 +29,7 @@
   // if necessary, add supported releases branches here
   // it is possible to enable/disable specific upgrades per branch with
   // `matchBaseBranches` in specific rule
-  baseBranches: ["main", "release-2.13"],
+  baseBranches: ["main"],
 
   enabledManagers: ["dockerfile", "github-actions", "gomod", "pep621", "npm"],
 
@@ -74,15 +74,6 @@
       schedule: ["* * 1 * *"], // every month
       matchPaths: ["dev_tools/builder_images/**"],
       matchBaseBranches: ["main"],
-    },
-
-    // Disable dev_tools/builder_images images upgrades
-    // for non-main branch
-    {
-      enabled: false,
-      matchDatasources: ["docker"],
-      matchPaths: ["dev_tools/builder_images/**"],
-      matchBaseBranches: ["!main"],
     },
 
     // Disable non-security upgrades for go and npm.
@@ -176,13 +167,6 @@
       matchBaseBranches: ["main"],
     },
 
-    // Disable upgrades for non-main branches
-    {
-      enabled: false,
-      matchManagers: ["github-actions"],
-      matchBaseBranches: ["!main"],
-    },
-
     // Go version used in GitHub Actions is updated manually
     {
       enabled: false,
@@ -217,18 +201,6 @@
       groupSlug: "go-version",
       schedule: ["* * * * 0"], // weekly
       matchBaseBranches: ["main"],
-    },
-
-    // Group Go version upgrades for supported release branch
-    // with necessary restrictions
-    {
-      enabled: true,
-      matchPackageNames: ["golang", "go"],
-      allowedVersions: "<1.24",
-      groupName: "Go version",
-      groupSlug: "go-version",
-      schedule: ["* * * * 0"], // weekly
-      matchBaseBranches: ["release-2.13"],
     },
 
     // Restrict uv version used in workflows, it will be updated manually

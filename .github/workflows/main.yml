@@ -78,7 +78,7 @@ jobs:
 
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
+        uses: step-security/harden-runner@58077d3c7e43986b6b15fba718e8ea69e387dfcc # v2.15.1
         with:
           egress-policy: audit
 
@@ -127,7 +127,7 @@ jobs:
           echo "registry=$registry"
 
       - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -135,10 +135,12 @@ jobs:
 
       - name: Get SHA, list images and umbrella charts
         id: repo-vars
+        env:
+          REGISTRY: ${{ steps.set-vars.outputs.registry }}
         run: |
           sha=$(git rev-parse HEAD)
-          image_list=$(REGISTRY=${{ steps.set-vars.outputs.registry }} make list-image | grep ${{ steps.set-vars.outputs.registry }} | jq -R -s -c 'split("\n")[:-1]')
-          umbrella_chart_list=$(REGISTRY=${{ steps.set-vars.outputs.registry }} make list-umbrella-chart | grep ${{ steps.set-vars.outputs.registry }} | jq -R -s -c 'split("\n")[:-1]')
+          image_list=$(REGISTRY="$REGISTRY" make list-image | grep "$REGISTRY" | jq -R -s -c 'split("\n")[:-1]')
+          umbrella_chart_list=$(REGISTRY="$REGISTRY" make list-umbrella-chart | grep "$REGISTRY" | jq -R -s -c 'split("\n")[:-1]')
           date=$(date +'%d/%m/%Y')
 
           echo "::group:: Daily promote variables"
@@ -265,7 +267,7 @@ jobs:
       BUILD_VERSION: ${{ needs.get-vars.outputs.build_version }}
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
+        uses: step-security/harden-runner@58077d3c7e43986b6b15fba718e8ea69e387dfcc # v2.15.1
         with:
           egress-policy: audit
       - name: Check
@@ -287,31 +289,36 @@ jobs:
       - name: Generate summary report
         if: github.event_name == 'schedule'
         id: msg
+        env:
+          BUILD_VERSION: ${{ needs.get-vars.outputs.build_version }}
+          UMBRELLA_CHART_LIST: ${{ needs.get-vars.outputs.umbrella_chart_list }}
+          IMAGES_LIST: ${{ needs.get-vars.outputs.images_list }}
+          SHA: ${{ needs.get-vars.outputs.sha }}
         run: |
           echo "## Daily Build Summary" > body.txt
           echo "> NOTE: This version is pre-release software and has not undergone full release qualification. APIs/behavior are subject to change. It is NOT meant to be incorporated into any production software/solution." >> body.txt
           echo "" >> body.txt
-          echo "**Published version**: ${{ needs.get-vars.outputs.build_version }}" >> body.txt
+          echo "**Published version**: $BUILD_VERSION" >> body.txt
           echo "**Installation Guide**: [Installation Using Helm Charts](https://docs.geti.intel.com/docs/user-guide/getting-started/installation/using-helm-charts)" >> body.txt
           echo "" >> body.txt
-          echo "Use the following value for the environment variable `version` :" >> body.txt
+          echo "Use the following value for the environment variable \`version\` :" >> body.txt
           echo '```' >> body.txt
-          echo "export version=${{ needs.get-vars.outputs.build_version }}" >> body.txt
+          echo "export version=$BUILD_VERSION" >> body.txt
           echo '```' >> body.txt
           echo "" >> body.txt
           echo "**Umbrella Charts**:" >> body.txt
-          UMBRELLA_CHARTS_LIST=$(echo '${{ needs.get-vars.outputs.umbrella_chart_list }}' | jq -r '.[]')
+          UMBRELLA_CHARTS_LIST=$(echo "$UMBRELLA_CHART_LIST" | jq -r '.[]')
           for CHART in $UMBRELLA_CHARTS_LIST; do
             echo "  - $CHART" >> body.txt
           done
           echo "" >> body.txt
           echo "**Container Images**:" >> body.txt
-          CONTAINER_IMAGES_LIST=$(echo '${{ needs.get-vars.outputs.images_list }}' | jq -r '.[]')
+          CONTAINER_IMAGES_LIST=$(echo "$IMAGES_LIST" | jq -r '.[]')
           for IMAGE in $CONTAINER_IMAGES_LIST; do
-            echo "  - $IMAGE:${{ needs.get-vars.outputs.build_version }}" >> body.txt
+            echo "  - $IMAGE:$BUILD_VERSION" >> body.txt
           done
           echo "" >> body.txt
-          echo "**Source Code**: https://github.com/open-edge-platform/geti/tree/${{ needs.get-vars.outputs.sha }}" >> body.txt
+          echo "**Source Code**: https://github.com/open-edge-platform/geti/tree/$SHA" >> body.txt
           {
             echo "body<<EOF"
             cat body.txt
