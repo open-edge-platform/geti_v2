@@ -130,7 +130,7 @@ class SessionBasedSchedulerJobRepo(SessionBasedRepo[Job]):
         job_filter: dict,
         update: dict,
         mongodb_session: ClientSession | None = None,
-    ) -> dict:
+    ) -> dict | None:
         """
         Finds and update a job document atomically
         :param job_filter: job filter
