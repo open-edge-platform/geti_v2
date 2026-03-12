@@ -978,7 +978,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "confluent-kafka", specifier = "~=2.3" }]
+requires-dist = [{ name = "confluent-kafka", specifier = "~=2.3,<=2.12.2" }]
 
 [package.metadata.requires-dev]
 dev = [

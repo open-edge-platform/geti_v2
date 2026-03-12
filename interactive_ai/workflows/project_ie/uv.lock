@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = "==3.10.*"
 resolution-markers = [
     "sys_platform == 'darwin'",
@@ -778,7 +778,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "confluent-kafka", specifier = "~=2.3" }]
+requires-dist = [{ name = "confluent-kafka", specifier = "~=2.3,<=2.12.2" }]
 
 [package.metadata.requires-dev]
 dev = [
