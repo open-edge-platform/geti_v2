@@ -3,7 +3,7 @@ name = "geti-kafka-tools"
 version = "1.0.1"
 description = "Kafka tools for Intel Geti"
 requires-python = ">=3.10, <3.11"
-dependencies = ["confluent-kafka~=2.3"]
+dependencies = ["confluent-kafka~=2.3,<=2.12.2"]
 
 [dependency-groups]
 dev = ["pytest~=8.3", "mypy~=1.15", "ruff~=0.11.2", "pre-commit~=4.1"]

@@ -80,7 +80,7 @@ def save_under_dict_key_path(dictionary: dict, dict_key_path: str, value: Any) -
         if not d.get(key):
             d[key] = {}
         d = d[key]
-    d[dict_key_path.split(".")[-1]] = value
+    d[dict_key_path.split(".")[-1]] = value  # noqa: PLC0207
 
 
 def join_dict_key_path(paths: Iterable[str | None]) -> str:  # noqa: D103
