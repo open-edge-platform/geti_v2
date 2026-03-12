@@ -100,12 +100,12 @@ global:
     name: kubectl:1.31.0.5-debian-12-r4
   busybox:
     registry: {{ registry }}
-    repository: base-images
-    name: debian:12.8.1
+    repository: local-third-party
+    name: busybox:glibc
   curl:
     registry: {{ registry }}
-    repository: base-images
-    name: debian:12.8.1
+    repository: local-third-party
+    name: curl:8.15.0
   {% endif %}
   s3_endpoint: impt-seaweed-fs.impt:8333
   cors_policy:
