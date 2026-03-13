@@ -100,12 +100,12 @@ global:
     name: kubectl:1.31.0.5-debian-12-r4
   busybox:
     registry: {{ registry }}
-    repository: base-images
-    name: debian:12.8.1
+    repository: local-third-party
+    name: busybox:glibc
   curl:
     registry: {{ registry }}
-    repository: base-images
-    name: debian:12.8.1
+    repository: local-third-party
+    name: curl:8.15.0
   {% endif %}
   s3_endpoint: impt-seaweed-fs.impt:8333
   cors_policy:
@@ -205,7 +205,7 @@ oidc-stack:
     image: 
       registry: {{ registry }}
       repository: local-third-party
-      name: openldap:2.6.8.5-debian-12-r9
+      name: openldap:2.6.3-debian-11-r63
     {% endif %}
     config:
       impt_ldif: |-
