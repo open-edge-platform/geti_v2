@@ -16,6 +16,8 @@ export const useThrottledCallback = <Args extends unknown[]>(
     }, [callback]);
 
     const debouncedCallback = useMemo(() => {
+        // Same ref-proxy pattern as debounce: `throttle` keeps the initial function,
+        // so we read from the ref to prevent stale callback invocations.
         return throttle((...args: Args) => savedCallback.current(...args), delay, {
             leading: true,
             trailing: true,

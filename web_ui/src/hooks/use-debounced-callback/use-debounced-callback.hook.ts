@@ -16,6 +16,8 @@ export const useDebouncedCallback = <Args extends unknown[]>(
     }, [callback]);
 
     const debouncedCallback = useMemo(() => {
+        // `debounce` captures the function reference at creation time; we route through
+        // a ref so delayed executions always invoke the latest callback after rerenders.
         return debounce((...args: Args) => savedCallback.current(...args), delay);
     }, [delay]);
 
