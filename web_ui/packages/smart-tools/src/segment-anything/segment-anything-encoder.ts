@@ -12,8 +12,18 @@ type cv = typeof OpenCVTypes;
 
 type ModelSession = Session | Comlink.Remote<Session>;
 
+// A plain-object representation of ort.Tensor that survives structured-clone
+// (Comlink transfers between workers). ort.Tensor instances lose their class
+// identity and `location` property when cloned, causing onnxruntime >=1.20 to
+// throw "invalid data location: undefined".
+export type SerializableTensor = {
+    data: Float32Array;
+    dims: number[];
+    type: ort.Tensor.Type;
+};
+
 export type EncodingOutput = {
-    encoderResult: ort.Tensor;
+    encoderResult: SerializableTensor;
     originalWidth: number;
     originalHeight: number;
     newWidth: number;
@@ -38,7 +48,17 @@ export class SegmentAnythingEncoder {
         console.timeEnd('[SAM] Encoding');
 
         const outputNames = await this.session.outputNames();
-        const encoderResult = outputData[outputNames[0]];
+        const gpuTensor = outputData[outputNames[0]];
+
+        // ort.Tensor instances lose their class identity (and `location` getter)
+        // when structured-cloned by Comlink across workers, causing onnxruntime
+        // >=1.20 to throw "invalid data location: undefined". Store raw typed
+        // array data so the decoder can reconstruct a valid tensor.
+        const encoderResult: SerializableTensor = {
+            data: new Float32Array((await gpuTensor.getData()) as Float32Array),
+            dims: [...gpuTensor.dims],
+            type: gpuTensor.type as ort.Tensor.Type,
+        };
 
         const originalWidth = initialImageData.width;
         const originalHeight = initialImageData.height;

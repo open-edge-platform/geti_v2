@@ -119,7 +119,7 @@ export class SegmentAnythingDecoder {
 
         const ratio = 1024 / Math.max(originalHeight, originalWidth);
         const feeds: Record<string, ort.Tensor> = {
-            image_embeddings: encoderResult,
+            image_embeddings: new ort.Tensor(encoderResult.type, encoderResult.data, encoderResult.dims),
             // TODO: reuse the low_res_masks output, also use existing polygons?
             mask_input: new ort.Tensor(new Float32Array(256 * 256).fill(1), [1, 1, 256, 256]),
             has_mask_input: new ort.Tensor(new Float32Array(1).fill(0), [1]),
