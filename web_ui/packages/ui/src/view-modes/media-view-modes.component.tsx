@@ -50,6 +50,7 @@ export const MediaViewModes = ({ items = ITEMS, isDisabled = false, viewMode, se
                 selectionMode='single'
                 onAction={handleAction}
                 selectedKeys={[viewMode.toLocaleLowerCase()]}
+                width={'size-2400'}
             >
                 {items.map((item: string) => (
                     <Item key={item.toLocaleLowerCase()} aria-label={item.toLocaleLowerCase()} textValue={item}>
