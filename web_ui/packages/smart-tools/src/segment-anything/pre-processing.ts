@@ -1,12 +1,12 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import * as ort from 'onnxruntime-common';
+import { Tensor } from 'onnxruntime-web';
 
 import type { OpenCVTypes } from '../opencv/interfaces';
 
 interface PreprocessorResult {
-    tensor: ort.Tensor;
+    tensor: Tensor;
     width: number;
     height: number;
     newWidth: number;
@@ -53,7 +53,13 @@ export class OpenCVPreprocessor {
                 throw new Error('Something went wrong with preprocessing the image.');
             }
 
-            const tensor = new ort.Tensor('float32', input.data32F, [1, 3, this.config.size, this.config.size]);
+            // `input.data32F` is a view into WASM memory owned by OpenCV's `input` Mat, which is
+            // freed in the `finally` block below. `session.run()` uploads the tensor data
+            // asynchronously (especially on the WebGPU EP), so we must copy the data into a
+            // JS-owned Float32Array to avoid reading freed memory and hanging/garbage output.
+            const data = new Float32Array(input.data32F);
+            const tensor = new Tensor('float32', data, [1, 3, this.config.size, this.config.size]);
+
             return { tensor, width, height, newWidth, newHeight };
         } finally {
             imageCv.delete();

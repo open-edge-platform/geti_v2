@@ -1,19 +1,19 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import * as ort from 'onnxruntime-common';
+import { InferenceSession, Tensor } from 'onnxruntime-web';
 
 import { Point, RegionOfInterest, ShapeType } from '../shared/interfaces';
 
 export interface MainModelResponse {
-    instances: ort.Tensor;
-    instances_aux: ort.Tensor;
-    feature: ort.Tensor;
+    instances: Tensor;
+    instances_aux: Tensor;
+    feature: Tensor;
 }
 
 export interface Models {
-    preprocess: ort.InferenceSession;
-    main: ort.InferenceSession;
+    preprocess: InferenceSession;
+    main: InferenceSession;
 }
 
 export interface RITMPoint {

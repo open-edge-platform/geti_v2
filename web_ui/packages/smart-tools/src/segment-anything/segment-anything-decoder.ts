@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import * as ort from 'onnxruntime-common';
+import { Tensor } from 'onnxruntime-web';
 
 import type { OpenCVTypes } from '../opencv/interfaces';
 import { Point, ShapeType } from '../shared/interfaces';
@@ -67,7 +67,7 @@ export class SegmentAnythingDecoder {
         return results;
     }
 
-    private getIndexOfMaskWithHighestConfidence(iou_predictions: ort.Tensor) {
+    private getIndexOfMaskWithHighestConfidence(iou_predictions: Tensor) {
         let predictionIdx = 0;
 
         for (let p = 0; p < iou_predictions.dims[1]; p++) {
@@ -86,9 +86,9 @@ export class SegmentAnythingDecoder {
         },
         { encoderResult, originalWidth, originalHeight, newWidth, newHeight }: EncodingOutput
     ): Promise<{
-        masks: ort.Tensor;
-        iouPredictions: ort.Tensor;
-        lowResMasks: ort.Tensor;
+        masks: Tensor;
+        iouPredictions: Tensor;
+        lowResMasks: Tensor;
     }> {
         const pointCoords: number[] = [];
         const pointLabels: number[] = [];
@@ -118,17 +118,17 @@ export class SegmentAnythingDecoder {
         }
 
         const ratio = 1024 / Math.max(originalHeight, originalWidth);
-        const feeds: Record<string, ort.Tensor> = {
-            image_embeddings: new ort.Tensor(encoderResult.type, encoderResult.data, encoderResult.dims),
+        const feeds: Record<string, Tensor> = {
+            image_embeddings: new Tensor(encoderResult.type, encoderResult.data, encoderResult.dims),
             // TODO: reuse the low_res_masks output, also use existing polygons?
-            mask_input: new ort.Tensor(new Float32Array(256 * 256).fill(1), [1, 1, 256, 256]),
-            has_mask_input: new ort.Tensor(new Float32Array(1).fill(0), [1]),
-            orig_im_size: new ort.Tensor(
+            mask_input: new Tensor(new Float32Array(256 * 256).fill(1), [1, 1, 256, 256]),
+            has_mask_input: new Tensor(new Float32Array(1).fill(0), [1]),
+            orig_im_size: new Tensor(
                 new Float32Array([Math.round(originalHeight * ratio), Math.round(originalWidth * ratio)]),
                 [2]
             ),
-            point_coords: new ort.Tensor(new Float32Array(pointCoords), [1, pointCoords.length / 2, 2]),
-            point_labels: new ort.Tensor(new Float32Array(pointLabels), [1, pointLabels.length]),
+            point_coords: new Tensor(new Float32Array(pointCoords), [1, pointCoords.length / 2, 2]),
+            point_labels: new Tensor(new Float32Array(pointLabels), [1, pointLabels.length]),
         };
 
         const outputData = await this.session.run(feeds);

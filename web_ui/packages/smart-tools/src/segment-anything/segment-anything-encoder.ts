@@ -3,7 +3,7 @@
 
 import type { OpenCVTypes } from '@geti/smart-tools/opencv';
 import type * as Comlink from 'comlink';
-import * as ort from 'onnxruntime-common';
+import { Tensor } from 'onnxruntime-web';
 
 import { OpenCVPreprocessor, OpenCVPreprocessorConfig } from './pre-processing';
 import { type Session } from './session';
@@ -19,7 +19,7 @@ type ModelSession = Session | Comlink.Remote<Session>;
 export type SerializableTensor = {
     data: Float32Array;
     dims: number[];
-    type: ort.Tensor.Type;
+    type: Tensor.Type;
 };
 
 export type EncodingOutput = {
@@ -57,7 +57,7 @@ export class SegmentAnythingEncoder {
         const encoderResult: SerializableTensor = {
             data: new Float32Array((await gpuTensor.getData()) as Float32Array),
             dims: [...gpuTensor.dims],
-            type: gpuTensor.type as ort.Tensor.Type,
+            type: gpuTensor.type as Tensor.Type,
         };
 
         const originalWidth = initialImageData.width;

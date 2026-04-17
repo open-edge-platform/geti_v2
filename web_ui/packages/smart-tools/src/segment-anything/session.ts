@@ -1,9 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { env, InferenceSession } from 'onnxruntime-common';
-
-import 'onnxruntime-web';
+import { env, InferenceSession } from 'onnxruntime-web';
 
 import { loadSource } from '../utils/tool-utils';
 import { SessionParameters, sessionParams } from '../utils/wasm-utils';
@@ -39,6 +37,10 @@ export class Session {
             executionProviders: this.params.executionProviders,
             graphOptimizationLevel: 'all',
             executionMode: 'parallel',
+            // 0=verbose, 1=info, 2=warning, 3=error, 4=fatal. Silences the
+            // native "VerifyEachNodeIsAssignedToAnEp" warnings emitted when
+            // ORT intentionally keeps shape-related ops on the CPU EP.
+            logSeverityLevel: 3,
         });
 
         this.ortSession = session;
