@@ -55,7 +55,7 @@ export class SegmentAnythingEncoder {
         // >=1.20 to throw "invalid data location: undefined". Store raw typed
         // array data so the decoder can reconstruct a valid tensor.
         const encoderResult: SerializableTensor = {
-            data: new Float32Array((await gpuTensor.getData()) as Float32Array),
+            data: (await gpuTensor.getData()) as Float32Array,
             dims: [...gpuTensor.dims],
             type: gpuTensor.type as Tensor.Type,
         };

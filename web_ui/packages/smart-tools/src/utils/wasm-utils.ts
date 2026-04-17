@@ -4,7 +4,7 @@
 export interface SessionParameters {
     numThreads: number;
     executionProviders: string[];
-    wasmRoot?: string | { wasm?: string };
+    wasmRoot: { wasm: string };
 }
 
 const wasmPaths = {
