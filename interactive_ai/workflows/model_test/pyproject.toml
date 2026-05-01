@@ -30,7 +30,7 @@ dev = [
     "pytest-html~=4.0.0",
     "ruff==0.9.5",
     "testcontainers~=4.10.0",
-    "requests~=2.32.4",
+    "requests~=2.33.0",
 ]
 
 [build-system]

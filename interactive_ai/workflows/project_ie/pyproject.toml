@@ -36,7 +36,7 @@ dev = [
     "ruff==0.9.5",
     "testfixtures==8.3.0",
     "testcontainers[mongodb]~=4.10.0",
-    "requests~=2.32.4",
+    "requests~=2.33.0",
 ]
 
 [build-system]

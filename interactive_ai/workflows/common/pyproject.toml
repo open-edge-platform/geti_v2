@@ -57,7 +57,7 @@ dev = [
     "types-cachetools",
     "types-PyYAML",
     "testcontainers[mongodb]~=4.10",
-    "requests~=2.32.4",
+    "requests~=2.33.0",
     "types-requests~=2.31",
 
     "asynctest==0.13.0",
