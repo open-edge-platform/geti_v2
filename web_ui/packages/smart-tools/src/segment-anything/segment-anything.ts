@@ -7,14 +7,46 @@ import { SegmentAnythingResult } from './interfaces';
 import { OpenCVPreprocessorConfig } from './pre-processing';
 import { SegmentAnythingDecoder, SegmentAnythingPrompt } from './segment-anything-decoder';
 import { EncodingOutput, SegmentAnythingEncoder } from './segment-anything-encoder';
-import { Session } from './session';
+import { Session, SessionPoisonedError } from './session';
 
 type cv = typeof OpenCVTypes;
 
+// Errors whose message points at the WebGPU / JSEP backend. When we see one
+// the right recovery is to drop `webgpu` from the EP list and retry on CPU.
+const WEBGPU_ERROR_PATTERN = /webgpu|jsep|wasm|initwasm|no available backend/i;
+
+const isWebGpuFailure = (err: unknown): boolean => {
+    if (err instanceof SessionPoisonedError) return true;
+    const message = err instanceof Error ? err.message : String(err ?? '');
+    return WEBGPU_ERROR_PATTERN.test(message);
+};
+
+/**
+ * Create a Session, falling back to CPU-only EPs if the first attempt fails
+ * with a WebGPU / JSEP initialisation error. Some environments (Tauri WebView,
+ * non-cross-origin-isolated tabs, broken GPU drivers) can't load the threaded
+ * JSEP wasm; the CPU EP still works there.
+ */
 const createSession = async (modelPath: string): Promise<Session> => {
     const session = new Session();
-    await session.init(modelPath);
-    return session;
+    try {
+        await session.init(modelPath);
+        return session;
+    } catch (err) {
+        if (!isWebGpuFailure(err)) throw err;
+
+        // Best-effort reset onto CPU. `reset()` reuses the cached model bytes
+        // when present; if init() failed before caching them we fall through
+        // to a fresh init() with CPU EPs.
+        try {
+            await session.reset({ executionProviders: ['cpu'] });
+            return session;
+        } catch {
+            const cpuOnly = new Session();
+            await cpuOnly.init(modelPath, { executionProviders: ['cpu'] });
+            return cpuOnly;
+        }
+    }
 };
 
 export class SegmentAnythingModel {
@@ -43,29 +75,49 @@ export class SegmentAnythingModel {
         }
     }
 
-    public async processEncoder(initialImageData: ImageData): Promise<EncodingOutput> {
-        const session = this.sessions.get('encoder');
-
+    /**
+     * Invoke `op` against the given session. On a WebGPU / JSEP failure or a
+     * `SessionPoisonedError`, reset the session (downgrading to CPU EPs) and
+     * retry exactly once. The retry is the user-visible recovery path: the
+     * first call dies, the wrapper transparently recreates the session on the
+     * CPU EP, and the caller sees a successful (slower) result.
+     */
+    private async runWithRecovery<T>(
+        sessionKey: 'encoder' | 'decoder',
+        op: (session: Session) => Promise<T>
+    ): Promise<T> {
+        const session = this.sessions.get(sessionKey);
         if (!session) {
-            throw Error('the encoder is absent in the sessions map');
+            throw Error(`the ${sessionKey} is absent in the sessions map`);
         }
 
-        const encoder = new SegmentAnythingEncoder(this.cv, this.preProcessorConfig, session);
+        try {
+            return await op(session);
+        } catch (err) {
+            if (!isWebGpuFailure(err)) throw err;
 
-        return await encoder.processEncoder(initialImageData);
+            // Drop WebGPU on the retry — repeating the same EP after a JSEP
+            // crash will almost always fail the same way.
+            await session.reset({ executionProviders: ['cpu'] });
+            return await op(session);
+        }
+    }
+
+    public async processEncoder(initialImageData: ImageData): Promise<EncodingOutput> {
+        return this.runWithRecovery('encoder', (session) => {
+            const encoder = new SegmentAnythingEncoder(this.cv, this.preProcessorConfig, session);
+            return encoder.processEncoder(initialImageData);
+        });
     }
 
     public async processDecoder(
         encodingOutput: EncodingOutput,
         input: SegmentAnythingPrompt
     ): Promise<SegmentAnythingResult> {
-        const session = this.sessions.get('decoder');
-        if (!session) {
-            throw Error('the decoder is absent in the sessions map');
-        }
-
-        const decoder = new SegmentAnythingDecoder(this.cv, session);
-        const output = await decoder.process(encodingOutput, input);
+        const output = await this.runWithRecovery('decoder', (session) => {
+            const decoder = new SegmentAnythingDecoder(this.cv, session);
+            return decoder.process(encodingOutput, input);
+        });
 
         if (output.shapes.length === 0) {
             return {

@@ -156,7 +156,14 @@ export class Session {
     }
 
     private async createOrtSession(): Promise<void> {
-        env.wasm.numThreads = this.params.numThreads;
+        // The threaded JSEP wasm needs SharedArrayBuffer / cross-origin
+        // isolation. When we're running CPU-only (either by config or after
+        // a WebGPU/JSEP downgrade) force single-threaded wasm so ORT skips
+        // pthread_create entirely — once `initWasm()` fails it stays failed
+        // for the lifetime of the page and even pure-CPU sessions reject
+        // with "previous call to 'initWasm()' failed".
+        const cpuOnly = this.executionProviders.length === 1 && this.executionProviders[0] === 'cpu';
+        env.wasm.numThreads = cpuOnly ? 1 : this.params.numThreads;
         env.wasm.wasmPaths = this.params.wasmRoot;
         env.wasm.simd = true;
         // Suppress expected "some nodes not assigned to WebGPU EP" warnings —
