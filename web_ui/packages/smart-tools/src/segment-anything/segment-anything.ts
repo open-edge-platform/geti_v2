@@ -51,17 +51,12 @@ const createSession = async (modelPath: string): Promise<Session> => {
 
 export class SegmentAnythingModel {
     private sessions = new Map<string, Session>();
-    private modelPaths: Map<string, string>;
-    private preProcessorConfig: OpenCVPreprocessorConfig;
 
     public constructor(
         private cv: cv,
-        modelPaths: Map<string, string>,
-        preProcessorConfig: OpenCVPreprocessorConfig
-    ) {
-        this.modelPaths = modelPaths;
-        this.preProcessorConfig = preProcessorConfig;
-    }
+        private modelPaths: Map<string, string>,
+        private preProcessorConfig: OpenCVPreprocessorConfig
+    ) {}
 
     public async init(algorithm: 'SEGMENT_ANYTHING_DECODER' | 'SEGMENT_ANYTHING_ENCODER'): Promise<void> {
         if (!this.sessions.has('encoder') && algorithm === 'SEGMENT_ANYTHING_ENCODER') {
