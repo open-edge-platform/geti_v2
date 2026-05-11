@@ -128,12 +128,13 @@ export const loadSource = async (source: string, cacheKey = 'general'): Promise<
 
     const response = await self.fetch(source);
 
-    // Putting the model in cache might fail if the user does not have enough storage
-    try {
-        await cache.put(source, response.clone());
-    } finally {
-        return response;
-    }
+    // Fire-and-forget: awaiting cache.put can stall for tens of seconds on
+    // WebKit / busy Chromium profiles, blocking the model load even though the
+    // bytes are already in hand. Failures (e.g. quota exceeded) are silently
+    // ignored — caching is a best-effort optimisation.
+    void cache.put(source, response.clone()).catch(() => undefined);
+
+    return response;
 };
 
 export const getPointsFromMat = (mat: OpenCVTypes.Mat, offset = { x: 0, y: 0 }): Point[] => {
