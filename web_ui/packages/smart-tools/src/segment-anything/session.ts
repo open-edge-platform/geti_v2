@@ -12,13 +12,13 @@ const loadModel = async (modelPath: string) => {
 
 /**
  * Default per-call timeout (ms) applied when neither `init()` nor `run()`
- * specifies one. Chosen to be well above the 95p inference latency for the
- * SAM encoder/decoder on a slow CPU EP, while still bounding the worst case
- * so a hung `ortSession.run()` (e.g. JSEP/WebGPU stall) cannot block the
- * serial queue indefinitely. Override via `init({ runTimeoutMs })` or
- * `run({ timeoutMs })`; pass `0` to disable.
+ * specifies one. Sized to bound a hung `ortSession.run()` (e.g. JSEP/WebGPU
+ * stall, native deadlock) without false-firing on a legitimate slow SAM
+ * encoder pass on a CPU EP, which can comfortably take 30–60 s on modest
+ * hardware. Override via `init({ runTimeoutMs })` or `run({ timeoutMs })`;
+ * pass `0` to disable.
  */
-export const DEFAULT_RUN_TIMEOUT_MS = 30_000;
+export const DEFAULT_RUN_TIMEOUT_MS = 5 * 60_000;
 
 /**
  * Thrown when a single `Session.run()` call exceeds its configured timeout.
