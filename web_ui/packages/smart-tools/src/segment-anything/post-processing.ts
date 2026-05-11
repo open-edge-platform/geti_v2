@@ -6,6 +6,11 @@ import { Circle, Point, Polygon, Rect, RotatedRect, Shape, ShapeType } from '../
 import { approximateShape } from '../utils/tool-utils';
 import { type SegmentAnythingResult } from './interfaces';
 
+// Discard contours whose bounding box covers more than this fraction of the
+// image — SAM occasionally returns a single mask that's basically the whole
+// frame and is never what the user wanted.
+const MAX_CONTOUR_AREA_RATIO = 0.9;
+
 interface PostProcessorConfig {
     type: ShapeType;
     shapeFilter?: (shape: Shape) => boolean;
@@ -32,91 +37,75 @@ export class PostProcessor {
         config: PostProcessorConfig
     ): SegmentAnythingResult {
         const scales = this.scaleToOriginalSize(sizes);
-        const width = sizes.width;
-        const height = sizes.height;
-        const mat = this.CV.matFromArray(height, width, this.CV.CV_8U, pixels);
-
+        const mat = this.CV.matFromArray(sizes.height, sizes.width, this.CV.CV_8U, pixels);
         const contours = new this.CV.MatVector();
-        const hierachy: OpenCVTypes.Mat = new this.CV.Mat();
-
-        this.CV.findContours(mat, contours, hierachy, this.CV.RETR_EXTERNAL, this.CV.CHAIN_APPROX_NONE);
-
-        let maxContourIdx = 0;
-        let maxArea = -1;
+        const hierarchy: OpenCVTypes.Mat = new this.CV.Mat();
 
         const shapes: Shape[] = [];
         const areas: number[] = [];
         const imageArea = sizes.originalWidth * sizes.originalHeight;
-        for (let idx = 0; idx < Number(contours.size()); idx++) {
-            const contour = contours.get(idx);
-            const optimizedContour = approximateShape(this.CV, contour);
-            const area = this.CV.contourArea(optimizedContour, false);
+        let maxContourIdx = 0;
+        let maxArea = -1;
 
-            const shape = this.contourToShape(optimizedContour, config, scales);
+        try {
+            this.CV.findContours(mat, contours, hierarchy, this.CV.RETR_EXTERNAL, this.CV.CHAIN_APPROX_NONE);
 
-            // Get rid of results that might take up the whole image
-            const boundingBox = this.contourToRectangle(optimizedContour, scales);
-            if ((boundingBox.width * boundingBox.height) / imageArea < 0.9) {
-                if (config.shapeFilter === undefined || config.shapeFilter(shape)) {
+            for (let idx = 0; idx < Number(contours.size()); idx++) {
+                const contour = contours.get(idx);
+                const optimized = approximateShape(this.CV, contour);
+                try {
+                    const bbox = this.contourToRectangle(optimized, scales);
+                    if ((bbox.width * bbox.height) / imageArea >= MAX_CONTOUR_AREA_RATIO) continue;
+
+                    const shape = this.contourToShape(optimized, config, scales);
+                    if (config.shapeFilter && !config.shapeFilter(shape)) continue;
+
+                    const area = this.CV.contourArea(optimized, false);
                     shapes.push(shape);
                     areas.push(area);
                     if (area > maxArea) {
                         maxArea = area;
                         maxContourIdx = shapes.length - 1;
                     }
+                } finally {
+                    optimized?.delete();
+                    contour?.delete();
                 }
             }
-
-            optimizedContour?.delete();
-            contour?.delete();
+        } finally {
+            contours.delete();
+            hierarchy.delete();
+            mat.delete();
         }
-
-        contours.delete();
-        hierachy.delete();
-        mat.delete();
-
-        // TODO: filter contours based on size (i.e. larger than x%, smaller than 90% of image)
-        // TODO: give some kind of score based on area and if the points are
-        // (not) included in the contour
 
         return { areas, maxContourIdx, shapes };
     }
 
-    private contourToShape = (
-        optimizedContour: OpenCVTypes.Mat,
-        config: PostProcessorConfig,
-        scales: ScaleToSize
-    ): Shape => {
+    private contourToShape(contour: OpenCVTypes.Mat, config: PostProcessorConfig, scales: ScaleToSize): Shape {
         switch (config.type) {
             case 'polygon':
-                return this.contourToPolygon(optimizedContour, scales);
+                return this.contourToPolygon(contour, scales);
             case 'rect':
-                return this.contourToRectangle(optimizedContour, scales);
+                return this.contourToRectangle(contour, scales);
             case 'rotated-rect':
-                return this.contourToRotatedRectangle(optimizedContour, scales);
+                return this.contourToRotatedRectangle(contour, scales);
             case 'circle':
-                return this.contourToCircle(optimizedContour, scales);
+                return this.contourToCircle(contour, scales);
             default:
                 throw new Error('Can not create keypoint using SAM');
         }
-    };
+    }
 
-    private contourToPolygon(optimizedContour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Polygon {
+    private contourToPolygon(contour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Polygon {
         const points: Point[] = [];
-
-        for (let row = 0; row < optimizedContour.rows; row++) {
-            const x = scaleX(optimizedContour.intAt(row, 0));
-            const y = scaleY(optimizedContour.intAt(row, 1));
-
-            points.push({ x, y });
+        for (let row = 0; row < contour.rows; row++) {
+            points.push({ x: scaleX(contour.intAt(row, 0)), y: scaleY(contour.intAt(row, 1)) });
         }
-
         return { shapeType: 'polygon', points };
     }
 
-    private contourToRectangle(optimizedContour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Rect {
-        const { x, y, width, height } = this.CV.boundingRect(optimizedContour);
-
+    private contourToRectangle(contour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Rect {
+        const { x, y, width, height } = this.CV.boundingRect(contour);
         return {
             shapeType: 'rect',
             x: scaleX(x),
@@ -126,13 +115,12 @@ export class PostProcessor {
         };
     }
 
-    private contourToRotatedRectangle(optimizedContour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): RotatedRect {
+    private contourToRotatedRectangle(contour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): RotatedRect {
         const {
             angle,
             center: { x, y },
             size: { width, height },
-        } = this.CV.minAreaRect(optimizedContour);
-
+        } = this.CV.minAreaRect(contour);
         return {
             shapeType: 'rotated-rect',
             x: scaleX(x),
@@ -143,12 +131,11 @@ export class PostProcessor {
         };
     }
 
-    private contourToCircle(optimizedContour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Circle {
+    private contourToCircle(contour: OpenCVTypes.Mat, { scaleX, scaleY }: ScaleToSize): Circle {
         const {
             center: { x, y },
             size: { width, height },
-        } = this.CV.minAreaRect(optimizedContour);
-
+        } = this.CV.minAreaRect(contour);
         return {
             shapeType: 'circle',
             x: scaleX(x),
@@ -157,12 +144,10 @@ export class PostProcessor {
         };
     }
 
-    private scaleToOriginalSize(sizes: Sizes): ScaleToSize {
-        const { width, height, originalWidth, originalHeight } = sizes;
-
+    private scaleToOriginalSize({ width, height, originalWidth, originalHeight }: Sizes): ScaleToSize {
         return {
-            scaleX: (x: number) => Math.round((x * originalWidth) / width),
-            scaleY: (y: number) => Math.round((y * originalHeight) / height),
+            scaleX: (x) => Math.round((x * originalWidth) / width),
+            scaleY: (y) => Math.round((y * originalHeight) / height),
         };
     }
 }

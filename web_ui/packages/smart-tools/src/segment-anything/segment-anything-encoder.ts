@@ -42,9 +42,9 @@ export class SegmentAnythingEncoder {
     }
 
     public async processEncoder(initialImageData: ImageData) {
-        const result = this.preprocessor.process(initialImageData);
+        const { tensor, newWidth, newHeight } = this.preprocessor.process(initialImageData);
         console.time('[SAM] Encoding');
-        const outputData = await this.session.run({ x: result.tensor });
+        const outputData = await this.session.run({ x: tensor });
         console.timeEnd('[SAM] Encoding');
 
         const outputNames = await this.session.outputNames();
@@ -60,15 +60,10 @@ export class SegmentAnythingEncoder {
             type: gpuTensor.type as Tensor.Type,
         };
 
-        const originalWidth = initialImageData.width;
-        const originalHeight = initialImageData.height;
-        const newWidth = result.newWidth;
-        const newHeight = result.newHeight;
-
         return {
             encoderResult,
-            originalWidth,
-            originalHeight,
+            originalWidth: initialImageData.width,
+            originalHeight: initialImageData.height,
             newWidth,
             newHeight,
         };

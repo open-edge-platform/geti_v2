@@ -104,33 +104,27 @@ export class SegmentAnythingModel {
     }
 
     public async processEncoder(initialImageData: ImageData): Promise<EncodingOutput> {
-        return this.runWithRecovery('encoder', (session) => {
-            const encoder = new SegmentAnythingEncoder(this.cv, this.preProcessorConfig, session);
-            return encoder.processEncoder(initialImageData);
-        });
+        return this.runWithRecovery('encoder', (session) =>
+            new SegmentAnythingEncoder(this.cv, this.preProcessorConfig, session).processEncoder(initialImageData)
+        );
     }
 
     public async processDecoder(
         encodingOutput: EncodingOutput,
         input: SegmentAnythingPrompt
     ): Promise<SegmentAnythingResult> {
-        const output = await this.runWithRecovery('decoder', (session) => {
-            const decoder = new SegmentAnythingDecoder(this.cv, session);
-            return decoder.process(encodingOutput, input);
-        });
+        const { shapes, areas, maxContourIdx } = await this.runWithRecovery('decoder', (session) =>
+            new SegmentAnythingDecoder(this.cv, session).process(encodingOutput, input)
+        );
 
-        if (output.shapes.length === 0) {
-            return {
-                areas: [],
-                maxContourIdx: 0,
-                shapes: [],
-            };
+        if (shapes.length === 0) {
+            return { shapes: [], areas: [], maxContourIdx: 0 };
         }
 
         return {
-            areas: [output.areas[output.maxContourIdx]],
-            maxContourIdx: output.maxContourIdx,
-            shapes: [output.shapes[output.maxContourIdx]],
+            shapes: [shapes[maxContourIdx]],
+            areas: [areas[maxContourIdx]],
+            maxContourIdx,
         };
     }
 }

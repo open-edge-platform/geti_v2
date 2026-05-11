@@ -11,8 +11,6 @@ import { PostProcessor } from './post-processing';
 import { EncodingOutput } from './segment-anything-encoder';
 import { type Session } from './session';
 
-type cv = OpenCVTypes;
-
 type InteractiveAnnotationPoint = Point & { positive: boolean };
 
 export interface SegmentAnythingPrompt {
@@ -21,106 +19,84 @@ export interface SegmentAnythingPrompt {
     outputConfig: { type: ShapeType };
 }
 
+const argmax = (data: ArrayLike<number>, length: number): number => {
+    let best = 0;
+    for (let i = 1; i < length; i++) {
+        if (data[i] > data[best]) best = i;
+    }
+    return best;
+};
+
 export class SegmentAnythingDecoder {
     constructor(
-        private cv: cv,
+        private cv: OpenCVTypes,
         private session: Session
     ) {}
 
     public async process(encodingOutput: EncodingOutput, input: SegmentAnythingPrompt): Promise<SegmentAnythingResult> {
-        const { masks, iouPredictions } = await this.processDecoder(
-            { boxes: input.boxes ?? [], points: input.points ?? [] },
-            encodingOutput
+        const points = input.points ?? [];
+        const boxes = input.boxes ?? [];
+        const { masks, iouPredictions } = await this.runDecoder(points, boxes, encodingOutput);
+
+        const [, , height, width] = masks.dims;
+        const maskIdx = argmax(iouPredictions.data as ArrayLike<number>, iouPredictions.dims[1]);
+        const maskOffset = maskIdx * height * width;
+
+        const pixels = new Uint8ClampedArray(height * width);
+        for (let i = 0; i < pixels.length; i++) {
+            pixels[i] = Number(masks.data[maskOffset + i]) > 0 ? 255 : 0;
+        }
+
+        const positivePoints = points.filter(({ positive }) => positive);
+
+        return new PostProcessor(this.cv).maskToAnnotationShape(
+            pixels,
+            {
+                width,
+                height,
+                originalWidth: encodingOutput.originalWidth + 1,
+                originalHeight: encodingOutput.originalHeight + 1,
+            },
+            {
+                ...input.outputConfig,
+                shapeFilter: (shape) => positivePoints.some((point) => isPointInShape(shape, point)),
+            }
         );
-
-        const maskIdx = this.getIndexOfMaskWithHighestConfidence(iouPredictions);
-
-        const size = masks.dims[2] * masks.dims[3];
-        const maskOffset = maskIdx * size;
-        const pixels = new Uint8ClampedArray(new ArrayBuffer(size));
-
-        for (let y = 0; y < masks.dims[2]; y++) {
-            for (let x = 0; x < masks.dims[3]; x++) {
-                const value = Number(masks.data[maskOffset + y * masks.dims[3] + x]);
-
-                const idx = y * masks.dims[3] + x;
-                pixels[idx] = value > 0 ? 255 : 0;
-            }
-        }
-
-        const postProcessor = new PostProcessor(this.cv);
-
-        const positivePoints = input.points?.filter(({ positive }) => positive) ?? [];
-
-        const sizes = {
-            height: masks.dims[2],
-            width: masks.dims[3],
-            originalWidth: encodingOutput.originalWidth + 1,
-            originalHeight: encodingOutput.originalHeight + 1,
-        };
-
-        const results = postProcessor.maskToAnnotationShape(pixels, sizes, {
-            ...(input.outputConfig ?? { type: 'polygon' }),
-            shapeFilter: (shape) => positivePoints.some((point) => isPointInShape(shape, point)),
-        });
-        return results;
     }
 
-    private getIndexOfMaskWithHighestConfidence(iou_predictions: Tensor) {
-        let predictionIdx = 0;
-
-        for (let p = 0; p < iou_predictions.dims[1]; p++) {
-            if (iou_predictions.data[p] > iou_predictions.data[predictionIdx]) {
-                predictionIdx = p;
-            }
-        }
-
-        return predictionIdx;
-    }
-
-    private async processDecoder(
-        prompt: {
-            points: InteractiveAnnotationPoint[];
-            boxes: Point[][];
-        },
+    private async runDecoder(
+        points: InteractiveAnnotationPoint[],
+        boxes: Point[][],
         { encoderResult, originalWidth, originalHeight, newWidth, newHeight }: EncodingOutput
-    ): Promise<{
-        masks: Tensor;
-        iouPredictions: Tensor;
-    }> {
-        const pointCoords: number[] = [];
-        const pointLabels: number[] = [];
-
+    ): Promise<{ masks: Tensor; iouPredictions: Tensor }> {
         const xRatio = newWidth / originalWidth;
         const yRatio = newHeight / originalHeight;
 
-        for (const point of prompt.points) {
-            pointCoords.push(point.x * xRatio);
-            pointCoords.push(point.y * yRatio);
-            pointLabels.push(point.positive ? 1 : 0);
+        const pointCoords: number[] = [];
+        const pointLabels: number[] = [];
+
+        for (const p of points) {
+            pointCoords.push(p.x * xRatio, p.y * yRatio);
+            pointLabels.push(p.positive ? 1 : 0);
         }
 
-        if (prompt.boxes.length === 0) {
-            pointCoords.push(0);
-            pointCoords.push(0);
+        if (boxes.length === 0) {
+            // SAM requires at least one extra padding point when no box is given.
+            pointCoords.push(0, 0);
             pointLabels.push(-1);
         }
 
-        for (const box of prompt.boxes) {
-            pointCoords.push(box[0].x * xRatio);
-            pointCoords.push(box[0].y * yRatio);
-            pointLabels.push(2);
-            pointCoords.push(box[1].x * xRatio);
-            pointCoords.push(box[1].y * yRatio);
-            pointLabels.push(3);
+        for (const [tl, br] of boxes) {
+            pointCoords.push(tl.x * xRatio, tl.y * yRatio, br.x * xRatio, br.y * yRatio);
+            pointLabels.push(2, 3);
         }
 
         const ratio = 1024 / Math.max(originalHeight, originalWidth);
+        // TODO: reuse the low_res_masks output, also use existing polygons?
         const feeds: Record<string, Tensor> = {
             image_embeddings: new Tensor(encoderResult.type, encoderResult.data, encoderResult.dims),
-            // TODO: reuse the low_res_masks output, also use existing polygons?
             mask_input: new Tensor(new Float32Array(256 * 256).fill(1), [1, 1, 256, 256]),
-            has_mask_input: new Tensor(new Float32Array(1).fill(0), [1]),
+            has_mask_input: new Tensor(new Float32Array(1), [1]),
             orig_im_size: new Tensor(
                 new Float32Array([Math.round(originalHeight * ratio), Math.round(originalWidth * ratio)]),
                 [2]
@@ -129,11 +105,7 @@ export class SegmentAnythingDecoder {
             point_labels: new Tensor(new Float32Array(pointLabels), [1, pointLabels.length]),
         };
 
-        const outputData = await this.session.run(feeds);
-
-        return {
-            masks: outputData['masks'],
-            iouPredictions: outputData['iou_predictions'],
-        };
+        const out = await this.session.run(feeds);
+        return { masks: out['masks'], iouPredictions: out['iou_predictions'] };
     }
 }

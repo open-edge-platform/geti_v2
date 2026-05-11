@@ -7,15 +7,12 @@ import type { OpenCVTypes } from '../opencv/interfaces';
 
 interface PreprocessorResult {
     tensor: Tensor;
-    width: number;
-    height: number;
     newWidth: number;
     newHeight: number;
 }
 
 export interface OpenCVPreprocessorConfig {
     normalize: {
-        enabled: boolean;
         mean?: number[];
         std?: number[];
     };
@@ -27,157 +24,93 @@ export interface OpenCVPreprocessorConfig {
 }
 
 export class OpenCVPreprocessor {
-    config: OpenCVPreprocessorConfig;
-
     constructor(
         private CV: OpenCVTypes.cv,
-        config: OpenCVPreprocessorConfig
-    ) {
-        this.config = config;
-    }
+        private config: OpenCVPreprocessorConfig
+    ) {}
 
     public process(initialImageData: ImageData): PreprocessorResult {
-        const imageCv = this.loadImage(initialImageData);
-
-        const preProcessedImage: OpenCVTypes.Mat = imageCv.clone();
-        let input: OpenCVTypes.Mat | null = null;
+        const mat = this.loadImage(initialImageData);
+        let blob: OpenCVTypes.Mat | null = null;
         try {
-            const { width, height, newWidth, newHeight } = this.resizeImage(preProcessedImage);
+            const { newWidth, newHeight } = this.resizeAndPad(mat);
 
-            // Apply color space transformations
-            preProcessedImage.convertTo(preProcessedImage, this.CV.CV_32F, 1 / 255);
-            this.processImage(preProcessedImage);
+            mat.convertTo(mat, this.CV.CV_32F, 1 / 255);
+            this.normalize(mat);
 
-            input = this.CV.blobFromImage(preProcessedImage);
-            if (!input) {
+            blob = this.CV.blobFromImage(mat);
+            if (!blob) {
                 throw new Error('Something went wrong with preprocessing the image.');
             }
 
-            // `input.data32F` is a view into WASM memory owned by OpenCV's `input` Mat, which is
-            // freed in the `finally` block below. `session.run()` uploads the tensor data
-            // asynchronously (especially on the WebGPU EP), so we must copy the data into a
-            // JS-owned Float32Array to avoid reading freed memory and hanging/garbage output.
-            const data = new Float32Array(input.data32F);
+            // `blob.data32F` is a view into WASM memory owned by `blob`, which is freed in the
+            // `finally` block below. `session.run()` uploads the tensor data asynchronously
+            // (especially on the WebGPU EP), so we must copy into JS-owned memory.
+            const data = new Float32Array(blob.data32F);
             const tensor = new Tensor('float32', data, [1, 3, this.config.size, this.config.size]);
 
-            return { tensor, width, height, newWidth, newHeight };
+            return { tensor, newWidth, newHeight };
         } finally {
-            imageCv.delete();
-            preProcessedImage?.delete();
-            input?.delete();
+            mat.delete();
+            blob?.delete();
         }
     }
 
     private loadImage(imageData: ImageData): OpenCVTypes.Mat {
-        // TODO: check if it is faster / more appropriate if we traser this value
-        // https://github.com/GoogleChromeLabs/comlink#comlinktransfervalue-transferables-and-comlinkproxyvalue
         const src = this.CV.matFromImageData(imageData);
-        // This is important as otherwise the matrix has too many channels
-        // and we don't want to convert the alpha channel to the ort tesnsor
+        // Strip the alpha channel — the ORT tensor only wants 3 channels.
         this.CV.cvtColor(src, src, this.CV.COLOR_RGBA2RGB, 0);
-
         return src;
     }
 
-    private resizeImage(preProcessedImage: OpenCVTypes.Mat) {
-        const width = this.config.pad ? this.config.padSize : preProcessedImage.cols;
-        const height = this.config.pad ? this.config.padSize : preProcessedImage.rows;
+    private resizeAndPad(mat: OpenCVTypes.Mat): { newWidth: number; newHeight: number } {
+        const { resize, squareImage, pad, padSize, size } = this.config;
 
-        if (this.config.resize) {
-            const CV_INTERPOLATION = this.CV.INTER_LANCZOS4;
-            if (!this.config.squareImage) {
-                if (preProcessedImage.cols > preProcessedImage.rows) {
-                    const scale = this.config.size / preProcessedImage.cols;
-                    const h = Math.ceil(preProcessedImage.rows * scale);
-                    const w = this.config.size;
-                    this.CV.resize(
-                        preProcessedImage,
-                        preProcessedImage,
-                        new this.CV.Size(w, h),
-                        0,
-                        0,
-                        CV_INTERPOLATION
-                    );
-                } else {
-                    const scale = this.config.size / preProcessedImage.rows;
-                    const h = this.config.size;
-                    const w = Math.ceil(preProcessedImage.cols * scale);
-                    this.CV.resize(
-                        preProcessedImage,
-                        preProcessedImage,
-                        new this.CV.Size(w, h),
-                        0,
-                        0,
-                        CV_INTERPOLATION
-                    );
-                }
-            } else {
-                this.CV.resize(
-                    preProcessedImage,
-                    preProcessedImage,
-                    new this.CV.Size(this.config.size, this.config.size),
-                    0,
-                    0,
-                    CV_INTERPOLATION
-                );
-            }
+        if (resize) {
+            const [w, h] = squareImage
+                ? [size, size]
+                : mat.cols > mat.rows
+                  ? [size, Math.ceil(mat.rows * (size / mat.cols))]
+                  : [Math.ceil(mat.cols * (size / mat.rows)), size];
+            this.CV.resize(mat, mat, new this.CV.Size(w, h), 0, 0, this.CV.INTER_LANCZOS4);
         }
 
-        const newWidth = preProcessedImage.cols;
-        const newHeight = preProcessedImage.rows;
+        const newWidth = mat.cols;
+        const newHeight = mat.rows;
 
-        if (this.config.pad) {
+        if (pad) {
             this.CV.copyMakeBorder(
-                preProcessedImage,
-                preProcessedImage,
+                mat,
+                mat,
                 0,
-                height - preProcessedImage.rows,
+                padSize - newHeight,
                 0,
-                width - preProcessedImage.cols,
+                padSize - newWidth,
                 this.CV.BORDER_CONSTANT,
                 new this.CV.Scalar(0, 0, 0, 0)
             );
         }
 
-        return {
-            width,
-            height,
-            newWidth,
-            newHeight,
-        };
+        return { newWidth, newHeight };
     }
 
-    private processImage(dst: OpenCVTypes.Mat): void {
-        // RITM requires the image to normalized. RITM code uses theses hardcoded values for some reason.
-        let norm: OpenCVTypes.Mat | null = null;
-        let stdDev: OpenCVTypes.Mat | null = null;
+    private normalize(dst: OpenCVTypes.Mat): void {
+        const { mean, std } = this.config.normalize;
+        if (mean) this.applyScalar(dst, mean, 'subtract');
+        if (std) this.applyScalar(dst, std, 'divide');
+    }
+
+    private applyScalar(dst: OpenCVTypes.Mat, [c0, c1, c2]: number[], op: 'subtract' | 'divide'): void {
+        const constant = dst.clone();
         try {
-            if (this.config.normalize.mean) {
-                const normValue = new this.CV.Scalar(
-                    this.config.normalize.mean[0],
-                    this.config.normalize.mean[1],
-                    this.config.normalize.mean[2]
-                );
-                norm = dst.clone();
-                norm.setTo(normValue);
-
-                this.CV.subtract(dst, norm, dst);
-            }
-
-            if (this.config.normalize.std) {
-                const stdDevValues = new this.CV.Scalar(
-                    this.config.normalize.std[0],
-                    this.config.normalize.std[1],
-                    this.config.normalize.std[2]
-                );
-                stdDev = dst.clone();
-                stdDev.setTo(stdDevValues);
-
-                this.CV.divide(dst, stdDev, dst, 1);
+            constant.setTo(new this.CV.Scalar(c0, c1, c2));
+            if (op === 'subtract') {
+                this.CV.subtract(dst, constant, dst);
+            } else {
+                this.CV.divide(dst, constant, dst, 1);
             }
         } finally {
-            stdDev?.delete();
-            norm?.delete();
+            constant.delete();
         }
     }
 }
