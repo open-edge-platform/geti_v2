@@ -11,6 +11,16 @@ const loadModel = async (modelPath: string) => {
 };
 
 /**
+ * Default per-call timeout (ms) applied when neither `init()` nor `run()`
+ * specifies one. Chosen to be well above the 95p inference latency for the
+ * SAM encoder/decoder on a slow CPU EP, while still bounding the worst case
+ * so a hung `ortSession.run()` (e.g. JSEP/WebGPU stall) cannot block the
+ * serial queue indefinitely. Override via `init({ runTimeoutMs })` or
+ * `run({ timeoutMs })`; pass `0` to disable.
+ */
+export const DEFAULT_RUN_TIMEOUT_MS = 30_000;
+
+/**
  * Thrown when a single `Session.run()` call exceeds its configured timeout.
  * The session is marked unhealthy after this — call `Session.reset()` to revive it.
  */
@@ -65,6 +75,11 @@ export class Session {
     private executionProviders: SessionParameters['executionProviders'];
     private runTimeoutMs: number | undefined;
     private poisoned = false;
+    // Bumped on every reset() and on poisoning. Captured by run() at enqueue
+    // time and re-checked inside the queued continuation so that calls already
+    // sitting behind a poisoned/replaced session are rejected instead of
+    // executing against a stale or corrupted ortSession.
+    private generation = 0;
 
     constructor() {
         this.params = sessionParams;
@@ -81,7 +96,10 @@ export class Session {
 
     public async init(modelPath: string, options?: SessionInitOptions): Promise<void> {
         this.executionProviders = options?.executionProviders ?? this.params.executionProviders;
-        this.runTimeoutMs = options?.runTimeoutMs;
+        // Default to a non-zero timeout so callers that omit `runTimeoutMs`
+        // are still protected from a hung run() blocking the serial queue.
+        // Explicit `0` disables the timeout.
+        this.runTimeoutMs = options?.runTimeoutMs ?? DEFAULT_RUN_TIMEOUT_MS;
 
         const modelData = await loadModel(modelPath);
 
@@ -126,8 +144,12 @@ export class Session {
             }
         }
 
-        // Drop any chained-but-never-resolved tail (e.g. a hung run()).
+        // Drop any chained-but-never-resolved tail (e.g. a hung run()) and
+        // invalidate any run() calls that are already queued — they captured
+        // the previous generation and must not execute against the new
+        // session.
         this.pending = Promise.resolve();
+        this.generation++;
         this.poisoned = false;
 
         await this.createOrtSession();
@@ -156,8 +178,7 @@ export class Session {
         input: InferenceSession.OnnxValueMapType,
         options?: SessionRunOptions
     ): Promise<InferenceSession.OnnxValueMapType> {
-        const session = this.ortSession;
-        if (!session) {
+        if (!this.ortSession) {
             throw Error('the session is not initialized. Call `init()` method first.');
         }
         if (this.poisoned) {
@@ -165,10 +186,28 @@ export class Session {
         }
 
         const timeoutMs = options?.timeoutMs ?? this.runTimeoutMs;
+        // Snapshot the session generation at enqueue time. If poisoning or a
+        // reset() bumps it before our turn arrives, we must refuse to run
+        // against the stale/corrupted (or now-replaced) ortSession.
+        const enqueuedGeneration = this.generation;
 
         // Wait for our turn but never propagate a previous failure to this call.
         const waitForTurn = this.pending.catch(() => undefined);
-        const next = waitForTurn.then(() => this.runOnce(session, input, timeoutMs));
+        const next = waitForTurn.then(() => {
+            // Re-validate just before invoking ortSession.run(): an earlier
+            // queued call may have poisoned the session, or reset() may have
+            // replaced it entirely while we were waiting.
+            if (this.poisoned || this.generation !== enqueuedGeneration) {
+                throw new SessionPoisonedError();
+            }
+
+            const currentSession = this.ortSession;
+            if (!currentSession) {
+                throw new SessionPoisonedError();
+            }
+
+            return this.runOnce(currentSession, input, timeoutMs);
+        });
 
         // Always advance the queue, regardless of whether `next` resolves or
         // rejects (incl. timeout). Without `.catch(...)` here a hung run()
@@ -191,7 +230,7 @@ export class Session {
                 // Any thrown error from ortSession.run() is treated as
                 // unrecoverable — JSEP failures leave the WASM heap in an
                 // inconsistent state and subsequent runs OOB or return garbage.
-                this.poisoned = true;
+                this.poison();
                 throw err;
             });
         }
@@ -199,7 +238,7 @@ export class Session {
         let timer: ReturnType<typeof setTimeout> | undefined;
         const timeoutPromise = new Promise<never>((_, reject) => {
             timer = setTimeout(() => {
-                this.poisoned = true;
+                this.poison();
                 reject(new SessionRunTimeoutError(timeoutMs));
             }, timeoutMs);
         });
@@ -211,10 +250,19 @@ export class Session {
             },
             (err) => {
                 if (timer !== undefined) clearTimeout(timer);
-                this.poisoned = true;
+                this.poison();
                 throw err;
             }
         );
+    }
+
+    private poison(): void {
+        if (this.poisoned) return;
+        this.poisoned = true;
+        // Bump the generation so any run() calls already queued behind this
+        // one are rejected in their `then(...)` re-check instead of executing
+        // against the now-corrupted session.
+        this.generation++;
     }
 
     public inputNames(): readonly string[] {
