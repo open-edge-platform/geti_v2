@@ -40,7 +40,9 @@ export class SegmentAnythingEncoder {
 
     public async processEncoder(initialImageData: ImageData): Promise<EncodingOutput> {
         const { tensor, newWidth, newHeight } = this.preprocessor.process(initialImageData);
+        console.time('[SAM] Encoding');
         const outputData = await this.session.run({ x: tensor });
+        console.timeEnd('[SAM] Encoding');
         const outputNames = await this.session.outputNames();
         const gpuTensor = outputData[outputNames[0]];
 
