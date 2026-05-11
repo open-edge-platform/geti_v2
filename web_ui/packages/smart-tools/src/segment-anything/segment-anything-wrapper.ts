@@ -12,6 +12,7 @@ import { EncodingOutput } from './segment-anything-encoder';
 
 const PRE_PROCESSOR_CONFIG: OpenCVPreprocessorConfig = {
     normalize: {
+        enabled: true,
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225],
     },

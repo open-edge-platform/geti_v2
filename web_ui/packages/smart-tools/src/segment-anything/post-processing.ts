@@ -37,46 +37,48 @@ export class PostProcessor {
         config: PostProcessorConfig
     ): SegmentAnythingResult {
         const scales = this.scaleToOriginalSize(sizes);
-        const mat = this.CV.matFromArray(sizes.height, sizes.width, this.CV.CV_8U, pixels);
+        const width = sizes.width;
+        const height = sizes.height;
+        const mat = this.CV.matFromArray(height, width, this.CV.CV_8U, pixels);
+
         const contours = new this.CV.MatVector();
         const hierarchy: OpenCVTypes.Mat = new this.CV.Mat();
+
+        this.CV.findContours(mat, contours, hierarchy, this.CV.RETR_EXTERNAL, this.CV.CHAIN_APPROX_NONE);
+
+        let maxContourIdx = 0;
+        let maxArea = -1;
 
         const shapes: Shape[] = [];
         const areas: number[] = [];
         const imageArea = sizes.originalWidth * sizes.originalHeight;
-        let maxContourIdx = 0;
-        let maxArea = -1;
+        for (let idx = 0; idx < Number(contours.size()); idx++) {
+            const contour = contours.get(idx);
+            const optimizedContour = approximateShape(this.CV, contour);
+            const area = this.CV.contourArea(optimizedContour, false);
 
-        try {
-            this.CV.findContours(mat, contours, hierarchy, this.CV.RETR_EXTERNAL, this.CV.CHAIN_APPROX_NONE);
+            const shape = this.contourToShape(optimizedContour, config, scales);
 
-            for (let idx = 0; idx < Number(contours.size()); idx++) {
-                const contour = contours.get(idx);
-                const optimized = approximateShape(this.CV, contour);
-                try {
-                    const bbox = this.contourToRectangle(optimized, scales);
-                    if ((bbox.width * bbox.height) / imageArea >= MAX_CONTOUR_AREA_RATIO) continue;
-
-                    const shape = this.contourToShape(optimized, config, scales);
-                    if (config.shapeFilter && !config.shapeFilter(shape)) continue;
-
-                    const area = this.CV.contourArea(optimized, false);
+            // Get rid of results that might take up the whole image
+            const boundingBox = this.contourToRectangle(optimizedContour, scales);
+            if ((boundingBox.width * boundingBox.height) / imageArea < MAX_CONTOUR_AREA_RATIO) {
+                if (config.shapeFilter === undefined || config.shapeFilter(shape)) {
                     shapes.push(shape);
                     areas.push(area);
                     if (area > maxArea) {
                         maxArea = area;
                         maxContourIdx = shapes.length - 1;
                     }
-                } finally {
-                    optimized?.delete();
-                    contour?.delete();
                 }
             }
-        } finally {
-            contours.delete();
-            hierarchy.delete();
-            mat.delete();
+
+            optimizedContour?.delete();
+            contour?.delete();
         }
+
+        contours.delete();
+        hierarchy.delete();
+        mat.delete();
 
         return { areas, maxContourIdx, shapes };
     }
