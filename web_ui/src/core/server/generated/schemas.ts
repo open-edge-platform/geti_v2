@@ -6276,6 +6276,23 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "total_matched": 1,
+                     *       "next_page": null,
+                     *       "subscriptions": [
+                     *         {
+                     *           "id": "e4187c27-2c1a-4265-9233-04950fd93471",
+                     *           "organization_id": "8ee3f85c-6fa7-4e7b-be4e-ae05eda8774e",
+                     *           "workspace_id": "23f347e1-cefc-4d98-9001-c551b6edb269",
+                     *           "product_id": "fafa904e-4ae9-4a5c-a4a7-ea22eee73c03",
+                     *           "status": "ACTIVE",
+                     *           "created": 1722439231555,
+                     *           "updated": 1722439231555,
+                     *           "next_renewal_date": 1725062400000,
+                     *           "previous_renewal_date": null
+                     *         }
+                     *       ]
+                     *     } */
                     "application/json": {
                         /** Total Matched */
                         total_matched: number;
@@ -6530,6 +6547,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "organizationId": "2503c663-b4e1-4162-ba32-11ba5b50722d"
+                     *     } */
                     "application/json": {
                         organizationId: string;
                     };
@@ -6555,6 +6575,24 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "workspaces": [
+                     *         {
+                     *           "creation_date": "2021-07-28T09:07:13.999000+00:00",
+                     *           "creator_name": "dummy",
+                     *           "description": "This is the first workspace.",
+                     *           "id": "97041954-7589-448a-808f-a32d607852cb",
+                     *           "name": "Workspace 1"
+                     *         },
+                     *         {
+                     *           "creation_date": "2021-07-28T09:07:15.985000+00:00",
+                     *           "creator_name": "dummy",
+                     *           "description": "This is another workspace.",
+                     *           "id": "7a3cb253-4532-44b8-a490-6b0ca023b9b2",
+                     *           "name": "Workspace 2"
+                     *         }
+                     *       ]
+                     *     } */
                     "application/json": {
                         /** @description Array of workspaces */
                         workspaces: {
@@ -6627,6 +6665,934 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "projects": [
+                     *         {
+                     *           "creation_time": "2021-07-28T09:31:18.137000+00:00",
+                     *           "creator_id": "Example user",
+                     *           "id": "610123e6efba22ca453f11bd",
+                     *           "name": "Example segmentation project",
+                     *           "storage_info": {},
+                     *           "pipeline": {
+                     *             "connections": [
+                     *               {
+                     *                 "from": "610123e6efba22ca453f11be",
+                     *                 "to": "610123e6efba22ca453f11c1"
+                     *               }
+                     *             ],
+                     *             "tasks": [
+                     *               {
+                     *                 "id": "610123e6efba22ca453f11be",
+                     *                 "task_type": "dataset",
+                     *                 "title": "Dataset"
+                     *               },
+                     *               {
+                     *                 "id": "610123e6efba22ca453f11c1",
+                     *                 "label_schema_id": "610123e6efba22ca453f11d2",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#0015ffff",
+                     *                     "group": "default_segmentation",
+                     *                     "hotkey": "ctrl+5",
+                     *                     "id": "610123e5efba22ca453f11b9",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "object",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#b10334ff",
+                     *                     "group": "Empty",
+                     *                     "hotkey": "ctrl+0",
+                     *                     "id": "610123e5efba22ca453f11ba",
+                     *                     "is_empty": true,
+                     *                     "name": "Empty",
+                     *                     "is_anomalous": false,
+                     *                     "parent_id": null
+                     *                   }
+                     *                 ],
+                     *                 "task_type": "segmentation",
+                     *                 "title": "Sample segmentation task"
+                     *               }
+                     *             ]
+                     *           },
+                     *           "performance": {
+                     *             "score": 0.7,
+                     *             "task_performances": [
+                     *               {
+                     *                 "task_id": "610123e6efba22ca453f11c1",
+                     *                 "score": {
+                     *                   "value": 0.7,
+                     *                   "metric_type": "f-measure"
+                     *                 }
+                     *               }
+                     *             ]
+                     *           },
+                     *           "thumbnail": "/api/v1/organizations/61b3a664-822d-45c5-beb1-8b10187e301d/workspaces/db99fa0c-46a2-427f-aba6-fd76f1b86d7f/projects/610123e6efba22ca453f11bd/thumbnail"
+                     *         },
+                     *         {
+                     *           "creation_time": "2021-07-28T09:31:18.137000+00:00",
+                     *           "id": "60d31793d5f1fb7e6e3c1a4c",
+                     *           "name": "Example detection project",
+                     *           "storage_info": {},
+                     *           "pipeline": {
+                     *             "connections": [
+                     *               {
+                     *                 "from": "610123e6efba22ca453f11bh",
+                     *                 "to": "610123e6efba22ca453f11ch"
+                     *               }
+                     *             ],
+                     *             "tasks": [
+                     *               {
+                     *                 "id": "610123e6efba22ca453f11bh",
+                     *                 "task_type": "dataset",
+                     *                 "title": "Dataset"
+                     *               },
+                     *               {
+                     *                 "id": "610123e6efba22ca453f11ch",
+                     *                 "label_schema_id": "610123e6efba22ca453f11dh",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#0015ffff",
+                     *                     "group": "default_detection",
+                     *                     "hotkey": "ctrl+5",
+                     *                     "id": "610123e5efba22ca453f11b9",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "object",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#b10334ff",
+                     *                     "group": "Empty",
+                     *                     "hotkey": "ctrl+0",
+                     *                     "id": "610123e5efba22ca453f11ba",
+                     *                     "is_empty": true,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Empty",
+                     *                     "parent_id": null
+                     *                   }
+                     *                 ],
+                     *                 "task_type": "detection",
+                     *                 "title": "Sample detection task"
+                     *               }
+                     *             ]
+                     *           },
+                     *           "performance": {
+                     *             "score": 0.7,
+                     *             "task_performances": [
+                     *               {
+                     *                 "task_id": "610123e6efba22ca453f11ch",
+                     *                 "score": {
+                     *                   "value": 0.7,
+                     *                   "metric_type": "f-measure"
+                     *                 }
+                     *               }
+                     *             ]
+                     *           },
+                     *           "thumbnail": "/api/v1/organizations/61b3a664-822d-45c5-beb1-8b10187e301d/workspaces/db99fa0c-46a2-427f-aba6-fd76f1b86d7f/projects/610123e6efba22ca453f11bh/thumbnail"
+                     *         },
+                     *         {
+                     *           "creation_time": "2021-07-28T09:37:17.319000+00:00",
+                     *           "creator_id": "Example user",
+                     *           "id": "61012cdb1d38a5e71ef3baf9",
+                     *           "name": "Example classification project",
+                     *           "storage_info": {},
+                     *           "pipeline": {
+                     *             "connections": [
+                     *               {
+                     *                 "from": "6101254defba22ca453f11ce",
+                     *                 "to": "6101254defba22ca453f11d1"
+                     *               }
+                     *             ],
+                     *             "tasks": [
+                     *               {
+                     *                 "id": "6101254defba22ca453f11ce",
+                     *                 "task_type": "dataset",
+                     *                 "title": "Dataset"
+                     *               },
+                     *               {
+                     *                 "id": "6101254defba22ca453f11d1",
+                     *                 "label_schema_id": "610123e6efba22ca453f11f1",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#0015ffff",
+                     *                     "group": "species",
+                     *                     "hotkey": "ctrl+6",
+                     *                     "id": "6101254defba22ca453f11c6",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "horse",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00ffffff",
+                     *                     "group": "species",
+                     *                     "hotkey": "ctrl+7",
+                     *                     "id": "6101254defba22ca453f11c7",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "donkey",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00aaaaff",
+                     *                     "group": "saddle_state",
+                     *                     "hotkey": "ctrl+8",
+                     *                     "id": "6101254defba22ca453f11c8",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "saddled",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00aaffff",
+                     *                     "group": "saddle_state",
+                     *                     "hotkey": "ctrl+9",
+                     *                     "id": "6101254defba22ca453f11c9",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "unsaddled",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#7ada55ff",
+                     *                     "group": "No class",
+                     *                     "hotkey": "ctrl+0",
+                     *                     "id": "6101254defba22ca453f11ca",
+                     *                     "is_empty": true,
+                     *                     "is_anomalous": false,
+                     *                     "name": "No class",
+                     *                     "parent_id": null
+                     *                   }
+                     *                 ],
+                     *                 "task_type": "classification",
+                     *                 "title": "Sample classification task"
+                     *               }
+                     *             ]
+                     *           },
+                     *           "performance": {
+                     *             "score": null,
+                     *             "task_performances": [
+                     *               {
+                     *                 "task_id": "6101254defba22ca453f11d1",
+                     *                 "score": null
+                     *               }
+                     *             ]
+                     *           },
+                     *           "thumbnail": "/api/v1/organizations/61b3a664-822d-45c5-beb1-8b10187e301d/workspaces/db99fa0c-46a2-427f-aba6-fd76f1b86d7f/projects/6101254defba22ca453f11cd/thumbnail"
+                     *         },
+                     *         {
+                     *           "creation_time": "2021-07-28T10:03:08.944000+00:00",
+                     *           "creator_id": "Example user",
+                     *           "id": "61012b5cefba22ca453f11df",
+                     *           "name": "Example classification project - label hierarchy",
+                     *           "storage_info": {},
+                     *           "pipeline": {
+                     *             "connections": [
+                     *               {
+                     *                 "from": "61012b5cefba22ca453f11e0",
+                     *                 "to": "61012b5defba22ca453f11e3"
+                     *               }
+                     *             ],
+                     *             "tasks": [
+                     *               {
+                     *                 "id": "61012b5cefba22ca453f11e0",
+                     *                 "task_type": "dataset",
+                     *                 "title": "Dataset"
+                     *               },
+                     *               {
+                     *                 "id": "61012b5defba22ca453f11e3",
+                     *                 "label_schema_id": "610123e6efba22ca453f11e4",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#0015ddff",
+                     *                     "group": "default - Sample classification task",
+                     *                     "hotkey": "",
+                     *                     "id": "61012b5cefba22ca453f11d7",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "animal",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#0015ffff",
+                     *                     "group": "species",
+                     *                     "hotkey": "ctrl+5",
+                     *                     "id": "61012b5cefba22ca453f11d8",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "horse",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00ffffff",
+                     *                     "group": "species",
+                     *                     "hotkey": "ctrl+6",
+                     *                     "id": "61012b5cefba22ca453f11d9",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "donkey",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00aaaaff",
+                     *                     "group": "saddle_state",
+                     *                     "hotkey": "ctrl+7",
+                     *                     "id": "61012b5cefba22ca453f11da",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "saddled",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00aaffff",
+                     *                     "group": "saddle_state",
+                     *                     "hotkey": "ctrl+8",
+                     *                     "id": "61012b5cefba22ca453f11db",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "unsaddled",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#676f5fff",
+                     *                     "group": "No class",
+                     *                     "hotkey": "ctrl+0",
+                     *                     "id": "61012b5cefba22ca453f11dc",
+                     *                     "is_empty": true,
+                     *                     "is_anomalous": false,
+                     *                     "name": "No class",
+                     *                     "parent_id": null
+                     *                   }
+                     *                 ],
+                     *                 "task_type": "classification",
+                     *                 "title": "Sample classification task"
+                     *               }
+                     *             ]
+                     *           },
+                     *           "performance": {
+                     *             "score": 0.36,
+                     *             "task_performances": [
+                     *               {
+                     *                 "task_id": "61012b5defba22ca453f11e3",
+                     *                 "score": {
+                     *                   "value": 0.7,
+                     *                   "metric_type": "f-measure"
+                     *                 }
+                     *               }
+                     *             ]
+                     *           },
+                     *           "thumbnail": "/api/v1/organizations/61b3a664-822d-45c5-beb1-8b10187e301d/workspaces/db99fa0c-46a2-427f-aba6-fd76f1b86d7f/projects/61012b5cefba22ca453f11df/thumbnail"
+                     *         },
+                     *         {
+                     *           "creation_time": "2021-07-28T10:05:43.819000+00:00",
+                     *           "creator_id": "Example user",
+                     *           "id": "61012bf776379a12afa0789c",
+                     *           "name": "Example classification project - label hierarchy",
+                     *           "storage_info": {},
+                     *           "pipeline": {
+                     *             "connections": [
+                     *               {
+                     *                 "from": "61012bf776379a12afa0789d",
+                     *                 "to": "61012bf776379a12afa078a0"
+                     *               }
+                     *             ],
+                     *             "tasks": [
+                     *               {
+                     *                 "id": "61012bf776379a12afa0789d",
+                     *                 "task_type": "dataset",
+                     *                 "title": "Dataset"
+                     *               },
+                     *               {
+                     *                 "id": "61012bf776379a12afa078a0",
+                     *                 "label_schema_id": "61012bf776379a12afa078b2",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#0015ddff",
+                     *                     "group": "default - Sample classification task",
+                     *                     "hotkey": "",
+                     *                     "id": "61012bf776379a12afa07894",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "animal",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#0015ffff",
+                     *                     "group": "species",
+                     *                     "hotkey": "ctrl+5",
+                     *                     "id": "61012bf776379a12afa07895",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "horse",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00ffffff",
+                     *                     "group": "species",
+                     *                     "hotkey": "ctrl+6",
+                     *                     "id": "61012bf776379a12afa07896",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "donkey",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00aaaaff",
+                     *                     "group": "saddle_state",
+                     *                     "hotkey": "ctrl+7",
+                     *                     "id": "61012bf776379a12afa07897",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "saddled",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00aaffff",
+                     *                     "group": "saddle_state",
+                     *                     "hotkey": "ctrl+8",
+                     *                     "id": "61012bf776379a12afa07898",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "unsaddled",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#19e0a5ff",
+                     *                     "group": "No class",
+                     *                     "hotkey": "ctrl+0",
+                     *                     "id": "61012bf776379a12afa07899",
+                     *                     "is_empty": true,
+                     *                     "is_anomalous": false,
+                     *                     "name": "No class",
+                     *                     "parent_id": null
+                     *                   }
+                     *                 ],
+                     *                 "task_type": "classification",
+                     *                 "title": "Sample classification task"
+                     *               }
+                     *             ]
+                     *           },
+                     *           "performance": {
+                     *             "score": 0.7,
+                     *             "task_performances": [
+                     *               {
+                     *                 "task_id": "61012bf776379a12afa078a0",
+                     *                 "score": {
+                     *                   "value": 0.7,
+                     *                   "metric_type": "f-measure"
+                     *                 }
+                     *               }
+                     *             ]
+                     *           },
+                     *           "thumbnail": "/api/v1/organizations/61b3a664-822d-45c5-beb1-8b10187e301d/workspaces/db99fa0c-46a2-427f-aba6-fd76f1b86d7f/projects/61012bf776379a12afa0789c/thumbnail"
+                     *         },
+                     *         {
+                     *           "creation_time": "2021-07-28T10:09:31.764000+00:00",
+                     *           "creator_id": "Example user",
+                     *           "id": "61012cdb1d38a5e71ef3baf9",
+                     *           "name": "Example classification project - label hierarchy",
+                     *           "storage_info": {},
+                     *           "pipeline": {
+                     *             "connections": [
+                     *               {
+                     *                 "from": "61012cdb1d38a5e71ef3bafa",
+                     *                 "to": "61012cdb1d38a5e71ef3bafd"
+                     *               }
+                     *             ],
+                     *             "tasks": [
+                     *               {
+                     *                 "id": "61012cdb1d38a5e71ef3bafa",
+                     *                 "task_type": "dataset",
+                     *                 "title": "Dataset"
+                     *               },
+                     *               {
+                     *                 "id": "61012cdb1d38a5e71ef3bafd",
+                     *                 "label_schema_id": "61012cdb1d38a5e71ef3bafe",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#0015ddff",
+                     *                     "group": "default - Sample classification task",
+                     *                     "hotkey": "",
+                     *                     "id": "61012cdb1d38a5e71ef3baf1",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "animal",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#0015ffff",
+                     *                     "group": "species",
+                     *                     "hotkey": "ctrl+5",
+                     *                     "id": "61012cdb1d38a5e71ef3baf2",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "horse",
+                     *                     "parent_id": "61012cdb1d38a5e71ef3baf1"
+                     *                   },
+                     *                   {
+                     *                     "color": "#00ffffff",
+                     *                     "group": "species",
+                     *                     "hotkey": "ctrl+6",
+                     *                     "id": "61012cdb1d38a5e71ef3baf3",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "donkey",
+                     *                     "parent_id": "61012cdb1d38a5e71ef3baf1"
+                     *                   },
+                     *                   {
+                     *                     "color": "#00aaaaff",
+                     *                     "group": "saddle_state",
+                     *                     "hotkey": "ctrl+7",
+                     *                     "id": "61012cdb1d38a5e71ef3baf4",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "saddled",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#00aaffff",
+                     *                     "group": "saddle_state",
+                     *                     "hotkey": "ctrl+8",
+                     *                     "id": "61012cdb1d38a5e71ef3baf5",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "unsaddled",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#9ee8d3ff",
+                     *                     "group": "No class",
+                     *                     "hotkey": "ctrl+0",
+                     *                     "id": "61012cdb1d38a5e71ef3baf6",
+                     *                     "is_empty": true,
+                     *                     "is_anomalous": false,
+                     *                     "name": "No class",
+                     *                     "parent_id": null
+                     *                   }
+                     *                 ],
+                     *                 "task_type": "classification",
+                     *                 "title": "Sample classification task"
+                     *               }
+                     *             ]
+                     *           },
+                     *           "performance": {
+                     *             "score": 0.7,
+                     *             "task_performances": [
+                     *               {
+                     *                 "task_id": "61012cdb1d38a5e71ef3bafd",
+                     *                 "score": {
+                     *                   "value": 0.7,
+                     *                   "metric_type": "f-measure"
+                     *                 }
+                     *               }
+                     *             ]
+                     *           },
+                     *           "thumbnail": "/api/v1/organizations/61b3a664-822d-45c5-beb1-8b10187e301d/workspaces/db99fa0c-46a2-427f-aba6-fd76f1b86d7f/projects/61012cdb1d38a5e71ef3baf9/thumbnail"
+                     *         },
+                     *         {
+                     *           "creation_time": "2022-06-17T10:33:29.896000+00:00",
+                     *           "id": "6290a8f9003ddb3967f14385",
+                     *           "name": "Anomaly Example",
+                     *           "storage_info": {},
+                     *           "performance": {
+                     *             "score": 0.7,
+                     *             "task_performances": [
+                     *               {
+                     *                 "task_id": "6290a8f9003ddb3967f14383",
+                     *                 "score": {
+                     *                   "value": 0.7,
+                     *                   "metric_type": "accuracy"
+                     *                 }
+                     *               }
+                     *             ]
+                     *           },
+                     *           "pipeline": {
+                     *             "connections": [
+                     *               {
+                     *                 "from": "6290a8f9003ddb3967f14383",
+                     *                 "to": "6290a8f9003ddb3967f14384"
+                     *               }
+                     *             ],
+                     *             "tasks": [
+                     *               {
+                     *                 "id": "6290a8f9003ddb3967f14383",
+                     *                 "task_type": "dataset",
+                     *                 "title": "Dataset"
+                     *               },
+                     *               {
+                     *                 "id": "6290a8f9003ddb3967f14384",
+                     *                 "label_schema_id": "6290a8f9003ddb3967f1438f",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#8bae46ff",
+                     *                     "group": "default - Anomaly task",
+                     *                     "hotkey": "",
+                     *                     "id": "6290a8f9003ddb3967f1438c",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Normal",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#ff5662ff",
+                     *                     "group": "default - Anomaly task",
+                     *                     "hotkey": "",
+                     *                     "id": "6290a8f9003ddb3967f1438d",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Anomalous",
+                     *                     "parent_id": null
+                     *                   }
+                     *                 ],
+                     *                 "task_type": "anomaly",
+                     *                 "title": "Anomaly task"
+                     *               }
+                     *             ]
+                     *           },
+                     *           "thumbnail": "/api/v1/organizations/61b3a664-822d-45c5-beb1-8b10187e301d/workspaces/db99fa0c-46a2-427f-aba6-fd76f1b86d7f/projects/6290a8f9003ddb3967f14385/thumbnail"
+                     *         },
+                     *         {
+                     *           "creation_time": "2022-05-30T07:04:01.917000+00:00",
+                     *           "id": "62946c61003ddb3967f14750",
+                     *           "name": "Card detection",
+                     *           "storage_info": {},
+                     *           "performance": {
+                     *             "score": 0.24,
+                     *             "task_performances": [
+                     *               {
+                     *                 "task_id": "62946c61003ddb3967f1474d",
+                     *                 "score": {
+                     *                   "value": 0.24,
+                     *                   "metric_type": "accuracy"
+                     *                 }
+                     *               }
+                     *             ]
+                     *           },
+                     *           "pipeline": {
+                     *             "connections": [
+                     *               {
+                     *                 "from": "62946c61003ddb3967f1474c",
+                     *                 "to": "62946c61003ddb3967f1474d"
+                     *               },
+                     *               {
+                     *                 "from": "62946c61003ddb3967f1474d",
+                     *                 "to": "62946c61003ddb3967f1474e"
+                     *               },
+                     *               {
+                     *                 "from": "62946c61003ddb3967f1474e",
+                     *                 "to": "62946c61003ddb3967f1474f"
+                     *               }
+                     *             ],
+                     *             "tasks": [
+                     *               {
+                     *                 "id": "62946c61003ddb3967f1474c",
+                     *                 "task_type": "dataset",
+                     *                 "title": "Dataset"
+                     *               },
+                     *               {
+                     *                 "id": "62946c61003ddb3967f1474d",
+                     *                 "label_schema_id": "62946c62003ddb3967f1475f",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#26518eff",
+                     *                     "group": "Default group root task",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f1475b",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Card",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#a4fc32ff",
+                     *                     "group": "No object",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f1475d",
+                     *                     "is_empty": true,
+                     *                     "is_anomalous": false,
+                     *                     "name": "No object",
+                     *                     "parent_id": null
+                     *                   }
+                     *                 ],
+                     *                 "task_type": "detection",
+                     *                 "title": "Detection task"
+                     *               },
+                     *               {
+                     *                 "id": "62946c61003ddb3967f1474e",
+                     *                 "task_type": "crop",
+                     *                 "title": "Crop task"
+                     *               },
+                     *               {
+                     *                 "id": "62946c61003ddb3967f1474f",
+                     *                 "label_schema_id": "62946c62003ddb3967f14770",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#ff5662ff",
+                     *                     "group": "Default group root task___Suit",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f14760",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Hearts",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#81407bff",
+                     *                     "group": "Default group root task___Suit",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f14762",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Diamonds",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#f7dab3ff",
+                     *                     "group": "Default group root task___Suit",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f14763",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Spades",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#80e9afff",
+                     *                     "group": "Default group root task___Suit",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f14764",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Clubs",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#ff7d00ff",
+                     *                     "group": "Default group root task___Value",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f14765",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Seven",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#c9e649ff",
+                     *                     "group": "Default group root task___Value",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f14767",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Eight",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#25a18eff",
+                     *                     "group": "Default group root task___Value",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f14768",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Nine",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#00a5cfff",
+                     *                     "group": "Default group root task___Value",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f14769",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Ten",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#708541ff",
+                     *                     "group": "Default group root task___Value",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f1476a",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Jack",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#26518eff",
+                     *                     "group": "Default group root task___Value",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f1476b",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Queen",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#5b69ffff",
+                     *                     "group": "Default group root task___Value",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f1476c",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "King",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#f15b85ff",
+                     *                     "group": "Default group root task___Value",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f1476d",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "Ace",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   },
+                     *                   {
+                     *                     "color": "#29d5ecff",
+                     *                     "group": "No class",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f1476e",
+                     *                     "is_empty": true,
+                     *                     "is_anomalous": false,
+                     *                     "name": "No class",
+                     *                     "parent_id": "62946c62003ddb3967f1475b"
+                     *                   }
+                     *                 ],
+                     *                 "task_type": "classification",
+                     *                 "title": "Classification task"
+                     *               }
+                     *             ]
+                     *           },
+                     *           "thumbnail": "/api/v1/organizations/61b3a664-822d-45c5-beb1-8b10187e301d/workspaces/db99fa0c-46a2-427f-aba6-fd76f1b86d7f/projects/62946c61003ddb3967f14750/thumbnail"
+                     *         },
+                     *         {
+                     *           "creation_time": "2024-10-16T14:45:01.917000+00:00",
+                     *           "id": "62946c61003ddb3967f14751",
+                     *           "name": "Human pose detection",
+                     *           "storage_info": {},
+                     *           "performance": {
+                     *             "score": 0.54,
+                     *             "task_performances": [
+                     *               {
+                     *                 "task_id": "62946c61003ddb3967f1474f",
+                     *                 "score": {
+                     *                   "value": 0.54,
+                     *                   "metric_type": "accuracy"
+                     *                 }
+                     *               }
+                     *             ]
+                     *           },
+                     *           "pipeline": {
+                     *             "connections": [
+                     *               {
+                     *                 "from": "62946c61003ddb3967f1474e",
+                     *                 "to": "62946c61003ddb3967f1474d"
+                     *               }
+                     *             ],
+                     *             "tasks": [
+                     *               {
+                     *                 "id": "62946c61003ddb3967f1474e",
+                     *                 "task_type": "dataset",
+                     *                 "title": "Dataset"
+                     *               },
+                     *               {
+                     *                 "task_type": "keypoint_detection",
+                     *                 "title": "Keypoint detection task",
+                     *                 "id": "62946c61003ddb3967f1474d",
+                     *                 "label_schema_id": "62946c62003ddb3967f14760",
+                     *                 "labels": [
+                     *                   {
+                     *                     "color": "#26518eff",
+                     *                     "group": "Default keypoint detection task",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f1475c",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "head",
+                     *                     "parent_id": null
+                     *                   },
+                     *                   {
+                     *                     "color": "#a4fc32ff",
+                     *                     "group": "Default keypoint detection task",
+                     *                     "hotkey": "",
+                     *                     "id": "62946c62003ddb3967f1475e",
+                     *                     "is_empty": false,
+                     *                     "is_background": false,
+                     *                     "is_anomalous": false,
+                     *                     "name": "neck",
+                     *                     "parent_id": null
+                     *                   }
+                     *                 ],
+                     *                 "keypoint_structure": {
+                     *                   "edges": [
+                     *                     {
+                     *                       "nodes": [
+                     *                         "62946c62003ddb3967f1475c",
+                     *                         "62946c62003ddb3967f1475e"
+                     *                       ]
+                     *                     }
+                     *                   ],
+                     *                   "positions": [
+                     *                     {
+                     *                       "label": "62946c62003ddb3967f1475c",
+                     *                       "x": 0.1,
+                     *                       "y": 0.2
+                     *                     },
+                     *                     {
+                     *                       "label": "62946c62003ddb3967f1475e",
+                     *                       "x": 0.3,
+                     *                       "y": 0.4
+                     *                     }
+                     *                   ]
+                     *                 }
+                     *               }
+                     *             ]
+                     *           },
+                     *           "thumbnail": "/api/v1/organizations/61b3a664-822d-45c5-beb1-8b10187e301d/workspaces/db99fa0c-46a2-427f-aba6-fd76f1b86d7f/projects/62946c61003ddb3967f14751/thumbnail"
+                     *         }
+                     *       ],
+                     *       "next_page": "",
+                     *       "project_counts": 9,
+                     *       "project_page_count": 10
+                     *     } */
                     "application/json": {
                         /** @description Array of projects */
                         projects?: {
@@ -6816,6 +7782,8 @@ export interface operations {
                                 hotkey?: string;
                                 /** @description Name of label group */
                                 group?: string;
+                                /** @description Indicates whether the label is the background label */
+                                is_background?: boolean;
                                 /** @description Name of parent label */
                                 parent_id?: unknown;
                             }[];
@@ -6972,6 +7940,10 @@ export interface operations {
                         storage_info: {
                             /** Project size in bytes */
                             size?: number;
+                            /** Project size without any models in bytes */
+                            size_excluding_models?: number;
+                            /** Project size with only active models in bytes */
+                            size_excluding_non_active_models?: number;
                         };
                     };
                 };
@@ -7030,6 +8002,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "projects": [
+                     *         {
+                     *           "id": "610123e6efba22ca453f11bd",
+                     *           "name": "Example segmentation project"
+                     *         },
+                     *         {
+                     *           "id": "60d31793d5f1fb7e6e3c1a4c",
+                     *           "name": "Example detection project"
+                     *         },
+                     *         {
+                     *           "id": "61012cdb1d38a5e71ef3baf9",
+                     *           "name": "Example classification project"
+                     *         },
+                     *         {
+                     *           "id": "61012b5cefba22ca453f11df",
+                     *           "name": "Example classification project - label hierarchy"
+                     *         },
+                     *         {
+                     *           "id": "61012bf776379a12afa0789c",
+                     *           "name": "Example classification project - label hierarchy"
+                     *         },
+                     *         {
+                     *           "id": "62adb9b2a4002f5a6757533c",
+                     *           "name": "Anomaly Detection Example"
+                     *         },
+                     *         {
+                     *           "id": "62946c61003ddb3967f14750",
+                     *           "name": "Card detection"
+                     *         }
+                     *       ]
+                     *     } */
                     "application/json": {
                         projects?: {
                             /** @description Project name */
@@ -7216,6 +8220,10 @@ export interface operations {
                         storage_info: {
                             /** Project size in bytes */
                             size?: number;
+                            /** Project size without any models in bytes */
+                            size_excluding_models?: number;
+                            /** Project size with only active models in bytes */
+                            size_excluding_non_active_models?: number;
                         };
                     };
                 };
@@ -7301,6 +8309,8 @@ export interface operations {
                                 readonly is_empty?: boolean;
                                 /** @description Indicates whether the label is going to be deleted */
                                 is_deleted?: boolean;
+                                /** @description Indicates whether the label is the background label */
+                                is_background?: boolean;
                                 /** @description Name of parent label */
                                 parent_id?: unknown;
                                 /** @description On label schema change, whether to mark the annotations linked to this label as "to be revisited" by the user */
@@ -7509,6 +8519,10 @@ export interface operations {
                         storage_info: {
                             /** Project size in bytes */
                             size?: number;
+                            /** Project size without any models in bytes */
+                            size_excluding_models?: number;
+                            /** Project size with only active models in bytes */
+                            size_excluding_non_active_models?: number;
                         };
                     };
                 };
@@ -18063,15 +19077,22 @@ export interface operations {
                          * @description Information about the project export operation
                          */
                         metadata?: {
-                            /** @description Information about the project being export */
+                            /** @description Information about the project being exported */
                             project?: {
                                 /** @description ID of the project */
                                 id?: string;
                                 /** @description Name of the project */
                                 name?: string;
                             };
+                            /**
+                             * @description Enum indicating which models are included in the exported zip
+                             * @enum {string}
+                             */
+                            include_models?: "all" | "none" | "latest_active";
                             /** @description URL to download the exported project archive */
                             download_url?: string;
+                            /** @description Size of the exported project zip file */
+                            size?: number;
                         };
                     } | {
                         /** @description Name of the job */
@@ -23795,6 +24816,20 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "annotation_templates": [
+                     *         {
+                     *           "id": "62387685df33ae8280c63b33",
+                     *           "name": "running",
+                     *           "value": "FORMAT IS TBD"
+                     *         },
+                     *         {
+                     *           "id": "62387685df33ae8280c63b36",
+                     *           "name": "standing",
+                     *           "value": "FORMAT IS TBD"
+                     *         }
+                     *       ]
+                     *     } */
                     "application/json": {
                         /**
                          * @description Mongo ID of the object
@@ -23933,6 +24968,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "product-version": "1.0.0"
+                     *     } */
                     "application/json": {
                         /** @description Version number of installed product. */
                         "product-version"?: string;
@@ -25086,7 +26124,13 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        /**
+                         * @description Mongo ID of the object
+                         * @example 60d31793d5f1fb7e6e3c1a4c
+                         */
+                        job_id?: string;
+                    };
                 };
             };
             /** @description Object not found */
@@ -25374,6 +26418,42 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "total_matched": 2,
+                     *       "next_page": null,
+                     *       "credit_accounts": [
+                     *         {
+                     *           "id": "de13930f-0028-47e9-a228-21d511e8d281",
+                     *           "organization_id": "8ee3f85c-6fa7-4e7b-be4e-ae05eda8774e",
+                     *           "name": "Freemium Credits",
+                     *           "renewable_amount": 1000,
+                     *           "renewal_day_of_month": 31,
+                     *           "created": 1722439231635,
+                     *           "updated": 1722439231635,
+                     *           "expires": null,
+                     *           "balance": {
+                     *             "incoming": 0,
+                     *             "available": 0,
+                     *             "blocked": 0
+                     *           }
+                     *         },
+                     *         {
+                     *           "id": "95e31d4b-5b48-4817-bdff-a4998f44bac9",
+                     *           "organization_id": "8ee3f85c-6fa7-4e7b-be4e-ae05eda8774e",
+                     *           "name": "Welcoming Credits",
+                     *           "renewable_amount": 0,
+                     *           "renewal_day_of_month": null,
+                     *           "created": 1722439231576,
+                     *           "updated": 1722439231576,
+                     *           "expires": 1725117631575,
+                     *           "balance": {
+                     *             "incoming": 3000,
+                     *             "available": 2941,
+                     *             "blocked": 59
+                     *           }
+                     *         }
+                     *       ]
+                     *     } */
                     "application/json": {
                         /** Total Matched */
                         total_matched: number;
@@ -25455,6 +26535,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "id": "e4187c27-2c1a-4265-9233-04950fd93471",
+                     *       "organization_id": "8ee3f85c-6fa7-4e7b-be4e-ae05eda8774e",
+                     *       "workspace_id": "23f347e1-cefc-4d98-9001-c551b6edb269",
+                     *       "product_id": "fafa904e-4ae9-4a5c-a4a7-ea22eee73c03",
+                     *       "status": "ACTIVE",
+                     *       "created": 1722439231555,
+                     *       "updated": 1722439231555,
+                     *       "next_renewal_date": 1725062400000,
+                     *       "previous_renewal_date": null
+                     *     } */
                     "application/json": {
                         /**
                          * Id
@@ -25531,6 +26622,30 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    /** @example {
+                     *       "total_matched": 3,
+                     *       "next_page": null,
+                     *       "transactions": [
+                     *         {
+                     *           "credits": 12,
+                     *           "project_id": "66aa8abff93bad108c06ec0a",
+                     *           "service_name": "optimization",
+                     *           "milliseconds_timestamp": 1722512643184
+                     *         },
+                     *         {
+                     *           "credits": 12,
+                     *           "project_id": "66aa8abff93bad108c06ec0a",
+                     *           "service_name": "training",
+                     *           "milliseconds_timestamp": 1722511748352
+                     *         },
+                     *         {
+                     *           "credits": 59,
+                     *           "project_id": "66aa882df93bad108c06eb0d",
+                     *           "service_name": "training",
+                     *           "milliseconds_timestamp": 1722511718089
+                     *         }
+                     *       ]
+                     *     } */
                     "application/json": {
                         /** Total Matched */
                         total_matched: number;
