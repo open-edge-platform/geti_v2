@@ -7,7 +7,7 @@ requires-python = ">=3.10, <3.11"
 [project.optional-dependencies]
 b3 = ["opentelemetry-propagator-b3==1.21.0"]
 fastapi =[
-    "fastapi~=0.115",
+    "fastapi~=0.124.1",
     "opentelemetry-instrumentation-fastapi==0.61b0",
 ]
 grpc =["grpcio>=1.51.1,<2.0","opentelemetry-instrumentation-grpc[instruments]==0.61b0"]
