@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = "==3.10.*"
 resolution-markers = [
     "sys_platform == 'darwin'",
@@ -912,7 +912,7 @@ telemetry = [
 [package.metadata]
 requires-dist = [
     { name = "confluent-kafka", marker = "extra == 'kafka'", specifier = ">=1.8.2,<=2.3.0" },
-    { name = "fastapi", marker = "extra == 'fastapi'", specifier = "~=0.115" },
+    { name = "fastapi", marker = "extra == 'fastapi'", specifier = "~=0.124.1" },
     { name = "grpcio", marker = "extra == 'grpc'", specifier = ">=1.51.1,<2.0" },
     { name = "opentelemetry-api", marker = "extra == 'telemetry'", specifier = "==1.40.0" },
     { name = "opentelemetry-exporter-otlp-proto-grpc", marker = "extra == 'telemetry'", specifier = "==1.40.0" },
@@ -1081,7 +1081,7 @@ requires-dist = [
     { name = "google-api-python-client", marker = "extra == 'account-service'", specifier = "==2.90.0" },
     { name = "grpc-interfaces", extras = ["account-service", "credit-system", "job-submission", "job-update", "model-registration"], marker = "extra == 'all'" },
     { name = "grpcio", specifier = "==1.78.0" },
-    { name = "protobuf", marker = "extra == 'model-registration'", specifier = "~=6.31.1" },
+    { name = "protobuf", marker = "extra == 'model-registration'", specifier = "~=6.33.5" },
     { name = "pydantic", marker = "extra == 'account-service'", specifier = "==2.6.1" },
     { name = "readerwriterlock", marker = "extra == 'job-submission'", specifier = "~=1.0" },
 ]
@@ -1250,7 +1250,7 @@ requires-dist = [
     { name = "pymongo", extras = ["aws"], specifier = "~=4.10" },
     { name = "scipy", specifier = "~=1.14" },
     { name = "shapely", specifier = "~=2.0" },
-    { name = "urllib3", specifier = ">=1.26" },
+    { name = "urllib3", specifier = ">=2.6.3" },
 ]
 
 [package.metadata.requires-dev]

@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = "==3.10.*"
 resolution-markers = [
     "sys_platform == 'darwin'",
@@ -711,7 +711,7 @@ telemetry = [
 [package.metadata]
 requires-dist = [
     { name = "confluent-kafka", marker = "extra == 'kafka'", specifier = ">=1.8.2,<=2.3.0" },
-    { name = "fastapi", marker = "extra == 'fastapi'", specifier = "~=0.115" },
+    { name = "fastapi", marker = "extra == 'fastapi'", specifier = "~=0.124.1" },
     { name = "grpcio", marker = "extra == 'grpc'", specifier = ">=1.51.1,<2.0" },
     { name = "opentelemetry-api", marker = "extra == 'telemetry'", specifier = "==1.40.0" },
     { name = "opentelemetry-exporter-otlp-proto-grpc", marker = "extra == 'telemetry'", specifier = "==1.40.0" },
