@@ -447,7 +447,7 @@ requires-dist = [
     { name = "grpc-interfaces", extras = ["account-service"], editable = "../../../libs/grpc_interfaces" },
     { name = "pillow", specifier = ">=10.2.0" },
     { name = "psycopg2-binary", specifier = "~=2.9.9" },
-    { name = "pyjwt", specifier = "==2.4.0" },
+    { name = "pyjwt", specifier = "==2.12.0" },
     { name = "python-ldap", specifier = "==3.4.5" },
     { name = "users-handler", editable = "../../libs/users_handler" },
 ]
@@ -760,11 +760,11 @@ wheels = [
 
 [[package]]
 name = "pyjwt"
-version = "2.4.0"
+version = "2.12.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d8/6b/6287745054dbcccf75903630346be77d4715c594402cec7c2518032416c2/PyJWT-2.4.0.tar.gz", hash = "sha256:d42908208c699b3b973cbeb01a969ba6a96c821eefb1c5bfe4c390c01d67abba", size = 66327, upload-time = "2022-05-12T18:58:21.274Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a8/10/e8192be5f38f3e8e7e046716de4cae33d56fd5ae08927a823bb916be36c1/pyjwt-2.12.0.tar.gz", hash = "sha256:2f62390b667cd8257de560b850bb5a883102a388829274147f1d724453f8fb02", size = 102511, upload-time = "2026-03-12T17:15:30.831Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1c/fb/b82e9601b00d88cf8bbee1f39b855ae773f9d5bcbcedb3801b2f72460696/PyJWT-2.4.0-py3-none-any.whl", hash = "sha256:72d1d253f32dbd4f5c88eaf1fdc62f3a19f676ccbadb9dbc5d07e951b2b26daf", size = 18228, upload-time = "2022-05-12T18:58:19.269Z" },
+    { url = "https://files.pythonhosted.org/packages/15/70/70f895f404d363d291dcf62c12c85fdd47619ad9674ac0f53364d035925a/pyjwt-2.12.0-py3-none-any.whl", hash = "sha256:9bb459d1bdd0387967d287f5656bf7ec2b9a26645d1961628cda1764e087fd6e", size = 29700, upload-time = "2026-03-12T17:15:29.257Z" },
 ]
 
 [[package]]
@@ -939,7 +939,7 @@ requires-dist = [
     { name = "cryptography", specifier = "==46.0.5" },
     { name = "geti-spicedb-tools", editable = "../../../libs/spicedb_tools" },
     { name = "pillow", specifier = "==12.2.0" },
-    { name = "pyjwt", specifier = "==2.4.0" },
+    { name = "pyjwt", specifier = "==2.12.0" },
     { name = "python-ldap", specifier = "==3.4.5" },
 ]
 
