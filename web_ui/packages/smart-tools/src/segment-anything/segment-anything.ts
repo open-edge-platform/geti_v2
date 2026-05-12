@@ -17,8 +17,21 @@ const WEBGPU_ERROR_PATTERN = /webgpu|jsep|wasm|initwasm|no available backend/i;
 
 const isWebGpuFailure = (err: unknown): boolean => {
     if (err instanceof SessionPoisonedError) return true;
+
     const message = err instanceof Error ? err.message : String(err ?? '');
+
     return WEBGPU_ERROR_PATTERN.test(message);
+};
+
+/**
+ * Build a fresh Session pinned to the CPU EP. Used as the last-resort recovery
+ * path whenever an existing Session is too damaged to reset() (e.g.
+ * createOrtSession threw on the new EP, leaving `ortSession === undefined`).
+ */
+const createCpuSession = async (modelPath: string): Promise<Session> => {
+    const session = new Session();
+    await session.init(modelPath, { executionProviders: ['cpu'] });
+    return session;
 };
 
 /**
@@ -31,6 +44,7 @@ const createSession = async (modelPath: string): Promise<Session> => {
     const session = new Session();
     try {
         await session.init(modelPath);
+
         return session;
     } catch (err) {
         if (!isWebGpuFailure(err)) throw err;
@@ -40,11 +54,10 @@ const createSession = async (modelPath: string): Promise<Session> => {
         // to a fresh init() with CPU EPs.
         try {
             await session.reset({ executionProviders: ['cpu'] });
+
             return session;
         } catch {
-            const cpuOnly = new Session();
-            await cpuOnly.init(modelPath, { executionProviders: ['cpu'] });
-            return cpuOnly;
+            return createCpuSession(modelPath);
         }
     }
 };
@@ -93,7 +106,21 @@ export class SegmentAnythingModel {
 
             // Drop WebGPU on the retry — repeating the same EP after a JSEP
             // crash will almost always fail the same way.
-            await session.reset({ executionProviders: ['cpu'] });
+            try {
+                await session.reset({ executionProviders: ['cpu'] });
+            } catch {
+                // reset() failed (e.g. createOrtSession threw on the CPU EP).
+                // The Session is now wedged with `ortSession === undefined`,
+                // so every future run() would throw "session not initialized"
+                // for the rest of the page's lifetime. Replace the entry in
+                // the map with a fresh CPU-only Session so subsequent calls
+                // recover.
+                const replacement = await createCpuSession(this.modelPaths.get(sessionKey) ?? '');
+
+                this.sessions.set(sessionKey, replacement);
+
+                return await op(replacement);
+            }
             return await op(session);
         }
     }
