@@ -48,7 +48,7 @@ describe('Label shortcuts', () => {
         });
 
         await userEvent.click(screen.getByRole('button', { name: labels3[0].name }));
-        expect(updateToolSettingsMock).not.toBeCalled();
+        expect(updateToolSettingsMock).not.toHaveBeenCalled();
     });
 
     it('updates grab-cut settings when label is local', async () => {

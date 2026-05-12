@@ -105,7 +105,7 @@ describe('RITM Secondary toolbar', () => {
             const annotationContext = await renderTool();
 
             fireEvent.click(getAcceptButton());
-            expect(annotationContext.scene.addShapes).not.toBeCalled();
+            expect(annotationContext.scene.addShapes).not.toHaveBeenCalled();
         });
 
         it('right click mode stays active when was activated before accepting the results', async () => {
@@ -140,7 +140,7 @@ describe('RITM Secondary toolbar', () => {
             await renderTool();
 
             fireEvent.click(screen.getByLabelText('reject ritm annotation'));
-            expect(mockRITMState.reset).toBeCalled();
+            expect(mockRITMState.reset).toHaveBeenCalled();
         });
     });
 });

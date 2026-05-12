@@ -72,6 +72,6 @@ describe('ContextMenu', () => {
 
         fireEvent.click(screen.getByRole('menuitem', { name: items[0].children[0].title }));
         expect(handleMenuAction).toHaveBeenCalledWith(items[0].children[0].title);
-        expect(handleClose).toBeCalled();
+        expect(handleClose).toHaveBeenCalled();
     });
 });

@@ -212,7 +212,7 @@ describe('Propagate annotations', () => {
         fireEvent.click(await screen.findByRole('button', { name: /cancel/i }));
 
         await waitForElementToBeRemoved(screen.getByRole('dialog'));
-        expect(saveAnnotations).not.toBeCalled();
+        expect(saveAnnotations).not.toHaveBeenCalled();
     });
 
     it('Is disabled when there is no next video frame', async () => {

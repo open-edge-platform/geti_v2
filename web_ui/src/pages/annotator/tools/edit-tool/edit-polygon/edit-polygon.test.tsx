@@ -352,7 +352,7 @@ describe('EditPolygonTool', () => {
 
             await userEvent.keyboard('{Delete}');
 
-            expect(annotationToolContext.scene.removeAnnotations).toBeCalled();
+            expect(annotationToolContext.scene.removeAnnotations).toHaveBeenCalled();
         });
 
         it('removes the polygon with the context menu option "delete"', async () => {

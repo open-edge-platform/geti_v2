@@ -27,11 +27,11 @@ describe('useInterval', () => {
         const callback = jest.fn();
         render(<Interval callback={callback} delay={500} />);
 
-        expect(callback).toBeCalledTimes(0 /* not called on first render */);
+        expect(callback).toHaveBeenCalledTimes(0 /* not called on first render */);
         jest.advanceTimersByTime(500);
-        expect(callback).toBeCalledTimes(1);
+        expect(callback).toHaveBeenCalledTimes(1);
         jest.advanceTimersByTime(1500);
-        expect(callback).toBeCalledTimes(4);
+        expect(callback).toHaveBeenCalledTimes(4);
 
         jest.clearAllTimers();
     });

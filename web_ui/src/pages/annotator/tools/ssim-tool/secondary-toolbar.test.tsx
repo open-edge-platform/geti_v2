@@ -101,7 +101,7 @@ describe('SecondaryToolbar', () => {
         fireEvent.click(acceptButton);
 
         expect(context.scene.addShapes).toHaveBeenCalledWith([shape], undefined);
-        expect(reset).toBeCalled();
+        expect(reset).toHaveBeenCalled();
     });
 
     it('clicking reject resets the shapes', async () => {
@@ -124,8 +124,8 @@ describe('SecondaryToolbar', () => {
 
         fireEvent.click(getRejectButton());
 
-        expect(context.scene.addShapes).toBeCalledTimes(0);
-        expect(reset).toBeCalled();
+        expect(context.scene.addShapes).toHaveBeenCalledTimes(0);
+        expect(reset).toHaveBeenCalled();
     });
 
     describe('Detected items slider', () => {

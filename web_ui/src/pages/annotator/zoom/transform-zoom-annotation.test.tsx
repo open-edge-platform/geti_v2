@@ -66,6 +66,7 @@ describe('TransformZoomAnnotation', () => {
 
         expect(canvas).not.toHaveClass('isPanning');
 
+        fireEvent.pointerDown(editor, { button: 1, buttons: 4, pointerType: 'mouse' });
         fireEvent.mouseDown(editor, { button: 1, buttons: 4 });
 
         expect(canvas).toHaveClass('isPanning');

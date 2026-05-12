@@ -69,8 +69,8 @@ describe(DatasetImportDeletionDialog, () => {
         expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
         fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
-        expect(mockOnDismiss).toBeCalled();
-        expect(mockTrigger.close).toBeCalled();
+        expect(mockOnDismiss).toHaveBeenCalled();
+        expect(mockTrigger.close).toHaveBeenCalled();
     });
 
     it('should properly interact with "Delete" button', () => {
@@ -86,9 +86,9 @@ describe(DatasetImportDeletionDialog, () => {
         expect(screen.getByRole('button', { name: 'Delete' })).toBeVisible();
         fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
 
-        expect(mockOnDismiss).toBeCalled();
-        expect(mockTrigger.close).toBeCalled();
-        expect(mockOnPrimaryAction).toBeCalled();
+        expect(mockOnDismiss).toHaveBeenCalled();
+        expect(mockTrigger.close).toHaveBeenCalled();
+        expect(mockOnPrimaryAction).toHaveBeenCalled();
     });
 
     it('should properly interact on "Esc" key press', () => {
@@ -103,7 +103,7 @@ describe(DatasetImportDeletionDialog, () => {
 
         fireEvent.keyDown(screen.getByRole('alertdialog', { name: 'Delete' }), { key: 'Escape' });
 
-        expect(mockOnDismiss).toBeCalled();
-        expect(mockTrigger.close).toBeCalled();
+        expect(mockOnDismiss).toHaveBeenCalled();
+        expect(mockTrigger.close).toHaveBeenCalled();
     });
 });

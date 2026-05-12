@@ -93,6 +93,6 @@ describe('LayersFactory', () => {
     it('renders video-layers component', async () => {
         await renderApp(videoItem, true);
 
-        expect(annotationService.getVideoAnnotations).toBeCalled();
+        expect(annotationService.getVideoAnnotations).toHaveBeenCalled();
     });
 });

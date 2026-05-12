@@ -17,10 +17,11 @@ describe('UploadStatusProgressBar', () => {
 
         render(<ThinProgressBar {...testProps} />);
 
-        expect(screen.getByTestId('thin-progress-bar')).toHaveStyle({
-            height: testProps.size,
-            backgroundColor: testProps.color,
-            width: `${testProps.progress}%`,
-        });
+        const bar = screen.getByTestId('thin-progress-bar');
+        // The width is the only style that ends up inline; `size` and `color`
+        // are forwarded to Spectrum's `View`, which renders them as CSS
+        // variables / classes rather than inline styles.
+        expect(bar).toHaveStyle({ width: `${testProps.progress}%` });
+        expect(bar.style.height).toMatch(/--spectrum-global-dimension-size-50/);
     });
 });

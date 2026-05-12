@@ -190,7 +190,7 @@ describe('CircleTool', (): void => {
 
         // Completing the circle should have been cancelled
         fireEvent.pointerUp(svg, { button: 2, buttons: 2, clientX: 50, clientY: 20 });
-        expect(onComplete).not.toBeCalled();
+        expect(onComplete).not.toHaveBeenCalled();
     });
 
     it('allows pressing esc to reset the tool after moving the cursor', async () => {
@@ -209,7 +209,7 @@ describe('CircleTool', (): void => {
 
         // Completing the circle should have been cancelled
         fireEvent.pointerUp(svg, { button: 2, buttons: 2, clientX: 50, clientY: 20 });
-        expect(onComplete).not.toBeCalled();
+        expect(onComplete).not.toHaveBeenCalled();
     });
 
     it('add circles partially drawn inside the roi', async () => {
@@ -220,7 +220,7 @@ describe('CircleTool', (): void => {
         fireEvent.pointerDown(svg, { button: 2, buttons: 2, clientX: -10, clientY: 0 });
         fireEvent.pointerMove(svg, { clientX: 10, clientY: 0 });
         fireEvent.pointerUp(svg, { button: 2, buttons: 2, clientX: 10, clientY: 0 });
-        expect(onComplete).toBeCalled();
+        expect(onComplete).toHaveBeenCalled();
     });
 
     it('does not add circles drawn outside the roi', async () => {
@@ -231,6 +231,6 @@ describe('CircleTool', (): void => {
         fireEvent.pointerDown(svg, { button: 2, buttons: 2, clientX: -10, clientY: -10 });
         fireEvent.pointerMove(svg, { clientX: -9, clientY: 0 });
         fireEvent.pointerUp(svg, { button: 2, buttons: 2, clientX: -9, clientY: 0 });
-        expect(onComplete).not.toBeCalled();
+        expect(onComplete).not.toHaveBeenCalled();
     });
 });
