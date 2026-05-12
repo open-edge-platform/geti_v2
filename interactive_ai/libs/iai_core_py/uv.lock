@@ -260,7 +260,7 @@ requires-dist = [
     { name = "pymongo", extras = ["aws"], specifier = "~=4.10" },
     { name = "scipy", specifier = "~=1.14" },
     { name = "shapely", specifier = "~=2.0" },
-    { name = "urllib3", specifier = ">=1.26" },
+    { name = "urllib3", specifier = ">=2.6.3" },
 ]
 
 [package.metadata.requires-dev]

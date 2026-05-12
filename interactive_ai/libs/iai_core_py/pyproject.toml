@@ -16,7 +16,7 @@ dependencies = [
     "pymongo[aws]~=4.10",
     "scipy~=1.14",
     "shapely~=2.0",
-    "urllib3>=1.26",
+    "urllib3>=2.6.3",
     "geti-types",
     "geti-feature-tools",
 ]

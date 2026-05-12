@@ -8,14 +8,14 @@ requires-python = ">=3.10, <3.11"
 
 dependencies = [
     "boto3==1.40.37",
-    "urllib3>=2.5.0", # Lower bound due to CVEs
-    "fastapi==0.117.1",
-    "starlette>=0.47.2", # Lower bound due to CVEs
+    "urllib3>=2.6.3", # Lower bound due to CVEs
+    "fastapi==0.124.1",
+    "starlette>=0.49.1", # Lower bound due to CVEs
     "googleapis-common-protos~=1.72.0",
     "httpx==0.26.*",
     "iso3166==2.1.1",
     "uvicorn==0.22.0",
-    "PyJWT==2.8.0",
+    "PyJWT==2.12.0",
     "geti-telemetry-tools[grpc,telemetry]",
     "grpc_interfaces[account-service]",
 ]

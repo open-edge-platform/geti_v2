@@ -5,7 +5,7 @@ description = "FastAPI-related utilities for Intel Geti"
 requires-python = ">=3.10, <3.11"
 dependencies = [
     "fastapi~=0.115",
-    "PyJWT~=2.10",
+    "PyJWT~=2.12.0",
     "geti-types",
 ]
 

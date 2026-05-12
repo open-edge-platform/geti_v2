@@ -10,8 +10,10 @@ dependencies = [
     "numpy==1.26.4",
     "opencv-python-headless~=4.11",
     "pillow~=11.1.0",
-    "urllib3~=2.5.0",
-    "geti_client"
+    "urllib3~=2.6.3",
+    "geti_client",
+    "virtualenv~=20.36.1",
+    "filelock~=3.20.3",
 ]
 
 [dependency-groups]
