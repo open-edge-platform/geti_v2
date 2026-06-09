@@ -6,8 +6,8 @@ requires-python = ">=3.10, <3.11"
 
 dependencies = [
   "attrs>=21.4.0",
-  "fastapi==0.124.1",
-  "starlette>=0.49.1", # Lower bound due to CVEs
+  "fastapi==0.136.3",
+  "starlette>=1.2.1", # Lower bound due to CVEs
   "jsonschema>=4.18.0a10",
   "PyYAML==6.0.1",
   "rx==3.1.1",

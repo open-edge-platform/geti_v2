@@ -17,7 +17,7 @@ dependencies = [
 [project.optional-dependencies]
 account_service = [
     "google-api-python-client==2.90.0",
-    "pydantic==2.6.1"
+    "pydantic==2.13.4"
 ]
 credit_system = []
 job_submission = [
