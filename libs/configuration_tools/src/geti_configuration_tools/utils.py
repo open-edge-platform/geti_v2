@@ -57,12 +57,11 @@ def partial_model(model: type[BaseModel]) -> type[BaseModel]:
             )
         else:
             partial_fields[field_name] = make_field_optional(new_field)
-    # enable validation for unrecognized fields
-    partial_fields["model_config"] = ConfigDict(extra="forbid")  # type: ignore[assignment]
 
     return create_model(  # type: ignore[call-overload]
         f"Partial{model.__name__}",
         __base__=model,
         __module__=model.__module__,
+        __config__=ConfigDict(extra="forbid"),
         **partial_fields,
     )
