@@ -62,6 +62,5 @@ def partial_model(model: type[BaseModel]) -> type[BaseModel]:
         f"Partial{model.__name__}",
         __base__=model,
         __module__=model.__module__,
-        __config__=ConfigDict(extra="forbid"),
         **partial_fields,
     )
