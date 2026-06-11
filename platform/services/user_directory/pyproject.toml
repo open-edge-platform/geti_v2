@@ -10,7 +10,7 @@ dependencies = [
     "confluent-kafka==2.3.0",
     "cryptography==46.0.5",
     "fastapi==0.136.3",
-    "starlette>=1.2.1", # Lower bound due to CVEs
+    "starlette>=1.2.1,<2.0.0", # Lower bound due to CVEs
     "Jinja2==3.1.*",
     "kubernetes==24.2.0",
     "Pillow>=10.2.0",

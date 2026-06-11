@@ -10,7 +10,7 @@ dependencies = [
     "boto3==1.40.37",
     "urllib3>=2.6.3", # Lower bound due to CVEs
     "fastapi==0.136.3",
-    "starlette>=1.2.1", # Lower bound due to CVEs
+    "starlette>=1.2.1,<2.0.0", # Lower bound due to CVEs
     "googleapis-common-protos~=1.72.0",
     "httpx==0.26.*",
     "iso3166==2.1.1",

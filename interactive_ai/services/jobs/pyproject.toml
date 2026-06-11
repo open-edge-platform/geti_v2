@@ -7,7 +7,7 @@ requires-python = ">=3.10, <3.11"
 dependencies = [
     "flytekit==1.13.15", # Version that supports urllib3>=2.5.0
     "fastapi==0.136.3",
-    "starlette>=1.2.1", # Lower bound due to CVEs
+    "starlette>=1.2.1,<2.0.0", # Lower bound due to CVEs
     "uvicorn~=0.27",
     "marshmallow-enum==1.5.1",
     "geti-telemetry-tools[telemetry,fastapi,logger,kafka,grpc]",
