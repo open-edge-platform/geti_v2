@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = "==3.10.*"
 
 [[package]]
@@ -676,7 +676,7 @@ requires-dist = [
     { name = "httpx", specifier = "==0.26.*" },
     { name = "iso3166", specifier = "==2.1.1" },
     { name = "pyjwt", specifier = "==2.12.0" },
-    { name = "starlette", specifier = ">=1.2.1" },
+    { name = "starlette", specifier = ">=1.2.1,<2.0.0" },
     { name = "urllib3", specifier = ">=2.6.3" },
     { name = "uvicorn", specifier = "==0.22.0" },
 ]
