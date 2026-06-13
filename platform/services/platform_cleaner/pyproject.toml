@@ -20,7 +20,7 @@ grpc_interfaces = { path = "../../../libs/grpc_interfaces", editable = true }
 [dependency-groups]
 dev = [
     "mypy~=1.15",
-    "pytest~=8.3",
+    "pytest~=9.0",
     "pytest-cov==2.11.1",
     "click==8.1.7",
     "pre-commit~=4.1",

@@ -20,7 +20,7 @@ dev = [
     "geti-fastapi-tools[bson]",
     "mypy~=1.15",
     "pre-commit~=4.1",
-    "pytest~=8.3",
+    "pytest~=9.0",
     "ruff~=0.11.2",
     "types-PyYAML~=6.0",
 ]

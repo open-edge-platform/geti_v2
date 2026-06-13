@@ -49,7 +49,7 @@ geti-configuration-tools = { path = "../../../libs/configuration_tools", editabl
 
 [dependency-groups]
 dev = [
-    "pytest~=8.3",
+    "pytest~=9.0",
     "ruff~=0.11.2",
     "pre-commit~=4.1",
     "testfixtures==7.0.0",
