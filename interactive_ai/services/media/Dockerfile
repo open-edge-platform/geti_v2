@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # Builder image
-FROM golang:1.24.10@sha256:7b13449f08287fdb53114d65bdf20eb3965e4e54997903b5cb9477df0ea37c12 AS build
+FROM golang:1.24.13@sha256:d2d2bc1c84f7e60d7d2438a3836ae7d0c847f4888464e7ec9ba3a1339a1ee804 AS build
 
 WORKDIR /build/interactive_ai/service
 

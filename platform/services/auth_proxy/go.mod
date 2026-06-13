@@ -2,7 +2,7 @@ module auth_proxy
 
 go 1.24.0
 
-toolchain go1.24.10
+toolchain go1.24.13
 
 replace geti.com/account_service_grpc => ../../../libs/grpc_interfaces/src/grpc_interfaces/account_service/go
 

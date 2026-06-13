@@ -2,7 +2,7 @@ module geti.com/credit_system
 
 go 1.24.0
 
-toolchain go1.24.10
+toolchain go1.24.13
 
 require (
 	google.golang.org/grpc v1.79.3
