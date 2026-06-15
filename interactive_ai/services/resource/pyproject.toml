@@ -5,12 +5,12 @@ description = "Resource service for Geti"
 requires-python = ">=3.10, <3.13"
 
 dependencies = [
-    "fastapi==0.117.1",
-    "starlette>=0.47.2", # Lower bound due to CVEs
+    "fastapi==0.136.3",
+    "starlette>=1.2.1,<2.0.0", # Lower bound due to CVEs
     "jsonschema>=4.18.0a10",
     "python-multipart~=0.0.18",
     "uvicorn~=0.27",
-    "pillow==12.1.1",
+    "pillow==12.2.0",
     "defusedxml~=0.7.1",
     "geti-feature-tools",
     "geti-fastapi-tools",

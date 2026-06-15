@@ -116,7 +116,7 @@ describe('BoundingBoxTool', () => {
 
         // Completing the bounding box should have been cancelled
         fireEvent.pointerUp(svg);
-        expect(onComplete).not.toBeCalled();
+        expect(onComplete).not.toHaveBeenCalled();
     });
 
     it('does not add bounding box outside the roi', () => {
@@ -138,7 +138,7 @@ describe('BoundingBoxTool', () => {
         fireEvent.pointerMove(svg, { clientX: roi.x - 1, clientY: roi.y - 1 });
         fireEvent.pointerUp(svg);
 
-        expect(onComplete).not.toBeCalled();
+        expect(onComplete).not.toHaveBeenCalled();
     });
 
     it('does not add partially inside bounding box', () => {
@@ -160,6 +160,6 @@ describe('BoundingBoxTool', () => {
         fireEvent.pointerMove(svg, { clientX: roi.x + 1, clientY: roi.y + 1 });
         fireEvent.pointerUp(svg);
 
-        expect(onComplete).not.toBeCalled();
+        expect(onComplete).not.toHaveBeenCalled();
     });
 });

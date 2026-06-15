@@ -1,7 +1,9 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Button, Flex } from '@adobe/react-spectrum';
+import { Flex } from '@adobe/react-spectrum';
+
+import { Button } from '../button/button.component';
 
 import styles from './toggle-buttons.module.scss';
 

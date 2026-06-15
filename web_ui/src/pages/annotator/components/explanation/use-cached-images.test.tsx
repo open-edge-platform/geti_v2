@@ -35,7 +35,7 @@ describe('useCachedImages', () => {
         await act(async () => await result.current.load(Antelope));
         await act(async () => await result.current.load(Antelope));
 
-        expect(loadImage).toBeCalledTimes(1);
+        expect(loadImage).toHaveBeenCalledTimes(1);
     });
 
     it('loads url and returns image', async () => {

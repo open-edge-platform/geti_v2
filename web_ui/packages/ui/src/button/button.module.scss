@@ -1,3 +1,8 @@
+.button {
+    padding-block-start: var(--spectrum-global-dimension-size-40);
+    padding-block-end: var(--spectrum-global-dimension-size-40);
+}
+
 .actionButtonDark {
     border: var(--spectrum-alias-border-size-thin) solid transparent !important;
 

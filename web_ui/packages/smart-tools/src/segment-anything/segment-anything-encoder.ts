@@ -2,15 +2,12 @@
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 import type { OpenCVTypes } from '@geti/smart-tools/opencv';
-import type * as Comlink from 'comlink';
 import { Tensor } from 'onnxruntime-web';
 
 import { OpenCVPreprocessor, OpenCVPreprocessorConfig } from './pre-processing';
 import { type Session } from './session';
 
 type cv = typeof OpenCVTypes;
-
-type ModelSession = Session | Comlink.Remote<Session>;
 
 // A plain-object representation of ort.Tensor that survives structured-clone
 // (Comlink transfers between workers). ort.Tensor instances lose their class
@@ -36,39 +33,27 @@ export class SegmentAnythingEncoder {
     constructor(
         cv: cv,
         config: OpenCVPreprocessorConfig,
-        private session: ModelSession
+        private session: Session
     ) {
         this.preprocessor = new OpenCVPreprocessor(cv, config);
     }
 
-    public async processEncoder(initialImageData: ImageData) {
-        const result = this.preprocessor.process(initialImageData);
+    public async processEncoder(initialImageData: ImageData): Promise<EncodingOutput> {
+        const { tensor, newWidth, newHeight } = this.preprocessor.process(initialImageData);
         console.time('[SAM] Encoding');
-        const outputData = await this.session.run({ x: result.tensor });
+        const outputData = await this.session.run({ x: tensor });
         console.timeEnd('[SAM] Encoding');
-
         const outputNames = await this.session.outputNames();
         const gpuTensor = outputData[outputNames[0]];
 
-        // ort.Tensor instances lose their class identity (and `location` getter)
-        // when structured-cloned by Comlink across workers, causing onnxruntime
-        // >=1.20 to throw "invalid data location: undefined". Store raw typed
-        // array data so the decoder can reconstruct a valid tensor.
-        const encoderResult: SerializableTensor = {
-            data: (await gpuTensor.getData()) as Float32Array,
-            dims: [...gpuTensor.dims],
-            type: gpuTensor.type as Tensor.Type,
-        };
-
-        const originalWidth = initialImageData.width;
-        const originalHeight = initialImageData.height;
-        const newWidth = result.newWidth;
-        const newHeight = result.newHeight;
-
         return {
-            encoderResult,
-            originalWidth,
-            originalHeight,
+            encoderResult: {
+                data: (await gpuTensor.getData()) as Float32Array,
+                dims: [...gpuTensor.dims],
+                type: gpuTensor.type as Tensor.Type,
+            },
+            originalWidth: initialImageData.width,
+            originalHeight: initialImageData.height,
             newWidth,
             newHeight,
         };

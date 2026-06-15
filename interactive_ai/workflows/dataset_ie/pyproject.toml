@@ -8,7 +8,7 @@ dependencies = [
     "six~=1.16.0",
     "python-dateutil==2.8.2",
     "python-multipart~=0.0.18",
-    "Pillow==12.1.1",
+    "Pillow==12.2.0",
     "jsonschema==4.17.3",
     "boto3==1.40.18",# to match s3fs==2025.9.0 dep
     "geti-kafka-tools",
@@ -39,7 +39,7 @@ dev = [
     "pytest-html~=4.0.0",
     "ruff==0.9.5",
     "testcontainers~=4.10.0",
-    "requests~=2.32.4",
+    "requests~=2.33.0",
     "types-requests~=2.31",
     "setuptools==80.10.2",
 ]

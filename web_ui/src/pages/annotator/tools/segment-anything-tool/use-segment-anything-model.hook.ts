@@ -56,10 +56,9 @@ const useDecodingFn = (model: Remote<SegmentAnythingModel> | undefined, encoding
         const { shapes } = await model.processDecoder(encoding, {
             points,
             boxes: [],
-            ouputConfig: {
+            outputConfig: {
                 type: shapeType,
             },
-            image: undefined,
         });
 
         return shapes.map(convertToolShapeToGetiShape);
@@ -84,7 +83,7 @@ const useEncodingQuery = (
             return await model.processEncoder(selectedMediaItem.image);
         },
         staleTime: Infinity,
-        gcTime: 3600 * 15, // WIP
+        gcTime: Infinity,
         enabled: model !== undefined && selectedMediaItem !== undefined,
     });
 };
@@ -101,15 +100,19 @@ const useSegmentAnythingWorker = (
         const loadWorker = async () => {
             setModelIsLoading(true);
 
-            if (worker) {
-                const model = worker;
+            try {
+                if (worker) {
+                    const model = worker;
 
-                await model.init(algorithmType);
+                    await model.init(algorithmType);
 
-                modelRef.current = model;
+                    modelRef.current = model;
+                }
+            } catch (err) {
+                console.error('[SAM] Failed to initialize worker', err);
+            } finally {
+                setModelIsLoading(false);
             }
-
-            setModelIsLoading(false);
         };
 
         if (worker && modelRef.current === undefined && !modelIsLoading) {

@@ -63,7 +63,14 @@ export const Button = (props: ButtonProps) => {
             ? props.elementType
             : LinkBuilder({ href: props.href, target: props.target, rel: props.rel });
 
-    return <SpectrumButton {...props} elementType={elementType} variant={props.variant ?? 'accent'} />;
+    return (
+        <SpectrumButton
+            {...props}
+            elementType={elementType}
+            variant={props.variant ?? 'accent'}
+            UNSAFE_className={clsx(buttonClasses.button, props.UNSAFE_className)}
+        />
+    );
 };
 
 export const ActionButton = (props: ActionButtonProps) => {

@@ -22,7 +22,7 @@ describe('select domain button', () => {
 
         const button = getById(container, 'test-domain-button');
         button && fireEvent.click(button);
-        expect(select).toBeCalled();
+        expect(select).toHaveBeenCalled();
     });
 
     it('button has proper text', () => {

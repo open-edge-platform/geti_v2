@@ -8,7 +8,7 @@ dependencies = [
     "psycopg2-binary==2.9.3",
     "pymongo[aws]~=4.10",
     "minio~=7.1.0",
-    "urllib3>=2.5.0", # Lower bound due to CVEs
+    "urllib3>=2.6.3", # Lower bound due to CVEs
     "geti-telemetry-tools[telemetry,grpc,logger]",
     "migration",
 ]
@@ -32,7 +32,7 @@ dev = [
     "pytest-html~=4.0.0",
     "ruff~=0.11.2",
     "pytest-mock==3.8.*",
-    "protobuf~=6.31.1",
+    "protobuf~=6.33.5",
     "types-requests",
     "grpcio_tools==1.78.0",
     "mypy-protobuf==3.5",

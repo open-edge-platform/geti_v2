@@ -142,14 +142,14 @@ describe('StreamingVideoControls', () => {
 
             it('active learning', async () => {
                 await preConfigApp(ANNOTATOR_MODE.ACTIVE_LEARNING);
-                expect(videoControls.pause).toBeCalledTimes(0);
+                expect(videoControls.pause).toHaveBeenCalledTimes(0);
             });
 
             it('prediction', async () => {
                 await preConfigApp(ANNOTATOR_MODE.PREDICTION);
 
                 await waitFor(() => {
-                    expect(videoControls.pause).toBeCalledTimes(1);
+                    expect(videoControls.pause).toHaveBeenCalledTimes(1);
                 });
             });
         });
@@ -247,7 +247,7 @@ describe('StreamingVideoControls', () => {
                 initialProps: { isPlaying: true, isBufferedFrame: false, hasEmptyBuffers: false, videoControls },
             });
 
-            expect(videoControls.pause).toBeCalledTimes(1);
+            expect(videoControls.pause).toHaveBeenCalledTimes(1);
         });
 
         it('resume video', () => {
@@ -258,13 +258,13 @@ describe('StreamingVideoControls', () => {
                 }
             );
 
-            expect(videoControls.pause).toBeCalledTimes(1);
-            expect(videoControls.play).not.toBeCalled();
+            expect(videoControls.pause).toHaveBeenCalledTimes(1);
+            expect(videoControls.play).not.toHaveBeenCalled();
 
             rerender({ isPlaying: false, isBufferedFrame: true, hasEmptyBuffers: false, videoControls });
 
-            expect(videoControls.pause).toBeCalledTimes(1);
-            expect(videoControls.play).toBeCalledTimes(1);
+            expect(videoControls.pause).toHaveBeenCalledTimes(1);
+            expect(videoControls.play).toHaveBeenCalledTimes(1);
         });
     });
 });

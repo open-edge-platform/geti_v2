@@ -185,7 +185,7 @@ describe('EditCircleTool', () => {
         const rect = screen.getByLabelText('Drag to move shape');
         moveShape(rect, startPoint, endPoint);
 
-        expect(updateAnnotation).not.toBeCalled();
+        expect(updateAnnotation).not.toHaveBeenCalled();
         expect(removeAnnotations).toHaveBeenCalledWith([
             {
                 ...annotation,

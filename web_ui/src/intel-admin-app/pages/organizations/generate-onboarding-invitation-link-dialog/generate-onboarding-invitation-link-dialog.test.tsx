@@ -15,29 +15,15 @@ jest.mock('../../../../hooks/use-clipboard/use-clipboard.hook', () => ({
 }));
 
 describe('GenerateOnboardingTokenDialog', () => {
-    let originalLocation: Location;
-
-    beforeAll(() => {
-        originalLocation = window.location;
-        Object.defineProperty(window, 'location', {
-            value: { origin: 'https://localhost' },
-            writable: true,
-        });
-    });
-
-    afterAll(() => {
-        Object.defineProperty(window, 'location', {
-            value: originalLocation,
-            writable: true,
-        });
-    });
-
     afterEach(() => {
         jest.clearAllMocks();
     });
 
     it('should generate token and allow user to copy it', async () => {
-        const originUrl = 'https://localhost';
+        // jsdom's default origin is `http://localhost` and `window.location` is
+        // not configurable in jsdom >= 24 (Jest 30), so we rely on the default
+        // origin instead of stubbing it.
+        const originUrl = window.location.origin;
         const token = 'cool-token';
         const link = `${originUrl}?signup-token=${token}`;
 

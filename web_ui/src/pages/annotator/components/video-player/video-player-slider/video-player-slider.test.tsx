@@ -124,7 +124,7 @@ describe('Video player slider', () => {
         hover(slider);
 
         // Simulate mouse movement with clientX
-        fireEvent.mouseMove(slider, { clientX: sliderWidth / 10 });
+        fireEvent.pointerMove(slider, { clientX: sliderWidth / 10, pointerType: 'mouse' });
 
         jest.advanceTimersByTime(1000);
 

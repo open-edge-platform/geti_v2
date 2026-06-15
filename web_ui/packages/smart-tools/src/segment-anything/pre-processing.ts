@@ -69,11 +69,8 @@ export class OpenCVPreprocessor {
     }
 
     private loadImage(imageData: ImageData): OpenCVTypes.Mat {
-        // TODO: check if it is faster / more appropriate if we traser this value
-        // https://github.com/GoogleChromeLabs/comlink#comlinktransfervalue-transferables-and-comlinkproxyvalue
         const src = this.CV.matFromImageData(imageData);
-        // This is important as otherwise the matrix has too many channels
-        // and we don't want to convert the alpha channel to the ort tesnsor
+        // Strip the alpha channel — the ORT tensor only wants 3 channels.
         this.CV.cvtColor(src, src, this.CV.COLOR_RGBA2RGB, 0);
 
         return src;
@@ -139,16 +136,10 @@ export class OpenCVPreprocessor {
             );
         }
 
-        return {
-            width,
-            height,
-            newWidth,
-            newHeight,
-        };
+        return { width, height, newWidth, newHeight };
     }
 
     private processImage(dst: OpenCVTypes.Mat): void {
-        // RITM requires the image to normalized. RITM code uses theses hardcoded values for some reason.
         let norm: OpenCVTypes.Mat | null = null;
         let stdDev: OpenCVTypes.Mat | null = null;
         try {

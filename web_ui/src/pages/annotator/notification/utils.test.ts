@@ -27,22 +27,22 @@ describe('credit-deduction-notification utils', () => {
 
         it(`check that callback function is triggered requested job trigger does not match scheduled job's author`, () => {
             onScheduledTrainingJobs(mockedCallback, JOB_TRIGGER.AUTO)(getJobResponse({ numberOfScheduledJobs: 1 }));
-            expect(mockedCallback).toBeCalledTimes(1);
+            expect(mockedCallback).toHaveBeenCalledTimes(1);
         });
 
         it(`check that callback function is not triggered when requested job trigger does not match scheduled job's author`, () => {
             onScheduledTrainingJobs(mockedCallback, JOB_TRIGGER.MANUAL)(getJobResponse({ numberOfScheduledJobs: 1 }));
-            expect(mockedCallback).toBeCalledTimes(0);
+            expect(mockedCallback).toHaveBeenCalledTimes(0);
         });
 
         it('invalid response', () => {
             onScheduledTrainingJobs(mockedCallback, JOB_TRIGGER.AUTO)({ pageParams: [undefined], pages: [] });
-            expect(mockedCallback).toBeCalledTimes(0);
+            expect(mockedCallback).toHaveBeenCalledTimes(0);
         });
 
         it('non schedule jobs', () => {
             onScheduledTrainingJobs(mockedCallback, JOB_TRIGGER.AUTO)(getJobResponse());
-            expect(mockedCallback).toBeCalledTimes(0);
+            expect(mockedCallback).toHaveBeenCalledTimes(0);
         });
     });
 });

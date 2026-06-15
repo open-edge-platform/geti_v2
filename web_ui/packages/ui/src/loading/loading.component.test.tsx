@@ -69,7 +69,9 @@ describe('Loading', () => {
             const container = progressbar.parentElement;
             expect(container).toBeInTheDocument();
             expect(container).toHaveClass('overlay', 'fullscreen');
-            expect(container).toHaveStyle({ backgroundColor: 'var(--spectrum-global-color-gray-50)' });
+            // The default background-color is provided by the `.fullscreen` CSS
+            // class (see loading.module.scss). CSS module styles are not loaded
+            // in jest, so we only assert the class is present.
         });
 
         it('supports custom styling and spinner height', () => {

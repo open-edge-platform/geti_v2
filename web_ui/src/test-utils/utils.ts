@@ -17,6 +17,10 @@ export const onHoverTooltip = (element: HTMLElement | null): void => {
 
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
+    // jsdom >= 23 (Jest 30) supports PointerEvent natively, so react-aria's
+    // `useHover` only listens to pointer events. Fire both kinds for backwards
+    // compatibility with components that listen to either.
+    fireEvent.pointerEnter(element, { pointerType: 'mouse' });
     fireEvent.mouseEnter(element);
 };
 
@@ -57,10 +61,16 @@ export const checkTooltip = async (element: HTMLElement, tooltipText: Matcher) =
     expect(await screen.findByText(tooltipText)).toBeInTheDocument();
 };
 
+// react-aria's `useHover` listens to PointerEvents when they are supported by
+// the environment (which is the case in jsdom >= 23, shipped with Jest 30) and
+// only falls back to mouse events otherwise. We dispatch both kinds of events
+// so the helper keeps working across jsdom versions.
 export const hover = (element: HTMLElement) => {
+    fireEvent.pointerEnter(element, { pointerType: 'mouse' });
     fireEvent.mouseEnter(element);
 };
 
 export const unhover = (element: HTMLElement) => {
+    fireEvent.pointerLeave(element, { pointerType: 'mouse' });
     fireEvent.mouseLeave(element);
 };

@@ -172,7 +172,7 @@ describe('DatasetImportPanelMenu', () => {
 
                 !!menuActionButton && fireEvent.click(menuActionButton);
 
-                expect(mockAbortDatasetImportAction).toBeCalled();
+                expect(mockAbortDatasetImportAction).toHaveBeenCalled();
             }
         );
 
@@ -199,7 +199,7 @@ describe('DatasetImportPanelMenu', () => {
 
                 !!menuActionButton && fireEvent.click(menuActionButton);
 
-                expect(mockDatasetImportDeleteDialogTrigger.open).toBeCalled();
+                expect(mockDatasetImportDeleteDialogTrigger.open).toHaveBeenCalled();
             }
         );
 
@@ -221,7 +221,7 @@ describe('DatasetImportPanelMenu', () => {
 
                 !!menuActionButton && fireEvent.click(menuActionButton);
 
-                expect(mockOnPrimaryAction).toBeCalled();
+                expect(mockOnPrimaryAction).toHaveBeenCalled();
             }
         );
     });

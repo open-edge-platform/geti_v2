@@ -52,6 +52,6 @@ describe('MaintenanceService', () => {
 
         const response = maintenanceService.getMaintenanceInfo(mockMaintenanceConfigUrl);
 
-        return expect(response).rejects.toThrowError('The server can not find requested resource');
+        return expect(response).rejects.toThrow('The server can not find requested resource');
     });
 });

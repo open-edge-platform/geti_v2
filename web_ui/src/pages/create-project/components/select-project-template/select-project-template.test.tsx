@@ -49,7 +49,7 @@ describe('Select project template step', () => {
         expect(detectionCard).toHaveClass('selected', { exact: false });
 
         expect(screen.getByRole('tab', { name: 'Detection', selected: true })).toBeInTheDocument();
-        expect(setValidationError).toBeCalled();
+        expect(setValidationError).toHaveBeenCalled();
     });
 
     it('should display only "Anomaly detection" card', async () => {

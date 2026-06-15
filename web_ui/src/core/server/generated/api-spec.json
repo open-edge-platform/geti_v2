@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Geti™ REST API",
-    "version": "2.12.0",
+    "version": "2.14.0",
     "description": "REST API documentation for Geti™."
   },
   "servers": [
@@ -4709,6 +4709,10 @@
                                     "type": "string",
                                     "description": "Name of label group"
                                   },
+                                  "is_background": {
+                                    "type": "boolean",
+                                    "description": "Indicates whether the label is the background label"
+                                  },
                                   "parent_id": {
                                     "description": "Name of parent label"
                                   }
@@ -5446,6 +5450,14 @@
                         "size": {
                           "title": "Project size in bytes",
                           "type": "integer"
+                        },
+                        "size_excluding_models": {
+                          "title": "Project size without any models in bytes",
+                          "type": "integer"
+                        },
+                        "size_excluding_non_active_models": {
+                          "title": "Project size with only active models in bytes",
+                          "type": "integer"
                         }
                       }
                     }
@@ -5504,6 +5516,7 @@
                                 "id": "60db493ed20945a0046f56c6",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "object"
@@ -5537,6 +5550,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "60db493ed20945a0046f56c7",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "rectangle",
@@ -5548,6 +5562,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "60db493ed20945a0046f56c8",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "circle",
@@ -5559,6 +5574,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "60db493ed20945a0046f56c9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "triangle",
@@ -5647,6 +5663,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "60db493ed20945a0046f56c6",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "name": "object"
                               },
@@ -5677,6 +5694,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "60db493ed20945a0046f56c7",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "name": "rectangle",
                                 "parent_id": null
@@ -5745,6 +5763,7 @@
                                 "id": "60d31793d5f1fb7e6e3c1a46",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "rectangle"
@@ -5820,6 +5839,7 @@
                                 "id": "6101254defba22ca453f11c6",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse"
                               },
@@ -5830,6 +5850,7 @@
                                 "id": "6101254defba22ca453f11c7",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey"
                               },
@@ -5840,6 +5861,7 @@
                                 "id": "6101254defba22ca453f11c8",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled"
                               },
@@ -5850,6 +5872,7 @@
                                 "id": "6101254defba22ca453f11c9",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled"
                               },
@@ -5923,6 +5946,7 @@
                                 "id": "61012cdb1d38a5e71ef3baf1",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "animal"
                               },
@@ -5933,6 +5957,7 @@
                                 "id": "61012cdb1d38a5e71ef3baf2",
                                 "parent_id": "61012cdb1d38a5e71ef3baf1",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse"
                               },
@@ -5943,6 +5968,7 @@
                                 "id": "61012cdb1d38a5e71ef3baf3",
                                 "parent_id": "61012cdb1d38a5e71ef3baf1",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey"
                               },
@@ -5953,6 +5979,7 @@
                                 "id": "61012cdb1d38a5e71ef3baf4",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled"
                               },
@@ -5963,6 +5990,7 @@
                                 "id": "61012cdb1d38a5e71ef3baf5",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled"
                               },
@@ -6036,6 +6064,7 @@
                                 "id": "610123e5efba22ca453f11b9",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "object"
                               },
@@ -6047,7 +6076,19 @@
                                 "parent_id": null,
                                 "is_empty": true,
                                 "is_anomalous": false,
+                                "is_background": false,
                                 "name": "Empty"
+                              },
+                              {
+                                "color": "#b10334ff",
+                                "group": "Background",
+                                "hotkey": "",
+                                "id": "610123e5efba22ca453f11c1",
+                                "parent_id": null,
+                                "is_empty": false,
+                                "is_anomalous": false,
+                                "is_background": true,
+                                "name": "Background"
                               }
                             ],
                             "task_type": "segmentation",
@@ -6691,6 +6732,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "610123e5efba22ca453f11b9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "object",
                                 "parent_id": null
@@ -6753,6 +6795,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "610123e5efba22ca453f11b9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "object",
                                 "parent_id": null
@@ -6816,6 +6859,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "6101254defba22ca453f11c6",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse",
                                 "parent_id": null
@@ -6826,6 +6870,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "6101254defba22ca453f11c7",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey",
                                 "parent_id": null
@@ -6836,6 +6881,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "6101254defba22ca453f11c8",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled",
                                 "parent_id": null
@@ -6846,6 +6892,7 @@
                                 "hotkey": "ctrl+9",
                                 "id": "6101254defba22ca453f11c9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled",
                                 "parent_id": null
@@ -6906,6 +6953,7 @@
                                 "hotkey": "",
                                 "id": "61012b5cefba22ca453f11d7",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "animal",
                                 "parent_id": null
@@ -6916,6 +6964,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "61012b5cefba22ca453f11d8",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse",
                                 "parent_id": null
@@ -6926,6 +6975,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "61012b5cefba22ca453f11d9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey",
                                 "parent_id": null
@@ -6936,6 +6986,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "61012b5cefba22ca453f11da",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled",
                                 "parent_id": null
@@ -6946,6 +6997,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "61012b5cefba22ca453f11db",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled",
                                 "parent_id": null
@@ -7009,6 +7061,7 @@
                                 "hotkey": "",
                                 "id": "61012bf776379a12afa07894",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "animal",
                                 "parent_id": null
@@ -7019,6 +7072,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "61012bf776379a12afa07895",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse",
                                 "parent_id": null
@@ -7029,6 +7083,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "61012bf776379a12afa07896",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey",
                                 "parent_id": null
@@ -7039,6 +7094,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "61012bf776379a12afa07897",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled",
                                 "parent_id": null
@@ -7049,6 +7105,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "61012bf776379a12afa07898",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled",
                                 "parent_id": null
@@ -7112,6 +7169,7 @@
                                 "hotkey": "",
                                 "id": "61012cdb1d38a5e71ef3baf1",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "animal",
                                 "parent_id": null
@@ -7122,6 +7180,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "61012cdb1d38a5e71ef3baf2",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse",
                                 "parent_id": "61012cdb1d38a5e71ef3baf1"
@@ -7132,6 +7191,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "61012cdb1d38a5e71ef3baf3",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey",
                                 "parent_id": "61012cdb1d38a5e71ef3baf1"
@@ -7142,6 +7202,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "61012cdb1d38a5e71ef3baf4",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled",
                                 "parent_id": null
@@ -7152,6 +7213,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "61012cdb1d38a5e71ef3baf5",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled",
                                 "parent_id": null
@@ -7226,6 +7288,7 @@
                                 "hotkey": "",
                                 "id": "6290a8f9003ddb3967f1438c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Normal",
                                 "parent_id": null
@@ -7236,6 +7299,7 @@
                                 "hotkey": "",
                                 "id": "6290a8f9003ddb3967f1438d",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Anomalous",
                                 "parent_id": null
@@ -7296,6 +7360,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475b",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Card",
                                 "parent_id": null
@@ -7329,6 +7394,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14760",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Hearts",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7339,6 +7405,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14762",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Diamonds",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7349,6 +7416,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14763",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Spades",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7359,6 +7427,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14764",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Clubs",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7369,6 +7438,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14765",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Seven",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7379,6 +7449,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14767",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Eight",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7389,6 +7460,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14768",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Nine",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7399,6 +7471,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14769",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Ten",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7409,6 +7482,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476a",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Jack",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7419,6 +7493,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476b",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Queen",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7429,6 +7504,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "King",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7439,6 +7515,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476d",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "Ace",
                                 "parent_id": "62946c62003ddb3967f1475b"
@@ -7503,6 +7580,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "head",
                                 "parent_id": null
@@ -7513,6 +7591,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475e",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "neck",
                                 "parent_id": null
@@ -8175,6 +8254,14 @@
                         "size": {
                           "title": "Project size in bytes",
                           "type": "integer"
+                        },
+                        "size_excluding_models": {
+                          "title": "Project size without any models in bytes",
+                          "type": "integer"
+                        },
+                        "size_excluding_non_active_models": {
+                          "title": "Project size with only active models in bytes",
+                          "type": "integer"
                         }
                       }
                     }
@@ -8233,6 +8320,7 @@
                                 "id": "60db493ed20945a0046f56c6",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "object"
@@ -8266,6 +8354,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "60db493ed20945a0046f56c7",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "rectangle",
@@ -8277,6 +8366,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "60db493ed20945a0046f56c8",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "circle",
@@ -8288,6 +8378,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "60db493ed20945a0046f56c9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "triangle",
@@ -8371,6 +8462,7 @@
                                 "id": "6101254defba22ca453f11c6",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse"
                               },
@@ -8381,6 +8473,7 @@
                                 "id": "6101254defba22ca453f11c7",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey"
                               },
@@ -8391,6 +8484,7 @@
                                 "id": "6101254defba22ca453f11c8",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled"
                               },
@@ -8401,6 +8495,7 @@
                                 "id": "6101254defba22ca453f11c9",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled"
                               },
@@ -8474,6 +8569,7 @@
                                 "id": "60d31793d5f1fb7e6e3c1a46",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "rectangle"
@@ -8558,6 +8654,7 @@
                                 "hotkey": "",
                                 "id": "62adc3caa4002f5a67575350",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Boat",
                                 "parent_id": null
                               },
@@ -8618,6 +8715,7 @@
                                 "id": "610123e5efba22ca453f11b9",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "object"
                               },
@@ -8629,7 +8727,19 @@
                                 "parent_id": null,
                                 "is_empty": true,
                                 "is_anomalous": false,
+                                "is_background": false,
                                 "name": "Empty"
+                              },
+                              {
+                                "color": "#b10334ff",
+                                "group": "Background",
+                                "hotkey": "",
+                                "id": "610123e5efba22ca453f11c1",
+                                "parent_id": null,
+                                "is_empty": false,
+                                "is_anomalous": false,
+                                "is_background": true,
+                                "name": "Background"
                               }
                             ],
                             "task_type": "segmentation",
@@ -8697,6 +8807,7 @@
                                 "hotkey": "",
                                 "id": "6290a8f9003ddb3967f1438c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Normal",
                                 "parent_id": null
                               },
@@ -8706,6 +8817,7 @@
                                 "hotkey": "",
                                 "id": "6290a8f9003ddb3967f1438d",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Anomalous",
                                 "parent_id": null
                               }
@@ -8775,6 +8887,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475b",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Card",
                                 "parent_id": null
                               },
@@ -8806,6 +8919,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14760",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Hearts",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8815,6 +8929,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14762",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Diamonds",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8824,6 +8939,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14763",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Spades",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8833,6 +8949,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14764",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Clubs",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8842,6 +8959,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14765",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Seven",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8851,6 +8969,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14767",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Eight",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8860,6 +8979,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14768",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Nine",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8869,6 +8989,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f14769",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Ten",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8878,6 +8999,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476a",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Jack",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8887,6 +9009,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476b",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Queen",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8896,6 +9019,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "King",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8905,6 +9029,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1476d",
                                 "is_empty": false,
+                                "is_background": false,
                                 "name": "Ace",
                                 "parent_id": "62946c62003ddb3967f1475b"
                               },
@@ -8970,6 +9095,7 @@
                                 "hotkey": "ctrl+5",
                                 "id": "60db493ed20945a0046f56c6",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "name": "object"
                               },
@@ -9000,6 +9126,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "60db493ed20945a0046f56c7",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "name": "rectangle",
                                 "parent_id": null
@@ -9080,6 +9207,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475c",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "head",
                                 "parent_id": null
@@ -9090,6 +9218,7 @@
                                 "hotkey": "",
                                 "id": "62946c62003ddb3967f1475e",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "neck",
                                 "parent_id": null
@@ -9363,6 +9492,10 @@
                                   "is_deleted": {
                                     "type": "boolean",
                                     "description": "Indicates whether the label is going to be deleted"
+                                  },
+                                  "is_background": {
+                                    "type": "boolean",
+                                    "description": "Indicates whether the label is the background label"
                                   },
                                   "parent_id": {
                                     "description": "Name of parent label"
@@ -10219,6 +10352,14 @@
                         "size": {
                           "title": "Project size in bytes",
                           "type": "integer"
+                        },
+                        "size_excluding_models": {
+                          "title": "Project size without any models in bytes",
+                          "type": "integer"
+                        },
+                        "size_excluding_non_active_models": {
+                          "title": "Project size with only active models in bytes",
+                          "type": "integer"
                         }
                       }
                     }
@@ -10277,6 +10418,7 @@
                                 "id": "60db493ed20945a0046f56c6",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "object"
@@ -10310,6 +10452,7 @@
                                 "hotkey": "ctrl+6",
                                 "id": "60db493ed20945a0046f56c7",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "rectangle",
@@ -10321,6 +10464,7 @@
                                 "hotkey": "ctrl+7",
                                 "id": "60db493ed20945a0046f56c8",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "circle",
@@ -10332,6 +10476,7 @@
                                 "hotkey": "ctrl+8",
                                 "id": "60db493ed20945a0046f56c9",
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "triangle",
@@ -10415,6 +10560,7 @@
                                 "id": "60d31793d5f1fb7e6e3c1a46",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_deleted": false,
                                 "is_anomalous": false,
                                 "name": "rectangle"
@@ -10490,6 +10636,7 @@
                                 "id": "6101254defba22ca453f11c6",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "horse"
                               },
@@ -10500,6 +10647,7 @@
                                 "id": "6101254defba22ca453f11c7",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "donkey"
                               },
@@ -10510,6 +10658,7 @@
                                 "id": "6101254defba22ca453f11dd",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "zebra"
                               },
@@ -10520,6 +10669,7 @@
                                 "id": "6101254defba22ca453f11c8",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "saddled"
                               },
@@ -10530,6 +10680,7 @@
                                 "id": "6101254defba22ca453f11c9",
                                 "parent_id": null,
                                 "is_empty": false,
+                                "is_background": false,
                                 "is_anomalous": false,
                                 "name": "unsaddled"
                               },
@@ -42375,7 +42526,7 @@
                           "description": "Information about the project export operation",
                           "properties": {
                             "project": {
-                              "description": "Information about the project being export",
+                              "description": "Information about the project being exported",
                               "type": "object",
                               "properties": {
                                 "id": {
@@ -42388,9 +42539,22 @@
                                 }
                               }
                             },
+                            "include_models": {
+                              "description": "Enum indicating which models are included in the exported zip",
+                              "type": "string",
+                              "enum": [
+                                "all",
+                                "none",
+                                "latest_active"
+                              ]
+                            },
                             "download_url": {
                               "type": "string",
                               "description": "URL to download the exported project archive"
+                            },
+                            "size": {
+                              "type": "integer",
+                              "description": "Size of the exported project zip file"
                             }
                           }
                         }
@@ -43160,6 +43324,7 @@
                           "id": "66042c987b4bd079335e9f8e",
                           "name": "MyProject"
                         },
+                        "include_models": "latest_active",
                         "download_url": "api/v1/organizations/421867ab-c380-48d0-b3ca-5cdb605f3c60/workspaces/6c029d4a-b93f-4114-93bd-78e534b98f04/projects/66042c987b4bd079335e9f8e/exports/6604445ad378a62f4bac6c84/download",
                         "size": 123456789
                       }
@@ -56526,102 +56691,100 @@
                 },
                 "examples": {
                   "Project configuration response": {
-                    "value": [
-                      {
-                        "task_configs": [
-                          {
-                            "task_id": "61012cdb1d38a5e71ef3bafd",
-                            "training": {
-                              "constraints": [
-                                {
-                                  "key": "min_images_per_label",
-                                  "name": "Minimum number of images per label",
-                                  "type": "int",
-                                  "description": "Minimum number of images that must be present for each label to train",
-                                  "value": 10,
-                                  "default_value": 0,
-                                  "min_value": 0,
-                                  "max_value": null
-                                }
-                              ]
-                            },
-                            "auto_training": [
-                              {
-                                "key": "enable",
-                                "name": "Enable auto training",
-                                "type": "bool",
-                                "description": "Whether automatic training is enabled for this task",
-                                "value": true,
-                                "default_value": true
-                              },
-                              {
-                                "key": "enable_dynamic_required_annotations",
-                                "name": "Enable dynamic required annotations",
-                                "type": "bool",
-                                "description": "Whether to dynamically adjust the number of required annotations",
-                                "value": false,
-                                "default_value": false
-                              },
+                    "value": {
+                      "task_configs": [
+                        {
+                          "task_id": "61012cdb1d38a5e71ef3bafd",
+                          "training": {
+                            "constraints": [
                               {
                                 "key": "min_images_per_label",
-                                "name": "Minimum images per label",
+                                "name": "Minimum number of images per label",
                                 "type": "int",
-                                "description": "Minimum number of images needed for each label to trigger auto-training",
-                                "value": 5,
-                                "default_value": 12,
-                                "min_value": 3,
+                                "description": "Minimum number of images that must be present for each label to train",
+                                "value": 10,
+                                "default_value": 0,
+                                "min_value": 0,
                                 "max_value": null
                               }
                             ]
                           },
-                          {
-                            "task_id": "61012cdb1d38a5e71ef3bafe",
-                            "training": {
-                              "constraints": [
-                                {
-                                  "key": "min_images_per_label",
-                                  "name": "Minimum number of images per label",
-                                  "type": "int",
-                                  "description": "Minimum number of images that must be present for each label to train",
-                                  "value": 15,
-                                  "default_value": 0,
-                                  "min_value": 0,
-                                  "max_value": null
-                                }
-                              ]
+                          "auto_training": [
+                            {
+                              "key": "enable",
+                              "name": "Enable auto training",
+                              "type": "bool",
+                              "description": "Whether automatic training is enabled for this task",
+                              "value": true,
+                              "default_value": true
                             },
-                            "auto_training": [
-                              {
-                                "key": "enable",
-                                "name": "Enable auto training",
-                                "type": "bool",
-                                "description": "Whether automatic training is enabled for this task",
-                                "value": false,
-                                "default_value": true
-                              },
-                              {
-                                "key": "enable_dynamic_required_annotations",
-                                "name": "Enable dynamic required annotations",
-                                "type": "bool",
-                                "description": "Whether to dynamically adjust the number of required annotations",
-                                "value": true,
-                                "default_value": false
-                              },
+                            {
+                              "key": "enable_dynamic_required_annotations",
+                              "name": "Enable dynamic required annotations",
+                              "type": "bool",
+                              "description": "Whether to dynamically adjust the number of required annotations",
+                              "value": false,
+                              "default_value": false
+                            },
+                            {
+                              "key": "min_images_per_label",
+                              "name": "Minimum images per label",
+                              "type": "int",
+                              "description": "Minimum number of images needed for each label to trigger auto-training",
+                              "value": 5,
+                              "default_value": 12,
+                              "min_value": 3,
+                              "max_value": null
+                            }
+                          ]
+                        },
+                        {
+                          "task_id": "61012cdb1d38a5e71ef3bafe",
+                          "training": {
+                            "constraints": [
                               {
                                 "key": "min_images_per_label",
-                                "name": "Minimum images per label",
+                                "name": "Minimum number of images per label",
                                 "type": "int",
-                                "description": "Minimum number of images needed for each label to trigger auto-training",
-                                "value": 8,
-                                "default_value": 12,
-                                "min_value": 3,
+                                "description": "Minimum number of images that must be present for each label to train",
+                                "value": 15,
+                                "default_value": 0,
+                                "min_value": 0,
                                 "max_value": null
                               }
                             ]
-                          }
-                        ]
-                      }
-                    ]
+                          },
+                          "auto_training": [
+                            {
+                              "key": "enable",
+                              "name": "Enable auto training",
+                              "type": "bool",
+                              "description": "Whether automatic training is enabled for this task",
+                              "value": false,
+                              "default_value": true
+                            },
+                            {
+                              "key": "enable_dynamic_required_annotations",
+                              "name": "Enable dynamic required annotations",
+                              "type": "bool",
+                              "description": "Whether to dynamically adjust the number of required annotations",
+                              "value": true,
+                              "default_value": false
+                            },
+                            {
+                              "key": "min_images_per_label",
+                              "name": "Minimum images per label",
+                              "type": "int",
+                              "description": "Minimum number of images needed for each label to trigger auto-training",
+                              "value": 8,
+                              "default_value": 12,
+                              "min_value": 3,
+                              "max_value": null
+                            }
+                          ]
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -57120,62 +57283,60 @@
               },
               "examples": {
                 "Project configuration payload": {
-                  "value": [
-                    {
-                      "task_configs": [
-                        {
-                          "task_id": "61012cdb1d38a5e71ef3bafd",
-                          "training": {
-                            "constraints": [
-                              {
-                                "key": "min_images_per_label",
-                                "value": 10
-                              }
-                            ]
-                          },
-                          "auto_training": [
-                            {
-                              "key": "enable",
-                              "value": true
-                            },
-                            {
-                              "key": "enable_dynamic_required_annotations",
-                              "value": false
-                            },
+                  "value": {
+                    "task_configs": [
+                      {
+                        "task_id": "61012cdb1d38a5e71ef3bafd",
+                        "training": {
+                          "constraints": [
                             {
                               "key": "min_images_per_label",
-                              "value": 5
+                              "value": 10
                             }
                           ]
                         },
-                        {
-                          "task_id": "61012cdb1d38a5e71ef3bafe",
-                          "training": {
-                            "constraints": [
-                              {
-                                "key": "min_images_per_label",
-                                "value": 15
-                              }
-                            ]
+                        "auto_training": [
+                          {
+                            "key": "enable",
+                            "value": true
                           },
-                          "auto_training": [
-                            {
-                              "key": "enable",
-                              "value": false
-                            },
-                            {
-                              "key": "enable_dynamic_required_annotations",
-                              "value": true
-                            },
+                          {
+                            "key": "enable_dynamic_required_annotations",
+                            "value": false
+                          },
+                          {
+                            "key": "min_images_per_label",
+                            "value": 5
+                          }
+                        ]
+                      },
+                      {
+                        "task_id": "61012cdb1d38a5e71ef3bafe",
+                        "training": {
+                          "constraints": [
                             {
                               "key": "min_images_per_label",
-                              "value": 8
+                              "value": 15
                             }
                           ]
-                        }
-                      ]
-                    }
-                  ]
+                        },
+                        "auto_training": [
+                          {
+                            "key": "enable",
+                            "value": false
+                          },
+                          {
+                            "key": "enable_dynamic_required_annotations",
+                            "value": true
+                          },
+                          {
+                            "key": "min_images_per_label",
+                            "value": 8
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -58758,11 +58919,12 @@
                           {
                             "key": "tile_overlap",
                             "name": "Tile overlap",
-                            "type": "int",
-                            "description": "Overlap between adjacent tiles in pixels",
-                            "value": 64,
-                            "default_value": 64,
-                            "min_value": 0
+                            "type": "float",
+                            "description": "Overlap between adjacent tiles as a fraction of tile size",
+                            "value": 0.4,
+                            "default_value": 0.5,
+                            "min_value": 0,
+                            "max_value": 1
                           }
                         ]
                       },
@@ -59242,12 +59404,12 @@
                             {
                               "key": "tile_overlap",
                               "name": "Tile overlap",
-                              "type": "int",
-                              "description": "Overlap between adjacent tiles in pixels",
-                              "value": 64,
-                              "default_value": 64,
+                              "type": "float",
+                              "description": "Overlap between adjacent tiles as a fraction of tile size",
+                              "value": 0.4,
+                              "default_value": 0.5,
                               "min_value": 0,
-                              "max_value": null
+                              "max_value": 1
                             }
                           ]
                         }
@@ -60024,7 +60186,7 @@
                         },
                         {
                           "key": "tile_overlap",
-                          "value": 64
+                          "value": 0.4
                         }
                       ]
                     },
@@ -60262,7 +60424,7 @@
                           },
                           {
                             "key": "tile_overlap",
-                            "value": 64
+                            "value": 0.2
                           }
                         ]
                       }
@@ -64187,6 +64349,18 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string",
+                      "minLength": 24,
+                      "maxLength": 24,
+                      "example": "60d31793d5f1fb7e6e3c1a4c",
+                      "description": "Mongo ID of the object"
+                    }
+                  }
+                },
                 "examples": {
                   "Export job submitted successfully": {
                     "value": {

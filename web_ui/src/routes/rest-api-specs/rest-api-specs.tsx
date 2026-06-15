@@ -32,11 +32,9 @@ export const RestApiSpecs = () => {
             <View flex={1} minHeight={0} overflow={'hidden auto'}>
                 <ApiReferenceReact
                     configuration={{
-                        spec: {
-                            // to generate the openapi-spec.json file, run the following command:
-                            // npm run build:rest-openapi-spec
-                            url: '/openapi-spec.json',
-                        },
+                        // to generate the openapi-spec.json file, run the following command:
+                        // npm run build:rest-openapi-spec
+                        url: '/openapi-spec.json',
                         layout: 'modern',
                         showSidebar: true,
                         hideModels: true,

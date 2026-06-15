@@ -88,6 +88,6 @@ describe('RotatedBoundingBoxTool', () => {
 
         // Completing the bounding box should have been cancelled
         fireEvent.pointerUp(svg);
-        expect(onComplete).not.toBeCalled();
+        expect(onComplete).not.toHaveBeenCalled();
     });
 });

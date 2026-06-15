@@ -3,7 +3,7 @@
 
 import { Grabcut, InferenceImage, IntelligentScissors, SSIM, Watershed } from '@geti/smart-tools';
 import { RITM } from '@geti/smart-tools/ritm';
-import { SegmentAnythingModel } from '@geti/smart-tools/segment-anything';
+import { SegmentAnythingModelWrapper } from '@geti/smart-tools/segment-anything';
 import { Remote } from 'comlink';
 
 import { AlgorithmType } from './algorithm.interface';
@@ -19,6 +19,6 @@ export type MapAlgorithmToInstance = {
     [AlgorithmType.RITM]: RITM;
     [AlgorithmType.SSIM]: SSIM;
     [AlgorithmType.INFERENCE_IMAGE]: InferenceImage;
-    [AlgorithmType.SEGMENT_ANYTHING_ENCODER]: SegmentAnythingModel;
-    [AlgorithmType.SEGMENT_ANYTHING_DECODER]: SegmentAnythingModel;
+    [AlgorithmType.SEGMENT_ANYTHING_ENCODER]: SegmentAnythingModelWrapper;
+    [AlgorithmType.SEGMENT_ANYTHING_DECODER]: SegmentAnythingModelWrapper;
 };

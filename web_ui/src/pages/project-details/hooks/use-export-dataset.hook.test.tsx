@@ -127,7 +127,7 @@ describe('useExportDataset', () => {
 
             await waitFor(() => {
                 expect(result.current.exportDatasetStatus.status).toBe('success');
-                expect(mockedToast).not.toBeCalled();
+                expect(mockedToast).not.toHaveBeenCalled();
             });
         });
 

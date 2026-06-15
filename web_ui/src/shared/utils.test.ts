@@ -117,7 +117,7 @@ describe('onValidFileList', () => {
 
         onValidFileList(mockedHandler)(validFile);
 
-        expect(mockedHandler).toBeCalledTimes(1);
+        expect(mockedHandler).toHaveBeenCalledTimes(1);
     });
 
     it('file list', () => {
@@ -131,14 +131,14 @@ describe('onValidFileList', () => {
 
         onValidFileList(mockedHandler)(mockFileList as unknown as FileList);
 
-        expect(mockedHandler).toBeCalledTimes(1);
+        expect(mockedHandler).toHaveBeenCalledTimes(1);
     });
 
     it('null', () => {
         const mockedHandler = jest.fn();
         onValidFileList(mockedHandler)(null);
 
-        expect(mockedHandler).toBeCalledTimes(0);
+        expect(mockedHandler).toHaveBeenCalledTimes(0);
     });
 });
 
