@@ -24,7 +24,7 @@ users_handler = { path = "../../libs/users_handler", editable = true }
 
 [dependency-groups]
 dev = [
-    "pytest~=8.3",
+    "pytest~=9.0",
     "ruff~=0.11.2",
     "mypy~=1.15",
     "types-requests",

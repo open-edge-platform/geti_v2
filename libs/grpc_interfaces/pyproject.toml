@@ -37,7 +37,7 @@ geti-types = { path = "../types", editable = true }
 
 [dependency-groups]
 dev = [
-    "pytest~=8.3",
+    "pytest~=9.0",
     "ruff~=0.11.2",
     "pre-commit~=4.1",
     "mypy~=1.15",

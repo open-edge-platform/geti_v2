@@ -24,7 +24,7 @@ geti-telemetry-tools = { path = "../../../../libs/telemetry_tools" }
 
 [dependency-groups]
 dev = [
-    "pytest~=8.3",
+    "pytest~=9.0",
     "ruff~=0.11.2",
     "pre-commit~=4.1",
     "testfixtures~=7.2",

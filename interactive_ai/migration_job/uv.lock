@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = "==3.10.*"
 
 [[package]]
@@ -193,7 +193,7 @@ telemetry = [
 [package.metadata]
 requires-dist = [
     { name = "confluent-kafka", marker = "extra == 'kafka'", specifier = ">=1.8.2,<=2.3.0" },
-    { name = "fastapi", marker = "extra == 'fastapi'", specifier = "~=0.124.1" },
+    { name = "fastapi", marker = "extra == 'fastapi'", specifier = "~=0.136.3" },
     { name = "grpcio", marker = "extra == 'grpc'", specifier = ">=1.51.1,<2.0" },
     { name = "opentelemetry-api", marker = "extra == 'telemetry'", specifier = "==1.40.0" },
     { name = "opentelemetry-exporter-otlp-proto-grpc", marker = "extra == 'telemetry'", specifier = "==1.40.0" },
@@ -215,7 +215,7 @@ dev = [
     { name = "httpx", specifier = "~=0.23" },
     { name = "mypy", specifier = "~=1.15" },
     { name = "pre-commit", specifier = "~=4.1" },
-    { name = "pytest", specifier = "~=8.3" },
+    { name = "pytest", specifier = "~=9.0" },
     { name = "pytest-freezegun" },
     { name = "ruff", specifier = "~=0.11.2" },
     { name = "testfixtures" },
@@ -404,7 +404,7 @@ dev = [
     { name = "mongomock", specifier = "~=4.3" },
     { name = "mypy", specifier = "~=1.15" },
     { name = "pre-commit", specifier = "~=4.1" },
-    { name = "pytest", specifier = "~=8.3" },
+    { name = "pytest", specifier = "~=9.0" },
     { name = "pytest-minio-mock", specifier = "~=0.4" },
     { name = "ruff", specifier = "~=0.11" },
     { name = "testcontainers", extras = ["mongodb"], specifier = "~=4.9" },
@@ -462,7 +462,7 @@ dev = [
     { name = "mypy-protobuf", specifier = "==3.5" },
     { name = "pre-commit", specifier = "==2.15.0" },
     { name = "protobuf", specifier = "~=6.33.5" },
-    { name = "pytest", specifier = "~=7.3.2" },
+    { name = "pytest", specifier = "~=9.0.3" },
     { name = "pytest-cov", specifier = "==2.11.1" },
     { name = "pytest-html", specifier = "~=4.0.0" },
     { name = "pytest-mock", specifier = "==3.8.*" },
@@ -815,6 +815,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pygments"
+version = "2.20.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c3/b2/bc9c9196916376152d655522fdcebac55e66de6603a76a02bca1b6414f6c/pygments-2.20.0.tar.gz", hash = "sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f", size = 4955991, upload-time = "2026-03-29T13:29:33.898Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f4/7e/a72dd26f3b0f4f2bf1dd8923c85f7ceb43172af56d63c7383eb62b332364/pygments-2.20.0-py3-none-any.whl", hash = "sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176", size = 1231151, upload-time = "2026-03-29T13:29:30.038Z" },
+]
+
+[[package]]
 name = "pymongo"
 version = "4.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -855,7 +864,7 @@ wheels = [
 
 [[package]]
 name = "pytest"
-version = "7.3.2"
+version = "9.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -863,11 +872,12 @@ dependencies = [
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
+    { name = "pygments" },
     { name = "tomli" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/58/2a/07c65fdc40846ecb8a9dcda2c38fcb5a06a3e39d08d4a4960916431951cb/pytest-7.3.2.tar.gz", hash = "sha256:ee990a3cc55ba808b80795a79944756f315c67c12b56abd3ac993a7b8c17030b", size = 1338457, upload-time = "2023-06-10T19:28:53.107Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/0d/549bd94f1a0a402dc8cf64563a117c0f3765662e2e668477624baeec44d5/pytest-9.0.3.tar.gz", hash = "sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c", size = 1572165, upload-time = "2026-04-07T17:16:18.027Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/d0/de969198293cdea22b3a6fb99a99aeeddb7b3827f0823b33c5dc0734bbe5/pytest-7.3.2-py3-none-any.whl", hash = "sha256:cdcbd012c9312258922f8cd3f1b62a6580fdced17db6014896053d47cddf9295", size = 320900, upload-time = "2023-06-10T19:28:50.763Z" },
+    { url = "https://files.pythonhosted.org/packages/d4/24/a372aaf5c9b7208e7112038812994107bc65a84cd00e0354a88c2c77a617/pytest-9.0.3-py3-none-any.whl", hash = "sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9", size = 375249, upload-time = "2026-04-07T17:16:16.13Z" },
 ]
 
 [[package]]

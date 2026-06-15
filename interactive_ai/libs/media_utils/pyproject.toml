@@ -24,7 +24,7 @@ dev = [
     "requests~=2.31",
     "types-cachetools",
     "mypy~=1.15",
-    "pytest~=7.0",
+    "pytest~=9.0",
     "pytest-cov~=2.12",
     "click~=8.1",
     "pre-commit~=2.15",
