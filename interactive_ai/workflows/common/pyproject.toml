@@ -17,6 +17,7 @@ dependencies = [
     "grpc_interfaces[job_update]",
     "iai-core",
     "geti-configuration-tools",
+    "lxml==6.1.0",
 ]
 
 [project.optional-dependencies]

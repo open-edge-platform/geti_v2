@@ -18,6 +18,7 @@ dependencies = [
     "geti-k8s-tools",
     "workflows_common[datumaro-conversion]",
     "geti-supported-models",
+    "lxml==6.1.0",
 ]
 
 [tool.uv.sources]

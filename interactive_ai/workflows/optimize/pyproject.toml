@@ -10,6 +10,7 @@ dependencies = [
     "geti-types~=1.0.2",
     "geti-k8s-tools==1.0.0",
     "workflows_common[evaluation, shard_dataset]",
+    "lxml==6.1.0",
 ]
 
 [tool.uv.sources]

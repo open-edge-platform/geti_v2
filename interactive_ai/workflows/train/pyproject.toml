@@ -11,6 +11,7 @@ dependencies = [
     "workflows_common[evaluation, shard-dataset]",
     "pyyaml~=6.0",
     "geti-supported-models",
+    "lxml==6.1.0",
 ]
 
 [tool.uv.sources]

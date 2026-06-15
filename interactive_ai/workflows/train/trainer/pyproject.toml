@@ -10,12 +10,15 @@ dependencies = [
     "requests==2.33.0",
     "tqdm==4.67.1",
     "otx==2.6.0",
+    "onnx==1.21.0",
+    "lxml==6.1.0",
     "geti-kafka-tools",
     "geti-telemetry-tools[telemetry,kafka]",
     "setuptools==78.1.1",
     "av<16",
     "torch==2.8.0", # to match otx supported version
     "torchvision==0.23.0", # to match otx supported version
+    "datumaro~=1.13",
 ]
 
 [tool.uv.sources]
@@ -28,7 +31,7 @@ dev = [
     "ruff~=0.11.2",
     "pre-commit~=4.1",
     "testfixtures~=7.2",
-    "requests~=2.32",
+    "requests~=2.33",
     "pytest-freezegun",
     "mypy~=1.15",
     "types-cachetools",
@@ -78,3 +81,10 @@ max-args=7
 python_version = "3.10"
 ignore_missing_imports = true
 show_error_codes = true
+
+[tool.uv]
+override-dependencies = [
+    "onnx==1.21.0",
+    "datumaro==1.10.0",
+    "lxml>=5.2.0,<6",
+]

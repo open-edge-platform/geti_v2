@@ -21,7 +21,7 @@ iai_core = { path = "../iai_core_py", editable = true }
 dev = [
     "testfixtures~=8.3",
     "tenacity~=8.3",
-    "requests~=2.31",
+    "requests~=2.33",
     "types-cachetools",
     "mypy~=1.15",
     "pytest~=9.0",
