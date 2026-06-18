@@ -3,6 +3,17 @@ Copyright (C) 2022-2025 Intel Corporation
 LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 -->
 
+## 🎉 Geti™ is growing up: lighter, unified and built for the edge
+
+Geti™ just received a massive revamp. New Geti™ is now significantly lighter, so no longer dependent on Kubernetes as the default architecture, it can run directly on edge devices and AI PCs with a fraction of the resources previously required.
+
+The application and its training backend now share a single repository, developed and maintained together as one cohesive project.
+
+All future development continues at **[geti repository](https://github.com/open-edge-platform/geti)**. That is where new features, improvements, and community contributions happen and we hope to see you there.
+
+---
+
+
 <div align="center">
   <p>
     <a align="center" href="https://docs.geti.intel.com/">
