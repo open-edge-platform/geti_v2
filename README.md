@@ -3,17 +3,9 @@ Copyright (C) 2022-2025 Intel Corporation
 LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 -->
 
-<div style="border: 5px solid #e0e0e0; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px;">
-
-## 🥁 Geti™ is growing up: lighter, unified, and built for the edge
-
-[Geti™ 3.0](https://github.com/open-edge-platform/geti) is a major release that streamlines the experience from installation to deployment, introduces several new capabilities, and radically simplifies the architecture. Geti™ is now significantly lighter - no longer dependent on Kubernetes as the default architecture, it can now run directly on edge and client hardware with a fraction of the resources previously required, while remaining fully compatible with cloud and cluster-based infrastructure.
-
-The application and its training backend now share a single repository, developed and maintained together as one cohesive project.
-
-All future development continues in the **[Geti repository](https://github.com/open-edge-platform/geti)**. That is where new features, improvements, and community contributions happen. We hope to see you there!
-
-</div>
+| |
+|---|
+| **🥁 Geti™ is growing up: lighter, unified, and built for the edge** <br><br> [Geti™ 3.0](https://github.com/open-edge-platform/geti) is a major release that streamlines the experience from installation to deployment, introduces several new capabilities, and radically simplifies the architecture. Geti™ is now significantly lighter - no longer dependent on Kubernetes as the default architecture, it can now run directly on edge and client hardware with a fraction of the resources previously required, while remaining fully compatible with cloud and cluster-based infrastructure. <br><br> The application and its training backend now share a single repository, developed and maintained together as one cohesive project. <br><br> All future development continues in the **[Geti repository](https://github.com/open-edge-platform/geti)**. That is where new features, improvements, and community contributions happen. We hope to see you there! |
 
 ---
 
