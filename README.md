@@ -4,7 +4,6 @@ LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 -->
 
 ---
----
 
 # 🥁 Geti™ is growing up: lighter, unified, and built for the edge
 
@@ -15,8 +14,6 @@ The application and its training backend now share a single repository, develope
 All future development continues in the **[Geti repository](https://github.com/open-edge-platform/geti)**. That is where new features, improvements, and community contributions happen. We hope to see you there!
 
 ---
----
-
 
 <div align="center">
   <p>
