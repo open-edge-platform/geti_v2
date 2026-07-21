@@ -37,7 +37,7 @@ dev = [
     "grpcio_tools==1.78.0",
     "mypy-protobuf==3.5",
     "mongomock==4.1.2",
-    "setuptools==80.10.2"
+    "setuptools==83.0.0"
 ]
 
 [build-system]
