@@ -16,7 +16,7 @@ dependencies = [
     "geti-telemetry-tools[telemetry,kafka]",
     "setuptools==78.1.1",
     "av<16",
-    "torch==2.8.0", # to match otx supported version
+    "torch==2.13.0", # to match otx supported version
     "torchvision==0.23.0", # to match otx supported version
     "datumaro~=1.12",
     "orjson~=3.11.6",
