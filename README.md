@@ -12,7 +12,7 @@ LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 >
 > **For new features, bug fixes, documentation, and releases, please use the new repository:**
 >
-> 👉 **https://github.com/open-edge-platform/geti**
+> 👉 **[https://github.com/open-edge-platform/geti](https://github.com/open-edge-platform/geti)**
 
 ---
 
