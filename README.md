@@ -27,7 +27,7 @@ LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
 <br>
 
-[Key Features](#key-features) | [User Guide](https://docs.geti.intel.com/docs/user-guide/getting-started/introduction) | [Dev Guide](https://docs.geti.intel.com/docs/developer-guide) | [License](LICENSE)
+[Key Features](#key-features) | [Documentation (v2)](https://docs.geti.intel.com/docs/2.0/user-guide/getting-started/introduction) | [License](LICENSE)
 
 <br>
 
