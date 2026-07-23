@@ -3,15 +3,16 @@ Copyright (C) 2022-2025 Intel Corporation
 LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 -->
 
----
-
-# 🥁 Geti™ is growing up: lighter, unified, and built for the edge
-
-[Geti™ 3.0](https://github.com/open-edge-platform/geti) is a major release that streamlines the experience from installation to deployment, introduces several new capabilities, and radically simplifies the architecture. Geti™ is now significantly lighter - no longer dependent on Kubernetes as the default architecture, it can now run directly on edge and client hardware with a fraction of the resources previously required, while remaining fully compatible with cloud and cluster-based infrastructure.
-
-The application and its training backend now share a single repository, developed and maintained together as one cohesive project. All future development continues in the **[Geti repository](https://github.com/open-edge-platform/geti)**. That is where new features, improvements, and community contributions happen. 
-
-We hope to see you there!
+> [!IMPORTANT]
+> **Geti has moved.**
+>
+> Active development of **Geti v3.0 and later** now takes place in the **[geti](https://github.com/open-edge-platform/geti)** repository.
+>
+> This repository contains the source code and history for **Geti v2.13 and earlier** only. It is no longer under active development and is maintained for historical and archival purposes.
+>
+> **For new features, bug fixes, documentation, and releases, please use the new repository:**
+>
+> 👉 **https://github.com/open-edge-platform/geti**
 
 ---
 
