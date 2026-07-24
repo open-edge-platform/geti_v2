@@ -35,7 +35,7 @@ dev = [
     "mypy==1.10.0",
     "pytest~=9.0.3",
     "pytest-cov==2.11.1",
-    "click==8.1.7",
+    "click==8.3.3",
     "pre-commit==2.15.0",
     "pytest-html~=4.0.0",
     "ruff==0.9.5",
