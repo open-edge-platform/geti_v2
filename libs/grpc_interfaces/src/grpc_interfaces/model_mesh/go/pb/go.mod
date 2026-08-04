@@ -1,8 +1,6 @@
 module geti.com/modelmesh
 
-go 1.24.0
-
-toolchain go1.24.10
+go 1.25.0
 
 require (
 	github.com/stretchr/testify v1.9.0
@@ -16,7 +14,7 @@ require (
 	github.com/stretchr/objx v0.5.2 // indirect
 	golang.org/x/net v0.48.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
+	golang.org/x/text v0.39.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
