@@ -135,7 +135,7 @@
         "@types/utif": "^3.0.5",
         "@types/uuid": "^10.0.0",
         "@typescript-eslint/eslint-plugin": "^8.38.0",
-        "adm-zip": "^0.5.16",
+        "adm-zip": "^0.6.0",
         "babel-preset-react-app": "^10.1.0",
         "eslint": "^9.31.0",
         "eslint-import-resolver-typescript": "^4.4.4",
