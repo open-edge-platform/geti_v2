@@ -1,8 +1,6 @@
 module auth_proxy
 
-go 1.24.0
-
-toolchain go1.24.10
+go 1.25.0
 
 replace geti.com/account_service_grpc => ../../../libs/grpc_interfaces/src/grpc_interfaces/account_service/go
 
@@ -29,7 +27,7 @@ require (
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/net v0.48.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/sys v0.44.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20251202230838-ff82c1b0f217 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
