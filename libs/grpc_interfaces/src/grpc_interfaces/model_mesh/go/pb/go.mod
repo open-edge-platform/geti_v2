@@ -2,7 +2,7 @@ module geti.com/modelmesh
 
 go 1.24.0
 
-toolchain go1.24.10
+toolchain go1.25.12
 
 require (
 	github.com/stretchr/testify v1.9.0
