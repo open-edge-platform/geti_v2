@@ -67,7 +67,7 @@ dev = [
     "scikit-learn~=1.6",
 
     # For Datumaro Arrow data format export
-    "pyarrow==17.0.0",
+    "pyarrow==23.0.1",
 
     "workflows-common[evaluation,shard-dataset,datumaro-conversion]"
 ]
