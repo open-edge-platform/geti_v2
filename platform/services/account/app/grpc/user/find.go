@@ -365,7 +365,7 @@ func (s *GRPCServer) Find(ctx context.Context, findRequest *pb.FindUserRequest) 
 		return nil, err
 	}
 
-	if len(findRequest.ResourceType) > 0 || findRequest.Role != "" || findRequest.ResourceId != "" {
+	if (len(findRequest.ResourceType) > 0 && findRequest.ResourceId != "") || findRequest.Role != "" {
 		users = filterUsersByRole(findRequest, users, userRolesMap)
 		response.TotalMatchedCount = int32(len(users))
 	}
