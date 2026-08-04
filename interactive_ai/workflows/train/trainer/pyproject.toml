@@ -14,7 +14,7 @@ dependencies = [
     "lxml==6.1.0",
     "geti-kafka-tools",
     "geti-telemetry-tools[telemetry,kafka]",
-    "setuptools==78.1.1",
+    "setuptools==83.0.0",
     "av<16",
     "torch==2.8.0", # to match otx supported version
     "torchvision==0.23.0", # to match otx supported version

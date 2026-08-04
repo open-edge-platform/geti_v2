@@ -42,7 +42,7 @@ dev = [
     "testcontainers~=4.10.0",
     "requests~=2.33.0",
     "types-requests~=2.31",
-    "setuptools==80.10.2",
+    "setuptools==83.0.0",
 ]
 
 [build-system]
