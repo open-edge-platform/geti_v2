@@ -1,14 +1,14 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { GETI_SYSTEM_AUTHOR_ID, JobState } from '../../../core/jobs/jobs.const';
-import { Job, JobCount } from '../../../core/jobs/jobs.interface';
-import { FUX_SETTINGS_KEYS } from '../../../core/user-settings/dtos/user-settings.interface';
-import { getMockedJob } from '../../../test-utils/mocked-items-factory/mocked-jobs';
+import { GETI_SYSTEM_AUTHOR_ID, JobState } from '../../../../core/jobs/jobs.const';
+import { Job, JobCount } from '../../../../core/jobs/jobs.interface';
+import { FUX_SETTINGS_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
+import { getMockedJob } from '../../../../test-utils/mocked-items-factory/mocked-jobs';
 import {
     getMockedUserGlobalSettings,
     getMockedUserGlobalSettingsObject,
-} from '../../../test-utils/mocked-items-factory/mocked-settings';
+} from '../../../../test-utils/mocked-items-factory/mocked-settings';
 import { onFirstSuccessfulAutoTrainingJob } from './utils';
 
 const getJobResponse = (jobCount: Partial<JobCount> = {}, mockedJobs: Job[] = []) => ({

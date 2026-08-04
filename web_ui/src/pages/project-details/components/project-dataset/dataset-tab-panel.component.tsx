@@ -1,7 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Key } from 'react';
+import { Key, useRef } from 'react';
 
 import { useNavigateToAnnotatorRoute } from '@geti/core/src/services/use-navigate-to-annotator-route.hook';
 import { Button, Flex, Item, TabList, TabPanels, Tabs, View } from '@geti/ui';
@@ -11,9 +11,8 @@ import { useOverlayTriggerState } from 'react-stately';
 
 import { Dataset } from '../../../../core/projects/dataset.interface';
 import { isAnomalyDomain } from '../../../../core/projects/domains';
-import { FUX_NOTIFICATION_KEYS } from '../../../../core/user-settings/dtos/user-settings.interface';
-import { CoachMark } from '../../../../shared/components/coach-mark/coach-mark.component';
 import { TooltipWithDisableButton } from '../../../../shared/components/custom-tooltip/tooltip-with-disable-button';
+import { AnnotateInteractivelyNotification } from '../../../../shared/components/fux-notification/notifications/annotate-interactively-notification.component';
 import { TabItem } from '../../../../shared/components/tabs/tabs.interface';
 import { TruncatedText } from '../../../../shared/components/truncated-text/truncated-text.component';
 import { useActiveTab } from '../../../../shared/hooks/use-active-tab.hook';
@@ -62,6 +61,9 @@ export const DatasetTabPanel = ({ dataset }: { dataset: Dataset }) => {
         });
     };
 
+    const triggerRef = useRef(null);
+    const fuxState = useOverlayTriggerState({});
+
     useOpenNotificationToast();
 
     return (
@@ -99,21 +101,9 @@ export const DatasetTabPanel = ({ dataset }: { dataset: Dataset }) => {
                         <Flex gap='size-100'>
                             {isAnomalyProject && <ExportImportDatasetButtons hasMediaItems={hasMediaItems} />}
                             <View>
-                                {annotateButtonText === 'Annotate interactively' && !isAnnotatorDisabled && (
-                                    <CoachMark
-                                        settingsKey={FUX_NOTIFICATION_KEYS.ANNOTATE_INTERACTIVELY}
-                                        styles={{
-                                            position: 'absolute',
-                                            zIndex: '5',
-                                            top: '-58px',
-                                            right: '55px',
-                                            maxWidth: '100%',
-                                        }}
-                                    />
-                                )}
-
                                 <TooltipWithDisableButton activeTooltip={tooltipText} disabledTooltip={tooltipText}>
                                     <Button
+                                        ref={triggerRef}
                                         id={'annotate-button-id'}
                                         variant={'accent'}
                                         onPress={handleGoToAnnotator}
@@ -123,6 +113,9 @@ export const DatasetTabPanel = ({ dataset }: { dataset: Dataset }) => {
                                         <TruncatedText>{annotateButtonText}</TruncatedText>
                                     </Button>
                                 </TooltipWithDisableButton>
+                                {annotateButtonText === 'Annotate interactively' && !isAnnotatorDisabled && (
+                                    <AnnotateInteractivelyNotification triggerRef={triggerRef} state={fuxState} />
+                                )}
                             </View>
                         </Flex>
                     </Flex>

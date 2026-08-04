@@ -18,8 +18,8 @@ import { useUserGlobalSettings } from '../../../../core/user-settings/hooks/use-
 import { useFuxNotifications } from '../../../../hooks/use-fux-notifications/use-fux-notifications.hook';
 import { useProjectIdentifier } from '../../../../hooks/use-project-identifier/use-project-identifier';
 import { useProject } from '../../../../pages/project-details/providers/project-provider/project-provider.component';
+import { onFirstSuccessfulAutoTrainingJob } from '../../fux-notification/notifications/utils';
 import { CoachMark } from '../coach-mark.component';
-import { onFirstSuccessfulAutoTrainingJob } from '../utils';
 
 const useSuccessfullyAutotrainedNotificationJobs = ({
     enabled,
