@@ -46,6 +46,7 @@ Thanks to Rspack, Rsbuild allows us to have lightning fast builds and provides c
 - **Routing & Navigation**: React Router manages client-side routing. We currently only use it for client side navigation, but are looking into integrating data loaders to speedup initial page loads.
 - **Data & State**: TanStack Query is used for server state, e.g. data fetching and other async processes. 
 - **UI Components**: We use Adobe's [React Spectrum](https://react-spectrum.adobe.com/) as our UI component library. Custom components often use [React Aria](https://react-spectrum.adobe.com/react-aria/index.html) either as hooks or via react-aria-components and are styled via css modules.
+- **Shared hooks**: `useDebouncedCallback` and `useThrottledCallback` are implemented to always invoke the latest callback after rerenders (via a ref proxy), which avoids stale-closure bugs in delayed executions.
 
 ### Testing
 
@@ -64,4 +65,3 @@ Thanks to Rspack, Rsbuild allows us to have lightning fast builds and provides c
 
 Our annotator contains smart tools such as [Detection Assistant](https://docs.geti.intel.com/docs/user-guide/geti-fundamentals/annotations/annotation-tools#detection-assistant-tool) or [Automatic Segmentation](https://docs.geti.intel.com/docs/user-guide/geti-fundamentals/annotations/annotation-tools#automatic-segmentation-tool) are local only and rely on [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) to keep the UI smooth and non blocking when we are performing heavy compute.
 The tools are implemented using [OpenCV](https://opencv.org/), [OnnxRUntime](https://onnxruntime.ai) compiled to [WebAssembly](https://webassembly.org/).
-

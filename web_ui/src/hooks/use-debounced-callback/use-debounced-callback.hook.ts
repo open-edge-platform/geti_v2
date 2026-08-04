@@ -5,24 +5,27 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { debounce, type DebouncedFunc } from 'lodash-es';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Callback = (...args: any[]) => void;
-
-export const useDebouncedCallback = (callback: Callback, delay: number): DebouncedFunc<Callback> => {
+export const useDebouncedCallback = <Args extends unknown[]>(
+    callback: (...args: Args) => void,
+    delay: number
+): DebouncedFunc<(...args: Args) => void> => {
     const savedCallback = useRef(callback);
 
     useLayoutEffect(() => {
         savedCallback.current = callback;
     }, [callback]);
 
-    const debouncedCallback = useMemo(() => debounce(savedCallback.current, delay), [delay]);
+    const debouncedCallback = useMemo(() => {
+        // `debounce` captures the function reference at creation time; we route through
+        // a ref so delayed executions always invoke the latest callback after rerenders.
+        return debounce((...args: Args) => savedCallback.current(...args), delay);
+    }, [delay]);
 
     useEffect(() => {
         return () => {
-            debouncedCallback.cancel?.();
+            debouncedCallback.cancel();
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [debouncedCallback]);
 
     return debouncedCallback;
 };

@@ -3,25 +3,19 @@
 
 import { act, renderHook } from '@testing-library/react';
 
-import { useDebouncedCallback } from './use-debounced-callback.hook';
+import { useThrottledCallback } from './use-throttled-callback.hook';
 
-describe('useDebouncedCallback', () => {
+describe('useThrottledCallback', () => {
     it('executes a given callback after given delay', () => {
         jest.useFakeTimers();
 
         const mockCallback = jest.fn();
         const delay = 1000;
-        const { result } = renderHook(() => useDebouncedCallback(mockCallback, delay));
-
-        const debouncedCallback = result.current;
+        const { result } = renderHook(() => useThrottledCallback(mockCallback, delay));
 
         act(() => {
-            debouncedCallback();
+            result.current();
         });
-
-        expect(mockCallback).toHaveBeenCalledTimes(0);
-
-        jest.advanceTimersByTime(delay);
 
         expect(mockCallback).toHaveBeenCalledTimes(1);
 
@@ -29,7 +23,7 @@ describe('useDebouncedCallback', () => {
         jest.useRealTimers();
     });
 
-    it('calls the latest callback after rerender', () => {
+    it('calls the latest callback for trailing invocation after rerender', () => {
         jest.useFakeTimers();
 
         const firstCallback = jest.fn();
@@ -37,7 +31,7 @@ describe('useDebouncedCallback', () => {
         const delay = 1000;
 
         const { result, rerender } = renderHook(
-            ({ callback }) => useDebouncedCallback(callback, delay),
+            ({ callback }) => useThrottledCallback(callback, delay),
             {
                 initialProps: { callback: firstCallback },
             }
@@ -47,6 +41,9 @@ describe('useDebouncedCallback', () => {
             result.current('first');
         });
 
+        expect(firstCallback).toHaveBeenCalledTimes(1);
+        expect(firstCallback).toHaveBeenCalledWith('first');
+
         rerender({ callback: secondCallback });
 
         act(() => {
@@ -54,7 +51,7 @@ describe('useDebouncedCallback', () => {
             jest.advanceTimersByTime(delay);
         });
 
-        expect(firstCallback).not.toHaveBeenCalled();
+        expect(firstCallback).toHaveBeenCalledTimes(1);
         expect(secondCallback).toHaveBeenCalledTimes(1);
         expect(secondCallback).toHaveBeenCalledWith('second');
 
